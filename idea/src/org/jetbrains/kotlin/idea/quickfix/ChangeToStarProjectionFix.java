@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
 
-public class ChangeToStarProjectionFix extends KotlinQuickFixAction<JetTypeElement> {
-    public ChangeToStarProjectionFix(@NotNull JetTypeElement element) {
+public class ChangeToStarProjectionFix extends KotlinQuickFixAction<KtTypeElement> {
+    public ChangeToStarProjectionFix(@NotNull KtTypeElement element) {
         super(element);
     }
 
@@ -46,10 +46,10 @@ public class ChangeToStarProjectionFix extends KotlinQuickFixAction<JetTypeEleme
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        for (JetTypeReference typeReference : getElement().getTypeArgumentsAsTypes()) {
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        for (KtTypeReference typeReference : getElement().getTypeArgumentsAsTypes()) {
             if (typeReference != null) {
-                typeReference.replace(JetPsiFactoryKt.JetPsiFactory(file).createStar());
+                typeReference.replace(KtPsiFactoryKt.KtPsiFactory(file).createStar());
             }
         }
     }
@@ -58,17 +58,17 @@ public class ChangeToStarProjectionFix extends KotlinQuickFixAction<JetTypeEleme
         return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetBinaryExpressionWithTypeRHS expression = QuickFixUtil
-                        .getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
-                JetTypeReference typeReference;
+                KtBinaryExpressionWithTypeRHS expression = QuickFixUtil
+                        .getParentElementOfType(diagnostic, KtBinaryExpressionWithTypeRHS.class);
+                KtTypeReference typeReference;
                 if (expression == null) {
-                    typeReference = QuickFixUtil.getParentElementOfType(diagnostic, JetTypeReference.class);
+                    typeReference = QuickFixUtil.getParentElementOfType(diagnostic, KtTypeReference.class);
                 }
                 else {
                     typeReference = expression.getRight();
                 }
                 if (typeReference == null) return null;
-                JetTypeElement typeElement = typeReference.getTypeElement();
+                KtTypeElement typeElement = typeReference.getTypeElement();
                 assert typeElement != null;
                 return new ChangeToStarProjectionFix(typeElement);
             }

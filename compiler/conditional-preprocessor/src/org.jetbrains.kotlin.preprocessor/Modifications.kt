@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.psi.*
 
 data class Modification(val range: TextRange, val apply: (String) -> String)
 
-class CollectModificationsVisitor(evaluators: List<Evaluator>) : JetTreeVisitorVoid() {
+class CollectModificationsVisitor(evaluators: List<Evaluator>) : KtTreeVisitorVoid() {
 
     val elementModifications: Map<Evaluator, MutableList<Modification>> =
             evaluators.toMap(selector = { it }, transform = { arrayListOf<Modification>() })
 
-    override fun visitDeclaration(declaration: JetDeclaration) {
+    override fun visitDeclaration(declaration: KtDeclaration) {
         super.visitDeclaration(declaration)
 
         val annotations = declaration.parseConditionalAnnotations()
-        val name = (declaration as? JetNamedDeclaration)?.nameAsSafeName ?: declaration.name
+        val name = (declaration as? KtNamedDeclaration)?.nameAsSafeName ?: declaration.name
 
         val declResults = arrayListOf<Pair<Evaluator, Boolean>>()
         for ((evaluator, modifications) in elementModifications) {
@@ -48,7 +48,7 @@ class CollectModificationsVisitor(evaluators: List<Evaluator>) : JetTreeVisitorV
             else {
                 val targetName = annotations.filterIsInstance<Conditional.TargetName>().singleOrNull()
                 if (targetName != null) {
-                    val placeholderName = (declaration as JetNamedDeclaration).nameAsName!!.asString()
+                    val placeholderName = (declaration as KtNamedDeclaration).nameAsName!!.asString()
                     val realName = targetName.name
                     modifications.add(Modification(declaration.textRange) { it.replace(placeholderName, realName) })
                 }

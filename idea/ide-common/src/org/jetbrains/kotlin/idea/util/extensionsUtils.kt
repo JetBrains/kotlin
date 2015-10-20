@@ -20,16 +20,16 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetThisExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
@@ -51,7 +51,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(
-        scope: JetScope,
+        scope: KtScope,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo
 ): Collection<CallableDescriptor> {
@@ -73,7 +73,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallable(
-        receiverTypes: Collection<JetType>,
+        receiverTypes: Collection<KtType>,
         callType: CallType<*>
 ): Collection<CallableDescriptor> {
     if (!callType.descriptorKindFilter.accepts(this)) return listOf()
@@ -105,7 +105,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
 public fun ReceiverValue.getThisReceiverOwner(bindingContext: BindingContext): DeclarationDescriptor? {
     return when (this) {
         is ExpressionReceiver -> {
-            val thisRef = (JetPsiUtil.deparenthesize(this.getExpression()) as? JetThisExpression)?.getInstanceReference() ?: return null
+            val thisRef = (KtPsiUtil.deparenthesize(this.getExpression()) as? KtThisExpression)?.getInstanceReference() ?: return null
             bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
         }
 

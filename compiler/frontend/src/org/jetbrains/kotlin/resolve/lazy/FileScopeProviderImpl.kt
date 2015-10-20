@@ -19,12 +19,15 @@ package org.jetbrains.kotlin.resolve.lazy
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetImportsFactory
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImportsFactory
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.NoSubpackagesInPackageScope
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
@@ -36,23 +39,23 @@ public class FileScopeProviderImpl(
         private val moduleDescriptor: ModuleDescriptor,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val bindingTrace: BindingTrace,
-        private val jetImportsFactory: JetImportsFactory,
+        private val ktImportsFactory: KtImportsFactory,
         private val additionalScopes: Iterable<FileScopeProvider.AdditionalScopes>
 ) : FileScopeProvider {
 
     private val defaultImports by storageManager.createLazyValue {
-        jetImportsFactory.createImportDirectives(moduleDescriptor.defaultImports)
+        ktImportsFactory.createImportDirectives(moduleDescriptor.defaultImports)
     }
 
-    private val fileScopes = storageManager.createMemoizedFunction { file: JetFile -> createFileScope(file) }
+    private val fileScopes = storageManager.createMemoizedFunction { file: KtFile -> createFileScope(file) }
 
-    override fun getFileScope(file: JetFile) = fileScopes(file)
+    override fun getFileScope(file: KtFile) = fileScopes(file)
 
-    private fun createFileScope(file: JetFile): LazyFileScope {
+    private fun createFileScope(file: KtFile): LazyFileScope {
         val debugName = "LazyFileScope for file " + file.getName()
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve")
 
-        val imports = if (file is JetCodeFragment)
+        val imports = if (file is KtCodeFragment)
             file.importsAsImportList()?.getImports() ?: listOf()
         else
             file.getImportDirectives()
@@ -69,7 +72,7 @@ public class FileScopeProviderImpl(
         val defaultAliasImportResolver = createImportResolver(AliasImportsIndexed(defaultImports), tempTrace)
         val defaultAllUnderImportResolver = createImportResolver(AllUnderImportsIndexed(defaultImports), tempTrace)
 
-        val scopeChain = ArrayList<JetScope>()
+        val scopeChain = ArrayList<KtScope>()
 
         scopeChain.add(LazyImportScope(packageFragment, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName"))
 

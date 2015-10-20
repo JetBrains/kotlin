@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -121,14 +121,14 @@ public class BodyResolver {
     }
 
     private void resolveSecondaryConstructors(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
+        for (Map.Entry<KtSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
             LexicalScope declaringScope = c.getDeclaringScope(entry.getKey());
             assert declaringScope != null : "Declaring scope should be registered before body resolve";
             resolveSecondaryConstructorBody(c.getOuterDataFlowInfo(), trace, entry.getKey(), entry.getValue(), declaringScope);
         }
         if (c.getSecondaryConstructors().isEmpty()) return;
         Set<ConstructorDescriptor> visitedConstructors = Sets.newHashSet();
-        for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
+        for (Map.Entry<KtSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
             checkCyclicConstructorDelegationCall(entry.getValue(), visitedConstructors);
         }
     }
@@ -136,7 +136,7 @@ public class BodyResolver {
     public void resolveSecondaryConstructorBody(
             @NotNull final DataFlowInfo outerDataFlowInfo,
             @NotNull final BindingTrace trace,
-            @NotNull final JetSecondaryConstructor constructor,
+            @NotNull final KtSecondaryConstructor constructor,
             @NotNull final ConstructorDescriptor descriptor,
             @NotNull LexicalScope declaringScope
     ) {
@@ -159,7 +159,7 @@ public class BodyResolver {
             @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
-            @NotNull JetSecondaryConstructor constructor,
+            @NotNull KtSecondaryConstructor constructor,
             @NotNull ConstructorDescriptor descriptor,
             @NotNull CallChecker callChecker
     ) {
@@ -212,7 +212,7 @@ public class BodyResolver {
         do {
             PsiElement constructorToReport = DescriptorToSourceUtils.descriptorToDeclaration(currentConstructor);
             if (constructorToReport != null) {
-                JetConstructorDelegationCall call = ((JetSecondaryConstructor) constructorToReport).getDelegationCall();
+                KtConstructorDelegationCall call = ((KtSecondaryConstructor) constructorToReport).getDelegationCall();
                 assert call.getCalleeExpression() != null
                         : "Callee expression of delegation call should not be null on cycle as there should be explicit 'this' calls";
                 trace.report(CYCLIC_CONSTRUCTOR_DELEGATION_CALL.on(call.getCalleeExpression()));
@@ -238,8 +238,8 @@ public class BodyResolver {
 
     private void resolveDelegationSpecifierLists(@NotNull BodiesResolveContext c) {
         // TODO : Make sure the same thing is not initialized twice
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            JetClassOrObject classOrObject = entry.getKey();
+        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
+            KtClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
 
             resolveDelegationSpecifierList(c.getOuterDataFlowInfo(), classOrObject, descriptor,
@@ -251,7 +251,7 @@ public class BodyResolver {
 
     public void resolveDelegationSpecifierList(
             @NotNull final DataFlowInfo outerDataFlowInfo,
-            @NotNull JetClassOrObject jetClass,
+            @NotNull KtClassOrObject jetClass,
             @NotNull final ClassDescriptor descriptor,
             @Nullable final ConstructorDescriptor primaryConstructor,
             @NotNull LexicalScope scopeForSupertypeResolution,
@@ -262,20 +262,20 @@ public class BodyResolver {
                 : FunctionDescriptorUtil.getFunctionInnerScope(scopeForSupertypeResolution, primaryConstructor, trace);
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
-        final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
+        final Map<KtTypeReference, KtType> supertypes = Maps.newLinkedHashMap();
         final ResolvedCall<?>[] primaryConstructorDelegationCall = new ResolvedCall[1];
-        JetVisitorVoid visitor = new JetVisitorVoid() {
-            private void recordSupertype(JetTypeReference typeReference, JetType supertype) {
+        KtVisitorVoid visitor = new KtVisitorVoid() {
+            private void recordSupertype(KtTypeReference typeReference, KtType supertype) {
                 if (supertype == null) return;
                 supertypes.put(typeReference, supertype);
             }
 
             @Override
-            public void visitDelegationByExpressionSpecifier(@NotNull JetDelegatorByExpressionSpecifier specifier) {
+            public void visitDelegationByExpressionSpecifier(@NotNull KtDelegatorByExpressionSpecifier specifier) {
                 if (descriptor.getKind() == ClassKind.INTERFACE) {
                     trace.report(DELEGATION_IN_INTERFACE.on(specifier));
                 }
-                JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
+                KtType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
                 recordSupertype(specifier.getTypeReference(), supertype);
                 if (supertype != null) {
                     DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
@@ -286,10 +286,10 @@ public class BodyResolver {
                         }
                     }
                 }
-                JetExpression delegateExpression = specifier.getDelegateExpression();
+                KtExpression delegateExpression = specifier.getDelegateExpression();
                 if (delegateExpression != null) {
                     LexicalScope scope = scopeForConstructor == null ? scopeForMemberResolution : scopeForConstructor;
-                    JetType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
+                    KtType expectedType = supertype != null ? supertype : NO_EXPECTED_TYPE;
                     typeInferrer.getType(scope, delegateExpression, expectedType, outerDataFlowInfo, trace);
                 }
                 if (primaryConstructor == null) {
@@ -298,13 +298,13 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
-                JetValueArgumentList valueArgumentList = call.getValueArgumentList();
+            public void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call) {
+                KtValueArgumentList valueArgumentList = call.getValueArgumentList();
                 PsiElement elementToMark = valueArgumentList == null ? call : valueArgumentList;
                 if (descriptor.getKind() == ClassKind.INTERFACE) {
                     trace.report(SUPERTYPE_INITIALIZED_IN_INTERFACE.on(elementToMark));
                 }
-                JetTypeReference typeReference = call.getTypeReference();
+                KtTypeReference typeReference = call.getTypeReference();
                 if (typeReference == null) return;
                 if (primaryConstructor == null) {
                     if (descriptor.getKind() != ClassKind.INTERFACE) {
@@ -317,7 +317,7 @@ public class BodyResolver {
                         trace, scopeForConstructor,
                         CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, outerDataFlowInfo, false);
                 if (results.isSuccess()) {
-                    JetType supertype = results.getResultingDescriptor().getReturnType();
+                    KtType supertype = results.getResultingDescriptor().getReturnType();
                     recordSupertype(typeReference, supertype);
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
@@ -340,9 +340,9 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperClassSpecifier(@NotNull JetDelegatorToSuperClass specifier) {
-                JetTypeReference typeReference = specifier.getTypeReference();
-                JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
+            public void visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier) {
+                KtTypeReference typeReference = specifier.getTypeReference();
+                KtType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
                 if (supertype == null) return;
                 ClassDescriptor superClass = TypeUtils.getClassDescriptor(supertype);
@@ -362,12 +362,12 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitJetElement(@NotNull JetElement element) {
+            public void visitJetElement(@NotNull KtElement element) {
                 throw new UnsupportedOperationException(element.getText() + " : " + element);
             }
         };
 
-        for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+        for (KtDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
             delegationSpecifier.accept(visitor);
         }
 
@@ -386,10 +386,10 @@ public class BodyResolver {
     @NotNull
     private static Set<TypeConstructor> getAllowedFinalSupertypes(
             @NotNull ClassDescriptor descriptor,
-            @NotNull JetClassOrObject jetClass
+            @NotNull KtClassOrObject jetClass
     ) {
         Set<TypeConstructor> parentEnumOrSealed;
-        if (jetClass instanceof JetEnumEntry) {
+        if (jetClass instanceof KtEnumEntry) {
             parentEnumOrSealed = Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor());
         }
         else {
@@ -419,19 +419,19 @@ public class BodyResolver {
 
     private void checkSupertypeList(
             @NotNull ClassDescriptor supertypeOwner,
-            @NotNull Map<JetTypeReference, JetType> supertypes,
-            @NotNull JetClassOrObject jetClass
+            @NotNull Map<KtTypeReference, KtType> supertypes,
+            @NotNull KtClassOrObject jetClass
     ) {
         Set<TypeConstructor> allowedFinalSupertypes = getAllowedFinalSupertypes(supertypeOwner, jetClass);
         Set<TypeConstructor> typeConstructors = Sets.newHashSet();
         boolean classAppeared = false;
-        for (Map.Entry<JetTypeReference, JetType> entry : supertypes.entrySet()) {
-            JetTypeReference typeReference = entry.getKey();
-            JetType supertype = entry.getValue();
+        for (Map.Entry<KtTypeReference, KtType> entry : supertypes.entrySet()) {
+            KtTypeReference typeReference = entry.getKey();
+            KtType supertype = entry.getValue();
 
-            JetTypeElement typeElement = typeReference.getTypeElement();
-            if (typeElement instanceof JetFunctionType) {
-                for (JetParameter parameter : ((JetFunctionType) typeElement).getParameters()) {
+            KtTypeElement typeElement = typeReference.getTypeElement();
+            if (typeElement instanceof KtFunctionType) {
+                for (KtParameter parameter : ((KtFunctionType) typeElement).getParameters()) {
                     PsiElement nameIdentifier = parameter.getNameIdentifier();
 
                     if (nameIdentifier != null) {
@@ -460,7 +460,7 @@ public class BodyResolver {
                         trace.report(INTERFACE_WITH_SUPERCLASS.on(typeReference));
                         addSupertype = false;
                     }
-                    else if (jetClass.hasModifier(JetTokens.DATA_KEYWORD)) {
+                    else if (jetClass.hasModifier(KtTokens.DATA_KEYWORD)) {
                         trace.report(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES.on(typeReference));
                         addSupertype = false;
                     }
@@ -506,8 +506,8 @@ public class BodyResolver {
     }
 
     private void resolveAnonymousInitializers(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetClassInitializer, ClassDescriptorWithResolutionScopes> entry : c.getAnonymousInitializers().entrySet()) {
-            JetClassInitializer initializer = entry.getKey();
+        for (Map.Entry<KtClassInitializer, ClassDescriptorWithResolutionScopes> entry : c.getAnonymousInitializers().entrySet()) {
+            KtClassInitializer initializer = entry.getKey();
             ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
             resolveAnonymousInitializer(c.getOuterDataFlowInfo(), initializer, descriptor);
         }
@@ -515,15 +515,15 @@ public class BodyResolver {
 
     public void resolveAnonymousInitializer(
             @NotNull DataFlowInfo outerDataFlowInfo,
-            @NotNull JetClassInitializer anonymousInitializer,
+            @NotNull KtClassInitializer anonymousInitializer,
             @NotNull ClassDescriptorWithResolutionScopes classDescriptor
     ) {
         LexicalScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
         if (!classDescriptor.getConstructors().isEmpty()) {
-            JetExpression body = anonymousInitializer.getBody();
+            KtExpression body = anonymousInitializer.getBody();
             if (body != null) {
                 PreliminaryDeclarationVisitor.Companion.createForDeclaration(
-                        (JetDeclaration) anonymousInitializer.getParent().getParent(), trace);
+                        (KtDeclaration) anonymousInitializer.getParent().getParent(), trace);
                 expressionTypingServices.getType(scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace);
             }
             processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
@@ -534,18 +534,18 @@ public class BodyResolver {
         }
     }
 
-    private void processModifiersOnInitializer(@NotNull JetModifierListOwner owner, @NotNull LexicalScope scope) {
+    private void processModifiersOnInitializer(@NotNull KtModifierListOwner owner, @NotNull LexicalScope scope) {
         annotationChecker.check(owner, trace, null);
         ModifierCheckerCore.INSTANCE$.check(owner, trace, null);
-        JetModifierList modifierList = owner.getModifierList();
+        KtModifierList modifierList = owner.getModifierList();
         if (modifierList == null) return;
 
         annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
     }
 
     private void resolvePrimaryConstructorParameters(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            JetClassOrObject klass = entry.getKey();
+        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
+            KtClassOrObject klass = entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             if (unsubstitutedPrimaryConstructor != null) {
@@ -580,13 +580,13 @@ public class BodyResolver {
     private void resolveProperty(
             @NotNull BodiesResolveContext c,
             @Nullable LexicalScope parentScope,
-            @NotNull JetProperty property,
+            @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
         computeDeferredType(propertyDescriptor.getReturnType());
 
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(property, trace);
-        JetExpression initializer = property.getInitializer();
+        KtExpression initializer = property.getInitializer();
         LexicalScope propertyScope = getScopeForProperty(c, property);
         if (parentScope == null) {
             parentScope = propertyScope;
@@ -595,7 +595,7 @@ public class BodyResolver {
             resolvePropertyInitializer(c.getOuterDataFlowInfo(), property, propertyDescriptor, initializer, propertyScope);
         }
 
-        JetExpression delegateExpression = property.getDelegateExpression();
+        KtExpression delegateExpression = property.getDelegateExpression();
         if (delegateExpression != null) {
             assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
             resolvePropertyDelegate(c.getOuterDataFlowInfo(), property, propertyDescriptor, delegateExpression, parentScope, propertyScope);
@@ -607,13 +607,13 @@ public class BodyResolver {
     private void resolvePropertyDeclarationBodies(@NotNull BodiesResolveContext c) {
 
         // Member properties
-        Set<JetProperty> processed = Sets.newHashSet();
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            if (!(entry.getKey() instanceof JetClass)) continue;
-            JetClass jetClass = (JetClass) entry.getKey();
+        Set<KtProperty> processed = Sets.newHashSet();
+        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
+            if (!(entry.getKey() instanceof KtClass)) continue;
+            KtClass ktClass = (KtClass) entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
 
-            for (JetProperty property : jetClass.getProperties()) {
+            for (KtProperty property : ktClass.getProperties()) {
                 PropertyDescriptor propertyDescriptor = c.getProperties().get(property);
                 assert propertyDescriptor != null;
 
@@ -623,8 +623,8 @@ public class BodyResolver {
         }
 
         // Top-level properties & properties of objects
-        for (Map.Entry<JetProperty, PropertyDescriptor> entry : c.getProperties().entrySet()) {
-            JetProperty property = entry.getKey();
+        for (Map.Entry<KtProperty, PropertyDescriptor> entry : c.getProperties().entrySet()) {
+            KtProperty property = entry.getKey();
             if (processed.contains(property)) continue;
 
             PropertyDescriptor propertyDescriptor = entry.getValue();
@@ -634,7 +634,7 @@ public class BodyResolver {
     }
 
     private LexicalScope makeScopeForPropertyAccessor(
-            @NotNull BodiesResolveContext c, @NotNull JetPropertyAccessor accessor, @NotNull PropertyDescriptor descriptor
+            @NotNull BodiesResolveContext c, @NotNull KtPropertyAccessor accessor, @NotNull PropertyDescriptor descriptor
     ) {
         LexicalScope accessorDeclaringScope = c.getDeclaringScope(accessor);
         assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
@@ -643,12 +643,12 @@ public class BodyResolver {
 
     public void resolvePropertyAccessors(
             @NotNull BodiesResolveContext c,
-            @NotNull JetProperty property,
+            @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
         ObservableBindingTrace fieldAccessTrackingTrace = createFieldTrackingTrace(propertyDescriptor);
 
-        JetPropertyAccessor getter = property.getGetter();
+        KtPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         if (getter != null && getterDescriptor != null) {
             LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
@@ -656,7 +656,7 @@ public class BodyResolver {
             resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
         }
 
-        JetPropertyAccessor setter = property.getSetter();
+        KtPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
         if (setter != null && setterDescriptor != null) {
             LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
@@ -666,12 +666,12 @@ public class BodyResolver {
     }
 
     private ObservableBindingTrace createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
-        return new ObservableBindingTrace(trace).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
+        return new ObservableBindingTrace(trace).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<KtReferenceExpression, DeclarationDescriptor>() {
             @Override
-            public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
-                if (expression instanceof JetSimpleNameExpression) {
-                    JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
-                    if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
+            public void handleRecord(WritableSlice<KtReferenceExpression, DeclarationDescriptor> slice, KtReferenceExpression expression, DeclarationDescriptor descriptor) {
+                if (expression instanceof KtSimpleNameExpression) {
+                    KtSimpleNameExpression simpleNameExpression = (KtSimpleNameExpression) expression;
+                    if (simpleNameExpression.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER) {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
                             trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this trace?
@@ -688,18 +688,18 @@ public class BodyResolver {
 
     public void resolvePropertyDelegate(
             @NotNull DataFlowInfo outerDataFlowInfo,
-            @NotNull JetProperty jetProperty,
+            @NotNull KtProperty jetProperty,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression delegateExpression,
+            @NotNull KtExpression delegateExpression,
             @NotNull LexicalScope parentScopeForAccessor,
             @NotNull LexicalScope propertyScope
     ) {
-        JetPropertyAccessor getter = jetProperty.getGetter();
+        KtPropertyAccessor getter = jetProperty.getGetter();
         if (getter != null && getter.hasBody()) {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
         }
 
-        JetPropertyAccessor setter = jetProperty.getSetter();
+        KtPropertyAccessor setter = jetProperty.getSetter();
         if (setter != null && setter.hasBody()) {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
@@ -709,7 +709,7 @@ public class BodyResolver {
         LexicalScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
                 propertyDescriptor, parentScopeForAccessor, trace);
 
-        JetType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
+        KtType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, jetProperty, propertyDescriptor, propertyDeclarationInnerScope, accessorScope, trace,
                 outerDataFlowInfo);
 
@@ -727,14 +727,14 @@ public class BodyResolver {
 
     public void resolvePropertyInitializer(
             @NotNull DataFlowInfo outerDataFlowInfo,
-            @NotNull JetProperty property,
+            @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression initializer,
+            @NotNull KtExpression initializer,
             @NotNull LexicalScope scope
     ) {
         LexicalScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
                 propertyDescriptor, scope, propertyDescriptor.getTypeParameters(), null, trace);
-        JetType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
+        KtType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         if (propertyDescriptor.getCompileTimeInitializer() == null) {
             expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer,
                                              outerDataFlowInfo, trace);
@@ -742,15 +742,15 @@ public class BodyResolver {
     }
 
     @NotNull
-    private static LexicalScope getScopeForProperty(@NotNull BodiesResolveContext c, @NotNull JetProperty property) {
+    private static LexicalScope getScopeForProperty(@NotNull BodiesResolveContext c, @NotNull KtProperty property) {
         LexicalScope scope = c.getDeclaringScope(property);
         assert scope != null : "Scope for property " + property.getText() + " should exists";
         return scope;
     }
 
     private void resolveFunctionBodies(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
-            JetNamedFunction declaration = entry.getKey();
+        for (Map.Entry<KtNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
+            KtNamedFunction declaration = entry.getKey();
 
             LexicalScope scope = c.getDeclaringScope(declaration);
             assert scope != null : "Scope is null: " + PsiUtilsKt.getElementTextWithContext(declaration);
@@ -768,7 +768,7 @@ public class BodyResolver {
     public void resolveFunctionBody(
             @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull BindingTrace trace,
-            @NotNull JetDeclarationWithBody function,
+            @NotNull KtDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull LexicalScope declaringScope
     ) {
@@ -782,7 +782,7 @@ public class BodyResolver {
     public void resolveFunctionBody(
             @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull BindingTrace trace,
-            @NotNull JetDeclarationWithBody function,
+            @NotNull KtDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull LexicalScope scope,
             @Nullable Function1<LexicalScope, DataFlowInfo> beforeBlockBody,
@@ -790,7 +790,7 @@ public class BodyResolver {
     ) {
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace);
         LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
-        List<JetParameter> valueParameters = function.getValueParameters();
+        List<KtParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
         valueParameterResolver.resolveValueParameters(
@@ -802,7 +802,7 @@ public class BodyResolver {
         // Synthetic "field" creation
         if (functionDescriptor instanceof PropertyAccessorDescriptor && functionDescriptor.getExtensionReceiverParameter() == null) {
             PropertyAccessorDescriptor accessorDescriptor = (PropertyAccessorDescriptor) functionDescriptor;
-            JetProperty property = (JetProperty) function.getParent();
+            KtProperty property = (KtProperty) function.getParent();
             final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
             innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
                                               "Accessor inner scope with synthetic field",
@@ -814,7 +814,7 @@ public class BodyResolver {
                 }
             });
             // Check parameter name shadowing
-            for (JetParameter parameter : function.getValueParameters()) {
+            for (KtParameter parameter : function.getValueParameters()) {
                 if (SyntheticFieldDescriptor.NAME.equals(parameter.getNameAsName())) {
                     trace.report(Errors.ACCESSOR_PARAMETER_NAME_SHADOWING.on(parameter));
                 }
@@ -838,11 +838,11 @@ public class BodyResolver {
     public void resolveConstructorParameterDefaultValuesAndAnnotations(
             @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull BindingTrace trace,
-            @NotNull JetClass klass,
+            @NotNull KtClass klass,
             @NotNull ConstructorDescriptor constructorDescriptor,
             @NotNull LexicalScope declaringScope
     ) {
-        List<JetParameter> valueParameters = klass.getPrimaryConstructorParameters();
+        List<KtParameter> valueParameters = klass.getPrimaryConstructorParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = constructorDescriptor.getValueParameters();
 
         LexicalScope scope = getPrimaryConstructorParametersScope(declaringScope, constructorDescriptor);
@@ -850,7 +850,7 @@ public class BodyResolver {
         valueParameterResolver.resolveValueParameters(valueParameters, valueParameterDescriptors, scope, outerDataFlowInfo, trace);
     }
 
-    private static void computeDeferredType(JetType type) {
+    private static void computeDeferredType(KtType type) {
         // handle type inference loop: function or property body contains a reference to itself
         // fun f() = { f() }
         // val x = x

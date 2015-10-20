@@ -50,35 +50,35 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         this.javaTreeStructure = new CalleeMethodsTreeStructure(project, representativePsiMethod, scopeType);
     }
 
-    private static Map<PsiReference, PsiElement> getReferencesToCalleeElements(@NotNull JetElement rootElement) {
-        List<JetElement> elementsToAnalyze = new ArrayList<JetElement>();
-        if (rootElement instanceof JetNamedFunction) {
-            elementsToAnalyze.add(((JetNamedFunction) rootElement).getBodyExpression());
-        } else if (rootElement instanceof JetProperty) {
-            for (JetPropertyAccessor accessor : ((JetProperty) rootElement).getAccessors()) {
-                JetExpression body = accessor.getBodyExpression();
+    private static Map<PsiReference, PsiElement> getReferencesToCalleeElements(@NotNull KtElement rootElement) {
+        List<KtElement> elementsToAnalyze = new ArrayList<KtElement>();
+        if (rootElement instanceof KtNamedFunction) {
+            elementsToAnalyze.add(((KtNamedFunction) rootElement).getBodyExpression());
+        } else if (rootElement instanceof KtProperty) {
+            for (KtPropertyAccessor accessor : ((KtProperty) rootElement).getAccessors()) {
+                KtExpression body = accessor.getBodyExpression();
                 if (body != null) {
                     elementsToAnalyze.add(body);
                 }
             }
         } else {
-            JetClassOrObject classOrObject = (JetClassOrObject) rootElement;
-            for (JetDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
-                if (specifier instanceof JetCallElement) {
+            KtClassOrObject classOrObject = (KtClassOrObject) rootElement;
+            for (KtDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
+                if (specifier instanceof KtCallElement) {
                     elementsToAnalyze.add(specifier);
                 }
             }
 
-            JetClassBody body = classOrObject.getBody();
+            KtClassBody body = classOrObject.getBody();
             if (body != null) {
-                for (JetClassInitializer initializer : body.getAnonymousInitializers()) {
-                    JetExpression initializerBody = initializer.getBody();
+                for (KtClassInitializer initializer : body.getAnonymousInitializers()) {
+                    KtExpression initializerBody = initializer.getBody();
                     if (initializerBody != null) {
                         elementsToAnalyze.add(initializerBody);
                     }
                 }
-                for (JetProperty property : body.getProperties()) {
-                    JetExpression initializer = property.getInitializer();
+                for (KtProperty property : body.getProperties()) {
+                    KtExpression initializer = property.getInitializer();
                     if (initializer != null) {
                         elementsToAnalyze.add(initializer);
                     }
@@ -87,11 +87,11 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         }
 
         final Map<PsiReference, PsiElement> referencesToCalleeElements = new HashMap<PsiReference, PsiElement>();
-        for (JetElement element : elementsToAnalyze) {
+        for (KtElement element : elementsToAnalyze) {
             element.accept(
                     new CalleeReferenceVisitorBase(ResolutionUtils.analyze(element, BodyResolveMode.FULL), false) {
                         @Override
-                        protected void processDeclaration(JetSimpleNameExpression reference, PsiElement declaration) {
+                        protected void processDeclaration(KtSimpleNameExpression reference, PsiElement declaration) {
                             referencesToCalleeElements.put(ReferenceUtilKt.getMainReference(reference), declaration);
                         }
                     }
@@ -112,8 +112,8 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
             if (psiMethod.isConstructor()) {
                 PsiClass psiClass = psiMethod.getContainingClass();
                 PsiElement navigationElement = psiClass != null ? psiClass.getNavigationElement() : null;
-                if (navigationElement instanceof JetClass) {
-                    return buildChildrenByKotlinTarget(descriptor, (JetElement) navigationElement);
+                if (navigationElement instanceof KtClass) {
+                    return buildChildrenByKotlinTarget(descriptor, (KtElement) navigationElement);
                 }
             }
         }
@@ -123,8 +123,8 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
             return buildChildrenByKotlinTarget(descriptor, ((KotlinLightMethod) targetElement).getOrigin());
         }
 
-        if (targetElement instanceof JetElement) {
-            return buildChildrenByKotlinTarget(descriptor, (JetElement) targetElement);
+        if (targetElement instanceof KtElement) {
+            return buildChildrenByKotlinTarget(descriptor, (KtElement) targetElement);
         }
 
         CallHierarchyNodeDescriptor javaDescriptor = descriptor instanceof CallHierarchyNodeDescriptor
@@ -133,7 +133,7 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
         return javaTreeStructure.getChildElements(javaDescriptor);
     }
 
-    private Object[] buildChildrenByKotlinTarget(HierarchyNodeDescriptor descriptor, JetElement targetElement) {
+    private Object[] buildChildrenByKotlinTarget(HierarchyNodeDescriptor descriptor, KtElement targetElement) {
         Map<PsiReference, PsiElement> referencesToCalleeElements = getReferencesToCalleeElements(targetElement);
         return collectNodeDescriptors(descriptor, referencesToCalleeElements, representativePsiClass);
     }

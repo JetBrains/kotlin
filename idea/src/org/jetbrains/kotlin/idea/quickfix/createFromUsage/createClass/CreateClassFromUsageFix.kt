@@ -25,7 +25,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiPackage
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.getOrCreateKotlinFile
@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import java.util.Collections
 import java.util.HashMap
 
@@ -59,7 +59,7 @@ public data class ClassInfo(
         val parameterInfos: List<ParameterInfo> = Collections.emptyList()
 )
 
-public class CreateClassFromUsageFix<E : JetElement>(
+public class CreateClassFromUsageFix<E : KtElement>(
         element: E,
         val classInfo: ClassInfo
 ): CreateFromUsageFixBase<E>(element) {
@@ -77,8 +77,8 @@ public class CreateClassFromUsageFix<E : JetElement>(
         return true
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        fun createFileByPackage(psiPackage: PsiPackage): JetFile? {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        fun createFileByPackage(psiPackage: PsiPackage): KtFile? {
             val directories = psiPackage.directories.filter { it.canRefactor() }
             assert (directories.isNotEmpty()) { "Package '${psiPackage.qualifiedName}' must be refactorable" }
 
@@ -94,7 +94,7 @@ public class CreateClassFromUsageFix<E : JetElement>(
                 preferredDirectory
             } ?: return null
 
-            val fileName = "${classInfo.name}.${JetFileType.INSTANCE.defaultExtension}"
+            val fileName = "${classInfo.name}.${KotlinFileType.INSTANCE.defaultExtension}"
             val targetFile = getOrCreateKotlinFile(fileName, targetDirectory)
             if (targetFile == null) {
                 val filePath = "${targetDirectory.virtualFile.path}/$fileName"
@@ -112,14 +112,14 @@ public class CreateClassFromUsageFix<E : JetElement>(
         with (classInfo) {
             val targetParent =
                     when (targetParent) {
-                        is JetElement, is PsiClass -> targetParent
+                        is KtElement, is PsiClass -> targetParent
                         is PsiPackage -> createFileByPackage(targetParent)
                         else -> throw AssertionError("Unexpected element: " + targetParent.text)
                     } ?: return
 
             val constructorInfo = PrimaryConstructorInfo(classInfo, expectedTypeInfo)
             val builder = CallableBuilderConfiguration(
-                    Collections.singletonList(constructorInfo), element as JetElement, file, editor, false, kind == PLAIN_CLASS || kind == INTERFACE
+                    Collections.singletonList(constructorInfo), element as KtElement, file, editor, false, kind == PLAIN_CLASS || kind == INTERFACE
             ).createBuilder()
             builder.placement = CallablePlacement.NoReceiver(targetParent)
             project.executeCommand(text) { builder.build() }

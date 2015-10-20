@@ -20,9 +20,9 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.ArrayList
 import java.util.HashMap
@@ -32,7 +32,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
     public constructor(originalElement: PsiElement, saveLineBreaks: Boolean = false/*TODO?*/) : this(PsiChildRange.singleElement(originalElement), saveLineBreaks)
 
     private val SAVED_TREE_KEY = Key<TreeElement>("SAVED_TREE")
-    private val psiFactory = JetPsiFactory(originalElements.first!!)
+    private val psiFactory = KtPsiFactory(originalElements.first!!)
 
     private abstract class TreeElement {
         public companion object {
@@ -122,7 +122,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
     }
 
     private class StandardTreeElement() : TreeElement()
-    private class TokenTreeElement(val tokenType: JetToken) : TreeElement()
+    private class TokenTreeElement(val tokenType: KtToken) : TreeElement()
     private class LineBreakTreeElement() : TreeElement()
 
     private class CommentTreeElement(
@@ -314,7 +314,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
 
             bindNewElement(restored, commentTreeElement) // will be used when restoring line breaks
 
-            if (restored.tokenType == JetTokens.EOL_COMMENT) {
+            if (restored.tokenType == KtTokens.EOL_COMMENT) {
                 needAdjustIndentAfterRestore = true // TODO: do we really need it?
             }
         }
@@ -336,7 +336,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
             }
 
 
-            val tokensToMatch = arrayListOf<JetToken>()
+            val tokensToMatch = arrayListOf<KtToken>()
             for (leaf in lineBreakElement.prevLeafs) {
                 var psiElement = findRestored(leaf)
                 if (psiElement != null) {
@@ -352,7 +352,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
         }
     }
 
-    private fun skipTokensForward(psiElement: PsiElement, tokensToMatch: List<JetToken>): PsiElement? {
+    private fun skipTokensForward(psiElement: PsiElement, tokensToMatch: List<KtToken>): PsiElement? {
         var currentPsiElement = psiElement
         for (token in tokensToMatch) {
             currentPsiElement = currentPsiElement.nextLeaf(nonSpaceAndNonEmptyFilter) ?: return null
@@ -432,7 +432,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
         }
 
         // don't put end of line comment right before comma
-        if (anchor.before && comment.tokenType == JetTokens.EOL_COMMENT) {
+        if (anchor.before && comment.tokenType == KtTokens.EOL_COMMENT) {
             psiElement = shiftNewLineAnchor(psiElement)
         }
 
@@ -442,14 +442,14 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
     // don't put line break right before comma
     private fun shiftNewLineAnchor(putAfter: PsiElement): PsiElement {
         val next = putAfter.nextLeaf(nonSpaceAndNonEmptyFilter)
-        return if (next?.tokenType == JetTokens.COMMA) next!! else putAfter
+        return if (next?.tokenType == KtTokens.COMMA) next!! else putAfter
     }
 
     private val nonSpaceAndNonEmptyFilter = { element: PsiElement -> element !is PsiWhiteSpace && element.getTextLength() > 0 }
 
     companion object {
         //TODO: making it private causes error on runtime (KT-7874?)
-        val PsiElement.tokenType: JetToken?
-            get() = getNode().getElementType() as? JetToken
+        val PsiElement.tokenType: KtToken?
+            get() = getNode().getElementType() as? KtToken
     }
 }

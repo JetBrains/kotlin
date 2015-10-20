@@ -65,7 +65,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.List;
@@ -80,40 +80,40 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
     @Override
     public boolean canInlineElement(PsiElement element) {
-        if (!(element instanceof JetProperty)) {
+        if (!(element instanceof KtProperty)) {
             return false;
         }
-        JetProperty property = (JetProperty) element;
+        KtProperty property = (KtProperty) element;
         return property.getGetter() == null && property.getReceiverTypeReference() == null;
     }
 
     @Override
     public void inlineElement(final Project project, final Editor editor, PsiElement element) {
-        final JetProperty val = (JetProperty) element;
-        final JetFile file = val.getContainingJetFile();
+        final KtProperty val = (KtProperty) element;
+        final KtFile file = val.getContainingJetFile();
         String name = val.getName();
 
-        JetExpression initializerInDeclaration = val.getInitializer();
+        KtExpression initializerInDeclaration = val.getInitializer();
 
-        final List<JetExpression> referenceExpressions = findReferenceExpressions(val);
+        final List<KtExpression> referenceExpressions = findReferenceExpressions(val);
 
         final Set<PsiElement> assignments = Sets.newHashSet();
-        for (JetExpression expression : referenceExpressions) {
+        for (KtExpression expression : referenceExpressions) {
             PsiElement parent = expression.getParent();
 
-            JetBinaryExpression assignment = JetPsiUtilKt.getAssignmentByLHS(expression);
+            KtBinaryExpression assignment = JetPsiUtilKt.getAssignmentByLHS(expression);
             if (assignment != null) {
                 assignments.add(parent);
             }
 
             //noinspection SuspiciousMethodCalls
-            if (parent instanceof JetUnaryExpression &&
-                OperatorConventions.INCREMENT_OPERATIONS.contains(((JetUnaryExpression) parent).getOperationToken())) {
+            if (parent instanceof KtUnaryExpression &&
+                OperatorConventions.INCREMENT_OPERATIONS.contains(((KtUnaryExpression) parent).getOperationToken())) {
                 assignments.add(parent);
             }
         }
 
-        final JetExpression initializer;
+        final KtExpression initializer;
         if (initializerInDeclaration != null) {
             initializer = initializerInDeclaration;
             if (!assignments.isEmpty()) {
@@ -123,7 +123,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         }
         else {
             if (assignments.size() == 1) {
-                initializer = ((JetBinaryExpression) assignments.iterator().next()).getRight();
+                initializer = ((KtBinaryExpression) assignments.iterator().next()).getRight();
             }
             else {
                 initializer = null;
@@ -139,9 +139,9 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
         final boolean canHighlight = CollectionsKt.all(
                 referenceExpressions,
-                new Function1<JetExpression, Boolean>() {
+                new Function1<KtExpression, Boolean>() {
                     @Override
-                    public Boolean invoke(JetExpression expression) {
+                    public Boolean invoke(KtExpression expression) {
                         return expression.getContainingFile() == file;
                     }
                 }
@@ -161,7 +161,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             return;
         }
 
-        final List<JetExpression> inlinedExpressions = Lists.newArrayList();
+        final List<KtExpression> inlinedExpressions = Lists.newArrayList();
         CommandProcessor.getInstance().executeCommand(
                 project,
                 new Runnable() {
@@ -170,12 +170,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                         ApplicationManager.getApplication().runWriteAction(new Runnable() {
                             @Override
                             public void run() {
-                                for (JetExpression referenceExpression : referenceExpressions) {
+                                for (KtExpression referenceExpression : referenceExpressions) {
                                     if (assignments.contains(referenceExpression.getParent())) {
                                         continue;
                                     }
 
-                                    inlinedExpressions.add((JetExpression) referenceExpression.replace(initializer));
+                                    inlinedExpressions.add((KtExpression) referenceExpression.replace(initializer));
                                 }
 
                                 for (PsiElement assignment : assignments) {
@@ -233,14 +233,14 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         highlightManager.addOccurrenceHighlights(editor, elementsArray, searchResultsAttributes, true, null);
     }
 
-    private static List<JetExpression> findReferenceExpressions(JetProperty val) {
-        List<JetExpression> result = Lists.newArrayList();
+    private static List<KtExpression> findReferenceExpressions(KtProperty val) {
+        List<KtExpression> result = Lists.newArrayList();
 
         for (PsiReference reference : ReferencesSearch.search(val, GlobalSearchScope.allScope(val.getProject()), false).findAll()) {
-            JetExpression expression = (JetExpression) reference.getElement();
+            KtExpression expression = (KtExpression) reference.getElement();
             PsiElement parent = expression.getParent();
-            if (parent instanceof JetQualifiedExpression && ((JetQualifiedExpression) parent).getSelectorExpression() == expression) {
-                result.add((JetQualifiedExpression) parent);
+            if (parent instanceof KtQualifiedExpression && ((KtQualifiedExpression) parent).getSelectorExpression() == expression) {
+                result.add((KtQualifiedExpression) parent);
             }
             else {
                 result.add(expression);
@@ -250,7 +250,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         return result;
     }
 
-    private static boolean showDialog(Project project, String name, List<JetExpression> referenceExpressions) {
+    private static boolean showDialog(Project project, String name, List<KtExpression> referenceExpressions) {
         if (ApplicationManager.getApplication().isUnitTestMode()) {
             return true;
         }
@@ -269,8 +269,8 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     }
 
     @Nullable
-    private static String getParametersForFunctionLiteral(JetExpression initializer) {
-        JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(initializer);
+    private static String getParametersForFunctionLiteral(KtExpression initializer) {
+        KtFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(initializer);
         if (functionLiteralExpression == null) {
             return null;
         }
@@ -290,24 +290,24 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     }
 
     @Nullable
-    private static JetFunctionLiteralExpression getFunctionLiteralExpression(@NotNull JetExpression expression) {
-        if (expression instanceof JetParenthesizedExpression) {
-            JetExpression inner = ((JetParenthesizedExpression) expression).getExpression();
+    private static KtFunctionLiteralExpression getFunctionLiteralExpression(@NotNull KtExpression expression) {
+        if (expression instanceof KtParenthesizedExpression) {
+            KtExpression inner = ((KtParenthesizedExpression) expression).getExpression();
             return inner == null ? null : getFunctionLiteralExpression(inner);
         }
-        if (expression instanceof JetFunctionLiteralExpression) {
-            return (JetFunctionLiteralExpression) expression;
+        if (expression instanceof KtFunctionLiteralExpression) {
+            return (KtFunctionLiteralExpression) expression;
         }
         return null;
     }
 
-    private static void addFunctionLiteralParameterTypes(@NotNull String parameters, @NotNull List<JetExpression> inlinedExpressions) {
-        JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
-        List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
+    private static void addFunctionLiteralParameterTypes(@NotNull String parameters, @NotNull List<KtExpression> inlinedExpressions) {
+        KtFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
+        List<KtFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);
-        for (JetExpression inlinedExpression : inlinedExpressions) {
-            JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
+        for (KtExpression inlinedExpression : inlinedExpressions) {
+            KtFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
             assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
 
             if (needToAddParameterTypes(functionLiteralExpression, resolutionFacade)) {
@@ -315,12 +315,12 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             }
         }
 
-        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(containingFile);
-        for (JetFunctionLiteralExpression functionLiteralExpression : functionsToAddParameters) {
-            JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(containingFile);
+        for (KtFunctionLiteralExpression functionLiteralExpression : functionsToAddParameters) {
+            KtFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
 
-            JetParameterList currentParameterList = functionLiteral.getValueParameterList();
-            JetParameterList newParameterList = psiFactory.createParameterList("(" + parameters + ")");
+            KtParameterList currentParameterList = functionLiteral.getValueParameterList();
+            KtParameterList newParameterList = psiFactory.createParameterList("(" + parameters + ")");
             if (currentParameterList != null) {
                 currentParameterList.replace(newParameterList);
             }
@@ -344,17 +344,17 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     }
 
     private static boolean needToAddParameterTypes(
-            @NotNull JetFunctionLiteralExpression functionLiteralExpression,
+            @NotNull KtFunctionLiteralExpression functionLiteralExpression,
             @NotNull ResolutionFacade resolutionFacade
     ) {
-        JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
+        KtFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
         BindingContext context = resolutionFacade.analyze(functionLiteralExpression, BodyResolveMode.FULL);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             DiagnosticFactory<?> factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
             boolean hasCantInferParameter = factory == Errors.CANNOT_INFER_PARAMETER_TYPE && element.getParent().getParent() == functionLiteral;
             boolean hasUnresolvedItOrThis = factory == Errors.UNRESOLVED_REFERENCE && element.getText().equals("it") &&
-                         PsiTreeUtil.getParentOfType(element, JetFunctionLiteral.class) == functionLiteral;
+                                            PsiTreeUtil.getParentOfType(element, KtFunctionLiteral.class) == functionLiteral;
             if (hasCantInferParameter || hasUnresolvedItOrThis) {
                 return true;
             }
@@ -362,44 +362,44 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         return false;
     }
 
-    private static void addTypeArguments(@NotNull String typeArguments, @NotNull List<JetExpression> inlinedExpressions) {
-        JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
-        List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
+    private static void addTypeArguments(@NotNull String typeArguments, @NotNull List<KtExpression> inlinedExpressions) {
+        KtFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
+        List<KtCallExpression> callsToAddArguments = Lists.newArrayList();
 
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);
-        for (JetExpression inlinedExpression : inlinedExpressions) {
+        for (KtExpression inlinedExpression : inlinedExpressions) {
             BindingContext context = resolutionFacade.analyze(inlinedExpression, BodyResolveMode.FULL);
             Call call = CallUtilKt.getCallWithAssert(inlinedExpression, context);
 
-            JetElement callElement = call.getCallElement();
-            if (callElement instanceof JetCallExpression && hasIncompleteTypeInferenceDiagnostic(call, context) &&
+            KtElement callElement = call.getCallElement();
+            if (callElement instanceof KtCallExpression && hasIncompleteTypeInferenceDiagnostic(call, context) &&
                     call.getTypeArgumentList() == null) {
-                callsToAddArguments.add((JetCallExpression) callElement);
+                callsToAddArguments.add((KtCallExpression) callElement);
             }
         }
 
-        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(containingFile);
-        for (JetCallExpression call : callsToAddArguments) {
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(containingFile);
+        for (KtCallExpression call : callsToAddArguments) {
             call.addAfter(psiFactory.createTypeArguments("<" + typeArguments + ">"), call.getCalleeExpression());
             ShortenReferences.DEFAULT.process(call.getTypeArgumentList());
         }
     }
 
     @Nullable
-    private static String getTypeArgumentsStringForCall(@NotNull JetExpression initializer) {
+    private static String getTypeArgumentsStringForCall(@NotNull KtExpression initializer) {
         BindingContext context = ResolutionUtils.analyze(initializer, BodyResolveMode.FULL);
         ResolvedCall<?> call = CallUtilKt.getResolvedCall(initializer, context);
         if (call == null) return null;
 
-        List<JetType> typeArguments = Lists.newArrayList();
-        Map<TypeParameterDescriptor, JetType> typeArgumentMap = call.getTypeArguments();
+        List<KtType> typeArguments = Lists.newArrayList();
+        Map<TypeParameterDescriptor, KtType> typeArgumentMap = call.getTypeArguments();
         for (TypeParameterDescriptor typeParameter : call.getCandidateDescriptor().getTypeParameters()) {
             typeArguments.add(typeArgumentMap.get(typeParameter));
         }
 
-        return StringUtil.join(typeArguments, new Function<JetType, String>() {
+        return StringUtil.join(typeArguments, new Function<KtType, String>() {
             @Override
-            public String fun(JetType type) {
+            public String fun(KtType type) {
                 return IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(type);
             }
         }, ", ");
@@ -409,7 +409,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             @NotNull Call call,
             @NotNull BindingContext context
     ) {
-        JetExpression callee = call.getCalleeExpression();
+        KtExpression callee = call.getCalleeExpression();
         for (Diagnostic diagnostic : context.getDiagnostics()) {
             if (diagnostic.getFactory() == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER && diagnostic.getPsiElement() == callee) {
                 return true;

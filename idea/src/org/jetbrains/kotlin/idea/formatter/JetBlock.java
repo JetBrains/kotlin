@@ -33,17 +33,17 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings;
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens;
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtDeclaration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.JetNodeTypes.*;
+import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.strategy;
-import static org.jetbrains.kotlin.lexer.JetTokens.*;
+import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 /**
  * @see Block for good JavaDoc documentation
@@ -172,7 +172,7 @@ public class JetBlock extends AbstractBlock {
 
     private static ASTNode getPrevWithoutWhitespaceAndComments(ASTNode node) {
         node = node.getTreePrev();
-        while (node != null && (node.getElementType() == TokenType.WHITE_SPACE || JetTokens.COMMENTS.contains(node.getElementType()))) {
+        while (node != null && (node.getElementType() == TokenType.WHITE_SPACE || KtTokens.COMMENTS.contains(node.getElementType()))) {
             node = node.getTreePrev();
         }
 
@@ -444,9 +444,9 @@ public class JetBlock extends AbstractBlock {
         }
 
         // do not indent child after heading comments inside declaration
-        if (childParent != null && childParent.getPsi() instanceof JetDeclaration) {
+        if (childParent != null && childParent.getPsi() instanceof KtDeclaration) {
             ASTNode prev = getPrevWithoutWhitespace(child);
-            if (prev != null && JetTokens.COMMENTS.contains(prev.getElementType()) && getPrevWithoutWhitespaceAndComments(prev) == null) {
+            if (prev != null && KtTokens.COMMENTS.contains(prev.getElementType()) && getPrevWithoutWhitespaceAndComments(prev) == null) {
                 return Indent.getNoneIndent();
             }
         }

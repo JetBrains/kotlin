@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.awt.Color
@@ -47,15 +47,15 @@ import javax.swing.JCheckBox
 
 public class KotlinInplaceParameterIntroducer(
         val originalDescriptor: IntroduceParameterDescriptor,
-        val parameterType: JetType,
+        val parameterType: KtType,
         val suggestedNames: Array<out String>,
         project: Project,
         editor: Editor
-): AbstractKotlinInplaceIntroducer<JetParameter>(
+): AbstractKotlinInplaceIntroducer<KtParameter>(
         null,
-        originalDescriptor.originalRange.elements.single() as JetExpression,
+        originalDescriptor.originalRange.elements.single() as KtExpression,
         originalDescriptor.occurrencesToReplace
-                .map { it.elements.single() as JetExpression }
+                .map { it.elements.single() as KtExpression }
                 .filterNotNull()
                 .toTypedArray(),
         INTRODUCE_PARAMETER,
@@ -95,7 +95,7 @@ public class KotlinInplaceParameterIntroducer(
         }
     }
 
-    private inner class Preview(addedParameter: JetParameter?, currentName: String?) {
+    private inner class Preview(addedParameter: KtParameter?, currentName: String?) {
         private val _rangesToRemove = ArrayList<TextRange>()
 
         var addedRange: TextRange? = null
@@ -117,7 +117,7 @@ public class KotlinInplaceParameterIntroducer(
             val builder = StringBuilder()
 
             with(descriptor) {
-                (callable as? JetFunction)?.getReceiverTypeReference()?.let { receiverTypeRef ->
+                (callable as? KtFunction)?.getReceiverTypeReference()?.let { receiverTypeRef ->
                     builder.append(receiverTypeRef.getText()).append('.')
                     if (!descriptor.withDefaultValue && receiverTypeRef in parametersToRemove) {
                         _rangesToRemove.add(TextRange(0, builder.length()))
@@ -200,22 +200,22 @@ public class KotlinInplaceParameterIntroducer(
 
     override fun getVariable() = originalDescriptor.callable.getValueParameters().lastOrNull()
 
-    override fun suggestNames(replaceAll: Boolean, variable: JetParameter?) = suggestedNames
+    override fun suggestNames(replaceAll: Boolean, variable: KtParameter?) = suggestedNames
 
-    override fun createFieldToStartTemplateOn(replaceAll: Boolean, names: Array<out String>): JetParameter? {
+    override fun createFieldToStartTemplateOn(replaceAll: Boolean, names: Array<out String>): KtParameter? {
         return runWriteAction {
             with(descriptor) {
                 val parameterList = callable.getValueParameterList()
-                                    ?: (callable as JetClass).createPrimaryConstructorParameterListIfAbsent()
-                val parameter = JetPsiFactory(myProject).createParameter("$newParameterName: $newParameterTypeText")
+                                    ?: (callable as KtClass).createPrimaryConstructorParameterListIfAbsent()
+                val parameter = KtPsiFactory(myProject).createParameter("$newParameterName: $newParameterTypeText")
                 parameterList.addParameter(parameter)
             }
         }
     }
 
-    override fun deleteTemplateField(psiField: JetParameter) {
+    override fun deleteTemplateField(psiField: KtParameter) {
         if (psiField.isValid()) {
-            (psiField.getParent() as? JetParameterList)?.removeParameter(psiField)
+            (psiField.getParent() as? KtParameterList)?.removeParameter(psiField)
         }
     }
 
@@ -227,7 +227,7 @@ public class KotlinInplaceParameterIntroducer(
 
     override fun getComponent() = myWholePanel
 
-    override fun updateTitle(addedParameter: JetParameter?, currentName: String?) {
+    override fun updateTitle(addedParameter: KtParameter?, currentName: String?) {
         val preview = Preview(addedParameter, currentName)
 
         val document = getPreviewEditor().getDocument()

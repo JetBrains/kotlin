@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.mutator.Mutator;
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
 
     @NotNull
     public static JsBlock translateFunctionBody(@NotNull FunctionDescriptor descriptor,
-                                                @NotNull JetDeclarationWithBody declarationWithBody,
+                                                @NotNull KtDeclarationWithBody declarationWithBody,
                                                 @NotNull TranslationContext functionBodyContext) {
         return (new FunctionBodyTranslator(descriptor, declarationWithBody, functionBodyContext)).translate();
     }
@@ -56,7 +56,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
             if (!DescriptorUtilsKt.hasDefaultValue(valueParameter)) continue;
 
             JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
-            JetExpression defaultArgument = getDefaultArgument(valueParameter);
+            KtExpression defaultArgument = getDefaultArgument(valueParameter);
             JsBlock defaultArgBlock = new JsBlock();
             JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
             JsStatement assignStatement = assignment(jsNameRef, defaultValue).makeStmt();
@@ -72,10 +72,10 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     @NotNull
     private final FunctionDescriptor descriptor;
     @NotNull
-    private final JetDeclarationWithBody declaration;
+    private final KtDeclarationWithBody declaration;
 
     private FunctionBodyTranslator(@NotNull FunctionDescriptor descriptor,
-                                   @NotNull JetDeclarationWithBody declaration,
+                                   @NotNull KtDeclarationWithBody declaration,
                                    @NotNull TranslationContext context) {
         super(context);
         this.descriptor = descriptor;
@@ -84,7 +84,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
 
     @NotNull
     private JsBlock translate() {
-        JetExpression jetBodyExpression = declaration.getBodyExpression();
+        KtExpression jetBodyExpression = declaration.getBodyExpression();
         assert jetBodyExpression != null : "Cannot translate a body of an abstract function.";
         JsBlock jsBlock = new JsBlock(setDefaultValueForArguments(descriptor, context()));
         jsBlock.getStatements().addAll(mayBeWrapWithReturn(Translation.translateExpression(jetBodyExpression, context(), jsBlock)).getStatements());
@@ -100,7 +100,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     }
 
     private boolean mustAddReturnToGeneratedFunctionBody() {
-        JetType functionReturnType = descriptor.getReturnType();
+        KtType functionReturnType = descriptor.getReturnType();
         assert functionReturnType != null : "Function return typed type must be resolved.";
         return (!declaration.hasBlockBody()) && (!KotlinBuiltIns.isUnit(functionReturnType));
     }

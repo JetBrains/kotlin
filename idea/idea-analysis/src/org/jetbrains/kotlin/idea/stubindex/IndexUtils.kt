@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 import org.jetbrains.kotlin.util.aliasImportMap
 
-fun indexTopLevelExtension<TDeclaration : JetCallableDeclaration>(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
+fun indexTopLevelExtension<TDeclaration : KtCallableDeclaration>(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
     if (stub.isExtension()) {
         val declaration = stub.getPsi()
         declaration.getReceiverTypeReference()!!.typeElement?.index(declaration, sink)
     }
 }
 
-private fun JetTypeElement.index<TDeclaration : JetCallableDeclaration>(declaration: TDeclaration, sink: IndexSink) {
+private fun KtTypeElement.index<TDeclaration : KtCallableDeclaration>(declaration: TDeclaration, sink: IndexSink) {
     fun occurrence(typeName: String) {
         val name = declaration.getName() ?: return
         sink.occurrence(JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE.getKey(),
@@ -36,7 +36,7 @@ private fun JetTypeElement.index<TDeclaration : JetCallableDeclaration>(declarat
     }
 
     when (this) {
-        is JetUserType -> {
+        is KtUserType -> {
             var referenceName = getReferencedName() ?: return
 
             val typeParameter = declaration.getTypeParameters().firstOrNull { it.getName() == referenceName }
@@ -56,14 +56,14 @@ private fun JetTypeElement.index<TDeclaration : JetCallableDeclaration>(declarat
             aliasImportMap()[referenceName].forEach { occurrence(it) }
         }
 
-        is JetNullableType -> getInnerType()?.index(declaration, sink)
+        is KtNullableType -> getInnerType()?.index(declaration, sink)
 
-        is JetFunctionType -> {
+        is KtFunctionType -> {
             val arity = getParameters().size() + (if (getReceiverTypeReference() != null) 1 else 0)
             occurrence("Function$arity")
         }
 
-        is JetDynamicType -> occurrence("Any")
+        is KtDynamicType -> occurrence("Any")
 
         else -> error("Unsupported type: $this")
     }

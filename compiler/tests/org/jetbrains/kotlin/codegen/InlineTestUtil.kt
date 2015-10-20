@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.org.objectweb.asm.*
@@ -35,7 +35,7 @@ public object InlineTestUtil {
     private val KOTLIN_PACKAGE_DESC = "L" + AsmUtil.internalNameByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE) + ";"
     private val KOTLIN_MULTIFILE_CLASS_DESC = "L" + AsmUtil.internalNameByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS) + ";"
 
-    public fun checkNoCallsToInline(files: Iterable<OutputFile>, sourceFiles: List<JetFile>) {
+    public fun checkNoCallsToInline(files: Iterable<OutputFile>, sourceFiles: List<KtFile>) {
         val inlineInfo = obtainInlineInfo(files)
         val inlineMethods = inlineInfo.inlineMethods
         assert(!inlineMethods.isEmpty()) { "There are no inline methods" }

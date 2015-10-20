@@ -30,11 +30,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration> {
+public class JetDeclarationTreeNode extends AbstractPsiBasedNode<KtDeclaration> {
     public static final String CLASS_INITIALIZER = "<class initializer>";
 
-    protected JetDeclarationTreeNode(Project project, JetDeclaration jetDeclaration, ViewSettings viewSettings) {
-        super(project, jetDeclaration, viewSettings);
+    protected JetDeclarationTreeNode(Project project, KtDeclaration ktDeclaration, ViewSettings viewSettings) {
+        super(project, ktDeclaration, viewSettings);
     }
 
     @Override
@@ -49,17 +49,17 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
 
     @Override
     protected void updateImpl(PresentationData data) {
-        JetDeclaration declaration = getValue();
+        KtDeclaration declaration = getValue();
         if (declaration != null) {
-            String text = declaration instanceof JetClassInitializer ? CLASS_INITIALIZER : declaration.getName();
+            String text = declaration instanceof KtClassInitializer ? CLASS_INITIALIZER : declaration.getName();
             if (text == null) return;
 
             JetCodeStyleSettings settings = CodeStyleSettingsManager.getInstance(getProject()).getCurrentSettings()
                     .getCustomSettings(JetCodeStyleSettings.class);
 
-            if (declaration instanceof JetProperty) {
-                JetProperty property = (JetProperty) declaration;
-                JetTypeReference ref = property.getTypeReference();
+            if (declaration instanceof KtProperty) {
+                KtProperty property = (KtProperty) declaration;
+                KtTypeReference ref = property.getTypeReference();
                 if (ref != null) {
                     if (settings.SPACE_BEFORE_TYPE_COLON) text += " ";
                     text += ":";
@@ -67,22 +67,22 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
                     text += ref.getText();
                 }
             }
-            else if (declaration instanceof JetFunction) {
-                JetFunction function = (JetFunction) declaration;
-                JetTypeReference receiverTypeRef = function.getReceiverTypeReference();
+            else if (declaration instanceof KtFunction) {
+                KtFunction function = (KtFunction) declaration;
+                KtTypeReference receiverTypeRef = function.getReceiverTypeReference();
                 if (receiverTypeRef != null) {
                     text = receiverTypeRef.getText() + "." + text;
                 }
                 text += "(";
-                List<JetParameter> parameters = function.getValueParameters();
-                for (JetParameter parameter : parameters) {
+                List<KtParameter> parameters = function.getValueParameters();
+                for (KtParameter parameter : parameters) {
                     if (parameter.getName() != null) {
                         text += parameter.getName();
                         if (settings.SPACE_BEFORE_TYPE_COLON) text += " ";
                         text += ":";
                         if (settings.SPACE_AFTER_TYPE_COLON) text += " ";
                     }
-                    JetTypeReference typeReference = parameter.getTypeReference();
+                    KtTypeReference typeReference = parameter.getTypeReference();
                     if (typeReference != null) {
                         text += typeReference.getText();
                     }
@@ -90,7 +90,7 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
                 }
                 if (parameters.size() > 0) text = text.substring(0, text.length() - 2);
                 text += ")";
-                JetTypeReference typeReference = function.getTypeReference();
+                KtTypeReference typeReference = function.getTypeReference();
                 if (typeReference != null) {
                     if (settings.SPACE_BEFORE_TYPE_COLON) text += " ";
                     text += ":";
@@ -105,6 +105,6 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
 
     @Override
     protected boolean isDeprecated() {
-        return JetPsiUtil.isDeprecated(getValue());
+        return KtPsiUtil.isDeprecated(getValue());
     }
 }

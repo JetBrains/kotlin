@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tasks
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.ArrayList

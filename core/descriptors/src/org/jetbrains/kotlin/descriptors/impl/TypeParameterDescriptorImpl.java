@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.types.Variance;
@@ -63,7 +63,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
         return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source);
     }
 
-    private final Set<JetType> upperBounds = SmartSet.create();
+    private final Set<KtType> upperBounds = SmartSet.create();
     private boolean initialized = false;
 
     private TypeParameterDescriptorImpl(
@@ -113,12 +113,12 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
         initialized = true;
     }
 
-    public void addUpperBound(@NotNull JetType bound) {
+    public void addUpperBound(@NotNull KtType bound) {
         checkUninitialized();
         doAddUpperBound(bound);
     }
 
-    private void doAddUpperBound(JetType bound) {
+    private void doAddUpperBound(KtType bound) {
         upperBounds.add(bound); // TODO : Duplicates?
     }
 
@@ -132,7 +132,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
 
     @NotNull
     @Override
-    protected Set<JetType> resolveUpperBounds() {
+    protected Set<KtType> resolveUpperBounds() {
         checkInitialized();
         return upperBounds;
     }

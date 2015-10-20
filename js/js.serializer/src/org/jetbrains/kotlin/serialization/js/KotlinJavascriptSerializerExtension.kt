@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtension
 import org.jetbrains.kotlin.serialization.StringTableImpl
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 public class KotlinJavascriptSerializerExtension : SerializerExtension() {
     private val stringTable = StringTableImpl()
@@ -64,7 +64,7 @@ public class KotlinJavascriptSerializerExtension : SerializerExtension() {
         }
     }
 
-    override fun serializeType(type: JetType, proto: ProtoBuf.Type.Builder) {
+    override fun serializeType(type: KtType, proto: ProtoBuf.Type.Builder) {
         for (annotation in type.annotations) {
             proto.addExtension(JsProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }

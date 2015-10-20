@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.android.synthetic.idea.res.IDESyntheticFileGenerator
 import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.moduleInfo
 
 public class IDEAndroidExternalDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
-    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<JetFile> {
+    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<KtFile> {
         if (moduleInfo !is ModuleSourceInfo) return listOf()
 
         val module = moduleInfo.module

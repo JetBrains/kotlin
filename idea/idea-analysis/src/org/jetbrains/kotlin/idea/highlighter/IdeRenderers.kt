@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 public object IdeRenderers {
     public val HTML_AMBIGUOUS_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
@@ -36,7 +36,7 @@ public object IdeRenderers {
                 .joinToString("") { "<li>" + DescriptorRenderer.HTML.render(it) + "</li>" }
     }
 
-    public val HTML_RENDER_TYPE: Renderer<JetType> = Renderer {
+    public val HTML_RENDER_TYPE: Renderer<KtType> = Renderer {
         DescriptorRenderer.HTML.renderType(it)
     }
 

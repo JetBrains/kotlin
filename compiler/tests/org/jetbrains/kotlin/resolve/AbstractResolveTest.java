@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 
 public abstract class AbstractResolveTest extends ExtensibleResolveTestCase {
 
@@ -30,7 +30,7 @@ public abstract class AbstractResolveTest extends ExtensibleResolveTestCase {
                 JetExpectedResolveDataUtil.prepareDefaultNameToDeclaration(project, getEnvironment())
         ) {
             @Override
-            protected JetFile createJetFile(String fileName, String text) {
+            protected KtFile createJetFile(String fileName, String text) {
                 return createCheckAndReturnPsiFile(fileName, null, text);
             }
         };

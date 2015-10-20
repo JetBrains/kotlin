@@ -28,19 +28,19 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.idea.search.usagesSearch.ALL_SEARCHABLE_OPERATIONS
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
-import org.jetbrains.kotlin.lexer.JetLexer
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.*
 
 val KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT: Short = 0x20
 
-class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): BaseFilterLexer(JetLexer(), occurrenceConsumer) {
+class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): BaseFilterLexer(KotlinLexer(), occurrenceConsumer) {
     private val codeTokens = TokenSet.orSet(
             TokenSet.create(*ALL_SEARCHABLE_OPERATIONS.toTypedArray()),
-            TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER)
+            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.FIELD_IDENTIFIER)
     )
 
-    private val commentTokens = TokenSet.orSet(JetTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
+    private val commentTokens = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
 
     private val MAX_PREV_TOKENS = 2
     private val prevTokens = ArrayDeque<IElementType>(MAX_PREV_TOKENS)
@@ -51,22 +51,22 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
         val tokenType = myDelegate.tokenType
 
         when (tokenType) {
-            JetTokens.EQ -> {
-                if (prevTokens.peekFirst() == JetTokens.IDENTIFIER) {
+            KtTokens.EQ -> {
+                if (prevTokens.peekFirst() == KtTokens.IDENTIFIER) {
                     val prevPrev = prevTokens.elementAtOrNull(1)
-                    if (prevPrev == JetTokens.COMMA || prevPrev == JetTokens.LPAR) {
+                    if (prevPrev == KtTokens.COMMA || prevPrev == KtTokens.LPAR) {
                         occurrenceConsumer.addOccurrence(bufferSequence, null, prevTokenStart, prevTokenEnd, KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT.toInt())
                     }
                 }
             }
 
-            JetTokens.LPAR -> {
+            KtTokens.LPAR -> {
                 if (isMultiDeclarationPosition()) {
                     addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
                 }
             }
 
-            JetTokens.IDENTIFIER -> {
+            KtTokens.IDENTIFIER -> {
                  if (myDelegate.tokenText.startsWith("`")) {
                      scanWordsInToken(UsageSearchContext.IN_CODE.toInt(), false, false)
                  }
@@ -77,7 +77,7 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
 
             in codeTokens -> addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
 
-            in JetTokens.STRINGS -> scanWordsInToken(UsageSearchContext.IN_STRINGS + UsageSearchContext.IN_FOREIGN_LANGUAGES, false, true)
+            in KtTokens.STRINGS -> scanWordsInToken(UsageSearchContext.IN_STRINGS + UsageSearchContext.IN_FOREIGN_LANGUAGES, false, true)
 
             in commentTokens -> {
                 scanWordsInToken(UsageSearchContext.IN_COMMENTS.toInt(), false, false)
@@ -99,8 +99,8 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
 
     private fun isMultiDeclarationPosition(): Boolean {
         val first = prevTokens.peekFirst()
-        if (first == JetTokens.VAL_KEYWORD || first == JetTokens.VAR_KEYWORD) return true
-        return first == JetTokens.LPAR && prevTokens.elementAtOrNull(1) == JetTokens.FOR_KEYWORD
+        if (first == KtTokens.VAL_KEYWORD || first == KtTokens.VAR_KEYWORD) return true
+        return first == KtTokens.LPAR && prevTokens.elementAtOrNull(1) == KtTokens.FOR_KEYWORD
     }
 }
 

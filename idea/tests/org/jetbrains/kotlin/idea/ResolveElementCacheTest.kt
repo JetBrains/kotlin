@@ -48,25 +48,25 @@ class C(param1: String = "", param2: Int = 0) {
 """
 
     private data class Data(
-            val file: JetFile,
-            val klass: JetClass,
-            val members: List<JetDeclaration>,
-            val statements: List<JetExpression>,
-            val factory: JetPsiFactory
+            val file: KtFile,
+            val klass: KtClass,
+            val members: List<KtDeclaration>,
+            val statements: List<KtExpression>,
+            val factory: KtPsiFactory
     )
 
     private fun doTest(handler: Data.() -> Unit) {
-        val file = myFixture.configureByText("Test.kt", FILE_TEXT) as JetFile
+        val file = myFixture.configureByText("Test.kt", FILE_TEXT) as KtFile
         val data = extractData(file)
         myFixture.project.executeWriteCommand("") { data.handler() }
     }
 
-    private fun extractData(file: JetFile): Data {
-        val klass = file.declarations.single() as JetClass
+    private fun extractData(file: KtFile): Data {
+        val klass = file.declarations.single() as KtClass
         val members = klass.declarations
-        val function = members.first() as JetNamedFunction
-        val statements = (function.bodyExpression as JetBlockExpression).statements
-        return Data(file, klass, members, statements, JetPsiFactory(getProject()))
+        val function = members.first() as KtNamedFunction
+        val statements = (function.bodyExpression as KtBlockExpression).statements
+        return Data(file, klass, members, statements, KtPsiFactory(getProject()))
     }
 
     public fun testFullResolveCaching() {
@@ -84,8 +84,8 @@ class C(param1: String = "", param2: Int = 0) {
         val aFunBodyContext3 = statement1.analyze(BodyResolveMode.FULL)
         assert(aFunBodyContext3 === aFunBodyContext1)
 
-        val bFun = members[1] as JetNamedFunction
-        val bBody = bFun.bodyExpression as JetBlockExpression
+        val bFun = members[1] as KtNamedFunction
+        val bBody = bFun.bodyExpression as KtBlockExpression
         val bStatement = bBody.statements[0]
         val bFunBodyContext = bStatement.analyze(BodyResolveMode.FULL)
 
@@ -111,7 +111,7 @@ class C(param1: String = "", param2: Int = 0) {
 
     public fun testNonPhysicalFileFullResolveCaching() {
         doTest {
-            val nonPhysicalFile = JetPsiFactory(getProject()).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
+            val nonPhysicalFile = KtPsiFactory(getProject()).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
             val nonPhysicalData = extractData(nonPhysicalFile)
             nonPhysicalData.testResolveCaching()
 
@@ -150,8 +150,8 @@ class C(param1: String = "", param2: Int = 0) {
             documentManager.doPostponedOperationsAndUnblockDocument(document)
 
             // modify body of "b()" via document
-            val bFun = members[1] as JetNamedFunction
-            val bBody = bFun.bodyExpression as JetBlockExpression
+            val bFun = members[1] as KtNamedFunction
+            val bBody = bFun.bodyExpression as KtBlockExpression
             document.insertString(bBody.lBrace!!.startOffset + 1, "x()")
             documentManager.commitAllDocuments()
 
@@ -165,7 +165,7 @@ class C(param1: String = "", param2: Int = 0) {
             document.insertString(statement.startOffset, "x()\n")
             documentManager.commitAllDocuments()
 
-            val bindingContext5 = (members[0] as JetNamedFunction).bodyExpression!!.analyze(BodyResolveMode.FULL)
+            val bindingContext5 = (members[0] as KtNamedFunction).bodyExpression!!.analyze(BodyResolveMode.FULL)
             assert(bindingContext5 !== bindingContext1)
 
             val bindingContext6 = classConstructorParamTypeRef.analyze(BodyResolveMode.FULL)
@@ -216,7 +216,7 @@ class C(param1: String = "", param2: Int = 0) {
 
     public fun testNonPhysicalFilePartialResolveCaching() {
         doTest {
-            val nonPhysicalFile = JetPsiFactory(getProject()).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
+            val nonPhysicalFile = KtPsiFactory(getProject()).createAnalyzableFile("NonPhysical.kt", FILE_TEXT, file)
             val nonPhysicalData = extractData(nonPhysicalFile)
             nonPhysicalData.testPartialResolveCaching()
         }
@@ -224,7 +224,7 @@ class C(param1: String = "", param2: Int = 0) {
 
     public fun testPartialResolveCachedForWholeStatement() {
         doTest {
-            val statement = statements[0] as JetCallExpression
+            val statement = statements[0] as KtCallExpression
             val argument1 = statement.getValueArguments()[0]
             val argument2 = statement.getValueArguments()[1]
             val bindingContext1 = argument1.analyze(BodyResolveMode.PARTIAL)
@@ -236,7 +236,7 @@ class C(param1: String = "", param2: Int = 0) {
     public fun testPartialResolveCachedForAllStatementsResolved() {
         doTest {
             val bindingContext1 = statements[2].analyze(BodyResolveMode.PARTIAL) // resolve 'd(x)'
-            val bindingContext2 = (statements[1] as JetVariableDeclaration).getInitializer()!!.analyze(BodyResolveMode.PARTIAL) // resolve initializer in 'val x = c()' - it required for resolved 'd(x)' and should be already resolved
+            val bindingContext2 = (statements[1] as KtVariableDeclaration).getInitializer()!!.analyze(BodyResolveMode.PARTIAL) // resolve initializer in 'val x = c()' - it required for resolved 'd(x)' and should be already resolved
             assert(bindingContext1 === bindingContext2)
 
             val bindingContext3 = statements[0].analyze(BodyResolveMode.PARTIAL)
@@ -246,7 +246,7 @@ class C(param1: String = "", param2: Int = 0) {
 
     public fun testPartialResolveCachedForDefaultParameterValue() {
         doTest {
-            val defaultValue = (members[0] as JetNamedFunction).getValueParameters()[0].getDefaultValue()
+            val defaultValue = (members[0] as KtNamedFunction).getValueParameters()[0].getDefaultValue()
             val bindingContext1 = defaultValue!!.analyze(BodyResolveMode.PARTIAL)
             val bindingContext2 = defaultValue.analyze(BodyResolveMode.PARTIAL)
             assert(bindingContext1 === bindingContext2)
@@ -270,9 +270,9 @@ class C(param1: String = "", param2: Int = 0) {
         val file = myFixture.configureByText("Test.kt", """
         annotation class A
         @A class B {}
-        """) as JetFile
+        """) as KtFile
 
-        val klass = file.getDeclarations()[1] as JetClass
+        val klass = file.getDeclarations()[1] as KtClass
         val annotationEntry = klass.getAnnotationEntries().single()
 
         val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)

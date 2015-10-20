@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 class BuiltInsAnnotationAndConstantLoader(
         module: ModuleDescriptor
@@ -81,7 +81,7 @@ class BuiltInsAnnotationAndConstantLoader(
     override fun loadPropertyConstant(
             container: ProtoContainer,
             proto: ProtoBuf.Property,
-            expectedType: JetType
+            expectedType: KtType
     ): ConstantValue<*>? {
         if (!proto.hasExtension(BuiltInsProtoBuf.compileTimeValue)) return null
         val value = proto.getExtension(BuiltInsProtoBuf.compileTimeValue)

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 public class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
-    override fun isReadWriteAccessible(element: PsiElement) = element is JetVariableDeclaration || element is JetParameter
+    override fun isReadWriteAccessible(element: PsiElement) = element is KtVariableDeclaration || element is KtParameter
 
     override fun isDeclarationWriteAccess(element: PsiElement) = isReadWriteAccessible(element)
 
@@ -40,9 +40,9 @@ public class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
         val refTarget = reference.resolve()
         if (refTarget is KotlinLightMethod) {
             val origin = refTarget.getOrigin()
-            val declaration: JetNamedDeclaration = when (origin) {
-                is JetPropertyAccessor -> origin.getNonStrictParentOfType<JetProperty>()
-                is JetProperty, is JetParameter -> origin as JetNamedDeclaration
+            val declaration: KtNamedDeclaration = when (origin) {
+                is KtPropertyAccessor -> origin.getNonStrictParentOfType<KtProperty>()
+                is KtProperty, is KtParameter -> origin as KtNamedDeclaration
                 else -> null
             } ?: return ReadWriteAccessDetector.Access.ReadWrite
 
@@ -57,7 +57,7 @@ public class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
     }
 
     override fun getExpressionAccess(expression: PsiElement): ReadWriteAccessDetector.Access {
-        if (expression !is JetExpression) { //TODO: there should be a more correct scheme of access type detection for cross-language references
+        if (expression !is KtExpression) { //TODO: there should be a more correct scheme of access type detection for cross-language references
             return JavaReadWriteAccessDetector().getExpressionAccess(expression)
         }
 

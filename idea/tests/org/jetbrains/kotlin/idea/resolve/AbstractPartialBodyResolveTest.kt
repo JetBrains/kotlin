@@ -17,31 +17,31 @@
 package org.jetbrains.kotlin.idea.resolve
 
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import java.util.HashSet
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
-import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.junit.Assert
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
@@ -66,19 +66,19 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
     }
 
     private fun dump(testPath: String, resolveMode: BodyResolveMode): String {
-        myFixture.configureByText(JetFileType.INSTANCE, File(testPath).readText())
+        myFixture.configureByText(KotlinFileType.INSTANCE, File(testPath).readText())
 
-        val file = myFixture.getFile() as JetFile
+        val file = myFixture.getFile() as KtFile
         val editor = myFixture.getEditor()
         val selectionModel = editor.getSelectionModel()
         val expression = if (selectionModel.hasSelection()) {
-            PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), javaClass<JetExpression>())
+            PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), javaClass<KtExpression>())
                 ?: error("No JetExpression at selection range")
         }
         else {
             val offset = editor.getCaretModel().getOffset()
             val element = file.findElementAt(offset)!!
-            element.getNonStrictParentOfType<JetSimpleNameExpression>() ?: error("No JetSimpleNameExpression at caret")
+            element.getNonStrictParentOfType<KtSimpleNameExpression>() ?: error("No JetSimpleNameExpression at caret")
         }
 
         val resolutionFacade = file.getResolutionFacade()
@@ -95,7 +95,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
 
         val builder = StringBuilder()
 
-        if (expression is JetReferenceExpression) {
+        if (expression is KtReferenceExpression) {
             builder.append("Resolve target: ${target2.presentation(type2)}\n")
         }
         else {
@@ -109,7 +109,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
 
         myFixture.getProject().executeWriteCommand("") {
             for (statement in skippedStatements) {
-                statement.replace(JetPsiFactory(getProject()).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
+                statement.replace(KtPsiFactory(getProject()).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
             }
         }
 
@@ -138,21 +138,21 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
 
     private data class ResolveData(
             val target: DeclarationDescriptor?,
-            val type: JetType?,
-            val processedStatements: Collection<JetExpression>
+            val type: KtType?,
+            val processedStatements: Collection<KtExpression>
     )
 
-    private fun doResolve(expression: JetExpression, bindingContext: BindingContext): ResolveData {
-        val target = if (expression is JetReferenceExpression) bindingContext[BindingContext.REFERENCE_TARGET, expression] else null
+    private fun doResolve(expression: KtExpression, bindingContext: BindingContext): ResolveData {
+        val target = if (expression is KtReferenceExpression) bindingContext[BindingContext.REFERENCE_TARGET, expression] else null
 
         val processedStatements = bindingContext.getSliceContents(BindingContext.PROCESSED)
                 .filter { it.value }
                 .map { it.key }
-                .filter { it.getParent() is JetBlockExpression }
+                .filter { it.getParent() is KtBlockExpression }
 
-        val receiver = (expression as? JetSimpleNameExpression)?.getReceiverExpression()
+        val receiver = (expression as? KtSimpleNameExpression)?.getReceiverExpression()
         val expressionWithType = if (receiver != null) {
-            expression.getParent() as? JetExpression ?: expression
+            expression.getParent() as? KtExpression ?: expression
         }
         else {
             expression
@@ -162,7 +162,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         return ResolveData(target, type, processedStatements)
     }
 
-    private fun DeclarationDescriptor?.presentation(type: JetType?): String {
+    private fun DeclarationDescriptor?.presentation(type: KtType?): String {
         if (this == null) return "null"
 
         val s = DescriptorRenderer.COMPACT.render(this)
@@ -172,10 +172,10 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         return "$s smart-cast to ${type.presentation()}"
     }
 
-    private fun JetType?.presentation()
+    private fun KtType?.presentation()
             = if (this != null) DescriptorRenderer.COMPACT.renderType(this) else "unknown type"
 
-    private fun JetExpression.compactPresentation(): String {
+    private fun KtExpression.compactPresentation(): String {
         val text = getText()
         val builder = StringBuilder()
         var dropSpace = false

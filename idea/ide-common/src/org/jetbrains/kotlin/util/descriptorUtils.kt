@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 
@@ -32,7 +32,7 @@ public fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?,
     if (descriptor1 !is CallableDescriptor) return true
     descriptor2 as CallableDescriptor
 
-    val typeChecker = JetTypeChecker.withAxioms(object: JetTypeChecker.TypeConstructorEquality {
+    val typeChecker = KotlinTypeChecker.withAxioms(object: KotlinTypeChecker.TypeConstructorEquality {
         override fun equals(a: TypeConstructor, b: TypeConstructor): Boolean {
             val typeParam1 = a.getDeclarationDescriptor() as? TypeParameterDescriptor
             val typeParam2 = b.getDeclarationDescriptor() as? TypeParameterDescriptor

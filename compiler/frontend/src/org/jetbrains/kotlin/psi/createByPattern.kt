@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
 import java.util.*
 
-public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): JetExpression
+public fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): KtExpression
         = createByPattern(pattern, *args) { createExpression(it) }
 
-public fun <TDeclaration : JetDeclaration> JetPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
+public fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
         = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
 
 private abstract class ArgumentType<T : Any>(val klass: Class<T>)
@@ -56,8 +56,8 @@ private class PsiElementArgumentType<T : PsiElement>(klass: Class<T>) : PsiEleme
     }
 }
 
-private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<PsiChildRange, JetElement>(javaClass(), javaClass()) {
-    override fun replacePlaceholderElement(placeholder: JetElement, argument: PsiChildRange) {
+private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<PsiChildRange, KtElement>(javaClass(), javaClass()) {
+    override fun replacePlaceholderElement(placeholder: KtElement, argument: PsiChildRange) {
         val project = placeholder.getProject()
         val codeStyleManager = CodeStyleManager.getInstance(project)
 
@@ -78,14 +78,14 @@ private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<Psi
 }
 
 private val SUPPORTED_ARGUMENT_TYPES = listOf(
-        PsiElementArgumentType<JetExpression>(javaClass()),
-        PsiElementArgumentType<JetTypeReference>(javaClass()),
+        PsiElementArgumentType<KtExpression>(javaClass()),
+        PsiElementArgumentType<KtTypeReference>(javaClass()),
         PlainTextArgumentType<String>(javaClass(), toPlainText = { it }),
         PlainTextArgumentType<Name>(javaClass(), toPlainText = { it.render() }),
         PsiChildRangeArgumentType
 )
 
-public fun <TElement : JetElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
+public fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
     val argumentTypes = args.map { arg ->
         SUPPORTED_ARGUMENT_TYPES.firstOrNull { it.klass.isInstance(arg) }
             ?: throw IllegalArgumentException("Unsupported argument type: ${arg.javaClass}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.getSimpleName() }.joinToString()}")
@@ -163,8 +163,8 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
 
     for ((pointer, n) in pointers) {
         var element = pointer.getElement()!!
-        if (element is JetFunctionLiteral) {
-            element = element.getParent() as JetFunctionLiteralExpression
+        if (element is KtFunctionLiteral) {
+            element = element.getParent() as KtFunctionLiteralExpression
         }
         (argumentTypes[n] as PsiElementPlaceholderArgumentType<in Any, in PsiElement>).replacePlaceholderElement(element, args[n])
     }
@@ -264,7 +264,7 @@ public class BuilderByPattern<TElement> {
         return this
     }
 
-    public fun appendExpression(expression: JetExpression?): BuilderByPattern<TElement> {
+    public fun appendExpression(expression: KtExpression?): BuilderByPattern<TElement> {
         if (expression != null) {
             patternBuilder.append("$" + arguments.size())
             arguments.add(expression)
@@ -272,7 +272,7 @@ public class BuilderByPattern<TElement> {
         return this
     }
 
-    public fun appendTypeReference(typeRef: JetTypeReference?): BuilderByPattern<TElement> {
+    public fun appendTypeReference(typeRef: KtTypeReference?): BuilderByPattern<TElement> {
         if (typeRef != null) {
             patternBuilder.append("$" + arguments.size())
             arguments.add(typeRef)
@@ -291,11 +291,11 @@ public class BuilderByPattern<TElement> {
     }
 }
 
-public fun JetPsiFactory.buildExpression(build: BuilderByPattern<JetExpression>.() -> Unit): JetExpression {
+public fun KtPsiFactory.buildExpression(build: BuilderByPattern<KtExpression>.() -> Unit): KtExpression {
     return buildByPattern({ pattern, args -> this.createExpressionByPattern(pattern, *args) }, build)
 }
 
-public fun JetPsiFactory.buildDeclaration(build: BuilderByPattern<JetDeclaration>.() -> Unit): JetDeclaration {
+public fun KtPsiFactory.buildDeclaration(build: BuilderByPattern<KtDeclaration>.() -> Unit): KtDeclaration {
     return buildByPattern({ pattern, args -> this.createDeclarationByPattern(pattern, *args) }, build)
 }
 

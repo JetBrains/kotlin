@@ -138,7 +138,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
         val allClassFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.class"), generatedPackageDir)
 
-        val packageScopes = arrayListOf<JetScope>()
+        val packageScopes = arrayListOf<KtScope>()
         val classes = arrayListOf<ClassDescriptor>()
         var shouldAddPackageView = false
         for (classFile in allClassFiles) {
@@ -182,12 +182,12 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
     }
 
     private class SyntheticPackageViewForTest(override val module: ModuleDescriptor,
-                                              packageScopes: List<JetScope>,
+                                              packageScopes: List<KtScope>,
                                               classes: List<ClassifierDescriptor>) : PackageViewDescriptor {
-        private val scope: JetScope
+        private val scope: KtScope
 
         init {
-            val writableScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.THROW_EXCEPTION, "runtime descriptor loader test")
+            val writableScope = WritableScopeImpl(KtScope.Empty, this, RedeclarationHandler.THROW_EXCEPTION, "runtime descriptor loader test")
             classes.forEach { writableScope.addClassifierDescriptor(it) }
             writableScope.changeLockLevel(WritableScope.LockLevel.READING)
             scope = ChainedScope(this, "synthetic package view for test", writableScope, *packageScopes.toTypedArray())
@@ -195,7 +195,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         override val fqName: FqName
             get() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
-        override val memberScope: JetScope
+        override val memberScope: KtScope
             get() = scope
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
                 visitor.visitPackageViewDescriptor(this, data)

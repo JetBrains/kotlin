@@ -17,19 +17,19 @@
 package org.jetbrains.kotlin.resolve.lazy.data;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetObjectDeclaration;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtObjectDeclaration;
 
 public class JetClassInfoUtil {
 
     @NotNull
-    public static JetClassLikeInfo createClassLikeInfo(@NotNull JetClassOrObject classOrObject) {
-        if (classOrObject instanceof JetClass) {
-            return new JetClassInfo((JetClass) classOrObject);
+    public static JetClassLikeInfo createClassLikeInfo(@NotNull KtClassOrObject classOrObject) {
+        if (classOrObject instanceof KtClass) {
+            return new JetClassInfo((KtClass) classOrObject);
         }
-        if (classOrObject instanceof JetObjectDeclaration) {
-            return new JetObjectInfo((JetObjectDeclaration) classOrObject);
+        if (classOrObject instanceof KtObjectDeclaration) {
+            return new JetObjectInfo((KtObjectDeclaration) classOrObject);
         }
         throw new IllegalArgumentException("Unknown declaration type: " + classOrObject + classOrObject.getText());
     }

@@ -24,22 +24,22 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetOperationExpression
-import org.jetbrains.kotlin.psi.JetUnaryExpression
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtOperationExpression
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
-object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetArrayAccessExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetArrayAccessExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>())
+object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtArrayAccessExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtArrayAccessExpression? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtArrayAccessExpression>())
     }
 
-    override fun createCallableInfo(element: JetArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
         val arrayExpr = element.arrayExpression ?: return null
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
 
@@ -48,12 +48,12 @@ object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<Jet
         val parameters = element.indexExpressions.mapTo(ArrayList<ParameterInfo>()) {
             ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))
         }
-        val assignmentExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetOperationExpression>()) ?: return null
+        val assignmentExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtOperationExpression>()) ?: return null
         val valType = when (assignmentExpr) {
-            is JetBinaryExpression -> {
+            is KtBinaryExpression -> {
                 TypeInfo(assignmentExpr.right ?: return null, Variance.IN_VARIANCE)
             }
-            is JetUnaryExpression -> {
+            is KtUnaryExpression -> {
                 if (assignmentExpr.operationToken !in OperatorConventions.INCREMENT_OPERATIONS) return null
 
                 val context = assignmentExpr.analyze()

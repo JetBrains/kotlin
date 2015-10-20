@@ -22,15 +22,15 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -99,12 +99,12 @@ fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
 }
 
 private fun setupFileStub(fileStub: KotlinFileStubImpl, packageFqName: FqName) {
-    val packageDirectiveStub = KotlinPlaceHolderStubImpl<JetPackageDirective>(fileStub, JetStubElementTypes.PACKAGE_DIRECTIVE)
+    val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtStubElementTypes.PACKAGE_DIRECTIVE)
     createStubForPackageName(packageDirectiveStub, packageFqName)
-    KotlinPlaceHolderStubImpl<JetImportList>(fileStub, JetStubElementTypes.IMPORT_LIST)
+    KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtStubElementTypes.IMPORT_LIST)
 }
 
-fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<JetPackageDirective>, packageFqName: FqName) {
+fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtPackageDirective>, packageFqName: FqName) {
     val segments = packageFqName.pathSegments().toArrayList()
     val iterator = segments.listIterator(segments.size())
 
@@ -117,7 +117,7 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<Jet
             }
             else -> {
                 val lastSegment = iterator.previous()
-                val receiver = KotlinPlaceHolderStubImpl<JetDotQualifiedExpression>(current, JetStubElementTypes.DOT_QUALIFIED_EXPRESSION)
+                val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
                 recCreateStubForPackageName(receiver)
                 KotlinNameReferenceExpressionStubImpl(receiver, lastSegment.ref())
             }
@@ -150,93 +150,93 @@ fun createStubForTypeName(typeClassId: ClassId, parent: StubElement<out PsiEleme
 
 enum class FlagsToModifiers {
     MODALITY {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken {
+        override fun getModifiers(flags: Int): KtModifierKeywordToken {
             val modality = Flags.MODALITY.get(flags)
             return when (modality) {
-                ProtoBuf.Modality.ABSTRACT -> JetTokens.ABSTRACT_KEYWORD
-                ProtoBuf.Modality.FINAL -> JetTokens.FINAL_KEYWORD
-                ProtoBuf.Modality.OPEN -> JetTokens.OPEN_KEYWORD
-                ProtoBuf.Modality.SEALED -> JetTokens.SEALED_KEYWORD
+                ProtoBuf.Modality.ABSTRACT -> KtTokens.ABSTRACT_KEYWORD
+                ProtoBuf.Modality.FINAL -> KtTokens.FINAL_KEYWORD
+                ProtoBuf.Modality.OPEN -> KtTokens.OPEN_KEYWORD
+                ProtoBuf.Modality.SEALED -> KtTokens.SEALED_KEYWORD
                 null -> throw IllegalStateException("Unexpected modality: null")
             }
         }
     },
 
     VISIBILITY {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
             val visibility = Flags.VISIBILITY.get(flags)
             return when (visibility) {
-                ProtoBuf.Visibility.PRIVATE, ProtoBuf.Visibility.PRIVATE_TO_THIS -> JetTokens.PRIVATE_KEYWORD
-                ProtoBuf.Visibility.INTERNAL -> JetTokens.INTERNAL_KEYWORD
-                ProtoBuf.Visibility.PROTECTED -> JetTokens.PROTECTED_KEYWORD
-                ProtoBuf.Visibility.PUBLIC -> JetTokens.PUBLIC_KEYWORD
+                ProtoBuf.Visibility.PRIVATE, ProtoBuf.Visibility.PRIVATE_TO_THIS -> KtTokens.PRIVATE_KEYWORD
+                ProtoBuf.Visibility.INTERNAL -> KtTokens.INTERNAL_KEYWORD
+                ProtoBuf.Visibility.PROTECTED -> KtTokens.PROTECTED_KEYWORD
+                ProtoBuf.Visibility.PUBLIC -> KtTokens.PUBLIC_KEYWORD
                 else -> throw IllegalStateException("Unexpected visibility: $visibility")
             }
         }
     },
 
     INNER {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_INNER.get(flags)) JetTokens.INNER_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_INNER.get(flags)) KtTokens.INNER_KEYWORD else null
         }
     },
 
     CONST {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_CONST.get(flags)) JetTokens.CONST_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_CONST.get(flags)) KtTokens.CONST_KEYWORD else null
         }
     },
 
     LATEINIT {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_LATEINIT.get(flags)) JetTokens.LATEINIT_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_LATEINIT.get(flags)) KtTokens.LATEINIT_KEYWORD else null
         }
     },
 
     OPERATOR {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_OPERATOR.get(flags)) JetTokens.OPERATOR_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_OPERATOR.get(flags)) KtTokens.OPERATOR_KEYWORD else null
         }
     },
 
     INFIX {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_INFIX.get(flags)) JetTokens.INFIX_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_INFIX.get(flags)) KtTokens.INFIX_KEYWORD else null
         }
     },
 
     DATA {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_DATA.get(flags)) JetTokens.DATA_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_DATA.get(flags)) KtTokens.DATA_KEYWORD else null
         }
     },
 
     EXTERNAL_FUN {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_EXTERNAL_FUNCTION.get(flags)) JetTokens.EXTERNAL_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_EXTERNAL_FUNCTION.get(flags)) KtTokens.EXTERNAL_KEYWORD else null
         }
     },
 
     INLINE {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_INLINE.get(flags)) JetTokens.INLINE_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_INLINE.get(flags)) KtTokens.INLINE_KEYWORD else null
         }
     },
 
     TAILREC {
-        override fun getModifiers(flags: Int): JetModifierKeywordToken? {
-            return if (Flags.IS_TAILREC.get(flags)) JetTokens.TAILREC_KEYWORD else null
+        override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+            return if (Flags.IS_TAILREC.get(flags)) KtTokens.TAILREC_KEYWORD else null
         }
     };
 
-    abstract fun getModifiers(flags: Int): JetModifierKeywordToken?
+    abstract fun getModifiers(flags: Int): KtModifierKeywordToken?
 }
 
 fun createModifierListStubForDeclaration(
         parent: StubElement<out PsiElement>,
         flags: Int,
         flagsToTranslate: List<FlagsToModifiers> = listOf(),
-        additionalModifiers: List<JetModifierKeywordToken> = listOf()
+        additionalModifiers: List<KtModifierKeywordToken> = listOf()
 ): KotlinModifierListStubImpl {
     assert(flagsToTranslate.isNotEmpty())
 
@@ -246,7 +246,7 @@ fun createModifierListStubForDeclaration(
 
 fun createModifierListStub(
         parent: StubElement<out PsiElement>,
-        modifiers: Collection<JetModifierKeywordToken>
+        modifiers: Collection<KtModifierKeywordToken>
 ): KotlinModifierListStubImpl? {
     if (modifiers.isEmpty()) {
         return null
@@ -254,7 +254,7 @@ fun createModifierListStub(
     return KotlinModifierListStubImpl(
             parent,
             ModifierMaskUtils.computeMask { it in modifiers },
-            JetStubElementTypes.MODIFIER_LIST
+            KtStubElementTypes.MODIFIER_LIST
     )
 }
 
@@ -278,8 +278,8 @@ fun createTargetedAnnotationStubs(
         if (target != null) {
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name())!!)
         }
-        val constructorCallee = KotlinPlaceHolderStubImpl<JetConstructorCalleeExpression>(annotationEntryStubImpl, JetStubElementTypes.CONSTRUCTOR_CALLEE)
-        val typeReference = KotlinPlaceHolderStubImpl<JetTypeReference>(constructorCallee, JetStubElementTypes.TYPE_REFERENCE)
+        val constructorCallee = KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
+        val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
         createStubForTypeName(annotationClassId, typeReference)
     }
 }

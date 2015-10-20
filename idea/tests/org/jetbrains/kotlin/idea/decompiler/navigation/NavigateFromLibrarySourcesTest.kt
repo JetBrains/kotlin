@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.sure
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -51,8 +51,8 @@ public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     // This test is not exactly for navigation, but separating it to another class doesn't worth it.
     public fun testLightClassForLibrarySource() {
         val navigationElement = navigationElementForReferenceInLibrarySource("Foo")
-        assertTrue(navigationElement is JetClassOrObject, "Foo should navigate to JetClassOrObject")
-        val lightClass = LightClassUtil.getPsiClass(navigationElement as JetClassOrObject)
+        assertTrue(navigationElement is KtClassOrObject, "Foo should navigate to JetClassOrObject")
+        val lightClass = LightClassUtil.getPsiClass(navigationElement as KtClassOrObject)
         assertTrue(lightClass is KotlinLightClassForDecompiledDeclaration,
                    "Light classes for decompiled declaration should be provided for library source")
         assertEquals("Foo", lightClass!!.getName())
@@ -81,7 +81,7 @@ public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
             is PsiClass -> {
                 assertEquals(expectedFqName, element.getQualifiedName())
             }
-            is JetClass -> {
+            is KtClass -> {
                 assertEquals(expectedFqName, element.getFqName()!!.asString())
             }
             else -> {

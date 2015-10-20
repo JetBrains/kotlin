@@ -28,10 +28,10 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 public class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
     override fun getTextOccurrenceProcessor(methods: Array<out PsiMethod>,
@@ -39,7 +39,7 @@ public class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                                             strictSignatureSearch: Boolean): MethodTextOccurrenceProcessor? {
         return object: MethodTextOccurrenceProcessor(aClass, strictSignatureSearch, *methods) {
             override fun processInexactReference(ref: PsiReference, refElement: PsiElement?, method: PsiMethod, consumer: Processor<PsiReference>): Boolean {
-                if (refElement !is JetCallableDeclaration) return true
+                if (refElement !is KtCallableDeclaration) return true
                 return refElement.getRepresentativeLightMethod()?.let { super.processInexactReference(ref, it, method, consumer) } ?: true
             }
         }

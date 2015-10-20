@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptorKt;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +38,7 @@ public final class BackingFieldAccessTranslator extends AbstractTranslator imple
     private final PropertyDescriptor descriptor;
 
     /*package*/
-    public static BackingFieldAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
+    public static BackingFieldAccessTranslator newInstance(@NotNull KtSimpleNameExpression expression,
                                                     @NotNull TranslationContext context) {
         PropertyDescriptor referencedProperty = SyntheticFieldDescriptorKt.getReferencedProperty(
                 getDescriptorForReferenceExpression(context.bindingContext(), expression)

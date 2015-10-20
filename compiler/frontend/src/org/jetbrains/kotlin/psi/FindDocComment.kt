@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.psi.findDocComment
 
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
-fun findDocComment(declaration: JetDeclaration): KDoc? {
+fun findDocComment(declaration: KtDeclaration): KDoc? {
     return declaration.allChildren
             .dropWhile { it !is KDoc && (it is PsiWhiteSpace || it is PsiComment) }
             .first() as? KDoc

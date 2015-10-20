@@ -41,7 +41,7 @@ public class OperatorValidator : SymbolUsageValidator {
         val functionDescriptor = targetDescriptor as? FunctionDescriptor ?: return
         if (!checkNotErrorOrDynamic(functionDescriptor)) return
 
-        val jetElement = element as? JetElement ?: return
+        val jetElement = element as? KtElement ?: return
         val call = resolvedCall?.call ?: trace.bindingContext[BindingContext.CALL, jetElement]
 
         fun isInvokeCall(): Boolean {
@@ -49,15 +49,15 @@ public class OperatorValidator : SymbolUsageValidator {
         }
 
         fun isMultiDeclaration(): Boolean {
-            return (resolvedCall != null) && (call?.callElement is JetMultiDeclarationEntry)
+            return (resolvedCall != null) && (call?.callElement is KtMultiDeclarationEntry)
         }
 
         fun isConventionOperator(): Boolean {
-            if (jetElement !is JetOperationReferenceExpression) return false
+            if (jetElement !is KtOperationReferenceExpression) return false
             return jetElement.getNameForConventionalOperation() != null
         }
 
-        fun isArrayAccessExpression() = jetElement is JetArrayAccessExpression
+        fun isArrayAccessExpression() = jetElement is KtArrayAccessExpression
 
         if (isMultiDeclaration() || isInvokeCall()) {
             if (!functionDescriptor.isOperator && call != null) {
@@ -78,7 +78,7 @@ public class OperatorValidator : SymbolUsageValidator {
     }
 
     private fun checkDeprecatedUnaryConventions(call: Call, functionDescriptor: FunctionDescriptor, sink: DiagnosticSink) {
-        (call.callElement as? JetPrefixExpression)?.let { expr ->
+        (call.callElement as? KtPrefixExpression)?.let { expr ->
             val functionName = functionDescriptor.name
             if (functionName == PLUS || functionName == MINUS) {
                 val newName = if (functionName == PLUS) UNARY_PLUS else UNARY_MINUS

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.android
 
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 
 public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
@@ -32,8 +32,8 @@ public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
         f.configureFromExistingVirtualFile(virtualFile)
 
         val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
-        if (f.getElementAtCaret() !is JetProperty) kotlin.test.fail("element at caret must be a property, not a ${f.getElementAtCaret().javaClass}")
-        kotlin.test.assertEquals("\"@+id/${(f.getElementAtCaret() as JetProperty).getName()}\"", resolved?.getText())
+        if (f.getElementAtCaret() !is KtProperty) kotlin.test.fail("element at caret must be a property, not a ${f.getElementAtCaret().javaClass}")
+        kotlin.test.assertEquals("\"@+id/${(f.getElementAtCaret() as KtProperty).getName()}\"", resolved?.getText())
 
     }
 }

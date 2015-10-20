@@ -26,34 +26,34 @@ import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
 
-public interface JetClassLikeInfo extends JetDeclarationContainer {
+public interface JetClassLikeInfo extends KtDeclarationContainer {
     @NotNull
     FqName getContainingPackageFqName();
 
     @Nullable
-    JetModifierList getModifierList();
+    KtModifierList getModifierList();
 
     @NotNull
     @ReadOnly
-    List<JetObjectDeclaration> getCompanionObjects();
+    List<KtObjectDeclaration> getCompanionObjects();
 
     // This element is used to identify resolution scope for the class
     @NotNull
     PsiElement getScopeAnchor();
 
     @Nullable
-    JetClassOrObject getCorrespondingClassOrObject();
+    KtClassOrObject getCorrespondingClassOrObject();
 
     @Nullable
-    JetTypeParameterList getTypeParameterList();
+    KtTypeParameterList getTypeParameterList();
 
     @NotNull
     @ReadOnly
-    List<? extends JetParameter> getPrimaryConstructorParameters();
+    List<? extends KtParameter> getPrimaryConstructorParameters();
 
     @NotNull
     ClassKind getClassKind();
 
     @NotNull
-    List<JetAnnotationEntry> getDanglingAnnotations();
+    List<KtAnnotationEntry> getDanglingAnnotations();
 }

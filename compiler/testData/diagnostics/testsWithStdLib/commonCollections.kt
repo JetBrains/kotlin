@@ -2,7 +2,7 @@ import java.util.*
 fun foo() {
     val al = ArrayList<String>()
     al.size
-    al.contains(1)
+    al.<!DEPRECATION!>contains<!>(1)
     al.contains("")
 
     al.remove("")
@@ -10,7 +10,7 @@ fun foo() {
 
     val hs = HashSet<String>()
     hs.size
-    hs.contains(1)
+    hs.<!DEPRECATION!>contains<!>(1)
     hs.contains("")
 
     hs.remove("")

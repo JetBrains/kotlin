@@ -32,14 +32,14 @@ public object RawTypeCapabilities : TypeCapabilities {
     }
 
     private object RawFlexibleRendering : CustomFlexibleRendering {
-        private fun DescriptorRenderer.renderArguments(jetType: JetType) = jetType.arguments.map { renderTypeProjection(it) }
+        private fun DescriptorRenderer.renderArguments(jetType: KtType) = jetType.arguments.map { renderTypeProjection(it) }
 
         private fun String.replaceArgs(newArgs: String): String {
             if (!contains('<')) return this
             return "${substringBefore('<')}<$newArgs>${substringAfterLast('>')}"
         }
 
-        override fun renderInflexible(type: JetType, renderer: DescriptorRenderer): String? {
+        override fun renderInflexible(type: KtType, renderer: DescriptorRenderer): String? {
             if (type.arguments.isNotEmpty()) return null
 
             return StringBuilder {
@@ -81,12 +81,12 @@ public object RawTypeCapabilities : TypeCapabilities {
 }
 
 internal object RawSubstitution : TypeSubstitution() {
-    override fun get(key: JetType) = TypeProjectionImpl(eraseType(key))
+    override fun get(key: KtType) = TypeProjectionImpl(eraseType(key))
 
     private val lowerTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)
     private val upperTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND)
 
-    public fun eraseType(type: JetType): JetType {
+    public fun eraseType(type: KtType): KtType {
         val declaration = type.constructor.declarationDescriptor
         return when (declaration) {
             is TypeParameterDescriptor -> eraseType(declaration.getErasedUpperBound())
@@ -102,20 +102,20 @@ internal object RawSubstitution : TypeSubstitution() {
         }
     }
 
-    private fun eraseInflexibleBasedOnClassDescriptor(type: JetType, declaration: ClassDescriptor, attr: JavaTypeAttributes): JetType {
+    private fun eraseInflexibleBasedOnClassDescriptor(type: KtType, declaration: ClassDescriptor, attr: JavaTypeAttributes): KtType {
         if (KotlinBuiltIns.isArray(type)) {
             val componentTypeProjection = type.arguments[0]
             val arguments = listOf(
                     TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type))
             )
-            return JetTypeImpl.create(
+            return KtTypeImpl.create(
                     type.annotations, type.constructor, type.isMarkedNullable, arguments,
                     (type.constructor.declarationDescriptor as ClassDescriptor).getMemberScope(arguments)
             )
         }
 
         val constructor = type.constructor
-        return JetTypeImpl.create(
+        return KtTypeImpl.create(
                 type.annotations, constructor, type.isMarkedNullable,
                 type.constructor.parameters.map {
                     parameter ->
@@ -130,7 +130,7 @@ internal object RawSubstitution : TypeSubstitution() {
     fun computeProjection(
             parameter: TypeParameterDescriptor,
             attr: JavaTypeAttributes,
-            erasedUpperBound: JetType = parameter.getErasedUpperBound()
+            erasedUpperBound: KtType = parameter.getErasedUpperBound()
     ) = when (attr.flexibility) {
         // Raw(List<T>) => (List<Any?>..List<*>)
         // Raw(Enum<T>) => (Enum<Enum<*>>..Enum<out Enum<*>>)

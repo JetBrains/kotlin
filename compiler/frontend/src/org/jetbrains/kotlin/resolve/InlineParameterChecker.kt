@@ -20,31 +20,31 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
 
 object InlineParameterChecker : DeclarationChecker {
-    override fun check(declaration: JetDeclaration,
+    override fun check(declaration: KtDeclaration,
                        descriptor: DeclarationDescriptor,
                        diagnosticHolder: DiagnosticSink,
                        bindingContext: BindingContext
     ) {
-        if (declaration is JetFunction) {
-            val inline = declaration.hasModifier(JetTokens.INLINE_KEYWORD)
+        if (declaration is KtFunction) {
+            val inline = declaration.hasModifier(KtTokens.INLINE_KEYWORD)
             for (parameter in declaration.valueParameters) {
                 val parameterDescriptor = bindingContext.get(BindingContext.VALUE_PARAMETER, parameter)
                 if (!inline || (parameterDescriptor != null && !KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterDescriptor.type))) {
-                    parameter.reportIncorrectInline(JetTokens.NOINLINE_KEYWORD, diagnosticHolder)
-                    parameter.reportIncorrectInline(JetTokens.CROSSINLINE_KEYWORD, diagnosticHolder)
+                    parameter.reportIncorrectInline(KtTokens.NOINLINE_KEYWORD, diagnosticHolder)
+                    parameter.reportIncorrectInline(KtTokens.CROSSINLINE_KEYWORD, diagnosticHolder)
                 }
             }
         }
     }
 
-    private fun JetParameter.reportIncorrectInline(modifierToken: JetModifierKeywordToken, diagnosticHolder: DiagnosticSink) {
+    private fun KtParameter.reportIncorrectInline(modifierToken: KtModifierKeywordToken, diagnosticHolder: DiagnosticSink) {
         val modifier = modifierList?.getModifier(modifierToken)
         modifier?.let {
             diagnosticHolder.report(Errors.ILLEGAL_INLINE_PARAMETER_MODIFIER.on(modifier, modifierToken))

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetPrimaryConstructor
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
@@ -30,11 +30,11 @@ object KDocFinder {
         if (declaration is DeclarationDescriptorWithSource) {
             var psiDeclaration = (declaration.getSource() as? PsiSourceElement)?.psi?.getNavigationElement()
             // KDoc for primary constructor is located inside of its class KDoc
-            if (psiDeclaration is JetPrimaryConstructor) {
+            if (psiDeclaration is KtPrimaryConstructor) {
                 psiDeclaration = psiDeclaration.getContainingClassOrObject()
             }
 
-            if (psiDeclaration is JetDeclaration) {
+            if (psiDeclaration is KtDeclaration) {
                 val kdoc = psiDeclaration.getDocComment()
                 if (kdoc != null) {
                     if (declaration is ConstructorDescriptor) {

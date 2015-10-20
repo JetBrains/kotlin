@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.List;
 
-public abstract class DelegatingType implements JetType {
-    protected abstract JetType getDelegate();
+public abstract class DelegatingType implements KtType {
+    protected abstract KtType getDelegate();
 
     @NotNull
     @Override
@@ -52,7 +52,7 @@ public abstract class DelegatingType implements JetType {
 
     @NotNull
     @Override
-    public JetScope getMemberScope() {
+    public KtScope getMemberScope() {
         return getDelegate().getMemberScope();
     }
 
@@ -87,10 +87,10 @@ public abstract class DelegatingType implements JetType {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof JetType)) return false;
+        if (!(obj instanceof KtType)) return false;
 
-        JetType type = (JetType) obj;
-        return JetTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
+        KtType type = (KtType) obj;
+        return KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
     }
 
     @Override

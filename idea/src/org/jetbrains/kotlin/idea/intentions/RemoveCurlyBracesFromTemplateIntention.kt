@@ -19,28 +19,28 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.psi.JetBlockStringTemplateEntry
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
+import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import java.util.regex.Pattern
 
-public class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<JetBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
+public class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
 
-public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
-    override fun isApplicableTo(element: JetBlockStringTemplateEntry): Boolean {
-        if (element.getExpression() !is JetNameReferenceExpression) return false
+public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
+    override fun isApplicableTo(element: KtBlockStringTemplateEntry): Boolean {
+        if (element.getExpression() !is KtNameReferenceExpression) return false
         val nextSiblingText = element.getNextSibling()?.getText()
         return nextSiblingText == null || !pattern.matcher(nextSiblingText).matches()
     }
 
-    override fun applyTo(element: JetBlockStringTemplateEntry, editor: Editor) {
+    override fun applyTo(element: KtBlockStringTemplateEntry, editor: Editor) {
         applyTo(element)
     }
 
-    public fun applyTo(element: JetBlockStringTemplateEntry): JetStringTemplateEntryWithExpression {
-        val name = (element.getExpression() as JetNameReferenceExpression).getReferencedName()
-        val newEntry = JetPsiFactory(element).createSimpleNameStringTemplateEntry(name)
+    public fun applyTo(element: KtBlockStringTemplateEntry): KtStringTemplateEntryWithExpression {
+        val name = (element.getExpression() as KtNameReferenceExpression).getReferencedName()
+        val newEntry = KtPsiFactory(element).createSimpleNameStringTemplateEntry(name)
         return element.replaced(newEntry)
     }
 

@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.psi.stubs.impl;
 
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.kotlin.psi.JetElementImplStub;
+import org.jetbrains.kotlin.psi.KtElementImplStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
-public class KotlinPlaceHolderStubImpl<T extends JetElementImplStub<? extends StubElement<?>>> extends KotlinStubBaseImpl<T>
+public class KotlinPlaceHolderStubImpl<T extends KtElementImplStub<? extends StubElement<?>>> extends KotlinStubBaseImpl<T>
         implements KotlinPlaceHolderStub<T> {
     public KotlinPlaceHolderStubImpl(StubElement parent, IStubElementType elementType) {
         //noinspection unchecked

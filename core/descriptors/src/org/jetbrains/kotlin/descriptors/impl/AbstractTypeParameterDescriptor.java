@@ -19,19 +19,18 @@ package org.jetbrains.kotlin.descriptors.impl;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.Collections;
 import java.util.Set;
@@ -44,9 +43,9 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     private final int index;
 
     private final NotNullLazyValue<TypeConstructor> typeConstructor;
-    private final NotNullLazyValue<JetType> defaultType;
-    private final NotNullLazyValue<Set<JetType>> upperBounds;
-    private final NotNullLazyValue<JetType> upperBoundsAsType;
+    private final NotNullLazyValue<KtType> defaultType;
+    private final NotNullLazyValue<Set<KtType>> upperBounds;
+    private final NotNullLazyValue<KtType> upperBoundsAsType;
 
     protected AbstractTypeParameterDescriptor(
             @NotNull final StorageManager storageManager,
@@ -69,29 +68,29 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                 return createTypeConstructor();
             }
         });
-        this.defaultType = storageManager.createLazyValue(new Function0<JetType>() {
+        this.defaultType = storageManager.createLazyValue(new Function0<KtType>() {
             @Override
-            public JetType invoke() {
-                return JetTypeImpl.create(Annotations.Companion.getEMPTY(), getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
-                                       new LazyScopeAdapter(storageManager.createLazyValue(
-                                               new Function0<JetScope>() {
+            public KtType invoke() {
+                return KtTypeImpl.create(Annotations.Companion.getEMPTY(), getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
+                                         new LazyScopeAdapter(storageManager.createLazyValue(
+                                               new Function0<KtScope>() {
                                                    @Override
-                                                   public JetScope invoke() {
+                                                   public KtScope invoke() {
                                                        return getUpperBoundsAsType().getMemberScope();
                                                    }
                                                }
                                        )));
             }
         });
-        this.upperBounds = storageManager.createRecursionTolerantLazyValue(new Function0<Set<JetType>>() {
+        this.upperBounds = storageManager.createRecursionTolerantLazyValue(new Function0<Set<KtType>>() {
             @Override
-            public Set<JetType> invoke() {
+            public Set<KtType> invoke() {
                 return resolveUpperBounds();
             }
         }, Collections.singleton(ErrorUtils.createErrorType("Recursion while calculating upper bounds")));
-        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<JetType>() {
+        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<KtType>() {
             @Override
-            public JetType invoke() {
+            public KtType invoke() {
                 return computeUpperBoundsAsType();
             }
         });
@@ -99,7 +98,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @ReadOnly
-    protected abstract Set<JetType> resolveUpperBounds();
+    protected abstract Set<KtType> resolveUpperBounds();
 
     @NotNull
     protected abstract TypeConstructor createTypeConstructor();
@@ -122,21 +121,21 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
-    public Set<JetType> getUpperBounds() {
+    public Set<KtType> getUpperBounds() {
         return upperBounds.invoke();
     }
 
     @NotNull
     @Override
-    public JetType getUpperBoundsAsType() {
+    public KtType getUpperBoundsAsType() {
         return upperBoundsAsType.invoke();
     }
 
     @NotNull
-    private JetType computeUpperBoundsAsType() {
-        Set<JetType> upperBounds = getUpperBounds();
+    private KtType computeUpperBoundsAsType() {
+        Set<KtType> upperBounds = getUpperBounds();
         assert !upperBounds.isEmpty() : "Upper bound list is empty in " + getName();
-        JetType upperBoundsAsType = TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, upperBounds);
+        KtType upperBoundsAsType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
         return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(this).getNothingType();
     }
 
@@ -148,13 +147,13 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
-    public JetType getDefaultType() {
+    public KtType getDefaultType() {
         return defaultType.invoke();
     }
 
     @NotNull
     @Override
-    public Set<JetType> getLowerBounds() {
+    public Set<KtType> getLowerBounds() {
         return Collections.singleton(getBuiltIns(this).getNothingType());
     }
 

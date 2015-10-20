@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public class AnalyzerScriptParameter {
     @NotNull
     private final Name name;
     @NotNull
-    private final JetType type;
+    private final KtType type;
 
-    public AnalyzerScriptParameter(@NotNull Name name, @NotNull JetType type) {
+    public AnalyzerScriptParameter(@NotNull Name name, @NotNull KtType type) {
         this.name = name;
         this.type = type;
     }
@@ -37,7 +37,7 @@ public class AnalyzerScriptParameter {
     }
 
     @NotNull
-    public JetType getType() {
+    public KtType getType() {
         return type;
     }
 }

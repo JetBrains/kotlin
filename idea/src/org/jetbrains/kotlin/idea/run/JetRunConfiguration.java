@@ -53,11 +53,10 @@ import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetDeclarationContainer;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtDeclarationContainer;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
@@ -243,15 +242,15 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Override
     public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
         FqName fqNameBeingRenamed = null;
-        if (element instanceof JetDeclarationContainer) {
-            fqNameBeingRenamed = KotlinRunConfigurationProducer.Companion.getStartClassFqName((JetDeclarationContainer) element);
+        if (element instanceof KtDeclarationContainer) {
+            fqNameBeingRenamed = KotlinRunConfigurationProducer.Companion.getStartClassFqName((KtDeclarationContainer) element);
         }
         else if (element instanceof PsiPackage) {
             fqNameBeingRenamed = new FqName(((PsiPackage) element).getQualifiedName());
         }
         FqName ourClassName = new FqName(MAIN_CLASS_NAME);
         if (fqNameBeingRenamed != null && fqNameBeingRenamed.isAncestorOf(ourClassName)) {
-            if (element instanceof JetDeclarationContainer) {
+            if (element instanceof KtDeclarationContainer) {
                 return new RefactoringElementAdapter() {
                     @Override
                     public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
@@ -283,7 +282,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     }
 
     private void updateMainClassName(PsiElement element) {
-        JetDeclarationContainer container = KotlinRunConfigurationProducer.Companion.getEntryPointContainer(element);
+        KtDeclarationContainer container = KotlinRunConfigurationProducer.Companion.getEntryPointContainer(element);
         FqName name = KotlinRunConfigurationProducer.Companion.getStartClassFqName(container);
         if (name != null) {
             MAIN_CLASS_NAME = name.asString();
@@ -305,17 +304,17 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     }
 
     @NotNull
-    private static Collection<JetNamedFunction> getMainFunCandidates(@NotNull PsiClass psiClass) {
+    private static Collection<KtNamedFunction> getMainFunCandidates(@NotNull PsiClass psiClass) {
         return CollectionsKt.filterNotNull(
                 ArraysKt.map(
                         psiClass.getAllMethods(),
-                        new Function1<PsiMethod, JetNamedFunction>() {
+                        new Function1<PsiMethod, KtNamedFunction>() {
                             @Override
-                            public JetNamedFunction invoke(PsiMethod method) {
+                            public KtNamedFunction invoke(PsiMethod method) {
                                 if (!(method instanceof KotlinLightMethod)) return null;
 
-                                JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-                                return declaration instanceof JetNamedFunction ? (JetNamedFunction) declaration : null;
+                                KtDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+                                return declaration instanceof KtNamedFunction ? (KtNamedFunction) declaration : null;
                             }
                         }
                 )
@@ -323,8 +322,8 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     }
 
     @Nullable
-    private static JetNamedFunction findMainFun(@NotNull PsiClass psiClass) {
-        for (JetNamedFunction function : getMainFunCandidates(psiClass)) {
+    private static KtNamedFunction findMainFun(@NotNull PsiClass psiClass) {
+        for (KtNamedFunction function : getMainFunCandidates(psiClass)) {
             BindingContext bindingContext = ResolutionUtils.analyze(function, BodyResolveMode.FULL);
             MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
             if (mainFunctionDetector.isMain(function)) return function;
@@ -363,7 +362,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             PsiClass psiClass = JavaExecutionUtil.findMainClass(module, runClass);
             if (psiClass == null) throw CantRunException.classNotFound(runClass, module);
 
-            JetNamedFunction mainFun = findMainFun(psiClass);
+            KtNamedFunction mainFun = findMainFun(psiClass);
             if (mainFun == null) throw new CantRunException(noFunctionFoundMessage(psiClass));
 
             Module classModule = ModuleUtilCore.findModuleForPsiElement(mainFun);

@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.resolve.calls.context;
 
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 
 public class TemporaryTraceAndCache {
     public final TemporaryBindingTrace trace;
     public final TemporaryResolutionResultsCache cache;
 
-    public TemporaryTraceAndCache(ResolutionContext context, String debugName, JetExpression expression) {
+    public TemporaryTraceAndCache(ResolutionContext context, String debugName, KtExpression expression) {
         trace = TemporaryBindingTrace.create(context.trace, debugName, expression);
         cache = new TemporaryResolutionResultsCache(context.resolutionResultsCache);
     }
 
-    public static TemporaryTraceAndCache create(ResolutionContext context, String debugName, JetExpression expression) {
+    public static TemporaryTraceAndCache create(ResolutionContext context, String debugName, KtExpression expression) {
         return new TemporaryTraceAndCache(context, debugName, expression);
     }
 

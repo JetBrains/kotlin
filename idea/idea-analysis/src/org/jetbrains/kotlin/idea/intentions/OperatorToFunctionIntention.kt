@@ -20,51 +20,51 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace overloaded operator with function call") {
+public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpression>(javaClass(), "Replace overloaded operator with function call") {
     companion object {
-        private fun isApplicablePrefix(element: JetPrefixExpression, caretOffset: Int): Boolean {
+        private fun isApplicablePrefix(element: KtPrefixExpression, caretOffset: Int): Boolean {
             val opRef = element.getOperationReference()
             if (!opRef.getTextRange().containsOffset(caretOffset)) return false
             return when (opRef.getReferencedNameElementType()) {
-                JetTokens.PLUS, JetTokens.MINUS, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS, JetTokens.EXCL -> true
+                KtTokens.PLUS, KtTokens.MINUS, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCL -> true
                 else -> false
             }
         }
 
-        private fun isApplicablePostfix(element: JetPostfixExpression, caretOffset: Int): Boolean {
+        private fun isApplicablePostfix(element: KtPostfixExpression, caretOffset: Int): Boolean {
             val opRef = element.getOperationReference()
             if (!opRef.getTextRange().containsOffset(caretOffset)) return false
             if (element.getBaseExpression() == null) return false
             return when (opRef.getReferencedNameElementType()) {
-                JetTokens.PLUSPLUS, JetTokens.MINUSMINUS -> true
+                KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> true
                 else -> false
             }
         }
 
-        private fun isApplicableBinary(element: JetBinaryExpression, caretOffset: Int): Boolean {
+        private fun isApplicableBinary(element: KtBinaryExpression, caretOffset: Int): Boolean {
             val opRef = element.getOperationReference()
             if (!opRef.getTextRange().containsOffset(caretOffset)) return false
             return when (opRef.getReferencedNameElementType()) {
-                JetTokens.PLUS, JetTokens.MINUS, JetTokens.MUL, JetTokens.DIV, JetTokens.PERC, JetTokens.RANGE, JetTokens.IN_KEYWORD, JetTokens.NOT_IN, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ, JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.GT, JetTokens.LT, JetTokens.GTEQ, JetTokens.LTEQ -> true
-                JetTokens.EQ -> element.getLeft() is JetArrayAccessExpression
+                KtTokens.PLUS, KtTokens.MINUS, KtTokens.MUL, KtTokens.DIV, KtTokens.PERC, KtTokens.RANGE, KtTokens.IN_KEYWORD, KtTokens.NOT_IN, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ, KtTokens.DIVEQ, KtTokens.PERCEQ, KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ -> true
+                KtTokens.EQ -> element.getLeft() is KtArrayAccessExpression
                 else -> false
             }
         }
 
-        private fun isApplicableArrayAccess(element: JetArrayAccessExpression, caretOffset: Int): Boolean {
+        private fun isApplicableArrayAccess(element: KtArrayAccessExpression, caretOffset: Int): Boolean {
             val lbracket = element.getLeftBracket() ?: return false
             val rbracket = element.getRightBracket() ?: return false
             return lbracket.getTextRange().containsOffset(caretOffset) || rbracket.getTextRange().containsOffset(caretOffset)
         }
 
-        private fun isApplicableCall(element: JetCallExpression, caretOffset: Int): Boolean {
+        private fun isApplicableCall(element: KtCallExpression, caretOffset: Int): Boolean {
             val lbrace = (element.getValueArgumentList()?.getLeftParenthesis()
                           ?: element.getFunctionLiteralArguments().firstOrNull()?.getFunctionLiteral()?.getLeftCurlyBrace()
                           ?: return false) as PsiElement
@@ -73,55 +73,55 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             val resolvedCall = element.getResolvedCall(element.analyze())
             val descriptor = resolvedCall?.getResultingDescriptor()
             if (descriptor is FunctionDescriptor && descriptor.getName() == OperatorNameConventions.INVOKE) {
-                if (element.getParent() is JetDotQualifiedExpression &&
+                if (element.getParent() is KtDotQualifiedExpression &&
                     element.getCalleeExpression()?.getText() == OperatorNameConventions.INVOKE.asString()) return false
                 return element.getValueArgumentList() != null || element.getFunctionLiteralArguments().isNotEmpty()
             }
             return false
         }
 
-        private fun convertPrefix(element: JetPrefixExpression): JetExpression {
+        private fun convertPrefix(element: KtPrefixExpression): KtExpression {
             val op = element.getOperationReference().getReferencedNameElementType()
             val base = element.getBaseExpression()!!.getText()
 
             val call = when (op) {
-                JetTokens.PLUS -> "plus()"
-                JetTokens.MINUS -> "minus()"
-                JetTokens.PLUSPLUS -> "inc()"
-                JetTokens.MINUSMINUS -> "dec()"
-                JetTokens.EXCL -> "not()"
+                KtTokens.PLUS -> "plus()"
+                KtTokens.MINUS -> "minus()"
+                KtTokens.PLUSPLUS -> "inc()"
+                KtTokens.MINUSMINUS -> "dec()"
+                KtTokens.EXCL -> "not()"
                 else -> return element
             }
 
             val transformation = "$base.$call"
-            val transformed = JetPsiFactory(element).createExpression(transformation)
-            return element.replace(transformed) as JetExpression
+            val transformed = KtPsiFactory(element).createExpression(transformation)
+            return element.replace(transformed) as KtExpression
         }
 
-        private fun convertPostFix(element: JetPostfixExpression): JetExpression {
+        private fun convertPostFix(element: KtPostfixExpression): KtExpression {
             val op = element.getOperationReference().getReferencedNameElementType()
             val base = element.getBaseExpression()!!.getText()
 
             val call = when (op) {
-                JetTokens.PLUSPLUS -> "inc()"
-                JetTokens.MINUSMINUS -> "dec()"
+                KtTokens.PLUSPLUS -> "inc()"
+                KtTokens.MINUSMINUS -> "dec()"
                 else -> return element
             }
 
             val transformation = "$base.$call"
-            val transformed = JetPsiFactory(element).createExpression(transformation)
-            return element.replace(transformed) as JetExpression
+            val transformed = KtPsiFactory(element).createExpression(transformation)
+            return element.replace(transformed) as KtExpression
         }
 
-        private fun convertBinary(element: JetBinaryExpression): JetExpression {
+        private fun convertBinary(element: KtBinaryExpression): KtExpression {
             val op = element.getOperationReference().getReferencedNameElementType()
             val left = element.getLeft()!!
             val right = element.getRight()!!
             val leftText = left.getText()
             val rightText = right.getText()
 
-            if (op == JetTokens.EQ) {
-                if (left is JetArrayAccessExpression) {
+            if (op == KtTokens.EQ) {
+                if (left is KtArrayAccessExpression) {
                     convertArrayAccess(left)
                 }
                 return element
@@ -133,42 +133,42 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             val elemType = context.getType(left)
 
             val transformation = when (op) {
-                JetTokens.PLUS -> "$leftText.plus($rightText)"
-                JetTokens.MINUS -> "$leftText.minus($rightText)"
-                JetTokens.MUL -> "$leftText.times($rightText)"
-                JetTokens.DIV -> "$leftText.div($rightText)"
-                JetTokens.PERC -> "$leftText.mod($rightText)"
-                JetTokens.RANGE -> "$leftText.rangeTo($rightText)"
-                JetTokens.IN_KEYWORD -> "$rightText.contains($leftText)"
-                JetTokens.NOT_IN -> "!$rightText.contains($leftText)"
-                JetTokens.PLUSEQ -> if (functionName == "plusAssign") "$leftText.plusAssign($rightText)" else "$leftText = $leftText.plus($rightText)"
-                JetTokens.MINUSEQ -> if (functionName == "minusAssign") "$leftText.minusAssign($rightText)" else "$leftText = $leftText.minus($rightText)"
-                JetTokens.MULTEQ -> if (functionName == "multAssign") "$leftText.multAssign($rightText)" else "$leftText = $leftText.mult($rightText)"
-                JetTokens.DIVEQ -> if (functionName == "divAssign") "$leftText.divAssign($rightText)" else "$leftText = $leftText.div($rightText)"
-                JetTokens.PERCEQ -> if (functionName == "modAssign") "$leftText.modAssign($rightText)" else "$leftText = $leftText.mod($rightText)"
-                JetTokens.EQEQ -> if (elemType?.isMarkedNullable() ?: true) "$leftText?.equals($rightText) ?: $rightText.identityEquals(null)" else "$leftText.equals($rightText)"
-                JetTokens.EXCLEQ -> if (elemType?.isMarkedNullable() ?: true) "!($leftText?.equals($rightText) ?: $rightText.identityEquals(null))" else "!$leftText.equals($rightText)"
-                JetTokens.GT -> "$leftText.compareTo($rightText) > 0"
-                JetTokens.LT -> "$leftText.compareTo($rightText) < 0"
-                JetTokens.GTEQ -> "$leftText.compareTo($rightText) >= 0"
-                JetTokens.LTEQ -> "$leftText.compareTo($rightText) <= 0"
+                KtTokens.PLUS -> "$leftText.plus($rightText)"
+                KtTokens.MINUS -> "$leftText.minus($rightText)"
+                KtTokens.MUL -> "$leftText.times($rightText)"
+                KtTokens.DIV -> "$leftText.div($rightText)"
+                KtTokens.PERC -> "$leftText.mod($rightText)"
+                KtTokens.RANGE -> "$leftText.rangeTo($rightText)"
+                KtTokens.IN_KEYWORD -> "$rightText.contains($leftText)"
+                KtTokens.NOT_IN -> "!$rightText.contains($leftText)"
+                KtTokens.PLUSEQ -> if (functionName == "plusAssign") "$leftText.plusAssign($rightText)" else "$leftText = $leftText.plus($rightText)"
+                KtTokens.MINUSEQ -> if (functionName == "minusAssign") "$leftText.minusAssign($rightText)" else "$leftText = $leftText.minus($rightText)"
+                KtTokens.MULTEQ -> if (functionName == "multAssign") "$leftText.multAssign($rightText)" else "$leftText = $leftText.mult($rightText)"
+                KtTokens.DIVEQ -> if (functionName == "divAssign") "$leftText.divAssign($rightText)" else "$leftText = $leftText.div($rightText)"
+                KtTokens.PERCEQ -> if (functionName == "modAssign") "$leftText.modAssign($rightText)" else "$leftText = $leftText.mod($rightText)"
+                KtTokens.EQEQ -> if (elemType?.isMarkedNullable() ?: true) "$leftText?.equals($rightText) ?: $rightText.identityEquals(null)" else "$leftText.equals($rightText)"
+                KtTokens.EXCLEQ -> if (elemType?.isMarkedNullable() ?: true) "!($leftText?.equals($rightText) ?: $rightText.identityEquals(null))" else "!$leftText.equals($rightText)"
+                KtTokens.GT -> "$leftText.compareTo($rightText) > 0"
+                KtTokens.LT -> "$leftText.compareTo($rightText) < 0"
+                KtTokens.GTEQ -> "$leftText.compareTo($rightText) >= 0"
+                KtTokens.LTEQ -> "$leftText.compareTo($rightText) <= 0"
                 else -> return element
             }
 
-            val transformed = JetPsiFactory(element).createExpression(transformation)
+            val transformed = KtPsiFactory(element).createExpression(transformation)
 
-            return element.replace(transformed) as JetExpression
+            return element.replace(transformed) as KtExpression
         }
 
-        private fun convertArrayAccess(element: JetArrayAccessExpression): JetExpression {
+        private fun convertArrayAccess(element: KtArrayAccessExpression): KtExpression {
             val parent = element.getParent()
             val array = element.getArrayExpression()!!.getText()
             val indices = element.getIndicesNode()
             val indicesText = indices.getText()?.removeSurrounding("[","]") ?: throw AssertionError("Indices node of ArrayExpression shouldn't be null: JetArrayAccessExpression = ${element.getText()}")
 
             val transformation : String
-            val replaced : JetElement
-            if (parent is JetBinaryExpression && parent.getOperationReference().getReferencedNameElementType() == JetTokens.EQ) {
+            val replaced : KtElement
+            if (parent is KtBinaryExpression && parent.getOperationReference().getReferencedNameElementType() == KtTokens.EQ) {
                 // part of an assignment
                 val right = parent.getRight()!!.getText()
                 transformation = "$array.set($indicesText, $right)"
@@ -179,11 +179,11 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
                 replaced = element
             }
 
-            val transformed = JetPsiFactory(element).createExpression(transformation)
-            return replaced.replace(transformed) as JetExpression
+            val transformed = KtPsiFactory(element).createExpression(transformation)
+            return replaced.replace(transformed) as KtExpression
         }
 
-        private fun convertCall(element: JetCallExpression): JetExpression {
+        private fun convertCall(element: KtCallExpression): KtExpression {
             val callee = element.getCalleeExpression()!!
             val arguments = element.getValueArgumentList()
             val argumentString = arguments?.getText()?.removeSurrounding("(", ")")
@@ -191,18 +191,18 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             val calleeText = callee.getText()
             val transformation = "$calleeText.${OperatorNameConventions.INVOKE.asString()}" +
                                  (if (argumentString == null) "" else "($argumentString)")
-            val transformed = JetPsiFactory(element).createExpression(transformation)
+            val transformed = KtPsiFactory(element).createExpression(transformation)
             funcLitArgs.forEach { transformed.add(it) }
-            return callee.getParent()!!.replace(transformed) as JetExpression
+            return callee.getParent()!!.replace(transformed) as KtExpression
         }
 
-        public fun convert(element: JetExpression): Pair<JetExpression, JetSimpleNameExpression> {
+        public fun convert(element: KtExpression): Pair<KtExpression, KtSimpleNameExpression> {
             val result = when (element) {
-                is JetPrefixExpression -> convertPrefix(element)
-                is JetPostfixExpression -> convertPostFix(element)
-                is JetBinaryExpression -> convertBinary(element)
-                is JetArrayAccessExpression -> convertArrayAccess(element)
-                is JetCallExpression -> convertCall(element)
+                is KtPrefixExpression -> convertPrefix(element)
+                is KtPostfixExpression -> convertPostFix(element)
+                is KtBinaryExpression -> convertBinary(element)
+                is KtArrayAccessExpression -> convertArrayAccess(element)
+                is KtCallExpression -> convertCall(element)
                 else -> throw IllegalArgumentException(element.toString())
             }
 
@@ -211,34 +211,34 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             return result to callName
         }
 
-        private fun findCallName(result: JetExpression): JetSimpleNameExpression? {
+        private fun findCallName(result: KtExpression): KtSimpleNameExpression? {
             return when (result) {
-                is JetBinaryExpression -> {
-                    if (JetPsiUtil.isAssignment(result))
+                is KtBinaryExpression -> {
+                    if (KtPsiUtil.isAssignment(result))
                         findCallName(result.getRight()!!)
                     else
                         findCallName(result.getLeft()!!)
                 }
 
-                is JetUnaryExpression -> findCallName(result.getBaseExpression()!!)
+                is KtUnaryExpression -> findCallName(result.getBaseExpression()!!)
 
-                else -> result.getQualifiedElementSelector() as JetSimpleNameExpression?
+                else -> result.getQualifiedElementSelector() as KtSimpleNameExpression?
             }
         }
     }
 
-    override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
+    override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
         return when (element) {
-            is JetPrefixExpression -> isApplicablePrefix(element, caretOffset)
-            is JetPostfixExpression -> isApplicablePostfix(element, caretOffset)
-            is JetBinaryExpression -> isApplicableBinary(element, caretOffset)
-            is JetArrayAccessExpression -> isApplicableArrayAccess(element, caretOffset)
-            is JetCallExpression -> isApplicableCall(element, caretOffset)
+            is KtPrefixExpression -> isApplicablePrefix(element, caretOffset)
+            is KtPostfixExpression -> isApplicablePostfix(element, caretOffset)
+            is KtBinaryExpression -> isApplicableBinary(element, caretOffset)
+            is KtArrayAccessExpression -> isApplicableArrayAccess(element, caretOffset)
+            is KtCallExpression -> isApplicableCall(element, caretOffset)
             else -> false
         }
     }
 
-    override fun applyTo(element: JetExpression, editor: Editor) {
+    override fun applyTo(element: KtExpression, editor: Editor) {
         convert(element)
     }
 }

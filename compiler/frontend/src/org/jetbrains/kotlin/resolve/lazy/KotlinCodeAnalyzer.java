@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 public interface KotlinCodeAnalyzer extends TopLevelDescriptorProvider {
@@ -32,13 +32,13 @@ public interface KotlinCodeAnalyzer extends TopLevelDescriptorProvider {
     ModuleDescriptor getModuleDescriptor();
 
     @NotNull
-    ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject, @NotNull LookupLocation location);
+    ClassDescriptor getClassDescriptor(@NotNull KtClassOrObject classOrObject, @NotNull LookupLocation location);
 
     @NotNull
     BindingContext getBindingContext();
 
     @NotNull
-    DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration);
+    DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration);
 
     @NotNull
     DeclarationScopeProvider getDeclarationScopeProvider();

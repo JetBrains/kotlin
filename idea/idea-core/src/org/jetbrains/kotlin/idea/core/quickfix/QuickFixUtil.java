@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.DeferredType;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 public class QuickFixUtil {
     private QuickFixUtil() {
@@ -58,12 +58,12 @@ public class QuickFixUtil {
     }
 
     @Nullable
-    public static JetType getDeclarationReturnType(JetNamedDeclaration declaration) {
+    public static KtType getDeclarationReturnType(KtNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
-        if (!(file instanceof JetFile)) return null;
+        if (!(file instanceof KtFile)) return null;
         DeclarationDescriptor descriptor = ResolutionUtils.resolveToDescriptor(declaration);
         if (!(descriptor instanceof CallableDescriptor)) return null;
-        JetType type = ((CallableDescriptor) descriptor).getReturnType();
+        KtType type = ((CallableDescriptor) descriptor).getReturnType();
         if (type instanceof DeferredType) {
             type = ((DeferredType) type).getDelegate();
         }
@@ -71,17 +71,17 @@ public class QuickFixUtil {
     }
 
     @Nullable
-    public static JetType findLowerBoundOfOverriddenCallablesReturnTypes(@NotNull CallableDescriptor descriptor) {
-        JetType matchingReturnType = null;
+    public static KtType findLowerBoundOfOverriddenCallablesReturnTypes(@NotNull CallableDescriptor descriptor) {
+        KtType matchingReturnType = null;
         for (CallableDescriptor overriddenDescriptor : ((CallableDescriptor) descriptor).getOverriddenDescriptors()) {
-            JetType overriddenReturnType = overriddenDescriptor.getReturnType();
+            KtType overriddenReturnType = overriddenDescriptor.getReturnType();
             if (overriddenReturnType == null) {
                 return null;
             }
-            if (matchingReturnType == null || JetTypeChecker.DEFAULT.isSubtypeOf(overriddenReturnType, matchingReturnType)) {
+            if (matchingReturnType == null || KotlinTypeChecker.DEFAULT.isSubtypeOf(overriddenReturnType, matchingReturnType)) {
                 matchingReturnType = overriddenReturnType;
             }
-            else if (!JetTypeChecker.DEFAULT.isSubtypeOf(matchingReturnType, overriddenReturnType)) {
+            else if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(matchingReturnType, overriddenReturnType)) {
                 return null;
             }
         }
@@ -100,23 +100,23 @@ public class QuickFixUtil {
     }
 
     @Nullable
-    public static JetParameter getParameterDeclarationForValueArgument(
+    public static KtParameter getParameterDeclarationForValueArgument(
             @NotNull ResolvedCall<?> resolvedCall,
             @Nullable ValueArgument valueArgument
     ) {
         PsiElement declaration = safeGetDeclaration(CallUtilKt.getParameterForArgument(resolvedCall, valueArgument));
-        return declaration instanceof JetParameter ? (JetParameter) declaration : null;
+        return declaration instanceof KtParameter ? (KtParameter) declaration : null;
     }
 
-    private static boolean equalOrLastInThenOrElse(JetExpression thenOrElse, JetExpression expression) {
+    private static boolean equalOrLastInThenOrElse(KtExpression thenOrElse, KtExpression expression) {
         if (thenOrElse == expression) return true;
-        return thenOrElse instanceof JetBlockExpression && expression.getParent() == thenOrElse &&
-               PsiTreeUtil.getNextSiblingOfType(expression, JetExpression.class) == null;
+        return thenOrElse instanceof KtBlockExpression && expression.getParent() == thenOrElse &&
+               PsiTreeUtil.getNextSiblingOfType(expression, KtExpression.class) == null;
     }
 
     @Nullable
-    public static JetIfExpression getParentIfForBranch(@Nullable JetExpression expression) {
-        JetIfExpression ifExpression = PsiTreeUtil.getParentOfType(expression, JetIfExpression.class, true);
+    public static KtIfExpression getParentIfForBranch(@Nullable KtExpression expression) {
+        KtIfExpression ifExpression = PsiTreeUtil.getParentOfType(expression, KtIfExpression.class, true);
         if (ifExpression == null) return null;
         if (equalOrLastInThenOrElse(ifExpression.getThen(), expression)
             || equalOrLastInThenOrElse(ifExpression.getElse(), expression)) {
@@ -125,13 +125,13 @@ public class QuickFixUtil {
         return null;
     }
 
-    public static boolean canEvaluateTo(JetExpression parent, JetExpression child) {
+    public static boolean canEvaluateTo(KtExpression parent, KtExpression child) {
         if (parent == null || child == null) {
             return false;
         }
         while (parent != child) {
-            if (child.getParent() instanceof JetParenthesizedExpression) {
-                child = (JetExpression) child.getParent();
+            if (child.getParent() instanceof KtParenthesizedExpression) {
+                child = (KtExpression) child.getParent();
                 continue;
             }
             child = getParentIfForBranch(child);
@@ -140,22 +140,22 @@ public class QuickFixUtil {
         return true;
     }
 
-    public static boolean canFunctionOrGetterReturnExpression(@NotNull JetDeclaration functionOrGetter, @NotNull JetExpression expression) {
-        if (functionOrGetter instanceof JetFunctionLiteral) {
-            JetBlockExpression functionLiteralBody = ((JetFunctionLiteral) functionOrGetter).getBodyExpression();
+    public static boolean canFunctionOrGetterReturnExpression(@NotNull KtDeclaration functionOrGetter, @NotNull KtExpression expression) {
+        if (functionOrGetter instanceof KtFunctionLiteral) {
+            KtBlockExpression functionLiteralBody = ((KtFunctionLiteral) functionOrGetter).getBodyExpression();
             PsiElement returnedElement = functionLiteralBody == null ? null : functionLiteralBody.getLastChild();
-            return returnedElement instanceof JetExpression && canEvaluateTo((JetExpression) returnedElement, expression);
+            return returnedElement instanceof KtExpression && canEvaluateTo((KtExpression) returnedElement, expression);
         }
         else {
-            if (functionOrGetter instanceof JetWithExpressionInitializer && canEvaluateTo(((JetWithExpressionInitializer) functionOrGetter).getInitializer(), expression)) {
+            if (functionOrGetter instanceof KtWithExpressionInitializer && canEvaluateTo(((KtWithExpressionInitializer) functionOrGetter).getInitializer(), expression)) {
                 return true;
             }
-            JetReturnExpression returnExpression = PsiTreeUtil.getParentOfType(expression, JetReturnExpression.class);
+            KtReturnExpression returnExpression = PsiTreeUtil.getParentOfType(expression, KtReturnExpression.class);
             return returnExpression != null && canEvaluateTo(returnExpression.getReturnedExpression(), expression);
         }
     }
 
-    public static String renderTypeWithFqNameOnClash(JetType type, String nameToCheckAgainst) {
+    public static String renderTypeWithFqNameOnClash(KtType type, String nameToCheckAgainst) {
         FqName typeFqName = DescriptorUtils.getFqNameSafe(DescriptorUtils.getClassDescriptorForType(type));
         FqName fqNameToCheckAgainst = new FqName(nameToCheckAgainst);
         DescriptorRenderer renderer = typeFqName.shortName().equals(fqNameToCheckAgainst.shortName())

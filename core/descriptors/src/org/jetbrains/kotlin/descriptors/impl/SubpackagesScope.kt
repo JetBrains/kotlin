@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
 import java.util.ArrayList
 
-public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : JetScopeImpl() {
+public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : KtScopeImpl() {
     override fun getContainingDeclaration(): DeclarationDescriptor {
         return moduleDescriptor.getPackage(fqName)
     }

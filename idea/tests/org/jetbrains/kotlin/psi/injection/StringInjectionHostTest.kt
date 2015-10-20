@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.psi.injection
 
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.junit.Assert.*
 import com.intellij.openapi.util.TextRange
 import java.util.HashMap
@@ -99,34 +99,34 @@ public class StringInjectionHostTest: JetLiteFixture() {
         }
     }
 
-    private fun quoted(s: String): JetStringTemplateExpression {
+    private fun quoted(s: String): KtStringTemplateExpression {
         return stringExpression("\"$s\"")
     }
 
-    private fun tripleQuoted(s: String): JetStringTemplateExpression {
+    private fun tripleQuoted(s: String): KtStringTemplateExpression {
         return stringExpression("\"\"\"$s\"\"\"")
     }
 
-    private fun stringExpression(s: String): JetStringTemplateExpression {
-        return JetPsiFactory(getProject()).createExpression(s) as JetStringTemplateExpression
+    private fun stringExpression(s: String): KtStringTemplateExpression {
+        return KtPsiFactory(getProject()).createExpression(s) as KtStringTemplateExpression
     }
 
-    private fun JetStringTemplateExpression.assertNoInjection(range: TextRange): JetStringTemplateExpression {
+    private fun KtStringTemplateExpression.assertNoInjection(range: TextRange): KtStringTemplateExpression {
         assertTrue(isValidHost())
         assertFalse(createLiteralTextEscaper().decode(range, StringBuilder()))
         return this
     }
 
-    private fun JetStringTemplateExpression.assertOneLine() {
+    private fun KtStringTemplateExpression.assertOneLine() {
         assertTrue(createLiteralTextEscaper().isOneLine())
     }
 
-    private fun JetStringTemplateExpression.assertMultiLine() {
+    private fun KtStringTemplateExpression.assertMultiLine() {
         assertFalse(createLiteralTextEscaper().isOneLine())
     }
 
     //todo[nik] make private when KT-6382 is fixed
-    fun JetStringTemplateExpression.checkInjection(decoded: String, targetToSourceOffsets: Map<Int,Int>, rangeInHost: TextRange? = null) {
+    fun KtStringTemplateExpression.checkInjection(decoded: String, targetToSourceOffsets: Map<Int,Int>, rangeInHost: TextRange? = null) {
         assertTrue(isValidHost())
         for (prefix in listOf("", "prefix")) {
             val escaper = createLiteralTextEscaper()

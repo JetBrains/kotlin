@@ -19,26 +19,26 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.psi.JetValueArgumentList
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.KtValueArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class RemoveArgumentNameIntention
-  : JetSelfTargetingRangeIntention<JetValueArgument>(javaClass(), "Remove argument name") {
+  : JetSelfTargetingRangeIntention<KtValueArgument>(javaClass(), "Remove argument name") {
 
-    override fun applicabilityRange(element: JetValueArgument): TextRange? {
+    override fun applicabilityRange(element: KtValueArgument): TextRange? {
         if (!element.isNamed()) return null
 
-        val argumentList = element.getParent() as? JetValueArgumentList ?: return null
+        val argumentList = element.getParent() as? KtValueArgumentList ?: return null
         val arguments = argumentList.getArguments()
         if (arguments.takeWhile { it != element }.any { it.isNamed() }) return null
 
-        val callExpr = argumentList.getParent() as? JetExpression ?: return null
+        val callExpr = argumentList.getParent() as? KtExpression ?: return null
         val resolvedCall = callExpr.getResolvedCall(callExpr.analyze(BodyResolveMode.PARTIAL)) ?: return null
         val argumentMatch = resolvedCall.getArgumentMapping(element) as? ArgumentMatch ?: return null
         if (argumentMatch.valueParameter.getIndex() != arguments.indexOf(element)) return null
@@ -47,8 +47,8 @@ public class RemoveArgumentNameIntention
         return TextRange(element.startOffset, expression.startOffset)
     }
 
-    override fun applyTo(element: JetValueArgument, editor: Editor) {
-        val newArgument = JetPsiFactory(element).createArgument(element.getArgumentExpression()!!, null, element.getSpreadElement() != null)
+    override fun applyTo(element: KtValueArgument, editor: Editor) {
+        val newArgument = KtPsiFactory(element).createArgument(element.getArgumentExpression()!!, null, element.getSpreadElement() != null)
         element.replace(newArgument)
     }
 }

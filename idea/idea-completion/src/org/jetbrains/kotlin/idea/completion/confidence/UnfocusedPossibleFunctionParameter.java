@@ -34,17 +34,17 @@ public class UnfocusedPossibleFunctionParameter extends CompletionConfidence {
         // 2. The same but for the case when first expression is additionally surrounded with brackets
 
         PsiElement position = parameters.getPosition();
-        JetFunctionLiteralExpression functionLiteral = PsiTreeUtil.getParentOfType(
-                position, JetFunctionLiteralExpression.class);
+        KtFunctionLiteralExpression functionLiteral = PsiTreeUtil.getParentOfType(
+                position, KtFunctionLiteralExpression.class);
 
         if (functionLiteral != null) {
             PsiElement expectedReference = position.getParent();
-            if (expectedReference instanceof JetSimpleNameExpression) {
-                if (PsiTreeUtil.findChildOfType(functionLiteral, JetParameterList.class) == null) {
+            if (expectedReference instanceof KtSimpleNameExpression) {
+                if (PsiTreeUtil.findChildOfType(functionLiteral, KtParameterList.class) == null) {
                     {
                         // 1.
                         PsiElement expectedBlock = expectedReference.getParent();
-                        if (expectedBlock instanceof JetBlockExpression) {
+                        if (expectedBlock instanceof KtBlockExpression) {
                             if (expectedReference.getPrevSibling() == null) {
                                 return ThreeState.NO;
                             }
@@ -54,9 +54,9 @@ public class UnfocusedPossibleFunctionParameter extends CompletionConfidence {
                     {
                         // 2.
                         PsiElement expectedParenthesized = expectedReference.getParent();
-                        if (expectedParenthesized instanceof JetParenthesizedExpression) {
+                        if (expectedParenthesized instanceof KtParenthesizedExpression) {
                             PsiElement expectedBlock = expectedParenthesized.getParent();
-                            if (expectedBlock instanceof JetBlockExpression) {
+                            if (expectedBlock instanceof KtBlockExpression) {
                                 if (expectedParenthesized.getPrevSibling() == null) {
                                     return ThreeState.NO;
                                 }

@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.asJava;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
-public interface KotlinLightClass : PsiClass, KotlinLightElement<JetClassOrObject, PsiClass> {
+public interface KotlinLightClass : PsiClass, KotlinLightElement<KtClassOrObject, PsiClass> {
     public fun getFqName(): FqName
 }

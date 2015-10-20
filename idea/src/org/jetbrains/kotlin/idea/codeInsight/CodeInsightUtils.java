@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,33 +46,33 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
 public class CodeInsightUtils {
 
     @Nullable
-    public static JetExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) {
-        PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
+    public static KtExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) {
+        PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, KtExpression.class);
         if (element == null) return null;
 
         // TODO: Support binary operations in "Introduce..." refactorings
-        if (element instanceof JetOperationReferenceExpression
-            && ((JetOperationReferenceExpression) element).getReferencedNameElementType() != JetTokens.IDENTIFIER
-            && element.getParent() instanceof JetBinaryExpression) {
+        if (element instanceof KtOperationReferenceExpression
+            && ((KtOperationReferenceExpression) element).getReferencedNameElementType() != KtTokens.IDENTIFIER
+            && element.getParent() instanceof KtBinaryExpression) {
             return null;
         }
 
         // For cases like 'this@outerClass', don't return the label part
-        if (JetPsiUtil.isLabelIdentifierExpression(element)) {
-            element = PsiTreeUtil.getParentOfType(element, JetExpression.class);
+        if (KtPsiUtil.isLabelIdentifierExpression(element)) {
+            element = PsiTreeUtil.getParentOfType(element, KtExpression.class);
         }
 
-        if (element instanceof JetBlockExpression) {
-            List<JetExpression> statements = ((JetBlockExpression) element).getStatements();
+        if (element instanceof KtBlockExpression) {
+            List<KtExpression> statements = ((KtBlockExpression) element).getStatements();
             if (statements.size() == 1) {
-                JetExpression statement = statements.get(0);
+                KtExpression statement = statements.get(0);
                 if (statement.getText().equals(element.getText())) {
                     return statement;
                 }
             }
         }
 
-        JetExpression expression = (JetExpression) element;
+        KtExpression expression = (KtExpression) element;
 
         BindingContext context = ResolutionUtils.analyze(expression);
 
@@ -100,8 +100,8 @@ public class CodeInsightUtils {
         PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
         if (parent == null) return PsiElement.EMPTY_ARRAY;
         while (true) {
-            if (parent instanceof JetBlockExpression) break;
-            if (parent == null || parent instanceof JetFile) return PsiElement.EMPTY_ARRAY;
+            if (parent instanceof KtBlockExpression) break;
+            if (parent == null || parent instanceof KtFile) return PsiElement.EMPTY_ARRAY;
             parent = parent.getParent();
         }
 
@@ -120,8 +120,8 @@ public class CodeInsightUtils {
         }
 
         for (PsiElement element : array) {
-            if (!(element instanceof JetExpression
-                  || element.getNode().getElementType() == JetTokens.SEMICOLON
+            if (!(element instanceof KtExpression
+                  || element.getNode().getElementType() == KtTokens.SEMICOLON
                   || element instanceof PsiWhiteSpace
                   || element instanceof PsiComment)) {
                 return PsiElement.EMPTY_ARRAY;
@@ -132,7 +132,7 @@ public class CodeInsightUtils {
     }
 
     @Nullable
-    public static PsiElement findElementOfClassAtRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<JetExpression> aClass) {
+    public static PsiElement findElementOfClassAtRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<KtExpression> aClass) {
         // When selected range is this@Fo<select>o</select> we'd like to return `@Foo`
         // But it's PSI looks like: (AT IDENTIFIER):JetLabel
         // So if we search parent starting exactly at IDENTIFIER then we find nothing
@@ -145,17 +145,17 @@ public class CodeInsightUtils {
         startOffset = element1.getTextRange().getStartOffset();
         endOffset = element2.getTextRange().getEndOffset();
 
-        JetExpression jetExpression = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, aClass);
-        if (jetExpression == null ||
-            jetExpression.getTextRange().getStartOffset() != startOffset ||
-            jetExpression.getTextRange().getEndOffset() != endOffset) {
+        KtExpression ktExpression = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, aClass);
+        if (ktExpression == null ||
+            ktExpression.getTextRange().getStartOffset() != startOffset ||
+            ktExpression.getTextRange().getEndOffset() != endOffset) {
             return null;
         }
-        return jetExpression;
+        return ktExpression;
     }
 
     private static PsiElement getParentLabelOrElement(@Nullable PsiElement element) {
-        if (element != null && element.getParent() instanceof JetLabelReferenceExpression) {
+        if (element != null && element.getParent() instanceof KtLabelReferenceExpression) {
             return element.getParent();
         }
         return element;
@@ -223,7 +223,7 @@ public class CodeInsightUtils {
     }
 
     @Nullable
-    public static String defaultInitializer(JetType type) {
+    public static String defaultInitializer(KtType type) {
         if (type.isMarkedNullable()) {
             return "null";
         }
@@ -294,7 +294,7 @@ public class CodeInsightUtils {
     public static PsiElement getTopmostElementAtOffset(@NotNull PsiElement element, int offset) {
         do {
             PsiElement parent = element.getParent();
-            if (parent == null || (parent.getTextOffset() < offset) || parent instanceof JetBlockExpression) {
+            if (parent == null || (parent.getTextOffset() < offset) || parent instanceof KtBlockExpression) {
                 break;
             }
             element = parent;
@@ -312,7 +312,7 @@ public class CodeInsightUtils {
         }
         do {
             PsiElement parent = element.getParent();
-            if (parent == null || (parent.getTextOffset() < offset) || parent instanceof JetBlockExpression) {
+            if (parent == null || (parent.getTextOffset() < offset) || parent instanceof KtBlockExpression) {
                 break;
             }
             if (klass.isInstance(parent)) {

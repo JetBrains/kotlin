@@ -55,10 +55,20 @@ public inline operator fun <T> List<T>.component5(): T {
 /**
  * Returns `true` if [element] is found in the collection.
  */
-public operator fun <T> Iterable<T>.contains(element: T): Boolean {
+public operator fun <T> Iterable<T>.contains(element: @kotlin.internal.NoInfer T): Boolean {
     if (this is Collection)
         return contains(element)
     return indexOf(element) >= 0
+}
+
+/**
+ * Returns `true` if [element] is found in the collection.
+ */
+@Deprecated("Use 'containsRaw' instead.", ReplaceWith("containsRaw(element)"))
+@kotlin.jvm.JvmName("containsAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+public operator fun <T> Iterable<T>.contains(element: T): Boolean {
+    return containsRaw(element)
 }
 
 /**
@@ -249,7 +259,7 @@ public fun <T> List<T>.getOrNull(index: Int): T? {
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Iterable<T>.indexOf(element: T): Int {
+public fun <T> Iterable<T>.indexOf(element: @kotlin.internal.NoInfer T): Int {
     if (this is List) return this.indexOf(element)
     var index = 0
     for (item in this) {
@@ -258,6 +268,17 @@ public fun <T> Iterable<T>.indexOf(element: T): Int {
         index++
     }
     return -1
+}
+
+/**
+ * Returns first index of [element], or -1 if the collection does not contain element.
+ */
+@Deprecated("Use 'indexOfRaw' instead.", ReplaceWith("indexOfRaw(element)"))
+@kotlin.jvm.JvmName("indexOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+@Suppress("NOTHING_TO_INLINE")
+public fun <T> Iterable<T>.indexOf(element: T): Int {
+    return indexOfRaw(element)
 }
 
 /**
@@ -397,7 +418,7 @@ public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
+public fun <T> Iterable<T>.lastIndexOf(element: @kotlin.internal.NoInfer T): Int {
     if (this is List) return this.lastIndexOf(element)
     var lastIndex = -1
     var index = 0
@@ -407,6 +428,17 @@ public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
         index++
     }
     return lastIndex
+}
+
+/**
+ * Returns last index of [element], or -1 if the collection does not contain element.
+ */
+@Deprecated("Use 'indexOfRaw' instead.", ReplaceWith("indexOfRaw(element)"))
+@kotlin.jvm.JvmName("lastIndexOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+@Suppress("NOTHING_TO_INLINE")
+public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
+    return indexOfRaw(element)
 }
 
 /**

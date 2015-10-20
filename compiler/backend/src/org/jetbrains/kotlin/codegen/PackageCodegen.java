@@ -22,13 +22,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
-import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
@@ -42,13 +39,13 @@ import java.util.Collection;
 
 public class PackageCodegen {
     private final GenerationState state;
-    private final Collection<JetFile> files;
+    private final Collection<KtFile> files;
     private final PackageFragmentDescriptor packageFragment;
     private final PackageParts packageParts;
 
     public PackageCodegen(
             @NotNull GenerationState state,
-            @NotNull Collection<JetFile> files,
+            @NotNull Collection<KtFile> files,
             @NotNull FqName packageFqName
     ) {
         this.state = state;
@@ -58,7 +55,7 @@ public class PackageCodegen {
     }
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             try {
                 generateFile(file);
@@ -79,7 +76,7 @@ public class PackageCodegen {
     }
 
     @Nullable
-    private ClassBuilder generateFile(@NotNull JetFile file) {
+    private ClassBuilder generateFile(@NotNull KtFile file) {
         JvmFileClassInfo fileClassInfo = state.getFileClassesProvider().getFileClassInfo(file);
 
         if (fileClassInfo.getWithJvmMultifileClass()) {
@@ -91,18 +88,18 @@ public class PackageCodegen {
 
         boolean generatePackagePart = false;
 
-        for (JetDeclaration declaration : file.getDeclarations()) {
-            if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+        for (KtDeclaration declaration : file.getDeclarations()) {
+            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
                 generatePackagePart = true;
             }
-            else if (declaration instanceof JetClassOrObject) {
-                JetClassOrObject classOrObject = (JetClassOrObject) declaration;
+            else if (declaration instanceof KtClassOrObject) {
+                KtClassOrObject classOrObject = (KtClassOrObject) declaration;
                 if (state.getGenerateDeclaredClassFilter().shouldGenerateClass(classOrObject)) {
                     generateClassOrObject(classOrObject, packagePartContext);
                 }
             }
-            else if (declaration instanceof JetScript) {
-                JetScript script = (JetScript) declaration;
+            else if (declaration instanceof KtScript) {
+                KtScript script = (KtScript) declaration;
 
                 // SCRIPT: generate script code, should be separate execution branch
                 if (state.getGenerateDeclaredClassFilter().shouldGenerateScript(script)) {
@@ -126,7 +123,7 @@ public class PackageCodegen {
     @Nullable
     private PackageFragmentDescriptor getOnlyPackageFragment(@NotNull FqName expectedPackageFqName) {
         SmartList<PackageFragmentDescriptor> fragments = new SmartList<PackageFragmentDescriptor>();
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             PackageFragmentDescriptor fragment = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
             assert fragment != null : "package fragment is null for " + file + "\n" + file.getText();
 
@@ -147,7 +144,7 @@ public class PackageCodegen {
         return fragments.get(0);
     }
 
-    public void generateClassOrObject(@NotNull JetClassOrObject classOrObject, @NotNull PackageContext packagePartContext) {
+    public void generateClassOrObject(@NotNull KtClassOrObject classOrObject, @NotNull PackageContext packagePartContext) {
         MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null);
     }
 
@@ -155,7 +152,7 @@ public class PackageCodegen {
         return packageParts;
     }
 
-    public Collection<JetFile> getFiles() {
+    public Collection<KtFile> getFiles() {
         return files;
     }
 

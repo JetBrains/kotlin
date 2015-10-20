@@ -26,14 +26,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetDelegationSpecifier;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtDelegationSpecifier;
+import org.jetbrains.kotlin.psi.KtFile;
 
-public class RemoveSupertypeFix extends KotlinQuickFixAction<JetDelegationSpecifier> {
-    private final JetDelegationSpecifier superClass;
+public class RemoveSupertypeFix extends KotlinQuickFixAction<KtDelegationSpecifier> {
+    private final KtDelegationSpecifier superClass;
 
-    public RemoveSupertypeFix(@NotNull JetDelegationSpecifier superClass) {
+    public RemoveSupertypeFix(@NotNull KtDelegationSpecifier superClass) {
         super(superClass);
         this.superClass = superClass;
     }
@@ -51,14 +51,14 @@ public class RemoveSupertypeFix extends KotlinQuickFixAction<JetDelegationSpecif
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
         // Find the preceding comma and delete it as well.
         // We must ignore whitespaces and comments when looking for the comma.
         PsiElement prevSibling = superClass.getPrevSibling();
         assert prevSibling != null: "A PSI element should exist before supertype declaration";
         ASTNode prev = PsiImplUtil.skipWhitespaceAndCommentsBack(prevSibling.getNode());
         assert prev != null: "A non-whitespace element should exist before supertype declaration";
-        if (prev.getElementType() == JetTokens.COMMA) {
+        if (prev.getElementType() == KtTokens.COMMA) {
             prev.getPsi().delete();
         }
         superClass.delete();
@@ -67,8 +67,8 @@ public class RemoveSupertypeFix extends KotlinQuickFixAction<JetDelegationSpecif
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<JetDelegationSpecifier> createAction(Diagnostic diagnostic) {
-                JetDelegationSpecifier superClass = QuickFixUtil.getParentElementOfType(diagnostic, JetDelegationSpecifier.class);
+            public KotlinQuickFixAction<KtDelegationSpecifier> createAction(Diagnostic diagnostic) {
+                KtDelegationSpecifier superClass = QuickFixUtil.getParentElementOfType(diagnostic, KtDelegationSpecifier.class);
                 if (superClass == null) return null;
                 return new RemoveSupertypeFix(superClass);
             }

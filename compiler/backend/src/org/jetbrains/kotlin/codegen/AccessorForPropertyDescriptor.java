@@ -25,21 +25,21 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetSuperExpression;
+import org.jetbrains.kotlin.psi.KtSuperExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collections;
 
 public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implements AccessorForCallableDescriptor<PropertyDescriptor> {
     private final PropertyDescriptor calleeDescriptor;
-    private final JetSuperExpression superCallExpression;
+    private final KtSuperExpression superCallExpression;
     @NotNull private final String nameSuffix;
 
     public AccessorForPropertyDescriptor(
             @NotNull PropertyDescriptor property,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable JetSuperExpression superCallExpression,
+            @Nullable KtSuperExpression superCallExpression,
             @NotNull String nameSuffix
     ) {
         this(property, property.getType(), DescriptorUtils.getReceiverParameterType(property.getExtensionReceiverParameter()),
@@ -48,11 +48,11 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
 
     protected AccessorForPropertyDescriptor(
             @NotNull PropertyDescriptor original,
-            @NotNull JetType propertyType,
-            @Nullable JetType receiverType,
+            @NotNull KtType propertyType,
+            @Nullable KtType receiverType,
             @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable JetSuperExpression superCallExpression,
+            @Nullable KtSuperExpression superCallExpression,
             @NotNull String nameSuffix
     ) {
         super(containingDeclaration, null, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
@@ -84,7 +84,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
 
         @Nullable
         @Override
-        public JetSuperExpression getSuperCallExpression() {
+        public KtSuperExpression getSuperCallExpression() {
             return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getSuperCallExpression();
         }
 
@@ -108,7 +108,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
 
         @Nullable
         @Override
-        public JetSuperExpression getSuperCallExpression() {
+        public KtSuperExpression getSuperCallExpression() {
             return ((AccessorForPropertyDescriptor) getCorrespondingProperty()).getSuperCallExpression();
         }
     }
@@ -120,7 +120,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     }
 
     @Override
-    public JetSuperExpression getSuperCallExpression() {
+    public KtSuperExpression getSuperCallExpression() {
         return superCallExpression;
     }
 

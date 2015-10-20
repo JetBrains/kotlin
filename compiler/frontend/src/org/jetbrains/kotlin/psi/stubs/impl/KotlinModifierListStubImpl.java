@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetModifierList;
+import org.jetbrains.kotlin.psi.KtModifierList;
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetModifierListElementType;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
+import org.jetbrains.kotlin.psi.stubs.elements.KtModifierListElementType;
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 
-public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<JetModifierList> implements KotlinModifierListStub {
+public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtModifierList> implements KotlinModifierListStub {
 
     private final int mask;
 
-    public KotlinModifierListStubImpl(StubElement parent, int mask, @NotNull JetModifierListElementType<?> elementType) {
+    public KotlinModifierListStubImpl(StubElement parent, int mask, @NotNull KtModifierListElementType<?> elementType) {
         super(parent, elementType);
         this.mask = mask;
     }
@@ -37,7 +37,7 @@ public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<JetModifierLi
     }
 
     @Override
-    public boolean hasModifier(@NotNull JetModifierKeywordToken modifierToken) {
+    public boolean hasModifier(@NotNull KtModifierKeywordToken modifierToken) {
         return ModifierMaskUtils.maskHasModifier(mask, modifierToken);
     }
 

@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.projectView
 
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 
 public class KotlinProblemFileHighlightFilter : Condition<VirtualFile> {
-    override fun value(t: VirtualFile): Boolean = t.fileType == JetFileType.INSTANCE
+    override fun value(t: VirtualFile): Boolean = t.fileType == KotlinFileType.INSTANCE
 }

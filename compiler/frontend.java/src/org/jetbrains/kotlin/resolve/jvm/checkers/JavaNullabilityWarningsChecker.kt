@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPostfixExpression
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 
 public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
-    private fun JetType.mayBeNull(): ErrorsJvm.NullabilityInformationSource? {
+    private fun KtType.mayBeNull(): ErrorsJvm.NullabilityInformationSource? {
         if (!isError() && !isFlexible() && TypeUtils.isNullableType(this)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
 
         if (isFlexible() && TypeUtils.isNullableType(flexibility().lowerBound)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
@@ -52,7 +52,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         return null
     }
 
-    private fun JetType.mustNotBeNull(): ErrorsJvm.NullabilityInformationSource? {
+    private fun KtType.mustNotBeNull(): ErrorsJvm.NullabilityInformationSource? {
         if (!isError() && !isFlexible() && !TypeUtils.isNullableType(this)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
 
         if (isFlexible() && !TypeUtils.isNullableType(flexibility().upperBound)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
@@ -62,8 +62,8 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     }
 
     private fun doCheckType(
-            expressionType: JetType,
-            expectedType: JetType,
+            expressionType: KtType,
+            expectedType: KtType,
             dataFlowValue: DataFlowValue,
             dataFlowInfo: DataFlowInfo,
             reportWarning: (expectedMustNotBeNull: ErrorsJvm.NullabilityInformationSource, actualMayBeNull: ErrorsJvm.NullabilityInformationSource) -> Unit
@@ -85,7 +85,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
     }
 
-    override fun checkType(expression: JetExpression, expressionType: JetType, expressionTypeWithSmartCast: JetType, c: ResolutionContext<*>) {
+    override fun checkType(expression: KtExpression, expressionType: KtType, expressionTypeWithSmartCast: KtType, c: ResolutionContext<*>) {
         doCheckType(
                 expressionType,
                 c.expectedType,
@@ -98,7 +98,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
 
         when (expression) {
-            is JetWhenExpression ->
+            is KtWhenExpression ->
                     if (expression.getElseExpression() == null) {
                         // Check for conditionally-exhaustive when on platform enums, see KT-6399
                         val type = expression.getSubjectExpression()?.let { c.trace.getType(it) } ?: return
@@ -112,8 +112,8 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                             }
                         }
                     }
-            is JetPostfixExpression ->
-                    if (expression.getOperationToken() == JetTokens.EXCLEXCL) {
+            is KtPostfixExpression ->
+                    if (expression.getOperationToken() == KtTokens.EXCLEXCL) {
                         val baseExpression = expression.getBaseExpression() ?: return
                         val baseExpressionType = c.trace.getType(baseExpression) ?: return
                         doIfNotNull(
@@ -123,9 +123,9 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                             c.trace.report(Errors.UNNECESSARY_NOT_NULL_ASSERTION.on(expression.getOperationReference(), baseExpressionType))
                         }
                     }
-            is JetBinaryExpression ->
+            is KtBinaryExpression ->
                 when (expression.getOperationToken()) {
-                    JetTokens.ELVIS -> {
+                    KtTokens.ELVIS -> {
                         val baseExpression = expression.getLeft()
                         val baseExpressionType = baseExpression?.let{ c.trace.getType(it) } ?: return
                         doIfNotNull(
@@ -135,10 +135,10 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                             c.trace.report(Errors.USELESS_ELVIS.on(expression, baseExpressionType))
                         }
                     }
-                    JetTokens.EQEQ,
-                    JetTokens.EXCLEQ,
-                    JetTokens.EQEQEQ,
-                    JetTokens.EXCLEQEQEQ -> {
+                    KtTokens.EQEQ,
+                    KtTokens.EXCLEQ,
+                    KtTokens.EQEQEQ,
+                    KtTokens.EXCLEQEQEQ -> {
                         if (expression.getLeft() != null && expression.getRight() != null) {
                             SenselessComparisonChecker.checkSenselessComparisonWithNull(
                                     expression, expression.getLeft()!!, expression.getRight()!!, c,

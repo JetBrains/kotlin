@@ -35,8 +35,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.DuplicateJvmSignatureUtilKt;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.types.Flexibility;
@@ -121,10 +121,10 @@ public abstract class BaseDiagnosticsTest extends
             List<TestFile> files
     );
 
-    protected List<JetFile> getJetFiles(List<? extends TestFile> testFiles, boolean includeExtras) {
+    protected List<KtFile> getJetFiles(List<? extends TestFile> testFiles, boolean includeExtras) {
         boolean declareFlexibleType = false;
         boolean declareCheckType = false;
-        List<JetFile> jetFiles = Lists.newArrayList();
+        List<KtFile> jetFiles = Lists.newArrayList();
         for (TestFile testFile : testFiles) {
             if (testFile.getJetFile() != null) {
                 jetFiles.add(testFile.getJetFile());
@@ -240,7 +240,7 @@ public abstract class BaseDiagnosticsTest extends
         public final String expectedText;
         private final TestModule module;
         private final String clearText;
-        private final JetFile jetFile;
+        private final KtFile jetFile;
         private final Condition<Diagnostic> whatDiagnosticsToConsider;
         private final boolean declareCheckType;
         private final boolean declareFlexibleType;
@@ -325,7 +325,7 @@ public abstract class BaseDiagnosticsTest extends
         }
 
         @Nullable
-        public JetFile getJetFile() {
+        public KtFile getJetFile() {
             return jetFile;
         }
 
@@ -398,8 +398,8 @@ public abstract class BaseDiagnosticsTest extends
 
         private Set<Diagnostic> computeJvmSignatureDiagnostics(BindingContext bindingContext) {
             Set<Diagnostic> jvmSignatureDiagnostics = new HashSet<Diagnostic>();
-            Collection<JetDeclaration> declarations = PsiTreeUtil.findChildrenOfType(jetFile, JetDeclaration.class);
-            for (JetDeclaration declaration : declarations) {
+            Collection<KtDeclaration> declarations = PsiTreeUtil.findChildrenOfType(jetFile, KtDeclaration.class);
+            for (KtDeclaration declaration : declarations) {
                 Diagnostics diagnostics = DuplicateJvmSignatureUtilKt.getJvmSignatureDiagnostics(declaration, bindingContext.getDiagnostics(),
                                                                                                  GlobalSearchScope.allScope(getProject()));
                 if (diagnostics == null) continue;

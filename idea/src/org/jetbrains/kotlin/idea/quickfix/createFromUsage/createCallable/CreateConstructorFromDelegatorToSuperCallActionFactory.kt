@@ -28,19 +28,19 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.SecondaryConstructorInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetDelegatorToSuperCall
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDelegatorToSuperCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.Variance
 
-object CreateConstructorFromDelegatorToSuperCallActionFactory : CreateCallableMemberFromUsageFactory<JetDelegatorToSuperCall>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetDelegatorToSuperCall? {
-        return diagnostic.psiElement.getStrictParentOfType<JetDelegatorToSuperCall>()
+object CreateConstructorFromDelegatorToSuperCallActionFactory : CreateCallableMemberFromUsageFactory<KtDelegatorToSuperCall>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtDelegatorToSuperCall? {
+        return diagnostic.psiElement.getStrictParentOfType<KtDelegatorToSuperCall>()
     }
 
-    override fun createCallableInfo(element: JetDelegatorToSuperCall, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtDelegatorToSuperCall, diagnostic: Diagnostic): CallableInfo? {
         val typeReference = element.calleeExpression.typeReference ?: return null
 
         val project = element.project
@@ -49,7 +49,7 @@ object CreateConstructorFromDelegatorToSuperCallActionFactory : CreateCallableMe
         val superClassDescriptor = superType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
         if (superClassDescriptor.kind != ClassKind.CLASS) return null
         val targetClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, superClassDescriptor) ?: return null
-        if (!(targetClass.canRefactor() && (targetClass is JetClass || targetClass is PsiClass))) return null
+        if (!(targetClass.canRefactor() && (targetClass is KtClass || targetClass is PsiClass))) return null
 
         val anyType = superClassDescriptor.builtIns.nullableAnyType
         val parameters = element.valueArguments.map {

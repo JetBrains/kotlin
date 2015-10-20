@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.types.expressions.typeInfoFactory
 
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo
 
@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.types.expressions.JetTypeInfo
  * Functions in this file are intended to create type info instances in different circumstances
  */
 
-public fun createTypeInfo(type: JetType?, dataFlowInfo: DataFlowInfo): JetTypeInfo = JetTypeInfo(type, dataFlowInfo)
+public fun createTypeInfo(type: KtType?, dataFlowInfo: DataFlowInfo): JetTypeInfo = JetTypeInfo(type, dataFlowInfo)
 
-public fun createTypeInfo(type: JetType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): JetTypeInfo =
+public fun createTypeInfo(type: KtType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): JetTypeInfo =
         JetTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
 
-public fun createTypeInfo(type: JetType?): JetTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
+public fun createTypeInfo(type: KtType?): JetTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
 
-public fun createTypeInfo(type: JetType?, context: ResolutionContext<*>): JetTypeInfo = createTypeInfo(type, context.dataFlowInfo)
+public fun createTypeInfo(type: KtType?, context: ResolutionContext<*>): JetTypeInfo = createTypeInfo(type, context.dataFlowInfo)
 
 public fun noTypeInfo(dataFlowInfo: DataFlowInfo): JetTypeInfo = createTypeInfo(null, dataFlowInfo)
 

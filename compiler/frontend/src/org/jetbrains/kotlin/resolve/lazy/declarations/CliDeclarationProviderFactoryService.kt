@@ -18,20 +18,20 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
 import java.util.ArrayList
 
-public class CliDeclarationProviderFactoryService(private val sourceFiles: Collection<JetFile>) : DeclarationProviderFactoryService() {
+public class CliDeclarationProviderFactoryService(private val sourceFiles: Collection<KtFile>) : DeclarationProviderFactoryService() {
 
     override fun create(
             project: Project,
             storageManager: StorageManager,
-            syntheticFiles: Collection<JetFile>,
+            syntheticFiles: Collection<KtFile>,
             filesScope: GlobalSearchScope
     ): DeclarationProviderFactory {
-        val allFiles = ArrayList<JetFile>()
+        val allFiles = ArrayList<KtFile>()
         sourceFiles.filterTo(allFiles) {
             val vFile = it.getVirtualFile().sure { "Source files should be physical files" }
             filesScope.contains(vFile)

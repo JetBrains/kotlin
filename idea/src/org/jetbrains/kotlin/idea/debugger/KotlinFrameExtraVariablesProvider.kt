@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import java.util.LinkedHashSet
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
@@ -43,7 +43,7 @@ public class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
     override fun isAvailable(sourcePosition: SourcePosition?, evalContext: EvaluationContext?): Boolean {
         if (sourcePosition == null) return false
         if (sourcePosition.getLine() < 0) return false
-        return sourcePosition.getFile().getFileType() == JetFileType.INSTANCE && DebuggerSettings.getInstance().AUTO_VARIABLES_MODE
+        return sourcePosition.getFile().getFileType() == KotlinFileType.INSTANCE && DebuggerSettings.getInstance().AUTO_VARIABLES_MODE
     }
 
     override fun collectVariables(sourcePosition: SourcePosition?, evalContext: EvaluationContext?, alreadyCollected: Set<String>?
@@ -101,16 +101,16 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
     return expressions
 }
 
-private fun getContainingElement(element: PsiElement): JetElement? {
-    val contElement = PsiTreeUtil.getParentOfType(element, javaClass<JetDeclaration>()) ?: PsiTreeUtil.getParentOfType(element, javaClass<JetElement>())
-    if (contElement is JetProperty && contElement.isLocal()) {
+private fun getContainingElement(element: PsiElement): KtElement? {
+    val contElement = PsiTreeUtil.getParentOfType(element, javaClass<KtDeclaration>()) ?: PsiTreeUtil.getParentOfType(element, javaClass<KtElement>())
+    if (contElement is KtProperty && contElement.isLocal()) {
         val parent = contElement.getParent()
         if (parent != null) {
             return getContainingElement(parent)
         }
     }
 
-    if (contElement is JetDeclarationWithBody) {
+    if (contElement is KtDeclarationWithBody) {
         return contElement.getBodyExpression()
     }
     return contElement
@@ -130,24 +130,24 @@ private fun shouldSkipLine(file: PsiFile, doc: Document, line: Int): Boolean {
 
     val elemAtOffset = file.findElementAt(start)
     val topmostElementAtOffset = CodeInsightUtils.getTopmostElementAtOffset(elemAtOffset!!, start)
-    return topmostElementAtOffset !is JetDeclaration
+    return topmostElementAtOffset !is KtDeclaration
 }
 
 private class VariablesCollector(
         private val myLineRange: TextRange,
         private val myExpressions: MutableSet<TextWithImports>
-) : JetTreeVisitorVoid() {
+) : KtTreeVisitorVoid() {
 
-    override fun visitJetElement(element: JetElement) {
+    override fun visitJetElement(element: KtElement) {
         if (element.isInRange()) {
             super.visitJetElement(element)
         }
     }
 
-    override fun visitQualifiedExpression(expression: JetQualifiedExpression) {
+    override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
         if (expression.isInRange()) {
             val selector = expression.getSelectorExpression()
-            if (selector is JetReferenceExpression) {
+            if (selector is KtReferenceExpression) {
                 if (isRefToProperty(selector)) {
                     myExpressions.add(expression.createText())
                     return
@@ -157,7 +157,7 @@ private class VariablesCollector(
         super.visitQualifiedExpression(expression)
     }
 
-    private fun isRefToProperty(expression: JetReferenceExpression): Boolean {
+    private fun isRefToProperty(expression: KtReferenceExpression): Boolean {
         val context = expression.analyzeFully()
         val descriptor = context[BindingContext.REFERENCE_TARGET, expression]
         if (descriptor is PropertyDescriptor) {
@@ -168,7 +168,7 @@ private class VariablesCollector(
         return false
     }
 
-    override fun visitReferenceExpression(expression: JetReferenceExpression) {
+    override fun visitReferenceExpression(expression: KtReferenceExpression) {
         if (expression.isInRange()) {
             if (isRefToProperty(expression)) {
                 myExpressions.add(expression.createText())
@@ -177,22 +177,22 @@ private class VariablesCollector(
         super.visitReferenceExpression(expression)
     }
 
-    private fun JetElement.isInRange(): Boolean = myLineRange.intersects(this.getTextRange())
-    private fun JetElement.createText(): TextWithImports = TextWithImportsImpl(CodeFragmentKind.EXPRESSION, this.getText())
+    private fun KtElement.isInRange(): Boolean = myLineRange.intersects(this.getTextRange())
+    private fun KtElement.createText(): TextWithImports = TextWithImportsImpl(CodeFragmentKind.EXPRESSION, this.getText())
 
-    override fun visitClass(klass: JetClass) {
+    override fun visitClass(klass: KtClass) {
         // Do not show expressions used in local classes
     }
 
-    override fun visitNamedFunction(function: JetNamedFunction) {
+    override fun visitNamedFunction(function: KtNamedFunction) {
         // Do not show expressions used in local functions
     }
 
-    override fun visitObjectLiteralExpression(expression: JetObjectLiteralExpression) {
+    override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
         // Do not show expressions used in anonymous objects
     }
 
-    override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression) {
+    override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
         // Do not show expressions used in lambdas
     }
 }

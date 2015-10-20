@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.types;
 import org.jetbrains.annotations.Nullable;
 
 public class TypeReconstructionResult {
-    private final JetType resultingType;
+    private final KtType resultingType;
     private final boolean allArgumentsInferred;
 
-    public TypeReconstructionResult(@Nullable JetType resultingType, boolean allArgumentsInferred) {
+    public TypeReconstructionResult(@Nullable KtType resultingType, boolean allArgumentsInferred) {
         this.resultingType = resultingType;
         this.allArgumentsInferred = allArgumentsInferred;
     }
 
     @Nullable
-    public JetType getResultingType() {
+    public KtType getResultingType() {
         return resultingType;
     }
 

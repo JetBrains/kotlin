@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetParameter
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages, skipWrite
 package server
 

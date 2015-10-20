@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -256,31 +256,31 @@ object DynamicOperatorCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean =
             callInfo.callableDescriptor.isDynamic() &&
             callInfo.resolvedCall.getCall().getCallElement() let {
-                it is JetOperationExpression &&
-                PsiUtils.getOperationToken(it) let { (it == JetTokens.NOT_IN || OperatorTable.hasCorrespondingOperator(it)) }
+                it is KtOperationExpression &&
+                PsiUtils.getOperationToken(it) let { (it == KtTokens.NOT_IN || OperatorTable.hasCorrespondingOperator(it)) }
             }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
-        val callElement = resolvedCall.getCall().getCallElement() as JetOperationExpression
+        val callElement = resolvedCall.getCall().getCallElement() as KtOperationExpression
         val operationToken = PsiUtils.getOperationToken(callElement)
 
         val arguments = argumentsInfo.translateArguments
 
         return when (callElement) {
-            is JetBinaryExpression -> {
+            is KtBinaryExpression -> {
                 // `!in` translated as `in` and will be wrapped by negation operation in BinaryOperationTranslator#translateAsOverloadedBinaryOperation by mayBeWrapWithNegation
-                val operationTokenToFind = if (operationToken == JetTokens.NOT_IN) JetTokens.IN_KEYWORD else operationToken
+                val operationTokenToFind = if (operationToken == KtTokens.NOT_IN) KtTokens.IN_KEYWORD else operationToken
                 val binaryOperator = OperatorTable.getBinaryOperator(operationTokenToFind)
 
-                if (operationTokenToFind == JetTokens.IN_KEYWORD)
+                if (operationTokenToFind == KtTokens.IN_KEYWORD)
                     JsBinaryOperation(binaryOperator, arguments[0], dispatchReceiver)
                 else
                     JsBinaryOperation(binaryOperator, dispatchReceiver, arguments[0])
             }
-            is JetPrefixExpression -> {
+            is KtPrefixExpression -> {
                 JsPrefixOperation(OperatorTable.getUnaryOperator(operationToken), dispatchReceiver)
             }
-            is JetPostfixExpression -> {
+            is KtPostfixExpression -> {
                 // TODO drop hack with ":JsExpression" when KT-5569 will be fixed
                 @Suppress("USELESS_CAST")
                 (JsPostfixOperation(OperatorTable.getUnaryOperator(operationToken), dispatchReceiver) as JsExpression)

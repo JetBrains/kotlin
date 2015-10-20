@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,10 +45,10 @@ public class ConstraintsUtil {
         TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintSystem);
         if (firstConflictingParameter == null) return Collections.emptyList();
 
-        Collection<JetType> conflictingTypes = constraintSystem.getTypeBounds(firstConflictingParameter).getValues();
+        Collection<KtType> conflictingTypes = constraintSystem.getTypeBounds(firstConflictingParameter).getValues();
 
         List<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
-        for (JetType type : conflictingTypes) {
+        for (KtType type : conflictingTypes) {
             Map<TypeConstructor, TypeProjection> context = Maps.newLinkedHashMap();
             context.put(firstConflictingParameter.getTypeConstructor(), new TypeProjectionImpl(type));
             substitutionContexts.add(context);
@@ -57,7 +57,7 @@ public class ConstraintsUtil {
         for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeVariables()) {
             if (typeParameter == firstConflictingParameter) continue;
 
-            JetType safeType = getSafeValue(constraintSystem, typeParameter);
+            KtType safeType = getSafeValue(constraintSystem, typeParameter);
             for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
                 TypeProjection typeProjection = new TypeProjectionImpl(safeType);
                 context.put(typeParameter.getTypeConstructor(), typeProjection);
@@ -71,8 +71,8 @@ public class ConstraintsUtil {
     }
 
     @NotNull
-    public static JetType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeParameterDescriptor typeParameter) {
-        JetType type = constraintSystem.getTypeBounds(typeParameter).getValue();
+    public static KtType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeParameterDescriptor typeParameter) {
+        KtType type = constraintSystem.getTypeBounds(typeParameter).getValue();
         if (type != null) {
             return type;
         }
@@ -85,16 +85,16 @@ public class ConstraintsUtil {
             @NotNull TypeParameterDescriptor typeParameter,
             boolean substituteOtherTypeParametersInBound
     ) {
-        JetType type = constraintSystem.getTypeBounds(typeParameter).getValue();
+        KtType type = constraintSystem.getTypeBounds(typeParameter).getValue();
         if (type == null) return true;
-        for (JetType upperBound : typeParameter.getUpperBounds()) {
+        for (KtType upperBound : typeParameter.getUpperBounds()) {
             if (!substituteOtherTypeParametersInBound && TypeUtils.dependsOnTypeParameters(upperBound, constraintSystem.getTypeVariables())) {
                 continue;
             }
-            JetType substitutedUpperBound = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
+            KtType substitutedUpperBound = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
             assert substitutedUpperBound != null : "We wanted to substitute projections as a result for " + typeParameter;
-            if (!JetTypeChecker.DEFAULT.isSubtypeOf(type, substitutedUpperBound)) {
+            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(type, substitutedUpperBound)) {
                 return false;
             }
         }

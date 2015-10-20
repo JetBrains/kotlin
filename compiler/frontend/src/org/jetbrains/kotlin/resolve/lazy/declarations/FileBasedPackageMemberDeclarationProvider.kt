@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
@@ -25,7 +25,7 @@ public class FileBasedPackageMemberDeclarationProvider(
         storageManager: StorageManager,
         private val fqName: FqName,
         private val factory: FileBasedDeclarationProviderFactory,
-        private val packageFiles: Collection<JetFile>)
+        private val packageFiles: Collection<KtFile>)
 : AbstractPsiBasedDeclarationProvider(storageManager), PackageMemberDeclarationProvider {
 
     private val allDeclaredSubPackages = storageManager.createLazyValue<Collection<FqName>> {

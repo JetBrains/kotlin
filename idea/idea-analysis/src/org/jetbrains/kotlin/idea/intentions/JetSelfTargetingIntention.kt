@@ -29,12 +29,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.HashMap
 
-public abstract class JetSelfTargetingIntention<TElement : JetElement>(
+public abstract class JetSelfTargetingIntention<TElement : KtElement>(
         public val elementType: Class<TElement>,
         private var text: String,
         private val familyName: String = text
@@ -109,7 +109,7 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
     companion object {
         private val intentionBasedInspections = HashMap<Class<out JetSelfTargetingIntention<*>>, IntentionBasedInspection<*>?>()
 
-        fun <TElement : JetElement> findInspection(intentionClass: Class<out JetSelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
+        fun <TElement : KtElement> findInspection(intentionClass: Class<out JetSelfTargetingIntention<TElement>>): IntentionBasedInspection<TElement>? {
             if (intentionBasedInspections.containsKey(intentionClass)) {
                 @Suppress("UNCHECKED_CAST")
                 return intentionBasedInspections[intentionClass] as IntentionBasedInspection<TElement>?
@@ -129,7 +129,7 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
     }
 }
 
-public abstract class JetSelfTargetingRangeIntention<TElement : JetElement>(
+public abstract class JetSelfTargetingRangeIntention<TElement : KtElement>(
         elementType: Class<TElement>,
         text: String,
         familyName: String = text
@@ -143,7 +143,7 @@ public abstract class JetSelfTargetingRangeIntention<TElement : JetElement>(
     }
 }
 
-public abstract class JetSelfTargetingOffsetIndependentIntention<TElement : JetElement>(
+public abstract class JetSelfTargetingOffsetIndependentIntention<TElement : KtElement>(
         elementType: Class<TElement>,
         text: String,
         familyName: String = text

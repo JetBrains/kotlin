@@ -4,15 +4,15 @@ import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.psi.PsiElement
 import com.intellij.util.Range
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import javax.swing.Icon
 
 public class KotlinMethodSmartStepTarget(
-        val resolvedElement: JetElement,
+        val resolvedElement: KtElement,
         label: String,
         highlightElement: PsiElement,
         lines: Range<Int>

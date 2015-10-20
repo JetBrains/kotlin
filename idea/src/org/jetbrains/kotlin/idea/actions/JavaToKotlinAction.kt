@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.io.IOException
 import java.util.ArrayList
@@ -74,7 +74,7 @@ public class JavaToKotlinAction : AnAction() {
             return result
         }
 
-        fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project, enableExternalCodeProcessing: Boolean = true): List<JetFile> {
+        fun convertFiles(javaFiles: List<PsiJavaFile>, project: Project, enableExternalCodeProcessing: Boolean = true): List<KtFile> {
             ApplicationManager.getApplication().saveAll()
 
             var converterResult: JavaToKotlinConverter.FilesResult? = null
@@ -121,7 +121,7 @@ public class JavaToKotlinAction : AnAction() {
                     FileEditorManager.getInstance(project).openFile(it, true)
                 }
 
-                newFiles.map { it.toPsiFile(project) as JetFile }
+                newFiles.map { it.toPsiFile(project) as KtFile }
             }
         }
     }

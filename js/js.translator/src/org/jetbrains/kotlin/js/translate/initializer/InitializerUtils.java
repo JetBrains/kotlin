@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetObjectDeclaration;
-import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtObjectDeclaration;
+import org.jetbrains.kotlin.psi.KtProperty;
 
 import java.util.List;
 
@@ -48,8 +48,8 @@ public final class InitializerUtils {
     }
 
     @Nullable
-    public static JsStatement generateInitializerForDelegate(@NotNull TranslationContext context, @NotNull JetProperty property) {
-        JetExpression delegate = property.getDelegateExpression();
+    public static JsStatement generateInitializerForDelegate(@NotNull TranslationContext context, @NotNull KtProperty property) {
+        KtExpression delegate = property.getDelegateExpression();
         if (delegate != null) {
             JsExpression value = Translation.translateAsExpression(delegate, context);
             String name = property.getName();
@@ -60,7 +60,7 @@ public final class InitializerUtils {
     }
 
     public static void generateObjectInitializer(
-            @NotNull JetObjectDeclaration declaration,
+            @NotNull KtObjectDeclaration declaration,
             @NotNull List<JsStatement> initializers,
             @NotNull TranslationContext context
     ) {

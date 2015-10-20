@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -40,7 +40,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
         super.handleInsert(context, item)
 
         val file = context.getFile()
-        if (file is JetFile) {
+        if (file is KtFile) {
             if (!context.isAfterDot()) {
                 val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
                 psiDocumentManager.commitAllDocuments()
@@ -52,7 +52,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
 
                 // first try to resolve short name for faster handling
                 val token = file.findElementAt(startOffset)
-                val nameRef = token!!.getParent() as? JetNameReferenceExpression
+                val nameRef = token!!.getParent() as? KtNameReferenceExpression
                 if (nameRef != null) {
                     val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
                     val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, nameRef]

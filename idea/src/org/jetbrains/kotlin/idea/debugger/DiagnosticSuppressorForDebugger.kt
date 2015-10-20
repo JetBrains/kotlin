@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.debugger
 
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 
@@ -27,7 +27,7 @@ public class DiagnosticSuppressorForDebugger : DiagnosticsWithSuppression.Diagno
         val element = diagnostic.getPsiElement()
         val containingFile = element.getContainingFile()
 
-        if (containingFile is JetFile && containingFile.suppressDiagnosticsInDebugMode) {
+        if (containingFile is KtFile && containingFile.suppressDiagnosticsInDebugMode) {
             val diagnosticFactory = diagnostic.getFactory()
             return diagnosticFactory == Errors.INVISIBLE_MEMBER ||
                    diagnosticFactory == Errors.INVISIBLE_REFERENCE ||

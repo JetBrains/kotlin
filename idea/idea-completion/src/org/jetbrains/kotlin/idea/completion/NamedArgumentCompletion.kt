@@ -20,24 +20,24 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.util.*
 
 object NamedArgumentCompletion {
-    public fun isOnlyNamedArgumentExpected(nameExpression: JetSimpleNameExpression): Boolean {
-        val thisArgument = nameExpression.parent as? JetValueArgument ?: return false
+    public fun isOnlyNamedArgumentExpected(nameExpression: KtSimpleNameExpression): Boolean {
+        val thisArgument = nameExpression.parent as? KtValueArgument ?: return false
         if (thisArgument.isNamed()) return false
 
-        val callElement = thisArgument.getStrictParentOfType<JetCallElement>() ?: return false
+        val callElement = thisArgument.getStrictParentOfType<KtCallElement>() ?: return false
 
         return callElement.valueArguments
                 .takeWhile { it != thisArgument }
@@ -45,7 +45,7 @@ object NamedArgumentCompletion {
     }
 
     public fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>) {
-        val nameToParameterType = HashMap<Name, MutableSet<JetType>>()
+        val nameToParameterType = HashMap<Name, MutableSet<KtType>>()
         for (expectedInfo in expectedInfos) {
             val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue
             for (parameter in argumentData.namedArgumentCandidates) {
@@ -59,7 +59,7 @@ object NamedArgumentCompletion {
             val lookupElement = LookupElementBuilder.create(nameString)
                     .withPresentableText("$nameString =")
                     .withTailText(" $typeText")
-                    .withIcon(JetIcons.PARAMETER)
+                    .withIcon(KtIcons.PARAMETER)
                     .withInsertHandler(NamedArgumentInsertHandler(name))
                     .assignPriority(ItemPriority.NAMED_PARAMETER)
             collector.addElement(lookupElement)

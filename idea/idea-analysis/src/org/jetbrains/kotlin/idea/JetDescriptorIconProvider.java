@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.KtElement;
 
 import javax.swing.*;
 
@@ -38,7 +38,7 @@ public final class JetDescriptorIconProvider {
 
     @NotNull
     public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration, @Iconable.IconFlags int flags) {
-        if (declaration != null && !(declaration instanceof JetElement)) {
+        if (declaration != null && !(declaration instanceof KtElement)) {
             return declaration.getIcon(flags);
         }
 
@@ -84,7 +84,7 @@ public final class JetDescriptorIconProvider {
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             if (functionDescriptor.getExtensionReceiverParameter() != null) {
-                return JetIcons.EXTENSION_FUNCTION;
+                return KtIcons.EXTENSION_FUNCTION;
             }
 
             if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
@@ -96,38 +96,38 @@ public final class JetDescriptorIconProvider {
                 }
             }
             else {
-                return JetIcons.FUNCTION;
+                return KtIcons.FUNCTION;
             }
         }
         if (descriptor instanceof ClassDescriptor) {
             switch (((ClassDescriptor) descriptor).getKind()) {
                 case INTERFACE:
-                    return JetIcons.TRAIT;
+                    return KtIcons.TRAIT;
                 case ENUM_CLASS:
-                    return JetIcons.ENUM;
+                    return KtIcons.ENUM;
                 case ENUM_ENTRY:
-                    return JetIcons.ENUM;
+                    return KtIcons.ENUM;
                 case ANNOTATION_CLASS:
                     return PlatformIcons.ANNOTATION_TYPE_ICON;
                 case OBJECT:
-                    return JetIcons.OBJECT;
+                    return KtIcons.OBJECT;
                 case CLASS:
-                    return JetIcons.CLASS;
+                    return KtIcons.CLASS;
                 default:
                     LOG.warn("No icon for descriptor: " + descriptor);
                     return null;
             }
         }
         if (descriptor instanceof ValueParameterDescriptor) {
-            return JetIcons.PARAMETER;
+            return KtIcons.PARAMETER;
         }
 
         if (descriptor instanceof LocalVariableDescriptor) {
-            return ((VariableDescriptor) descriptor).isVar() ? JetIcons.VAR : JetIcons.VAL;
+            return ((VariableDescriptor) descriptor).isVar() ? KtIcons.VAR : KtIcons.VAL;
         }
 
         if (descriptor instanceof PropertyDescriptor) {
-            return ((VariableDescriptor) descriptor).isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
+            return ((VariableDescriptor) descriptor).isVar() ? KtIcons.FIELD_VAR : KtIcons.FIELD_VAL;
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {

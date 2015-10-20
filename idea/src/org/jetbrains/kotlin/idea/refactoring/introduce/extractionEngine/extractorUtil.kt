@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.Stro
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder
+import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.codeFragmentUtil.DEBUG_TYPE_REFERENCE_STRING
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.ArrayList
@@ -84,7 +84,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
                 }
         )
 
-        fun JetType.typeAsString(): String {
+        fun KtType.typeAsString(): String {
             return if (descriptor.extractionData.options.allowSpecialClassNames && isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
         }
 
@@ -127,20 +127,20 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
     }
 }
 
-fun JetType.isSpecial(): Boolean {
+fun KtType.isSpecial(): Boolean {
     val classDescriptor = this.constructor.declarationDescriptor as? ClassDescriptor ?: return false
     return classDescriptor.name.isSpecial || DescriptorUtils.isLocal(classDescriptor)
 }
 
-fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNameExpression, JetSimpleNameExpression> {
-    val map = HashMap<JetSimpleNameExpression, JetSimpleNameExpression>()
+fun createNameCounterpartMap(from: KtElement, to: KtElement): Map<KtSimpleNameExpression, KtSimpleNameExpression> {
+    val map = HashMap<KtSimpleNameExpression, KtSimpleNameExpression>()
 
     val fromOffset = from.getTextRange()!!.getStartOffset()
     from.accept(
-            object : JetTreeVisitorVoid() {
-                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+            object : KtTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                     val offset = expression.getTextRange()!!.getStartOffset() - fromOffset
-                    val newExpression = to.findElementAt(offset)?.getNonStrictParentOfType<JetSimpleNameExpression>()
+                    val newExpression = to.findElementAt(offset)?.getNonStrictParentOfType<KtSimpleNameExpression>()
                     assert(newExpression != null) { "Couldn't find expression at $offset in '${to.getText()}'" }
 
                     map[expression] = newExpression!!
@@ -230,23 +230,23 @@ private fun ExtractableCodeDescriptor.getOccurrenceContainer(): PsiElement? {
 
 private fun makeCall(
         extractableDescriptor: ExtractableCodeDescriptor,
-        declaration: JetNamedDeclaration,
+        declaration: KtNamedDeclaration,
         controlFlow: ControlFlow,
         rangeToReplace: JetPsiRange,
         arguments: List<String>) {
-    fun insertCall(anchor: PsiElement, wrappedCall: JetExpression) {
-        val firstExpression = rangeToReplace.elements.firstOrNull { it is JetExpression } as? JetExpression
+    fun insertCall(anchor: PsiElement, wrappedCall: KtExpression) {
+        val firstExpression = rangeToReplace.elements.firstOrNull { it is KtExpression } as? KtExpression
         if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
-            val functionLiteralArgument = firstExpression?.getStrictParentOfType<JetFunctionLiteralArgument>()!!
+            val functionLiteralArgument = firstExpression?.getStrictParentOfType<KtFunctionLiteralArgument>()!!
             functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
             return
         }
 
-        if (anchor is JetOperationReferenceExpression) {
-            val operationExpression = anchor.parent as? JetOperationExpression ?: return
+        if (anchor is KtOperationReferenceExpression) {
+            val operationExpression = anchor.parent as? KtOperationExpression ?: return
             val newNameExpression = when (operationExpression) {
-                is JetUnaryExpression -> OperatorToFunctionIntention.convert(operationExpression).second
-                is JetBinaryExpression -> {
+                is KtUnaryExpression -> OperatorToFunctionIntention.convert(operationExpression).second
+                is KtBinaryExpression -> {
                     InfixCallToOrdinaryIntention.convert(operationExpression).getCalleeExpressionIfAny()
                 }
                 else -> null
@@ -272,7 +272,7 @@ private fun makeCall(
 
     val calleeName = declaration.getName()
     val callText = when (declaration) {
-        is JetNamedFunction -> {
+        is KtNamedFunction -> {
             val argumentsText = arguments.joinToString(separator = ", ", prefix = "(", postfix = ")")
             val typeArguments = extractableDescriptor.typeParameters.map { it.originalDeclaration.name }
             val typeArgumentsText = with(typeArguments) {
@@ -283,10 +283,10 @@ private fun makeCall(
         else -> calleeName
     }
 
-    val anchorInBlock = sequence(anchor) { it.getParent() }.firstOrNull { it.getParent() is JetBlockExpression }
-    val block = (anchorInBlock?.getParent() as? JetBlockExpression) ?: anchorParent
+    val anchorInBlock = sequence(anchor) { it.getParent() }.firstOrNull { it.getParent() is KtBlockExpression }
+    val block = (anchorInBlock?.getParent() as? KtBlockExpression) ?: anchorParent
 
-    val psiFactory = JetPsiFactory(anchor.getProject())
+    val psiFactory = KtPsiFactory(anchor.getProject())
     val newLine = psiFactory.createNewLine()
 
     if (controlFlow.outputValueBoxer is AsTuple && controlFlow.outputValues.size() > 1 && controlFlow.outputValues.all { it is Initializer }) {
@@ -294,7 +294,7 @@ private fun makeCall(
         val isVar = declarationsToMerge.first().isVar()
         if (declarationsToMerge.all { it.isVar() == isVar }) {
             controlFlow.declarationsToCopy.subtract(declarationsToMerge).forEach {
-                block.addBefore(psiFactory.createDeclaration<JetDeclaration>(it.getText()!!), anchorInBlock) as JetDeclaration
+                block.addBefore(psiFactory.createDeclaration<KtDeclaration>(it.getText()!!), anchorInBlock) as KtDeclaration
                 block.addBefore(newLine, anchorInBlock)
             }
 
@@ -320,10 +320,10 @@ private fun makeCall(
                 controlFlow.outputValueBoxer.getUnboxingExpressions(resultVal)
             }
 
-    val copiedDeclarations = HashMap<JetDeclaration, JetDeclaration>()
+    val copiedDeclarations = HashMap<KtDeclaration, KtDeclaration>()
     for (decl in controlFlow.declarationsToCopy) {
-        val declCopy = psiFactory.createDeclaration<JetDeclaration>(decl.getText()!!)
-        copiedDeclarations[decl] = block.addBefore(declCopy, anchorInBlock) as JetDeclaration
+        val declCopy = psiFactory.createDeclaration<KtDeclaration>(decl.getText()!!)
+        copiedDeclarations[decl] = block.addBefore(declCopy, anchorInBlock) as KtDeclaration
         block.addBefore(newLine, anchorInBlock)
     }
 
@@ -336,7 +336,7 @@ private fun makeCall(
         return when (outputValue) {
             is OutputValue.ExpressionValue -> {
                 val exprText = if (outputValue.callSiteReturn) {
-                    val firstReturn = outputValue.originalExpressions.filterIsInstance<JetReturnExpression>().firstOrNull()
+                    val firstReturn = outputValue.originalExpressions.filterIsInstance<KtReturnExpression>().firstOrNull()
                     val label = firstReturn?.getTargetLabel()?.getText() ?: ""
                     "return$label $callText"
                 }
@@ -370,7 +370,7 @@ private fun makeCall(
             }
 
             is Initializer -> {
-                val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as JetProperty
+                val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as KtProperty
                 newProperty.setInitializer(psiFactory.createExpression(callText))
                 Collections.emptyList()
             }
@@ -398,7 +398,7 @@ private fun makeCall(
         if (!inlinableCall) {
             block.addBefore(newLine, anchorInBlock)
         }
-        insertCall(anchor, wrapCall(it, unboxingExpressions[it]!!).first() as JetExpression)
+        insertCall(anchor, wrapCall(it, unboxingExpressions[it]!!).first() as KtExpression)
     }
 
     if (anchor.isValid()) {
@@ -407,12 +407,12 @@ private fun makeCall(
 }
 
 fun ExtractionGeneratorConfiguration.generateDeclaration(
-        declarationToReplace: JetNamedDeclaration? = null
+        declarationToReplace: KtNamedDeclaration? = null
 ): ExtractionResult{
-    val psiFactory = JetPsiFactory(descriptor.extractionData.originalFile)
-    val nameByOffset = HashMap<Int, JetElement>()
+    val psiFactory = KtPsiFactory(descriptor.extractionData.originalFile)
+    val nameByOffset = HashMap<Int, KtElement>()
 
-    fun createDeclaration(): JetNamedDeclaration {
+    fun createDeclaration(): KtNamedDeclaration {
         return with(descriptor.extractionData) {
             if (generatorOptions.inTempFile) {
                 createTemporaryDeclaration("${getDeclarationText()}\n")
@@ -423,7 +423,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
     }
 
-    fun getReturnArguments(resultExpression: JetExpression?): List<String> {
+    fun getReturnArguments(resultExpression: KtExpression?): List<String> {
         return descriptor.controlFlow.outputValues
                 .map {
                     when (it) {
@@ -438,12 +438,12 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     }
 
     fun replaceWithReturn(
-            originalExpression: JetExpression,
-            replacingExpression: JetReturnExpression,
-            expressionToUnifyWith: JetExpression?
+            originalExpression: KtExpression,
+            replacingExpression: KtReturnExpression,
+            expressionToUnifyWith: KtExpression?
     ) {
         val currentResultExpression =
-                if (originalExpression is JetReturnExpression) originalExpression.getReturnedExpression() else originalExpression
+                if (originalExpression is KtReturnExpression) originalExpression.getReturnedExpression() else originalExpression
         if (currentResultExpression == null) return
 
         val newResultExpression = descriptor.controlFlow.defaultOutputValue?.let {
@@ -458,10 +458,10 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         nameByOffset.entrySet().forEach { e -> counterpartMap[e.getValue()]?.let { e.setValue(it) } }
     }
 
-    fun getCounterparts<T : JetExpression>(originalExpressions: Collection<T>,
-                                           body: JetExpression,
-                                           bodyOffset: Int,
-                                           file: PsiFile): List<T> {
+    fun getCounterparts<T : KtExpression>(originalExpressions: Collection<T>,
+                                                                   body: KtExpression,
+                                                                   bodyOffset: Int,
+                                                                   file: PsiFile): List<T> {
         return originalExpressions.map { originalExpression ->
             val offsetInBody = originalExpression.getTextRange()!!.getStartOffset() - descriptor.extractionData.originalStartOffset!!
             file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType(originalExpression.javaClass)
@@ -469,11 +469,11 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
     }
 
-    fun adjustDeclarationBody(declaration: JetNamedDeclaration) {
+    fun adjustDeclarationBody(declaration: KtNamedDeclaration) {
         val body = declaration.getGeneratedBody()
 
-        val exprReplacementMap = HashMap<JetElement, (ExtractableCodeDescriptor, JetElement) -> JetElement>()
-        val originalOffsetByExpr = LinkedHashMap<JetElement, Int>()
+        val exprReplacementMap = HashMap<KtElement, (ExtractableCodeDescriptor, KtElement) -> KtElement>()
+        val originalOffsetByExpr = LinkedHashMap<KtElement, Int>()
 
         val bodyOffset = body.getBlockContentOffset()
         val file = body.getContainingFile()!!
@@ -483,7 +483,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
          * before calls/types themselves
          */
         for ((offsetInBody, resolveResult) in descriptor.extractionData.refOffsetToDeclaration.entrySet().sortedByDescending { it.key }) {
-            val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType<JetSimpleNameExpression>()
+            val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType<KtSimpleNameExpression>()
             assert(expr != null) { "Couldn't find expression at $offsetInBody in '${body.getText()}'" }
 
             originalOffsetByExpr[expr!!] = offsetInBody
@@ -493,11 +493,11 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             }
         }
 
-        val replacingReturn: JetExpression?
-        val expressionsToReplaceWithReturn: List<JetElement>
+        val replacingReturn: KtExpression?
+        val expressionsToReplaceWithReturn: List<KtElement>
 
         val returnsForLabelRemoval = descriptor.controlFlow.outputValues
-                .flatMapTo(ArrayList<JetReturnExpression>()) { it.originalExpressions.filterIsInstance<JetReturnExpression>() }
+                .flatMapTo(ArrayList<KtReturnExpression>()) { it.originalExpressions.filterIsInstance<KtReturnExpression>() }
 
         val jumpValue = descriptor.controlFlow.jumpOutputValue
         if (jumpValue != null) {
@@ -526,7 +526,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         if (generatorOptions.target == ExtractionTarget.PROPERTY_WITH_INITIALIZER) return
 
-        if (body !is JetBlockExpression) throw AssertionError("Block body expected: ${descriptor.extractionData.codeFragmentText}")
+        if (body !is KtBlockExpression) throw AssertionError("Block body expected: ${descriptor.extractionData.codeFragmentText}")
 
         val firstExpression = body.getStatements().firstOrNull()
         if (firstExpression != null) {
@@ -541,13 +541,13 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         val defaultValue = descriptor.controlFlow.defaultOutputValue
 
         val lastExpression = body.getStatements().lastOrNull()
-        if (lastExpression is JetReturnExpression) return
+        if (lastExpression is KtReturnExpression) return
 
         val (defaultExpression, expressionToUnifyWith) =
                 if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
                     val varNameValidator = NewDeclarationNameValidator(body, lastExpression, NewDeclarationNameValidator.Target.VARIABLES)
                     val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue.valueType, varNameValidator, null).first()
-                    val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.getText()}"), lastExpression) as JetProperty
+                    val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.getText()}"), lastExpression) as KtProperty
                     body.addBefore(psiFactory.createNewLine(), lastExpression)
                     psiFactory.createExpression(resultVal) to newDecl.getInitializer()!!
                 }
@@ -579,27 +579,27 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         if (generatorOptions.allowExpressionBody) {
             val convertToExpressionBody = ConvertToExpressionBodyIntention()
             val bodyExpression = body.getStatements().singleOrNull()
-            val bodyOwner = body.getParent() as JetDeclarationWithBody
+            val bodyOwner = body.getParent() as KtDeclarationWithBody
             if (bodyExpression != null && !bodyExpression.isMultiLine() && convertToExpressionBody.isApplicableTo(bodyOwner)) {
                 convertToExpressionBody.applyTo(bodyOwner, !descriptor.returnType.isFlexible())
             }
         }
     }
 
-    fun insertDeclaration(declaration: JetNamedDeclaration, anchor: PsiElement): JetNamedDeclaration {
-        declarationToReplace?.let { return it.replace(declaration) as JetNamedDeclaration }
+    fun insertDeclaration(declaration: KtNamedDeclaration, anchor: PsiElement): KtNamedDeclaration {
+        declarationToReplace?.let { return it.replace(declaration) as KtNamedDeclaration }
 
         return with(descriptor.extractionData) {
             val targetContainer = anchor.getParent()!!
             val emptyLines = psiFactory.createWhiteSpace("\n\n")
             if (insertBefore) {
-                val declarationInFile = targetContainer.addBefore(declaration, anchor) as JetNamedDeclaration
+                val declarationInFile = targetContainer.addBefore(declaration, anchor) as KtNamedDeclaration
                 targetContainer.addBefore(emptyLines, anchor)
 
                 declarationInFile
             }
             else {
-                val declarationInFile = targetContainer.addAfter(declaration, anchor) as JetNamedDeclaration
+                val declarationInFile = targetContainer.addAfter(declaration, anchor) as KtNamedDeclaration
                 targetContainer.addAfter(emptyLines, anchor)
 
                 declarationInFile
@@ -629,7 +629,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     val declaration = createDeclaration().let { if (shouldInsert) insertDeclaration(it, anchor) else it }
     adjustDeclarationBody(declaration)
 
-    if (declaration is JetNamedFunction && declaration.getContainingJetFile().suppressDiagnosticsInDebugMode) {
+    if (declaration is KtNamedFunction && declaration.getContainingJetFile().suppressDiagnosticsInDebugMode) {
         declaration.getReceiverTypeReference()?.debugTypeInfo = descriptor.receiverParameter?.getParameterType(true)
 
         for ((i, param) in declaration.getValueParameters().withIndex()) {
@@ -654,7 +654,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
     if (descriptor.typeParameters.isNotEmpty()) {
         for (ref in ReferencesSearch.search(declaration, LocalSearchScope(descriptor.getOccurrenceContainer()!!))) {
-            val typeArgumentList = (ref.element.parent as? JetCallExpression)?.typeArgumentList ?: continue
+            val typeArgumentList = (ref.element.parent as? KtCallExpression)?.typeArgumentList ?: continue
             if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(typeArgumentList, false)) {
                 typeArgumentList.delete()
             }

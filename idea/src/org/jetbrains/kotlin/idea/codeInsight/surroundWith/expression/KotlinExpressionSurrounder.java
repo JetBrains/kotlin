@@ -24,11 +24,11 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.psi.JetCallExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetQualifiedExpression;
+import org.jetbrains.kotlin.psi.KtCallExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnit;
 
@@ -36,30 +36,30 @@ public abstract class KotlinExpressionSurrounder implements Surrounder {
 
     @Override
     public boolean isApplicable(@NotNull PsiElement[] elements) {
-        if (elements.length != 1 || !(elements[0] instanceof JetExpression)) {
+        if (elements.length != 1 || !(elements[0] instanceof KtExpression)) {
             return false;
         }
 
-        JetExpression expression = (JetExpression) elements[0];
-        if (expression instanceof JetCallExpression && expression.getParent() instanceof JetQualifiedExpression) {
+        KtExpression expression = (KtExpression) elements[0];
+        if (expression instanceof KtCallExpression && expression.getParent() instanceof KtQualifiedExpression) {
             return false;
         }
-        JetType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+        KtType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         if (type == null || isUnit(type)) {
             return false;
         }
         return isApplicable(expression);
     }
 
-    protected abstract boolean isApplicable(@NotNull JetExpression expression);
+    protected abstract boolean isApplicable(@NotNull KtExpression expression);
 
     @Nullable
     @Override
     public TextRange surroundElements(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement[] elements) {
         assert elements.length == 1 : "KotlinExpressionSurrounder should be applicable only for 1 expression: " + elements.length;
-        return surroundExpression(project, editor, (JetExpression) elements[0]);
+        return surroundExpression(project, editor, (KtExpression) elements[0]);
     }
 
     @Nullable
-    protected abstract TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull JetExpression expression);
+    protected abstract TextRange surroundExpression(@NotNull Project project, @NotNull Editor editor, @NotNull KtExpression expression);
 }

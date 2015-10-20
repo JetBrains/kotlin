@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.references.AbstractJetReference
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 fun checkConflictsAndReplaceUsageInfos(result: MutableList<UsageInfo>) {
     val usagesToAdd = ArrayList<UsageInfo>()
@@ -55,8 +55,8 @@ class UnresolvableConventionViolationUsageInfo(
     override fun getDescription(): String = JetRefactoringBundle.message("naming.convention.will.be.violated.after.rename")
 }
 
-fun dropOverrideKeywordIfNecessary(element: JetNamedDeclaration) {
+fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
     if ((element.resolveToDescriptor() as CallableDescriptor).overriddenDescriptors.isEmpty()) {
-        element.removeModifier(JetTokens.OVERRIDE_KEYWORD)
+        element.removeModifier(KtTokens.OVERRIDE_KEYWORD)
     }
 }

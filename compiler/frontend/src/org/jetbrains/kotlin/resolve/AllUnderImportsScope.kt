@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.Printer
 
-class AllUnderImportsScope(descriptor: DeclarationDescriptor) : JetScope {
+class AllUnderImportsScope(descriptor: DeclarationDescriptor) : KtScope {
     private val scopes = if (descriptor is ClassDescriptor) {
         listOf(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope)
     }
@@ -51,19 +51,19 @@ class AllUnderImportsScope(descriptor: DeclarationDescriptor) : JetScope {
         return scopes.flatMap { it.getFunctions(name, location) }
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         return scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes, name, location) }
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>): Collection<PropertyDescriptor> {
         return scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes) }
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>): Collection<FunctionDescriptor> {
         return scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes) }
     }
 

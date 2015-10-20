@@ -33,36 +33,36 @@ public final class AccessTranslationUtils {
     }
 
     @NotNull
-    public static AccessTranslator getAccessTranslator(@NotNull JetExpression referenceExpression,
+    public static AccessTranslator getAccessTranslator(@NotNull KtExpression referenceExpression,
                                                        @NotNull TranslationContext context) {
         return getAccessTranslator(referenceExpression, context, false);
     }
 
     @NotNull
-    public static AccessTranslator getAccessTranslator(@NotNull JetExpression referenceExpression,
+    public static AccessTranslator getAccessTranslator(@NotNull KtExpression referenceExpression,
             @NotNull TranslationContext context, boolean forceOrderOfEvaluation) {
-        assert ((referenceExpression instanceof JetReferenceExpression) ||
-                (referenceExpression instanceof JetQualifiedExpression));
-        if (referenceExpression instanceof JetQualifiedExpression) {
-            return QualifiedExpressionTranslator.getAccessTranslator((JetQualifiedExpression) referenceExpression, context, forceOrderOfEvaluation);
+        assert ((referenceExpression instanceof KtReferenceExpression) ||
+                (referenceExpression instanceof KtQualifiedExpression));
+        if (referenceExpression instanceof KtQualifiedExpression) {
+            return QualifiedExpressionTranslator.getAccessTranslator((KtQualifiedExpression) referenceExpression, context, forceOrderOfEvaluation);
         }
-        if (referenceExpression instanceof JetSimpleNameExpression) {
-            return ReferenceTranslator.getAccessTranslator((JetSimpleNameExpression) referenceExpression, context);
+        if (referenceExpression instanceof KtSimpleNameExpression) {
+            return ReferenceTranslator.getAccessTranslator((KtSimpleNameExpression) referenceExpression, context);
         }
-        assert referenceExpression instanceof JetArrayAccessExpression;
-        return getArrayAccessTranslator((JetArrayAccessExpression) referenceExpression, context, forceOrderOfEvaluation);
+        assert referenceExpression instanceof KtArrayAccessExpression;
+        return getArrayAccessTranslator((KtArrayAccessExpression) referenceExpression, context, forceOrderOfEvaluation);
     }
 
     @NotNull
     private static AccessTranslator getArrayAccessTranslator(
-            @NotNull JetArrayAccessExpression expression,
+            @NotNull KtArrayAccessExpression expression,
             @NotNull TranslationContext context,
             boolean forceOrderOfEvaluation
     ) {
         TranslationContext accessArrayContext;
         if (forceOrderOfEvaluation) {
-            Map<JetExpression, JsExpression> indexesMap = new LinkedHashMap<JetExpression, JsExpression>();
-            for(JetExpression indexExpression : expression.getIndexExpressions()) {
+            Map<KtExpression, JsExpression> indexesMap = new LinkedHashMap<KtExpression, JsExpression>();
+            for(KtExpression indexExpression : expression.getIndexExpressions()) {
                 JsExpression jsIndexExpression = Translation.translateAsExpression(indexExpression, context);
                 if (TranslationUtils.isCacheNeeded(jsIndexExpression)) {
                     TemporaryVariable temporaryVariable = context.declareTemporary(null);
@@ -80,13 +80,13 @@ public final class AccessTranslationUtils {
     }
 
     @NotNull
-    public static CachedAccessTranslator getCachedAccessTranslator(@NotNull JetExpression referenceExpression,
+    public static CachedAccessTranslator getCachedAccessTranslator(@NotNull KtExpression referenceExpression,
                                                                    @NotNull TranslationContext context) {
         return getAccessTranslator(referenceExpression, context).getCached();
     }
 
     @NotNull
-    public static JsExpression translateAsGet(@NotNull JetExpression expression,
+    public static JsExpression translateAsGet(@NotNull KtExpression expression,
                                               @NotNull TranslationContext context) {
         return (getAccessTranslator(expression, context)).translateAsGet();
     }

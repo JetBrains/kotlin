@@ -28,16 +28,16 @@ import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetConstructor
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is JetClassOrObject || element is KotlinLightClass || element is JetConstructor<*>
+        return element is KtClassOrObject || element is KotlinLightClass || element is KtConstructor<*>
     }
 
     override fun substituteElementToRename(element: PsiElement, editor: Editor?): PsiElement? {
@@ -59,21 +59,21 @@ public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        if (element is JetObjectDeclaration && element.isCompanion()) {
+        if (element is KtObjectDeclaration && element.isCompanion()) {
             return super.findReferences(element).filter { !it.isCompanionObjectClassReference() }
         }
         return super.findReferences(element)
     }
 
     private fun PsiReference.isCompanionObjectClassReference(): Boolean {
-        if (this !is JetSimpleNameReference) {
+        if (this !is KtSimpleNameReference) {
             return false
         }
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
         return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element] != null
     }
 
-    private fun getJetClassOrObject(element: PsiElement?, showErrors: Boolean, editor: Editor?): JetClassOrObject? = when (element) {
+    private fun getJetClassOrObject(element: PsiElement?, showErrors: Boolean, editor: Editor?): KtClassOrObject? = when (element) {
         is KotlinLightClass ->
             if (element is KotlinLightClassForExplicitDeclaration) {
                 element.getOrigin()
@@ -95,10 +95,10 @@ public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
                 null
             }
 
-        is JetConstructor<*> ->
+        is KtConstructor<*> ->
             element.getContainingClassOrObject()
 
         else ->
-            element as? JetClassOrObject
+            element as? KtClassOrObject
     }
 }

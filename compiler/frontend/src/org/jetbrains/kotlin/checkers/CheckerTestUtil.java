@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.diagnostics.rendering.AbstractDiagnosticWithParametersRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetReferenceExpression;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
@@ -119,22 +119,22 @@ public class CheckerTestUtil {
         final List<Diagnostic> debugAnnotations = Lists.newArrayList();
         DebugInfoUtil.markDebugAnnotations(root, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
             @Override
-            public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {
+            public void reportElementWithErrorType(@NotNull KtReferenceExpression expression) {
                 newDiagnostic(expression, DebugInfoDiagnosticFactory.ELEMENT_WITH_ERROR_TYPE);
             }
 
             @Override
-            public void reportMissingUnresolved(@NotNull JetReferenceExpression expression) {
+            public void reportMissingUnresolved(@NotNull KtReferenceExpression expression) {
                 newDiagnostic(expression, DebugInfoDiagnosticFactory.MISSING_UNRESOLVED);
             }
 
             @Override
-            public void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target) {
+            public void reportUnresolvedWithTarget(@NotNull KtReferenceExpression expression, @NotNull String target) {
                 newDiagnostic(expression, DebugInfoDiagnosticFactory.UNRESOLVED_WITH_TARGET);
             }
 
             @Override
-            public void reportDynamicCall(@NotNull JetElement element, DeclarationDescriptor declarationDescriptor) {
+            public void reportDynamicCall(@NotNull KtElement element, DeclarationDescriptor declarationDescriptor) {
                 if (dynamicCallDescriptors != null) {
                     dynamicCallDescriptors.add(declarationDescriptor);
                 }
@@ -144,13 +144,13 @@ public class CheckerTestUtil {
                 }
             }
 
-            private void newDiagnostic(JetElement element, DebugInfoDiagnosticFactory factory) {
+            private void newDiagnostic(KtElement element, DebugInfoDiagnosticFactory factory) {
                 debugAnnotations.add(new DebugInfoDiagnostic(element, factory));
             }
         });
         // this code is used in tests and in internal action 'copy current file as diagnostic test'
         //noinspection TestOnlyProblems
-        for (JetExpression expression : bindingContext.getSliceContents(BindingContext.SMARTCAST).keySet()) {
+        for (KtExpression expression : bindingContext.getSliceContents(BindingContext.SMARTCAST).keySet()) {
             if (PsiTreeUtil.isAncestor(root, expression, false)) {
                 debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.SMARTCAST));
             }
@@ -533,7 +533,7 @@ public class CheckerTestUtil {
     }
 
     public static class DebugInfoDiagnostic extends AbstractDiagnosticForTests {
-        public DebugInfoDiagnostic(@NotNull JetElement element, @NotNull DebugInfoDiagnosticFactory factory) {
+        public DebugInfoDiagnostic(@NotNull KtElement element, @NotNull DebugInfoDiagnosticFactory factory) {
             super(element, factory);
         }
     }

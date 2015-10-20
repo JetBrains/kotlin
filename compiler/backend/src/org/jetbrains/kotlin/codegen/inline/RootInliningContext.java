@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.inline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.KtElement;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,14 +27,14 @@ import java.util.Map;
 public class RootInliningContext extends InliningContext {
     public final CodegenContext startContext;
     private final String classNameToInline;
-    public final JetElement callElement;
+    public final KtElement callElement;
 
     public RootInliningContext(
             @NotNull Map<Integer, LambdaInfo> map,
             @NotNull GenerationState state,
             @NotNull NameGenerator nameGenerator,
             @NotNull CodegenContext startContext,
-            @NotNull JetElement callElement,
+            @NotNull KtElement callElement,
             @NotNull String classNameToInline,
             @NotNull ReifiedTypeInliner inliner
     ) {

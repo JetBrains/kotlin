@@ -22,11 +22,11 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 public object DirectiveBasedActionUtils {
-    public fun checkForUnexpectedErrors(file: JetFile) {
+    public fun checkForUnexpectedErrors(file: KtFile) {
         if (InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// DISABLE-ERRORS").isNotEmpty()) {
             return
         }

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.JetFunctionPsiElementCellRenderer
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.resolve.OverrideResolver
 import java.awt.event.MouseEvent
 import java.util.ArrayList
 
-object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
-    override fun `fun`(jetDeclaration: JetDeclaration?): String? {
-        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(jetDeclaration!!)
+object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
+    override fun `fun`(ktDeclaration: KtDeclaration?): String? {
+        val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(ktDeclaration!!)
         if (overriddenDescriptors.isEmpty()) return ""
 
         val isAbstract = elementDescriptor!!.getModality() == Modality.ABSTRACT
@@ -65,7 +65,7 @@ object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
     }
 }
 
-public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<JetDeclaration> {
+public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<KtDeclaration> {
     private var testNavigableElements: List<NavigatablePsiElement>? = null
 
     @TestOnly
@@ -75,7 +75,7 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
         return navigationResult
     }
 
-    override fun navigate(e: MouseEvent?, element: JetDeclaration?) {
+    override fun navigate(e: MouseEvent?, element: KtDeclaration?) {
         if (element == null) return
 
         val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(element)
@@ -112,7 +112,7 @@ public data class ResolveWithParentsResult(
         val descriptor: CallableMemberDescriptor?,
         val overriddenDescriptors: Collection<CallableMemberDescriptor>)
 
-public fun resolveDeclarationWithParents(element: JetDeclaration): ResolveWithParentsResult {
+public fun resolveDeclarationWithParents(element: KtDeclaration): ResolveWithParentsResult {
     val descriptor = element.resolveToDescriptorIfAny()
 
     if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, listOf())

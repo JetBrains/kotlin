@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -82,10 +82,10 @@ class LazyJavaClassDescriptor(
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
 
     private val innerClassesScope = InnerClassesScopeWrapper(getUnsubstitutedMemberScope())
-    override fun getUnsubstitutedInnerClassesScope(): JetScope = innerClassesScope
+    override fun getUnsubstitutedInnerClassesScope(): KtScope = innerClassesScope
 
     private val staticScope = LazyJavaStaticClassScope(c, jClass, this)
-    override fun getStaticScope(): JetScope = staticScope
+    override fun getStaticScope(): KtScope = staticScope
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 
@@ -102,7 +102,7 @@ class LazyJavaClassDescriptor(
         }
     }
 
-    override fun getFunctionTypeForSamInterface(): JetType? = functionTypeForSamInterface()
+    override fun getFunctionTypeForSamInterface(): KtType? = functionTypeForSamInterface()
 
     override fun isCompanionObject() = false
 
@@ -120,12 +120,12 @@ class LazyJavaClassDescriptor(
 
         override fun getParameters(): List<TypeParameterDescriptor> = parameters()
 
-        private val supertypes = c.storageManager.createLazyValue<Collection<JetType>> {
+        private val supertypes = c.storageManager.createLazyValue<Collection<KtType>> {
             val javaTypes = jClass.getSupertypes()
-            val result = ArrayList<JetType>(javaTypes.size())
+            val result = ArrayList<KtType>(javaTypes.size())
             val incomplete = ArrayList<JavaType>(0)
 
-            val purelyImplementedSupertype: JetType? = getPurelyImplementedSupertype()
+            val purelyImplementedSupertype: KtType? = getPurelyImplementedSupertype()
 
             for (javaType in javaTypes) {
                 val jetType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
@@ -154,7 +154,7 @@ class LazyJavaClassDescriptor(
             if (result.isNotEmpty()) result.toReadOnlyList() else listOf(c.module.builtIns.getAnyType())
         }
 
-        private fun getPurelyImplementedSupertype(): JetType? {
+        private fun getPurelyImplementedSupertype(): KtType? {
             val purelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()
                                           ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqName)
                                           ?: return null
@@ -169,7 +169,7 @@ class LazyJavaClassDescriptor(
                 parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.getDefaultType())
             }
 
-            return JetTypeImpl.create(
+            return KtTypeImpl.create(
                     Annotations.EMPTY, classDescriptor,
                     /* nullable =*/ false, parametersAsTypeProjections
             )
@@ -186,7 +186,7 @@ class LazyJavaClassDescriptor(
             return FqName(fqNameString)
         }
 
-        override fun getSupertypes(): Collection<JetType> = supertypes()
+        override fun getSupertypes(): Collection<KtType> = supertypes()
 
         override fun getAnnotations() = Annotations.EMPTY
 

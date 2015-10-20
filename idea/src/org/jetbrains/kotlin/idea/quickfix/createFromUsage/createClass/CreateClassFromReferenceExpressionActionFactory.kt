@@ -31,37 +31,37 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import java.util.Arrays
 import java.util.Collections
 
-public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFactory<JetSimpleNameExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetSimpleNameExpression? {
-        val refExpr = diagnostic.psiElement as? JetSimpleNameExpression ?: return null
-        if (refExpr.getNonStrictParentOfType<JetTypeReference>() != null) return null
+public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFactory<KtSimpleNameExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
+        val refExpr = diagnostic.psiElement as? KtSimpleNameExpression ?: return null
+        if (refExpr.getNonStrictParentOfType<KtTypeReference>() != null) return null
         return refExpr
     }
 
-    private fun getFullCallExpression(element: JetSimpleNameExpression): JetExpression? {
+    private fun getFullCallExpression(element: KtSimpleNameExpression): KtExpression? {
         return element.parent?.let {
             when {
-                it is JetCallExpression && it.calleeExpression == element -> return null
-                it is JetQualifiedExpression && it.selectorExpression == element -> it
+                it is KtCallExpression && it.calleeExpression == element -> return null
+                it is KtQualifiedExpression && it.selectorExpression == element -> it
                 else -> element
             }
-        } as? JetExpression
+        } as? KtExpression
     }
 
-    private fun isQualifierExpected(element: JetSimpleNameExpression) = element.isDotReceiver() || ((element.parent as? JetDotQualifiedExpression)?.isDotReceiver() ?: false)
+    private fun isQualifierExpected(element: KtSimpleNameExpression) = element.isDotReceiver() || ((element.parent as? KtDotQualifiedExpression)?.isDotReceiver() ?: false)
 
-    private fun isInsideOfImport(element: JetSimpleNameExpression) = element.getNonStrictParentOfType<JetImportDirective>() != null
+    private fun isInsideOfImport(element: KtSimpleNameExpression) = element.getNonStrictParentOfType<KtImportDirective>() != null
 
-    override fun getPossibleClassKinds(element: JetSimpleNameExpression, diagnostic: Diagnostic): List<ClassKind> {
+    override fun getPossibleClassKinds(element: KtSimpleNameExpression, diagnostic: Diagnostic): List<ClassKind> {
         fun isEnum(element: PsiElement): Boolean {
             return when (element) {
-                is JetClass -> element.isEnum()
+                is KtClass -> element.isEnum()
                 is PsiClass -> element.isEnum
                 else -> false
             }
         }
 
-        val file = element.containingFile as? JetFile ?: return Collections.emptyList()
+        val file = element.containingFile as? KtFile ?: return Collections.emptyList()
 
         val name = element.getReferencedName()
 
@@ -69,9 +69,9 @@ public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromU
 
         val fullCallExpr = getFullCallExpression(element) ?: return Collections.emptyList()
 
-        val inImport = element.getNonStrictParentOfType<JetImportDirective>() != null
+        val inImport = element.getNonStrictParentOfType<KtImportDirective>() != null
         if (inImport || isQualifierExpected(element)) {
-            val receiverSelector = (fullCallExpr as? JetQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? JetReferenceExpression
+            val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
             val targetParent =
@@ -111,8 +111,8 @@ public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromU
                 }
     }
 
-    override fun extractFixData(element: JetSimpleNameExpression, diagnostic: Diagnostic): ClassInfo? {
-        val file = element.containingFile as? JetFile ?: return null
+    override fun extractFixData(element: KtSimpleNameExpression, diagnostic: Diagnostic): ClassInfo? {
+        val file = element.containingFile as? KtFile ?: return null
 
         val name = element.getReferencedName()
 
@@ -121,7 +121,7 @@ public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromU
         val fullCallExpr = getFullCallExpression(element) ?: return null
 
         if (isInsideOfImport(element) || isQualifierExpected(element)) {
-            val receiverSelector = (fullCallExpr as? JetQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? JetReferenceExpression
+            val receiverSelector = (fullCallExpr as? KtQualifiedExpression)?.receiverExpression?.getQualifiedElementSelector() as? KtReferenceExpression
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
             val targetParent =

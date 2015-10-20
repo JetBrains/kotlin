@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
@@ -34,26 +34,26 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
-    public fun check(annotated: JetAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
+    public fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor)
         checkEntries(annotated.annotationEntries, actualTargets, trace)
-        if (annotated is JetCallableDeclaration) {
+        if (annotated is KtCallableDeclaration) {
             annotated.typeReference?.let { check(it, trace) }
             annotated.receiverTypeReference?.let { check(it, trace) }
         }
-        if (annotated is JetTypeParameterListOwner && annotated is JetCallableDeclaration) {
+        if (annotated is KtTypeParameterListOwner && annotated is KtCallableDeclaration) {
             // TODO: support type parameter annotations for type parameters on classes and properties
             annotated.typeParameters.forEach { check(it, trace) }
         }
-        if (annotated is JetTypeReference) {
+        if (annotated is KtTypeReference) {
             annotated.typeElement?.typeArgumentsAsTypes?.filterNotNull()?.forEach { check(it, trace) }
         }
-        if (annotated is JetDeclarationWithBody) {
+        if (annotated is KtDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor
             for (parameter in annotated.valueParameters) {
                 if (!parameter.hasValOrVar()) {
                     check(parameter, trace)
-                    if (annotated is JetFunctionLiteral) {
+                    if (annotated is KtFunctionLiteral) {
                         parameter.typeReference?.let { check(it, trace) }
                     }
                 }
@@ -61,17 +61,17 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         }
     }
 
-    public fun checkExpression(expression: JetExpression, trace: BindingTrace) {
+    public fun checkExpression(expression: KtExpression, trace: BindingTrace) {
         checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null), trace)
-        if (expression is JetFunctionLiteralExpression) {
+        if (expression is KtFunctionLiteralExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
             }
         }
     }
 
-    private fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: TargetList, trace: BindingTrace) {
-        val entryTypesWithAnnotations = hashMapOf<JetType, MutableList<AnnotationUseSiteTarget?>>()
+    private fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: TargetList, trace: BindingTrace) {
+        val entryTypesWithAnnotations = hashMapOf<KtType, MutableList<AnnotationUseSiteTarget?>>()
 
         for (entry in entries) {
             checkAnnotationEntry(entry, actualTargets, trace)
@@ -92,7 +92,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         additionalCheckers.forEach { it.checkEntries(entries, actualTargets.defaultTargets, trace) }
     }
 
-    private fun checkAnnotationEntry(entry: JetAnnotationEntry, actualTargets: TargetList, trace: BindingTrace) {
+    private fun checkAnnotationEntry(entry: KtAnnotationEntry, actualTargets: TargetList, trace: BindingTrace) {
         val applicableTargets = applicableTargetSet(entry, trace)
         val useSiteTarget = entry.useSiteTarget?.getAnnotationUseSiteTarget()
 
@@ -103,12 +103,12 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         fun checkUselessFunctionLiteralAnnotation() {
             // TODO: tests on different JetAnnotatedExpression (?!)
             if (KotlinTarget.FUNCTION !in applicableTargets) return
-            val annotatedExpression = entry.parent as? JetAnnotatedExpression ?: return
+            val annotatedExpression = entry.parent as? KtAnnotatedExpression ?: return
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return
             val retention = descriptor.type.constructor.declarationDescriptor?.getAnnotationRetention()
             if (retention == KotlinRetention.SOURCE) return
 
-            val functionLiteralExpression = annotatedExpression.baseExpression as? JetFunctionLiteralExpression ?: return
+            val functionLiteralExpression = annotatedExpression.baseExpression as? KtFunctionLiteralExpression ?: return
             if (InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, trace.bindingContext, false)) {
                 trace.report(Errors.NON_SOURCE_ANNOTATION_ON_INLINED_FUNCTION_LITERAL.on(entry))
             }
@@ -134,7 +134,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 
     companion object {
-        private fun applicableTargetSet(entry: JetAnnotationEntry, trace: BindingTrace): Set<KotlinTarget> {
+        private fun applicableTargetSet(entry: KtAnnotationEntry, trace: BindingTrace): Set<KotlinTarget> {
             val descriptor = trace.get(BindingContext.ANNOTATION, entry) ?: return KotlinTarget.DEFAULT_TARGET_SET
             // For descriptor with error type, all targets are considered as possible
             if (descriptor.type.isError) return KotlinTarget.ALL_TARGET_SET
@@ -158,51 +158,51 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             }.filterNotNull().toSet()
         }
 
-        public fun getDeclarationSiteActualTargetList(annotated: JetElement, descriptor: ClassDescriptor?): List<KotlinTarget> {
+        public fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?): List<KotlinTarget> {
             return getActualTargetList(annotated, descriptor).defaultTargets
         }
 
-        private fun getActualTargetList(annotated: JetElement, descriptor: DeclarationDescriptor?): TargetList {
+        private fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?): TargetList {
             return when (annotated) {
-                is JetClassOrObject ->
+                is KtClassOrObject ->
                     (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
-                is JetMultiDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
-                is JetProperty -> {
+                is KtMultiDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
+                is KtProperty -> {
                     if (annotated.isLocal)
                         TargetLists.T_LOCAL_VARIABLE
-                    else if (annotated.parent is JetClassOrObject || annotated.parent is JetClassBody)
+                    else if (annotated.parent is KtClassOrObject || annotated.parent is KtClassBody)
                         TargetLists.T_MEMBER_PROPERTY
                     else
                         TargetLists.T_TOP_LEVEL_PROPERTY
                 }
-                is JetParameter -> {
+                is KtParameter -> {
                     if (annotated.hasValOrVar())
                         TargetLists.T_VALUE_PARAMETER_WITH_VAL
                     else
                         TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
                 }
-                is JetConstructor<*> -> TargetLists.T_CONSTRUCTOR
-                is JetFunction -> {
+                is KtConstructor<*> -> TargetLists.T_CONSTRUCTOR
+                is KtFunction -> {
                     if (DescriptorUtils.isFunctionExpression(descriptor))
                         TargetLists.T_FUNCTION_EXPRESSION
                     else if (annotated.isLocal)
                         TargetLists.T_LOCAL_FUNCTION
-                    else if (annotated.parent is JetClassOrObject || annotated.parent is JetClassBody)
+                    else if (annotated.parent is KtClassOrObject || annotated.parent is KtClassBody)
                         TargetLists.T_MEMBER_FUNCTION
                     else
                         TargetLists.T_TOP_LEVEL_FUNCTION
                 }
-                is JetPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
-                is JetTypeReference -> TargetLists.T_TYPE_REFERENCE
-                is JetFile -> TargetLists.T_FILE
-                is JetTypeParameter -> TargetLists.T_TYPE_PARAMETER
-                is JetTypeProjection ->
-                    if (annotated.projectionKind == JetProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
-                is JetClassInitializer -> TargetLists.T_INITIALIZER
-                is JetMultiDeclaration -> TargetLists.T_MULTI_DECLARATION
-                is JetFunctionLiteralExpression -> TargetLists.T_FUNCTION_LITERAL
-                is JetObjectLiteralExpression -> TargetLists.T_OBJECT_LITERAL
-                is JetExpression -> TargetLists.T_EXPRESSION
+                is KtPropertyAccessor -> if (annotated.isGetter) TargetLists.T_PROPERTY_GETTER else TargetLists.T_PROPERTY_SETTER
+                is KtTypeReference -> TargetLists.T_TYPE_REFERENCE
+                is KtFile -> TargetLists.T_FILE
+                is KtTypeParameter -> TargetLists.T_TYPE_PARAMETER
+                is KtTypeProjection ->
+                    if (annotated.projectionKind == KtProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
+                is KtClassInitializer -> TargetLists.T_INITIALIZER
+                is KtMultiDeclaration -> TargetLists.T_MULTI_DECLARATION
+                is KtFunctionLiteralExpression -> TargetLists.T_FUNCTION_LITERAL
+                is KtObjectLiteralExpression -> TargetLists.T_OBJECT_LITERAL
+                is KtExpression -> TargetLists.T_EXPRESSION
                 else -> TargetLists.EMPTY
             }
         }
@@ -306,5 +306,5 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
 }
 
 public interface AdditionalAnnotationChecker {
-    public fun checkEntries(entries: List<JetAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace)
+    public fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace)
 }

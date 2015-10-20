@@ -28,7 +28,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject;
-import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.KtProperty;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -92,7 +92,7 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
                 chooser.show();
                 List<DescriptorMemberChooserObject> selectedElements = chooser.getSelectedElements();
                 if (selectedElements != null && selectedElements.size() == 1) {
-                    JetProperty field = (JetProperty) selectedElements.get(0).getElement();
+                    KtProperty field = (KtProperty) selectedElements.get(0).getElement();
                     myFieldChooser.setText(field.getName());
                 }
             }

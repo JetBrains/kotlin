@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.Variance;
 
 import java.util.Collections;
@@ -141,13 +141,13 @@ public class DescriptorFactory {
                         /* lateInit = */ false, /* isConst = */ false
                 );
 
-        JetType type = getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType());
+        KtType type = getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType());
 
         PropertyGetterDescriptorImpl getter = createDefaultGetter(values, Annotations.Companion.getEMPTY());
 
         values.initialize(getter, null);
         getter.initialize(type);
-        values.setType(type, Collections.<TypeParameterDescriptor>emptyList(), null, (JetType) null);
+        values.setType(type, Collections.<TypeParameterDescriptor>emptyList(), null, (KtType) null);
 
         return values;
     }
@@ -173,7 +173,7 @@ public class DescriptorFactory {
     @Nullable
     public static ReceiverParameterDescriptor createExtensionReceiverParameterForCallable(
             @NotNull CallableDescriptor owner,
-            @Nullable JetType receiverParameterType
+            @Nullable KtType receiverParameterType
     ) {
         return receiverParameterType == null
                ? null

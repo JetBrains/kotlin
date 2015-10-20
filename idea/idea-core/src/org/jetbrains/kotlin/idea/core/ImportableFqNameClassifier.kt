@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
-class ImportableFqNameClassifier(private val file: JetFile) {
+class ImportableFqNameClassifier(private val file: KtFile) {
     private val preciseImports = HashSet<FqName>()
     private val preciseImportPackages = HashSet<FqName>()
     private val allUnderImports = HashSet<FqName>()

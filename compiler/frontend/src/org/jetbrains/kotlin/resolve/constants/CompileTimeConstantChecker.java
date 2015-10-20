@@ -20,16 +20,16 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
-import org.jetbrains.kotlin.psi.JetConstantExpression;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.KtConstantExpression;
+import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.Set;
 
@@ -56,24 +56,24 @@ public class CompileTimeConstantChecker {
     // return true if there is an error
     public boolean checkConstantExpressionType(
             @Nullable ConstantValue<?> compileTimeConstant,
-            @NotNull JetConstantExpression expression,
-            @NotNull JetType expectedType
+            @NotNull KtConstantExpression expression,
+            @NotNull KtType expectedType
     ) {
         IElementType elementType = expression.getNode().getElementType();
 
-        if (elementType == JetNodeTypes.INTEGER_CONSTANT) {
+        if (elementType == KtNodeTypes.INTEGER_CONSTANT) {
             return checkIntegerValue(compileTimeConstant, expectedType, expression);
         }
-        else if (elementType == JetNodeTypes.FLOAT_CONSTANT) {
+        else if (elementType == KtNodeTypes.FLOAT_CONSTANT) {
             return checkFloatValue(compileTimeConstant, expectedType, expression);
         }
-        else if (elementType == JetNodeTypes.BOOLEAN_CONSTANT) {
+        else if (elementType == KtNodeTypes.BOOLEAN_CONSTANT) {
             return checkBooleanValue(expectedType, expression);
         }
-        else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
+        else if (elementType == KtNodeTypes.CHARACTER_CONSTANT) {
             return checkCharValue(compileTimeConstant, expectedType, expression);
         }
-        else if (elementType == JetNodeTypes.NULL) {
+        else if (elementType == KtNodeTypes.NULL) {
             return checkNullValue(expectedType, expression);
         }
         return false;
@@ -81,8 +81,8 @@ public class CompileTimeConstantChecker {
 
     private boolean checkIntegerValue(
             @Nullable ConstantValue<?> value,
-            @NotNull JetType expectedType,
-            @NotNull JetConstantExpression expression
+            @NotNull KtType expectedType,
+            @NotNull KtConstantExpression expression
     ) {
         if (value == null) {
             return reportError(INT_LITERAL_OUT_OF_RANGE.on(expression));
@@ -93,8 +93,8 @@ public class CompileTimeConstantChecker {
         }
 
         if (!noExpectedTypeOrError(expectedType)) {
-            JetType valueType = value.getType();
-            if (!JetTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
+            KtType valueType = value.getType();
+            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
                 return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "integer", expectedType));
             }
         }
@@ -103,15 +103,15 @@ public class CompileTimeConstantChecker {
 
     private boolean checkFloatValue(
             @Nullable ConstantValue<?> value,
-            @NotNull JetType expectedType,
-            @NotNull JetConstantExpression expression
+            @NotNull KtType expectedType,
+            @NotNull KtConstantExpression expression
     ) {
         if (value == null) {
             return reportError(FLOAT_LITERAL_OUT_OF_RANGE.on(expression));
         }
         if (!noExpectedTypeOrError(expectedType)) {
-            JetType valueType = value.getType();
-            if (!JetTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
+            KtType valueType = value.getType();
+            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
                 return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "floating-point", expectedType));
             }
         }
@@ -119,19 +119,19 @@ public class CompileTimeConstantChecker {
     }
 
     private boolean checkBooleanValue(
-            @NotNull JetType expectedType,
-            @NotNull JetConstantExpression expression
+            @NotNull KtType expectedType,
+            @NotNull KtConstantExpression expression
     ) {
         if (!noExpectedTypeOrError(expectedType)
-            && !JetTypeChecker.DEFAULT.isSubtypeOf(builtIns.getBooleanType(), expectedType)) {
+            && !KotlinTypeChecker.DEFAULT.isSubtypeOf(builtIns.getBooleanType(), expectedType)) {
             return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "boolean", expectedType));
         }
         return false;
     }
 
-    private boolean checkCharValue(ConstantValue<?> constant, JetType expectedType, JetConstantExpression expression) {
+    private boolean checkCharValue(ConstantValue<?> constant, KtType expectedType, KtConstantExpression expression) {
         if (!noExpectedTypeOrError(expectedType)
-            && !JetTypeChecker.DEFAULT.isSubtypeOf(builtIns.getCharType(), expectedType)) {
+            && !KotlinTypeChecker.DEFAULT.isSubtypeOf(builtIns.getCharType(), expectedType)) {
             return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "character", expectedType));
         }
 
@@ -146,7 +146,7 @@ public class CompileTimeConstantChecker {
         return false;
     }
 
-    private boolean checkNullValue(@NotNull JetType expectedType, @NotNull JetConstantExpression expression) {
+    private boolean checkNullValue(@NotNull KtType expectedType, @NotNull KtConstantExpression expression) {
         if (!noExpectedTypeOrError(expectedType) && !TypeUtils.acceptsNullable(expectedType)) {
             return reportError(NULL_FOR_NONNULL_TYPE.on(expression, expectedType));
         }
@@ -154,7 +154,7 @@ public class CompileTimeConstantChecker {
     }
 
     @NotNull
-    private static CharacterWithDiagnostic parseCharacter(@NotNull JetConstantExpression expression) {
+    private static CharacterWithDiagnostic parseCharacter(@NotNull KtConstantExpression expression) {
         String text = expression.getText();
         // Strip the quotes
         if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
@@ -177,7 +177,7 @@ public class CompileTimeConstantChecker {
     }
 
     @NotNull
-    public static CharacterWithDiagnostic escapedStringToCharacter(@NotNull String text, @NotNull JetElement expression) {
+    public static CharacterWithDiagnostic escapedStringToCharacter(@NotNull String text, @NotNull KtElement expression) {
         assert text.length() > 0 && text.charAt(0) == '\\' : "Only escaped sequences must be passed to this routine: " + text;
 
         // Escape
@@ -209,7 +209,7 @@ public class CompileTimeConstantChecker {
     }
 
     @NotNull
-    private static CharacterWithDiagnostic illegalEscape(@NotNull JetElement expression) {
+    private static CharacterWithDiagnostic illegalEscape(@NotNull KtElement expression) {
         return createErrorCharacter(ILLEGAL_ESCAPE.on(expression, expression));
     }
 
@@ -242,7 +242,7 @@ public class CompileTimeConstantChecker {
     }
 
     @Nullable
-    public static Character parseChar(@NotNull JetConstantExpression expression) {
+    public static Character parseChar(@NotNull KtConstantExpression expression) {
         return parseCharacter(expression).getValue();
     }
 
@@ -269,7 +269,7 @@ public class CompileTimeConstantChecker {
         return null;
     }
 
-    public static boolean noExpectedTypeOrError(JetType expectedType) {
+    public static boolean noExpectedTypeOrError(KtType expectedType) {
         return TypeUtils.noExpectedType(expectedType) || expectedType.isError();
     }
 

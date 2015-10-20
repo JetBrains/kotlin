@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
@@ -38,7 +38,7 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
      * Method may return null for not yet fully initialized object or if error occurred.
      */
     @Nullable
-    JetType getReturnType();
+    KtType getReturnType();
 
     @NotNull
     @Override

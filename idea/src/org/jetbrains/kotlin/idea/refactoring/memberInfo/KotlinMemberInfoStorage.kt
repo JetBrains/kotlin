@@ -34,9 +34,9 @@ import java.util.ArrayList
 
 public class KotlinMemberInfoStorage(
         classOrObject: PsiNamedElement,
-        filter: (JetNamedDeclaration) -> Boolean = { true }
-): AbstractMemberInfoStorage<JetNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(classOrObject, filter) {
-    override fun memberConflict(member1: JetNamedDeclaration, member: JetNamedDeclaration): Boolean {
+        filter: (KtNamedDeclaration) -> Boolean = { true }
+): AbstractMemberInfoStorage<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(classOrObject, filter) {
+    override fun memberConflict(member1: KtNamedDeclaration, member: KtNamedDeclaration): Boolean {
         val descriptor1 = member1.resolveToDescriptor()
         val descriptor = member.resolveToDescriptor()
         if (descriptor1.name != descriptor.name) return false
@@ -56,7 +56,7 @@ public class KotlinMemberInfoStorage(
         val classType = classDescriptor.defaultType
         for (supertype in classType.immediateSupertypes()) {
             val superClass = supertype.constructor.declarationDescriptor?.source?.getPsi()
-            if (superClass is JetClass || superClass is PsiClass) {
+            if (superClass is KtClass || superClass is PsiClass) {
                 getSubclasses(superClass as PsiNamedElement).add(aClass)
                 buildSubClassesMap(superClass)
             }
@@ -70,21 +70,21 @@ public class KotlinMemberInfoStorage(
     }
 
     override fun extractClassMembers(aClass: PsiNamedElement, temp: ArrayList<KotlinMemberInfo>) {
-        if (aClass !is JetClassOrObject) return
+        if (aClass !is KtClassOrObject) return
 
         val context = aClass.analyze()
         aClass.declarations
-                .filter { it is JetNamedDeclaration
-                          && it !is JetConstructor<*>
-                          && !(it is JetObjectDeclaration && it.isCompanion())
+                .filter { it is KtNamedDeclaration
+                          && it !is KtConstructor<*>
+                          && !(it is KtObjectDeclaration && it.isCompanion())
                           && myFilter.includeMember(it) }
-                .mapTo(temp) { KotlinMemberInfo(it as JetNamedDeclaration) }
+                .mapTo(temp) { KotlinMemberInfo(it as KtNamedDeclaration) }
         aClass.getDelegationSpecifiers()
-                .filterIsInstance<JetDelegatorToSuperClass>()
+                .filterIsInstance<KtDelegatorToSuperClass>()
                 .map {
                     val type = context[BindingContext.TYPE, it.typeReference]
                     val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor
-                    classDescriptor?.source?.getPsi() as? JetClass
+                    classDescriptor?.source?.getPsi() as? KtClass
                 }
                 .filter { it != null && it.isInterface() }
                 .mapTo(temp) { KotlinMemberInfo(it!!, true) }

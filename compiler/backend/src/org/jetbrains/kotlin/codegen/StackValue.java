@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -266,7 +266,7 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static StackValue expression(Type type, JetExpression expression, ExpressionCodegen generator) {
+    public static StackValue expression(Type type, KtExpression expression, ExpressionCodegen generator) {
         return new Expression(type, expression, generator);
     }
 
@@ -1124,10 +1124,10 @@ public abstract class StackValue {
     }
 
     private static class Expression extends StackValue {
-        private final JetExpression expression;
+        private final KtExpression expression;
         private final ExpressionCodegen generator;
 
-        public Expression(Type type, JetExpression expression, ExpressionCodegen generator) {
+        public Expression(Type type, KtExpression expression, ExpressionCodegen generator) {
             super(type);
             this.expression = expression;
             this.generator = generator;

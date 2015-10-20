@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
-public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetElement): KotlinQuickFixAction<JetLoopExpression>(loop) {
+public class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtElement): KotlinQuickFixAction<KtLoopExpression>(loop) {
     override fun getText() = "Add label to loop"
     override fun getFamilyName() = getText()
 
@@ -33,31 +33,31 @@ public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetEle
         return super.isAvailable(project, editor, file)
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val usedLabels = collectUsedLabels(element)
         val labelName = getUniqueLabelName(usedLabels)
 
-        val jumpWithLabel = JetPsiFactory(project).createExpression(jumpExpression.getText() + "@" + labelName)
+        val jumpWithLabel = KtPsiFactory(project).createExpression(jumpExpression.getText() + "@" + labelName)
         jumpExpression.replace(jumpWithLabel)
 
         // TODO(yole) use createExpressionByPattern() once it's available
-        val labeledLoopExpression = JetPsiFactory(project).createLabeledExpression(labelName)
+        val labeledLoopExpression = KtPsiFactory(project).createLabeledExpression(labelName)
         labeledLoopExpression.getBaseExpression()!!.replace(element)
         element.replace(labeledLoopExpression)
 
         // TODO(yole) We should initiate in-place rename for the label here, but in-place rename for labels is not yet implemented
     }
 
-    private fun collectUsedLabels(element: JetElement): Set<String> {
+    private fun collectUsedLabels(element: KtElement): Set<String> {
         val usedLabels = hashSetOf<String>()
-        element.acceptChildren(object : JetTreeVisitorVoid() {
-            override fun visitLabeledExpression(expression: JetLabeledExpression) {
+        element.acceptChildren(object : KtTreeVisitorVoid() {
+            override fun visitLabeledExpression(expression: KtLabeledExpression) {
                 super.visitLabeledExpression(expression)
                 usedLabels.add(expression.getLabelName()!!)
             }
         })
         element.parents.forEach {
-            if (it is JetLabeledExpression) {
+            if (it is KtLabeledExpression) {
                 usedLabels.add(it.getLabelName()!!)
             }
         }
@@ -75,10 +75,10 @@ public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetEle
 
     companion object: JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val element = diagnostic.getPsiElement() as? JetElement
-            assert(element is JetBreakExpression || element is JetContinueExpression)
-            assert((element as? JetLabeledExpression)?.getLabelName() == null)
-            val loop = element?.getStrictParentOfType<JetLoopExpression>() ?: return null
+            val element = diagnostic.getPsiElement() as? KtElement
+            assert(element is KtBreakExpression || element is KtContinueExpression)
+            assert((element as? KtLabeledExpression)?.getLabelName() == null)
+            val loop = element?.getStrictParentOfType<KtLoopExpression>() ?: return null
             return AddLoopLabelFix(loop, element!!)
         }
     }

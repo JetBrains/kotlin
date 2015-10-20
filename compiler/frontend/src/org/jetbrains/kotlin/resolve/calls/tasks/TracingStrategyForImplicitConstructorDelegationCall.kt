@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
-import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
-import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
+import org.jetbrains.kotlin.psi.KtFunctionLiteralArgument
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.resolve.BindingContext.CALL
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 
 public class TracingStrategyForImplicitConstructorDelegationCall(
-        val delegationCall: JetConstructorDelegationCall, call: Call
+        val delegationCall: KtConstructorDelegationCall, call: Call
 ) : AbstractTracingStrategy(delegationCall.getCalleeExpression()!!, call) {
 
     val calleeExpression = delegationCall.getCalleeExpression()
@@ -109,11 +109,11 @@ public class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("nestedClassAccessViaInstanceReference")
     }
 
-    override fun unsafeCall(trace: BindingTrace, type: JetType, isCallForImplicitInvoke: Boolean) {
+    override fun unsafeCall(trace: BindingTrace, type: KtType, isCallForImplicitInvoke: Boolean) {
         unexpectedError("unsafeCall")
     }
 
-    override fun unnecessarySafeCall(trace: BindingTrace, type: JetType) {
+    override fun unnecessarySafeCall(trace: BindingTrace, type: KtType) {
         unexpectedError("unnecessarySafeCall")
     }
 

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.quickfix.insertMembersAfter
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -92,16 +92,16 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             val variablesForHashCode: List<VariableDescriptor>
     )
 
-    override fun isValidForClass(targetClass: JetClassOrObject): Boolean {
-        return targetClass is JetClass && targetClass !is JetEnumEntry && !targetClass.isAnnotation()
-                && !targetClass.hasModifier(JetTokens.DATA_KEYWORD)
+    override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
+        return targetClass is KtClass && targetClass !is KtEnumEntry && !targetClass.isAnnotation()
+                && !targetClass.hasModifier(KtTokens.DATA_KEYWORD)
                 && targetClass.getPropertiesToUse().isNotEmpty()
     }
 
-    private fun JetClassOrObject.getPropertiesToUse(): List<JetNamedDeclaration> {
-        return ArrayList<JetNamedDeclaration>().apply {
+    private fun KtClassOrObject.getPropertiesToUse(): List<KtNamedDeclaration> {
+        return ArrayList<KtNamedDeclaration>().apply {
             getPrimaryConstructorParameters().filterTo(this) { it.hasValOrVar() }
-            declarations.filterIsInstance<JetProperty>().filterTo(this) f@ {
+            declarations.filterIsInstance<KtProperty>().filterTo(this) f@ {
                 val descriptor = it.resolveToDescriptor()
                 when (descriptor) {
                     is ValueParameterDescriptor -> true
@@ -113,7 +113,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     }
 
     private fun confirmRewrite(
-            targetClass: JetClass,
+            targetClass: KtClass,
             equalsDescriptor: FunctionDescriptor,
             hashCodeDescriptor: FunctionDescriptor
     ): Boolean {
@@ -125,8 +125,8 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                                         Messages.getQuestionIcon()) == Messages.YES
     }
 
-    override fun prepareMembersInfo(klass: JetClassOrObject, project: Project, editor: Editor?): Info? {
-        if (klass !is JetClass) throw AssertionError("Not a class: ${klass.getElementTextWithContext()}")
+    override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
+        if (klass !is KtClass) throw AssertionError("Not a class: ${klass.getElementTextWithContext()}")
 
         val context = klass.analyzeFully()
         val classDescriptor = context.get(BindingContext.CLASS, klass) ?: return null
@@ -171,13 +171,13 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
 
     private fun FunctionDescriptor.isMemberOfAny() = containingDeclaration == builtIns.any
 
-    private fun generateFunctionSkeleton(descriptor: FunctionDescriptor, project: Project): JetNamedFunction {
+    private fun generateFunctionSkeleton(descriptor: FunctionDescriptor, project: Project): KtNamedFunction {
         return OverrideMemberChooserObject
                 .create(project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
-                .generateMember(project) as JetNamedFunction
+                .generateMember(project) as KtNamedFunction
     }
 
-    private fun generateEquals(project: Project, info: Info): JetNamedFunction? {
+    private fun generateEquals(project: Project, info: Info): KtNamedFunction? {
         with(info) {
             if (!needEquals) return null
 
@@ -218,12 +218,12 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 append("return true")
             }
 
-            equalsFun.bodyExpression!!.replace(JetPsiFactory(project).createExpression("{\n$bodyText\n}"))
+            equalsFun.bodyExpression!!.replace(KtPsiFactory(project).createExpression("{\n$bodyText\n}"))
 
             return equalsFun
         }
     }
-    private fun generateHashCode(project: Project, info: Info): JetNamedFunction? {
+    private fun generateHashCode(project: Project, info: Info): KtNamedFunction? {
         fun VariableDescriptor.genVariableHashCode(parenthesesNeeded: Boolean): String {
             val ref = name.asString().quoteIfNeeded()
             val isNullable = TypeUtils.isNullableType(type)
@@ -267,20 +267,20 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 }.toString()
             } else "return $initialValue"
 
-            hashCodeFun.bodyExpression!!.replace(JetPsiFactory(project).createExpression("{\n$bodyText\n}"))
+            hashCodeFun.bodyExpression!!.replace(KtPsiFactory(project).createExpression("{\n$bodyText\n}"))
 
             return hashCodeFun
         }
     }
 
-    override fun generateMembers(project: Project, editor: Editor?, info: Info): List<JetDeclaration> {
-        val targetClass = info.classDescriptor.source.getPsi() as JetClass
-        val prototypes = ArrayList<JetDeclaration>(2)
+    override fun generateMembers(project: Project, editor: Editor?, info: Info): List<KtDeclaration> {
+        val targetClass = info.classDescriptor.source.getPsi() as KtClass
+        val prototypes = ArrayList<KtDeclaration>(2)
                 .apply {
                     addIfNotNull(generateEquals(project, info))
                     addIfNotNull(generateHashCode(project, info))
                 }
-        val anchor = with(targetClass.declarations) { lastIsInstanceOrNull<JetNamedFunction>() ?: lastOrNull() }
+        val anchor = with(targetClass.declarations) { lastIsInstanceOrNull<KtNamedFunction>() ?: lastOrNull() }
         return insertMembersAfter(editor, targetClass, prototypes, anchor)
     }
 }

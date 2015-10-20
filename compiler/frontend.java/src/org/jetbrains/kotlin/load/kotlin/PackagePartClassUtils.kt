@@ -22,9 +22,9 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 
@@ -67,21 +67,21 @@ public object PackagePartClassUtils {
 
     @Deprecated("Migrate to JvmFileClassesProvider")
     @JvmStatic
-    public fun getPackagePartInternalName(file: JetFile): String =
+    public fun getPackagePartInternalName(file: KtFile): String =
             JvmClassName.byFqNameWithoutInnerClasses(getPackagePartFqName(file)).internalName
 
     @Deprecated("Migrate to JvmFileClassesProvider")
     @JvmStatic
-    public fun getPackagePartFqName(file: JetFile): FqName =
+    public fun getPackagePartFqName(file: KtFile): FqName =
             getPackagePartFqName(file.packageFqName, file.name)
 
     @JvmStatic
-    public fun getFilesWithCallables(files: Collection<JetFile>): List<JetFile> =
+    public fun getFilesWithCallables(files: Collection<KtFile>): List<KtFile> =
             files.filter { fileHasTopLevelCallables(it) }
 
     @JvmStatic
-    public fun fileHasTopLevelCallables(file: JetFile): Boolean =
-            file.declarations.any { it is JetProperty || it is JetNamedFunction }
+    public fun fileHasTopLevelCallables(file: KtFile): Boolean =
+            file.declarations.any { it is KtProperty || it is KtNamedFunction }
 
     @JvmStatic
     public fun getFilePartShortName(fileName: String): String =

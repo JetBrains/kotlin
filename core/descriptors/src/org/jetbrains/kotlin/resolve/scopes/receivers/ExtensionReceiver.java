@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public class ExtensionReceiver extends AbstractReceiverValue implements ThisReceiver {
 
     private final CallableDescriptor descriptor;
 
-    public ExtensionReceiver(@NotNull CallableDescriptor callableDescriptor, @NotNull JetType receiverType) {
+    public ExtensionReceiver(@NotNull CallableDescriptor callableDescriptor, @NotNull KtType receiverType) {
         super(receiverType);
         this.descriptor = callableDescriptor;
     }

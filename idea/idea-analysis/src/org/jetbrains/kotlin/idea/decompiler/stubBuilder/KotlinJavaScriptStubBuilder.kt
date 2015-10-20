@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedKotlinJavaScriptDataFinder
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedKotlinJavaScriptMetaFileFinder
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
@@ -48,7 +48,7 @@ public open class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
         return doBuildFileStub(file)
     }
 
-    fun doBuildFileStub(file: VirtualFile): PsiFileStub<JetFile>? {
+    fun doBuildFileStub(file: VirtualFile): PsiFileStub<KtFile>? {
         val packageFqName = JsMetaFileUtils.getPackageFqName(file)
 
         val content = file.contentsToByteArray(false)

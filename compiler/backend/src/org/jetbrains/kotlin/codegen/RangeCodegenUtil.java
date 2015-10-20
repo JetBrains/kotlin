@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 
@@ -53,27 +53,27 @@ public class RangeCodegenUtil {
 
     private RangeCodegenUtil() {}
 
-    public static boolean isRange(JetType rangeType) {
+    public static boolean isRange(KtType rangeType) {
         return !rangeType.isMarkedNullable() && getPrimitiveRangeElementType(rangeType) != null;
     }
 
-    public static boolean isProgression(JetType rangeType) {
+    public static boolean isProgression(KtType rangeType) {
         return !rangeType.isMarkedNullable() && getPrimitiveProgressionElementType(rangeType) != null;
     }
 
     @Nullable
-    public static BinaryCall getRangeAsBinaryCall(@NotNull JetForExpression forExpression) {
+    public static BinaryCall getRangeAsBinaryCall(@NotNull KtForExpression forExpression) {
         // We are looking for rangeTo() calls
         // Other binary operations will succeed too, but will be filtered out later (by examining a resolvedCall)
-        JetExpression rangeExpression = forExpression.getLoopRange();
+        KtExpression rangeExpression = forExpression.getLoopRange();
         assert rangeExpression != null;
-        JetExpression loopRange = JetPsiUtil.deparenthesize(rangeExpression);
-        if (loopRange instanceof JetQualifiedExpression) {
+        KtExpression loopRange = KtPsiUtil.deparenthesize(rangeExpression);
+        if (loopRange instanceof KtQualifiedExpression) {
             // a.rangeTo(b)
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) loopRange;
-            JetExpression selector = qualifiedExpression.getSelectorExpression();
-            if (selector instanceof JetCallExpression) {
-                JetCallExpression callExpression = (JetCallExpression) selector;
+            KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) loopRange;
+            KtExpression selector = qualifiedExpression.getSelectorExpression();
+            if (selector instanceof KtCallExpression) {
+                KtCallExpression callExpression = (KtCallExpression) selector;
                 List<? extends ValueArgument> arguments = callExpression.getValueArguments();
                 if (arguments.size() == 1) {
                     return new BinaryCall(qualifiedExpression.getReceiverExpression(), callExpression.getCalleeExpression(),
@@ -81,10 +81,10 @@ public class RangeCodegenUtil {
                 }
             }
         }
-        else if (loopRange instanceof JetBinaryExpression) {
+        else if (loopRange instanceof KtBinaryExpression) {
             // a rangeTo b
             // a .. b
-            JetBinaryExpression binaryExpression = (JetBinaryExpression) loopRange;
+            KtBinaryExpression binaryExpression = (KtBinaryExpression) loopRange;
             return new BinaryCall(binaryExpression.getLeft(), binaryExpression.getOperationReference(), binaryExpression.getRight());
 
         }
@@ -92,18 +92,18 @@ public class RangeCodegenUtil {
     }
 
     @Nullable
-    private static PrimitiveType getPrimitiveRangeElementType(JetType rangeType) {
+    private static PrimitiveType getPrimitiveRangeElementType(KtType rangeType) {
         return getPrimitiveRangeOrProgressionElementType(rangeType, RANGE_TO_ELEMENT_TYPE);
     }
 
     @Nullable
-    private static PrimitiveType getPrimitiveProgressionElementType(JetType rangeType) {
+    private static PrimitiveType getPrimitiveProgressionElementType(KtType rangeType) {
         return getPrimitiveRangeOrProgressionElementType(rangeType, PROGRESSION_TO_ELEMENT_TYPE);
     }
 
     @Nullable
     private static PrimitiveType getPrimitiveRangeOrProgressionElementType(
-            @NotNull JetType rangeOrProgression,
+            @NotNull KtType rangeOrProgression,
             @NotNull ImmutableMap<FqName, PrimitiveType> map
     ) {
         ClassifierDescriptor declarationDescriptor = rangeOrProgression.getConstructor().getDeclarationDescriptor();
@@ -133,11 +133,11 @@ public class RangeCodegenUtil {
     }
 
     public static class BinaryCall {
-        public final JetExpression left;
-        public final JetExpression op;
-        public final JetExpression right;
+        public final KtExpression left;
+        public final KtExpression op;
+        public final KtExpression right;
 
-        private BinaryCall(JetExpression left, JetExpression op, JetExpression right) {
+        private BinaryCall(KtExpression left, KtExpression op, KtExpression right) {
             this.left = left;
             this.op = op;
             this.right = right;

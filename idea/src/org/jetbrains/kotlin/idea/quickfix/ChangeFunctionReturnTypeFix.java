@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -54,15 +54,15 @@ import static org.jetbrains.kotlin.diagnostics.Errors.COMPONENT_FUNCTION_RETURN_
 import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
-public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunction> {
-    private final JetType type;
+public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction> {
+    private final KtType type;
     private final ChangeFunctionLiteralReturnTypeFix changeFunctionLiteralReturnTypeFix;
 
-    public ChangeFunctionReturnTypeFix(@NotNull JetFunction element, @NotNull JetType type) {
+    public ChangeFunctionReturnTypeFix(@NotNull KtFunction element, @NotNull KtType type) {
         super(element);
         this.type = type;
-        if (element instanceof JetFunctionLiteral) {
-            JetFunctionLiteralExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, JetFunctionLiteralExpression.class);
+        if (element instanceof KtFunctionLiteral) {
+            KtFunctionLiteralExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, KtFunctionLiteralExpression.class);
             assert functionLiteralExpression != null : "FunctionLiteral outside any FunctionLiteralExpression: " +
                                                        PsiUtilsKt.getElementTextWithContext(element);
             changeFunctionLiteralReturnTypeFix = new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type);
@@ -106,13 +106,14 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
     }
 
     @Override
-    public void invoke(@NotNull Project project, @Nullable Editor editor, JetFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, @Nullable Editor editor, KtFile file) throws IncorrectOperationException {
         if (changeFunctionLiteralReturnTypeFix != null) {
             changeFunctionLiteralReturnTypeFix.invoke(project, editor, file);
         }
         else {
             if (!(KotlinBuiltIns.isUnit(type) && getElement().hasBlockBody())) {
-                JetTypeReference newTypeRef = JetPsiFactoryKt.JetPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+                KtTypeReference newTypeRef = KtPsiFactoryKt
+                        .KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
                 newTypeRef = getElement().setTypeReference(newTypeRef);
                 assert newTypeRef != null;
                 ShortenReferences.DEFAULT.process(newTypeRef);
@@ -124,10 +125,10 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
     }
 
     @NotNull
-    public static JetMultiDeclarationEntry getMultiDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
+    public static KtMultiDeclarationEntry getMultiDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
         Name componentName = COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.cast(diagnostic).getA();
         int componentIndex = DataClassUtilsKt.getComponentIndex(componentName);
-        JetMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, JetMultiDeclaration.class);
+        KtMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtMultiDeclaration.class);
         assert multiDeclaration != null : "COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration";
         return multiDeclaration.getEntries().get(componentIndex - 1);
     }
@@ -138,13 +139,13 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                JetMultiDeclarationEntry entry = getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
+                KtMultiDeclarationEntry entry = getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
                 BindingContext context = ResolutionUtils.analyze(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
-                JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
+                KtFunction componentFunction = (KtFunction) DescriptorToSourceUtils
                         .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
-                JetType expectedType = context.get(BindingContext.TYPE, entry.getTypeReference());
+                KtType expectedType = context.get(BindingContext.TYPE, entry.getTypeReference());
                 if (componentFunction != null && expectedType != null) {
                     return new ChangeFunctionReturnTypeFix(componentFunction, expectedType);
                 }
@@ -159,13 +160,13 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                JetExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetExpression.class);
+                KtExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, KtExpression.class);
                 assert expression != null : "HAS_NEXT_FUNCTION_TYPE_MISMATCH reported on element that is not within any expression";
                 BindingContext context = ResolutionUtils.analyze(expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
                 if (resolvedCall == null) return null;
                 FunctionDescriptor hasNextDescriptor = resolvedCall.getCandidateDescriptor();
-                JetFunction hasNextFunction = (JetFunction) DescriptorToSourceUtils
+                KtFunction hasNextFunction = (KtFunction) DescriptorToSourceUtils
                         .descriptorToDeclaration(hasNextDescriptor);
                 if (hasNextFunction != null) {
                     return new ChangeFunctionReturnTypeFix(hasNextFunction, getBuiltIns(hasNextDescriptor).getBooleanType());
@@ -181,15 +182,15 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
+                KtBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, KtBinaryExpression.class);
                 assert expression != null : "COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression";
                 BindingContext context = ResolutionUtils.analyze(expression);
                 ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context);
                 if (resolvedCall == null) return null;
                 CallableDescriptor compareToDescriptor = resolvedCall.getCandidateDescriptor();
                 PsiElement compareTo = DescriptorToSourceUtils.descriptorToDeclaration(compareToDescriptor);
-                if (!(compareTo instanceof JetFunction)) return null;
-                return new ChangeFunctionReturnTypeFix((JetFunction) compareTo, getBuiltIns(compareToDescriptor).getIntType());
+                if (!(compareTo instanceof KtFunction)) return null;
+                return new ChangeFunctionReturnTypeFix((KtFunction) compareTo, getBuiltIns(compareToDescriptor).getIntType());
             }
         };
     }
@@ -202,23 +203,23 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
             protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
                 List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
-                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
                 if (function != null) {
                     FunctionDescriptor descriptor = (FunctionDescriptor) ResolutionUtils.resolveToDescriptor(function);
 
-                    JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor);
+                    KtType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor);
                     if (matchingReturnType != null) {
                         actions.add(new ChangeFunctionReturnTypeFix(function, matchingReturnType));
                     }
 
-                    JetType functionType = descriptor.getReturnType();
+                    KtType functionType = descriptor.getReturnType();
                     if (functionType == null) return actions;
 
                     List<FunctionDescriptor> overriddenMismatchingFunctions = new LinkedList<FunctionDescriptor>();
                     for (FunctionDescriptor overriddenFunction: descriptor.getOverriddenDescriptors()) {
-                        JetType overriddenFunctionType = overriddenFunction.getReturnType();
+                        KtType overriddenFunctionType = overriddenFunction.getReturnType();
                         if (overriddenFunctionType == null) continue;
-                        if (!JetTypeChecker.DEFAULT.isSubtypeOf(functionType, overriddenFunctionType)) {
+                        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, overriddenFunctionType)) {
                             overriddenMismatchingFunctions.add(overriddenFunction);
                         }
                     }
@@ -226,8 +227,8 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
                     if (overriddenMismatchingFunctions.size() == 1) {
                         PsiElement overriddenFunction = DescriptorToSourceUtils
                                 .descriptorToDeclaration(overriddenMismatchingFunctions.get(0));
-                        if (overriddenFunction instanceof JetFunction) {
-                            actions.add(new ChangeFunctionReturnTypeFix((JetFunction) overriddenFunction, functionType));
+                        if (overriddenFunction instanceof KtFunction) {
+                            actions.add(new ChangeFunctionReturnTypeFix((KtFunction) overriddenFunction, functionType));
                         }
                     }
                 }
@@ -242,7 +243,7 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
                 return function == null ? null : new ChangeFunctionReturnTypeFix(function, getPlatform(function).getBuiltIns().getUnitType());
             }
         };
@@ -254,7 +255,7 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<JetFunctio
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
                 return function == null ? null : new ChangeFunctionReturnTypeFix(function, getPlatform(function).getBuiltIns().getNothingType());
             }
         };

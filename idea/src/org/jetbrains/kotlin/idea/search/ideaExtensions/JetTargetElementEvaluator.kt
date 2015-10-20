@@ -22,17 +22,17 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 import com.intellij.psi.PsiReference
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetPrimaryConstructor
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 public class JetTargetElementEvaluator : TargetElementEvaluatorEx {
-    override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is JetClass && element.isAbstract())
+    override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is KtClass && element.isAbstract())
 
     override fun getElementByReference(ref: PsiReference, flags: Int): PsiElement? = null
 
     override fun isIdentifierPart(file: PsiFile, text: CharSequence?, offset: Int): Boolean {
         // '(' is considered identifier part if it belongs to primary constructor without 'constructor' keyword
-        return file.findElementAt(offset)?.getNonStrictParentOfType<JetPrimaryConstructor>()?.getTextOffset() == offset
+        return file.findElementAt(offset)?.getNonStrictParentOfType<KtPrimaryConstructor>()?.getTextOffset() == offset
     }
 }

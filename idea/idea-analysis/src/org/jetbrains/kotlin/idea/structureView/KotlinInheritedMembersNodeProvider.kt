@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import com.intellij.psi.NavigatablePsiElement
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
@@ -32,7 +32,7 @@ public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<Tr
         if (node !is JetStructureViewElement) return listOf()
 
         val element = node.getElement()
-        if (element !is JetClassOrObject) return listOf()
+        if (element !is KtClassOrObject) return listOf()
 
         @Suppress("USELESS_CAST") // KT-3996 Workaround
         val project = (element as NavigatablePsiElement).getProject()

@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -39,7 +39,7 @@ public class InfixValidator : SymbolUsageValidator {
         val functionDescriptor = targetDescriptor as? FunctionDescriptor ?: return
         if (functionDescriptor.isDynamic() || ErrorUtils.isError(functionDescriptor)) return
         if (isInfixCall(element) && !functionDescriptor.isInfix) {
-            val operationRefExpression = element as? JetOperationReferenceExpression ?: return
+            val operationRefExpression = element as? KtOperationReferenceExpression ?: return
             val containingDeclarationName = functionDescriptor.containingDeclaration.fqNameUnsafe.asString()
             trace.report(Errors.INFIX_MODIFIER_REQUIRED.on(operationRefExpression, functionDescriptor, containingDeclarationName))
         }
@@ -47,8 +47,8 @@ public class InfixValidator : SymbolUsageValidator {
 
     companion object {
         fun isInfixCall(element: PsiElement?): Boolean {
-            val operationRefExpression = element as? JetOperationReferenceExpression ?: return false
-            val binaryExpression = operationRefExpression.parent as? JetBinaryExpression ?: return false
+            val operationRefExpression = element as? KtOperationReferenceExpression ?: return false
+            val binaryExpression = operationRefExpression.parent as? KtBinaryExpression ?: return false
             return binaryExpression.operationReference === operationRefExpression && !operationRefExpression.isPredefinedOperator()
         }
     }

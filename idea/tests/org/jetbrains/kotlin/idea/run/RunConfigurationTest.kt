@@ -72,7 +72,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
         Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.srcOutputDir))
         Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.testOutputDir))
 
-        fun functionVisitor(function: JetNamedFunction) {
+        fun functionVisitor(function: KtNamedFunction) {
             val options = function.bodyExpression?.allChildren?.filterIsInstance<PsiComment>()?.map { it.text.trim().replace("//", "").trim() }?.filter { it.isNotBlank() }?.toList() ?: emptyList()
             if (options.isNotEmpty()) {
                 val assertIsMain = "yes" in options
@@ -108,9 +108,9 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
         createResult.srcDir.children.filter { it.extension == "kt" }.forEach {
             val psiFile = PsiManager.getInstance(createResult.module.project).findFile(it)
-            if (psiFile is JetFile) {
-                psiFile.acceptChildren(object : JetVisitorVoid() {
-                    override fun visitNamedFunction(function: JetNamedFunction) {
+            if (psiFile is KtFile) {
+                psiFile.acceptChildren(object : KtVisitorVoid() {
+                    override fun visitNamedFunction(function: KtNamedFunction) {
                         functionVisitor(function)
                     }
                 })
@@ -187,9 +187,9 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
             val testFile = PsiManager.getInstance(getTestProject()).findFile(srcDir.findFileByRelativePath("test.kt")!!)!!
             testFile.accept(
-                    object : JetTreeVisitorVoid() {
+                    object : KtTreeVisitorVoid() {
                         override fun visitComment(comment: PsiComment) {
-                            val declaration = comment.getStrictParentOfType<JetNamedDeclaration>()!!
+                            val declaration = comment.getStrictParentOfType<KtNamedDeclaration>()!!
                             val text = comment.getText() ?: return
                             if (!text.startsWith(RUN_PREFIX)) return
 
@@ -221,7 +221,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): JetRunConfiguration {
         val obj = JetFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
-        val mainFunction = obj.getDeclarations().single { it is JetFunction && it.getName() == "main" }
+        val mainFunction = obj.getDeclarations().single { it is KtFunction && it.getName() == "main" }
         return createConfigurationFromElement(mainFunction, save)
     }
 

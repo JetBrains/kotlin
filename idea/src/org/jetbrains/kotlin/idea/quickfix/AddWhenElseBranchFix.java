@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.psi.*;
 
-public class AddWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpression> {
+public class AddWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression> {
     private static final String ELSE_ENTRY_TEXT = "else -> {}";
 
-    public AddWhenElseBranchFix(@NotNull JetWhenExpression element) {
+    public AddWhenElseBranchFix(@NotNull KtWhenExpression element) {
         super(element);
     }
 
@@ -56,17 +56,17 @@ public class AddWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpression
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
         PsiElement whenCloseBrace = getElement().getCloseBrace();
         assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
 
-        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(file);
-        JetWhenEntry entry = psiFactory.createWhenEntry(ELSE_ENTRY_TEXT);
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);
+        KtWhenEntry entry = psiFactory.createWhenEntry(ELSE_ENTRY_TEXT);
 
         PsiElement insertedBranch = getElement().addBefore(entry, whenCloseBrace);
         getElement().addAfter(psiFactory.createNewLine(), insertedBranch);
 
-        JetWhenEntry insertedWhenEntry = (JetWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
+        KtWhenEntry insertedWhenEntry = (KtWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
         TextRange textRange = insertedWhenEntry.getTextRange();
 
         int indexOfOpenBrace = insertedWhenEntry.getText().indexOf('{');
@@ -79,7 +79,7 @@ public class AddWhenElseBranchFix extends KotlinQuickFixAction<JetWhenExpression
             @Override
             public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
-                JetWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, JetWhenExpression.class, false);
+                KtWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, KtWhenExpression.class, false);
                 if (whenExpression == null) return null;
                 return new AddWhenElseBranchFix(whenExpression);
             }

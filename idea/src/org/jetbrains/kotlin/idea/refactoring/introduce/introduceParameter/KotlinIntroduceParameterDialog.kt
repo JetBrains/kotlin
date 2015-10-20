@@ -29,7 +29,7 @@ import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.ui.TitledSeparator
 import com.intellij.usageView.BaseUsageViewDescriptor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.core.refactoring.validateElement
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
@@ -56,7 +56,7 @@ public class KotlinIntroduceParameterDialog private constructor(
         val descriptor: IntroduceParameterDescriptor,
         val lambdaExtractionDescriptor: ExtractableCodeDescriptor?,
         nameSuggestions: Array<String>,
-        val typeSuggestions: List<JetType>,
+        val typeSuggestions: List<KtType>,
         val helper: KotlinIntroduceParameterHelper
 ): RefactoringDialog(project, true) {
     constructor(
@@ -64,7 +64,7 @@ public class KotlinIntroduceParameterDialog private constructor(
             editor: Editor,
             descriptor: IntroduceParameterDescriptor,
             nameSuggestions: Array<String>,
-            typeSuggestions: List<JetType>,
+            typeSuggestions: List<KtType>,
             helper: KotlinIntroduceParameterHelper
     ): this(project, editor, descriptor, null, nameSuggestions, typeSuggestions, helper)
 
@@ -87,11 +87,11 @@ public class KotlinIntroduceParameterDialog private constructor(
             .map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }
             .toTypedArray()
 
-    private val nameField = NameSuggestionsField(nameSuggestions, project, JetFileType.INSTANCE)
-    private val typeField = NameSuggestionsField(typeNameSuggestions, project, JetFileType.INSTANCE)
+    private val nameField = NameSuggestionsField(nameSuggestions, project, KotlinFileType.INSTANCE)
+    private val typeField = NameSuggestionsField(typeNameSuggestions, project, KotlinFileType.INSTANCE)
     private var replaceAllCheckBox: JCheckBox? = null
     private var defaultValueCheckBox: JCheckBox? = null
-    private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, JetElement>(descriptor.parametersToRemove.size())
+    private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, KtElement>(descriptor.parametersToRemove.size())
     private var parameterTablePanel: KotlinParameterTablePanel? = null
     private val commandName = if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER
 
@@ -219,7 +219,7 @@ public class KotlinIntroduceParameterDialog private constructor(
         }
 
         for (parameter in descriptor.parametersToRemove) {
-            val removeWhat = if (parameter is JetParameter) "parameter '${parameter.getName()}'" else "receiver"
+            val removeWhat = if (parameter is KtParameter) "parameter '${parameter.getName()}'" else "receiver"
             val cb = NonFocusableCheckBox("Remove $removeWhat no longer used")
 
             removeParamsCheckBoxes[cb] = parameter
@@ -234,7 +234,7 @@ public class KotlinIntroduceParameterDialog private constructor(
     override fun createCenterPanel() = null
 
     override fun canRun() {
-        val psiFactory = JetPsiFactory(myProject)
+        val psiFactory = KtPsiFactory(myProject)
         psiFactory.createSimpleName(nameField.getEnteredName()).validateElement("Invalid parameter name")
         psiFactory.createType(typeField.getEnteredName()).validateElement("Invalid parameter type")
     }
@@ -249,8 +249,8 @@ public class KotlinIntroduceParameterDialog private constructor(
                     override fun findUsages() = UsageInfo.EMPTY_ARRAY
 
                     override fun performRefactoring(usages: Array<out UsageInfo>) {
-                        fun createLambdaForArgument(function: JetFunction): JetExpression {
-                            val statement = (function.getBodyExpression() as JetBlockExpression).getStatements().single()
+                        fun createLambdaForArgument(function: KtFunction): KtExpression {
+                            val statement = (function.getBodyExpression() as KtBlockExpression).getStatements().single()
                             val space = if (statement.isMultiLine()) "\n" else " "
                             val parameters = function.getValueParameters()
                             val parametersText = if (parameters.isNotEmpty()) {
@@ -258,7 +258,7 @@ public class KotlinIntroduceParameterDialog private constructor(
                             } else ""
                             val text = "{$parametersText$space${statement.getText()}$space}"
 
-                            return JetPsiFactory(myProject).createExpression(text)
+                            return KtPsiFactory(myProject).createExpression(text)
                         }
 
                         val chosenName = nameField.getEnteredName()
@@ -282,7 +282,7 @@ public class KotlinIntroduceParameterDialog private constructor(
                                     allowExpressionBody = false
                             )
                             with (ExtractionGeneratorConfiguration(newDescriptor, options).generateDeclaration()) {
-                                val function = declaration as JetFunction
+                                val function = declaration as KtFunction
                                 val receiverType = function.getReceiverTypeReference()?.getText()
                                 val parameterTypes = function
                                         .getValueParameters()

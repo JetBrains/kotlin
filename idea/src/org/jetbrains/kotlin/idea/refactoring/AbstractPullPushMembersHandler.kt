@@ -52,8 +52,8 @@ public abstract class AbstractPullPushMembersHandler(
 
     protected abstract fun invoke(project: Project,
                                   editor: Editor?,
-                                  classOrObject: JetClassOrObject?,
-                                  member: JetNamedDeclaration?,
+                                  classOrObject: KtClassOrObject?,
+                                  member: KtNamedDeclaration?,
                                   dataContext: DataContext?)
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
@@ -61,7 +61,7 @@ public abstract class AbstractPullPushMembersHandler(
         editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
 
         val target = (file.findElementAt(offset) ?: return).parentsWithSelf.firstOrNull {
-            it is JetClassOrObject || ((it is JetNamedFunction || it is JetProperty) && it.parent is JetClassBody)
+            it is KtClassOrObject || ((it is KtNamedFunction || it is KtProperty) && it.parent is KtClassBody)
         }
 
         if (target == null) {
@@ -79,8 +79,8 @@ public abstract class AbstractPullPushMembersHandler(
         val editor = dataContext?.let { CommonDataKeys.EDITOR.getData(it) }
 
         val (classOrObject, member) = when (element) {
-            is JetNamedFunction, is JetProperty -> element.getStrictParentOfType<JetClassOrObject>() to element as JetNamedDeclaration?
-            is JetClassOrObject -> element to null
+            is KtNamedFunction, is KtProperty -> element.getStrictParentOfType<KtClassOrObject>() to element as KtNamedDeclaration?
+            is KtClassOrObject -> element to null
             else -> {
                 reportWrongPosition(project, editor)
                 return
@@ -93,9 +93,9 @@ public abstract class AbstractPullPushMembersHandler(
     override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean {
         return elements.mapTo(HashSet<PsiElement>()) {
             when (it) {
-                is JetNamedFunction, is JetProperty ->
-                    (it.parent as? JetClassBody)?.parent as? JetClassOrObject
-                is JetClassOrObject -> it
+                is KtNamedFunction, is KtProperty ->
+                    (it.parent as? KtClassBody)?.parent as? KtClassOrObject
+                is KtClassOrObject -> it
                 else -> null
             } ?: return false
         }.size() == 1

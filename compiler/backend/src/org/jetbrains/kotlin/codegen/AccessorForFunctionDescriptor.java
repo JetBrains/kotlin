@@ -20,18 +20,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetSuperExpression;
+import org.jetbrains.kotlin.psi.KtSuperExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 
 public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
     private final FunctionDescriptor calleeDescriptor;
-    private final JetSuperExpression superCallExpression;
+    private final KtSuperExpression superCallExpression;
 
     public AccessorForFunctionDescriptor(
             @NotNull FunctionDescriptor descriptor,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable JetSuperExpression superCallExpression,
+            @Nullable KtSuperExpression superCallExpression,
             @NotNull String nameSuffix
     ) {
         super(containingDeclaration,
@@ -57,7 +57,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
     }
 
     @Override
-    public JetSuperExpression getSuperCallExpression() {
+    public KtSuperExpression getSuperCallExpression() {
         return superCallExpression;
     }
 }

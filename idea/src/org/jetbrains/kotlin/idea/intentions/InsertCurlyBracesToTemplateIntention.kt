@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSimpleNameStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 
-public class InsertCurlyBracesToTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameStringTemplateEntry> (
+public class InsertCurlyBracesToTemplateIntention : JetSelfTargetingOffsetIndependentIntention<KtSimpleNameStringTemplateEntry> (
         javaClass(), "Insert curly braces around variable"), LowPriorityAction {
 
-    override fun isApplicableTo(element: JetSimpleNameStringTemplateEntry): Boolean = true
+    override fun isApplicableTo(element: KtSimpleNameStringTemplateEntry): Boolean = true
 
-    override fun applyTo(element: JetSimpleNameStringTemplateEntry, editor: Editor) {
+    override fun applyTo(element: KtSimpleNameStringTemplateEntry, editor: Editor) {
         val expression = element.getExpression() ?: return
-        element.replace(JetPsiFactory(element).createBlockStringTemplateEntry(expression))
+        element.replace(KtPsiFactory(element).createBlockStringTemplateEntry(expression))
     }
 }

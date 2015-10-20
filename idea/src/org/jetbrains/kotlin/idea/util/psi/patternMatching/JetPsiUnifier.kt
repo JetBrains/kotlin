@@ -20,75 +20,75 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.Status.*
 import java.util.HashMap
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.Collections
-import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetUnaryExpression
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetConstantExpression
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtUnaryExpression
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression
-import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.psi.JetLabelReferenceExpression
+import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.types.ErrorUtils
 import com.intellij.lang.ASTNode
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.psi.JetThisExpression
-import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
+import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange.Empty
-import org.jetbrains.kotlin.psi.JetMultiDeclaration
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetClassBody
+import org.jetbrains.kotlin.psi.KtMultiDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.psi.JetWithExpressionInitializer
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtWithExpressionInitializer
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetTypeParameter
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetClassInitializer
-import org.jetbrains.kotlin.psi.JetTypeParameterListOwner
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtClassInitializer
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.psi.doNotAnalyze
-import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
-import org.jetbrains.kotlin.psi.JetDelegationSpecifier
+import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtDelegatorToSuperClass
+import org.jetbrains.kotlin.psi.KtDelegationSpecifier
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.JetOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 
 public interface UnificationResult {
     public enum class Status {
@@ -108,15 +108,15 @@ public interface UnificationResult {
     }
 
     interface Matched: UnificationResult {
-        val substitution: Map<UnifierParameter, JetExpression>
+        val substitution: Map<UnifierParameter, KtExpression>
         override val status: Status get() = MATCHED
     }
 
-    class StronglyMatched(override val substitution: Map<UnifierParameter, JetExpression>): Matched
+    class StronglyMatched(override val substitution: Map<UnifierParameter, KtExpression>): Matched
 
     class WeaklyMatched(
-            override val substitution: Map<UnifierParameter, JetExpression>,
-            val weakMatches: Map<JetElement, JetElement>
+            override val substitution: Map<UnifierParameter, KtExpression>,
+            val weakMatches: Map<KtElement, KtElement>
     ): Matched
 
     val status: Status
@@ -125,7 +125,7 @@ public interface UnificationResult {
 
 public class UnifierParameter(
         val descriptor: DeclarationDescriptor,
-        val expectedType: JetType
+        val expectedType: KtType
 )
 
 public class JetPsiUnifier(
@@ -142,14 +142,14 @@ public class JetPsiUnifier(
     ) {
         val patternContext: BindingContext = originalPattern.getBindingContext()
         val targetContext: BindingContext = originalTarget.getBindingContext()
-        val substitution = HashMap<UnifierParameter, JetExpression>()
+        val substitution = HashMap<UnifierParameter, KtExpression>()
         val declarationPatternsToTargets = MultiMap<DeclarationDescriptor, DeclarationDescriptor>()
-        val weakMatches = HashMap<JetElement, JetElement>()
+        val weakMatches = HashMap<KtElement, KtElement>()
         var checkEquivalence: Boolean = false
 
         private fun JetPsiRange.getBindingContext(): BindingContext {
-            val element = (this as? JetPsiRange.ListRange)?.startElement as? JetElement
-            if ((element?.getContainingFile() as? JetFile)?.doNotAnalyze != null) return BindingContext.EMPTY
+            val element = (this as? JetPsiRange.ListRange)?.startElement as? KtElement
+            if ((element?.getContainingFile() as? KtFile)?.doNotAnalyze != null) return BindingContext.EMPTY
             return element?.getContextForContainingDeclarationBody() ?: BindingContext.EMPTY
         }
 
@@ -157,8 +157,8 @@ public class JetPsiUnifier(
             if (d1 == d2 || d2 in declarationPatternsToTargets[d1] || d1 in declarationPatternsToTargets[d2]) return true
             if (d1 == null || d2 == null) return false
 
-            val decl1 = DescriptorToSourceUtils.descriptorToDeclaration(d1) as? JetDeclaration
-            val decl2 = DescriptorToSourceUtils.descriptorToDeclaration(d2) as? JetDeclaration
+            val decl1 = DescriptorToSourceUtils.descriptorToDeclaration(d1) as? KtDeclaration
+            val decl2 = DescriptorToSourceUtils.descriptorToDeclaration(d2) as? KtDeclaration
             if (decl1 == null || decl2 == null) return false
             if (decl1 == decl2) return true
 
@@ -202,15 +202,15 @@ public class JetPsiUnifier(
 
         private fun matchResolvedCalls(rc1: ResolvedCall<*>, rc2: ResolvedCall<*>): Status? {
             fun checkSpecialOperations(): Boolean {
-                val op1 = (rc1.getCall().getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedNameElementType()
-                val op2 = (rc2.getCall().getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedNameElementType()
+                val op1 = (rc1.getCall().getCalleeExpression() as? KtSimpleNameExpression)?.getReferencedNameElementType()
+                val op2 = (rc2.getCall().getCalleeExpression() as? KtSimpleNameExpression)?.getReferencedNameElementType()
 
                 return when {
                     op1 == op2 ->
                         true
-                    op1 == JetTokens.NOT_IN, op2 == JetTokens.NOT_IN ->
+                    op1 == KtTokens.NOT_IN, op2 == KtTokens.NOT_IN ->
                         false
-                    op1 == JetTokens.EXCLEQ, op2 == JetTokens.EXCLEQ ->
+                    op1 == KtTokens.EXCLEQ, op2 == KtTokens.EXCLEQ ->
                         false
                     op1 in OperatorConventions.COMPARISON_OPERATIONS, op2 in OperatorConventions.COMPARISON_OPERATIONS ->
                         false
@@ -252,7 +252,7 @@ public class JetPsiUnifier(
                                 null to null
                         }
 
-                val thisExpression = explicitReceiver?.getExpression() as? JetThisExpression
+                val thisExpression = explicitReceiver?.getExpression() as? KtThisExpression
                 if (implicitReceiver == null || thisExpression == null) return false
 
                 return matchDescriptors(
@@ -303,17 +303,17 @@ public class JetPsiUnifier(
             }
         }
 
-        private val JetElement.bindingContext: BindingContext get() = if (this in originalPattern) patternContext else targetContext
+        private val KtElement.bindingContext: BindingContext get() = if (this in originalPattern) patternContext else targetContext
 
-        private fun JetElement.getAdjustedResolvedCall(): ResolvedCall<*>? {
-            val rc = if (this is JetArrayAccessExpression) {
+        private fun KtElement.getAdjustedResolvedCall(): ResolvedCall<*>? {
+            val rc = if (this is KtArrayAccessExpression) {
                 bindingContext[BindingContext.INDEXED_LVALUE_GET, this]
             }
             else {
                 getResolvedCall(bindingContext)?.let {
                     when {
                         it !is VariableAsFunctionResolvedCall -> it
-                        this is JetSimpleNameExpression -> it.variableCall
+                        this is KtSimpleNameExpression -> it.variableCall
                         else -> it.functionCall
                     }
                 }
@@ -325,7 +325,7 @@ public class JetPsiUnifier(
             }
         }
 
-        private fun matchCalls(e1: JetElement, e2: JetElement): Status? {
+        private fun matchCalls(e1: KtElement, e2: KtElement): Status? {
             if (e1.shouldIgnoreResolvedCall() || e2.shouldIgnoreResolvedCall()) return null
 
             val resolvedCall1 = e1.getAdjustedResolvedCall()
@@ -353,12 +353,12 @@ public class JetPsiUnifier(
             }
         }
 
-        private fun JetTypeReference.getType(): JetType? {
+        private fun KtTypeReference.getType(): KtType? {
             val t = bindingContext[BindingContext.TYPE, this]
             return if (t == null || t.isError()) null else t
         }
 
-        private fun matchTypes(type1: JetType?, type2: JetType?): Status? {
+        private fun matchTypes(type1: KtType?, type2: KtType?): Status? {
             if (type1 != null && type2 != null) {
                 if (type1.isError() || type2.isError()) return null
                 if (TypeUtils.equalTypes(type1, type2)) return MATCHED
@@ -381,45 +381,45 @@ public class JetPsiUnifier(
             return if (type1 == null && type2 == null) null else UNMATCHED
         }
 
-        private fun matchTypes(types1: Collection<JetType>, types2: Collection<JetType>): Boolean {
-            fun sortTypes(types: Collection<JetType>) = types.sortedBy { DescriptorRenderer.DEBUG_TEXT.renderType(it) }
+        private fun matchTypes(types1: Collection<KtType>, types2: Collection<KtType>): Boolean {
+            fun sortTypes(types: Collection<KtType>) = types.sortedBy { DescriptorRenderer.DEBUG_TEXT.renderType(it) }
 
             if (types1.size() != types2.size()) return false
             return (sortTypes(types1) zip sortTypes(types2)).all { matchTypes(it.first, it.second) == MATCHED }
         }
 
-        private fun JetElement.shouldIgnoreResolvedCall(): Boolean {
+        private fun KtElement.shouldIgnoreResolvedCall(): Boolean {
             return when {
-                this is JetConstantExpression -> true
-                this is JetOperationReferenceExpression -> getReferencedNameElementType() == JetTokens.EXCLEXCL
-                this is JetIfExpression -> true
-                this is JetUnaryExpression -> when (getOperationReference().getReferencedNameElementType()) {
-                    JetTokens.EXCLEXCL, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS -> true
+                this is KtConstantExpression -> true
+                this is KtOperationReferenceExpression -> getReferencedNameElementType() == KtTokens.EXCLEXCL
+                this is KtIfExpression -> true
+                this is KtUnaryExpression -> when (getOperationReference().getReferencedNameElementType()) {
+                    KtTokens.EXCLEXCL, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> true
                     else -> false
                 }
-                this is JetBinaryExpression -> getOperationReference().getReferencedNameElementType() == JetTokens.ELVIS
+                this is KtBinaryExpression -> getOperationReference().getReferencedNameElementType() == KtTokens.ELVIS
                 else -> false
             }
         }
 
-        private fun JetBinaryExpression.matchComplexAssignmentWithSimple(simple: JetBinaryExpression): Status? {
+        private fun KtBinaryExpression.matchComplexAssignmentWithSimple(simple: KtBinaryExpression): Status? {
             return when {
                 doUnify(getLeft(), simple.getLeft()) == UNMATCHED -> UNMATCHED
                 else -> simple.getRight()?.let { matchCalls(this, it) } ?: UNMATCHED
             }
         }
 
-        private fun JetBinaryExpression.matchAssignment(e: JetElement): Status? {
-            val operationType = getOperationReference().getReferencedNameElementType() as JetToken
-            if (operationType == JetTokens.EQ) {
+        private fun KtBinaryExpression.matchAssignment(e: KtElement): Status? {
+            val operationType = getOperationReference().getReferencedNameElementType() as KtToken
+            if (operationType == KtTokens.EQ) {
                 if (e.shouldIgnoreResolvedCall()) return UNMATCHED
 
-                if (JetPsiUtil.isAssignment(e) && !JetPsiUtil.isOrdinaryAssignment(e)) {
-                    return (e as JetBinaryExpression).matchComplexAssignmentWithSimple(this)
+                if (KtPsiUtil.isAssignment(e) && !KtPsiUtil.isOrdinaryAssignment(e)) {
+                    return (e as KtBinaryExpression).matchComplexAssignmentWithSimple(this)
                 }
 
                 val lhs = getLeft()?.unwrap()
-                if (lhs !is JetArrayAccessExpression) return null
+                if (lhs !is KtArrayAccessExpression) return null
 
                 val setResolvedCall = bindingContext[BindingContext.INDEXED_LVALUE_SET, lhs]
                 val resolvedCallToMatch = e.getAdjustedResolvedCall()
@@ -433,10 +433,10 @@ public class JetPsiUnifier(
             val operationName = OperatorConventions.getNameForOperationSymbol(operationType)
             if (assignResolvedCall.getResultingDescriptor()?.getName() == operationName) return matchCalls(this, e)
 
-            return if (JetPsiUtil.isAssignment(e)) null else UNMATCHED
+            return if (KtPsiUtil.isAssignment(e)) null else UNMATCHED
         }
 
-        private fun matchLabelTargets(e1: JetLabelReferenceExpression, e2: JetLabelReferenceExpression): Status {
+        private fun matchLabelTargets(e1: KtLabelReferenceExpression, e2: KtLabelReferenceExpression): Status {
             val target1 = e1.bindingContext[BindingContext.LABEL_TARGET, e1]
             val target2 = e2.bindingContext[BindingContext.LABEL_TARGET, e2]
 
@@ -445,18 +445,18 @@ public class JetPsiUnifier(
 
         private fun PsiElement.isIncrement(): Boolean {
             val parent = getParent()
-            return parent is JetUnaryExpression
+            return parent is KtUnaryExpression
                    && this == parent.getOperationReference()
-                   && ((parent.getOperationToken() as JetToken) in OperatorConventions.INCREMENT_OPERATIONS)
+                   && ((parent.getOperationToken() as KtToken) in OperatorConventions.INCREMENT_OPERATIONS)
         }
 
-        private fun matchCallableReferences(e1: JetCallableReferenceExpression, e2: JetCallableReferenceExpression): Boolean {
+        private fun matchCallableReferences(e1: KtCallableReferenceExpression, e2: KtCallableReferenceExpression): Boolean {
             val d1 = e1.bindingContext[BindingContext.REFERENCE_TARGET, e1.getCallableReference()]
             val d2 = e2.bindingContext[BindingContext.REFERENCE_TARGET, e2.getCallableReference()]
             return matchDescriptors(d1, d2)
         }
 
-        private fun matchMultiDeclarations(e1: JetMultiDeclaration, e2: JetMultiDeclaration): Boolean {
+        private fun matchMultiDeclarations(e1: KtMultiDeclaration, e2: KtMultiDeclaration): Boolean {
             val entries1 = e1.getEntries()
             val entries2 = e2.getEntries()
             if (entries1.size() != entries2.size()) return false
@@ -489,13 +489,13 @@ public class JetPsiUnifier(
         }
 
         private fun matchCallables(
-                decl1: JetDeclaration,
-                decl2: JetDeclaration,
+                decl1: KtDeclaration,
+                decl2: KtDeclaration,
                 desc1: CallableDescriptor,
                 desc2: CallableDescriptor): Status? {
             fun needToCompareReturnTypes(): Boolean {
-                if (decl1 !is JetCallableDeclaration) return true
-                return decl1.getTypeReference() != null || (decl2 as JetCallableDeclaration).getTypeReference() != null
+                if (decl1 !is KtCallableDeclaration) return true
+                return decl1.getTypeReference() != null || (decl2 as KtCallableDeclaration).getTypeReference() != null
             }
 
             if (desc1 is VariableDescriptor && desc1.isVar() != (desc2 as VariableDescriptor).isVar()) return UNMATCHED
@@ -525,31 +525,31 @@ public class JetPsiUnifier(
             zippedParams.forEach { declarationPatternsToTargets.putValue(it.first, it.second) }
 
             return doUnify(
-                    (decl1 as? JetTypeParameterListOwner)?.getTypeParameters()?.toRange() ?: Empty,
-                    (decl2 as? JetTypeParameterListOwner)?.getTypeParameters()?.toRange() ?: Empty
+                    (decl1 as? KtTypeParameterListOwner)?.getTypeParameters()?.toRange() ?: Empty,
+                    (decl2 as? KtTypeParameterListOwner)?.getTypeParameters()?.toRange() ?: Empty
             ) and when (decl1) {
-                is JetDeclarationWithBody ->
-                    doUnify(decl1.getBodyExpression(), (decl2 as JetDeclarationWithBody).getBodyExpression())
+                is KtDeclarationWithBody ->
+                    doUnify(decl1.getBodyExpression(), (decl2 as KtDeclarationWithBody).getBodyExpression())
 
-                is JetWithExpressionInitializer ->
-                    doUnify(decl1.getInitializer(), (decl2 as JetWithExpressionInitializer).getInitializer())
+                is KtWithExpressionInitializer ->
+                    doUnify(decl1.getInitializer(), (decl2 as KtWithExpressionInitializer).getInitializer())
 
-                is JetParameter ->
-                    doUnify(decl1.getDefaultValue(), (decl2 as JetParameter).getDefaultValue())
+                is KtParameter ->
+                    doUnify(decl1.getDefaultValue(), (decl2 as KtParameter).getDefaultValue())
 
                 else ->
                     UNMATCHED
             }
         }
 
-        private fun JetDeclaration.isNameRelevant(): Boolean {
-            if (this is JetParameter && hasValOrVar()) return true
+        private fun KtDeclaration.isNameRelevant(): Boolean {
+            if (this is KtParameter && hasValOrVar()) return true
 
             val parent = getParent()
-            return parent is JetClassBody || parent is JetFile
+            return parent is KtClassBody || parent is KtFile
         }
 
-        private fun matchNames(decl1: JetDeclaration, decl2: JetDeclaration, desc1: DeclarationDescriptor, desc2: DeclarationDescriptor): Boolean {
+        private fun matchNames(decl1: KtDeclaration, decl2: KtDeclaration, desc1: DeclarationDescriptor, desc2: DeclarationDescriptor): Boolean {
             return (!decl1.isNameRelevant() && !decl2.isNameRelevant()) || desc1.getName() == desc2.getName()
         }
 
@@ -566,8 +566,8 @@ public class JetPsiUnifier(
         }
 
         private fun matchClasses(
-                decl1: JetClassOrObject,
-                decl2: JetClassOrObject,
+                decl1: KtClassOrObject,
+                decl2: KtClassOrObject,
                 desc1: ClassDescriptor,
                 desc2: ClassDescriptor): Status? {
             class OrderInfo<T>(
@@ -575,26 +575,26 @@ public class JetPsiUnifier(
                     val orderInsensitive: List<T>
             )
 
-            fun getMemberOrderInfo(cls: JetClassOrObject): OrderInfo<JetDeclaration> {
+            fun getMemberOrderInfo(cls: KtClassOrObject): OrderInfo<KtDeclaration> {
                 val (orderInsensitive, orderSensitive) = (cls.getBody()?.getDeclarations() ?: Collections.emptyList()).partition {
-                    it is JetClassOrObject || it is JetFunction
+                    it is KtClassOrObject || it is KtFunction
                 }
 
                 return OrderInfo(orderSensitive, orderInsensitive)
             }
 
-            fun getDelegationOrderInfo(cls: JetClassOrObject): OrderInfo<JetDelegationSpecifier> {
-                val (orderInsensitive, orderSensitive) = cls.getDelegationSpecifiers().partition { it is JetDelegatorToSuperClass }
+            fun getDelegationOrderInfo(cls: KtClassOrObject): OrderInfo<KtDelegationSpecifier> {
+                val (orderInsensitive, orderSensitive) = cls.getDelegationSpecifiers().partition { it is KtDelegatorToSuperClass }
                 return OrderInfo(orderSensitive, orderInsensitive)
             }
 
-            fun resolveAndSortDeclarationsByDescriptor(declarations: List<JetDeclaration>): List<Pair<JetDeclaration, DeclarationDescriptor?>> {
+            fun resolveAndSortDeclarationsByDescriptor(declarations: List<KtDeclaration>): List<Pair<KtDeclaration, DeclarationDescriptor?>> {
                 return declarations
                         .map { it to it.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] }
                         .sortedBy { it.second?.let { IdeDescriptorRenderers.SOURCE_CODE.render(it) } ?: "" }
             }
 
-            fun sortDeclarationsByElementType(declarations: List<JetDeclaration>): List<JetDeclaration> {
+            fun sortDeclarationsByElementType(declarations: List<KtDeclaration>): List<KtDeclaration> {
                 return declarations.sortedBy { it.getNode()?.getElementType()?.getIndex() ?: -1 }
             }
 
@@ -621,8 +621,8 @@ public class JetPsiUnifier(
                 return UNMATCHED
             }
 
-            val status = doUnify((decl1 as? JetClass)?.getPrimaryConstructorParameterList(), (decl2 as? JetClass)?.getPrimaryConstructorParameterList()) and
-                    doUnify((decl1 as? JetClass)?.getTypeParameterList(), (decl2 as? JetClass)?.getTypeParameterList()) and
+            val status = doUnify((decl1 as? KtClass)?.getPrimaryConstructorParameterList(), (decl2 as? KtClass)?.getPrimaryConstructorParameterList()) and
+                    doUnify((decl1 as? KtClass)?.getTypeParameterList(), (decl2 as? KtClass)?.getTypeParameterList()) and
                     doUnify(delegationInfo1.orderSensitive.toRange(), delegationInfo2.orderSensitive.toRange())
             if (status == UNMATCHED) return UNMATCHED
 
@@ -653,8 +653,8 @@ public class JetPsiUnifier(
             return MATCHED
         }
 
-        private fun JetDeclaration.matchDeclarations(e: PsiElement): Status? {
-            if (e !is JetDeclaration) return UNMATCHED
+        private fun KtDeclaration.matchDeclarations(e: PsiElement): Status? {
+            if (e !is KtDeclaration) return UNMATCHED
 
             val desc1 = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
             val desc2 = e.bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, e]
@@ -662,8 +662,8 @@ public class JetPsiUnifier(
         }
 
         private fun matchDeclarations(
-                decl1: JetDeclaration,
-                decl2: JetDeclaration,
+                decl1: KtDeclaration,
+                decl2: KtDeclaration,
                 desc1: DeclarationDescriptor?,
                 desc2: DeclarationDescriptor?): Status? {
             if (decl1.javaClass != decl2.javaClass) return UNMATCHED
@@ -673,13 +673,13 @@ public class JetPsiUnifier(
 
             declarationPatternsToTargets.putValue(desc1, desc2)
             val status = when (decl1) {
-                is JetDeclarationWithBody, is JetWithExpressionInitializer, is JetParameter ->
+                is KtDeclarationWithBody, is KtWithExpressionInitializer, is KtParameter ->
                     matchCallables(decl1, decl2, desc1 as CallableDescriptor, desc2 as CallableDescriptor)
 
-                is JetClassOrObject ->
-                    matchClasses(decl1, decl2 as JetClassOrObject, desc1 as ClassDescriptor, desc2 as ClassDescriptor)
+                is KtClassOrObject ->
+                    matchClasses(decl1, decl2 as KtClassOrObject, desc1 as ClassDescriptor, desc2 as ClassDescriptor)
 
-                is JetTypeParameter ->
+                is KtTypeParameter ->
                     matchTypeParameters(desc1 as TypeParameterDescriptor, desc2 as TypeParameterDescriptor)
 
                 else ->
@@ -694,37 +694,37 @@ public class JetPsiUnifier(
 
         private fun matchResolvedInfo(e1: PsiElement, e2: PsiElement): Status? {
             return when {
-                e1 !is JetElement, e2 !is JetElement ->
+                e1 !is KtElement, e2 !is KtElement ->
                     null
 
-                e1 is JetMultiDeclaration && e2 is JetMultiDeclaration ->
+                e1 is KtMultiDeclaration && e2 is KtMultiDeclaration ->
                     if (matchMultiDeclarations(e1, e2)) null else UNMATCHED
 
-                e1 is JetClassInitializer && e2 is JetClassInitializer ->
+                e1 is KtClassInitializer && e2 is KtClassInitializer ->
                     null
 
-                e1 is JetDeclaration ->
+                e1 is KtDeclaration ->
                     e1.matchDeclarations(e2)
 
-                e2 is JetDeclaration ->
+                e2 is KtDeclaration ->
                     e2.matchDeclarations(e1)
 
-                e1 is JetTypeReference && e2 is JetTypeReference ->
+                e1 is KtTypeReference && e2 is KtTypeReference ->
                     matchTypes(e1.getType(), e2.getType())
 
-                JetPsiUtil.isAssignment(e1) ->
-                    (e1 as JetBinaryExpression).matchAssignment(e2)
+                KtPsiUtil.isAssignment(e1) ->
+                    (e1 as KtBinaryExpression).matchAssignment(e2)
 
-                JetPsiUtil.isAssignment(e2) ->
-                    (e2 as JetBinaryExpression).matchAssignment(e1)
+                KtPsiUtil.isAssignment(e2) ->
+                    (e2 as KtBinaryExpression).matchAssignment(e1)
 
-                e1 is JetLabelReferenceExpression && e2 is JetLabelReferenceExpression ->
+                e1 is KtLabelReferenceExpression && e2 is KtLabelReferenceExpression ->
                     matchLabelTargets(e1, e2)
 
                 e1.isIncrement() != e2.isIncrement() ->
                     UNMATCHED
 
-                e1 is JetCallableReferenceExpression && e2 is JetCallableReferenceExpression ->
+                e1 is KtCallableReferenceExpression && e2 is KtCallableReferenceExpression ->
                     if (matchCallableReferences(e1, e2)) MATCHED else UNMATCHED
 
                 else ->
@@ -733,8 +733,8 @@ public class JetPsiUnifier(
         }
 
         private fun PsiElement.checkType(parameter: UnifierParameter): Boolean {
-            val targetElementType = (this as? JetExpression)?.let { it.bindingContext.getType(it) }
-            return targetElementType != null && JetTypeChecker.DEFAULT.isSubtypeOf(targetElementType, parameter.expectedType)
+            val targetElementType = (this as? KtExpression)?.let { it.bindingContext.getType(it) }
+            return targetElementType != null && KotlinTypeChecker.DEFAULT.isSubtypeOf(targetElementType, parameter.expectedType)
         }
 
         fun doUnify(target: JetPsiRange, pattern: JetPsiRange): Status {
@@ -750,19 +750,19 @@ public class JetPsiUnifier(
         private fun ASTNode.getChildrenRange(): JetPsiRange =
                 getChildren(null).map { it.getPsi() }.filterNotNull().toRange()
 
-        private fun PsiElement.unwrapWeakly(): JetElement? {
+        private fun PsiElement.unwrapWeakly(): KtElement? {
             return when {
-                this is JetReturnExpression -> getReturnedExpression()
-                this is JetProperty -> getInitializer()
-                JetPsiUtil.isOrdinaryAssignment(this) -> (this as JetBinaryExpression).getRight()
-                this is JetExpression && this !is JetDeclaration -> this
+                this is KtReturnExpression -> getReturnedExpression()
+                this is KtProperty -> getInitializer()
+                KtPsiUtil.isOrdinaryAssignment(this) -> (this as KtBinaryExpression).getRight()
+                this is KtExpression && this !is KtDeclaration -> this
                 else -> null
             }
         }
 
         private fun doUnifyWeakly(
-                targetElement: JetElement,
-                patternElement: JetElement
+                targetElement: KtElement,
+                patternElement: KtElement
         ): Status {
             if (!allowWeakMatches) return UNMATCHED
 
@@ -790,12 +790,12 @@ public class JetPsiUnifier(
             if (targetElementUnwrapped == null || patternElementUnwrapped == null) return UNMATCHED
 
             if (!checkEquivalence) {
-                val referencedPatternDescriptor = (patternElementUnwrapped as? JetReferenceExpression)?.let {
+                val referencedPatternDescriptor = (patternElementUnwrapped as? KtReferenceExpression)?.let {
                     it.bindingContext[BindingContext.REFERENCE_TARGET, it]
                 }
                 val parameter = descriptorToParameter[referencedPatternDescriptor]
                 if (parameter != null) {
-                    if (targetElementUnwrapped !is JetExpression) return UNMATCHED
+                    if (targetElementUnwrapped !is KtExpression) return UNMATCHED
                     if (!targetElementUnwrapped.checkType(parameter)) return UNMATCHED
 
                     val existingArgument = substitution[parameter]
@@ -822,7 +822,7 @@ public class JetPsiUnifier(
             val resolvedStatus = matchResolvedInfo(targetElementUnwrapped, patternElementUnwrapped)
             if (resolvedStatus == MATCHED) return resolvedStatus
 
-            if (targetElementUnwrapped is JetElement && patternElementUnwrapped is JetElement) {
+            if (targetElementUnwrapped is KtElement && patternElementUnwrapped is KtElement) {
                 val weakStatus = doUnifyWeakly(targetElementUnwrapped, patternElementUnwrapped)
                 if (weakStatus != UNMATCHED) return weakStatus
             }
@@ -846,15 +846,15 @@ public class JetPsiUnifier(
 
     private fun PsiElement.unwrap(): PsiElement? {
         return when (this) {
-            is JetExpression -> JetPsiUtil.deparenthesize(this)
-            is JetStringTemplateEntryWithExpression -> JetPsiUtil.deparenthesize(getExpression())
+            is KtExpression -> KtPsiUtil.deparenthesize(this)
+            is KtStringTemplateEntryWithExpression -> KtPsiUtil.deparenthesize(getExpression())
             else -> this
         }
     }
 
     private fun PsiElement.unquotedText(): String {
         val text = getText() ?: ""
-        return if (this is LeafPsiElement) JetPsiUtil.unquoteIdentifier(text) else text
+        return if (this is LeafPsiElement) KtPsiUtil.unquoteIdentifier(text) else text
     }
 
     public fun unify(target: JetPsiRange, pattern: JetPsiRange): UnificationResult {

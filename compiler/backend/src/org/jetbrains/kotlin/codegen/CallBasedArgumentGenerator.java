@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -68,7 +68,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         Type type = valueParameterTypes.get(i);
         ValueArgument valueArgument = argument.getValueArgument();
         assert valueArgument != null;
-        JetExpression argumentExpression = valueArgument.getArgumentExpression();
+        KtExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression != null : valueArgument.asElement().getText();
         callGenerator.genValueAndPut(parameter, argumentExpression, type, i);
     }

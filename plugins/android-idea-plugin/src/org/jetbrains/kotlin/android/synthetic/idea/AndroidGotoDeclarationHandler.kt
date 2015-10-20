@@ -26,16 +26,16 @@ import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
 
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
-        if (sourceElement is LeafPsiElement && sourceElement.getParent() is JetSimpleNameExpression) {
-            val resolved = JetSimpleNameReference(sourceElement.getParent() as JetSimpleNameExpression).resolve()
-            val property = resolved as? JetProperty ?: return null
+        if (sourceElement is LeafPsiElement && sourceElement.getParent() is KtSimpleNameExpression) {
+            val resolved = KtSimpleNameReference(sourceElement.getParent() as KtSimpleNameExpression).resolve()
+            val property = resolved as? KtProperty ?: return null
 
             val moduleInfo = sourceElement.getModuleInfo()
             if (moduleInfo !is ModuleSourceInfo) return null

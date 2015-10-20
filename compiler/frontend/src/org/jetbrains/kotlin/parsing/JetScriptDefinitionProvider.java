@@ -20,7 +20,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 
 import java.util.*;
@@ -40,7 +40,7 @@ public class JetScriptDefinitionProvider {
         addScriptDefinition(standardScript);
     }
 
-    public void markFileAsScript(JetFile file) {
+    public void markFileAsScript(KtFile file) {
         scriptsFiles.add(file);
     }
 

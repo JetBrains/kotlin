@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 public interface AdditionalTypeChecker {
-    fun checkType(expression: JetExpression, expressionType: JetType, expressionTypeWithSmartCast: JetType, c: ResolutionContext<*>)
+    fun checkType(expression: KtExpression, expressionType: KtType, expressionTypeWithSmartCast: KtType, c: ResolutionContext<*>)
     fun checkReceiver(
             receiverParameter: ReceiverParameterDescriptor,
             receiverArgument: ReceiverValue,

@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 
 class KotlinLightFieldForDeclaration(
         manager: PsiManager,
-        origin: JetDeclaration,
+        origin: KtDeclaration,
         field: PsiField,
         containingClass: PsiClass
-) : KotlinLightField<JetDeclaration, PsiField>(manager, origin, field, containingClass) {
+) : KotlinLightField<KtDeclaration, PsiField>(manager, origin, field, containingClass) {
     override fun copy() = KotlinLightFieldForDeclaration(getManager()!!, getOrigin(), getDelegate(), getContainingClass()!!)
 }

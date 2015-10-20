@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -432,7 +432,7 @@ public class AsmUtil {
             allFields.add(Pair.create(CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis)));
         }
 
-        JetType captureReceiverType = closure.getCaptureReceiverType();
+        KtType captureReceiverType = closure.getCaptureReceiverType();
         if (captureReceiverType != null) {
             allFields.add(Pair.create(CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType)));
         }
@@ -558,7 +558,7 @@ public class AsmUtil {
                 right.put(rightType, v);
                 genAreEqualCall(v);
 
-                if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
+                if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
                     genInvertBoolean(v);
                 }
                 return Unit.INSTANCE$;
@@ -638,7 +638,7 @@ public class AsmUtil {
             @NotNull CallableDescriptor parameter,
             @NotNull String name
     ) {
-        JetType type = parameter.getReturnType();
+        KtType type = parameter.getReturnType();
         if (type == null || isNullableType(type)) return;
         
         int index = frameMap.getIndex(parameter);
@@ -672,7 +672,7 @@ public class AsmUtil {
 
         if (!isDeclaredInJava(descriptor)) return false;
 
-        JetType type = descriptor.getReturnType();
+        KtType type = descriptor.getReturnType();
         if (type == null || isNullableType(FlexibleTypesKt.lowerIfFlexible(type))) return false;
 
         Type asmType = state.getTypeMapper().mapReturnType(descriptor);

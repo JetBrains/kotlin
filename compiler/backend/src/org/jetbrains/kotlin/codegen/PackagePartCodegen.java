@@ -46,12 +46,12 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class PackagePartCodegen extends MemberCodegen<JetFile> {
+public class PackagePartCodegen extends MemberCodegen<KtFile> {
     private final Type packagePartType;
 
     public PackagePartCodegen(
             @NotNull ClassBuilder v,
-            @NotNull JetFile file,
+            @NotNull KtFile file,
             @NotNull Type packagePartType,
             @NotNull FieldOwnerContext context,
             @NotNull GenerationState state
@@ -78,7 +78,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
 
     private void generateAnnotationsForPartClass() {
         List<AnnotationDescriptor> fileAnnotationDescriptors = new ArrayList<AnnotationDescriptor>();
-        for (JetAnnotationEntry annotationEntry : element.getAnnotationEntries()) {
+        for (KtAnnotationEntry annotationEntry : element.getAnnotationEntries()) {
             AnnotationDescriptor annotationDescriptor = state.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
             if (annotationDescriptor != null) {
                 fileAnnotationDescriptors.add(annotationDescriptor);
@@ -90,8 +90,8 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
 
     @Override
     protected void generateBody() {
-        for (JetDeclaration declaration : element.getDeclarations()) {
-            if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
+        for (KtDeclaration declaration : element.getDeclarations()) {
+            if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty) {
                 genFunctionOrProperty(declaration);
             }
         }
@@ -109,11 +109,11 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
     @Override
     protected void generateKotlinAnnotation() {
         List<DeclarationDescriptor> members = new ArrayList<DeclarationDescriptor>();
-        for (JetDeclaration declaration : element.getDeclarations()) {
-            if (declaration instanceof JetNamedFunction) {
+        for (KtDeclaration declaration : element.getDeclarations()) {
+            if (declaration instanceof KtNamedFunction) {
                 SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
                 members.add(functionDescriptor);
-            } else if (declaration instanceof JetProperty) {
+            } else if (declaration instanceof KtProperty) {
                 VariableDescriptor property = bindingContext.get(BindingContext.VARIABLE, declaration);
                 members.add(property);
             }

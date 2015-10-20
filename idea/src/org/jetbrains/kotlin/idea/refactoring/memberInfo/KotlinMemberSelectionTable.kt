@@ -21,24 +21,24 @@ import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.ui.AbstractMemberSelectionTable
 import com.intellij.ui.RowIcon
 import org.jetbrains.kotlin.idea.JetIconProvider
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import javax.swing.Icon
 
 public class KotlinMemberSelectionTable(
         memberInfos: List<KotlinMemberInfo>,
-        memberInfoModel: MemberInfoModel<JetNamedDeclaration, KotlinMemberInfo>?,
+        memberInfoModel: MemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>?,
         abstractColumnHeader: String?
-) : AbstractMemberSelectionTable<JetNamedDeclaration, KotlinMemberInfo>(memberInfos, memberInfoModel, abstractColumnHeader) {
+) : AbstractMemberSelectionTable<KtNamedDeclaration, KotlinMemberInfo>(memberInfos, memberInfoModel, abstractColumnHeader) {
     override fun getAbstractColumnValue(memberInfo: KotlinMemberInfo): Any? {
         if (memberInfo.isStatic()) return null
 
         val member = memberInfo.member
-        if (member !is JetNamedFunction && member !is JetProperty) return null
+        if (member !is KtNamedFunction && member !is KtProperty) return null
 
-        if (member.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+        if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
             myMemberInfoModel.isFixedAbstract(memberInfo)?.let { return it }
         }
         if (myMemberInfoModel.isAbstractEnabled(memberInfo)) return memberInfo.isToAbstract
@@ -51,9 +51,9 @@ public class KotlinMemberSelectionTable(
         if (memberInfo.isStatic()) return false
 
         val member = memberInfo.member
-        if (member !is JetNamedFunction && member !is JetProperty) return false
+        if (member !is KtNamedFunction && member !is KtProperty) return false
 
-        if (member.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+        if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
             myMemberInfoModel.isFixedAbstract(memberInfo)?.let { return false }
         }
 
@@ -68,7 +68,7 @@ public class KotlinMemberSelectionTable(
         val defaultIcon = AbstractMemberSelectionTable.EMPTY_OVERRIDE_ICON
 
         val member = memberInfo.member
-        if (member !is JetNamedFunction && member !is JetProperty) return defaultIcon
+        if (member !is KtNamedFunction && member !is KtProperty) return defaultIcon
 
         return when (memberInfo.getOverrides()) {
             true -> AllIcons.General.OverridingMethod

@@ -37,29 +37,29 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
-val JetDeclaration.descriptor: DeclarationDescriptor?
+val KtDeclaration.descriptor: DeclarationDescriptor?
     get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 
-val JetDeclaration.constructor: ConstructorDescriptor?
+val KtDeclaration.constructor: ConstructorDescriptor?
     get() {
         val context = this.analyze()
         return when (this) {
-            is JetClassOrObject -> context[BindingContext.CLASS, this]?.getUnsubstitutedPrimaryConstructor()
-            is JetFunction -> context[BindingContext.CONSTRUCTOR, this]
+            is KtClassOrObject -> context[BindingContext.CLASS, this]?.getUnsubstitutedPrimaryConstructor()
+            is KtFunction -> context[BindingContext.CONSTRUCTOR, this]
             else -> null
         }
     }
 
-val JetParameter.propertyDescriptor: PropertyDescriptor?
+val KtParameter.propertyDescriptor: PropertyDescriptor?
     get() = this.analyze().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
 
 fun PsiReference.checkUsageVsOriginalDescriptor(
         targetDescriptor: DeclarationDescriptor,
-        declarationToDescriptor: (JetDeclaration) -> DeclarationDescriptor? = {it.descriptor},
+        declarationToDescriptor: (KtDeclaration) -> DeclarationDescriptor? = {it.descriptor},
         checker: (usageDescriptor: DeclarationDescriptor, targetDescriptor: DeclarationDescriptor) -> Boolean
 ): Boolean {
     return unwrappedTargets
-            .filterIsInstance<JetDeclaration>()
+            .filterIsInstance<KtDeclaration>()
             .any {
                 val usageDescriptor = declarationToDescriptor(it)
                 usageDescriptor != null && checker(usageDescriptor, targetDescriptor)
@@ -67,38 +67,38 @@ fun PsiReference.checkUsageVsOriginalDescriptor(
 }
 
 fun PsiReference.isImportUsage(): Boolean =
-        getElement()!!.getNonStrictParentOfType<JetImportDirective>() != null
+        getElement()!!.getNonStrictParentOfType<KtImportDirective>() != null
 
-fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean = with (getElement()!!) {
+fun PsiReference.isConstructorUsage(ktClassOrObject: KtClassOrObject): Boolean = with (getElement()!!) {
     fun checkJavaUsage(): Boolean {
         val call = getNonStrictParentOfType<PsiConstructorCall>()
-        return call == getParent() && call?.resolveConstructor()?.getContainingClass()?.getNavigationElement() == jetClassOrObject
+        return call == getParent() && call?.resolveConstructor()?.getContainingClass()?.getNavigationElement() == ktClassOrObject
     }
 
     fun checkKotlinUsage(): Boolean {
-        if (this !is JetElement) return false
+        if (this !is KtElement) return false
 
         val descriptor = getConstructorCallDescriptor()
         if (descriptor !is ConstructorDescriptor) return false
 
         val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration())
-        return declaration == jetClassOrObject || (declaration is JetConstructor<*> && declaration.getContainingClassOrObject() == jetClassOrObject)
+        return declaration == ktClassOrObject || (declaration is KtConstructor<*> && declaration.getContainingClassOrObject() == ktClassOrObject)
     }
 
     checkJavaUsage() || checkKotlinUsage()
 }
 
-private fun JetElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
+private fun KtElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
     val bindingContext = this.analyze()
-    val constructorCalleeExpression = getNonStrictParentOfType<JetConstructorCalleeExpression>()
+    val constructorCalleeExpression = getNonStrictParentOfType<KtConstructorCalleeExpression>()
     if (constructorCalleeExpression != null) {
         return bindingContext.get(BindingContext.REFERENCE_TARGET, constructorCalleeExpression.getConstructorReferenceExpression())
     }
 
-    val callExpression = getNonStrictParentOfType<JetCallElement>()
+    val callExpression = getNonStrictParentOfType<KtCallElement>()
     if (callExpression != null) {
         val callee = callExpression.getCalleeExpression()
-        if (callee is JetReferenceExpression) {
+        if (callee is KtReferenceExpression) {
             return bindingContext.get(BindingContext.REFERENCE_TARGET, callee)
         }
     }
@@ -106,27 +106,27 @@ private fun JetElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
     return null
 }
 
-public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Boolean): Boolean {
+public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
     if (!processDelegationCallKotlinConstructorUsages(scope, process)) return false
     return processDelegationCallJavaConstructorUsages(scope, process)
 }
 
-private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Boolean): Boolean {
+private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
     val element = unwrapped
     val klass = when (element) {
-        is JetConstructor<*> -> element.getContainingClassOrObject()
-        is JetClass -> element
+        is KtConstructor<*> -> element.getContainingClassOrObject()
+        is KtClass -> element
         else -> return true
     }
 
-    if (klass !is JetClass || element !is JetDeclaration) return true
+    if (klass !is KtClass || element !is KtDeclaration) return true
     val descriptor = element.constructor ?: return true
 
     if (!processClassDelegationCallsToSpecifiedConstructor(klass, descriptor, process)) return false
     return processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
 }
 
-private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (JetCallElement) -> Boolean): Boolean {
+private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
     if (this is KotlinLightElement<*, *>) return true
     // TODO: Temporary hack to avoid NPE while KotlinNoOriginLightMethod is around
     if (this is KotlinNoOriginLightMethod) return true
@@ -141,11 +141,11 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
         klass: PsiElement,
         scope: SearchScope,
         descriptor: ConstructorDescriptor,
-        process: (JetCallElement) -> Boolean
+        process: (KtCallElement) -> Boolean
 ): Boolean {
     return HierarchySearchRequest(klass, scope, false).searchInheritors().all {
         val unwrapped = it.unwrapped
-        if (unwrapped is JetClass) {
+        if (unwrapped is KtClass) {
             processClassDelegationCallsToSpecifiedConstructor(unwrapped, descriptor, process)
         } else
             true
@@ -153,7 +153,7 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
 }
 
 private fun processClassDelegationCallsToSpecifiedConstructor(
-        klass: JetClass, constructor: DeclarationDescriptor, process: (JetCallElement) -> Boolean
+        klass: KtClass, constructor: DeclarationDescriptor, process: (KtCallElement) -> Boolean
 ): Boolean {
     for (secondaryConstructor in klass.getSecondaryConstructors()) {
         val delegationCallDescriptor = secondaryConstructor.getDelegationCall().getConstructorCallDescriptor()
@@ -163,9 +163,9 @@ private fun processClassDelegationCallsToSpecifiedConstructor(
     }
     if (!klass.isEnum()) return true
     for (declaration in klass.declarations) {
-        if (declaration is JetEnumEntry) {
+        if (declaration is KtEnumEntry) {
             val delegationCall = declaration.getDelegationSpecifiers().firstOrNull()
-            if (delegationCall is JetDelegatorToSuperCall && constructor == delegationCall.calleeExpression.getConstructorCallDescriptor()) {
+            if (delegationCall is KtDelegatorToSuperCall && constructor == delegationCall.calleeExpression.getConstructorCallDescriptor()) {
                 if (!process(delegationCall)) return false
             }
         }
@@ -175,7 +175,7 @@ private fun processClassDelegationCallsToSpecifiedConstructor(
 
 // Check if reference resolves to extension function whose receiver is the same as declaration's parent (or its superclass)
 // Used in extension search
-fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclaration): Boolean {
+fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: KtNamedDeclaration): Boolean {
     val descriptor = declaration.descriptor ?: return false
     return checkUsageVsOriginalDescriptor(descriptor) { usageDescriptor, targetDescriptor ->
         when {
@@ -197,7 +197,7 @@ fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: JetNamedDeclara
 
 // Check if reference resolves to the declaration with the same parent
 // Used in overload search
-fun PsiReference.isUsageInContainingDeclaration(declaration: JetNamedDeclaration): Boolean {
+fun PsiReference.isUsageInContainingDeclaration(declaration: KtNamedDeclaration): Boolean {
     val descriptor = declaration.descriptor ?: return false
     return checkUsageVsOriginalDescriptor(descriptor) { usageDescriptor, targetDescriptor ->
         usageDescriptor != targetDescriptor
@@ -205,9 +205,9 @@ fun PsiReference.isUsageInContainingDeclaration(declaration: JetNamedDeclaration
     }
 }
 
-fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Boolean {
-    val toDescriptor: (JetDeclaration) -> DeclarationDescriptor? = { declaration ->
-        if (declaration is JetParameter) {
+fun PsiReference.isCallableOverrideUsage(declaration: KtNamedDeclaration): Boolean {
+    val toDescriptor: (KtDeclaration) -> DeclarationDescriptor? = { declaration ->
+        if (declaration is KtParameter) {
             // we don't treat parameters in overriding method as "override" here (overriding parameters usages are searched optionally and via searching of overriding methods first)
             if (declaration.hasValOrVar()) declaration.propertyDescriptor else null
         }

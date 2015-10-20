@@ -17,20 +17,20 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.types.KtType;
 
 public class ExpressionReceiver extends AbstractReceiverValue implements ReceiverValue {
 
-    private final JetExpression expression;
+    private final KtExpression expression;
 
-    public ExpressionReceiver(@NotNull JetExpression expression, @NotNull JetType type) {
+    public ExpressionReceiver(@NotNull KtExpression expression, @NotNull KtType type) {
         super(type);
         this.expression = expression;
     }
 
     @NotNull
-    public JetExpression getExpression() {
+    public KtExpression getExpression() {
         return expression;
     }
 

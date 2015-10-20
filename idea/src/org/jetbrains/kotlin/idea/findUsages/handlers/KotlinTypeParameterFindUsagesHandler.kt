@@ -25,16 +25,16 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.dialogs.KotlinTypeParameterFindUsagesDialog
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 public class KotlinTypeParameterFindUsagesHandler(
-        element: JetNamedDeclaration,
+        element: KtNamedDeclaration,
         factory: KotlinFindUsagesHandlerFactory
-) : KotlinFindUsagesHandler<JetNamedDeclaration>(element, factory) {
+) : KotlinFindUsagesHandler<KtNamedDeclaration>(element, factory) {
     public override fun getFindUsagesDialog(
             isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean
     ): AbstractFindUsagesDialog {
-        return KotlinTypeParameterFindUsagesDialog<JetNamedDeclaration>(
+        return KotlinTypeParameterFindUsagesDialog<KtNamedDeclaration>(
                 getElement(), getProject(), getFindUsagesOptions(), toShowInNewTab, mustOpenInNewTab, isSingleFile, this
         )
     }

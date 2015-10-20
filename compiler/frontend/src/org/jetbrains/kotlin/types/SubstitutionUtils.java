@@ -35,7 +35,7 @@ public class SubstitutionUtils {
      * Builds a context with all the supertypes' parameters substituted
      */
     @NotNull
-    public static TypeSubstitutor buildDeepSubstitutor(@NotNull JetType type) {
+    public static TypeSubstitutor buildDeepSubstitutor(@NotNull KtType type) {
         Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
         // we use the mutability of the map here
@@ -57,7 +57,7 @@ public class SubstitutionUtils {
           F declared in MyFooCollection -> out CharSequence
      */
     @NotNull
-    public static Multimap<TypeConstructor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull JetType type) {
+    public static Multimap<TypeConstructor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull KtType type) {
         Multimap<TypeConstructor, TypeProjection> fullSubstitution = LinkedHashMultimap.create();
         Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
@@ -68,7 +68,7 @@ public class SubstitutionUtils {
 
     // we use the mutability of the substitution map here
     private static void fillInDeepSubstitutor(
-            @NotNull JetType context,
+            @NotNull KtType context,
             @NotNull TypeSubstitutor substitutor,
             @NotNull Map<TypeConstructor, TypeProjection> substitution,
             @Nullable Multimap<TypeConstructor, TypeProjection> fullSubstitution
@@ -92,7 +92,7 @@ public class SubstitutionUtils {
             }
         }
         if (KotlinBuiltIns.isNothingOrNullableNothing(context)) return;
-        for (JetType supertype : context.getConstructor().getSupertypes()) {
+        for (KtType supertype : context.getConstructor().getSupertypes()) {
             fillInDeepSubstitutor(supertype, substitutor, substitution, fullSubstitution);
         }
     }

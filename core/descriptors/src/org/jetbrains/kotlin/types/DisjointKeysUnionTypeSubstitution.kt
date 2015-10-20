@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.types;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 public class DisjointKeysUnionTypeSubstitution private constructor(
     private val first: TypeSubstitution,
@@ -32,9 +32,11 @@ public class DisjointKeysUnionTypeSubstitution private constructor(
         }
     }
 
-    override fun get(key: JetType) = first[key] ?: second[key]
+    override fun get(key: KtType) = first[key] ?: second[key]
 
     override fun isEmpty() = false
 
     override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
+
+    override fun filterAnnotations(annotations: Annotations) = second.filterAnnotations(first.filterAnnotations(annotations))
 }

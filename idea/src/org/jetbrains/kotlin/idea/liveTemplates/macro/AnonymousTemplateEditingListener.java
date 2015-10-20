@@ -33,12 +33,12 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler;
-import org.jetbrains.kotlin.psi.JetReferenceExpression;
+import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
-    private JetReferenceExpression classRef;
+    private KtReferenceExpression classRef;
     private ClassDescriptor classDescriptor;
     private final Editor editor;
     private final PsiFile psiFile;
@@ -56,8 +56,8 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
         TextRange variableRange = templateState.getVariableRange("SUPERTYPE");
         if (variableRange == null) return;
         PsiElement name = psiFile.findElementAt(variableRange.getStartOffset());
-        if (name != null && name.getParent() instanceof JetReferenceExpression) {
-            JetReferenceExpression ref = (JetReferenceExpression) name.getParent();
+        if (name != null && name.getParent() instanceof KtReferenceExpression) {
+            KtReferenceExpression ref = (KtReferenceExpression) name.getParent();
             DeclarationDescriptor descriptor = ResolutionUtils.analyze(ref, BodyResolveMode.FULL).get(BindingContext.REFERENCE_TARGET, ref);
             if (descriptor instanceof ClassDescriptor) {
                 classRef = ref;

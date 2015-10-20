@@ -20,37 +20,37 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<JetStringTemplateExpression>(javaClass(), "Convert template to concatenated string"), LowPriorityAction {
-    override fun isApplicableTo(element: JetStringTemplateExpression): Boolean {
-        if (element.getLastChild().getNode().getElementType() != JetTokens.CLOSING_QUOTE) return false // not available for unclosed literal
-        return element.getEntries().any { it is JetStringTemplateEntryWithExpression }
+public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(javaClass(), "Convert template to concatenated string"), LowPriorityAction {
+    override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
+        if (element.getLastChild().getNode().getElementType() != KtTokens.CLOSING_QUOTE) return false // not available for unclosed literal
+        return element.getEntries().any { it is KtStringTemplateEntryWithExpression }
     }
 
-    override fun applyTo(element: JetStringTemplateExpression, editor: Editor) {
+    override fun applyTo(element: KtStringTemplateExpression, editor: Editor) {
         val tripleQuoted = isTripleQuoted(element.getText()!!)
         val quote = if (tripleQuoted) "\"\"\"" else "\""
         val entries = element.getEntries()
 
         val text = entries
-                .filterNot { it is JetStringTemplateEntryWithExpression && it.getExpression() == null }
+                .filterNot { it is KtStringTemplateEntryWithExpression && it.getExpression() == null }
                 .mapIndexed { index, entry ->
                     entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
                 }
                 .join(separator = "+")
                 .replace("""$quote+$quote""", "")
 
-        val replacement = JetPsiFactory(element).createExpression(text)
+        val replacement = KtPsiFactory(element).createExpression(text)
         element.replace(replacement)
     }
 
     private fun isTripleQuoted(str: String) = str.startsWith("\"\"\"") && str.endsWith("\"\"\"")
 
-    private fun JetStringTemplateEntry.toSeparateString(quote: String, convertExplicitly: Boolean, isFinalEntry: Boolean): String {
-        if (this !is JetStringTemplateEntryWithExpression) {
+    private fun KtStringTemplateEntry.toSeparateString(quote: String, convertExplicitly: Boolean, isFinalEntry: Boolean): String {
+        if (this !is KtStringTemplateEntryWithExpression) {
             return getText().quote(quote)
         }
 
@@ -67,15 +67,15 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndepe
             text
     }
 
-    private fun needsParenthesis(expression: JetExpression, isFinalEntry: Boolean): Boolean {
+    private fun needsParenthesis(expression: KtExpression, isFinalEntry: Boolean): Boolean {
         return when (expression) {
-            is JetBinaryExpression -> true
-            is JetIfExpression -> expression.getElse() !is JetBlockExpression && !isFinalEntry
+            is KtBinaryExpression -> true
+            is KtIfExpression -> expression.getElse() !is KtBlockExpression && !isFinalEntry
             else -> false
         }
     }
 
     private fun String.quote(quote: String) = quote + this + quote
 
-    private fun JetExpression.isStringExpression() = KotlinBuiltIns.isString(analyze().getType(this))
+    private fun KtExpression.isStringExpression() = KotlinBuiltIns.isString(analyze().getType(this))
 }

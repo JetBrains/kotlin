@@ -21,24 +21,24 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import java.util.LinkedHashMap
 import java.util.LinkedHashSet
 
-public fun JetScope.getImplicitReceiversWithInstance(): Collection<ReceiverParameterDescriptor>
+public fun KtScope.getImplicitReceiversWithInstance(): Collection<ReceiverParameterDescriptor>
         = getImplicitReceiversWithInstanceToExpression().keySet()
 
 public interface ReceiverExpressionFactory {
-    public fun createExpression(psiFactory: JetPsiFactory, shortThis: Boolean = true): JetExpression
+    public fun createExpression(psiFactory: KtPsiFactory, shortThis: Boolean = true): KtExpression
 }
 
-public fun JetScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverParameterDescriptor, ReceiverExpressionFactory?> {
+public fun KtScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverParameterDescriptor, ReceiverExpressionFactory?> {
     // we use a set to workaround a bug with receiver for companion object present twice in the result of getImplicitReceiversHierarchy()
     val receivers = LinkedHashSet(getImplicitReceiversHierarchy())
 
@@ -74,7 +74,7 @@ public fun JetScope.getImplicitReceiversWithInstanceToExpression(): Map<Receiver
         }
         val factory = if (expressionText != null)
             object : ReceiverExpressionFactory {
-                override fun createExpression(psiFactory: JetPsiFactory, shortThis: Boolean): JetExpression {
+                override fun createExpression(psiFactory: KtPsiFactory, shortThis: Boolean): KtExpression {
                     return psiFactory.createExpression(if (shortThis && isImmediateThis) "this" else expressionText)
                 }
             }
@@ -90,6 +90,6 @@ private fun thisQualifierName(receiver: ReceiverParameterDescriptor): Name? {
     val name = descriptor.getName()
     if (!name.isSpecial()) return name
 
-    val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetFunctionLiteral
+    val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtFunctionLiteral
     return functionLiteral?.findLabelAndCall()?.first
 }

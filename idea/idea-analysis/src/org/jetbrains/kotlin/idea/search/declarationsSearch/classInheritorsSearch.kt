@@ -20,7 +20,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.util.Query
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiAnonymousClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ClassInheritorsSearch
@@ -28,7 +28,7 @@ import com.intellij.util.EmptyQuery
 
 public fun HierarchySearchRequest<*>.searchInheritors(): Query<PsiClass> {
     val psiClass: PsiClass? = when (originalElement) {
-        is JetClassOrObject -> LightClassUtil.getPsiClass(originalElement)
+        is KtClassOrObject -> LightClassUtil.getPsiClass(originalElement)
         is PsiClass -> originalElement
         else -> null
     }

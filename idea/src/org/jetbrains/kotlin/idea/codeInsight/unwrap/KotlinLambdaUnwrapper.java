@@ -27,19 +27,19 @@ public class KotlinLambdaUnwrapper extends KotlinUnwrapRemoveBase {
         super(key);
     }
 
-    private static JetElement getLambdaEnclosingElement(@NotNull JetFunctionLiteralExpression lambda) {
+    private static KtElement getLambdaEnclosingElement(@NotNull KtFunctionLiteralExpression lambda) {
         PsiElement parent = lambda.getParent();
 
-        if (parent instanceof JetValueArgument) {
-            return PsiTreeUtil.getParentOfType(parent, JetCallExpression.class, true);
+        if (parent instanceof KtValueArgument) {
+            return PsiTreeUtil.getParentOfType(parent, KtCallExpression.class, true);
         }
 
-        if (parent instanceof JetCallExpression) {
-            return (JetElement) parent;
+        if (parent instanceof KtCallExpression) {
+            return (KtElement) parent;
         }
 
-        if (parent instanceof JetProperty && ((JetProperty) parent).isLocal()) {
-            return (JetElement) parent;
+        if (parent instanceof KtProperty && ((KtProperty) parent).isLocal()) {
+            return (KtElement) parent;
         }
 
         return lambda;
@@ -47,22 +47,22 @@ public class KotlinLambdaUnwrapper extends KotlinUnwrapRemoveBase {
 
     @Override
     public boolean isApplicableTo(PsiElement e) {
-        if (!(e instanceof JetFunctionLiteralExpression)) return false;
+        if (!(e instanceof KtFunctionLiteralExpression)) return false;
 
-        JetFunctionLiteralExpression lambda = (JetFunctionLiteralExpression) e;
-        JetBlockExpression body = lambda.getBodyExpression();
-        JetElement enclosingElement = getLambdaEnclosingElement((JetFunctionLiteralExpression) e);
+        KtFunctionLiteralExpression lambda = (KtFunctionLiteralExpression) e;
+        KtBlockExpression body = lambda.getBodyExpression();
+        KtElement enclosingElement = getLambdaEnclosingElement((KtFunctionLiteralExpression) e);
 
         if (body == null || enclosingElement == null) return false;
 
-        return canExtractExpression(body, (JetElement)enclosingElement.getParent());
+        return canExtractExpression(body, (KtElement)enclosingElement.getParent());
     }
 
     @Override
     protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-        JetFunctionLiteralExpression lambda = (JetFunctionLiteralExpression) element;
-        JetBlockExpression body = lambda.getBodyExpression();
-        JetElement enclosingExpression = getLambdaEnclosingElement(lambda);
+        KtFunctionLiteralExpression lambda = (KtFunctionLiteralExpression) element;
+        KtBlockExpression body = lambda.getBodyExpression();
+        KtElement enclosingExpression = getLambdaEnclosingElement(lambda);
 
         context.extractFromBlock(body, enclosingExpression);
         context.delete(enclosingExpression);

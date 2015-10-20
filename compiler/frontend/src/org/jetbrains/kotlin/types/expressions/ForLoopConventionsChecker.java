@@ -26,18 +26,16 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collections;
@@ -62,14 +60,14 @@ public class ForLoopConventionsChecker {
     }
 
     @Nullable
-    public JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
-        JetExpression loopRangeExpression = loopRange.getExpression();
+    public KtType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
+        KtExpression loopRangeExpression = loopRange.getExpression();
 
         // Make a fake call loopRange.iterator(), and try to resolve it
         Name iterator = Name.identifier("iterator");
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls =
-                fakeCallResolver.makeAndResolveFakeCall(loopRange, context, Collections.<JetExpression>emptyList(), iterator,
-                                                             loopRange.getExpression());
+                fakeCallResolver.makeAndResolveFakeCall(loopRange, context, Collections.<KtExpression>emptyList(), iterator,
+                                                        loopRange.getExpression());
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
 
         if (iteratorResolutionResults.isSuccess()) {
@@ -81,10 +79,10 @@ public class ForLoopConventionsChecker {
 
             symbolUsageValidator.validateCall(iteratorResolvedCall, iteratorFunction, context.trace, loopRangeExpression);
 
-            JetType iteratorType = iteratorFunction.getReturnType();
-            JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
-                                                             HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
-                                                             LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
+            KtType iteratorType = iteratorFunction.getReturnType();
+            KtType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
+                                                            HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
+                                                            LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
             if (hasNextType != null && !builtIns.isBooleanOrSubtype(hasNextType)) {
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
             }
@@ -103,7 +101,7 @@ public class ForLoopConventionsChecker {
         return null;
     }
 
-    private static void checkIfOperatorModifierPresent(JetExpression expression, FunctionDescriptor descriptor, DiagnosticSink sink) {
+    private static void checkIfOperatorModifierPresent(KtExpression expression, FunctionDescriptor descriptor, DiagnosticSink sink) {
         if (ErrorUtils.isError(descriptor)) return;
         ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
         if ((extensionReceiverParameter != null) && (DynamicTypesKt.isDynamic(extensionReceiverParameter.getType()))) return;
@@ -114,15 +112,15 @@ public class ForLoopConventionsChecker {
     }
 
     @Nullable
-    private JetType checkConventionForIterator(
+    private KtType checkConventionForIterator(
             @NotNull ExpressionTypingContext context,
-            @NotNull JetExpression loopRangeExpression,
-            @NotNull JetType iteratorType,
+            @NotNull KtExpression loopRangeExpression,
+            @NotNull KtType iteratorType,
             @NotNull String name,
-            @NotNull DiagnosticFactory1<JetExpression, JetType> ambiguity,
-            @NotNull DiagnosticFactory1<JetExpression, JetType> missing,
-            @NotNull DiagnosticFactory1<JetExpression, JetType> noneApplicable,
-            @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
+            @NotNull DiagnosticFactory1<KtExpression, KtType> ambiguity,
+            @NotNull DiagnosticFactory1<KtExpression, KtType> missing,
+            @NotNull DiagnosticFactory1<KtExpression, KtType> noneApplicable,
+            @NotNull WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
         OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = fakeCallResolver.resolveFakeCall(
                 context, new TransientReceiver(iteratorType), Name.identifier(name), loopRangeExpression);

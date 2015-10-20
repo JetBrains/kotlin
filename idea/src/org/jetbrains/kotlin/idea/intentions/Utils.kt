@@ -17,58 +17,58 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
-fun JetCallableDeclaration.setType(type: JetType, shortenReferences: Boolean = true) {
+fun KtCallableDeclaration.setType(type: KtType, shortenReferences: Boolean = true) {
     if (type.isError()) return
     setType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type), shortenReferences)
 }
 
-fun JetCallableDeclaration.setType(typeString: String, shortenReferences: Boolean = true) {
-    val typeReference = JetPsiFactory(project).createType(typeString)
+fun KtCallableDeclaration.setType(typeString: String, shortenReferences: Boolean = true) {
+    val typeReference = KtPsiFactory(project).createType(typeString)
     setTypeReference(typeReference)
     if (shortenReferences) {
         ShortenReferences.DEFAULT.process(getTypeReference()!!)
     }
 }
 
-fun JetCallableDeclaration.setReceiverType(type: JetType) {
+fun KtCallableDeclaration.setReceiverType(type: KtType) {
     if (type.isError()) return
-    val typeReference = JetPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+    val typeReference = KtPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
     setReceiverTypeReference(typeReference)
     ShortenReferences.DEFAULT.process(getReceiverTypeReference()!!)
 }
 
-fun JetContainerNode.description(): String? {
+fun KtContainerNode.description(): String? {
     when (getNode().getElementType()) {
-        JetNodeTypes.THEN -> return "if"
-        JetNodeTypes.ELSE -> return "else"
-        JetNodeTypes.BODY -> {
+        KtNodeTypes.THEN -> return "if"
+        KtNodeTypes.ELSE -> return "else"
+        KtNodeTypes.BODY -> {
             when (getParent()) {
-                is JetWhileExpression -> return "while"
-                is JetDoWhileExpression -> return "do...while"
-                is JetForExpression -> return "for"
+                is KtWhileExpression -> return "while"
+                is KtDoWhileExpression -> return "do...while"
+                is KtForExpression -> return "for"
             }
         }
     }
     return null
 }
 
-fun isAutoCreatedItUsage(expression: JetNameReferenceExpression): Boolean {
+fun isAutoCreatedItUsage(expression: KtNameReferenceExpression): Boolean {
     if (expression.getReferencedName() != "it") return false
     val context = expression.analyze(BodyResolveMode.PARTIAL)
     val target = expression.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return false
@@ -76,17 +76,17 @@ fun isAutoCreatedItUsage(expression: JetNameReferenceExpression): Boolean {
 }
 
 // returns assignment which replaces initializer
-fun splitPropertyDeclaration(property: JetProperty): JetBinaryExpression {
+fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
     val parent = property.getParent()!!
 
     val initializer = property.getInitializer()!!
 
     val explicitTypeToSet = if (property.getTypeReference() != null) null else initializer.analyze().getType(initializer)
 
-    val psiFactory = JetPsiFactory(property)
+    val psiFactory = KtPsiFactory(property)
     var assignment = psiFactory.createExpressionByPattern("$0 = $1", property.getNameAsName()!!, initializer)
 
-    assignment = parent.addAfter(assignment, property) as JetBinaryExpression
+    assignment = parent.addAfter(assignment, property) as KtBinaryExpression
     parent.addAfter(psiFactory.createNewLine(), property)
 
     property.setInitializer(null)
@@ -98,50 +98,50 @@ fun splitPropertyDeclaration(property: JetProperty): JetBinaryExpression {
     return assignment
 }
 
-val JetQualifiedExpression.callExpression: JetCallExpression?
-    get() = getSelectorExpression() as? JetCallExpression
+val KtQualifiedExpression.callExpression: KtCallExpression?
+    get() = getSelectorExpression() as? KtCallExpression
 
-val JetQualifiedExpression.calleeName: String?
-    get() = (callExpression?.getCalleeExpression() as? JetNameReferenceExpression)?.getText()
+val KtQualifiedExpression.calleeName: String?
+    get() = (callExpression?.getCalleeExpression() as? KtNameReferenceExpression)?.getText()
 
-fun JetQualifiedExpression.toResolvedCall(): ResolvedCall<out CallableDescriptor>? {
+fun KtQualifiedExpression.toResolvedCall(): ResolvedCall<out CallableDescriptor>? {
     val callExpression = callExpression ?: return null
     return callExpression.getResolvedCall(callExpression.analyze()) ?: return null
 }
 
-fun JetExpression.isExitStatement(): Boolean {
+fun KtExpression.isExitStatement(): Boolean {
     when (this) {
-        is JetContinueExpression, is JetBreakExpression, is JetThrowExpression, is JetReturnExpression -> return true
+        is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression -> return true
         else -> return false
     }
 }
 
 // returns false for call of super, static method or method from package
-fun JetQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
+fun KtQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
     val receiver = getReceiverExpression()
-    if (receiver is JetSuperExpression) return false
+    if (receiver is KtSuperExpression) return false
     return analyze().getType(receiver) != null
 }
 
-public fun JetExpression.negate(): JetExpression {
+public fun KtExpression.negate(): KtExpression {
     val specialNegation = specialNegation()
     if (specialNegation != null) return specialNegation
-    return JetPsiFactory(this).createExpressionByPattern("!$0", this)
+    return KtPsiFactory(this).createExpressionByPattern("!$0", this)
 }
 
-private fun JetExpression.specialNegation(): JetExpression? {
-    val factory = JetPsiFactory(this)
+private fun KtExpression.specialNegation(): KtExpression? {
+    val factory = KtPsiFactory(this)
     when (this) {
-        is JetPrefixExpression -> {
+        is KtPrefixExpression -> {
             if (getOperationReference().getReferencedName() == "!") {
                 val baseExpression = getBaseExpression()
                 if (baseExpression != null) {
-                    return JetPsiUtil.safeDeparenthesize(baseExpression)
+                    return KtPsiUtil.safeDeparenthesize(baseExpression)
                 }
             }
         }
 
-        is JetBinaryExpression -> {
+        is KtBinaryExpression -> {
             val operator = getOperationToken()
             if (operator !in NEGATABLE_OPERATORS) return null
             val left = getLeft() ?: return null
@@ -149,7 +149,7 @@ private fun JetExpression.specialNegation(): JetExpression? {
             return factory.createExpressionByPattern("$0 $1 $2", left, getNegatedOperatorText(operator), right)
         }
 
-        is JetConstantExpression -> {
+        is KtConstantExpression -> {
             return when (getText()) {
                 "true" -> factory.createExpression("false")
                 "false" -> factory.createExpression("true")
@@ -160,24 +160,24 @@ private fun JetExpression.specialNegation(): JetExpression? {
     return null
 }
 
-private val NEGATABLE_OPERATORS = setOf(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ,
-                                        JetTokens.EXCLEQEQEQ, JetTokens.IS_KEYWORD, JetTokens.NOT_IS, JetTokens.IN_KEYWORD,
-                                        JetTokens.NOT_IN, JetTokens.LT, JetTokens.LTEQ, JetTokens.GT, JetTokens.GTEQ)
+private val NEGATABLE_OPERATORS = setOf(KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.EQEQEQ,
+                                        KtTokens.EXCLEQEQEQ, KtTokens.IS_KEYWORD, KtTokens.NOT_IS, KtTokens.IN_KEYWORD,
+                                        KtTokens.NOT_IN, KtTokens.LT, KtTokens.LTEQ, KtTokens.GT, KtTokens.GTEQ)
 
 private fun getNegatedOperatorText(token: IElementType): String {
     return when(token) {
-        JetTokens.EQEQ -> JetTokens.EXCLEQ.getValue()
-        JetTokens.EXCLEQ -> JetTokens.EQEQ.getValue()
-        JetTokens.EQEQEQ -> JetTokens.EXCLEQEQEQ.getValue()
-        JetTokens.EXCLEQEQEQ -> JetTokens.EQEQEQ.getValue()
-        JetTokens.IS_KEYWORD -> JetTokens.NOT_IS.getValue()
-        JetTokens.NOT_IS -> JetTokens.IS_KEYWORD.getValue()
-        JetTokens.IN_KEYWORD -> JetTokens.NOT_IN.getValue()
-        JetTokens.NOT_IN -> JetTokens.IN_KEYWORD.getValue()
-        JetTokens.LT -> JetTokens.GTEQ.getValue()
-        JetTokens.LTEQ -> JetTokens.GT.getValue()
-        JetTokens.GT -> JetTokens.LTEQ.getValue()
-        JetTokens.GTEQ -> JetTokens.LT.getValue()
+        KtTokens.EQEQ -> KtTokens.EXCLEQ.getValue()
+        KtTokens.EXCLEQ -> KtTokens.EQEQ.getValue()
+        KtTokens.EQEQEQ -> KtTokens.EXCLEQEQEQ.getValue()
+        KtTokens.EXCLEQEQEQ -> KtTokens.EQEQEQ.getValue()
+        KtTokens.IS_KEYWORD -> KtTokens.NOT_IS.getValue()
+        KtTokens.NOT_IS -> KtTokens.IS_KEYWORD.getValue()
+        KtTokens.IN_KEYWORD -> KtTokens.NOT_IN.getValue()
+        KtTokens.NOT_IN -> KtTokens.IN_KEYWORD.getValue()
+        KtTokens.LT -> KtTokens.GTEQ.getValue()
+        KtTokens.LTEQ -> KtTokens.GT.getValue()
+        KtTokens.GT -> KtTokens.LTEQ.getValue()
+        KtTokens.GTEQ -> KtTokens.LT.getValue()
         else -> throw IllegalArgumentException("The token $token does not have a negated equivalent.")
     }
 }

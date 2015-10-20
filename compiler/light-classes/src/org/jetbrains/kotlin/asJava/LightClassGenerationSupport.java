@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.Collection;
 
@@ -37,13 +37,13 @@ public abstract class LightClassGenerationSupport {
     }
 
     @NotNull
-    public abstract LightClassConstructionContext getContextForPackage(@NotNull Collection<JetFile> files);
+    public abstract LightClassConstructionContext getContextForPackage(@NotNull Collection<KtFile> files);
 
     @NotNull
-    public abstract LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject);
+    public abstract LightClassConstructionContext getContextForClassOrObject(@NotNull KtClassOrObject classOrObject);
 
     @NotNull
-    public abstract Collection<JetClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
+    public abstract Collection<KtClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
 
     /*
      * Finds files whose package declaration is exactly {@code fqName}. For example, if a file declares
@@ -53,11 +53,11 @@ public abstract class LightClassGenerationSupport {
      * If the resulting collection is empty, it means that this package has not other declarations than sub-packages
      */
     @NotNull
-    public abstract Collection<JetFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
+    public abstract Collection<KtFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
 
     // Returns only immediately declared classes/objects, package classes are not included (they have no declarations)
     @NotNull
-    public abstract Collection<JetClassOrObject> findClassOrObjectDeclarationsInPackage(
+    public abstract Collection<KtClassOrObject> findClassOrObjectDeclarationsInPackage(
             @NotNull FqName packageFqName,
             @NotNull GlobalSearchScope searchScope
     );
@@ -68,10 +68,10 @@ public abstract class LightClassGenerationSupport {
     public abstract Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope);
 
     @Nullable
-    public abstract PsiClass getPsiClass(@NotNull JetClassOrObject classOrObject);
+    public abstract PsiClass getPsiClass(@NotNull KtClassOrObject classOrObject);
 
     @Nullable
-    public abstract ClassDescriptor resolveClassToDescriptor(@NotNull JetClassOrObject classOrObject);
+    public abstract ClassDescriptor resolveClassToDescriptor(@NotNull KtClassOrObject classOrObject);
 
     @NotNull
     public abstract Collection<PsiClass> getFacadeClasses(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
@@ -83,9 +83,9 @@ public abstract class LightClassGenerationSupport {
     public abstract Collection<String> getFacadeNames(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
 
     @NotNull
-    public abstract Collection<JetFile> findFilesForFacade(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
+    public abstract Collection<KtFile> findFilesForFacade(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
 
     @NotNull
-    public abstract LightClassConstructionContext getContextForFacade(@NotNull Collection<JetFile> files);
+    public abstract LightClassConstructionContext getContextForFacade(@NotNull Collection<KtFile> files);
 
 }

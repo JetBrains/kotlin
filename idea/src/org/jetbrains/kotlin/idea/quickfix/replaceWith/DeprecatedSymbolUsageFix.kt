@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
-import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 
 public class DeprecatedSymbolUsageFix(
-        element: JetSimpleNameExpression/*TODO?*/,
+        element: KtSimpleNameExpression/*TODO?*/,
         replaceWith: ReplaceWith
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith), CleanupFix, HighPriorityAction {
 
@@ -50,7 +50,7 @@ public class DeprecatedSymbolUsageFix(
             return DeprecatedSymbolUsageFix(nameExpression, replacement)
         }
 
-        public fun isImportToBeRemoved(import: JetImportDirective): Boolean {
+        public fun isImportToBeRemoved(import: KtImportDirective): Boolean {
             return !import.isAllUnder
                    && import.targetDescriptors().all { DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, import.project) != null }
         }

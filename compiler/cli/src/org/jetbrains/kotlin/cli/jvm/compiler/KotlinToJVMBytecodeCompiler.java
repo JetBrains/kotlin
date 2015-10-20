@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
@@ -57,7 +56,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetScriptDefinition;
 import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
@@ -142,7 +141,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         for (Module module : chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            List<JetFile> jetFiles = CompileEnvironmentUtil.getJetFiles(
+            List<KtFile> jetFiles = CompileEnvironmentUtil.getJetFiles(
                     environment.getProject(), getAbsolutePaths(directory, module), new Function1<String, Unit>() {
                         @Override
                         public Unit invoke(String s) {
@@ -196,10 +195,10 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    private static FqName findMainClass(@NotNull GenerationState generationState, @NotNull List<JetFile> files) {
+    private static FqName findMainClass(@NotNull GenerationState generationState, @NotNull List<KtFile> files) {
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(generationState.getBindingContext());
         FqName mainClass = null;
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             if (mainFunctionDetector.hasMain(file.getDeclarations())) {
                 if (mainClass != null) {
                     // more than one main
@@ -357,7 +356,7 @@ public class KotlinToJVMBytecodeCompiler {
     private static GenerationState generate(
             @NotNull KotlinCoreEnvironment environment,
             @NotNull AnalysisResult result,
-            @NotNull List<JetFile> sourceFiles,
+            @NotNull List<KtFile> sourceFiles,
             @Nullable Module module,
             File outputDirectory,
             String moduleName

@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
@@ -35,7 +35,7 @@ public class KotlinPropertyStubImpl(
         private val isExtension: Boolean,
         private val hasReturnTypeRef: Boolean,
         private val fqName: FqName?
-) : KotlinStubBaseImpl<JetProperty>(parent, JetStubElementTypes.PROPERTY), KotlinPropertyStub {
+) : KotlinStubBaseImpl<KtProperty>(parent, KtStubElementTypes.PROPERTY), KotlinPropertyStub {
 
     init {
         if (isTopLevel && fqName == null) {

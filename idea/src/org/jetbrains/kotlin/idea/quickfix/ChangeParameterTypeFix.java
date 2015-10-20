@@ -27,18 +27,18 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
-public class ChangeParameterTypeFix extends KotlinQuickFixAction<JetParameter> {
-    private final JetType type;
+public class ChangeParameterTypeFix extends KotlinQuickFixAction<KtParameter> {
+    private final KtType type;
     private final String containingDeclarationName;
     private final boolean isPrimaryConstructorParameter;
 
-    public ChangeParameterTypeFix(@NotNull JetParameter element, @NotNull JetType type) {
+    public ChangeParameterTypeFix(@NotNull KtParameter element, @NotNull KtType type) {
         super(element);
         this.type = type;
-        JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
-        isPrimaryConstructorParameter = declaration instanceof JetPrimaryConstructor;
+        KtNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, KtNamedDeclaration.class);
+        isPrimaryConstructorParameter = declaration instanceof KtPrimaryConstructor;
         FqName declarationFQName = declaration == null ? null : declaration.getFqName();
         containingDeclarationName = declarationFQName == null ? declaration.getName() : declarationFQName.asString();
     }
@@ -64,8 +64,8 @@ public class ChangeParameterTypeFix extends KotlinQuickFixAction<JetParameter> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetTypeReference newTypeRef = JetPsiFactoryKt.JetPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtTypeReference newTypeRef = KtPsiFactoryKt.KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
         newTypeRef = getElement().setTypeReference(newTypeRef);
         assert newTypeRef != null;
         ShortenReferences.DEFAULT.process(newTypeRef);

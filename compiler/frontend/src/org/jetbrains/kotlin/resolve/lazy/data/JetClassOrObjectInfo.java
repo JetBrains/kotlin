@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implements JetClassLikeInfo {
+public abstract class JetClassOrObjectInfo<E extends KtClassOrObject> implements JetClassLikeInfo {
     protected final E element;
 
     protected JetClassOrObjectInfo(@NotNull E element) {
@@ -40,26 +40,26 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
     }
 
     @Override
-    public JetClassOrObject getCorrespondingClassOrObject() {
+    public KtClassOrObject getCorrespondingClassOrObject() {
         return element;
     }
 
     @Override
     @Nullable
-    public JetModifierList getModifierList() {
+    public KtModifierList getModifierList() {
         return element.getModifierList();
     }
 
     @Override
     @NotNull
-    public List<JetDeclaration> getDeclarations() {
+    public List<KtDeclaration> getDeclarations() {
         return element.getDeclarations();
     }
 
     @NotNull
     @Override
-    public List<JetObjectDeclaration> getCompanionObjects() {
-        JetClassBody body = element.getBody();
+    public List<KtObjectDeclaration> getCompanionObjects() {
+        KtClassBody body = element.getBody();
         if (body == null) {
             return Collections.emptyList();
         }
@@ -76,8 +76,8 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
     @Override
     public FqName getContainingPackageFqName() {
         PsiFile file = element.getContainingFile();
-        if (file instanceof JetFile) {
-            JetFile jetFile = (JetFile) file;
+        if (file instanceof KtFile) {
+            KtFile jetFile = (KtFile) file;
             return jetFile.getPackageFqName();
         }
         throw new IllegalArgumentException("Not in a JetFile: " + element);
@@ -85,14 +85,14 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
 
     @NotNull
     @Override
-    public List<JetAnnotationEntry> getDanglingAnnotations() {
-        JetClassBody body = element.getBody();
-        return body == null ? Collections.<JetAnnotationEntry>emptyList() : body.getDanglingAnnotations();
+    public List<KtAnnotationEntry> getDanglingAnnotations() {
+        KtClassBody body = element.getBody();
+        return body == null ? Collections.<KtAnnotationEntry>emptyList() : body.getDanglingAnnotations();
     }
 
     @NotNull
     @Override
-    public List<? extends JetParameter> getPrimaryConstructorParameters() {
+    public List<? extends KtParameter> getPrimaryConstructorParameters() {
         return element.getPrimaryConstructorParameters();
     }
 

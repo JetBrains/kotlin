@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
@@ -53,7 +53,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
     abstract fun getFunctions(name: Name): Collection<FunctionDescriptor>
 
-    fun getMembers(scope: JetScope, declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> {
+    fun getMembers(scope: KtScope, declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> {
         val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Unit>() {
             private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
                 if (declaredOnly && !descriptor.getKind().isReal()) return true

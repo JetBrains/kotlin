@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.KotlinStringWriter
 import org.jetbrains.kotlin.android.synthetic.escapeAndroidIdentifier
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.types.Flexibility
 
 public class AndroidSyntheticFile(val name: String, val contents: String) {
@@ -42,7 +42,7 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     public abstract val layoutXmlFileManager: AndroidLayoutXmlFileManager
 
-    public abstract fun getSyntheticFiles(): List<JetFile>
+    public abstract fun getSyntheticFiles(): List<KtFile>
 
     protected open fun generateSyntheticFiles(generateCommonFiles: Boolean, supportV4: Boolean): List<AndroidSyntheticFile> {
         val commonFiles = if (generateCommonFiles) generateCommonFiles(supportV4) else listOf()
@@ -197,14 +197,14 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
         return resourceMap.values().toList()
     }
 
-    protected fun generateSyntheticJetFiles(files: List<AndroidSyntheticFile>): List<JetFile> {
+    protected fun generateSyntheticJetFiles(files: List<AndroidSyntheticFile>): List<KtFile> {
         val psiManager = PsiManager.getInstance(project)
         val applicationPackage = layoutXmlFileManager.androidModuleInfo?.applicationPackage
 
         return files.mapIndexed { index, syntheticFile ->
             val fileName = AndroidConst.SYNTHETIC_FILENAME_PREFIX + syntheticFile.name + ".kt"
             val virtualFile = LightVirtualFile(fileName, syntheticFile.contents)
-            val jetFile = psiManager.findFile(virtualFile) as JetFile
+            val jetFile = psiManager.findFile(virtualFile) as KtFile
             if (applicationPackage != null) {
                 jetFile.putUserData(AndroidConst.ANDROID_USER_PACKAGE, applicationPackage)
             }

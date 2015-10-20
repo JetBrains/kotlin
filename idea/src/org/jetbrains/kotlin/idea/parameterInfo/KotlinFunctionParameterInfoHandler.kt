@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -46,29 +46,29 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import java.awt.Color
 import java.util.*
 import kotlin.reflect.KClass
 
-class KotlinFunctionParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<JetValueArgumentList, JetValueArgument>(JetValueArgumentList::class, JetValueArgument::class) {
-    override fun getActualParameters(arguments: JetValueArgumentList) = arguments.arguments.toTypedArray()
+class KotlinFunctionParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<KtValueArgumentList, KtValueArgument>(KtValueArgumentList::class, KtValueArgument::class) {
+    override fun getActualParameters(arguments: KtValueArgumentList) = arguments.arguments.toTypedArray()
 
-    override fun getActualParametersRBraceType() = JetTokens.RPAR
+    override fun getActualParametersRBraceType() = KtTokens.RPAR
 
-    override fun getArgumentListAllowedParentClasses() = setOf(JetCallElement::class.java)
+    override fun getArgumentListAllowedParentClasses() = setOf(KtCallElement::class.java)
 }
 
-class KotlinArrayAccessParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<JetContainerNode, JetExpression>(JetContainerNode::class, JetExpression::class) {
-    override fun getArgumentListAllowedParentClasses() = setOf(JetArrayAccessExpression::class.java)
+class KotlinArrayAccessParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<KtContainerNode, KtExpression>(KtContainerNode::class, KtExpression::class) {
+    override fun getArgumentListAllowedParentClasses() = setOf(KtArrayAccessExpression::class.java)
 
-    override fun getActualParameters(containerNode: JetContainerNode): Array<out JetExpression> = containerNode.allChildren.filterIsInstance<JetExpression>().toList().toTypedArray()
+    override fun getActualParameters(containerNode: KtContainerNode): Array<out KtExpression> = containerNode.allChildren.filterIsInstance<KtExpression>().toList().toTypedArray()
 
-    override fun getActualParametersRBraceType() = JetTokens.RBRACKET
+    override fun getActualParametersRBraceType() = KtTokens.RBRACKET
 }
 
-abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement, TArgument : JetElement>(
+abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement, TArgument : KtElement>(
         private val argumentListClass: KClass<TArgumentList>,
         private val argumentClass: KClass<TArgument>
 ) : ParameterInfoHandlerWithTabActionSupport<TArgumentList, FunctionDescriptor, TArgument> {
@@ -78,12 +78,12 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
     }
 
     private fun findCall(argumentList: TArgumentList, bindingContext: BindingContext): Call? {
-        return (argumentList.parent as JetElement).getCall(bindingContext)
+        return (argumentList.parent as KtElement).getCall(bindingContext)
     }
 
-    override fun getActualParameterDelimiterType() = JetTokens.COMMA
+    override fun getActualParameterDelimiterType() = KtTokens.COMMA
 
-    override fun getArgListStopSearchClasses() = setOf(JetNamedFunction::class.java, JetVariableDeclaration::class.java)
+    override fun getArgListStopSearchClasses() = setOf(KtNamedFunction::class.java, KtVariableDeclaration::class.java)
 
     override fun getArgumentListClass() = argumentListClass.java
 
@@ -106,7 +106,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
 
     override fun findElementForParameterInfo(context: CreateParameterInfoContext): TArgumentList? {
         //todo: calls to this constructors, when we will have auxiliary constructors
-        val file = context.file as? JetFile ?: return null
+        val file = context.file as? KtFile ?: return null
 
         val token = file.findElementAt(context.offset) ?: return null
         val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java) ?: return null
@@ -128,7 +128,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
         val offset = context.offset
         val parameterIndex = argumentList.allChildren
                 .takeWhile { it.startOffset < offset }
-                .count { it.node.elementType == JetTokens.COMMA }
+                .count { it.node.elementType == KtTokens.COMMA }
         context.setCurrentParameter(parameterIndex)
     }
 
@@ -264,7 +264,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
                 return text
             }
 
-            if (expression is JetConstantExpression || expression is JetStringTemplateExpression) {
+            if (expression is KtConstantExpression || expression is KtStringTemplateExpression) {
                 if (text.startsWith("\"")) {
                     return "\"...\""
                 }
@@ -276,7 +276,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
         return "..."
     }
 
-    private fun parameterTypeToRender(descriptor: ValueParameterDescriptor): JetType {
+    private fun parameterTypeToRender(descriptor: ValueParameterDescriptor): KtType {
         var type = descriptor.varargElementType ?: descriptor.type
         if (type.containsError()) {
             val original = descriptor.original
@@ -325,10 +325,10 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : JetElement
         else {
             // add dummy current argument if we don't have one
             currentArgument = object : ValueArgument {
-                override fun getArgumentExpression(): JetExpression? = null
+                override fun getArgumentExpression(): KtExpression? = null
                 override fun getArgumentName(): ValueArgumentName? = null
                 override fun isNamed(): Boolean = false
-                override fun asElement(): JetElement = call.callElement // is a hack but what to do?
+                override fun asElement(): KtElement = call.callElement // is a hack but what to do?
                 override fun getSpreadElement(): LeafPsiElement? = null
                 override fun isExternal() = false
             }

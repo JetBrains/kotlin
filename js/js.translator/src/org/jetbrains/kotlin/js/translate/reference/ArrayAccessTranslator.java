@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -38,15 +38,15 @@ import java.util.*;
 public class ArrayAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
     /*package*/
-    static ArrayAccessTranslator newInstance(@NotNull JetArrayAccessExpression expression,
+    static ArrayAccessTranslator newInstance(@NotNull KtArrayAccessExpression expression,
                                              @NotNull TranslationContext context) {
         return new ArrayAccessTranslator(expression, context);
     }
 
     @NotNull
-    private final JetArrayAccessExpression expression;
+    private final KtArrayAccessExpression expression;
 
-    protected ArrayAccessTranslator(@NotNull JetArrayAccessExpression expression,
+    protected ArrayAccessTranslator(@NotNull KtArrayAccessExpression expression,
                                     @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
@@ -87,7 +87,7 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
 
     @NotNull
     protected JsExpression getArrayExpression() {
-        JetExpression arrayExpression = expression.getArrayExpression();
+        KtExpression arrayExpression = expression.getArrayExpression();
         assert arrayExpression != null : "Code with parsing errors shouldn't be translated";
         return Translation.translateAsExpression(arrayExpression, context());
     }
@@ -109,7 +109,7 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
         ValueArgument valueArgument = ((ExpressionValueArgument) lastArgument).getValueArgument();
         assert valueArgument != null;
 
-        JetExpression element = valueArgument.getArgumentExpression();
+        KtExpression element = valueArgument.getArgumentExpression();
         return context().innerContextWithAliasesForExpressions(Collections.singletonMap(element, toSetTo));
     }
 
@@ -117,16 +117,16 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
     @Override
     public CachedAccessTranslator getCached() {
         List<TemporaryVariable> temporaries = new ArrayList<TemporaryVariable>();
-        Map<JetExpression, JsExpression> aliases = new HashMap<JetExpression, JsExpression>();
+        Map<KtExpression, JsExpression> aliases = new HashMap<KtExpression, JsExpression>();
 
         TemporaryVariable temporaryArrayExpression = context().declareTemporary(getArrayExpression());
         temporaries.add(temporaryArrayExpression);
 
-        for (JetExpression jetExpression : expression.getIndexExpressions()) {
-            JsExpression jsExpression = Translation.translateAsExpression(jetExpression, context());
+        for (KtExpression ktExpression : expression.getIndexExpressions()) {
+            JsExpression jsExpression = Translation.translateAsExpression(ktExpression, context());
             TemporaryVariable temporaryVariable = context().declareTemporary(jsExpression);
             temporaries.add(temporaryVariable);
-            aliases.put(jetExpression, temporaryVariable.reference());
+            aliases.put(ktExpression, temporaryVariable.reference());
         }
         return new CachedArrayAccessTranslator(expression, context().innerContextWithAliasesForExpressions(aliases),
                                                temporaryArrayExpression, temporaries);
@@ -139,7 +139,7 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
         private final List<TemporaryVariable> declaredTemporaries;
 
         protected CachedArrayAccessTranslator(
-                @NotNull JetArrayAccessExpression expression,
+                @NotNull KtArrayAccessExpression expression,
                 @NotNull TranslationContext context,
                 @NotNull TemporaryVariable temporaryArrayExpression,
                 @NotNull List<TemporaryVariable> temporaries

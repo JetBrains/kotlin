@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinWithDifferentJvmDescriptor
-import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -145,13 +145,13 @@ private fun needGenerateSpecialBridge(
 }
 
 public fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
-        element: JetElement,
+        element: KtElement,
         bindingContext: BindingContext
 ): Boolean {
 
     val parentCall = element.getParentCall(bindingContext, strict = true) ?: return false
     val argumentExpression = parentCall.valueArguments.singleOrNull()?.getArgumentExpression() ?: return false
-    if (JetPsiUtil.deparenthesize(argumentExpression) !== element) return false
+    if (KtPsiUtil.deparenthesize(argumentExpression) !== element) return false
 
     val candidateDescriptor = parentCall.getResolvedCall(bindingContext)?.candidateDescriptor as CallableMemberDescriptor?
                                 ?: return false

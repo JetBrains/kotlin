@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.psi.JetEnumEntry
+import org.jetbrains.kotlin.psi.KtEnumEntry
 
 class KotlinLightEnumConstant(
         manager: PsiManager,
-        origin: JetEnumEntry,
+        origin: KtEnumEntry,
         enumConstant: PsiEnumConstant,
         containingClass: PsiClass,
         private val initializingClass: PsiEnumConstantInitializer?
-) : KotlinLightField<JetEnumEntry, PsiEnumConstant>(manager, origin, enumConstant, containingClass), PsiEnumConstant {
+) : KotlinLightField<KtEnumEntry, PsiEnumConstant>(manager, origin, enumConstant, containingClass), PsiEnumConstant {
     override fun copy() = KotlinLightEnumConstant(getManager()!!, getOrigin(), getDelegate(), getContainingClass()!!, initializingClass)
 
     // NOTE: we don't use "delegation by" because the compiler would generate method calls to ALL of PsiEnumConstant members,

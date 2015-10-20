@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaMethod
 import org.jetbrains.kotlin.idea.core.refactoring.toPsiFile
@@ -84,10 +84,10 @@ public class JetChangeSignature(project: Project,
     private fun runSilentRefactoring(descriptor: JetMethodDescriptor) {
         val baseDeclaration = descriptor.baseDeclaration
         val processor = when (baseDeclaration) {
-            is JetFunction, is JetClass -> {
+            is KtFunction, is KtClass -> {
                 JetChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(project, commandName, descriptor, defaultValueContext)
             }
-            is JetProperty, is JetParameter -> {
+            is KtProperty, is KtParameter -> {
                 JetChangePropertySignatureDialog.createProcessorForSilentRefactoring(project, commandName, descriptor)
             }
             is PsiMethod -> {
@@ -106,8 +106,8 @@ public class JetChangeSignature(project: Project,
     private fun runInteractiveRefactoring(descriptor: JetMethodDescriptor) {
         val baseDeclaration = descriptor.baseDeclaration
         val dialog = when (baseDeclaration) {
-            is JetFunction, is JetClass -> JetChangeSignatureDialog(project, descriptor, defaultValueContext, commandName)
-            is JetProperty, is JetParameter -> JetChangePropertySignatureDialog(project, descriptor, commandName)
+            is KtFunction, is KtClass -> JetChangeSignatureDialog(project, descriptor, defaultValueContext, commandName)
+            is KtProperty, is KtParameter -> JetChangePropertySignatureDialog(project, descriptor, commandName)
             is PsiMethod -> {
                 // No changes are made from Kotlin side: just run foreign refactoring
                 if (descriptor is JetChangeSignatureData) {
@@ -137,7 +137,7 @@ public class JetChangeSignature(project: Project,
 
     private fun getPreviewInfoForJavaMethod(descriptor: JetMethodDescriptor): Pair<PsiMethod, JavaChangeInfo> {
         val originalMethod = descriptor.baseDeclaration as PsiMethod
-        val contextFile = defaultValueContext.getContainingFile() as JetFile
+        val contextFile = defaultValueContext.getContainingFile() as KtFile
 
         // Generate new Java method signature from the Kotlin point of view
         val ktChangeInfo = JetChangeInfo(methodDescriptor = descriptor, context = defaultValueContext)
@@ -147,8 +147,8 @@ public class JetChangeSignature(project: Project,
             append("class Dummy {\n").append(ktSignature).append("{}\n}")
             toString()
         }
-        val dummyFile = LightVirtualFile("dummy.kt", JetFileType.INSTANCE, dummyFileText).toPsiFile(project) as JetFile
-        val dummyDeclaration = (dummyFile.getDeclarations().first() as JetClass).getBody()!!.getDeclarations().first()
+        val dummyFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, dummyFileText).toPsiFile(project) as KtFile
+        val dummyDeclaration = (dummyFile.getDeclarations().first() as KtClass).getBody()!!.getDeclarations().first()
 
         // Convert to PsiMethod which can be used in Change Signature dialog
         val containingClass = PsiElementFactory.SERVICE.getInstance(project).createClass("Dummy")

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.model;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 
 import java.util.Iterator;
@@ -42,7 +42,7 @@ public class VarargValueArgument implements ResolvedValueArgument {
         StringBuilder builder = new StringBuilder("vararg:{");
         for (Iterator<ValueArgument> iterator = arguments.iterator(); iterator.hasNext(); ) {
             ValueArgument valueArgument = iterator.next();
-            JetExpression expression = valueArgument.getArgumentExpression();
+            KtExpression expression = valueArgument.getArgumentExpression();
             builder.append(expression == null ? "no expression" : expression.getText());
             if (iterator.hasNext()) {
                 builder.append(", ");

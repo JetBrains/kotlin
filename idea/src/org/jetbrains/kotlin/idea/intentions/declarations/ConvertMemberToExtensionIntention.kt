@@ -26,37 +26,37 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.setReceiverType
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<JetCallableDeclaration>(javaClass(), "Convert member to extension"), LowPriorityAction {
-    override fun applicabilityRange(element: JetCallableDeclaration): TextRange? {
-        val classBody = element.getParent() as? JetClassBody ?: return null
-        if (classBody.getParent() !is JetClass) return null
+public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<KtCallableDeclaration>(javaClass(), "Convert member to extension"), LowPriorityAction {
+    override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
+        val classBody = element.getParent() as? KtClassBody ?: return null
+        if (classBody.getParent() !is KtClass) return null
         if (element.getReceiverTypeReference() != null) return null
-        if (element.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return null
+        if (element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
         when (element) {
-            is JetProperty -> if (element.hasInitializer()) return null
-            is JetSecondaryConstructor -> return null
+            is KtProperty -> if (element.hasInitializer()) return null
+            is KtSecondaryConstructor -> return null
         }
         return (element.getNameIdentifier() ?: return null).getTextRange()
     }
 
     //TODO: local class
 
-    override fun applyTo(element: JetCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
         val descriptor = element.resolveToDescriptor()
         val containingClass = descriptor.getContainingDeclaration() as ClassDescriptor
 
         val file = element.getContainingJetFile()
-        val outermostParent = JetPsiUtil.getOutermostParent(element, file, false)
+        val outermostParent = KtPsiUtil.getOutermostParent(element, file, false)
 
         val typeParameterList = newTypeParameterList(element)
 
         val project = element.getProject()
-        val psiFactory = JetPsiFactory(element)
+        val psiFactory = KtPsiFactory(element)
 
-        val extension = file.addAfter(element, outermostParent) as JetCallableDeclaration
+        val extension = file.addAfter(element, outermostParent) as KtCallableDeclaration
         file.addAfter(psiFactory.createNewLine(), outermostParent)
         file.addAfter(psiFactory.createNewLine(), outermostParent)
         element.delete()
@@ -73,20 +73,20 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
             }
         }
 
-        extension.getModifierList()?.getModifier(JetTokens.PROTECTED_KEYWORD)?.delete()
-        extension.getModifierList()?.getModifier(JetTokens.ABSTRACT_KEYWORD)?.delete()
+        extension.getModifierList()?.getModifier(KtTokens.PROTECTED_KEYWORD)?.delete()
+        extension.getModifierList()?.getModifier(KtTokens.ABSTRACT_KEYWORD)?.delete()
 
-        var bodyToSelect: JetExpression? = null
+        var bodyToSelect: KtExpression? = null
 
-        fun selectBody(declaration: JetDeclarationWithBody) {
+        fun selectBody(declaration: KtDeclarationWithBody) {
             if (bodyToSelect == null) {
                 val body = declaration.getBodyExpression()
-                bodyToSelect = if (body is JetBlockExpression) body.getStatements().single() else body
+                bodyToSelect = if (body is KtBlockExpression) body.getStatements().single() else body
             }
         }
 
         when (extension) {
-            is JetFunction -> {
+            is KtFunction -> {
                 if (!extension.hasBody()) {
                     //TODO: methods in PSI for setBody
                     extension.add(psiFactory.createBlock(THROW_UNSUPPORTED_OPERATION_EXCEPTION))
@@ -94,31 +94,31 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
                 }
             }
 
-            is JetProperty -> {
-                val templateProperty = psiFactory.createDeclaration<JetProperty>("var v: Any\nget()=$THROW_UNSUPPORTED_OPERATION_EXCEPTION\nset(value){$THROW_UNSUPPORTED_OPERATION_EXCEPTION}")
+            is KtProperty -> {
+                val templateProperty = psiFactory.createDeclaration<KtProperty>("var v: Any\nget()=$THROW_UNSUPPORTED_OPERATION_EXCEPTION\nset(value){$THROW_UNSUPPORTED_OPERATION_EXCEPTION}")
                 val templateGetter = templateProperty.getGetter()!!
                 val templateSetter = templateProperty.getSetter()!!
 
                 var getter = extension.getGetter()
                 if (getter == null) {
-                    getter = extension.addAfter(templateGetter, extension.getTypeReference()) as JetPropertyAccessor
+                    getter = extension.addAfter(templateGetter, extension.getTypeReference()) as KtPropertyAccessor
                     extension.addBefore(psiFactory.createNewLine(), getter)
                     selectBody(getter)
                 }
                 else if (!getter.hasBody()) {
-                    getter = getter.replace(templateGetter) as JetPropertyAccessor
+                    getter = getter.replace(templateGetter) as KtPropertyAccessor
                     selectBody(getter)
                 }
 
                 if (extension.isVar()) {
                     var setter = extension.getSetter()
                     if (setter == null) {
-                        setter = extension.addAfter(templateSetter, getter) as JetPropertyAccessor
+                        setter = extension.addAfter(templateSetter, getter) as KtPropertyAccessor
                         extension.addBefore(psiFactory.createNewLine(), setter)
                         selectBody(setter)
                     }
                     else if (!setter.hasBody()) {
-                        setter = setter.replace(templateSetter) as JetPropertyAccessor
+                        setter = setter.replace(templateSetter) as KtPropertyAccessor
                         selectBody(setter)
                     }
                 }
@@ -140,12 +140,12 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
     //TODO: reuse TEMPLATE_FROM_USAGE_FUNCTION_BODY
     private val THROW_UNSUPPORTED_OPERATION_EXCEPTION = "throw UnsupportedOperationException()"
 
-    private fun newTypeParameterList(member: JetCallableDeclaration): JetTypeParameterList? {
-        val classElement = member.getParent().getParent() as JetClass
+    private fun newTypeParameterList(member: KtCallableDeclaration): KtTypeParameterList? {
+        val classElement = member.getParent().getParent() as KtClass
         val classParams = classElement.getTypeParameters()
         if (classParams.isEmpty()) return null
         val allTypeParameters = classParams + member.getTypeParameters()
         val text = allTypeParameters.map { it.getText() }.joinToString(",", "<", ">")
-        return JetPsiFactory(member).createDeclaration<JetFunction>("fun $text foo()").getTypeParameterList()
+        return KtPsiFactory(member).createDeclaration<KtFunction>("fun $text foo()").getTypeParameterList()
     }
 }

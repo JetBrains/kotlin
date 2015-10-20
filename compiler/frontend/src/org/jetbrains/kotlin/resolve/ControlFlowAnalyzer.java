@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Map;
 
@@ -40,40 +40,40 @@ public class ControlFlowAnalyzer {
     }
 
     public void process(@NotNull BodiesResolveContext c) {
-        for (JetFile file : c.getFiles()) {
+        for (KtFile file : c.getFiles()) {
             checkDeclarationContainer(c, file);
         }
-        for (JetClassOrObject aClass : c.getDeclaredClasses().keySet()) {
+        for (KtClassOrObject aClass : c.getDeclaredClasses().keySet()) {
             checkDeclarationContainer(c, aClass);
         }
-        for (JetSecondaryConstructor constructor : c.getSecondaryConstructors().keySet()) {
+        for (KtSecondaryConstructor constructor : c.getSecondaryConstructors().keySet()) {
             checkSecondaryConstructor(constructor);
         }
-        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
-            JetNamedFunction function = entry.getKey();
+        for (Map.Entry<KtNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
+            KtNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
-            JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
+            KtType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
             checkFunction(c, function, expectedReturnType);
         }
-        for (Map.Entry<JetProperty, PropertyDescriptor> entry : c.getProperties().entrySet()) {
-            JetProperty property = entry.getKey();
+        for (Map.Entry<KtProperty, PropertyDescriptor> entry : c.getProperties().entrySet()) {
+            KtProperty property = entry.getKey();
             PropertyDescriptor propertyDescriptor = entry.getValue();
             checkProperty(c, property, propertyDescriptor);
         }
     }
 
-    private void checkSecondaryConstructor(@NotNull JetSecondaryConstructor constructor) {
+    private void checkSecondaryConstructor(@NotNull KtSecondaryConstructor constructor) {
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(constructor, trace);
         flowInformationProvider.checkDeclaration();
         flowInformationProvider.checkFunction(builtIns.getUnitType());
     }
 
-    private void checkDeclarationContainer(@NotNull BodiesResolveContext c, JetDeclarationContainer declarationContainer) {
+    private void checkDeclarationContainer(@NotNull BodiesResolveContext c, KtDeclarationContainer declarationContainer) {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) declarationContainer, trace);
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((KtElement) declarationContainer, trace);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
             flowInformationProvider.checkForLocalClassOrObjectMode();
             return;
@@ -81,18 +81,18 @@ public class ControlFlowAnalyzer {
         flowInformationProvider.checkDeclaration();
     }
 
-    private void checkProperty(@NotNull BodiesResolveContext c, JetProperty property, PropertyDescriptor propertyDescriptor) {
-        for (JetPropertyAccessor accessor : property.getAccessors()) {
+    private void checkProperty(@NotNull BodiesResolveContext c, KtProperty property, PropertyDescriptor propertyDescriptor) {
+        for (KtPropertyAccessor accessor : property.getAccessors()) {
             PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
             assert accessorDescriptor != null : "no property accessor descriptor " + accessor.getText();
-            JetType returnType = accessorDescriptor.getReturnType();
+            KtType returnType = accessorDescriptor.getReturnType();
             checkFunction(c, accessor, returnType);
         }
     }
 
-    private void checkFunction(@NotNull BodiesResolveContext c, @NotNull JetDeclarationWithBody function, @Nullable JetType expectedReturnType) {
+    private void checkFunction(@NotNull BodiesResolveContext c, @NotNull KtDeclarationWithBody function, @Nullable KtType expectedReturnType) {
         if (!function.hasBody()) return;
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {

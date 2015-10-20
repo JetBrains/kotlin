@@ -24,15 +24,15 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 fun PsiNamedElement.getClassDescriptorIfAny(resolutionFacade: ResolutionFacade? = null): ClassDescriptor? {
     return when (this) {
-        is JetClass -> (resolutionFacade ?: getResolutionFacade()).resolveToDescriptor(this) as ClassDescriptor
+        is KtClass -> (resolutionFacade ?: getResolutionFacade()).resolveToDescriptor(this) as ClassDescriptor
         is PsiClass -> getJavaClassDescriptor()
         else -> null
     }
@@ -40,7 +40,7 @@ fun PsiNamedElement.getClassDescriptorIfAny(resolutionFacade: ResolutionFacade? 
 
 fun PsiNamedElement.isAbstractMember(): Boolean {
     return when(this) {
-        is JetNamedDeclaration -> hasModifier(JetTokens.ABSTRACT_KEYWORD)
+        is KtNamedDeclaration -> hasModifier(KtTokens.ABSTRACT_KEYWORD)
         is PsiMember -> hasModifierProperty(PsiModifier.ABSTRACT)
         else -> false
     }
@@ -49,7 +49,7 @@ fun PsiNamedElement.isAbstractMember(): Boolean {
 // Applies to JetClassOrObject and PsiClass
 public fun PsiNamedElement.qualifiedClassNameForRendering(): String {
     val fqName = when (this) {
-        is JetClassOrObject -> fqName?.asString()
+        is KtClassOrObject -> fqName?.asString()
         is PsiClass -> qualifiedName
         else -> throw AssertionError("Not a class: ${getElementTextWithContext()}")
     }

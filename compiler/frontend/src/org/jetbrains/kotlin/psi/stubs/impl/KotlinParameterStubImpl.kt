@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
@@ -31,7 +31,7 @@ public class KotlinParameterStubImpl(
         private val isMutable: Boolean,
         private val hasValOrVar: Boolean,
         private val hasDefaultValue: Boolean
-) : KotlinStubBaseImpl<JetParameter>(parent, JetStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
+) : KotlinStubBaseImpl<KtParameter>(parent, KtStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
     override fun getName(): String? {
         return StringRef.toString(name)
     }

@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import org.jetbrains.kotlin.psi.JetModifierList
+import org.jetbrains.kotlin.psi.KtModifierList
 
-import org.jetbrains.kotlin.lexer.JetTokens.MODIFIER_KEYWORDS_ARRAY
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens.MODIFIER_KEYWORDS_ARRAY
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 
 public object ModifierMaskUtils {
     init {
@@ -27,10 +27,10 @@ public object ModifierMaskUtils {
     }
 
     @JvmStatic
-    public fun computeMaskFromModifierList(modifierList: JetModifierList): Int = computeMask { modifierList.hasModifier(it) }
+    public fun computeMaskFromModifierList(modifierList: KtModifierList): Int = computeMask { modifierList.hasModifier(it) }
 
     @JvmStatic
-    public fun computeMask(hasModifier: (JetModifierKeywordToken) -> Boolean): Int {
+    public fun computeMask(hasModifier: (KtModifierKeywordToken) -> Boolean): Int {
         var mask = 0
         for ((index, modifierKeywordToken) in MODIFIER_KEYWORDS_ARRAY.withIndex()) {
             if (hasModifier(modifierKeywordToken)) {
@@ -41,7 +41,7 @@ public object ModifierMaskUtils {
     }
 
     @JvmStatic
-    public fun maskHasModifier(mask: Int, modifierToken: JetModifierKeywordToken): Boolean {
+    public fun maskHasModifier(mask: Int, modifierToken: KtModifierKeywordToken): Boolean {
         val index = MODIFIER_KEYWORDS_ARRAY.indexOf(modifierToken)
         assert(index >= 0) { "All JetModifierKeywordTokens should be present in MODIFIER_KEYWORDS_ARRAY" }
         return (mask and (1 shl index)) != 0

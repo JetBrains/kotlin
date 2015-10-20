@@ -51,11 +51,11 @@ import org.jetbrains.kotlin.idea.core.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.move.*
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.search.projectScope
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetModifierListOwner
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
@@ -63,22 +63,22 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
-interface Mover: (JetNamedDeclaration, JetFile) -> JetNamedDeclaration {
+interface Mover: (KtNamedDeclaration, KtFile) -> KtNamedDeclaration {
     object Default: Mover {
-        override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration {
-            val newElement = targetFile.add(originalElement) as JetNamedDeclaration
+        override fun invoke(originalElement: KtNamedDeclaration, targetFile: KtFile): KtNamedDeclaration {
+            val newElement = targetFile.add(originalElement) as KtNamedDeclaration
             originalElement.deleteSingle()
             return newElement
         }
     }
 
     object Idle: Mover {
-        override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile) = originalElement
+        override fun invoke(originalElement: KtNamedDeclaration, targetFile: KtFile) = originalElement
     }
 }
 
 public class MoveKotlinTopLevelDeclarationsOptions(
-        val elementsToMove: Collection<JetNamedDeclaration>,
+        val elementsToMove: Collection<KtNamedDeclaration>,
         val moveTarget: KotlinMoveTarget,
         val searchInCommentsAndStrings: Boolean = true,
         val searchInNonCode: Boolean = true,
@@ -112,7 +112,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
     public override fun findUsages(): Array<UsageInfo> {
         val newPackageName = options.moveTarget.packageWrapper?.getQualifiedName() ?: ""
 
-        fun collectUsages(kotlinToLightElements: Map<JetNamedDeclaration, List<PsiNamedElement>>, result: MutableList<UsageInfo>) {
+        fun collectUsages(kotlinToLightElements: Map<KtNamedDeclaration, List<PsiNamedElement>>, result: MutableList<UsageInfo>) {
             kotlinToLightElements.values().flatMap { it }.flatMapTo(result) { lightElement ->
                 val newFqName = StringUtil.getQualifiedName(newPackageName, lightElement.getName())
 
@@ -154,12 +154,12 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
          */
 
         fun collectConflictsInUsages(usages: List<UsageInfo>) {
-            val declarationToContainers = HashMap<JetNamedDeclaration, MutableSet<PsiElement>>()
+            val declarationToContainers = HashMap<KtNamedDeclaration, MutableSet<PsiElement>>()
             for (usage in usages) {
                 val element = usage.getElement()
                 if (element == null || usage !is MoveRenameUsageInfo || usage is NonCodeUsageInfo) continue
 
-                val declaration = usage.getReferencedElement()?.namedUnwrappedElement as? JetNamedDeclaration
+                val declaration = usage.getReferencedElement()?.namedUnwrappedElement as? KtNamedDeclaration
                 if (declaration == null || !declaration.isPrivate()) continue
 
                 if (element.isInsideOf(elementsToMove)) continue
@@ -184,7 +184,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
         fun collectConflictsInDeclarations() {
             if (newPackageName == UNKNOWN_PACKAGE_FQ_NAME.asString()) return
 
-            val declarationToReferenceTargets = HashMap<JetNamedDeclaration, MutableSet<PsiElement>>()
+            val declarationToReferenceTargets = HashMap<KtNamedDeclaration, MutableSet<PsiElement>>()
             for (declaration in elementsToMove) {
                 val referenceToContext = JetFileReferencesResolver.resolve(element = declaration, resolveQualifiers = false)
                 for ((refExpr, bindingContext) in referenceToContext) {
@@ -194,7 +194,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                     if (refTarget == null || refTarget.isInsideOf(elementsToMove)) continue
 
                     val packagePrivate = when(refTarget) {
-                        is JetModifierListOwner ->
+                        is KtModifierListOwner ->
                             refTarget.isPrivate()
                         is PsiModifierListOwner ->
                             VisibilityUtil.getVisibilityModifier(refTarget.getModifierList()) == PsiModifier.PACKAGE_LOCAL
@@ -240,14 +240,14 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         fun moveDeclaration(
-                declaration: JetNamedDeclaration,
+                declaration: KtNamedDeclaration,
                 moveTarget: KotlinMoveTarget,
                 usagesToProcessAfterMove: MutableList<UsageInfo>
-        ): JetNamedDeclaration? {
-            val file = declaration.getContainingFile() as? JetFile
+        ): KtNamedDeclaration? {
+            val file = declaration.getContainingFile() as? KtFile
             assert(file != null) { "${declaration.javaClass}: ${declaration.getText()}" }
 
-            val targetFile = moveTarget.getOrCreateTargetPsi(declaration) as? JetFile
+            val targetFile = moveTarget.getOrCreateTargetPsi(declaration) as? KtFile
                              ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration.javaClass}: ${declaration.getText()}")
 
             if (options.updateInternalReferences) {

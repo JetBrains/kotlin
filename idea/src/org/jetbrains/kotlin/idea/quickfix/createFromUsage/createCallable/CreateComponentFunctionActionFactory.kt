@@ -22,19 +22,19 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.psi.JetMultiDeclaration
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtMultiDeclaration
 import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.Variance
 
-object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetMultiDeclaration>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetMultiDeclaration? {
-        QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetMultiDeclaration>())?.let { return it }
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())?.multiParameter
+object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtMultiDeclaration>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtMultiDeclaration? {
+        QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtMultiDeclaration>())?.let { return it }
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtForExpression>())?.multiParameter
     }
 
-    override fun createCallableInfo(element: JetMultiDeclaration, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtMultiDeclaration, diagnostic: Diagnostic): CallableInfo? {
         val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic)
 
         val name = diagnosticWithParameters.a

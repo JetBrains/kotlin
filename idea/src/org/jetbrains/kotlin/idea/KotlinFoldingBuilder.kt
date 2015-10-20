@@ -25,12 +25,12 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetImportList
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtImportList
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     override fun buildLanguageFoldRegions(descriptors: MutableList<FoldingDescriptor>,
                                           root: PsiElement, document: Document, quick: Boolean) {
-        if (root !is JetFile) {
+        if (root !is KtFile) {
             return
         }
         val imports = root.getImportDirectives()
@@ -76,14 +76,14 @@ public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     private fun needFolding(node: ASTNode): Boolean {
         val type = node.getElementType()
         val parentType = node.getTreeParent()?.getElementType()
-        return type == JetNodeTypes.FUNCTION_LITERAL ||
-               (type == JetNodeTypes.BLOCK && parentType != JetNodeTypes.FUNCTION_LITERAL) ||
-               type == JetNodeTypes.CLASS_BODY || type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC
+        return type == KtNodeTypes.FUNCTION_LITERAL ||
+               (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
+               type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC
     }
 
     private fun getRangeToFold(node: ASTNode): TextRange {
-        if (node.getElementType() == JetNodeTypes.FUNCTION_LITERAL) {
-            val psi = node.getPsi() as? JetFunctionLiteral
+        if (node.getElementType() == KtNodeTypes.FUNCTION_LITERAL) {
+            val psi = node.getPsi() as? KtFunctionLiteral
             val lbrace = psi?.getLBrace()
             val rbrace = psi?.getRBrace()
             if (lbrace != null && rbrace != null) {
@@ -97,21 +97,21 @@ public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         document.getLineNumber(textRange.getStartOffset()) == document.getLineNumber(textRange.getEndOffset())
 
     override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String = when {
-        node.getElementType() == JetTokens.BLOCK_COMMENT -> "/.../"
+        node.getElementType() == KtTokens.BLOCK_COMMENT -> "/.../"
         node.getElementType() == KDocTokens.KDOC -> "/**...*/"
-        node.getPsi() is JetImportList -> "..."
+        node.getPsi() is KtImportList -> "..."
         else ->  "{...}"
     }
 
     override fun isRegionCollapsedByDefault(node: ASTNode): Boolean {
         val settings = JavaCodeFoldingSettings.getInstance()
 
-        if (node.getPsi() is JetImportList) {
+        if (node.getPsi() is KtImportList) {
             return settings.isCollapseImports()
         }
 
         val type = node.getElementType()
-        if (type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC) {
+        if (type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC) {
             if (isFirstElementInFile(node.getPsi())) {
                 return settings.isCollapseFileHeader()
             }
@@ -121,11 +121,11 @@ public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     }
 
     override fun isCustomFoldingRoot(node: ASTNode)
-        = node.getElementType() == JetNodeTypes.BLOCK || node.getElementType() == JetNodeTypes.CLASS_BODY
+        = node.getElementType() == KtNodeTypes.BLOCK || node.getElementType() == KtNodeTypes.CLASS_BODY
 
     private fun isFirstElementInFile(element: PsiElement): Boolean {
         val parent = element.getParent()
-        if (parent is JetFile) {
+        if (parent is KtFile) {
             val firstNonWhiteSpace = parent.allChildren.firstOrNull {
                 it.getTextLength() != 0 && it !is PsiWhiteSpace
             }

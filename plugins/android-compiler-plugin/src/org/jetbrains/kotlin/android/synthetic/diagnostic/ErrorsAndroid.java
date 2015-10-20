@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.android.synthetic.diagnostic;
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 
 import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface ErrorsAndroid {
-    DiagnosticFactory1<JetExpression, String> SYNTHETIC_INVALID_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<JetExpression, String> SYNTHETIC_UNRESOLVED_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<KtExpression, String> SYNTHETIC_INVALID_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<KtExpression, String> SYNTHETIC_UNRESOLVED_WIDGET_TYPE = DiagnosticFactory1.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

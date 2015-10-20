@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import java.util.ArrayList
@@ -52,7 +52,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
             val virtualFile = addFile(file, "test")
             val psiFile = psiManager.findFile(virtualFile)!!
             externalPsiFiles.add(psiFile)
-            assert(psiFile is PsiJavaFile || psiFile is JetFile)
+            assert(psiFile is PsiJavaFile || psiFile is KtFile)
         }
 
         val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
@@ -63,11 +63,11 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
 
         fun expectedResultFile(i: Int) = File(filesToConvert[i].getPath().replace(".java", ".kt"))
 
-        val resultFiles = ArrayList<JetFile>()
+        val resultFiles = ArrayList<KtFile>()
         for ((i, javaFile) in psiFilesToConvert.withIndex()) {
             deleteFile(javaFile.getVirtualFile())
             val virtualFile = addFile(results[i], expectedResultFile(i).getName(), "test")
-            resultFiles.add(psiManager.findFile(virtualFile) as JetFile)
+            resultFiles.add(psiManager.findFile(virtualFile) as KtFile)
         }
 
         for ((i, kotlinFile) in resultFiles.withIndex()) {
@@ -76,7 +76,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
 
         for ((externalFile, externalPsiFile) in externalFiles.zip(externalPsiFiles)) {
             val expectedFile = File(externalFile.getPath() + ".expected")
-            var resultText = if (externalPsiFile is JetFile) {
+            var resultText = if (externalPsiFile is KtFile) {
                 externalPsiFile.dumpTextWithErrors()
             }
             else {

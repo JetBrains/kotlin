@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInst
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.KtElement;
 
 public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean> implements Function1<Instruction, Boolean> {
-    private final JetElement subroutine;
+    private final KtElement subroutine;
     private final Instruction start;
 
-    public TailRecursionDetector(@NotNull JetElement subroutine, @NotNull Instruction start) {
+    public TailRecursionDetector(@NotNull KtElement subroutine, @NotNull Instruction start) {
         this.subroutine = subroutine;
         this.start = start;
     }

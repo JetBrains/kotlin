@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeKt;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -102,7 +102,7 @@ public class FunctionCodegen {
         this.memberCodegen = memberCodegen;
     }
 
-    public void gen(@NotNull JetNamedFunction function) {
+    public void gen(@NotNull KtNamedFunction function) {
         SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
         assert functionDescriptor != null : "No descriptor for function " + function.getText() + "\n" +
                                             "in " + function.getContainingFile().getVirtualFile();
@@ -119,7 +119,7 @@ public class FunctionCodegen {
     }
 
     public void generateOverloadsWithDefaultValues(
-            @Nullable JetNamedFunction function,
+            @Nullable KtNamedFunction function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull FunctionDescriptor delegateFunctionDescriptor
     ) {
@@ -650,7 +650,7 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull OwnerKind kind,
             @NotNull DefaultParameterValueLoader loadStrategy,
-            @Nullable JetNamedFunction function
+            @Nullable KtNamedFunction function
     ) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
@@ -704,7 +704,7 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodVisitor mv,
             @NotNull DefaultParameterValueLoader loadStrategy,
-            @Nullable JetNamedFunction function,
+            @Nullable KtNamedFunction function,
             @NotNull MemberCodegen<?> parentCodegen
     ) {
         GenerationState state = parentCodegen.state;
@@ -887,7 +887,7 @@ public class FunctionCodegen {
 
         iv.load(1, OBJECT_TYPE);
 
-        JetType jetType = descriptor.getValueParameters().get(0).getType();
+        KtType jetType = descriptor.getValueParameters().get(0).getType();
 
         // TODO: reuse logic from ExpressionCodegen
         if (jetType.isMarkedNullable()) {

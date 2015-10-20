@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 
-public class ChangeToPropertyNameFix extends KotlinQuickFixAction<JetSimpleNameExpression> {
-    public ChangeToPropertyNameFix(@NotNull JetSimpleNameExpression element) {
+public class ChangeToPropertyNameFix extends KotlinQuickFixAction<KtSimpleNameExpression> {
+    public ChangeToPropertyNameFix(@NotNull KtSimpleNameExpression element) {
         super(element);
     }
 
@@ -53,22 +53,22 @@ public class ChangeToPropertyNameFix extends KotlinQuickFixAction<JetSimpleNameE
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetSimpleNameExpression propertyName = (JetSimpleNameExpression) JetPsiFactoryKt.JetPsiFactory(file).createExpression(getPropertyName());
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtSimpleNameExpression propertyName = (KtSimpleNameExpression) KtPsiFactoryKt.KtPsiFactory(file).createExpression(getPropertyName());
         getElement().replace(propertyName);
     }
 
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<JetSimpleNameExpression> createAction(Diagnostic diagnostic) {
-                JetSimpleNameExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetSimpleNameExpression.class);
+            public KotlinQuickFixAction<KtSimpleNameExpression> createAction(Diagnostic diagnostic) {
+                KtSimpleNameExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, KtSimpleNameExpression.class);
                 if (expression == null) {
                     PsiElement element = diagnostic.getPsiElement();
-                    if (element instanceof JetQualifiedExpression && ((JetQualifiedExpression) element).getReceiverExpression() instanceof JetThisExpression) {
-                        JetExpression selector = ((JetQualifiedExpression) element).getSelectorExpression();
-                        if (selector instanceof JetSimpleNameExpression) {
-                            expression = (JetSimpleNameExpression) selector;
+                    if (element instanceof KtQualifiedExpression && ((KtQualifiedExpression) element).getReceiverExpression() instanceof KtThisExpression) {
+                        KtExpression selector = ((KtQualifiedExpression) element).getSelectorExpression();
+                        if (selector instanceof KtSimpleNameExpression) {
+                            expression = (KtSimpleNameExpression) selector;
                         }
                     }
                 }

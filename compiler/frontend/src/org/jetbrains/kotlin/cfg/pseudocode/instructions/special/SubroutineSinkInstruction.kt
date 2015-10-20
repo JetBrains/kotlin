@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import java.util.Collections
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 public class SubroutineSinkInstruction(
-        public val subroutine: JetElement,
+        public val subroutine: KtElement,
         lexicalScope: LexicalScope,
         private val debugLabel: String) : InstructionImpl(lexicalScope) {
     override val nextInstructions: Collection<Instruction>

@@ -21,11 +21,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeTypes;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
@@ -58,8 +58,8 @@ public class DataFlowValueFactory {
 
     @NotNull
     public static DataFlowValue createDataFlowValue(
-            @NotNull JetExpression expression,
-            @NotNull JetType type,
+            @NotNull KtExpression expression,
+            @NotNull KtType type,
             @NotNull ResolutionContext resolutionContext
     ) {
         return createDataFlowValue(expression, type, resolutionContext.trace.getBindingContext(),
@@ -68,14 +68,14 @@ public class DataFlowValueFactory {
 
     @NotNull
     public static DataFlowValue createDataFlowValue(
-            @NotNull JetExpression expression,
-            @NotNull JetType type,
+            @NotNull KtExpression expression,
+            @NotNull KtType type,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule
     ) {
-        if (expression instanceof JetConstantExpression) {
-            JetConstantExpression constantExpression = (JetConstantExpression) expression;
-            if (constantExpression.getNode().getElementType() == JetNodeTypes.NULL) {
+        if (expression instanceof KtConstantExpression) {
+            KtConstantExpression constantExpression = (KtConstantExpression) expression;
+            if (constantExpression.getNode().getElementType() == KtNodeTypes.NULL) {
                 return DataFlowValue.nullValue(DescriptorUtilsKt.getBuiltIns(containingDeclarationOrModule));
             }
         }
@@ -84,7 +84,7 @@ public class DataFlowValueFactory {
             return DataFlowValue.nullValue(DescriptorUtilsKt.getBuiltIns(containingDeclarationOrModule)); // 'null' is the only inhabitant of 'Nothing?'
         }
 
-        if (ExpressionTypingUtils.isExclExclExpression(JetPsiUtil.deparenthesize(expression))) {
+        if (ExpressionTypingUtils.isExclExclExpression(KtPsiUtil.deparenthesize(expression))) {
             // In most cases type of `E!!`-expression is strictly not nullable and we could get proper Nullability
             // by calling `getImmanentNullability` (as it happens below).
             //
@@ -105,7 +105,7 @@ public class DataFlowValueFactory {
 
     @NotNull
     public static DataFlowValue createDataFlowValue(@NotNull ThisReceiver receiver) {
-        JetType type = receiver.getType();
+        KtType type = receiver.getType();
         return new DataFlowValue(receiver, type, STABLE_VALUE, getImmanentNullability(type));
     }
 
@@ -126,7 +126,7 @@ public class DataFlowValueFactory {
     ) {
         if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
             // SCRIPT: smartcasts data flow
-            JetType type = receiverValue.getType();
+            KtType type = receiverValue.getType();
             return new DataFlowValue(receiverValue, type, STABLE_VALUE, getImmanentNullability(type));
         }
         else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {
@@ -148,12 +148,12 @@ public class DataFlowValueFactory {
 
     @NotNull
     public static DataFlowValue createDataFlowValueForProperty(
-            @NotNull JetProperty property,
+            @NotNull KtProperty property,
             @NotNull VariableDescriptor variableDescriptor,
             @NotNull BindingContext bindingContext,
             @Nullable ModuleDescriptor usageContainingModule
     ) {
-        JetType type = variableDescriptor.getType();
+        KtType type = variableDescriptor.getType();
         return new DataFlowValue(variableDescriptor, type,
                                  variableKind(variableDescriptor, usageContainingModule,
                                               bindingContext, property),
@@ -161,7 +161,7 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    private static Nullability getImmanentNullability(@NotNull JetType type) {
+    private static Nullability getImmanentNullability(@NotNull KtType type) {
         return TypeUtils.isNullableType(type) ? Nullability.UNKNOWN : Nullability.NOT_NULL;
     }
 
@@ -215,7 +215,7 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    private static IdentifierInfo createPostfixInfo(@NotNull JetPostfixExpression expression, @NotNull IdentifierInfo argumentInfo) {
+    private static IdentifierInfo createPostfixInfo(@NotNull KtPostfixExpression expression, @NotNull IdentifierInfo argumentInfo) {
         if (argumentInfo == NO_IDENTIFIER_INFO) {
             return NO_IDENTIFIER_INFO;
         }
@@ -224,43 +224,43 @@ public class DataFlowValueFactory {
 
     @NotNull
     private static IdentifierInfo getIdForStableIdentifier(
-            @Nullable JetExpression expression,
+            @Nullable KtExpression expression,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule
     ) {
         if (expression != null) {
-            JetExpression deparenthesized = JetPsiUtil.deparenthesize(expression);
+            KtExpression deparenthesized = KtPsiUtil.deparenthesize(expression);
             if (expression != deparenthesized) {
                 return getIdForStableIdentifier(deparenthesized, bindingContext, containingDeclarationOrModule);
             }
         }
-        if (expression instanceof JetQualifiedExpression) {
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression;
-            JetExpression receiverExpression = qualifiedExpression.getReceiverExpression();
-            JetExpression selectorExpression = qualifiedExpression.getSelectorExpression();
+        if (expression instanceof KtQualifiedExpression) {
+            KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) expression;
+            KtExpression receiverExpression = qualifiedExpression.getReceiverExpression();
+            KtExpression selectorExpression = qualifiedExpression.getSelectorExpression();
             IdentifierInfo receiverId = getIdForStableIdentifier(receiverExpression, bindingContext, containingDeclarationOrModule);
             IdentifierInfo selectorId = getIdForStableIdentifier(selectorExpression, bindingContext, containingDeclarationOrModule);
 
             return combineInfo(receiverId, selectorId);
         }
-        if (expression instanceof JetSimpleNameExpression) {
-            return getIdForSimpleNameExpression((JetSimpleNameExpression) expression, bindingContext, containingDeclarationOrModule);
+        if (expression instanceof KtSimpleNameExpression) {
+            return getIdForSimpleNameExpression((KtSimpleNameExpression) expression, bindingContext, containingDeclarationOrModule);
         }
-        else if (expression instanceof JetThisExpression) {
-            JetThisExpression thisExpression = (JetThisExpression) expression;
+        else if (expression instanceof KtThisExpression) {
+            KtThisExpression thisExpression = (KtThisExpression) expression;
             DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, thisExpression.getInstanceReference());
 
             return getIdForThisReceiver(declarationDescriptor);
         }
-        else if (expression instanceof JetPostfixExpression) {
-            JetPostfixExpression postfixExpression = (JetPostfixExpression) expression;
+        else if (expression instanceof KtPostfixExpression) {
+            KtPostfixExpression postfixExpression = (KtPostfixExpression) expression;
             IElementType operationType = postfixExpression.getOperationReference().getReferencedNameElementType();
-            if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
+            if (operationType == KtTokens.PLUSPLUS || operationType == KtTokens.MINUSMINUS) {
                 return createPostfixInfo(postfixExpression,
                         getIdForStableIdentifier(postfixExpression.getBaseExpression(), bindingContext, containingDeclarationOrModule));
             }
         }
-        else if (expression instanceof JetRootPackageExpression) {
+        else if (expression instanceof KtRootPackageExpression) {
             //todo return createPackageInfo());
         }
         return NO_IDENTIFIER_INFO;
@@ -268,7 +268,7 @@ public class DataFlowValueFactory {
 
     @NotNull
     private static IdentifierInfo getIdForSimpleNameExpression(
-            @NotNull JetSimpleNameExpression simpleNameExpression,
+            @NotNull KtSimpleNameExpression simpleNameExpression,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule
     ) {
@@ -297,7 +297,7 @@ public class DataFlowValueFactory {
     }
 
     @Nullable
-    private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable JetExpression expression) {
+    private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable KtExpression expression) {
         if (receiverValue instanceof ThisReceiver) {
             return getIdForThisReceiver(((ThisReceiver) receiverValue).getDeclarationDescriptor());
         }
@@ -340,12 +340,12 @@ public class DataFlowValueFactory {
     private static boolean isAccessedInsideClosure(
             @NotNull DeclarationDescriptor variableContainingDeclaration,
             @NotNull BindingContext bindingContext,
-            @NotNull JetElement accessElement
+            @NotNull KtElement accessElement
     ) {
         PsiElement parent = accessElement.getParent();
         while (parent != null) {
             // We are inside some declaration
-            if (parent instanceof JetDeclarationWithBody || parent instanceof JetClassOrObject) {
+            if (parent instanceof KtDeclarationWithBody || parent instanceof KtClassOrObject) {
                 DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, parent);
                 if (variableContainingDeclaration.equals(descriptor)) {
                     // Access is at the same declaration: not in closure
@@ -363,13 +363,13 @@ public class DataFlowValueFactory {
 
     private static boolean isAccessedBeforeAllClosureWriters(
             @NotNull DeclarationDescriptor variableContainingDeclaration,
-            @NotNull Set<JetDeclaration> writers,
+            @NotNull Set<KtDeclaration> writers,
             @NotNull BindingContext bindingContext,
-            @NotNull JetElement accessElement
+            @NotNull KtElement accessElement
     ) {
         // All writers should be before access element, with the exception:
         // writer which is the same with declaration site does not count
-        for (JetDeclaration writer : writers) {
+        for (KtDeclaration writer : writers) {
             DeclarationDescriptor writerDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, writer);
             // Access is after some writer
             if (!variableContainingDeclaration.equals(writerDescriptor) && !PsiUtilsKt.before(accessElement, writer)) {
@@ -384,7 +384,7 @@ public class DataFlowValueFactory {
             @NotNull VariableDescriptor variableDescriptor,
             @Nullable ModuleDescriptor usageModule,
             @NotNull BindingContext bindingContext,
-            @NotNull JetElement accessElement
+            @NotNull KtElement accessElement
     ) {
         if (isStableValue(variableDescriptor, usageModule)) return STABLE_VALUE;
         boolean isLocalVar = variableDescriptor.isVar() && variableDescriptor instanceof LocalVariableDescriptor;
@@ -399,7 +399,7 @@ public class DataFlowValueFactory {
 
         // Analyze who writes variable
         // If there is no writer: predictable
-        Set<JetDeclaration> writers = preliminaryVisitor.writers(variableDescriptor);
+        Set<KtDeclaration> writers = preliminaryVisitor.writers(variableDescriptor);
         if (writers.isEmpty()) return PREDICTABLE_VARIABLE;
 
         // If access element is inside closure: unpredictable

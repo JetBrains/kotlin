@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.constants
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeConstructor
 import java.util.*
 
@@ -27,7 +27,7 @@ public class IntegerValueTypeConstructor(
         private val value: Long,
         private val builtIns: KotlinBuiltIns
 ) : TypeConstructor {
-    private val supertypes = ArrayList<JetType>(4)
+    private val supertypes = ArrayList<KtType>(4)
 
     init {
         // order of types matters
@@ -39,13 +39,13 @@ public class IntegerValueTypeConstructor(
         supertypes.add(builtIns.getLongType())
     }
 
-    private fun checkBoundsAndAddSuperType(value: Long, minValue: Long, maxValue: Long, kotlinType: JetType) {
+    private fun checkBoundsAndAddSuperType(value: Long, minValue: Long, maxValue: Long, kotlinType: KtType) {
         if (value >= minValue && value <= maxValue) {
             supertypes.add(kotlinType)
         }
     }
 
-    override fun getSupertypes(): Collection<JetType> = supertypes
+    override fun getSupertypes(): Collection<KtType> = supertypes
 
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
 

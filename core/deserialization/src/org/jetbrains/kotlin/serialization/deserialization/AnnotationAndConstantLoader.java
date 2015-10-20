@@ -20,7 +20,7 @@ import com.google.protobuf.MessageLite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 
@@ -72,6 +72,6 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     C loadPropertyConstant(
             @NotNull ProtoContainer container,
             @NotNull ProtoBuf.Property proto,
-            @NotNull JetType expectedType
+            @NotNull KtType expectedType
     );
 }

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.Collections;
@@ -53,13 +53,13 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitIsExpression(@NotNull JetIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public JetTypeInfo visitIsExpression(@NotNull KtIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType
                                             .replaceExpectedType(NO_EXPECTED_TYPE)
                                             .replaceContextDependency(INDEPENDENT);
-        JetExpression leftHandSide = expression.getLeftHandSide();
+        KtExpression leftHandSide = expression.getLeftHandSide();
         JetTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
-        JetType knownType = typeInfo.getType();
+        KtType knownType = typeInfo.getType();
         if (expression.getTypeReference() != null) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context);
             DataFlowInfo conditionInfo = checkTypeForIs(context, knownType, expression.getTypeReference(), dataFlowValue).thenInfo;
@@ -70,18 +70,18 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitWhenExpression(@NotNull JetWhenExpression expression, ExpressionTypingContext context) {
+    public JetTypeInfo visitWhenExpression(@NotNull KtWhenExpression expression, ExpressionTypingContext context) {
         return visitWhenExpression(expression, context, false);
     }
 
-    public JetTypeInfo visitWhenExpression(JetWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+    public JetTypeInfo visitWhenExpression(KtWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         components.dataFlowAnalyzer.recordExpectedType(contextWithExpectedType.trace, expression, contextWithExpectedType.expectedType);
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         // TODO :change scope according to the bound value in the when header
-        JetExpression subjectExpression = expression.getSubjectExpression();
+        KtExpression subjectExpression = expression.getSubjectExpression();
 
-        JetType subjectType;
+        KtType subjectType;
         boolean loopBreakContinuePossible = false;
         if (subjectExpression == null) {
             subjectType = ErrorUtils.createErrorType("Unknown type");
@@ -93,7 +93,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             assert subjectType != null;
             if (TypeUtils.isNullableType(subjectType) && !WhenChecker.containsNullCase(expression, context.trace)) {
                 ExpressionTypingContext subjectContext = context.replaceExpectedType(TypeUtils.makeNotNullable(subjectType));
-                components.dataFlowAnalyzer.checkPossibleCast(subjectType, JetPsiUtil.safeDeparenthesize(subjectExpression), subjectContext);
+                components.dataFlowAnalyzer.checkPossibleCast(subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext);
             }
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
@@ -103,15 +103,15 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
         // TODO : exhaustive patterns
 
-        Set<JetType> expressionTypes = Sets.newHashSet();
+        Set<KtType> expressionTypes = Sets.newHashSet();
         DataFlowInfo commonDataFlowInfo = null;
         DataFlowInfo elseDataFlowInfo = context.dataFlowInfo;
-        for (JetWhenEntry whenEntry : expression.getEntries()) {
+        for (KtWhenEntry whenEntry : expression.getEntries()) {
             DataFlowInfos infosForCondition = getDataFlowInfosForEntryCondition(
                     whenEntry, context.replaceDataFlowInfo(elseDataFlowInfo), subjectExpression, subjectType, subjectDataFlowValue);
             elseDataFlowInfo = elseDataFlowInfo.and(infosForCondition.elseInfo);
 
-            JetExpression bodyExpression = whenEntry.getExpression();
+            KtExpression bodyExpression = whenEntry.getExpression();
             if (bodyExpression != null) {
                 LexicalWritableScope scopeToExtend = newWritableScopeImpl(context, "Scope extended in when entry");
                 ExpressionTypingContext newContext = contextWithExpectedType
@@ -120,7 +120,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                         scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext);
                 loopBreakContinuePossible |= typeInfo.getJumpOutPossible();
-                JetType type = typeInfo.getType();
+                KtType type = typeInfo.getType();
                 if (type != null) {
                     expressionTypes.add(type);
                 }
@@ -154,10 +154,10 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     @NotNull
     private DataFlowInfos getDataFlowInfosForEntryCondition(
-            @NotNull JetWhenEntry whenEntry,
+            @NotNull KtWhenEntry whenEntry,
             @NotNull ExpressionTypingContext context,
-            @Nullable JetExpression subjectExpression,
-            @NotNull JetType subjectType,
+            @Nullable KtExpression subjectExpression,
+            @NotNull KtType subjectType,
             @NotNull DataFlowValue subjectDataFlowValue
     ) {
         if (whenEntry.isElse()) {
@@ -166,7 +166,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
         DataFlowInfos infos = null;
         ExpressionTypingContext contextForCondition = context;
-        for (JetWhenCondition condition : whenEntry.getConditions()) {
+        for (KtWhenCondition condition : whenEntry.getConditions()) {
             DataFlowInfos conditionInfos = checkWhenCondition(subjectExpression, subjectType, condition,
                                                               contextForCondition, subjectDataFlowValue);
             if (infos != null) {
@@ -181,17 +181,17 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private DataFlowInfos checkWhenCondition(
-            @Nullable final JetExpression subjectExpression,
-            final JetType subjectType,
-            JetWhenCondition condition,
+            @Nullable final KtExpression subjectExpression,
+            final KtType subjectType,
+            KtWhenCondition condition,
             final ExpressionTypingContext context,
             final DataFlowValue subjectDataFlowValue
     ) {
         final Ref<DataFlowInfos> newDataFlowInfo = new Ref<DataFlowInfos>(noChange(context));
-        condition.accept(new JetVisitorVoid() {
+        condition.accept(new KtVisitorVoid() {
             @Override
-            public void visitWhenConditionInRange(@NotNull JetWhenConditionInRange condition) {
-                JetExpression rangeExpression = condition.getRangeExpression();
+            public void visitWhenConditionInRange(@NotNull KtWhenConditionInRange condition) {
+                KtExpression rangeExpression = condition.getRangeExpression();
                 if (rangeExpression == null) return;
                 if (subjectExpression == null) {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
@@ -204,14 +204,14 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                                                                 argumentForSubject, rangeExpression, context);
                 DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
                 newDataFlowInfo.set(new DataFlowInfos(dataFlowInfo, dataFlowInfo));
-                JetType type = typeInfo.getType();
+                KtType type = typeInfo.getType();
                 if (type == null || !isBoolean(type)) {
                     context.trace.report(TYPE_MISMATCH_IN_RANGE.on(condition));
                 }
             }
 
             @Override
-            public void visitWhenConditionIsPattern(@NotNull JetWhenConditionIsPattern condition) {
+            public void visitWhenConditionIsPattern(@NotNull KtWhenConditionIsPattern condition) {
                 if (subjectExpression == null) {
                     context.trace.report(EXPECTED_CONDITION.on(condition));
                 }
@@ -227,8 +227,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public void visitWhenConditionWithExpression(@NotNull JetWhenConditionWithExpression condition) {
-                JetExpression expression = condition.getExpression();
+            public void visitWhenConditionWithExpression(@NotNull KtWhenConditionWithExpression condition) {
+                KtExpression expression = condition.getExpression();
                 if (expression != null) {
                     newDataFlowInfo.set(checkTypeForExpressionCondition(context, expression, subjectType, subjectExpression == null,
                                                                         subjectDataFlowValue));
@@ -236,7 +236,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public void visitJetElement(@NotNull JetElement element) {
+            public void visitJetElement(@NotNull KtElement element) {
                 context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
             }
         });
@@ -259,8 +259,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     private DataFlowInfos checkTypeForExpressionCondition(
             ExpressionTypingContext context,
-            JetExpression expression,
-            JetType subjectType,
+            KtExpression expression,
+            KtType subjectType,
             boolean conditionExpected,
             DataFlowValue subjectDataFlowValue
     ) {
@@ -268,14 +268,14 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             return noChange(context);
         }
         JetTypeInfo typeInfo = facade.getTypeInfo(expression, context);
-        JetType type = typeInfo.getType();
+        KtType type = typeInfo.getType();
         if (type == null) {
             return noChange(context);
         }
         context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         if (conditionExpected) {
-            JetType booleanType = components.builtIns.getBooleanType();
-            if (!JetTypeChecker.DEFAULT.equalTypes(booleanType, type)) {
+            KtType booleanType = components.builtIns.getBooleanType();
+            if (!KotlinTypeChecker.DEFAULT.equalTypes(booleanType, type)) {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(expression, type));
             }
             else {
@@ -298,8 +298,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     private DataFlowInfos checkTypeForIs(
             ExpressionTypingContext context,
-            JetType subjectType,
-            JetTypeReference typeReferenceAfterIs,
+            KtType subjectType,
+            KtTypeReference typeReferenceAfterIs,
             DataFlowValue subjectDataFlowValue
     ) {
         if (typeReferenceAfterIs == null) {
@@ -307,7 +307,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true);
         PossiblyBareType possiblyBareTarget = components.typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
-        JetType targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace, components.builtIns);
+        KtType targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace, components.builtIns);
 
         if (DynamicTypesKt.isDynamic(targetType)) {
             context.trace.report(DYNAMIC_NOT_ALLOWED.on(typeReferenceAfterIs));
@@ -318,13 +318,13 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
 
         if (!subjectType.isMarkedNullable() && targetType.isMarkedNullable()) {
-            JetTypeElement element = typeReferenceAfterIs.getTypeElement();
-            assert element instanceof JetNullableType : "element must be instance of " + JetNullableType.class.getName();
-            JetNullableType nullableType = (JetNullableType) element;
+            KtTypeElement element = typeReferenceAfterIs.getTypeElement();
+            assert element instanceof KtNullableType : "element must be instance of " + KtNullableType.class.getName();
+            KtNullableType nullableType = (KtNullableType) element;
             context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(nullableType));
         }
         checkTypeCompatibility(context, targetType, subjectType, typeReferenceAfterIs);
-        if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, JetTypeChecker.DEFAULT)) {
+        if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, KotlinTypeChecker.DEFAULT)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType));
         }
         return new DataFlowInfos(context.dataFlowInfo.establishSubtyping(subjectDataFlowValue, targetType), context.dataFlowInfo);
@@ -339,9 +339,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
      */
     private void checkTypeCompatibility(
             @NotNull ExpressionTypingContext context,
-            @Nullable JetType type,
-            @NotNull JetType subjectType,
-            @NotNull JetElement reportErrorOn
+            @Nullable KtType type,
+            @NotNull KtType subjectType,
+            @NotNull KtElement reportErrorOn
     ) {
         // TODO : Take smart casts into account?
         if (type == null) {

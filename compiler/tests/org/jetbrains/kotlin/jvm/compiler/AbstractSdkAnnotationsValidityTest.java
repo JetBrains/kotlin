@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.TypeTransformingVisitor;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -77,7 +77,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
 
                 BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
                 ModuleDescriptor module = LazyResolveTestUtil.resolve(
-                        commonEnvironment.getProject(), trace, Collections.<JetFile>emptyList(), commonEnvironment
+                        commonEnvironment.getProject(), trace, Collections.<KtFile>emptyList(), commonEnvironment
                 );
 
                 AlternativeSignatureErrorFindingVisitor visitor =
@@ -155,7 +155,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
             return null;
         }
 
-        private Void visitDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull JetScope memberScope) {
+        private Void visitDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull KtScope memberScope) {
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
                 member.acceptVoid(this);
             }

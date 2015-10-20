@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetTypeParameter
+import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import com.intellij.psi.PsiElement
 
 public class KotlinTypeParameterStubImpl(
@@ -28,7 +28,7 @@ public class KotlinTypeParameterStubImpl(
         private val name: StringRef?,
         private val isInVariance: Boolean,
         private val isOutVariance: Boolean
-) : KotlinStubBaseImpl<JetTypeParameter>(parent, JetStubElementTypes.TYPE_PARAMETER), KotlinTypeParameterStub {
+) : KotlinStubBaseImpl<KtTypeParameter>(parent, KtStubElementTypes.TYPE_PARAMETER), KotlinTypeParameterStub {
     override fun isInVariance() = isInVariance
     override fun isOutVariance() = isOutVariance
     override fun getName() = StringRef.toString(name)

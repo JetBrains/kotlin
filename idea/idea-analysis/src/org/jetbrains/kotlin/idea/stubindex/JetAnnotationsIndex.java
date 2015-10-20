@@ -21,12 +21,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetAnnotationEntry;
+import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 
 import java.util.Collection;
 
-public class JetAnnotationsIndex extends StringStubIndexExtension<JetAnnotationEntry> {
-    private static final StubIndexKey<String, JetAnnotationEntry> KEY = KotlinIndexUtil.createIndexKey(JetAnnotationsIndex.class);
+public class JetAnnotationsIndex extends StringStubIndexExtension<KtAnnotationEntry> {
+    private static final StubIndexKey<String, KtAnnotationEntry> KEY = KotlinIndexUtil.createIndexKey(JetAnnotationsIndex.class);
 
     private static final JetAnnotationsIndex ourInstance = new JetAnnotationsIndex();
 
@@ -38,13 +38,13 @@ public class JetAnnotationsIndex extends StringStubIndexExtension<JetAnnotationE
 
     @NotNull
     @Override
-    public StubIndexKey<String, JetAnnotationEntry> getKey() {
+    public StubIndexKey<String, KtAnnotationEntry> getKey() {
         return KEY;
     }
 
     @NotNull
     @Override
-    public Collection<JetAnnotationEntry> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<KtAnnotationEntry> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 

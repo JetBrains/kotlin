@@ -31,13 +31,13 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
-public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
-    protected final JetClassOrObject myClass;
+public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
+    protected final KtClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
 
     protected ClassBodyCodegen(
-            @NotNull JetClassOrObject myClass,
+            @NotNull KtClassOrObject myClass,
             @NotNull ClassContext context,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
@@ -53,14 +53,14 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
     protected void generateBody() {
         if (kind != OwnerKind.DEFAULT_IMPLS) {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
-            for (JetDeclaration declaration : myClass.getDeclarations()) {
+            for (KtDeclaration declaration : myClass.getDeclarations()) {
                 if (shouldProcessFirst(declaration)) {
                     generateDeclaration(declaration);
                 }
             }
         }
 
-        for (JetDeclaration declaration : myClass.getDeclarations()) {
+        for (KtDeclaration declaration : myClass.getDeclarations()) {
             if (!shouldProcessFirst(declaration)) {
                 generateDeclaration(declaration);
             }
@@ -92,26 +92,26 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
         generatePrimaryConstructorProperties();
     }
 
-    private static boolean shouldProcessFirst(JetDeclaration declaration) {
-        return !(declaration instanceof JetProperty || declaration instanceof JetNamedFunction);
+    private static boolean shouldProcessFirst(KtDeclaration declaration) {
+        return !(declaration instanceof KtProperty || declaration instanceof KtNamedFunction);
     }
 
-    protected void generateDeclaration(JetDeclaration declaration) {
-        if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+    protected void generateDeclaration(KtDeclaration declaration) {
+        if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction) {
             genFunctionOrProperty(declaration);
         }
-        else if (declaration instanceof JetClassOrObject) {
-            if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(bindingContext, (JetEnumEntry) declaration)) {
+        else if (declaration instanceof KtClassOrObject) {
+            if (declaration instanceof KtEnumEntry && !enumEntryNeedSubclass(bindingContext, (KtEnumEntry) declaration)) {
                 return;
             }
 
-            genClassOrObject((JetClassOrObject) declaration);
+            genClassOrObject((KtClassOrObject) declaration);
         }
     }
 
     private void generatePrimaryConstructorProperties() {
         boolean isAnnotation = descriptor.getKind() == ClassKind.ANNOTATION_CLASS;
-        for (JetParameter p : getPrimaryConstructorParameters()) {
+        for (KtParameter p : getPrimaryConstructorParameters()) {
             if (p.hasValOrVar()) {
                 PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
@@ -127,9 +127,9 @@ public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
     }
 
     @NotNull
-    protected List<JetParameter> getPrimaryConstructorParameters() {
-        if (myClass instanceof JetClass) {
-            return ((JetClass) myClass).getPrimaryConstructorParameters();
+    protected List<KtParameter> getPrimaryConstructorParameters() {
+        if (myClass instanceof KtClass) {
+            return ((KtClass) myClass).getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
     }

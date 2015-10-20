@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -37,103 +37,103 @@ public final class PsiUtils {
     }
 
     @Nullable
-    public static JetSimpleNameExpression getSimpleName(@NotNull JetExpression expression) {
-        if (expression instanceof JetSimpleNameExpression) {
-            return (JetSimpleNameExpression) expression;
+    public static KtSimpleNameExpression getSimpleName(@NotNull KtExpression expression) {
+        if (expression instanceof KtSimpleNameExpression) {
+            return (KtSimpleNameExpression) expression;
         }
 
-        if (expression instanceof JetQualifiedExpression) {
-            return getSelectorAsSimpleName((JetQualifiedExpression) expression);
+        if (expression instanceof KtQualifiedExpression) {
+            return getSelectorAsSimpleName((KtQualifiedExpression) expression);
         }
 
         return null;
     }
 
     @Nullable
-    public static JetSimpleNameExpression getSelectorAsSimpleName(@NotNull JetQualifiedExpression expression) {
-        JetExpression selectorExpression = getSelector(expression);
-        if (!(selectorExpression instanceof JetSimpleNameExpression)) {
+    public static KtSimpleNameExpression getSelectorAsSimpleName(@NotNull KtQualifiedExpression expression) {
+        KtExpression selectorExpression = getSelector(expression);
+        if (!(selectorExpression instanceof KtSimpleNameExpression)) {
             return null;
         }
-        return (JetSimpleNameExpression) selectorExpression;
+        return (KtSimpleNameExpression) selectorExpression;
     }
 
     @NotNull
-    public static JetExpression getSelector(@NotNull JetQualifiedExpression expression) {
-        JetExpression selectorExpression = expression.getSelectorExpression();
+    public static KtExpression getSelector(@NotNull KtQualifiedExpression expression) {
+        KtExpression selectorExpression = expression.getSelectorExpression();
         assert selectorExpression != null : "Selector should not be null.";
         return selectorExpression;
     }
 
     @NotNull
-    public static JetSimpleNameExpression getNotNullSimpleNameSelector(@NotNull JetQualifiedExpression expression) {
-        JetSimpleNameExpression selectorAsSimpleName = getSelectorAsSimpleName(expression);
+    public static KtSimpleNameExpression getNotNullSimpleNameSelector(@NotNull KtQualifiedExpression expression) {
+        KtSimpleNameExpression selectorAsSimpleName = getSelectorAsSimpleName(expression);
         assert selectorAsSimpleName != null;
         return selectorAsSimpleName;
     }
 
     @NotNull
-    public static JetToken getOperationToken(@NotNull JetOperationExpression expression) {
-        JetSimpleNameExpression operationExpression = expression.getOperationReference();
+    public static KtToken getOperationToken(@NotNull KtOperationExpression expression) {
+        KtSimpleNameExpression operationExpression = expression.getOperationReference();
         IElementType elementType = operationExpression.getReferencedNameElementType();
-        assert elementType instanceof JetToken : "Expected JetToken type, but " + elementType.getClass() + ", expression: " + expression.getText();
-        return (JetToken) elementType;
+        assert elementType instanceof KtToken : "Expected KtToken type, but " + elementType.getClass() + ", expression: " + expression.getText();
+        return (KtToken) elementType;
     }
 
     @NotNull
-    public static JetExpression getBaseExpression(@NotNull JetUnaryExpression expression) {
-        JetExpression baseExpression = expression.getBaseExpression();
+    public static KtExpression getBaseExpression(@NotNull KtUnaryExpression expression) {
+        KtExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null;
         return baseExpression;
     }
 
-    public static boolean isPrefix(@NotNull JetUnaryExpression expression) {
-        return (expression instanceof JetPrefixExpression);
+    public static boolean isPrefix(@NotNull KtUnaryExpression expression) {
+        return (expression instanceof KtPrefixExpression);
     }
 
-    public static boolean isAssignment(JetToken token) {
-        return (token == JetTokens.EQ);
+    public static boolean isAssignment(KtToken token) {
+        return (token == KtTokens.EQ);
     }
 
-    public static boolean isInOrNotInOperation(@NotNull JetBinaryExpression binaryExpression) {
+    public static boolean isInOrNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
         return isInOperation(binaryExpression) || isNotInOperation(binaryExpression);
     }
 
-    public static boolean isNotInOperation(@NotNull JetBinaryExpression binaryExpression) {
-        return (binaryExpression.getOperationToken() == JetTokens.NOT_IN);
+    public static boolean isNotInOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == KtTokens.NOT_IN);
     }
 
-    public static boolean isNegatedOperation(@NotNull JetBinaryExpression binaryExpression) {
-        return (binaryExpression.getOperationToken() == JetTokens.EXCLEQ) || isNotInOperation(binaryExpression);
+    public static boolean isNegatedOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == KtTokens.EXCLEQ) || isNotInOperation(binaryExpression);
     }
 
-    private static boolean isInOperation(@NotNull JetBinaryExpression binaryExpression) {
-        return (binaryExpression.getOperationToken() == JetTokens.IN_KEYWORD);
+    private static boolean isInOperation(@NotNull KtBinaryExpression binaryExpression) {
+        return (binaryExpression.getOperationToken() == KtTokens.IN_KEYWORD);
     }
 
     @Nullable
-    public static JetParameter getLoopParameter(@NotNull JetForExpression expression) {
+    public static KtParameter getLoopParameter(@NotNull KtForExpression expression) {
         return expression.getLoopParameter();
     }
 
     @NotNull
-    public static List<JetParameter> getPrimaryConstructorParameters(@NotNull JetClassOrObject classDeclaration) {
-        if (classDeclaration instanceof JetClass) {
+    public static List<KtParameter> getPrimaryConstructorParameters(@NotNull KtClassOrObject classDeclaration) {
+        if (classDeclaration instanceof KtClass) {
             return classDeclaration.getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
     }
 
     @NotNull
-    public static JetExpression getLoopRange(@NotNull JetForExpression expression) {
-        JetExpression rangeExpression = expression.getLoopRange();
+    public static KtExpression getLoopRange(@NotNull KtForExpression expression) {
+        KtExpression rangeExpression = expression.getLoopRange();
         assert rangeExpression != null;
         return rangeExpression;
     }
 
     @NotNull
     public static CallableDescriptor getFunctionDescriptor(
-            @NotNull JetCallExpression expression,
+            @NotNull KtCallExpression expression,
             @NotNull TranslationContext context
     ) {
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, context.bindingContext());

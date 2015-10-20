@@ -30,34 +30,34 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.Collections
 
-public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<JetCallElement>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetCallElement? {
+public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<KtCallElement>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {
         val diagElement = diagnostic.psiElement
 
         val callElement = PsiTreeUtil.getParentOfType(
                 diagElement,
-                javaClass<JetAnnotationEntry>(),
-                javaClass<JetDelegatorToSuperCall>()
-        ) as? JetCallElement ?: return null
+                javaClass<KtAnnotationEntry>(),
+                javaClass<KtDelegatorToSuperCall>()
+        ) as? KtCallElement ?: return null
 
-        val callee = callElement.calleeExpression as? JetConstructorCalleeExpression ?: return null
+        val callee = callElement.calleeExpression as? KtConstructorCalleeExpression ?: return null
         val calleeRef = callee.constructorReferenceExpression ?: return null
 
         if (!calleeRef.isAncestor(diagElement)) return null
         return callElement
     }
 
-    override fun getPossibleClassKinds(element: JetCallElement, diagnostic: Diagnostic): List<ClassKind> {
-        return (if (element is JetAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS).singletonList()
+    override fun getPossibleClassKinds(element: KtCallElement, diagnostic: Diagnostic): List<ClassKind> {
+        return (if (element is KtAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS).singletonList()
     }
 
-    override fun extractFixData(element: JetCallElement, diagnostic: Diagnostic): ClassInfo? {
-        val isAnnotation = element is JetAnnotationEntry
-        val callee = element.calleeExpression as? JetConstructorCalleeExpression ?: return null
+    override fun extractFixData(element: KtCallElement, diagnostic: Diagnostic): ClassInfo? {
+        val isAnnotation = element is KtAnnotationEntry
+        val callee = element.calleeExpression as? KtConstructorCalleeExpression ?: return null
         val calleeRef = callee.constructorReferenceExpression ?: return null
-        val file = element.containingFile as? JetFile ?: return null
+        val file = element.containingFile as? KtFile ?: return null
         val typeRef = callee.typeReference ?: return null
-        val userType = typeRef.typeElement as? JetUserType ?: return null
+        val userType = typeRef.typeElement as? KtUserType ?: return null
 
         val (context, module) = userType.analyzeAndGetResult()
 

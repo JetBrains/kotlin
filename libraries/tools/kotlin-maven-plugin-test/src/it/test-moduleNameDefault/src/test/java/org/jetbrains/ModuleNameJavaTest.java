@@ -24,6 +24,6 @@ public class ModuleNameJavaTest {
 
     @Test
     public void moduleFileExists() {
-        assertTrue(org.jetbrains.JetbrainsPackage.isModuleFileExists());
+        assertTrue(org.jetbrains.ModuleNameKt.isModuleFileExists());
     }
 }

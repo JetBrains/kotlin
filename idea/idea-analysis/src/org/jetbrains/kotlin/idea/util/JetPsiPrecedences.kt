@@ -42,13 +42,13 @@ public object JetPsiPrecedences {
     public val PRECEDENCE_OF_PREFIX_EXPRESSION: Int = PREFIX.ordinal()
     public val PRECEDENCE_OF_POSTFIX_EXPRESSION: Int = POSTFIX.ordinal()
 
-    public fun getPrecedence(expression: JetExpression): Int {
+    public fun getPrecedence(expression: KtExpression): Int {
         return when (expression) {
-            is JetAnnotatedExpression,
-            is JetLabeledExpression,
-            is JetPrefixExpression -> PRECEDENCE_OF_PREFIX_EXPRESSION
-            is JetPostfixExpression -> PRECEDENCE_OF_POSTFIX_EXPRESSION
-            is JetOperationExpression -> {
+            is KtAnnotatedExpression,
+            is KtLabeledExpression,
+            is KtPrefixExpression -> PRECEDENCE_OF_PREFIX_EXPRESSION
+            is KtPostfixExpression -> PRECEDENCE_OF_POSTFIX_EXPRESSION
+            is KtOperationExpression -> {
                 val operation = expression.getOperationReference().getReferencedNameElementType()
                 val precedenceNumber = precedence[operation]
                 if (precedenceNumber == null) {

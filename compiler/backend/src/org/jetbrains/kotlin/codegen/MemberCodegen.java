@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -72,7 +72,7 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclarationContainer*/> {
+public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclarationContainer*/> {
     protected final GenerationState state;
     protected final T element;
     protected final FieldOwnerContext context;
@@ -179,10 +179,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         v.done();
     }
 
-    public void genFunctionOrProperty(@NotNull JetDeclaration functionOrProperty) {
-        if (functionOrProperty instanceof JetNamedFunction) {
+    public void genFunctionOrProperty(@NotNull KtDeclaration functionOrProperty) {
+        if (functionOrProperty instanceof KtNamedFunction) {
             try {
-                functionCodegen.gen((JetNamedFunction) functionOrProperty);
+                functionCodegen.gen((KtNamedFunction) functionOrProperty);
             }
             catch (ProcessCanceledException e) {
                 throw e;
@@ -194,9 +194,9 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
                 throw new CompilationException("Failed to generate function " + functionOrProperty.getName(), e, functionOrProperty);
             }
         }
-        else if (functionOrProperty instanceof JetProperty) {
+        else if (functionOrProperty instanceof KtProperty) {
             try {
-                propertyCodegen.gen((JetProperty) functionOrProperty);
+                propertyCodegen.gen((KtProperty) functionOrProperty);
             }
             catch (ProcessCanceledException e) {
                 throw e;
@@ -215,7 +215,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     public static void genClassOrObject(
             @NotNull CodegenContext parentContext,
-            @NotNull JetClassOrObject aClass,
+            @NotNull KtClassOrObject aClass,
             @NotNull GenerationState state,
             @Nullable MemberCodegen<?> parentCodegen
     ) {
@@ -242,7 +242,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
     }
 
-    public void genClassOrObject(JetClassOrObject aClass) {
+    public void genClassOrObject(KtClassOrObject aClass) {
         genClassOrObject(context, aClass, state, this);
     }
 
@@ -367,14 +367,14 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     protected void generateInitializers(@NotNull Function0<ExpressionCodegen> createCodegen) {
         NotNullLazyValue<ExpressionCodegen> codegen = LockBasedStorageManager.NO_LOCKS.createLazyValue(createCodegen);
-        for (JetDeclaration declaration : ((JetDeclarationContainer) element).getDeclarations()) {
-            if (declaration instanceof JetProperty) {
-                if (shouldInitializeProperty((JetProperty) declaration)) {
-                    initializeProperty(codegen.invoke(), (JetProperty) declaration);
+        for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {
+            if (declaration instanceof KtProperty) {
+                if (shouldInitializeProperty((KtProperty) declaration)) {
+                    initializeProperty(codegen.invoke(), (KtProperty) declaration);
                 }
             }
-            else if (declaration instanceof JetClassInitializer) {
-                JetExpression body = ((JetClassInitializer) declaration).getBody();
+            else if (declaration instanceof KtClassInitializer) {
+                KtExpression body = ((KtClassInitializer) declaration).getBody();
                 if (body != null) {
                     codegen.invoke().gen(body, Type.VOID_TYPE);
                 }
@@ -382,11 +382,11 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
     }
 
-    private void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull JetProperty property) {
+    private void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull KtProperty property) {
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
 
-        JetExpression initializer = property.getDelegateExpressionOrInitializer();
+        KtExpression initializer = property.getDelegateExpressionOrInitializer();
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
         StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, true, StackValue.LOCAL_0);
@@ -394,7 +394,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         propValue.store(codegen.gen(initializer), codegen.v);
     }
 
-    private boolean shouldInitializeProperty(@NotNull JetProperty property) {
+    private boolean shouldInitializeProperty(@NotNull KtProperty property) {
         if (!property.hasDelegateExpressionOrInitializer()) return false;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
@@ -405,7 +405,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             return false;
         }
 
-        JetExpression initializer = property.getInitializer();
+        KtExpression initializer = property.getInitializer();
 
         ConstantValue<?> initializerValue = computeInitializerValue(property, propertyDescriptor, initializer);
         // we must write constant values for fields in light classes,
@@ -413,16 +413,16 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         if (initializerValue == null) return state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES;
 
         //TODO: OPTIMIZATION: don't initialize static final fields
-        JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
+        KtType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
         Type type = typeMapper.mapType(jetType);
         return !skipDefaultValue(propertyDescriptor, initializerValue.getValue(), type);
     }
 
     @Nullable
     private ConstantValue<?> computeInitializerValue(
-            @NotNull JetProperty property,
+            @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @Nullable JetExpression initializer
+            @Nullable KtExpression initializer
     ) {
         if (property.isVar() && initializer != null) {
             BindingTrace tempTrace = TemporaryBindingTrace.create(state.getBindingTrace(), "property initializer");
@@ -432,10 +432,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     }
 
     @NotNull
-    private JetType getPropertyOrDelegateType(@NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
-        JetExpression delegateExpression = property.getDelegateExpression();
+    private KtType getPropertyOrDelegateType(@NotNull KtProperty property, @NotNull PropertyDescriptor descriptor) {
+        KtExpression delegateExpression = property.getDelegateExpression();
         if (delegateExpression != null) {
-            JetType delegateType = bindingContext.getType(delegateExpression);
+            KtType delegateType = bindingContext.getType(delegateExpression);
             assert delegateType != null : "Type of delegate expression should be recorded";
             return delegateType;
         }
@@ -488,10 +488,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     }
 
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {
-        List<JetProperty> delegatedProperties = new ArrayList<JetProperty>();
-        for (JetDeclaration declaration : ((JetDeclarationContainer) element).getDeclarations()) {
-            if (declaration instanceof JetProperty) {
-                JetProperty property = (JetProperty) declaration;
+        List<KtProperty> delegatedProperties = new ArrayList<KtProperty>();
+        for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {
+            if (declaration instanceof KtProperty) {
+                KtProperty property = (KtProperty) declaration;
                 if (property.hasDelegate()) {
                     delegatedProperties.add(property);
                 }

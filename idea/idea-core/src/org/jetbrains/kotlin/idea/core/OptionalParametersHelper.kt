@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -74,10 +74,10 @@ public object OptionalParametersHelper {
         return argumentExpression.getText() == expression.getText() //TODO
     }
 
-    private fun DefaultValue.substituteArguments(resolvedCall: ResolvedCall<out CallableDescriptor>): JetExpression {
+    private fun DefaultValue.substituteArguments(resolvedCall: ResolvedCall<out CallableDescriptor>): KtExpression {
         if (parameterUsages.isEmpty()) return expression
 
-        val key = Key<JetExpression>("SUBSTITUTION")
+        val key = Key<KtExpression>("SUBSTITUTION")
 
         for ((parameter, usages) in parameterUsages) {
             val resolvedArgument = resolvedCall.getValueArguments()[parameter]!!
@@ -90,10 +90,10 @@ public object OptionalParametersHelper {
 
         var expressionCopy = expression.copied()
 
-        expression.forEachDescendantOfType<JetExpression> { it.putCopyableUserData(key, null) }
+        expression.forEachDescendantOfType<KtExpression> { it.putCopyableUserData(key, null) }
 
-        val replacements = ArrayList<Pair<JetExpression, JetExpression>>()
-        expressionCopy.forEachDescendantOfType<JetExpression> {
+        val replacements = ArrayList<Pair<KtExpression, KtExpression>>()
+        expressionCopy.forEachDescendantOfType<KtExpression> {
             val replacement = it.getCopyableUserData(key)
             if (replacement != null) {
                 replacements.add(it to replacement)
@@ -101,7 +101,7 @@ public object OptionalParametersHelper {
         }
 
         for ((expression, replacement) in replacements) {
-            val replaced = expression.replace(replacement) as JetExpression
+            val replaced = expression.replace(replacement) as KtExpression
             if (expression == expressionCopy) {
                 expressionCopy = replaced
             }
@@ -111,11 +111,11 @@ public object OptionalParametersHelper {
     }
 
     public data class DefaultValue(
-            public val expression: JetExpression,
-            public val parameterUsages: Map<ValueParameterDescriptor, Collection<JetExpression>>
+            public val expression: KtExpression,
+            public val parameterUsages: Map<ValueParameterDescriptor, Collection<KtExpression>>
     )
 
-    public fun defaultParameterValueExpression(parameter: ValueParameterDescriptor, project: Project): JetExpression? {
+    public fun defaultParameterValueExpression(parameter: ValueParameterDescriptor, project: Project): KtExpression? {
         if (!parameter.hasDefaultValue()) return null
 
         if (!parameter.declaresDefaultValue()) {
@@ -125,7 +125,7 @@ public object OptionalParametersHelper {
 
         //TODO: parameter in overriding method!
         //TODO: it's a temporary code while we don't have default values accessible from descriptors
-        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter)?.getNavigationElement() as? JetParameter
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter)?.getNavigationElement() as? KtParameter
         return declaration?.defaultValue
     }
 
@@ -136,10 +136,10 @@ public object OptionalParametersHelper {
 
         val allParameters = parameter.getContainingDeclaration().getValueParameters().toSet()
 
-        val parameterUsages = HashMap<ValueParameterDescriptor, MutableCollection<JetExpression>>()
+        val parameterUsages = HashMap<ValueParameterDescriptor, MutableCollection<KtExpression>>()
 
         val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-        expression.forEachDescendantOfType<JetSimpleNameExpression> {
+        expression.forEachDescendantOfType<KtSimpleNameExpression> {
             val target = bindingContext[BindingContext.REFERENCE_TARGET, it]
             if (target is ValueParameterDescriptor && target in allParameters) {
                 parameterUsages.getOrPut(target) { ArrayList() }.add(it)

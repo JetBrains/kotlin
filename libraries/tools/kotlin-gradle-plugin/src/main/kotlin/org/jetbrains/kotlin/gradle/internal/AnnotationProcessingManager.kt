@@ -339,7 +339,7 @@ public class AnnotationProcessingManager(
     }
 
     private fun getCoreKaptPackageClass(): Class<*> {
-        return Class.forName("org.jetbrains.kotlin.gradle.tasks.kapt.KaptPackage", false, coreClassLoader)
+        return Class.forName("org.jetbrains.kotlin.gradle.tasks.kapt.KaptStubGeneratorUtilsKt", false, coreClassLoader)
     }
 
 }

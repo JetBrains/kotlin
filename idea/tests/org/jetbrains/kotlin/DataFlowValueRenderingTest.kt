@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin
 
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.idea.completion.renderDataFlowValue
 import org.jetbrains.kotlin.test.JetTestUtils
 import com.intellij.openapi.util.io.FileUtil
@@ -43,9 +43,9 @@ public abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFix
         val fixture = myFixture
         fixture.configureByFile(fileName)
 
-        val jetFile = fixture.getFile() as JetFile
+        val jetFile = fixture.getFile() as KtFile
         val element = jetFile.findElementAt(fixture.getCaretOffset())!!
-        val expression = element.getStrictParentOfType<JetExpression>()!!
+        val expression = element.getStrictParentOfType<KtExpression>()!!
         val info = expression.analyze().getDataFlowInfo(expression)
 
         val allValues = (info.getCompleteTypeInfo().keySet() + info.getCompleteNullabilityInfo().keySet()).toSet()

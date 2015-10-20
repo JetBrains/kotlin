@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
 
@@ -63,9 +63,9 @@ public class CodegenUtil {
     }
 
     @Nullable
-    public static PropertyDescriptor getDelegatePropertyIfAny(JetExpression expression, ClassDescriptor classDescriptor, BindingContext bindingContext) {
+    public static PropertyDescriptor getDelegatePropertyIfAny(KtExpression expression, ClassDescriptor classDescriptor, BindingContext bindingContext) {
         PropertyDescriptor propertyDescriptor = null;
-        if (expression instanceof JetSimpleNameExpression) {
+        if (expression instanceof KtSimpleNameExpression) {
             ResolvedCall<?> call = CallUtilKt.getResolvedCall(expression, bindingContext);
             if (call != null) {
                 CallableDescriptor callResultingDescriptor = call.getResultingDescriptor();
@@ -140,8 +140,8 @@ public class CodegenUtil {
     }
 
     @NotNull
-    public static ClassDescriptor getSuperClassByDelegationSpecifier(@NotNull JetDelegationSpecifier specifier, @NotNull BindingContext bindingContext) {
-        JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
+    public static ClassDescriptor getSuperClassByDelegationSpecifier(@NotNull KtDelegationSpecifier specifier, @NotNull BindingContext bindingContext) {
+        KtType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
         assert superType != null : "superType should not be null: " + specifier.getText();
 
         ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
@@ -164,16 +164,16 @@ public class CodegenUtil {
         return true;
     }
 
-    private static boolean rawTypeMatches(JetType type, ClassifierDescriptor classifier) {
+    private static boolean rawTypeMatches(KtType type, ClassifierDescriptor classifier) {
         return type.getConstructor().equals(classifier.getTypeConstructor());
     }
 
     public static boolean isEnumValueOfMethod(@NotNull FunctionDescriptor functionDescriptor) {
         List<ValueParameterDescriptor> methodTypeParameters = functionDescriptor.getValueParameters();
-        JetType nullableString = TypeUtils.makeNullable(DescriptorUtilsKt.getBuiltIns(functionDescriptor).getStringType());
+        KtType nullableString = TypeUtils.makeNullable(DescriptorUtilsKt.getBuiltIns(functionDescriptor).getStringType());
         return DescriptorUtils.ENUM_VALUE_OF.equals(functionDescriptor.getName())
                && methodTypeParameters.size() == 1
-               && JetTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
+               && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters.get(0).getType(), nullableString);
     }
 
     public static boolean isEnumValuesProperty(@NotNull VariableDescriptor propertyDescriptor) {
@@ -183,8 +183,8 @@ public class CodegenUtil {
     @Nullable
     public static Integer getLineNumberForElement(@NotNull PsiElement statement, boolean markEndOffset) {
         PsiFile file = statement.getContainingFile();
-        if (file instanceof JetFile) {
-            if (JetPsiFactoryKt.getDoNotAnalyze((JetFile) file) != null) {
+        if (file instanceof KtFile) {
+            if (KtPsiFactoryKt.getDoNotAnalyze((KtFile) file) != null) {
                 return null;
             }
         }

@@ -22,21 +22,21 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
 
-class RemoveUnusedFunctionParameterFix(parameter: JetParameter) : KotlinQuickFixAction<JetParameter>(parameter) {
+class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixAction<KtParameter>(parameter) {
     override fun getFamilyName() = ChangeFunctionSignatureFix.FAMILY_NAME
 
     override fun getText() = "Remove parameter '${element.name}'"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val parameterDescriptor = element.resolveToDescriptor() as ValueParameterDescriptor
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
     }
 
     companion object : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<JetParameter> {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtParameter> {
             return RemoveUnusedFunctionParameterFix(Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement)
         }
     }

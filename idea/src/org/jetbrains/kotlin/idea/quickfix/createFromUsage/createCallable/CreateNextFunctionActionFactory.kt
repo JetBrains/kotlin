@@ -23,22 +23,22 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object CreateNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetForExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())
+object CreateNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtForExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtForExpression? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtForExpression>())
     }
 
-    override fun createCallableInfo(element: JetForExpression, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtForExpression, diagnostic: Diagnostic): CallableInfo? {
         val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic, Errors.NEXT_MISSING, Errors.NEXT_NONE_APPLICABLE)
         val ownerType = TypeInfo(diagnosticWithParameters.a, Variance.IN_VARIANCE)
 
         val variableExpr = element.loopParameter ?: element.multiParameter ?: return null
-        val returnType = TypeInfo(variableExpr as JetExpression, Variance.OUT_VARIANCE)
+        val returnType = TypeInfo(variableExpr as KtExpression, Variance.OUT_VARIANCE)
         return FunctionInfo(OperatorNameConventions.NEXT.asString(), ownerType, returnType, isOperator = true)
     }
 }

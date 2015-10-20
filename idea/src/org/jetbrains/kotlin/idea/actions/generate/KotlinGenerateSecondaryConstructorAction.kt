@@ -42,10 +42,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
@@ -59,13 +59,13 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
             val classDescriptor: ClassDescriptor
     )
 
-    override fun isValidForClass(targetClass: JetClassOrObject): Boolean {
-        return targetClass is JetClass && targetClass !is JetEnumEntry && !targetClass.isInterface() && !targetClass.isAnnotation()
+    override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
+        return targetClass is KtClass && targetClass !is KtEnumEntry && !targetClass.isInterface() && !targetClass.isAnnotation()
     }
 
-    private fun shouldPreselect(element: PsiElement) = element is JetProperty && !element.isVar
+    private fun shouldPreselect(element: PsiElement) = element is KtProperty && !element.isVar
 
-    private fun chooseSuperConstructors(klass: JetClassOrObject, classDescriptor: ClassDescriptor): List<DescriptorMemberChooserObject> {
+    private fun chooseSuperConstructors(klass: KtClassOrObject, classDescriptor: ClassDescriptor): List<DescriptorMemberChooserObject> {
         val project = klass.project
         val superClassDescriptor = classDescriptor.getSuperClassNotAny() ?: return emptyList()
         val candidates = superClassDescriptor.constructors
@@ -82,9 +82,9 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
         }
     }
 
-    private fun choosePropertiesToInitialize(klass: JetClassOrObject, context: BindingContext): List<DescriptorMemberChooserObject> {
+    private fun choosePropertiesToInitialize(klass: KtClassOrObject, context: BindingContext): List<DescriptorMemberChooserObject> {
         val candidates = klass.declarations
-                .filterIsInstance<JetProperty>()
+                .filterIsInstance<KtProperty>()
                 .filter { it.isVar || context.diagnostics.forElement(it).any { it.factory in Errors.MUST_BE_INITIALIZED_DIAGNOSTICS } }
                 .map { context.get(BindingContext.VARIABLE, it) as PropertyDescriptor }
                 .map { DescriptorMemberChooserObject(it.source.getPsi()!!, it) }
@@ -100,7 +100,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
         }
     }
 
-    override fun prepareMembersInfo(klass: JetClassOrObject, project: Project, editor: Editor?): Info? {
+    override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
         val context = klass.analyzeFully()
         val classDescriptor = context.get(BindingContext.CLASS, klass) ?: return null
         val superConstructors = chooseSuperConstructors(klass, classDescriptor).map { it.descriptor as ConstructorDescriptor }
@@ -108,15 +108,15 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
         return Info(propertiesToInitialize, superConstructors, classDescriptor)
     }
 
-    override fun generateMembers(project: Project, editor: Editor?, info: Info): List<JetDeclaration> {
-        val targetClass = info.classDescriptor.source.getPsi() as? JetClass ?: return emptyList()
+    override fun generateMembers(project: Project, editor: Editor?, info: Info): List<KtDeclaration> {
+        val targetClass = info.classDescriptor.source.getPsi() as? KtClass ?: return emptyList()
 
         fun Info.findAnchor(): PsiElement? {
-            targetClass.declarations.lastIsInstanceOrNull<JetSecondaryConstructor>()?.let { return it }
+            targetClass.declarations.lastIsInstanceOrNull<KtSecondaryConstructor>()?.let { return it }
             val lastPropertyToInitialize = propertiesToInitialize.lastOrNull()?.source?.getPsi()
-            val declarationsAfter = lastPropertyToInitialize?.siblings()?.filterIsInstance<JetDeclaration>() ?: targetClass.declarations.asSequence()
-            val firstNonProperty = declarationsAfter.firstOrNull { it !is JetProperty } ?: return null
-            return firstNonProperty.siblings(forward = false).firstIsInstanceOrNull<JetProperty>() ?: targetClass.getOrCreateBody().lBrace
+            val declarationsAfter = lastPropertyToInitialize?.siblings()?.filterIsInstance<KtDeclaration>() ?: targetClass.declarations.asSequence()
+            val firstNonProperty = declarationsAfter.firstOrNull { it !is KtProperty } ?: return null
+            return firstNonProperty.siblings(forward = false).firstIsInstanceOrNull<KtProperty>() ?: targetClass.getOrCreateBody().lBrace
         }
 
         return with(info) {
@@ -139,19 +139,19 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
             classDescriptor: ClassDescriptor,
             propertiesToInitialize: List<PropertyDescriptor>,
             superConstructor: ConstructorDescriptor?
-    ): JetSecondaryConstructor? {
-        fun equalTypes(types1: Collection<JetType>, types2: Collection<JetType>): Boolean {
-            return types1.size == types2.size && (types1.zip(types2)).all { JetTypeChecker.DEFAULT.equalTypes(it.first, it.second) }
+    ): KtSecondaryConstructor? {
+        fun equalTypes(types1: Collection<KtType>, types2: Collection<KtType>): Boolean {
+            return types1.size == types2.size && (types1.zip(types2)).all { KotlinTypeChecker.DEFAULT.equalTypes(it.first, it.second) }
         }
 
         val constructorParamTypes = propertiesToInitialize.map { it.type } +
                 (superConstructor?.valueParameters?.map { it.varargElementType ?: it.type } ?: emptyList())
 
-        if (classDescriptor.constructors.any { it.source.getPsi() is JetConstructor<*>
+        if (classDescriptor.constructors.any { it.source.getPsi() is KtConstructor<*>
                 && equalTypes(it.valueParameters.map { it.varargElementType ?: it.type }, constructorParamTypes) }) return null
 
-        val targetClass = classDescriptor.source.getPsi() as JetClass
-        val psiFactory = JetPsiFactory(targetClass)
+        val targetClass = classDescriptor.source.getPsi() as KtClass
+        val psiFactory = KtPsiFactory(targetClass)
 
         val validator = CollectingNameValidator()
 

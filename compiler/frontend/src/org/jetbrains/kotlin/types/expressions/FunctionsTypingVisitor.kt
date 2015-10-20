@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.*
@@ -34,23 +34,21 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.CommonSupertypes
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
-import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
-import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
+import org.jetbrains.kotlin.types.TypeUtils.*
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
 
-    override fun visitNamedFunction(function: JetNamedFunction, data: ExpressionTypingContext): JetTypeInfo {
+    override fun visitNamedFunction(function: KtNamedFunction, data: ExpressionTypingContext): JetTypeInfo {
         return visitNamedFunction(function, data, false, null)
     }
 
     public fun visitNamedFunction(
-            function: JetNamedFunction,
+            function: KtNamedFunction,
             context: ExpressionTypingContext,
             isStatement: Boolean,
             statementScope: LexicalWritableScope? // must be not null if isStatement
@@ -104,7 +102,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
 
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
         components.identifierChecker.checkDeclaration(function, context.trace)
-        if (!function.hasBody() && !function.hasModifier(JetTokens.EXTERNAL_KEYWORD)) {
+        if (!function.hasBody() && !function.hasModifier(KtTokens.EXTERNAL_KEYWORD)) {
             context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
 
@@ -116,7 +114,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         }
     }
 
-    private fun createFunctionType(functionDescriptor: SimpleFunctionDescriptor): JetType? {
+    private fun createFunctionType(functionDescriptor: SimpleFunctionDescriptor): KtType? {
         val receiverType = functionDescriptor.getExtensionReceiverParameter()?.getType()
 
         val returnType = functionDescriptor.getReturnType()
@@ -131,7 +129,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         return components.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameters, returnType)
     }
 
-    override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression, context: ExpressionTypingContext): JetTypeInfo? {
+    override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression, context: ExpressionTypingContext): JetTypeInfo? {
         if (!expression.getFunctionLiteral().hasBody()) return null
 
         val expectedType = context.expectedType
@@ -155,7 +153,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     }
 
     private fun createFunctionLiteralDescriptor(
-            expression: JetFunctionLiteralExpression,
+            expression: KtFunctionLiteralExpression,
             context: ExpressionTypingContext
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.getFunctionLiteral()
@@ -175,11 +173,11 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     }
 
     private fun computeReturnType(
-            expression: JetFunctionLiteralExpression,
+            expression: KtFunctionLiteralExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             functionTypeExpected: Boolean
-    ): JetType {
+    ): KtType {
         val expectedReturnType = if (functionTypeExpected) KotlinBuiltIns.getReturnTypeFromFunctionType(context.expectedType) else null
         val returnType = computeUnsafeReturnType(expression, context, functionDescriptor, expectedReturnType);
 
@@ -192,11 +190,11 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     }
 
     private fun computeUnsafeReturnType(
-            expression: JetFunctionLiteralExpression,
+            expression: KtFunctionLiteralExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
-            expectedReturnType: JetType?
-    ): JetType? {
+            expectedReturnType: KtType?
+    ): KtType? {
         val functionLiteral = expression.getFunctionLiteral()
 
         val expectedType = expectedReturnType ?: NO_EXPECTED_TYPE
@@ -212,11 +210,11 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
     }
 
     private fun computeReturnTypeBasedOnReturnExpressions(
-            functionLiteral: JetFunctionLiteral,
+            functionLiteral: KtFunctionLiteral,
             context: ExpressionTypingContext,
-            typeOfBodyExpression: JetType?
-    ): JetType? {
-        val returnedExpressionTypes = Lists.newArrayList<JetType>()
+            typeOfBodyExpression: KtType?
+    ): KtType? {
+        val returnedExpressionTypes = Lists.newArrayList<KtType>()
 
         var hasEmptyReturn = false
         val returnExpressions = collectReturns(functionLiteral, context.trace)
@@ -249,11 +247,11 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         return CommonSupertypes.commonSupertype(returnedExpressionTypes)
     }
 
-    private fun collectReturns(functionLiteral: JetFunctionLiteral, trace: BindingTrace): Collection<JetReturnExpression> {
-        val result = Lists.newArrayList<JetReturnExpression>()
+    private fun collectReturns(functionLiteral: KtFunctionLiteral, trace: BindingTrace): Collection<KtReturnExpression> {
+        val result = Lists.newArrayList<KtReturnExpression>()
         val bodyExpression = functionLiteral.getBodyExpression()
-        bodyExpression?.accept(object : JetTreeVisitor<MutableList<JetReturnExpression>>() {
-            override fun visitReturnExpression(expression: JetReturnExpression, data: MutableList<JetReturnExpression>): Void? {
+        bodyExpression?.accept(object : KtTreeVisitor<MutableList<KtReturnExpression>>() {
+            override fun visitReturnExpression(expression: KtReturnExpression, data: MutableList<KtReturnExpression>): Void? {
                 data.add(expression)
                 return null
             }

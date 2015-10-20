@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -47,11 +47,11 @@ public interface BindingTrace extends DiagnosticSink {
      * Expression type should be taken from EXPRESSION_TYPE_INFO slice
      */
     @Nullable
-    JetType getType(@NotNull JetExpression expression);
+    KtType getType(@NotNull KtExpression expression);
 
     /**
      * Expression type should be recorded into EXPRESSION_TYPE_INFO slice
      * (either updated old or a new one)
      */
-    void recordType(@NotNull JetExpression expression, @Nullable JetType type);
+    void recordType(@NotNull KtExpression expression, @Nullable KtType type);
 }

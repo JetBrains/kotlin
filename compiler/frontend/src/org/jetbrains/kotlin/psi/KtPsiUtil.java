@@ -1,0 +1,855 @@
+/*
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.psi;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.codeInsight.CommentUtilCore;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
+import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.parsing.JetExpressionParsing;
+import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.resolve.StatementFilter;
+import org.jetbrains.kotlin.resolve.StatementFilterKt;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class KtPsiUtil {
+    private KtPsiUtil() {
+    }
+
+    public interface KtExpressionWrapper {
+        KtExpression getBaseExpression();
+    }
+
+    public static <D> void visitChildren(@NotNull KtElement element, @NotNull KtVisitor<Void, D> visitor, D data) {
+        PsiElement child = element.getFirstChild();
+        while (child != null) {
+            if (child instanceof KtElement) {
+                ((KtElement) child).accept(visitor, data);
+            }
+            child = child.getNextSibling();
+        }
+    }
+
+    @NotNull
+    public static KtExpression safeDeparenthesize(@NotNull KtExpression expression) {
+        KtExpression deparenthesized = deparenthesize(expression);
+        return deparenthesized != null ? deparenthesized : expression;
+    }
+
+    @Nullable
+    public static KtExpression deparenthesize(@Nullable KtExpression expression ) {
+        while (true) {
+            KtExpression baseExpression = deparenthesizeOnce(expression);
+
+            if (baseExpression == expression) return baseExpression;
+            expression = baseExpression;
+        }
+    }
+
+    @Nullable
+    public static KtExpression deparenthesizeOnce(
+            @Nullable KtExpression expression
+    ) {
+        if (expression instanceof KtAnnotatedExpression) {
+            return ((KtAnnotatedExpression) expression).getBaseExpression();
+        }
+        else if (expression instanceof KtLabeledExpression) {
+            return ((KtLabeledExpression) expression).getBaseExpression();
+        }
+        else if (expression instanceof KtExpressionWrapper) {
+            return ((KtExpressionWrapper) expression).getBaseExpression();
+        }
+        else if (expression instanceof KtParenthesizedExpression) {
+            return ((KtParenthesizedExpression) expression).getExpression();
+        }
+        return expression;
+    }
+
+    @NotNull
+    public static Name safeName(@Nullable String name) {
+        return name == null ? SpecialNames.NO_NAME_PROVIDED : Name.identifier(name);
+    }
+
+    @NotNull
+    public static Set<KtElement> findRootExpressions(@NotNull Collection<KtElement> unreachableElements) {
+        Set<KtElement> rootElements = new HashSet<KtElement>();
+        final Set<KtElement> shadowedElements = new HashSet<KtElement>();
+        KtVisitorVoid shadowAllChildren = new KtVisitorVoid() {
+            @Override
+            public void visitJetElement(@NotNull KtElement element) {
+                if (shadowedElements.add(element)) {
+                    element.acceptChildren(this);
+                }
+            }
+        };
+
+        for (KtElement element : unreachableElements) {
+            if (shadowedElements.contains(element)) continue;
+            element.acceptChildren(shadowAllChildren);
+
+            rootElements.removeAll(shadowedElements);
+            rootElements.add(element);
+        }
+        return rootElements;
+    }
+
+    @NotNull
+    public static String unquoteIdentifier(@NotNull String quoted) {
+        if (quoted.indexOf('`') < 0) {
+            return quoted;
+        }
+
+        if (quoted.startsWith("`") && quoted.endsWith("`") && quoted.length() >= 2) {
+            return quoted.substring(1, quoted.length() - 1);
+        }
+        else {
+            return quoted;
+        }
+    }
+
+    @NotNull
+    public static String unquoteIdentifierOrFieldReference(@NotNull String quoted) {
+        if (quoted.indexOf('`') < 0) {
+            return quoted;
+        }
+
+        if (quoted.startsWith("$")) {
+            return "$" + unquoteIdentifier(quoted.substring(1));
+        }
+        else {
+            return unquoteIdentifier(quoted);
+        }
+    }
+
+    /** @return <code>null</code> iff the tye has syntactic errors */
+    @Nullable
+    public static FqName toQualifiedName(@NotNull KtUserType userType) {
+        List<String> reversedNames = Lists.newArrayList();
+
+        KtUserType current = userType;
+        while (current != null) {
+            String name = current.getReferencedName();
+            if (name == null) return null;
+
+            reversedNames.add(name);
+            current = current.getQualifier();
+        }
+
+        return FqName.fromSegments(ContainerUtil.reverse(reversedNames));
+    }
+
+    @Nullable
+    public static Name getShortName(@NotNull KtAnnotationEntry annotation) {
+        KtTypeReference typeReference = annotation.getTypeReference();
+        assert typeReference != null : "Annotation entry hasn't typeReference " + annotation.getText();
+        KtTypeElement typeElement = typeReference.getTypeElement();
+        if (typeElement instanceof KtUserType) {
+            KtUserType userType = (KtUserType) typeElement;
+            String shortName = userType.getReferencedName();
+            if (shortName != null) {
+                return Name.identifier(shortName);
+            }
+        }
+        return null;
+    }
+
+    public static boolean isDeprecated(@NotNull KtModifierListOwner owner) {
+        KtModifierList modifierList = owner.getModifierList();
+        if (modifierList != null) {
+            List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
+            for (KtAnnotationEntry annotation : annotationEntries) {
+                Name shortName = getShortName(annotation);
+                if (KotlinBuiltIns.FQ_NAMES.deprecated.shortName().equals(shortName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    public static <T extends PsiElement> T getDirectParentOfTypeForBlock(@NotNull KtBlockExpression block, @NotNull Class<T> aClass) {
+        T parent = PsiTreeUtil.getParentOfType(block, aClass);
+        if (parent instanceof KtIfExpression) {
+            KtIfExpression ifExpression = (KtIfExpression) parent;
+            if (ifExpression.getElse() == block || ifExpression.getThen() == block) {
+                return parent;
+            }
+        }
+        if (parent instanceof KtWhenExpression) {
+            KtWhenExpression whenExpression = (KtWhenExpression) parent;
+            for (KtWhenEntry whenEntry : whenExpression.getEntries()) {
+                if (whenEntry.getExpression() == block) {
+                    return parent;
+                }
+            }
+        }
+        if (parent instanceof KtFunctionLiteral) {
+            KtFunctionLiteral functionLiteral = (KtFunctionLiteral) parent;
+            if (functionLiteral.getBodyExpression() == block) {
+                return parent;
+            }
+        }
+        if (parent instanceof KtTryExpression) {
+            KtTryExpression tryExpression = (KtTryExpression) parent;
+            if (tryExpression.getTryBlock() == block) {
+                return parent;
+            }
+            for (KtCatchClause clause : tryExpression.getCatchClauses()) {
+                if (clause.getCatchBody() == block) {
+                    return parent;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static Name getAliasName(@NotNull KtImportDirective importDirective) {
+        if (importDirective.isAllUnder()) {
+            return null;
+        }
+        String aliasName = importDirective.getAliasName();
+        KtExpression importedReference = importDirective.getImportedReference();
+        if (importedReference == null) {
+            return null;
+        }
+        KtSimpleNameExpression referenceExpression = getLastReference(importedReference);
+        if (aliasName == null) {
+            aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
+        }
+
+        return aliasName != null && !aliasName.isEmpty() ? Name.identifier(aliasName) : null;
+    }
+
+    @Nullable
+    public static KtSimpleNameExpression getLastReference(@NotNull KtExpression importedReference) {
+        KtElement selector = JetPsiUtilKt.getQualifiedElementSelector(importedReference);
+        return selector instanceof KtSimpleNameExpression ? (KtSimpleNameExpression) selector : null;
+    }
+
+    public static boolean isSelectorInQualified(@NotNull KtSimpleNameExpression nameExpression) {
+        KtElement qualifiedElement = JetPsiUtilKt.getQualifiedElement(nameExpression);
+        return qualifiedElement instanceof KtQualifiedExpression
+               || ((qualifiedElement instanceof KtUserType) && ((KtUserType) qualifiedElement).getQualifier() != null);
+    }
+
+    public static boolean isLHSOfDot(@NotNull KtExpression expression) {
+        PsiElement parent = expression.getParent();
+        if (!(parent instanceof KtQualifiedExpression)) return false;
+        KtQualifiedExpression qualifiedParent = (KtQualifiedExpression) parent;
+        return qualifiedParent.getReceiverExpression() == expression || isLHSOfDot(qualifiedParent);
+    }
+
+    // SCRIPT: is declaration in script?
+    public static boolean isScriptDeclaration(@NotNull KtDeclaration namedDeclaration) {
+        return getScript(namedDeclaration) != null;
+    }
+
+    // SCRIPT: get script from top-level declaration
+    @Nullable
+    public static KtScript getScript(@NotNull KtDeclaration namedDeclaration) {
+        PsiElement parent = namedDeclaration.getParent();
+        if (parent != null && parent.getParent() instanceof KtScript) {
+            return (KtScript) parent.getParent();
+        }
+        else {
+            return null;
+        }
+    }
+
+    public static boolean isVariableNotParameterDeclaration(@NotNull KtDeclaration declaration) {
+        if (!(declaration instanceof KtVariableDeclaration)) return false;
+        if (declaration instanceof KtProperty) return true;
+        assert declaration instanceof KtMultiDeclarationEntry;
+        KtMultiDeclarationEntry multiDeclarationEntry = (KtMultiDeclarationEntry) declaration;
+        return !(multiDeclarationEntry.getParent().getParent() instanceof KtForExpression);
+    }
+
+    @Nullable
+    public static Name getConventionName(@NotNull KtSimpleNameExpression simpleNameExpression) {
+        if (simpleNameExpression.getIdentifier() != null) {
+            return simpleNameExpression.getReferencedNameAsName();
+        }
+
+        PsiElement firstChild = simpleNameExpression.getFirstChild();
+        if (firstChild != null) {
+            IElementType elementType = firstChild.getNode().getElementType();
+            if (elementType instanceof KtToken) {
+                KtToken jetToken = (KtToken) elementType;
+                boolean isPrefixExpression = simpleNameExpression.getParent() instanceof KtPrefixExpression;
+                if (isPrefixExpression) {
+                    return OperatorConventions.getNameForOperationSymbol(jetToken, true, false);
+                }
+                return OperatorConventions.getNameForOperationSymbol(jetToken);
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Contract("null, _ -> null")
+    public static PsiElement getTopmostParentOfTypes(
+            @Nullable PsiElement element,
+            @NotNull Class<? extends PsiElement>... parentTypes) {
+        if (element instanceof PsiFile) return null;
+
+        PsiElement answer = PsiTreeUtil.getParentOfType(element, parentTypes);
+        if (answer instanceof PsiFile) return answer;
+
+        do {
+            PsiElement next = PsiTreeUtil.getParentOfType(answer, parentTypes);
+            if (next == null) break;
+            answer = next;
+        }
+        while (true);
+
+        return answer;
+    }
+
+    public static boolean isNullConstant(@NotNull KtExpression expression) {
+        KtExpression deparenthesized = deparenthesize(expression);
+        return deparenthesized instanceof KtConstantExpression && deparenthesized.getNode().getElementType() == KtNodeTypes.NULL;
+    }
+
+    public static boolean isTrueConstant(@Nullable KtExpression condition) {
+        return (condition != null && condition.getNode().getElementType() == KtNodeTypes.BOOLEAN_CONSTANT &&
+                condition.getNode().findChildByType(KtTokens.TRUE_KEYWORD) != null);
+    }
+
+    public static boolean isAbstract(@NotNull KtDeclarationWithBody declaration) {
+        return declaration.getBodyExpression() == null;
+    }
+
+    public static boolean isBackingFieldReference(@NotNull KtSimpleNameExpression expression, @Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof SyntheticFieldDescriptor || expression.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER;
+    }
+
+    public static boolean isBackingFieldReference(@Nullable KtElement element, @Nullable DeclarationDescriptor descriptor) {
+        return element instanceof KtSimpleNameExpression && isBackingFieldReference((KtSimpleNameExpression) element, descriptor);
+    }
+
+    @Nullable
+    public static KtExpression getExpressionOrLastStatementInBlock(@Nullable KtExpression expression) {
+        if (expression instanceof KtBlockExpression) {
+            return getLastStatementInABlock((KtBlockExpression) expression);
+        }
+        return expression;
+    }
+
+    @Nullable
+    public static KtExpression getLastStatementInABlock(@Nullable KtBlockExpression blockExpression) {
+        if (blockExpression == null) return null;
+        List<KtExpression> statements = blockExpression.getStatements();
+        return statements.isEmpty() ? null : statements.get(statements.size() - 1);
+    }
+
+    public static boolean isTrait(@NotNull KtClassOrObject classOrObject) {
+        return classOrObject instanceof KtClass && ((KtClass) classOrObject).isInterface();
+    }
+
+    @Nullable
+    public static KtClassOrObject getOutermostClassOrObject(@NotNull KtClassOrObject classOrObject) {
+        KtClassOrObject current = classOrObject;
+        while (true) {
+            PsiElement parent = current.getParent();
+            assert classOrObject.getParent() != null : "Class with no parent: " + classOrObject.getText();
+
+            if (parent instanceof PsiFile) {
+                return current;
+            }
+            if (!(parent instanceof KtClassBody)) {
+                // It is a local class, no legitimate outer
+                return current;
+            }
+
+            current = (KtClassOrObject) parent.getParent();
+        }
+    }
+
+    @Nullable
+    public static KtClassOrObject getClassIfParameterIsProperty(@NotNull KtParameter jetParameter) {
+        if (jetParameter.hasValOrVar()) {
+            PsiElement grandParent = jetParameter.getParent().getParent();
+            if (grandParent instanceof KtPrimaryConstructor) {
+                return ((KtPrimaryConstructor) grandParent).getContainingClassOrObject();
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static IElementType getOperation(@NotNull KtExpression expression) {
+        if (expression instanceof KtQualifiedExpression) {
+            return ((KtQualifiedExpression) expression).getOperationSign();
+        }
+        else if (expression instanceof KtOperationExpression) {
+            return ((KtOperationExpression) expression).getOperationReference().getReferencedNameElementType();
+        }
+        return null;
+    }
+
+
+    private static int getPriority(@NotNull KtExpression expression) {
+        int maxPriority = JetExpressionParsing.Precedence.values().length + 1;
+
+        // same as postfix operations
+        if (expression instanceof KtPostfixExpression ||
+            expression instanceof KtQualifiedExpression ||
+            expression instanceof KtCallExpression ||
+            expression instanceof KtArrayAccessExpression) {
+            return maxPriority - 1;
+        }
+
+        if (expression instanceof KtPrefixExpression || expression instanceof KtLabeledExpression) return maxPriority - 2;
+
+        if (expression instanceof KtIfExpression) {
+            return JetExpressionParsing.Precedence.ASSIGNMENT.ordinal();
+        }
+
+        if (expression instanceof KtSuperExpression) {
+            return maxPriority;
+        }
+
+        if (expression instanceof KtDeclaration || expression instanceof KtStatementExpression) {
+            return 0;
+        }
+
+        IElementType operation = getOperation(expression);
+        for (JetExpressionParsing.Precedence precedence : JetExpressionParsing.Precedence.values()) {
+            if (precedence != JetExpressionParsing.Precedence.PREFIX && precedence != JetExpressionParsing.Precedence.POSTFIX &&
+                precedence.getOperations().contains(operation)) {
+                return maxPriority - precedence.ordinal() - 1;
+            }
+        }
+
+        return maxPriority;
+    }
+
+    public static boolean areParenthesesUseless(@NotNull KtParenthesizedExpression expression) {
+        KtExpression innerExpression = expression.getExpression();
+        if (innerExpression == null) return true;
+
+        PsiElement parent = expression.getParent();
+        if (!(parent instanceof KtExpression)) return true;
+
+        return !areParenthesesNecessary(innerExpression, expression, (KtExpression) parent);
+    }
+
+    public static boolean areParenthesesNecessary(@NotNull KtExpression innerExpression, @NotNull KtExpression currentInner, @NotNull KtExpression parentExpression) {
+        if (parentExpression instanceof KtParenthesizedExpression || innerExpression instanceof KtParenthesizedExpression) {
+            return false;
+        }
+
+        if (parentExpression instanceof KtPackageDirective) return false;
+
+        if (parentExpression instanceof KtWhenExpression || innerExpression instanceof KtWhenExpression) {
+            return false;
+        }
+
+        if (innerExpression instanceof KtIfExpression) {
+            PsiElement current = parentExpression;
+
+            while (!(current instanceof KtBlockExpression || current instanceof KtDeclaration || current instanceof KtStatementExpression)) {
+                if (current.getTextRange().getEndOffset() != currentInner.getTextRange().getEndOffset()) {
+                    return current.getText().charAt(current.getTextLength() - 1) != ')'; // if current expression is "guarded" by parenthesis, no extra parenthesis is necessary
+                }
+
+                current = current.getParent();
+            }
+        }
+
+        if (parentExpression instanceof KtCallExpression && currentInner == ((KtCallExpression) parentExpression).getCalleeExpression()) {
+            if (innerExpression instanceof KtSimpleNameExpression) return false;
+            if (JetPsiUtilKt.getQualifiedExpressionForSelector(parentExpression) != null) return true;
+            return !(innerExpression instanceof KtThisExpression
+                     || innerExpression instanceof KtArrayAccessExpression
+                     || innerExpression instanceof KtConstantExpression
+                     || innerExpression instanceof KtStringTemplateExpression
+                     || innerExpression instanceof KtCallExpression);
+        }
+
+        IElementType innerOperation = getOperation(innerExpression);
+        IElementType parentOperation = getOperation(parentExpression);
+
+        // 'return (@label{...})' case
+        if (parentExpression instanceof KtReturnExpression
+            && (innerExpression instanceof KtLabeledExpression || innerExpression instanceof KtAnnotatedExpression)) return true;
+
+        // '(x: Int) < y' case
+        if (innerExpression instanceof KtBinaryExpressionWithTypeRHS && parentOperation == KtTokens.LT) {
+            return true;
+        }
+
+        if (parentExpression instanceof KtLabeledExpression) return false;
+
+        // 'x ?: ...' case
+        if (parentExpression instanceof KtBinaryExpression && parentOperation == KtTokens.ELVIS && currentInner == ((KtBinaryExpression) parentExpression).getRight()) {
+            return false;
+        }
+
+        int innerPriority = getPriority(innerExpression);
+        int parentPriority = getPriority(parentExpression);
+
+        if (innerPriority == parentPriority) {
+            if (parentExpression instanceof KtBinaryExpression) {
+                if (innerOperation == KtTokens.ANDAND || innerOperation == KtTokens.OROR) {
+                    return false;
+                }
+                return ((KtBinaryExpression) parentExpression).getRight() == currentInner;
+            }
+
+            //'-(-x)' case
+            if (parentExpression instanceof KtPrefixExpression && innerExpression instanceof KtPrefixExpression) {
+                return innerOperation == parentOperation && (innerOperation == KtTokens.PLUS || innerOperation == KtTokens.MINUS);
+            }
+            return false;
+        }
+
+        return innerPriority < parentPriority;
+    }
+
+    public static boolean isAssignment(@NotNull PsiElement element) {
+        return element instanceof KtBinaryExpression &&
+               KtTokens.ALL_ASSIGNMENTS.contains(((KtBinaryExpression) element).getOperationToken());
+    }
+
+    public static boolean isOrdinaryAssignment(@NotNull PsiElement element) {
+        return element instanceof KtBinaryExpression &&
+               ((KtBinaryExpression) element).getOperationToken().equals(KtTokens.EQ);
+    }
+
+    public static boolean checkVariableDeclarationInBlock(@NotNull KtBlockExpression block, @NotNull String varName) {
+        for (KtExpression element : block.getStatements()) {
+            if (element instanceof KtVariableDeclaration) {
+                if (((KtVariableDeclaration) element).getNameAsSafeName().asString().equals(varName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean checkWhenExpressionHasSingleElse(@NotNull KtWhenExpression whenExpression) {
+        int elseCount = 0;
+        for (KtWhenEntry entry : whenExpression.getEntries()) {
+            if (entry.isElse()) {
+                elseCount++;
+            }
+        }
+        return (elseCount == 1);
+    }
+
+    @Nullable
+    public static PsiElement skipTrailingWhitespacesAndComments(@Nullable PsiElement element)  {
+        return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace.class, PsiComment.class);
+    }
+
+    public static final Predicate<KtElement> ANY_JET_ELEMENT = new Predicate<KtElement>() {
+        @Override
+        public boolean apply(@Nullable KtElement input) {
+            return true;
+        }
+    };
+
+    @NotNull
+    public static String getText(@Nullable PsiElement element) {
+        return element != null ? element.getText() : "";
+    }
+
+    @Nullable
+    public static String getNullableText(@Nullable PsiElement element) {
+        return element != null ? element.getText() : null;
+    }
+
+    /**
+     * CommentUtilCore.isComment fails if element <strong>inside</strong> comment.
+     *
+     * Also, we can not add KDocTokens to COMMENTS TokenSet, because it is used in JetParserDefinition.getCommentTokens(),
+     * and therefor all COMMENTS tokens will be ignored by PsiBuilder.
+     *
+     * @param element
+     * @return
+     */
+    public static boolean isInComment(PsiElement element) {
+        return CommentUtilCore.isComment(element) || element instanceof KDocElement;
+    }
+
+    @Nullable
+    public static PsiElement getOutermostParent(@NotNull PsiElement element, @NotNull PsiElement upperBound, boolean strict) {
+        PsiElement parent = strict ? element.getParent() : element;
+        while (parent != null && parent.getParent() != upperBound) {
+            parent = parent.getParent();
+        }
+
+        return parent;
+    }
+
+    public static <T extends PsiElement> T getLastChildByType(@NotNull PsiElement root, @NotNull Class<? extends T>... elementTypes) {
+        PsiElement[] children = root.getChildren();
+
+        for (int i = children.length - 1; i >= 0; i--) {
+            if (PsiTreeUtil.instanceOf(children[i], elementTypes)) {
+                //noinspection unchecked
+                return (T) children[i];
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static KtElement getOutermostDescendantElement(
+            @Nullable PsiElement root,
+            boolean first,
+            final @NotNull Predicate<KtElement> predicate
+    ) {
+        if (!(root instanceof KtElement)) return null;
+
+        final List<KtElement> results = Lists.newArrayList();
+
+        root.accept(
+                new KtVisitorVoid() {
+                    @Override
+                    public void visitJetElement(@NotNull KtElement element) {
+                        if (predicate.apply(element)) {
+                            //noinspection unchecked
+                            results.add(element);
+                        }
+                        else {
+                            element.acceptChildren(this);
+                        }
+                    }
+                }
+        );
+
+        if (results.isEmpty()) return null;
+
+        return first ? results.get(0) : results.get(results.size() - 1);
+    }
+
+    @Nullable
+    public static PsiElement findChildByType(@NotNull PsiElement element, @NotNull IElementType type) {
+        ASTNode node = element.getNode().findChildByType(type);
+        return node == null ? null : node.getPsi();
+    }
+
+    @Nullable
+    public static PsiElement skipSiblingsBackwardByPredicate(@Nullable PsiElement element, Predicate<PsiElement> elementsToSkip) {
+        if (element == null) return null;
+        for (PsiElement e = element.getPrevSibling(); e != null; e = e.getPrevSibling()) {
+            if (elementsToSkip.apply(e)) continue;
+            return e;
+        }
+        return null;
+    }
+
+    public static PsiElement ascendIfPropertyAccessor(PsiElement element) {
+        if (element instanceof KtPropertyAccessor) {
+            return element.getParent();
+        }
+        return element;
+    }
+
+    @Nullable
+    public static KtModifierList replaceModifierList(@NotNull KtModifierListOwner owner, @Nullable KtModifierList modifierList) {
+        KtModifierList oldModifierList = owner.getModifierList();
+        if (modifierList == null) {
+            if (oldModifierList != null) oldModifierList.delete();
+            return null;
+        }
+        else {
+            if (oldModifierList == null) {
+                PsiElement firstChild = owner.getFirstChild();
+                return (KtModifierList) owner.addBefore(modifierList, firstChild);
+            }
+            else {
+                return (KtModifierList) oldModifierList.replace(modifierList);
+            }
+        }
+    }
+
+    @Nullable
+    public static String getPackageName(@NotNull KtElement element) {
+        KtFile file = element.getContainingJetFile();
+        KtPackageDirective header = PsiTreeUtil.findChildOfType(file, KtPackageDirective.class);
+
+        return header != null ? header.getQualifiedName() : null;
+    }
+
+    @Nullable
+    public static KtElement getEnclosingElementForLocalDeclaration(@NotNull KtDeclaration declaration) {
+        return getEnclosingElementForLocalDeclaration(declaration, true);
+    }
+
+    private static boolean isMemberOfObjectExpression(@NotNull KtCallableDeclaration propertyOrFunction) {
+        PsiElement parent = PsiTreeUtil.getStubOrPsiParent(propertyOrFunction);
+        if (!(parent instanceof KtClassBody)) return false;
+        PsiElement grandparent = PsiTreeUtil.getStubOrPsiParent(parent);
+        if (!(grandparent instanceof KtObjectDeclaration)) return false;
+        return PsiTreeUtil.getStubOrPsiParent(grandparent) instanceof KtObjectLiteralExpression;
+    }
+
+    @Nullable
+    public static KtElement getEnclosingElementForLocalDeclaration(@NotNull KtDeclaration declaration, boolean skipParameters) {
+        if (declaration instanceof KtTypeParameter && skipParameters) {
+            declaration = PsiTreeUtil.getParentOfType(declaration, KtNamedDeclaration.class);
+        }
+        else if (declaration instanceof KtParameter) {
+            PsiElement parent = declaration.getParent();
+
+            // val/var parameter of primary constructor should be considered as local according to containing class
+            if (((KtParameter) declaration).hasValOrVar() && parent != null && parent.getParent() instanceof KtPrimaryConstructor) {
+                return getEnclosingElementForLocalDeclaration(((KtPrimaryConstructor) parent.getParent()).getContainingClassOrObject(), skipParameters);
+            }
+
+            else if (skipParameters && parent != null && parent.getParent() instanceof KtNamedFunction) {
+                declaration = (KtNamedFunction) parent.getParent();
+            }
+        }
+
+        if (declaration instanceof PsiFile) {
+            return declaration;
+        }
+
+        // No appropriate stub-tolerant method in PsiTreeUtil, nor JetStubbedPsiUtil, writing manually
+        PsiElement current = PsiTreeUtil.getStubOrPsiParent(declaration);
+        while (current != null) {
+            PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
+            if (parent instanceof KtScript) return null;
+            if (current instanceof KtClassInitializer) {
+                return ((KtClassInitializer) current).getBody();
+            }
+            if (current instanceof KtProperty || current instanceof KtFunction) {
+                if (parent instanceof KtFile) {
+                    return (KtElement) current;
+                }
+                else if (parent instanceof KtClassBody && !isMemberOfObjectExpression((KtCallableDeclaration) current)) {
+                    return (KtElement) parent;
+                }
+            }
+            if (current instanceof KtBlockExpression || current instanceof KtParameter) {
+                return (KtElement) current;
+            }
+
+            current = parent;
+        }
+        return null;
+    }
+
+    public static boolean isLocal(@NotNull KtDeclaration declaration) {
+        return getEnclosingElementForLocalDeclaration(declaration) != null;
+    }
+
+    @Nullable
+    public static KtToken getOperationToken(@NotNull KtOperationExpression expression) {
+        KtSimpleNameExpression operationExpression = expression.getOperationReference();
+        IElementType elementType = operationExpression.getReferencedNameElementType();
+        assert elementType == null || elementType instanceof KtToken :
+                "JetOperationExpression should have operation token of type KtToken: " +
+                expression;
+        return (KtToken) elementType;
+    }
+
+    public static boolean isLabelIdentifierExpression(PsiElement element) {
+        return element instanceof KtLabelReferenceExpression;
+    }
+
+    @Nullable
+    public static KtExpression getParentCallIfPresent(@NotNull KtExpression expression) {
+        PsiElement parent = expression.getParent();
+        while (parent != null) {
+            if (parent instanceof KtBinaryExpression ||
+                parent instanceof KtUnaryExpression ||
+                parent instanceof KtLabeledExpression ||
+                parent instanceof KtDotQualifiedExpression ||
+                parent instanceof KtCallExpression ||
+                parent instanceof KtArrayAccessExpression ||
+                parent instanceof KtMultiDeclaration) {
+
+                if (parent instanceof KtLabeledExpression) {
+                    parent = parent.getParent();
+                    continue;
+                }
+
+                //check that it's in inlineable call would be in resolve call of parent
+                return (KtExpression) parent;
+            }
+            else if (parent instanceof KtParenthesizedExpression || parent instanceof KtBinaryExpressionWithTypeRHS) {
+                parent = parent.getParent();
+            }
+            else if (parent instanceof KtValueArgument || parent instanceof KtValueArgumentList) {
+                parent = parent.getParent();
+            }
+            else if (parent instanceof KtFunctionLiteralExpression || parent instanceof KtAnnotatedExpression) {
+                parent = parent.getParent();
+            }
+            else {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static KtExpression getLastElementDeparenthesized(
+            @Nullable KtExpression expression,
+            @NotNull StatementFilter statementFilter
+    ) {
+        KtExpression deparenthesizedExpression = deparenthesize(expression);
+        if (deparenthesizedExpression instanceof KtBlockExpression) {
+            KtBlockExpression blockExpression = (KtBlockExpression) deparenthesizedExpression;
+            // todo
+            // This case is a temporary hack for 'if' branches.
+            // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
+            // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
+            KtExpression lastStatementInABlock = StatementFilterKt.getLastStatementInABlock(statementFilter, blockExpression);
+            if (lastStatementInABlock != null) {
+                return getLastElementDeparenthesized(lastStatementInABlock, statementFilter);
+            }
+        }
+        return deparenthesizedExpression;
+    }
+}

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
 import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -65,7 +65,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     }
 
     public fun resolveValue(
-            expectedType: JetType,
+            expectedType: KtType,
             value: Value,
             nameResolver: NameResolver
     ): ConstantValue<*> {
@@ -141,7 +141,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
         return factory.createErrorValue("Unresolved enum entry: $enumClassId.$enumEntryName")
     }
 
-    private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): JetType =
+    private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): KtType =
             with(builtIns) {
                 when (value.getType()) {
                     Type.BYTE -> getByteType()

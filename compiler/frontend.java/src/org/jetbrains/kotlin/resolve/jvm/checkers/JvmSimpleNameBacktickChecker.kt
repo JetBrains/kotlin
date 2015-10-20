@@ -32,22 +32,22 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
         reportIfNeeded(identifier.text, identifier, diagnosticHolder)
     }
 
-    override fun checkDeclaration(declaration: JetDeclaration, diagnosticHolder: DiagnosticSink) {
-        if (declaration is JetMultiDeclaration) {
+    override fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
+        if (declaration is KtMultiDeclaration) {
             declaration.entries.forEach { checkNamed(it, diagnosticHolder) }
         }
-        if (declaration is JetCallableDeclaration) {
+        if (declaration is KtCallableDeclaration) {
             declaration.valueParameters.forEach { checkNamed(it, diagnosticHolder) }
         }
-        if (declaration is JetTypeParameterListOwner) {
+        if (declaration is KtTypeParameterListOwner) {
             declaration.typeParameters.forEach { checkNamed(it, diagnosticHolder) }
         }
-        if (declaration is JetNamedDeclaration) {
+        if (declaration is KtNamedDeclaration) {
             checkNamed(declaration, diagnosticHolder)
         }
     }
 
-    fun checkNamed(declaration: JetNamedDeclaration, diagnosticHolder: DiagnosticSink) {
+    fun checkNamed(declaration: KtNamedDeclaration, diagnosticHolder: DiagnosticSink) {
         val name = declaration.name ?: return
 
         val element = declaration.nameIdentifier ?: declaration
@@ -55,7 +55,7 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
     }
 
     private fun reportIfNeeded(name: String, element: PsiElement, diagnosticHolder: DiagnosticSink) {
-        val text = JetPsiUtil.unquoteIdentifier(name)
+        val text = KtPsiUtil.unquoteIdentifier(name)
         if (text.isEmpty()) {
             diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(element, "should not be empty"))
         }

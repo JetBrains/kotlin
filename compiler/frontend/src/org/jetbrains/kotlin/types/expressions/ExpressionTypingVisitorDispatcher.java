@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
@@ -39,7 +39,8 @@ import org.jetbrains.kotlin.utils.KotlinFrontEndException;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM;
 
-public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
+public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<JetTypeInfo, ExpressionTypingContext>
+        implements ExpressionTypingInternals {
 
     public static final PerformanceCounter typeInfoPerfCounter = PerformanceCounter.Companion.create("Type info", true);
 
@@ -107,10 +108,10 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
     @NotNull
     @Override
     public JetTypeInfo checkInExpression(
-            @NotNull JetElement callElement,
-            @NotNull JetSimpleNameExpression operationSign,
+            @NotNull KtElement callElement,
+            @NotNull KtSimpleNameExpression operationSign,
             @NotNull ValueArgument leftArgument,
-            @Nullable JetExpression right,
+            @Nullable KtExpression right,
             @NotNull ExpressionTypingContext context
     ) {
         return basic.checkInExpression(callElement, operationSign, leftArgument, right, context);
@@ -118,7 +119,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
 
     @Override
     @NotNull
-    public final JetTypeInfo safeGetTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context) {
+    public final JetTypeInfo safeGetTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context) {
         JetTypeInfo typeInfo = getTypeInfo(expression, context);
         if (typeInfo.getType() != null) {
             return typeInfo;
@@ -130,7 +131,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
 
     @Override
     @NotNull
-    public final JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context) {
+    public final JetTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context) {
         JetTypeInfo result = getTypeInfo(expression, context, this);
         annotationChecker.checkExpression(expression, context.trace);
         return result;
@@ -138,7 +139,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
 
     @Override
     @NotNull
-    public final JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement) {
+    public final JetTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context, boolean isStatement) {
         if (!isStatement) return getTypeInfo(expression, context);
         return getTypeInfo(expression, context, getStatementVisitor(context));
     }
@@ -150,12 +151,12 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
     }
 
     @Override
-    public void checkStatementType(@NotNull JetExpression expression, ExpressionTypingContext context) {
+    public void checkStatementType(@NotNull KtExpression expression, ExpressionTypingContext context) {
         expression.accept(createStatementVisitor(context), context);
     }
 
     @NotNull
-    private static JetTypeInfo getTypeInfo(@NotNull final JetExpression expression, final ExpressionTypingContext context, final JetVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
+    private static JetTypeInfo getTypeInfo(@NotNull final KtExpression expression, final ExpressionTypingContext context, final KtVisitor<JetTypeInfo, ExpressionTypingContext> visitor) {
         return typeInfoPerfCounter.time(new Function0<JetTypeInfo>() {
             @Override
             public JetTypeInfo invoke() {
@@ -170,7 +171,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
                         // Some recursive definitions (object expressions) must put their types in the cache manually:
                         //noinspection ConstantConditions
                         if (context.trace.get(BindingContext.PROCESSED, expression)) {
-                            JetType type = context.trace.getBindingContext().getType(expression);
+                            KtType type = context.trace.getBindingContext().getType(expression);
                             return result.replaceType(type);
                         }
 
@@ -209,7 +210,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
         });
     }
 
-    private static void logOrThrowException(@NotNull JetExpression expression, Throwable e) {
+    private static void logOrThrowException(@NotNull KtExpression expression, Throwable e) {
         try {
             // This trows AssertionError in CLI and reports the error in the IDE
             LOG.error(
@@ -227,178 +228,178 @@ public abstract class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTy
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression, ExpressionTypingContext data) {
         return functions.visitFunctionLiteralExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitNamedFunction(@NotNull JetNamedFunction function, ExpressionTypingContext data) {
+    public JetTypeInfo visitNamedFunction(@NotNull KtNamedFunction function, ExpressionTypingContext data) {
         return functions.visitNamedFunction(function, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetTypeInfo visitThrowExpression(@NotNull JetThrowExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitThrowExpression(@NotNull KtThrowExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitThrowExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitReturnExpression(@NotNull JetReturnExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitReturnExpression(@NotNull KtReturnExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitReturnExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitContinueExpression(@NotNull JetContinueExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitContinueExpression(@NotNull KtContinueExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitContinueExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitIfExpression(@NotNull JetIfExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitIfExpression(@NotNull KtIfExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitIfExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitTryExpression(@NotNull JetTryExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitTryExpression(@NotNull KtTryExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitTryExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitForExpression(@NotNull JetForExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitForExpression(@NotNull KtForExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitForExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitWhileExpression(@NotNull JetWhileExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitWhileExpression(@NotNull KtWhileExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitWhileExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitDoWhileExpression(@NotNull JetDoWhileExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitDoWhileExpression(@NotNull KtDoWhileExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitDoWhileExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitBreakExpression(@NotNull KtBreakExpression expression, ExpressionTypingContext data) {
         return controlStructures.visitBreakExpression(expression, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetTypeInfo visitIsExpression(@NotNull JetIsExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitIsExpression(@NotNull KtIsExpression expression, ExpressionTypingContext data) {
         return patterns.visitIsExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitWhenExpression(@NotNull JetWhenExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitWhenExpression(@NotNull KtWhenExpression expression, ExpressionTypingContext data) {
         return patterns.visitWhenExpression(expression, data);
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public JetTypeInfo visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, ExpressionTypingContext data) {
         return basic.visitSimpleNameExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitParenthesizedExpression(@NotNull KtParenthesizedExpression expression, ExpressionTypingContext data) {
         return basic.visitParenthesizedExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitConstantExpression(@NotNull JetConstantExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitConstantExpression(@NotNull KtConstantExpression expression, ExpressionTypingContext data) {
         return basic.visitConstantExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitBinaryWithTypeRHSExpression(@NotNull JetBinaryExpressionWithTypeRHS expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitBinaryWithTypeRHSExpression(@NotNull KtBinaryExpressionWithTypeRHS expression, ExpressionTypingContext data) {
         return basic.visitBinaryWithTypeRHSExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitThisExpression(@NotNull JetThisExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitThisExpression(@NotNull KtThisExpression expression, ExpressionTypingContext data) {
         return basic.visitThisExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitSuperExpression(@NotNull JetSuperExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitSuperExpression(@NotNull KtSuperExpression expression, ExpressionTypingContext data) {
         return basic.visitSuperExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitBlockExpression(@NotNull JetBlockExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitBlockExpression(@NotNull KtBlockExpression expression, ExpressionTypingContext data) {
         return basic.visitBlockExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitClassLiteralExpression(@NotNull KtClassLiteralExpression expression, ExpressionTypingContext data) {
         return basic.visitClassLiteralExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitCallableReferenceExpression(@NotNull KtCallableReferenceExpression expression, ExpressionTypingContext data) {
         return basic.visitCallableReferenceExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, ExpressionTypingContext data) {
         return basic.visitObjectLiteralExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitQualifiedExpression(@NotNull JetQualifiedExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitQualifiedExpression(@NotNull KtQualifiedExpression expression, ExpressionTypingContext data) {
         return basic.visitQualifiedExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitCallExpression(@NotNull JetCallExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitCallExpression(@NotNull KtCallExpression expression, ExpressionTypingContext data) {
         return basic.visitCallExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitUnaryExpression(@NotNull JetUnaryExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitUnaryExpression(@NotNull KtUnaryExpression expression, ExpressionTypingContext data) {
         return basic.visitUnaryExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitLabeledExpression(@NotNull JetLabeledExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitLabeledExpression(@NotNull KtLabeledExpression expression, ExpressionTypingContext data) {
         return basic.visitLabeledExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitBinaryExpression(@NotNull JetBinaryExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitBinaryExpression(@NotNull KtBinaryExpression expression, ExpressionTypingContext data) {
         return basic.visitBinaryExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitArrayAccessExpression(@NotNull KtArrayAccessExpression expression, ExpressionTypingContext data) {
         return basic.visitArrayAccessExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitDeclaration(@NotNull JetDeclaration dcl, ExpressionTypingContext data) {
+    public JetTypeInfo visitDeclaration(@NotNull KtDeclaration dcl, ExpressionTypingContext data) {
         return basic.visitDeclaration(dcl, data);
     }
 
     @Override
-    public JetTypeInfo visitRootPackageExpression(@NotNull JetRootPackageExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitRootPackageExpression(@NotNull KtRootPackageExpression expression, ExpressionTypingContext data) {
         return basic.visitRootPackageExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitStringTemplateExpression(@NotNull JetStringTemplateExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression, ExpressionTypingContext data) {
         return basic.visitStringTemplateExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitAnnotatedExpression(@NotNull JetAnnotatedExpression expression, ExpressionTypingContext data) {
+    public JetTypeInfo visitAnnotatedExpression(@NotNull KtAnnotatedExpression expression, ExpressionTypingContext data) {
         return basic.visitAnnotatedExpression(expression, data);
     }
 
     @Override
-    public JetTypeInfo visitJetElement(@NotNull JetElement element, ExpressionTypingContext data) {
+    public JetTypeInfo visitJetElement(@NotNull KtElement element, ExpressionTypingContext data) {
         return element.accept(basic, data);
     }
 }

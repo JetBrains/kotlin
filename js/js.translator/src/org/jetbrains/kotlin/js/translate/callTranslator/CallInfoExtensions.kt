@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.psi.JetSuperExpression
+import org.jetbrains.kotlin.psi.KtSuperExpression
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsName
@@ -41,7 +41,7 @@ fun CallInfo.isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescr
 
 fun CallInfo.isSuperInvocation(): Boolean {
     val dispatchReceiver = resolvedCall.getDispatchReceiver()
-    return dispatchReceiver is ExpressionReceiver && dispatchReceiver.getExpression() is JetSuperExpression
+    return dispatchReceiver is ExpressionReceiver && dispatchReceiver.getExpression() is KtSuperExpression
 }
 
 val VariableAccessInfo.variableDescriptor: VariableDescriptor

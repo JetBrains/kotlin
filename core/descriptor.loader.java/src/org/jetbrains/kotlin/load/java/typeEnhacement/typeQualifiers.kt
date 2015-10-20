@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NOT_NU
 import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NULLABLE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 import java.util.ArrayList
@@ -65,7 +65,7 @@ class JavaTypeQualifiers(
     }
 }
 
-private fun JetType.extractQualifiers(): JavaTypeQualifiers {
+private fun KtType.extractQualifiers(): JavaTypeQualifiers {
     val (lower, upper) =
             if (this.isFlexible())
                 flexibility().let { Pair(it.lowerBound, it.upperBound) }
@@ -88,11 +88,11 @@ private fun Annotations.extractQualifiers(): JavaTypeQualifiers {
     )
 }
 
-fun JetType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<JetType>, isCovariant: Boolean): (Int) -> JavaTypeQualifiers {
-    fun JetType.toIndexed(): List<JetType> {
-        val list = ArrayList<JetType>(1)
+fun KtType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<KtType>, isCovariant: Boolean): (Int) -> JavaTypeQualifiers {
+    fun KtType.toIndexed(): List<KtType> {
+        val list = ArrayList<KtType>(1)
 
-        fun add(type: JetType) {
+        fun add(type: KtType) {
             list.add(type)
             for (arg in type.getArguments()) {
                 if (arg.isStarProjection()) {
@@ -116,7 +116,7 @@ fun JetType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<JetTy
     // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
     // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
     // Note that `this` is flexible here, so it's equal to it's bounds
-    val onlyHeadTypeConstructor = isCovariant && fromSupertypes.any { !JetTypeChecker.DEFAULT.equalTypes(it, this) }
+    val onlyHeadTypeConstructor = isCovariant && fromSupertypes.any { !KotlinTypeChecker.DEFAULT.equalTypes(it, this) }
 
     val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size()
     val computedResult = Array(treeSize) {
@@ -134,7 +134,7 @@ fun JetType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<JetTy
     return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
 }
 
-private fun JetType.computeQualifiersForOverride(fromSupertypes: Collection<JetType>, isCovariant: Boolean): JavaTypeQualifiers {
+private fun KtType.computeQualifiersForOverride(fromSupertypes: Collection<KtType>, isCovariant: Boolean): JavaTypeQualifiers {
     val nullabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().nullability }.filterNotNull().toSet()
     val mutabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().mutability }.filterNotNull().toSet()
     val own = getAnnotations().extractQualifiers()

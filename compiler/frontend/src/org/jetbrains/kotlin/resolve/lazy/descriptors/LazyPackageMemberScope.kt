@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -36,7 +36,7 @@ public class LazyPackageMemberScope(
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getScopeForMemberDeclarationResolution(declaration: JetDeclaration)
+    override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration)
             = resolveSession.getFileScopeProvider().getFileScope(declaration.getContainingJetFile())
 
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>) {

@@ -39,12 +39,12 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.ArrayList
 import java.util.HashMap
@@ -53,7 +53,7 @@ import java.util.LinkedHashSet
 public open class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
         private var name: String = methodDescriptor.getName(),
-        val newReturnType: JetType? = methodDescriptor.baseDescriptor.getReturnType(),
+        val newReturnType: KtType? = methodDescriptor.baseDescriptor.getReturnType(),
         var newReturnTypeText: String = methodDescriptor.renderOriginalReturnType(),
         var newVisibility: Visibility = methodDescriptor.getVisibility(),
         parameterInfos: List<JetParameterInfo> = methodDescriptor.getParameters(),
@@ -106,7 +106,7 @@ public open class JetChangeInfo(
     fun getNonReceiverParametersCount(): Int = newParameters.size() - (if (receiverParameterInfo != null) 1 else 0)
 
     fun getNonReceiverParameters(): List<JetParameterInfo> {
-        methodDescriptor.baseDeclaration.let { if (it is JetProperty || it is JetParameter) return emptyList() }
+        methodDescriptor.baseDeclaration.let { if (it is KtProperty || it is KtParameter) return emptyList() }
         return receiverParameterInfo?.let { receiver -> newParameters.filter { it != receiver } } ?: newParameters
     }
 
@@ -162,8 +162,8 @@ public open class JetChangeInfo(
             fun add(element: PsiElement) {
                 element.unwrapped?.let {
                     val usageInfo = when (it) {
-                        is JetNamedFunction, is JetConstructor<*>, is JetClassOrObject ->
-                            KotlinCallerUsage(it as JetNamedDeclaration)
+                        is KtNamedFunction, is KtConstructor<*>, is KtClassOrObject ->
+                            KotlinCallerUsage(it as KtNamedDeclaration)
                         is PsiMethod ->
                             CallerUsageInfo(it, true, true)
                         else ->
@@ -203,7 +203,7 @@ public open class JetChangeInfo(
                 buffer.append(newVisibility).append(' ')
             }
 
-            buffer.append(if (kind == Kind.SECONDARY_CONSTRUCTOR) JetTokens.CONSTRUCTOR_KEYWORD else JetTokens.FUN_KEYWORD).append(' ')
+            buffer.append(if (kind == Kind.SECONDARY_CONSTRUCTOR) KtTokens.CONSTRUCTOR_KEYWORD else KtTokens.FUN_KEYWORD).append(' ')
 
             if (kind == Kind.FUNCTION) {
                 receiverParameterInfo?.let {
@@ -236,7 +236,7 @@ public open class JetChangeInfo(
     ): String {
         val signatureParameters = getNonReceiverParameters()
 
-        val isLambda = inheritedCallable.getDeclaration() is JetFunctionLiteral
+        val isLambda = inheritedCallable.getDeclaration() is KtFunctionLiteral
         if (isLambda && signatureParameters.size() == 1 && !signatureParameters.get(0).requiresExplicitType(inheritedCallable)) {
             return signatureParameters.get(0).getDeclarationSignature(0, inheritedCallable)
         }
@@ -356,7 +356,7 @@ public open class JetChangeInfo(
             return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, PsiType.VOID, newJavaParameters.toTypedArray())
         }
 
-        if (ProjectStructureUtil.isJsKotlinModule(getMethod().getContainingFile() as JetFile)) return null
+        if (ProjectStructureUtil.isJsKotlinModule(getMethod().getContainingFile() as KtFile)) return null
 
         if (javaChangeInfos == null) {
             val method = getMethod()
@@ -364,9 +364,9 @@ public open class JetChangeInfo(
                 val (originalPsiMethod, currentPsiMethod) = it
 
                 when (method) {
-                    is JetFunction, is JetClassOrObject ->
+                    is KtFunction, is KtClassOrObject ->
                         createJavaChangeInfoForFunctionOrGetter(originalPsiMethod, currentPsiMethod, false)
-                    is JetProperty, is JetParameter -> {
+                    is KtProperty, is KtParameter -> {
                         val accessorName = originalPsiMethod.getName()
                         when {
                             JvmAbi.isGetterName(accessorName) ->
@@ -391,7 +391,7 @@ public val JetChangeInfo.originalBaseFunctionDescriptor: CallableDescriptor
 public val JetChangeInfo.kind: Kind get() = methodDescriptor.kind
 
 public val JetChangeInfo.oldName: String?
-    get() = (methodDescriptor.getMethod() as? JetFunction)?.getName()
+    get() = (methodDescriptor.getMethod() as? KtFunction)?.getName()
 
 public fun JetChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescriptor.affectedCallables + propagationTargetUsageInfos
 

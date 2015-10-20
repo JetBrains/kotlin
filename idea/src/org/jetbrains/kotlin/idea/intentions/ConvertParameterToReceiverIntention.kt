@@ -24,17 +24,17 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureC
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertParameterToReceiverIntention : JetSelfTargetingIntention<JetParameter>(javaClass(), "Convert parameter to receiver") {
-    override fun isApplicableTo(element: JetParameter, caretOffset: Int): Boolean {
+public class ConvertParameterToReceiverIntention : JetSelfTargetingIntention<KtParameter>(javaClass(), "Convert parameter to receiver") {
+    override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
         val identifier = element.getNameIdentifier() ?: return false
         if (!identifier.getTextRange().containsOffset(caretOffset)) return false
         if (element.isVarArg()) return false
-        val function = element.getStrictParentOfType<JetNamedFunction>() ?: return false
+        val function = element.getStrictParentOfType<KtNamedFunction>() ?: return false
         return function.getValueParameterList() == element.getParent() && function.getReceiverTypeReference() == null
     }
 
@@ -50,8 +50,8 @@ public class ConvertParameterToReceiverIntention : JetSelfTargetingIntention<Jet
 
     override fun startInWriteAction() = false
 
-    override fun applyTo(element: JetParameter, editor: Editor) {
-        val function = element.getStrictParentOfType<JetNamedFunction>() ?: return
+    override fun applyTo(element: KtParameter, editor: Editor) {
+        val function = element.getStrictParentOfType<KtNamedFunction>() ?: return
         val parameterIndex = function.getValueParameters().indexOf(element)
         val context = function.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return

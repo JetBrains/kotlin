@@ -28,20 +28,20 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZE
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.lexer.JetTokens.OPEN_KEYWORD
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.lexer.KtTokens.OPEN_KEYWORD
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import java.util.*
 
-public class MakeOverriddenMemberOpenFix(declaration: JetDeclaration) : KotlinQuickFixAction<JetDeclaration>(declaration) {
-    private val overriddenNonOverridableMembers = ArrayList<JetCallableDeclaration>()
+public class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(declaration) {
+    private val overriddenNonOverridableMembers = ArrayList<KtCallableDeclaration>()
     private val containingDeclarationsNames = ArrayList<String>()
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (!super.isAvailable(project, editor, file) || file !is JetFile) {
+        if (!super.isAvailable(project, editor, file) || file !is KtFile) {
             return false
         }
 
@@ -56,7 +56,7 @@ public class MakeOverriddenMemberOpenFix(declaration: JetDeclaration) : KotlinQu
                 descriptor)) {
             assert(overriddenDescriptor.kind == DECLARATION) { "Can only be applied to declarations." }
             val overriddenMember = DescriptorToSourceUtils.descriptorToDeclaration(overriddenDescriptor)
-            if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember) || overriddenMember !is JetCallableDeclaration) {
+            if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember) || overriddenMember !is KtCallableDeclaration) {
                 return false
             }
             val containingDeclarationName = overriddenDescriptor.containingDeclaration.name.asString()
@@ -80,7 +80,7 @@ public class MakeOverriddenMemberOpenFix(declaration: JetDeclaration) : KotlinQu
 
     override fun getFamilyName(): String = "Add Modifier"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         for (overriddenMember in overriddenNonOverridableMembers) {
             overriddenMember.addModifier(OPEN_KEYWORD)
         }
@@ -114,7 +114,7 @@ public class MakeOverriddenMemberOpenFix(declaration: JetDeclaration) : KotlinQu
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val declaration = diagnostic.psiElement.getNonStrictParentOfType<JetDeclaration>()!!
+            val declaration = diagnostic.psiElement.getNonStrictParentOfType<KtDeclaration>()!!
             return MakeOverriddenMemberOpenFix(declaration)
         }
     }

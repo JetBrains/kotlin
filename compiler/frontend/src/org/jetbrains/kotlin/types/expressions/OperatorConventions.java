@@ -21,12 +21,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.JetSingleValueToken;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtSingleValueToken;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
-
-import java.util.Map;
 
 import static org.jetbrains.kotlin.util.OperatorNameConventions.*;
 
@@ -50,70 +48,70 @@ public class OperatorConventions {
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventionNames as well
 
-    public static final ImmutableBiMap<JetSingleValueToken, Name> UNARY_OPERATION_NAMES = ImmutableBiMap.<JetSingleValueToken, Name>builder()
-            .put(JetTokens.PLUSPLUS, INC)
-            .put(JetTokens.MINUSMINUS, DEC)
-            .put(JetTokens.PLUS, UNARY_PLUS)
-            .put(JetTokens.MINUS, UNARY_MINUS)
-            .put(JetTokens.EXCL, NOT)
+    public static final ImmutableBiMap<KtSingleValueToken, Name> UNARY_OPERATION_NAMES = ImmutableBiMap.<KtSingleValueToken, Name>builder()
+            .put(KtTokens.PLUSPLUS, INC)
+            .put(KtTokens.MINUSMINUS, DEC)
+            .put(KtTokens.PLUS, UNARY_PLUS)
+            .put(KtTokens.MINUS, UNARY_MINUS)
+            .put(KtTokens.EXCL, NOT)
             .build();
 
-    public static final ImmutableMap<Name, JetSingleValueToken> UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED = ImmutableMap.<Name, JetSingleValueToken>builder()
-            .put(INC, JetTokens.PLUSPLUS)
-            .put(DEC, JetTokens.MINUSMINUS)
-            .put(UNARY_PLUS, JetTokens.PLUS)
-            .put(PLUS, JetTokens.PLUS)
-            .put(UNARY_MINUS, JetTokens.MINUS)
-            .put(MINUS, JetTokens.MINUS)
-            .put(NOT, JetTokens.EXCL)
+    public static final ImmutableMap<Name, KtSingleValueToken> UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED = ImmutableMap.<Name, KtSingleValueToken>builder()
+            .put(INC, KtTokens.PLUSPLUS)
+            .put(DEC, KtTokens.MINUSMINUS)
+            .put(UNARY_PLUS, KtTokens.PLUS)
+            .put(PLUS, KtTokens.PLUS)
+            .put(UNARY_MINUS, KtTokens.MINUS)
+            .put(MINUS, KtTokens.MINUS)
+            .put(NOT, KtTokens.EXCL)
             .build();
 
-    public static final ImmutableBiMap<JetSingleValueToken, Name> BINARY_OPERATION_NAMES = ImmutableBiMap.<JetSingleValueToken, Name>builder()
-            .put(JetTokens.MUL, TIMES)
-            .put(JetTokens.PLUS, PLUS)
-            .put(JetTokens.MINUS, MINUS)
-            .put(JetTokens.DIV, DIV)
-            .put(JetTokens.PERC, MOD)
-            .put(JetTokens.RANGE, RANGE_TO)
+    public static final ImmutableBiMap<KtSingleValueToken, Name> BINARY_OPERATION_NAMES = ImmutableBiMap.<KtSingleValueToken, Name>builder()
+            .put(KtTokens.MUL, TIMES)
+            .put(KtTokens.PLUS, PLUS)
+            .put(KtTokens.MINUS, MINUS)
+            .put(KtTokens.DIV, DIV)
+            .put(KtTokens.PERC, MOD)
+            .put(KtTokens.RANGE, RANGE_TO)
             .build();
 
-    public static final ImmutableSet<JetSingleValueToken> NOT_OVERLOADABLE =
-            ImmutableSet.of(JetTokens.ANDAND, JetTokens.OROR, JetTokens.ELVIS, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ);
+    public static final ImmutableSet<KtSingleValueToken> NOT_OVERLOADABLE =
+            ImmutableSet.of(KtTokens.ANDAND, KtTokens.OROR, KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ);
     
-    public static final ImmutableSet<JetSingleValueToken> INCREMENT_OPERATIONS =
-            ImmutableSet.of(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS);
+    public static final ImmutableSet<KtSingleValueToken> INCREMENT_OPERATIONS =
+            ImmutableSet.of(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS);
 
-    public static final ImmutableSet<JetSingleValueToken> COMPARISON_OPERATIONS =
-            ImmutableSet.of(JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ);
+    public static final ImmutableSet<KtSingleValueToken> COMPARISON_OPERATIONS =
+            ImmutableSet.of(KtTokens.LT, KtTokens.GT, KtTokens.LTEQ, KtTokens.GTEQ);
 
-    public static final ImmutableSet<JetSingleValueToken> EQUALS_OPERATIONS =
-            ImmutableSet.of(JetTokens.EQEQ, JetTokens.EXCLEQ);
+    public static final ImmutableSet<KtSingleValueToken> EQUALS_OPERATIONS =
+            ImmutableSet.of(KtTokens.EQEQ, KtTokens.EXCLEQ);
 
-    public static final ImmutableSet<JetSingleValueToken> IDENTITY_EQUALS_OPERATIONS =
-            ImmutableSet.of(JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ);
+    public static final ImmutableSet<KtSingleValueToken> IDENTITY_EQUALS_OPERATIONS =
+            ImmutableSet.of(KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ);
 
-    public static final ImmutableSet<JetSingleValueToken> IN_OPERATIONS =
-            ImmutableSet.<JetSingleValueToken>of(JetTokens.IN_KEYWORD, JetTokens.NOT_IN);
+    public static final ImmutableSet<KtSingleValueToken> IN_OPERATIONS =
+            ImmutableSet.<KtSingleValueToken>of(KtTokens.IN_KEYWORD, KtTokens.NOT_IN);
 
-    public static final ImmutableBiMap<JetSingleValueToken, Name> ASSIGNMENT_OPERATIONS = ImmutableBiMap.<JetSingleValueToken, Name>builder()
-            .put(JetTokens.MULTEQ, TIMES_ASSIGN)
-            .put(JetTokens.DIVEQ, DIV_ASSIGN)
-            .put(JetTokens.PERCEQ, MOD_ASSIGN)
-            .put(JetTokens.PLUSEQ, PLUS_ASSIGN)
-            .put(JetTokens.MINUSEQ, MINUS_ASSIGN)
+    public static final ImmutableBiMap<KtSingleValueToken, Name> ASSIGNMENT_OPERATIONS = ImmutableBiMap.<KtSingleValueToken, Name>builder()
+            .put(KtTokens.MULTEQ, TIMES_ASSIGN)
+            .put(KtTokens.DIVEQ, DIV_ASSIGN)
+            .put(KtTokens.PERCEQ, MOD_ASSIGN)
+            .put(KtTokens.PLUSEQ, PLUS_ASSIGN)
+            .put(KtTokens.MINUSEQ, MINUS_ASSIGN)
             .build();
 
-    public static final ImmutableBiMap<JetSingleValueToken, JetSingleValueToken> ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableBiMap.<JetSingleValueToken, JetSingleValueToken>builder()
-            .put(JetTokens.MULTEQ, JetTokens.MUL)
-            .put(JetTokens.DIVEQ, JetTokens.DIV)
-            .put(JetTokens.PERCEQ, JetTokens.PERC)
-            .put(JetTokens.PLUSEQ, JetTokens.PLUS)
-            .put(JetTokens.MINUSEQ, JetTokens.MINUS)
+    public static final ImmutableBiMap<KtSingleValueToken, KtSingleValueToken> ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableBiMap.<KtSingleValueToken, KtSingleValueToken>builder()
+            .put(KtTokens.MULTEQ, KtTokens.MUL)
+            .put(KtTokens.DIVEQ, KtTokens.DIV)
+            .put(KtTokens.PERCEQ, KtTokens.PERC)
+            .put(KtTokens.PLUSEQ, KtTokens.PLUS)
+            .put(KtTokens.MINUSEQ, KtTokens.MINUS)
             .build();
 
-    public static final ImmutableBiMap<JetSingleValueToken, Name> BOOLEAN_OPERATIONS = ImmutableBiMap.<JetSingleValueToken, Name>builder()
-             .put(JetTokens.ANDAND, AND)
-             .put(JetTokens.OROR, OR)
+    public static final ImmutableBiMap<KtSingleValueToken, Name> BOOLEAN_OPERATIONS = ImmutableBiMap.<KtSingleValueToken, Name>builder()
+             .put(KtTokens.ANDAND, AND)
+             .put(KtTokens.OROR, OR)
              .build();
 
     public static final ImmutableSet<Name> CONVENTION_NAMES = ImmutableSet.<Name>builder()
@@ -124,12 +122,12 @@ public class OperatorConventions {
             .build();
 
     @Nullable
-    public static Name getNameForOperationSymbol(@NotNull JetToken token) {
+    public static Name getNameForOperationSymbol(@NotNull KtToken token) {
         return getNameForOperationSymbol(token, true, true);
     }
 
     @Nullable
-    public static Name getNameForOperationSymbol(@NotNull JetToken token, boolean unaryOperations, boolean binaryOperations) {
+    public static Name getNameForOperationSymbol(@NotNull KtToken token, boolean unaryOperations, boolean binaryOperations) {
         Name name;
 
         if (binaryOperations) {

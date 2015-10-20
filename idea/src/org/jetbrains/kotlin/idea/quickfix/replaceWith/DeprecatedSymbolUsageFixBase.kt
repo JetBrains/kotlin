@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
-import org.jetbrains.kotlin.psi.JetConstructorCalleeExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtConstructorCalleeExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -38,9 +38,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 //TODO: different replacements for property accessors
 
 public abstract class DeprecatedSymbolUsageFixBase(
-        element: JetSimpleNameExpression,
+        element: KtSimpleNameExpression,
         val replaceWith: ReplaceWith
-) : KotlinQuickFixAction<JetSimpleNameExpression>(element) {
+) : KotlinQuickFixAction<KtSimpleNameExpression>(element) {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
@@ -48,7 +48,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         return strategy != null && strategy.createReplacer(element) != null
     }
 
-    final override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val strategy = UsageReplacementStrategy.build(element, replaceWith, recheckAnnotation = false)!!
         invoke(strategy, project, editor)
     }
@@ -77,7 +77,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         }
 
         data class Data(
-                val nameExpression: JetSimpleNameExpression,
+                val nameExpression: KtSimpleNameExpression,
                 val replaceWith: ReplaceWith,
                 val descriptor: DeclarationDescriptor
         )
@@ -93,9 +93,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
                             else -> null
                         } ?: return null
             */
-            val nameExpression: JetSimpleNameExpression = (if (psiElement is JetSimpleNameExpression)
+            val nameExpression: KtSimpleNameExpression = (if (psiElement is KtSimpleNameExpression)
                 psiElement
-            else if (psiElement is JetConstructorCalleeExpression)
+            else if (psiElement is KtConstructorCalleeExpression)
                 psiElement.constructorReferenceExpression
             else
                 null) ?: return null

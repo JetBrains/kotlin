@@ -611,9 +611,9 @@ class _JetLexer implements FlexLexer {
     private IElementType commentStateToTokenType(int state) {
         switch (state) {
             case BLOCK_COMMENT:
-                return JetTokens.BLOCK_COMMENT;
+                return KtTokens.BLOCK_COMMENT;
             case DOC_COMMENT:
-                return JetTokens.DOC_COMMENT;
+                return KtTokens.DOC_COMMENT;
             default:
                 throw new IllegalArgumentException("Unexpected state: " + state);
         }
@@ -864,188 +864,188 @@ class _JetLexer implements FlexLexer {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 102: 
-          { return JetTokens.TYPE_ALIAS_KEYWORD ;
+          { return KtTokens.TYPE_ALIAS_KEYWORD ;
           }
         case 104: break;
         case 3: 
-          { return JetTokens.IDENTIFIER;
+          { return KtTokens.IDENTIFIER;
           }
         case 105: break;
         case 11: 
-          { pushState(STRING); return JetTokens.OPEN_QUOTE;
+          { pushState(STRING); return KtTokens.OPEN_QUOTE;
           }
         case 106: break;
         case 78: 
-          { return JetTokens.FOR_KEYWORD ;
+          { return KtTokens.FOR_KEYWORD ;
           }
         case 107: break;
         case 98: 
-          { return JetTokens.RETURN_KEYWORD ;
+          { return KtTokens.RETURN_KEYWORD ;
           }
         case 108: break;
         case 103: 
-          { return JetTokens.INTERFACE_KEYWORD ;
+          { return KtTokens.INTERFACE_KEYWORD ;
           }
         case 109: break;
         case 88: 
-          { return JetTokens.NULL_KEYWORD ;
+          { return KtTokens.NULL_KEYWORD ;
           }
         case 110: break;
         case 35: 
           { if (lBraceCount == 0) {
                                              popState();
-                                             return JetTokens.LONG_TEMPLATE_ENTRY_END;
+                                             return KtTokens.LONG_TEMPLATE_ENTRY_END;
                                            }
                                            lBraceCount--;
-                                           return JetTokens.RBRACE;
+                                           return KtTokens.RBRACE;
           }
         case 111: break;
         case 18: 
-          { return JetTokens.LT        ;
+          { return KtTokens.LT        ;
           }
         case 112: break;
         case 52: 
-          { return JetTokens.DO_KEYWORD ;
+          { return KtTokens.DO_KEYWORD ;
           }
         case 113: break;
         case 17: 
-          { return JetTokens.PLUS      ;
+          { return KtTokens.PLUS      ;
           }
         case 114: break;
         case 55: 
-          { return JetTokens.PLUSEQ    ;
+          { return KtTokens.PLUSEQ    ;
           }
         case 115: break;
         case 91: 
-          { popState(); return JetTokens.THIS_KEYWORD;
+          { popState(); return KtTokens.THIS_KEYWORD;
           }
         case 116: break;
         case 27: 
-          { return JetTokens.COMMA     ;
+          { return KtTokens.COMMA     ;
           }
         case 117: break;
         case 19: 
-          { return JetTokens.GT        ;
+          { return KtTokens.GT        ;
           }
         case 118: break;
         case 4: 
-          { return JetTokens.WHITE_SPACE;
+          { return KtTokens.WHITE_SPACE;
           }
         case 119: break;
         case 25: 
-          { return JetTokens.RPAR      ;
+          { return KtTokens.RPAR      ;
           }
         case 120: break;
         case 54: 
-          { return JetTokens.DOUBLE_ARROW;
+          { return KtTokens.DOUBLE_ARROW;
           }
         case 121: break;
         case 86: 
-          { return JetTokens.TRUE_KEYWORD ;
+          { return KtTokens.TRUE_KEYWORD ;
           }
         case 122: break;
         case 37: 
-          { return JetTokens.FIELD_IDENTIFIER;
+          { return KtTokens.FIELD_IDENTIFIER;
           }
         case 123: break;
         case 59: 
-          { return JetTokens.ANDAND    ;
+          { return KtTokens.ANDAND    ;
           }
         case 124: break;
         case 65: 
-          { pushState(LONG_TEMPLATE_ENTRY); return JetTokens.LONG_TEMPLATE_ENTRY_START;
+          { pushState(LONG_TEMPLATE_ENTRY); return KtTokens.LONG_TEMPLATE_ENTRY_START;
           }
         case 125: break;
         case 36: 
-          { return JetTokens.FLOAT_LITERAL;
+          { return KtTokens.FLOAT_LITERAL;
           }
         case 126: break;
         case 38: 
-          { return JetTokens.EOL_COMMENT;
+          { return KtTokens.EOL_COMMENT;
           }
         case 127: break;
         case 89: 
-          { return JetTokens.WHEN_KEYWORD ;
+          { return KtTokens.WHEN_KEYWORD ;
           }
         case 128: break;
         case 74: 
-          { pushState(RAW_STRING); return JetTokens.OPEN_QUOTE;
+          { pushState(RAW_STRING); return KtTokens.OPEN_QUOTE;
           }
         case 129: break;
         case 21: 
-          { return JetTokens.COLON     ;
+          { return KtTokens.COLON     ;
           }
         case 130: break;
         case 57: 
-          { return JetTokens.LTEQ      ;
+          { return KtTokens.LTEQ      ;
           }
         case 131: break;
         case 46: 
-          { return JetTokens.ARROW     ;
+          { return KtTokens.ARROW     ;
           }
         case 132: break;
         case 32: 
-          { popState(); return JetTokens.IDENTIFIER;
+          { popState(); return KtTokens.IDENTIFIER;
           }
         case 133: break;
         case 22: 
-          { return JetTokens.LBRACKET  ;
+          { return KtTokens.LBRACKET  ;
           }
         case 134: break;
         case 69: 
-          { yypushback(2); return JetTokens.INTEGER_LITERAL;
+          { yypushback(2); return KtTokens.INTEGER_LITERAL;
           }
         case 135: break;
         case 10: 
-          { return JetTokens.CHARACTER_LITERAL;
+          { return KtTokens.CHARACTER_LITERAL;
           }
         case 136: break;
         case 80: 
-          { return JetTokens.VAR_KEYWORD ;
+          { return KtTokens.VAR_KEYWORD ;
           }
         case 137: break;
         case 58: 
-          { return JetTokens.GTEQ      ;
+          { return KtTokens.GTEQ      ;
           }
         case 138: break;
         case 2: 
-          { return JetTokens.INTEGER_LITERAL;
+          { return KtTokens.INTEGER_LITERAL;
           }
         case 139: break;
         case 13: 
-          { return JetTokens.RBRACE    ;
+          { return KtTokens.RBRACE    ;
           }
         case 140: break;
         case 95: 
-          { return JetTokens.CLASS_KEYWORD ;
+          { return KtTokens.CLASS_KEYWORD ;
           }
         case 141: break;
         case 75: 
-          { return JetTokens.TRY_KEYWORD ;
+          { return KtTokens.TRY_KEYWORD ;
           }
         case 142: break;
         case 7: 
-          { return JetTokens.EXCL      ;
+          { return KtTokens.EXCL      ;
           }
         case 143: break;
         case 42: 
-          { return JetTokens.EXCLEQ    ;
+          { return KtTokens.EXCLEQ    ;
           }
         case 144: break;
         case 45: 
-          { return JetTokens.MINUSEQ   ;
+          { return KtTokens.MINUSEQ   ;
           }
         case 145: break;
         case 100: 
-          { return JetTokens.PACKAGE_KEYWORD ;
+          { return KtTokens.PACKAGE_KEYWORD ;
           }
         case 146: break;
         case 92: 
-          { return JetTokens.THROW_KEYWORD ;
+          { return KtTokens.THROW_KEYWORD ;
           }
         case 147: break;
         case 93: 
-          { return JetTokens.SUPER_KEYWORD ;
+          { return KtTokens.SUPER_KEYWORD ;
           }
         case 148: break;
         case 68: 
@@ -1061,47 +1061,47 @@ class _JetLexer implements FlexLexer {
           }
         case 149: break;
         case 97: 
-          { return JetTokens.WHILE_KEYWORD ;
+          { return KtTokens.WHILE_KEYWORD ;
           }
         case 150: break;
         case 44: 
-          { return JetTokens.MINUSMINUS;
+          { return KtTokens.MINUSMINUS;
           }
         case 151: break;
         case 101: 
-          { return JetTokens.CONTINUE_KEYWORD ;
+          { return KtTokens.CONTINUE_KEYWORD ;
           }
         case 152: break;
         case 72: 
-          { return JetTokens.NOT_IN;
+          { return KtTokens.NOT_IN;
           }
         case 153: break;
         case 63: 
-          { return JetTokens.DOUBLE_SEMICOLON;
+          { return KtTokens.DOUBLE_SEMICOLON;
           }
         case 154: break;
         case 5: 
-          { return JetTokens.DIV       ;
+          { return KtTokens.DIV       ;
           }
         case 155: break;
         case 82: 
           { int length = yytext().length();
                                     if (length <= 3) { // closing """
                                         popState();
-                                        return JetTokens.CLOSING_QUOTE;
+                                        return KtTokens.CLOSING_QUOTE;
                                     }
                                     else { // some quotes at the end of a string, e.g. """ "foo""""
                                         yypushback(3); // return the closing quotes (""") to the stream
-                                        return JetTokens.REGULAR_STRING_PART;
+                                        return KtTokens.REGULAR_STRING_PART;
                                     }
           }
         case 156: break;
         case 29: 
-          { return JetTokens.REGULAR_STRING_PART;
+          { return KtTokens.REGULAR_STRING_PART;
           }
         case 157: break;
         case 16: 
-          { return JetTokens.QUEST     ;
+          { return KtTokens.QUEST     ;
           }
         case 158: break;
         case 70: 
@@ -1111,23 +1111,23 @@ class _JetLexer implements FlexLexer {
           }
         case 159: break;
         case 60: 
-          { return JetTokens.OROR      ;
+          { return KtTokens.OROR      ;
           }
         case 160: break;
         case 20: 
-          { return JetTokens.PERC      ;
+          { return KtTokens.PERC      ;
           }
         case 161: break;
         case 73: 
-          { return JetTokens.EXCLEQEQEQ;
+          { return KtTokens.EXCLEQEQEQ;
           }
         case 162: break;
         case 61: 
-          { return JetTokens.PERCEQ    ;
+          { return KtTokens.PERCEQ    ;
           }
         case 163: break;
         case 43: 
-          { return JetTokens.RANGE     ;
+          { return KtTokens.RANGE     ;
           }
         case 164: break;
         case 1: 
@@ -1137,23 +1137,23 @@ class _JetLexer implements FlexLexer {
         case 64: 
           { pushState(SHORT_TEMPLATE_ENTRY);
                                                         yypushback(yylength() - 1);
-                                                        return JetTokens.SHORT_TEMPLATE_ENTRY_START;
+                                                        return KtTokens.SHORT_TEMPLATE_ENTRY_START;
           }
         case 166: break;
         case 71: 
-          { return JetTokens.NOT_IS;
+          { return KtTokens.NOT_IS;
           }
         case 167: break;
         case 14: 
-          { return JetTokens.MUL       ;
+          { return KtTokens.MUL       ;
           }
         case 168: break;
         case 23: 
-          { return JetTokens.RBRACKET  ;
+          { return KtTokens.RBRACKET  ;
           }
         case 169: break;
         case 56: 
-          { return JetTokens.PLUSPLUS  ;
+          { return KtTokens.PLUSPLUS  ;
           }
         case 170: break;
         case 39: 
@@ -1163,51 +1163,51 @@ class _JetLexer implements FlexLexer {
           }
         case 171: break;
         case 85: 
-          { return JetTokens.THIS_KEYWORD ;
+          { return KtTokens.THIS_KEYWORD ;
           }
         case 172: break;
         case 8: 
-          { return JetTokens.DOT       ;
+          { return KtTokens.DOT       ;
           }
         case 173: break;
         case 26: 
-          { return JetTokens.SEMICOLON ;
+          { return KtTokens.SEMICOLON ;
           }
         case 174: break;
         case 49: 
-          { return JetTokens.IF_KEYWORD ;
+          { return KtTokens.IF_KEYWORD ;
           }
         case 175: break;
         case 66: 
-          { return JetTokens.ESCAPE_SEQUENCE;
+          { return KtTokens.ESCAPE_SEQUENCE;
           }
         case 176: break;
         case 31: 
-          { popState(); return JetTokens.CLOSING_QUOTE;
+          { popState(); return KtTokens.CLOSING_QUOTE;
           }
         case 177: break;
         case 15: 
-          { return JetTokens.EQ        ;
+          { return KtTokens.EQ        ;
           }
         case 178: break;
         case 28: 
-          { return JetTokens.AT        ;
+          { return KtTokens.AT        ;
           }
         case 179: break;
         case 76: 
-          { return JetTokens.AS_SAFE;
+          { return KtTokens.AS_SAFE;
           }
         case 180: break;
         case 24: 
-          { return JetTokens.LPAR      ;
+          { return KtTokens.LPAR      ;
           }
         case 181: break;
         case 9: 
-          { return JetTokens.MINUS     ;
+          { return KtTokens.MINUS     ;
           }
         case 182: break;
         case 94: 
-          { return JetTokens.FALSE_KEYWORD ;
+          { return KtTokens.FALSE_KEYWORD ;
           }
         case 183: break;
         case 67: 
@@ -1215,89 +1215,89 @@ class _JetLexer implements FlexLexer {
           }
         case 184: break;
         case 77: 
-          { return JetTokens.FUN_KEYWORD ;
+          { return KtTokens.FUN_KEYWORD ;
           }
         case 185: break;
         case 47: 
-          { return JetTokens.IS_KEYWORD ;
+          { return KtTokens.IS_KEYWORD ;
           }
         case 186: break;
         case 30: 
-          { popState(); yypushback(1); return JetTokens.DANGLING_NEWLINE;
+          { popState(); yypushback(1); return KtTokens.DANGLING_NEWLINE;
           }
         case 187: break;
         case 34: 
-          { lBraceCount++; return JetTokens.LBRACE;
+          { lBraceCount++; return KtTokens.LBRACE;
           }
         case 188: break;
         case 84: 
-          { yypushback(3); return JetTokens.EXCL;
+          { yypushback(3); return KtTokens.EXCL;
           }
         case 189: break;
         case 40: 
-          { return JetTokens.DIVEQ     ;
+          { return KtTokens.DIVEQ     ;
           }
         case 190: break;
         case 87: 
-          { return JetTokens.ELSE_KEYWORD ;
+          { return KtTokens.ELSE_KEYWORD ;
           }
         case 191: break;
         case 51: 
-          { return JetTokens.AS_KEYWORD ;
+          { return KtTokens.AS_KEYWORD ;
           }
         case 192: break;
         case 48: 
-          { return JetTokens.IN_KEYWORD ;
+          { return KtTokens.IN_KEYWORD ;
           }
         case 193: break;
         case 53: 
-          { return JetTokens.EQEQ      ;
+          { return KtTokens.EQEQ      ;
           }
         case 194: break;
         case 81: 
-          { return JetTokens.EQEQEQ    ;
+          { return KtTokens.EQEQEQ    ;
           }
         case 195: break;
         case 79: 
-          { return JetTokens.VAL_KEYWORD ;
+          { return KtTokens.VAL_KEYWORD ;
           }
         case 196: break;
         case 90: 
-          { return JetTokens.CAPITALIZED_THIS_KEYWORD ;
+          { return KtTokens.CAPITALIZED_THIS_KEYWORD ;
           }
         case 197: break;
         case 50: 
-          { return JetTokens.MULTEQ    ;
+          { return KtTokens.MULTEQ    ;
           }
         case 198: break;
         case 41: 
           { if (zzCurrentPos == 0) {
-                return JetTokens.SHEBANG_COMMENT;
+                return KtTokens.SHEBANG_COMMENT;
             }
             else {
                 yypushback(yylength() - 1);
-                return JetTokens.HASH;
+                return KtTokens.HASH;
             }
           }
         case 199: break;
         case 12: 
-          { return JetTokens.LBRACE    ;
+          { return KtTokens.LBRACE    ;
           }
         case 200: break;
         case 99: 
-          { return JetTokens.OBJECT_KEYWORD ;
+          { return KtTokens.OBJECT_KEYWORD ;
           }
         case 201: break;
         case 96: 
-          { return JetTokens.BREAK_KEYWORD ;
+          { return KtTokens.BREAK_KEYWORD ;
           }
         case 202: break;
         case 83: 
-          { return JetTokens.BLOCK_COMMENT;
+          { return KtTokens.BLOCK_COMMENT;
           }
         case 203: break;
         case 62: 
-          { return JetTokens.COLONCOLON;
+          { return KtTokens.COLONCOLON;
           }
         case 204: break;
         case 33: 
@@ -1305,7 +1305,7 @@ class _JetLexer implements FlexLexer {
           }
         case 205: break;
         case 6: 
-          { return JetTokens.HASH      ;
+          { return KtTokens.HASH      ;
           }
         case 206: break;
         default:

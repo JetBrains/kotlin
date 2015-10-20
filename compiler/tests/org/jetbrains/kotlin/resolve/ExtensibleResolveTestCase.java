@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -53,10 +53,10 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
     protected void doTest(@NonNls String filePath) throws Exception {
         File file = new File(filePath);
         String text = JetTestUtils.doLoadFile(file);
-        List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
+        List<KtFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactoryNoModules<KtFile>() {
             @NotNull
             @Override
-            public JetFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+            public KtFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
         });

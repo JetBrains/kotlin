@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.backingFieldRefe
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateFunctionAsEcma5PropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.addParameter
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.addStatement
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPropertyAccessor
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 public fun translateAccessors(
         descriptor: PropertyDescriptor,
-        declaration: JetProperty?,
+        declaration: KtProperty?,
         result: MutableList<JsPropertyInitializer>,
         context: TranslationContext
 ) {
@@ -85,7 +85,7 @@ public fun MutableList<JsPropertyInitializer>.addGetterAndSetter(
 
 private class PropertyTranslator(
         val descriptor: PropertyDescriptor,
-        val declaration: JetProperty?,
+        val declaration: KtProperty?,
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
@@ -105,11 +105,11 @@ private class PropertyTranslator(
 
     private fun hasCustomSetter() = declaration?.getSetter() != null && getCustomSetterDeclaration().hasBody()
 
-    private fun getCustomGetterDeclaration(): JetPropertyAccessor =
+    private fun getCustomGetterDeclaration(): KtPropertyAccessor =
             declaration?.getGetter() ?:
                     throw IllegalStateException("declaration and getter should not be null descriptor=${descriptor} declaration=${declaration}")
 
-    private fun getCustomSetterDeclaration(): JetPropertyAccessor =
+    private fun getCustomSetterDeclaration(): KtPropertyAccessor =
             declaration?.getSetter() ?:
                     throw IllegalStateException("declaration and setter should not be null descriptor=${descriptor} declaration=${declaration}")
 
@@ -207,7 +207,7 @@ private class PropertyTranslator(
     private fun generateDefaultAccessor(accessorDescriptor: PropertyAccessorDescriptor, function: JsFunction): JsPropertyInitializer =
             translateFunctionAsEcma5PropertyDescriptor(function, accessorDescriptor, context())
 
-    private fun translateCustomAccessor(expression: JetPropertyAccessor): JsPropertyInitializer =
+    private fun translateCustomAccessor(expression: KtPropertyAccessor): JsPropertyInitializer =
             Translation.functionTranslator(expression, context()).translateAsEcma5PropertyDescriptor()
 
     private fun accessorDescription(accessorDescriptor: PropertyAccessorDescriptor): String {

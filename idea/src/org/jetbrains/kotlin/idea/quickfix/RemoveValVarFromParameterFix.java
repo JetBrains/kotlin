@@ -25,14 +25,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
-public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<JetParameter> {
+public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtParameter> {
     private final String varOrVal;
 
-    public RemoveValVarFromParameterFix(@NotNull JetParameter element) {
+    public RemoveValVarFromParameterFix(@NotNull KtParameter element) {
         super(element);
         PsiElement valOrVarNode = element.getValOrVarKeyword();
         assert valOrVarNode != null : "Val or var node not found for " + PsiUtilsKt.getElementTextWithContext(element);
@@ -52,7 +52,7 @@ public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<JetParame
     }
 
     @Override
-    protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
+    protected void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
         PsiElement keyword = getElement().getValOrVarKeyword();
         if (keyword == null) return;
         keyword.delete();
@@ -64,7 +64,7 @@ public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<JetParame
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                return new RemoveValVarFromParameterFix((JetParameter) diagnostic.getPsiElement().getParent());
+                return new RemoveValVarFromParameterFix((KtParameter) diagnostic.getPsiElement().getParent());
             }
         };
     }

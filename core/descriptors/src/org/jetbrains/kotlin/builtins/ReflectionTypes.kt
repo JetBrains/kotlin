@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.*
 import java.util.*
@@ -32,7 +32,7 @@ import java.util.*
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
 public class ReflectionTypes(private val module: ModuleDescriptor) {
-    private val kotlinReflectScope: JetScope by lazy {
+    private val kotlinReflectScope: KtScope by lazy {
         module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
     }
 
@@ -57,22 +57,22 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public val kMutableProperty0: ClassDescriptor by ClassLookup
     public val kMutableProperty1: ClassDescriptor by ClassLookup
 
-    public fun getKClassType(annotations: Annotations, type: JetType): JetType {
+    public fun getKClassType(annotations: Annotations, type: KtType): KtType {
         val descriptor = kClass
         if (ErrorUtils.isError(descriptor)) {
             return descriptor.defaultType
         }
 
         val arguments = listOf(TypeProjectionImpl(Variance.INVARIANT, type))
-        return JetTypeImpl.create(annotations, descriptor, false, arguments)
+        return KtTypeImpl.create(annotations, descriptor, false, arguments)
     }
 
     public fun getKFunctionType(
             annotations: Annotations,
-            receiverType: JetType?,
-            parameterTypes: List<JetType>,
-            returnType: JetType
-    ): JetType {
+            receiverType: KtType?,
+            parameterTypes: List<KtType>,
+            returnType: KtType
+    ): KtType {
         val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
 
         val classDescriptor = getKFunction(arguments.size() - 1 /* return type */)
@@ -81,10 +81,10 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             return classDescriptor.defaultType
         }
 
-        return JetTypeImpl.create(annotations, classDescriptor, false, arguments)
+        return KtTypeImpl.create(annotations, classDescriptor, false, arguments)
     }
 
-    public fun getKPropertyType(annotations: Annotations, receiverType: JetType?, returnType: JetType, mutable: Boolean): JetType {
+    public fun getKPropertyType(annotations: Annotations, receiverType: KtType?, returnType: KtType, mutable: Boolean): KtType {
         val classDescriptor =
                 when {
                     receiverType != null -> when {
@@ -106,7 +106,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             arguments.add(TypeProjectionImpl(receiverType))
         }
         arguments.add(TypeProjectionImpl(returnType))
-        return JetTypeImpl.create(annotations, classDescriptor, false, arguments)
+        return KtTypeImpl.create(annotations, classDescriptor, false, arguments)
     }
 
     companion object {
@@ -115,21 +115,21 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
         }
 
-        public fun isCallableType(type: JetType): Boolean =
+        public fun isCallableType(type: KtType): Boolean =
                 KotlinBuiltIns.isFunctionOrExtensionFunctionType(type) || isKCallableType(type)
 
-        private fun isKCallableType(type: JetType): Boolean =
+        private fun isKCallableType(type: KtType): Boolean =
                 isExactKCallableType(type) ||
                 type.constructor.supertypes.any { isKCallableType(it) }
 
-        private fun isExactKCallableType(type: JetType): Boolean {
+        private fun isExactKCallableType(type: KtType): Boolean {
             val descriptor = type.constructor.declarationDescriptor
             return descriptor is ClassDescriptor && DescriptorUtils.getFqName(descriptor) == KotlinBuiltIns.FQ_NAMES.kCallable
         }
 
-        public fun createKPropertyStarType(module: ModuleDescriptor): JetType? {
+        public fun createKPropertyStarType(module: ModuleDescriptor): KtType? {
             val kPropertyClass = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.kProperty) ?: return null
-            return JetTypeImpl.create(
+            return KtTypeImpl.create(
                     Annotations.EMPTY, kPropertyClass, false,
                     listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single()))
             )

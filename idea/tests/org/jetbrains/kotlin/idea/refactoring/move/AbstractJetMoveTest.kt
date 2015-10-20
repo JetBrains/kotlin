@@ -51,8 +51,8 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
@@ -246,7 +246,7 @@ enum class MoveAction {
     MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val project = mainFile.getProject()
-            val elementToMove = elementAtCaret!!.getNonStrictParentOfType<JetNamedDeclaration>()!!
+            val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtNamedDeclaration>()!!
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
                 DeferredJetFileKotlinMoveTarget(project, FqName(packageName)) {
@@ -254,7 +254,7 @@ enum class MoveAction {
                     createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
-                JetFileKotlinMoveTarget(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as JetFile)
+                JetFileKotlinMoveTarget(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
             }
 
             val options = MoveKotlinTopLevelDeclarationsOptions(listOf(elementToMove), moveTarget)
@@ -264,7 +264,7 @@ enum class MoveAction {
 
     CHANGE_PACKAGE_DIRECTIVE {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
-            KotlinChangePackageRefactoring(mainFile as JetFile).run(FqName(config.getString("newPackageName")))
+            KotlinChangePackageRefactoring(mainFile as KtFile).run(FqName(config.getString("newPackageName")))
         }
     },
 

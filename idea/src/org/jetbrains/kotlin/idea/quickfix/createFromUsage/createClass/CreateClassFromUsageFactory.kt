@@ -20,9 +20,9 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 
-abstract class CreateClassFromUsageFactory<E : JetElement> : KotlinIntentionActionFactoryWithDelegate<E, ClassInfo>() {
+abstract class CreateClassFromUsageFactory<E : KtElement> : KotlinIntentionActionFactoryWithDelegate<E, ClassInfo>() {
     protected abstract fun getPossibleClassKinds(element: E, diagnostic: Diagnostic): List<ClassKind>
 
     override fun createFixes(

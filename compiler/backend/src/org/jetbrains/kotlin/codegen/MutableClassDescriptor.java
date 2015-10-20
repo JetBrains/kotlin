@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -41,7 +41,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private Visibility visibility;
     private TypeConstructor typeConstructor;
     private List<TypeParameterDescriptor> typeParameters;
-    private final Collection<JetType> supertypes = new ArrayList<JetType>();
+    private final Collection<KtType> supertypes = new ArrayList<KtType>();
 
     public MutableClassDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -116,7 +116,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         return typeConstructor;
     }
 
-    public void addSupertype(@NotNull JetType supertype) {
+    public void addSupertype(@NotNull KtType supertype) {
         assert !supertype.isError() : "Error types must be filtered out in DescriptorResolver";
         if (TypeUtils.getClassDescriptor(supertype) != null) {
             // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE
@@ -160,14 +160,14 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     @Override
     @NotNull
-    public JetScope getUnsubstitutedMemberScope() {
-        return JetScope.Empty.INSTANCE$; // used for getDefaultType
+    public KtScope getUnsubstitutedMemberScope() {
+        return KtScope.Empty.INSTANCE$; // used for getDefaultType
     }
 
     @NotNull
     @Override
-    public JetScope getStaticScope() {
-        return JetScope.Empty.INSTANCE$;
+    public KtScope getStaticScope() {
+        return KtScope.Empty.INSTANCE$;
     }
 
     @Override

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
@@ -81,7 +81,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final ExplicitReceiverKind explicitReceiverKind;
     private final TypeSubstitutor knownTypeParametersSubstitutor;
 
-    private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
+    private final Map<TypeParameterDescriptor, KtType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
     private final Map<ValueArgument, ArgumentMatchImpl> argumentToParameterMap = Maps.newHashMap();
@@ -287,7 +287,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @NotNull
     @Override
-    public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
+    public Map<TypeParameterDescriptor, KtType> getTypeArguments() {
         return typeArguments;
     }
 

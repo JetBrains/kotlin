@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.Printer
 
 /**
  * Introduces a simple wrapper for internal scope.
  */
-public abstract class AbstractScopeAdapter : JetScope {
-    protected abstract val workerScope: JetScope
+public abstract class AbstractScopeAdapter : KtScope {
+    protected abstract val workerScope: KtScope
 
-    public fun getActualScope(): JetScope =
+    public fun getActualScope(): KtScope =
             if (workerScope is AbstractScopeAdapter)
                 (workerScope as AbstractScopeAdapter).getActualScope()
             else
@@ -54,19 +54,19 @@ public abstract class AbstractScopeAdapter : JetScope {
         return workerScope.getProperties(name, location)
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         return workerScope.getSyntheticExtensionProperties(receiverTypes, name, location)
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location)
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<JetType>): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KtType>): Collection<PropertyDescriptor> {
         return workerScope.getSyntheticExtensionProperties(receiverTypes)
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<JetType>): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>): Collection<FunctionDescriptor> {
         return workerScope.getSyntheticExtensionFunctions(receiverTypes)
     }
 

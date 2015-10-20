@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
@@ -37,8 +37,8 @@ public class JetPrimaryConstructorParameterTableModel extends JetCallableParamet
               context,
               new ValVarColumn(),
               new NameColumn(context.getProject()),
-              new TypeColumn(context.getProject(), JetFileType.INSTANCE),
-              new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(), JetFileType.INSTANCE));
+              new TypeColumn(context.getProject(), KotlinFileType.INSTANCE),
+              new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(), KotlinFileType.INSTANCE));
     }
 
     public static boolean isValVarColumn(ColumnInfo column) {

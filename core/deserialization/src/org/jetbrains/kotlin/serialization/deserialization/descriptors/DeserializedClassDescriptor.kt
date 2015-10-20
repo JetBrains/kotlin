@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -134,8 +134,8 @@ public class DeserializedClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()
 
-    private fun computeSupertypes(): Collection<JetType> {
-        val result = ArrayList<JetType>(classProto.supertypeCount)
+    private fun computeSupertypes(): Collection<KtType> {
+        val result = ArrayList<KtType>(classProto.supertypeCount)
         val unresolved = ArrayList<DeserializedType>(0)
 
         for (supertypeProto in classProto.supertypes(c.typeTable)) {
@@ -188,7 +188,7 @@ public class DeserializedClassDescriptor(
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.functionList, classProto.propertyList) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
         private val allDescriptors = c.storageManager.createLazyValue {
-            computeDescriptors(DescriptorKindFilter.ALL, JetScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+            computeDescriptors(DescriptorKindFilter.ALL, KtScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         }
 
         override fun getDescriptors(kindFilter: DescriptorKindFilter,

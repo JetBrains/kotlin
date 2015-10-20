@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsics;
 import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntrinsic;
 import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntrinsics;
-import org.jetbrains.kotlin.psi.JetBinaryExpression;
+import org.jetbrains.kotlin.psi.KtBinaryExpression;
 
 /**
  * Provides mechanism to substitute method calls /w native constructs directly.
@@ -38,7 +38,7 @@ public final class Intrinsics {
 
     @NotNull
     public BinaryOperationIntrinsic getBinaryOperationIntrinsic(
-            @NotNull JetBinaryExpression expression,
+            @NotNull KtBinaryExpression expression,
             @NotNull TranslationContext context
     ) {
         return binaryOperationIntrinsics.getIntrinsic(expression, context);

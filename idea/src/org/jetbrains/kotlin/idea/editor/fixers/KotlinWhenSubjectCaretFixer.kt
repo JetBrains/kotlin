@@ -20,11 +20,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.KtWhenExpression
 
 public class KotlinWhenSubjectCaretFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
-        if (element !is JetWhenExpression) return
+        if (element !is KtWhenExpression) return
 
         val lParen = element.getLeftParenthesis()
         val rParen = element.getRightParenthesis()

@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.search
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
-import org.jetbrains.kotlin.idea.references.JetMultiDeclarationReference
+import org.jetbrains.kotlin.idea.references.KtMultiDeclarationReference
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.junit.Assert
 import java.io.File
@@ -33,7 +33,7 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
     }
 
     public fun testPlus() {
-        val refs = doTest<JetFunction>()
+        val refs = doTest<KtFunction>()
         Assert.assertEquals(3, refs.size())
         Assert.assertEquals("+", refs[0].getCanonicalText())
         Assert.assertEquals("plus", refs[1].getCanonicalText())
@@ -41,11 +41,11 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
     }
 
     public fun testParam() {
-        val refs = doTest<JetParameter>()
+        val refs = doTest<KtParameter>()
         Assert.assertEquals(3, refs.size())
         Assert.assertEquals("n", refs[0].getCanonicalText())
         Assert.assertEquals("component1", refs[1].getCanonicalText())
-        Assert.assertTrue(refs[2] is JetMultiDeclarationReference)
+        Assert.assertTrue(refs[2] is KtMultiDeclarationReference)
     }
 
     private inline fun doTest<reified T: PsiElement>(): List<PsiReference> {

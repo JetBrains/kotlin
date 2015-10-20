@@ -28,10 +28,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.KtDeclaration;
 
 // Copied from com.intellij.psi.impl.light.LightField
-public abstract class KotlinLightField<T extends JetDeclaration, D extends PsiField> extends LightElement
+public abstract class KotlinLightField<T extends KtDeclaration, D extends PsiField> extends LightElement
         implements PsiField, KotlinLightElement<T, D> {
     private final T origin;
     private final D delegate;

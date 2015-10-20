@@ -27,21 +27,21 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.JetCallElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 public class AddFunctionParametersFix(
-        private val callElement: JetCallElement,
+        private val callElement: KtCallElement,
         functionDescriptor: FunctionDescriptor,
         private val hasTypeMismatches: Boolean) : ChangeFunctionSignatureFix(callElement, functionDescriptor) {
-    private val typesToShorten = ArrayList<JetType>()
+    private val typesToShorten = ArrayList<KtType>()
 
     override fun getText(): String {
         val parameters = functionDescriptor.valueParameters
@@ -74,7 +74,7 @@ public class AddFunctionParametersFix(
         return newParametersCnt > 0
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         runChangeSignature(project, functionDescriptor, addParameterConfiguration(), callElement, text)
     }
 
@@ -98,7 +98,7 @@ public class AddFunctionParametersFix(
                             }
                             val parameterType = parameters.get(i).type
 
-                            if (argumentType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
+                            if (argumentType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
                                 it.parameters.get(i).currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(argumentType)
                                 typesToShorten.add(argumentType)
                             }
@@ -142,7 +142,7 @@ public class AddFunctionParametersFix(
 
     private fun hasOtherUsages(function: PsiElement): Boolean {
         return ReferencesSearch.search(function).any {
-            val call = it.element.getParentOfType<JetCallElement>(false)
+            val call = it.element.getParentOfType<KtCallElement>(false)
             call != null && callElement != call
         }
     }

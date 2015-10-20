@@ -42,26 +42,26 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
-public class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<JetCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
+public class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<KtCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
 
-public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIntention<JetCallableDeclaration>(
+public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIntention<KtCallableDeclaration>(
         javaClass(), "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'Deprecated' annotation"
 ) {
     private class ReplaceWith(val expression: String, vararg val imports: String)
 
-    override fun applicabilityRange(element: JetCallableDeclaration): TextRange? {
+    override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         val annotationEntry = element.deprecatedAnnotationWithNoReplaceWith() ?: return null
         if (element.suggestReplaceWith() == null) return null
         return annotationEntry.getTextRange()
     }
 
-    override fun applyTo(element: JetCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
         val replaceWith = element.suggestReplaceWith()!!
 
         assert('\n' !in replaceWith.expression && '\r' !in replaceWith.expression) { "Formatted expression text should not contain \\n or \\r" }
 
         val annotationEntry = element.deprecatedAnnotationWithNoReplaceWith()!!
-        val psiFactory = JetPsiFactory(element)
+        val psiFactory = KtPsiFactory(element)
 
         var escapedText = replaceWith.expression
                 .replace("\\", "\\\\")
@@ -96,13 +96,13 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
 
         var argument = psiFactory.createArgument(psiFactory.createExpression(argumentText))
         argument = annotationEntry.getValueArgumentList()!!.addArgument(argument)
-        argument = ShortenReferences.DEFAULT.process(argument) as JetValueArgument
+        argument = ShortenReferences.DEFAULT.process(argument) as KtValueArgument
 
         PsiDocumentManager.getInstance(argument.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
         editor.moveCaret(argument.getTextOffset())
     }
 
-    private fun JetCallableDeclaration.deprecatedAnnotationWithNoReplaceWith(): JetAnnotationEntry? {
+    private fun KtCallableDeclaration.deprecatedAnnotationWithNoReplaceWith(): KtAnnotationEntry? {
         val bindingContext = this.analyze()
 //        val deprecatedConstructor = KotlinBuiltIns.getInstance().getDeprecatedAnnotation().getUnsubstitutedPrimaryConstructor()
         for (entry in getAnnotationEntries()) {
@@ -123,11 +123,11 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         return null
     }
 
-    private fun JetCallableDeclaration.suggestReplaceWith(): ReplaceWith? {
+    private fun KtCallableDeclaration.suggestReplaceWith(): ReplaceWith? {
         val replacementExpression = when (this) {
-            is JetNamedFunction -> replacementExpressionFromBody()
+            is KtNamedFunction -> replacementExpressionFromBody()
 
-            is JetProperty -> {
+            is KtProperty -> {
                 if (isVar()) return null //TODO
                 getGetter()?.replacementExpressionFromBody()
             }
@@ -136,16 +136,16 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         } ?: return null
 
         var isGood = true
-        replacementExpression.accept(object: JetVisitorVoid(){
-            override fun visitReturnExpression(expression: JetReturnExpression) {
+        replacementExpression.accept(object: KtVisitorVoid(){
+            override fun visitReturnExpression(expression: KtReturnExpression) {
                 isGood = false
             }
 
-            override fun visitDeclaration(dcl: JetDeclaration) {
+            override fun visitDeclaration(dcl: KtDeclaration) {
                 isGood = false
             }
 
-            override fun visitBlockExpression(expression: JetBlockExpression) {
+            override fun visitBlockExpression(expression: KtBlockExpression) {
                 if (expression.getStatements().size() > 1) {
                     isGood = false
                     return
@@ -153,14 +153,14 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
                 super.visitBlockExpression(expression)
             }
 
-            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+            override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val target = expression.analyze()[BindingContext.REFERENCE_TARGET, expression] as? DeclarationDescriptorWithVisibility ?: return
                 if (Visibilities.isPrivate((target.getVisibility()))) {
                     isGood = false
                 }
             }
 
-            override fun visitJetElement(element: JetElement) {
+            override fun visitJetElement(element: KtElement) {
                 element.acceptChildren(this)
             }
         })
@@ -170,36 +170,36 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
 
         val text = replacementExpression.getText()
         var expression = try {
-            JetPsiFactory(this).createExpression(text.replace('\n', ' '))
+            KtPsiFactory(this).createExpression(text.replace('\n', ' '))
         }
         catch(e: Throwable) { // does not parse in one line
             return null
         }
-        expression = CodeStyleManager.getInstance(getProject()).reformat(expression, true) as JetExpression
+        expression = CodeStyleManager.getInstance(getProject()).reformat(expression, true) as KtExpression
 
         return ReplaceWith(expression.getText(), *extractImports(replacementExpression).toTypedArray())
     }
 
-    private fun JetDeclarationWithBody.replacementExpressionFromBody(): JetExpression? {
+    private fun KtDeclarationWithBody.replacementExpressionFromBody(): KtExpression? {
         val body = getBodyExpression() ?: return null
         if (!hasBlockBody()) return body
-        val block = body as? JetBlockExpression ?: return null
-        val statement = block.getStatements().singleOrNull() as? JetExpression ?: return null
+        val block = body as? KtBlockExpression ?: return null
+        val statement = block.getStatements().singleOrNull() as? KtExpression ?: return null
         val returnsUnit = (analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor)?.getReturnType()?.isUnit() ?: return null
         return when (statement) {
-            is JetReturnExpression -> statement.getReturnedExpression()
+            is KtReturnExpression -> statement.getReturnedExpression()
             else -> if (returnsUnit) statement else null
         }
     }
 
-    private fun extractImports(expression: JetExpression): Collection<String> {
+    private fun extractImports(expression: KtExpression): Collection<String> {
         val file = expression.getContainingJetFile()
         val currentPackageFqName = file.getPackageFqName()
         val importHelper = ImportInsertHelper.getInstance(expression.getProject())
 
         val result = ArrayList<String>()
-        expression.accept(object : JetVisitorVoid(){
-            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+        expression.accept(object : KtVisitorVoid(){
+            override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val bindingContext = expression.analyze()
                 val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression]
                              ?: bindingContext[BindingContext.REFERENCE_TARGET, expression]
@@ -213,7 +213,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
                 }
             }
 
-            override fun visitJetElement(element: JetElement) {
+            override fun visitJetElement(element: KtElement) {
                 element.acceptChildren(this)
             }
         })

@@ -22,10 +22,10 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetDynamicType;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
-import org.jetbrains.kotlin.psi.JetTypeParameter;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDynamicType;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtTypeParameter;
 import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
@@ -35,7 +35,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
+    public void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression) {
         if (NameHighlighter.namesHighlightingEnabled) {
             DeclarationDescriptor referenceTarget = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
             if (referenceTarget instanceof ConstructorDescriptor) {
@@ -57,13 +57,13 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         }
     }
 
-    private void highlightAnnotation(@NotNull JetSimpleNameExpression expression) {
+    private void highlightAnnotation(@NotNull KtSimpleNameExpression expression) {
         TextRange toHighlight = JetPsiUtilKt.getCalleeHighlightingRange(expression);
         NameHighlighter.highlightName(holder, toHighlight, JetHighlightingColors.ANNOTATION);
     }
 
     @Override
-    public void visitTypeParameter(@NotNull JetTypeParameter parameter) {
+    public void visitTypeParameter(@NotNull KtTypeParameter parameter) {
         PsiElement identifier = parameter.getNameIdentifier();
         if (identifier != null) {
             highlightName(identifier, JetHighlightingColors.TYPE_PARAMETER);
@@ -72,7 +72,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
+    public void visitClassOrObject(@NotNull KtClassOrObject classOrObject) {
         PsiElement identifier = classOrObject.getNameIdentifier();
         ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
         if (identifier != null && classDescriptor != null) {
@@ -82,7 +82,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitDynamicType(@NotNull JetDynamicType type) {
+    public void visitDynamicType(@NotNull KtDynamicType type) {
         // Do nothing: 'dynamic' is highlighted as a keyword
     }
 

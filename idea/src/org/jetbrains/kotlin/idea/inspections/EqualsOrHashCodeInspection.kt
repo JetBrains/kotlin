@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcod
 import org.jetbrains.kotlin.idea.actions.generate.findDeclaredEquals
 import org.jetbrains.kotlin.idea.actions.generate.findDeclaredHashCode
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
-import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
 
@@ -41,7 +41,7 @@ object DeleteEqualsAndHashCodeFix : LocalQuickFix {
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val objectDeclaration = descriptor.psiElement.getStrictParentOfType<JetObjectDeclaration>() ?: return
+        val objectDeclaration = descriptor.psiElement.getStrictParentOfType<KtObjectDeclaration>() ?: return
         val classDescriptor = objectDeclaration.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
         classDescriptor.findDeclaredEquals(false)?.source?.getPsi()?.delete()
         classDescriptor.findDeclaredHashCode(false)?.source?.getPsi()?.delete()
@@ -60,14 +60,14 @@ sealed class GenerateEqualsOrHashCodeFix : LocalQuickFix {
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        KotlinGenerateEqualsAndHashcodeAction().doInvoke(project, null, descriptor.psiElement.parent as JetClass)
+        KotlinGenerateEqualsAndHashcodeAction().doInvoke(project, null, descriptor.psiElement.parent as KtClass)
     }
 }
 
 class EqualsOrHashCodeInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object: JetVisitorVoid() {
-            override fun visitClassOrObject(classOrObject: JetClassOrObject) {
+        return object: KtVisitorVoid() {
+            override fun visitClassOrObject(classOrObject: KtClassOrObject) {
                 val nameIdentifier = classOrObject.nameIdentifier ?: return
                 val classDescriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
                 val hasEquals = classDescriptor.findDeclaredEquals(false) != null

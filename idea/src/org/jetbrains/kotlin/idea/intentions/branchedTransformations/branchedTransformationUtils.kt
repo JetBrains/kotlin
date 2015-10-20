@@ -18,23 +18,23 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
-    val factory = JetPsiFactory(this)
+fun KtWhenCondition.toExpression(subject: KtExpression?): KtExpression {
+    val factory = KtPsiFactory(this)
     when (this) {
-        is JetWhenConditionIsPattern -> {
+        is KtWhenConditionIsPattern -> {
             val op = if (isNegated()) "!is" else "is"
             return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", getTypeReference() ?: "")
         }
 
-        is JetWhenConditionInRange -> {
+        is KtWhenConditionInRange -> {
             val op = getOperationReference().getText()
             return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", getRangeExpression() ?: "")
         }
 
-        is JetWhenConditionWithExpression -> {
+        is KtWhenConditionWithExpression -> {
             return if (subject != null) {
                 factory.createExpressionByPattern("$0 == $1", subject, getExpression() ?: "")
             }
@@ -47,18 +47,18 @@ fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
     }
 }
 
-public fun JetWhenExpression.getSubjectToIntroduce(): JetExpression?  {
+public fun KtWhenExpression.getSubjectToIntroduce(): KtExpression?  {
     if (getSubjectExpression() != null) return null
 
-    var lastCandidate: JetExpression? = null
+    var lastCandidate: KtExpression? = null
     for (entry in getEntries()) {
         val conditions = entry.getConditions()
         if (!entry.isElse() && conditions.isEmpty()) return null
 
         for (condition in conditions) {
-            if (condition !is JetWhenConditionWithExpression) return null
+            if (condition !is KtWhenConditionWithExpression) return null
 
-            val candidate = condition.getExpression()?.getWhenConditionSubjectCandidate() as? JetNameReferenceExpression ?: return null
+            val candidate = condition.getExpression()?.getWhenConditionSubjectCandidate() as? KtNameReferenceExpression ?: return null
 
             if (lastCandidate == null) {
                 lastCandidate = candidate
@@ -73,16 +73,16 @@ public fun JetWhenExpression.getSubjectToIntroduce(): JetExpression?  {
     return lastCandidate
 }
 
-private fun JetExpression?.getWhenConditionSubjectCandidate(): JetExpression? {
+private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? {
     return when(this) {
-        is JetIsExpression -> getLeftHandSide()
+        is KtIsExpression -> getLeftHandSide()
 
-        is JetBinaryExpression -> {
+        is KtBinaryExpression -> {
             val lhs = getLeft()
             val op = getOperationToken()
             when (op) {
-                JetTokens.IN_KEYWORD, JetTokens.NOT_IN -> lhs
-                JetTokens.EQEQ -> lhs as? JetNameReferenceExpression ?: getRight()
+                KtTokens.IN_KEYWORD, KtTokens.NOT_IN -> lhs
+                KtTokens.EQEQ -> lhs as? KtNameReferenceExpression ?: getRight()
                 else -> null
             }
 
@@ -92,10 +92,10 @@ private fun JetExpression?.getWhenConditionSubjectCandidate(): JetExpression? {
     }
 }
 
-public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
+public fun KtWhenExpression.introduceSubject(): KtWhenExpression {
     val subject = getSubjectToIntroduce()!!
 
-    val whenExpression = JetPsiFactory(this).buildExpression {
+    val whenExpression = KtPsiFactory(this).buildExpression {
         appendFixedText("when(").appendExpression(subject).appendFixedText("){\n")
 
         for (entry in getEntries()) {
@@ -108,9 +108,9 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
                 for ((i, condition) in entry.getConditions().withIndex()) {
                     if (i > 0) appendFixedText(",")
 
-                    val conditionExpression = (condition as JetWhenConditionWithExpression).getExpression()
+                    val conditionExpression = (condition as KtWhenConditionWithExpression).getExpression()
                     when (conditionExpression)  {
-                        is JetIsExpression -> {
+                        is KtIsExpression -> {
                             if (conditionExpression.isNegated()) {
                                 appendFixedText("!")
                             }
@@ -118,14 +118,14 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
                             appendNonFormattedText(conditionExpression.getTypeReference()?.getText() ?: "")
                         }
 
-                        is JetBinaryExpression -> {
+                        is KtBinaryExpression -> {
                             val lhs = conditionExpression.getLeft()
                             val rhs = conditionExpression.getRight()
                             val op = conditionExpression.getOperationToken()
                             when (op) {
-                                JetTokens.IN_KEYWORD -> appendFixedText("in ").appendExpression(rhs)
-                                JetTokens.NOT_IN -> appendFixedText("!in ").appendExpression(rhs)
-                                JetTokens.EQEQ -> appendExpression(if (subject.matches(lhs)) rhs else lhs)
+                                KtTokens.IN_KEYWORD -> appendFixedText("in ").appendExpression(rhs)
+                                KtTokens.NOT_IN -> appendFixedText("!in ").appendExpression(rhs)
+                                KtTokens.EQEQ -> appendExpression(if (subject.matches(lhs)) rhs else lhs)
                                 else -> throw IllegalStateException()
                             }
                         }
@@ -141,7 +141,7 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
         }
 
         appendFixedText("}")
-    } as JetWhenExpression
+    } as KtWhenExpression
 
     return replaced(whenExpression)
 }

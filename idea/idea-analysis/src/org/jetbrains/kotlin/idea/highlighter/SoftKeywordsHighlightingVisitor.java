@@ -23,12 +23,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetFunctionLiteral;
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
-import org.jetbrains.kotlin.psi.JetVisitorVoid;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtFunctionLiteral;
+import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.KtVisitorVoid;
 
-class SoftKeywordsHighlightingVisitor extends JetVisitorVoid {
+class SoftKeywordsHighlightingVisitor extends KtVisitorVoid {
     private final AnnotationHolder holder;
 
     SoftKeywordsHighlightingVisitor(AnnotationHolder holder) {
@@ -39,23 +39,23 @@ class SoftKeywordsHighlightingVisitor extends JetVisitorVoid {
     public void visitElement(PsiElement element) {
         if (element instanceof LeafPsiElement) {
             IElementType elementType = ((LeafPsiElement)element).getElementType();
-            if (JetTokens.SOFT_KEYWORDS.contains(elementType)) {
+            if (KtTokens.SOFT_KEYWORDS.contains(elementType)) {
                 TextAttributesKey attributes = JetHighlightingColors.KEYWORD;
-                if (JetTokens.MODIFIER_KEYWORDS.contains(elementType)) {
+                if (KtTokens.MODIFIER_KEYWORDS.contains(elementType)) {
                     attributes = JetHighlightingColors.BUILTIN_ANNOTATION;
                 }
                 holder.createInfoAnnotation(element, null).setTextAttributes(attributes);
             }
-            if (JetTokens.SAFE_ACCESS.equals(elementType)) {
+            if (KtTokens.SAFE_ACCESS.equals(elementType)) {
                 holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.SAFE_ACCESS);
             }
         }
     }
 
     @Override
-    public void visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression) {
+    public void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression) {
         if (ApplicationManager.getApplication().isUnitTestMode()) return;
-        JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
+        KtFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         holder.createInfoAnnotation(functionLiteral.getLBrace(), null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
         PsiElement closingBrace = functionLiteral.getRBrace();
         if (closingBrace != null) {

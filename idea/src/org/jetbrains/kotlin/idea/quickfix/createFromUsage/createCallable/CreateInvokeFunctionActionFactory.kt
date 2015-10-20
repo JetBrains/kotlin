@@ -23,16 +23,16 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetCallExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetCallExpression? {
-        return diagnostic.psiElement.parent as? JetCallExpression
+object CreateInvokeFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtCallExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtCallExpression? {
+        return diagnostic.psiElement.parent as? KtCallExpression
     }
 
-    override fun createCallableInfo(element: JetCallExpression, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtCallExpression, diagnostic: Diagnostic): CallableInfo? {
         val expectedType = Errors.FUNCTION_EXPECTED.cast(diagnostic).b
         if (expectedType.isError) return null
 

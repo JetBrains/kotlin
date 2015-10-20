@@ -51,19 +51,19 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.*;
 
-public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
-    private static final Comparator<Pair<JetElement, JetElement>>
-            REVERSED_TEXT_OFFSET_COMPARATOR = new Comparator<Pair<JetElement, JetElement>>() {
+public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
+    private static final Comparator<Pair<KtElement, KtElement>>
+            REVERSED_TEXT_OFFSET_COMPARATOR = new Comparator<Pair<KtElement, KtElement>>() {
         @Override
         public int compare(
-                @NotNull Pair<JetElement, JetElement> p1,
-                @NotNull Pair<JetElement, JetElement> p2
+                @NotNull Pair<KtElement, KtElement> p1,
+                @NotNull Pair<KtElement, KtElement> p2
         ) {
             int offset1 = p1.getFirst().getTextRange().getStartOffset();
             int offset2 = p2.getFirst().getTextRange().getStartOffset();
@@ -79,7 +79,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     private final BindingContext context;
     private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
 
-    public JetFunctionCallUsage(@NotNull JetCallElement element, JetCallableDefinitionUsage callee) {
+    public JetFunctionCallUsage(@NotNull KtCallElement element, JetCallableDefinitionUsage callee) {
         super(element);
         this.callee = callee;
         this.context = ResolutionUtils.analyze(element, BodyResolveMode.FULL);
@@ -87,7 +87,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     }
 
     @Override
-    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull JetCallElement element, @NotNull UsageInfo[] allUsages) {
+    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull KtCallElement element, @NotNull UsageInfo[] allUsages) {
         if (shouldSkipUsage(element)) return true;
 
         changeNameIfNeeded(changeInfo, element);
@@ -102,11 +102,11 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         if (changeInfo.getNewParametersCount() == 0
-            && element instanceof JetDelegatorToSuperCall) {
-            JetEnumEntry enumEntry = PsiTreeUtil.getParentOfType(element, JetEnumEntry.class, true);
+            && element instanceof KtDelegatorToSuperCall) {
+            KtEnumEntry enumEntry = PsiTreeUtil.getParentOfType(element, KtEnumEntry.class, true);
             if (enumEntry != null && enumEntry.getInitializerList() == element.getParent()) {
                 PsiElement colon = enumEntry.getColon();
-                JetInitializerList initializerList = enumEntry.getInitializerList();
+                KtInitializerList initializerList = enumEntry.getInitializerList();
                 enumEntry.deleteChildRange(colon != null ? colon : initializerList, initializerList);
             }
         }
@@ -114,12 +114,12 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         return true;
     }
 
-    private boolean shouldSkipUsage(JetCallElement element) {
+    private boolean shouldSkipUsage(KtCallElement element) {
         // TODO: We probable need more clever processing of invalid calls, but for now default to Java-like behaviour
-        if (resolvedCall == null && !(element instanceof JetDelegatorToSuperCall)) return true;
+        if (resolvedCall == null && !(element instanceof KtDelegatorToSuperCall)) return true;
         if (resolvedCall != null && !ArgumentMappingKt.isReallySuccess(resolvedCall)) {
             // TODO: investigate why arguments are not recorded for enum constructor call
-            if (element instanceof JetDelegatorToSuperCall && element.getParent().getParent() instanceof JetEnumEntry) return false;
+            if (element instanceof KtDelegatorToSuperCall && element.getParent().getParent() instanceof KtEnumEntry) return false;
             for (ValueArgument valueArgument : resolvedCall.getCall().getValueArguments()) {
                 if (!(resolvedCall.getArgumentMapping(valueArgument) instanceof ArgumentMatch)) return true;
             }
@@ -133,31 +133,31 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
     private boolean isPropertyJavaUsage() {
         PsiElement calleeElement = this.callee.getElement();
-        return (calleeElement instanceof JetProperty || calleeElement instanceof JetParameter)
+        return (calleeElement instanceof KtProperty || calleeElement instanceof KtParameter)
                && resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof JavaMethodDescriptor;
     }
 
-    protected void changeNameIfNeeded(JetChangeInfo changeInfo, JetCallElement element) {
+    protected void changeNameIfNeeded(JetChangeInfo changeInfo, KtCallElement element) {
         if (!changeInfo.isNameChanged()) return;
 
-        JetExpression callee = element.getCalleeExpression();
-        if (!(callee instanceof JetSimpleNameExpression)) return;
+        KtExpression callee = element.getCalleeExpression();
+        if (!(callee instanceof KtSimpleNameExpression)) return;
 
         String newName = changeInfo.getNewName();
         if (isPropertyJavaUsage()) {
-            String currentName = ((JetSimpleNameExpression) callee).getReferencedName();
+            String currentName = ((KtSimpleNameExpression) callee).getReferencedName();
             if (JvmAbi.isGetterName(currentName)) newName = JvmAbi.getterName(newName);
             else if (JvmAbi.isSetterName(currentName)) newName = JvmAbi.setterName(newName);
         }
 
-        callee.replace(JetPsiFactoryKt.JetPsiFactory(getProject()).createSimpleName(newName));
+        callee.replace(KtPsiFactoryKt.KtPsiFactory(getProject()).createSimpleName(newName));
     }
 
     @Nullable
-    private JetExpression getReceiverExpressionIfMatched(
+    private KtExpression getReceiverExpressionIfMatched(
             @NotNull ReceiverValue receiverValue,
             @NotNull DeclarationDescriptor originalDescriptor,
-            @NotNull JetPsiFactory psiFactory
+            @NotNull KtPsiFactory psiFactory
     ) {
         if (!receiverValue.exists()) return null;
 
@@ -175,32 +175,32 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 ((ReceiverParameterDescriptor) originalDescriptor).getValue() instanceof ExtensionReceiver;
         if (currentIsExtension != originalIsExtension) return null;
 
-        JetType originalType = originalDescriptor instanceof ReceiverParameterDescriptor
+        KtType originalType = originalDescriptor instanceof ReceiverParameterDescriptor
                                ? ((ReceiverParameterDescriptor) originalDescriptor).getType()
                                : originalDescriptor instanceof ClassDescriptor
                                  ? ((ClassDescriptor) originalDescriptor).getDefaultType()
                                  : null;
-        if (originalType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(receiverValue.getType(), originalType)) return null;
+        if (originalType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(receiverValue.getType(), originalType)) return null;
 
         return getReceiverExpression(receiverValue, psiFactory);
     }
 
     private boolean needSeparateVariable(@NotNull PsiElement element) {
-        if (element instanceof JetConstantExpression) return false;
-        if (element instanceof JetThisExpression) return false;
-        if (element instanceof JetSimpleNameExpression) return false;
+        if (element instanceof KtConstantExpression) return false;
+        if (element instanceof KtThisExpression) return false;
+        if (element instanceof KtSimpleNameExpression) return false;
 
         //noinspection SuspiciousMethodCalls
-        if (element instanceof JetBinaryExpression
-            && OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(((JetBinaryExpression) element).getOperationToken())) return true;
+        if (element instanceof KtBinaryExpression
+            && OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(((KtBinaryExpression) element).getOperationToken())) return true;
 
         //noinspection SuspiciousMethodCalls
-        if (element instanceof JetUnaryExpression
-            && OperatorConventions.INCREMENT_OPERATIONS.contains(((JetUnaryExpression) element).getOperationToken())) return true;
+        if (element instanceof KtUnaryExpression
+            && OperatorConventions.INCREMENT_OPERATIONS.contains(((KtUnaryExpression) element).getOperationToken())) return true;
 
-        if (element instanceof JetCallExpression) {
+        if (element instanceof KtCallExpression) {
             ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                    CallUtilKt.getResolvedCall((JetCallExpression) element, context);
+                    CallUtilKt.getResolvedCall((KtCallExpression) element, context);
             return resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
         }
 
@@ -211,25 +211,25 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     }
 
     @NotNull
-    private JetExpression substituteReferences(
-            @NotNull JetExpression expression,
+    private KtExpression substituteReferences(
+            @NotNull KtExpression expression,
             @NotNull Map<PsiReference, DeclarationDescriptor> referenceMap,
-            @NotNull final JetPsiFactory psiFactory
+            @NotNull final KtPsiFactory psiFactory
     ) {
         if (referenceMap.isEmpty() || resolvedCall == null) return expression;
 
-        JetExpression newExpression = (JetExpression) expression.copy();
+        KtExpression newExpression = (KtExpression) expression.copy();
 
-        Map<JetSimpleNameExpression, JetSimpleNameExpression> nameCounterpartMap =
+        Map<KtSimpleNameExpression, KtSimpleNameExpression> nameCounterpartMap =
                 ExtractorUtilKt.createNameCounterpartMap(expression, newExpression);
 
         Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();
 
-        List<Pair<JetElement, JetElement>> replacements = new ArrayList<Pair<JetElement, JetElement>>();
+        List<Pair<KtElement, KtElement>> replacements = new ArrayList<Pair<KtElement, KtElement>>();
         for (Map.Entry<PsiReference, DeclarationDescriptor> e : referenceMap.entrySet()) {
             DeclarationDescriptor descriptor = e.getValue();
 
-            JetExpression argumentExpression;
+            KtExpression argumentExpression;
             boolean addReceiver = false;
             if (descriptor instanceof ValueParameterDescriptor) { // Ordinary parameter
                 // Find corresponding parameter in the current function (may differ from 'descriptor' if original function is part of override hierarchy)
@@ -256,19 +256,19 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             //noinspection unchecked
             if (needSeparateVariable(argumentExpression) &&
                 PsiTreeUtil.getNonStrictParentOfType(getElement(),
-                                                     JetConstructorDelegationCall.class,
-                                                     JetDelegationSpecifier.class,
-                                                     JetParameter.class) == null) {
+                                                     KtConstructorDelegationCall.class,
+                                                     KtDelegationSpecifier.class,
+                                                     KtParameter.class) == null) {
 
-                final Ref<JetExpression> newExpressionRef = new Ref<JetExpression>();
+                final Ref<KtExpression> newExpressionRef = new Ref<KtExpression>();
                 KotlinIntroduceVariableHandler.doRefactoring(
                         getProject(),
                         null,
                         argumentExpression,
                         Collections.singletonList(argumentExpression),
-                        new Function1<JetProperty, Unit>() {
+                        new Function1<KtProperty, Unit>() {
                             @Override
-                            public Unit invoke(JetProperty property) {
+                            public Unit invoke(KtProperty property) {
                                 //noinspection ConstantConditions
                                 newExpressionRef.set(psiFactory.createExpression(property.getName()));
                                 return null;
@@ -279,47 +279,47 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             }
 
             //noinspection SuspiciousMethodCalls
-            JetExpression expressionToReplace = nameCounterpartMap.get(e.getKey().getElement());
+            KtExpression expressionToReplace = nameCounterpartMap.get(e.getKey().getElement());
             if (expressionToReplace == null) continue;
             PsiElement parent = expressionToReplace.getParent();
-            if (parent instanceof JetThisExpression) {
-                expressionToReplace = (JetThisExpression) parent;
+            if (parent instanceof KtThisExpression) {
+                expressionToReplace = (KtThisExpression) parent;
             }
 
             if (addReceiver) {
-                JetCallExpression callExpression = PsiTreeUtil.getParentOfType(expressionToReplace, JetCallExpression.class, true);
+                KtCallExpression callExpression = PsiTreeUtil.getParentOfType(expressionToReplace, KtCallExpression.class, true);
                 if (callExpression != null && PsiTreeUtil.isAncestor(callExpression.getCalleeExpression(), expressionToReplace, false)) {
                     expressionToReplace = callExpression;
                 } else {
                     // Do not substitute operation references in infix/prefix calls
-                    if (parent instanceof JetOperationExpression
-                        && ((JetOperationExpression) parent).getOperationReference() == expressionToReplace) {
+                    if (parent instanceof KtOperationExpression
+                        && ((KtOperationExpression) parent).getOperationReference() == expressionToReplace) {
                         continue;
                     }
                 }
                 replacements.add(
-                        new Pair<JetElement, JetElement>(
+                        new Pair<KtElement, KtElement>(
                                 expressionToReplace,
                                 psiFactory.createExpression(argumentExpression.getText() + "." + expressionToReplace.getText())
                         )
                 );
             }
             else {
-                replacements.add(new Pair<JetElement, JetElement>(expressionToReplace, argumentExpression));
+                replacements.add(new Pair<KtElement, KtElement>(expressionToReplace, argumentExpression));
             }
         }
 
         // Sort by descending offset so that call arguments are replaced before call itself
         ContainerUtil.sort(replacements, REVERSED_TEXT_OFFSET_COMPARATOR);
-        for (Pair<JetElement, JetElement> replacement : replacements) {
+        for (Pair<KtElement, KtElement> replacement : replacements) {
             replacement.getFirst().replace(replacement.getSecond());
         }
 
         return newExpression;
     }
 
-    private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, JetCallElement element, @NotNull UsageInfo[] allUsages) {
-        JetValueArgumentList arguments = element.getValueArgumentList();
+    private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, KtCallElement element, @NotNull UsageInfo[] allUsages) {
+        KtValueArgumentList arguments = element.getValueArgumentList();
         assert arguments != null : "Argument list is expected: " + element.getText();
         List<? extends ValueArgument> oldArguments = element.getValueArguments();
 
@@ -334,7 +334,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         TIntArrayList indicesOfArgumentsWithDefaultValues = new TIntArrayList();
 
-        JetPsiFactory psiFactory = new JetPsiFactory(element.getProject());
+        KtPsiFactory psiFactory = new KtPsiFactory(element.getProject());
 
         List<JetParameterInfo> newSignatureParameters = changeInfo.getNonReceiverParameters();
         for (JetParameterInfo parameterInfo : newSignatureParameters) {
@@ -345,7 +345,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 parametersBuilder.append(',');
             }
 
-            JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
+            KtExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
 
             String defaultValueText;
             if (ChangeSignatureUtilsKt.isInsideOfCallerBody(element, allUsages)) {
@@ -368,7 +368,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         parametersBuilder.append(')');
-        JetValueArgumentList newArgumentList = JetPsiFactoryKt.JetPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
+        KtValueArgumentList newArgumentList = KtPsiFactoryKt.KtPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
 
         Map<Integer, ? extends ValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
 
@@ -380,22 +380,22 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         PsiElement elementToReplace = element;
         PsiElement parent = element.getParent();
-        if (parent instanceof JetQualifiedExpression && ((JetQualifiedExpression) parent).getSelectorExpression() == element) {
+        if (parent instanceof KtQualifiedExpression && ((KtQualifiedExpression) parent).getSelectorExpression() == element) {
             elementToReplace = parent;
         }
 
         // Do not add extension receiver to calls with explicit dispatch receiver
         if (newReceiverInfo != null
-            && elementToReplace instanceof JetQualifiedExpression
+            && elementToReplace instanceof KtQualifiedExpression
             && dispatchReceiver instanceof ExpressionReceiver) return;
 
-        List<JetValueArgument> newArguments = newArgumentList.getArguments();
+        List<KtValueArgument> newArguments = newArgumentList.getArguments();
         int actualIndex = 0;
         for (int i = 0; i < newArguments.size(); i++) {
-            JetValueArgument newArgument = newArguments.get(i);
+            KtValueArgument newArgument = newArguments.get(i);
             JetParameterInfo parameterInfo = newSignatureParameters.get(i);
             if (parameterInfo == originalReceiverInfo) {
-                JetExpression receiverExpression = getReceiverExpression(extensionReceiver, psiFactory);
+                KtExpression receiverExpression = getReceiverExpression(extensionReceiver, psiFactory);
                 if (receiverExpression != null) {
                     newArgument.replace(receiverExpression);
                 }
@@ -407,10 +407,10 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
             if (oldArgument != null) {
                 ValueArgumentName argumentName = oldArgument.getArgumentName();
-                JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
+                KtSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
                 changeArgumentName(argumentNameExpression, parameterInfo);
                 //noinspection ConstantConditions
-                newArgument.replace(oldArgument instanceof JetFunctionLiteralArgument
+                newArgument.replace(oldArgument instanceof KtFunctionLiteralArgument
                                     ? psiFactory.createArgument(oldArgument.getArgumentExpression(), null, false)
                                     : oldArgument.asElement());
             }
@@ -428,20 +428,20 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             }
         }
 
-        List<JetFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();
+        List<KtFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();
         if (!lambdaArguments.isEmpty()) {
             element.deleteChildRange(CollectionsKt.first(lambdaArguments), CollectionsKt.last(lambdaArguments));
         }
 
         //TODO: this is not correct!
-        JetValueArgument lastArgument = CollectionsKt.lastOrNull(newArgumentList.getArguments());
+        KtValueArgument lastArgument = CollectionsKt.lastOrNull(newArgumentList.getArguments());
         boolean hasTrailingLambdaInArgumentListAfter =
-                lastArgument != null && JetFunctionLiteralArgumentKt.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
+                lastArgument != null && KtFunctionLiteralArgumentKt.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
 
-        arguments = (JetValueArgumentList) arguments.replace(newArgumentList);
+        arguments = (KtValueArgumentList) arguments.replace(newArgumentList);
 
-        final List<JetElement> argumentsToShorten = new ArrayList<JetElement>(indicesOfArgumentsWithDefaultValues.size());
-        final List<JetValueArgument> argumentList = arguments.getArguments();
+        final List<KtElement> argumentsToShorten = new ArrayList<KtElement>(indicesOfArgumentsWithDefaultValues.size());
+        final List<KtValueArgument> argumentList = arguments.getArguments();
         indicesOfArgumentsWithDefaultValues.forEach(
                 new TIntProcedure() {
                     @Override
@@ -452,18 +452,18 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 }
         );
 
-        for (JetElement argument : argumentsToShorten) {
+        for (KtElement argument : argumentsToShorten) {
             ShortenWaitingSetKt.addToShorteningWaitSet(argument, SHORTEN_ARGUMENTS_OPTIONS);
         }
 
-        JetElement newElement = element;
+        KtElement newElement = element;
         if (newReceiverInfo != originalReceiverInfo) {
             PsiElement replacingElement;
             if (newReceiverInfo != null) {
                 ValueArgument receiverArgument = argumentMap.get(newReceiverInfo.getOldIndex());
-                JetExpression extensionReceiverExpression = receiverArgument != null ? receiverArgument.getArgumentExpression() : null;
-                JetExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
-                JetExpression receiver =
+                KtExpression extensionReceiverExpression = receiverArgument != null ? receiverArgument.getArgumentExpression() : null;
+                KtExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
+                KtExpression receiver =
                         extensionReceiverExpression != null ? psiFactory.createExpression(extensionReceiverExpression.getText())
                         : defaultValueForCall != null ? defaultValueForCall
                         : psiFactory.createExpression("_");
@@ -474,40 +474,40 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 replacingElement = psiFactory.createExpression(element.getText());
             }
 
-            newElement = (JetElement) elementToReplace.replace(replacingElement);
+            newElement = (KtElement) elementToReplace.replace(replacingElement);
         }
 
         if (hasTrailingLambdaInArgumentListAfter) {
-            JetCallExpression newCallExpression =
-                    (JetCallExpression) (newElement instanceof JetQualifiedExpression
-                                      ? ((JetQualifiedExpression) newElement).getSelectorExpression()
+            KtCallExpression newCallExpression =
+                    (KtCallExpression) (newElement instanceof KtQualifiedExpression
+                                      ? ((KtQualifiedExpression) newElement).getSelectorExpression()
                                       : newElement);
             PsiModificationUtilsKt.moveFunctionLiteralOutsideParentheses(newCallExpression);
         }
     }
 
-    private static void updateJavaPropertyCall(JetChangeInfo changeInfo, JetCallElement element) {
+    private static void updateJavaPropertyCall(JetChangeInfo changeInfo, KtCallElement element) {
         JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
         JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
         if (newReceiverInfo == originalReceiverInfo) return;
 
-        JetValueArgumentList arguments = element.getValueArgumentList();
+        KtValueArgumentList arguments = element.getValueArgumentList();
         assert arguments != null : "Argument list is expected: " + element.getText();
         List<? extends ValueArgument> oldArguments = element.getValueArguments();
 
-        JetPsiFactory psiFactory = new JetPsiFactory(element.getProject());
+        KtPsiFactory psiFactory = new KtPsiFactory(element.getProject());
 
-        JetValueArgument firstArgument = oldArguments.isEmpty() ? null : (JetValueArgument) oldArguments.get(0);
+        KtValueArgument firstArgument = oldArguments.isEmpty() ? null : (KtValueArgument) oldArguments.get(0);
 
         if (newReceiverInfo == null) {
             if (firstArgument != null) arguments.removeArgument(firstArgument);
         }
         else {
-            JetExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
+            KtExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
             if (defaultValueForCall == null) {
                 defaultValueForCall = psiFactory.createExpression("_");
             }
-            JetValueArgument newReceiverArgument = psiFactory.createArgument(defaultValueForCall, null, false);
+            KtValueArgument newReceiverArgument = psiFactory.createArgument(defaultValueForCall, null, false);
 
             if (originalReceiverInfo != null) {
                 if (firstArgument != null) firstArgument.replace(newReceiverArgument);
@@ -519,7 +519,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     }
 
     @Nullable
-    private static JetExpression getReceiverExpression(@NotNull ReceiverValue receiver, @NotNull JetPsiFactory psiFactory) {
+    private static KtExpression getReceiverExpression(@NotNull ReceiverValue receiver, @NotNull KtPsiFactory psiFactory) {
         if (receiver instanceof ExpressionReceiver) {
             return ((ExpressionReceiver) receiver).getExpression();
         }
@@ -552,10 +552,10 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         return argumentMap;
     }
 
-    private void changeArgumentNames(JetChangeInfo changeInfo, JetCallElement element) {
+    private void changeArgumentNames(JetChangeInfo changeInfo, KtCallElement element) {
         for (ValueArgument argument : element.getValueArguments()) {
             ValueArgumentName argumentName = argument.getArgumentName();
-            JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
+            KtSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
 
             if (argumentNameExpression != null) {
                 Integer oldParameterIndex = changeInfo.getOldParameterIndex(argumentNameExpression.getReferencedName());
@@ -568,12 +568,12 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
     }
 
-    private void changeArgumentName(JetSimpleNameExpression argumentNameExpression, JetParameterInfo parameterInfo) {
+    private void changeArgumentName(KtSimpleNameExpression argumentNameExpression, JetParameterInfo parameterInfo) {
         PsiElement identifier = argumentNameExpression != null ? argumentNameExpression.getIdentifier() : null;
 
         if (identifier != null) {
             String newName = parameterInfo.getInheritedName(callee);
-            identifier.replace(JetPsiFactoryKt.JetPsiFactory(getProject()).createIdentifier(newName));
+            identifier.replace(KtPsiFactoryKt.KtPsiFactory(getProject()).createIdentifier(newName));
         }
     }
 }

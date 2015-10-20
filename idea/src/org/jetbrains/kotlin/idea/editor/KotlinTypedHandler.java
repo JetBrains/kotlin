@@ -44,21 +44,21 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.KtNodeTypes;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtFile;
 
 public class KotlinTypedHandler extends TypedHandlerDelegate {
     private final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(
-            JetNodeTypes.IF,
-            JetNodeTypes.FOR,
-            JetNodeTypes.WHILE);
+            KtNodeTypes.IF,
+            KtNodeTypes.FOR,
+            KtNodeTypes.WHILE);
 
     private boolean jetLTTyped;
 
     @Override
     public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
-        if (!(file instanceof JetFile)) {
+        if (!(file instanceof KtFile)) {
             return Result.CONTINUE;
         }
 
@@ -89,7 +89,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                     iterator.retreat();
                 }
 
-                if (iterator.atEnd() || iterator.getTokenType() != JetTokens.RPAR) {
+                if (iterator.atEnd() || iterator.getTokenType() != KtTokens.RPAR) {
                     return Result.CONTINUE;
                 }
 
@@ -139,7 +139,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 if (lastElement == null) return false;
 
                 IElementType elementType = lastElement.getNode().getElementType();
-                return elementType == JetTokens.DOT || elementType == JetTokens.SAFE_ACCESS;
+                return elementType == KtTokens.DOT || elementType == KtTokens.SAFE_ACCESS;
             }
         });
     }
@@ -159,7 +159,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 PsiElement lastElement = file.findElementAt(offset - 1);
                 if (lastElement == null) return false;
 
-                return lastElement.getNode().getElementType() == JetTokens.AT;
+                return lastElement.getNode().getElementType() == KtTokens.AT;
             }
         });
     }
@@ -173,7 +173,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 PsiElement lastElement = file.findElementAt(offset - 1);
                 if (lastElement == null) return false;
 
-                return lastElement.getNode().getElementType() == JetTokens.COLONCOLON;
+                return lastElement.getNode().getElementType() == KtTokens.COLONCOLON;
             }
         });
     }
@@ -185,7 +185,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
     @Override
     public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
-        if (!(file instanceof JetFile)) {
+        if (!(file instanceof KtFile)) {
             return Result.CONTINUE;
         }
 
@@ -201,7 +201,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             int offset = editor.getCaretModel().getOffset();
             PsiElement previousElement = file.findElementAt(offset - 1);
             if (previousElement instanceof LeafPsiElement
-                    && ((LeafPsiElement) previousElement).getElementType() == JetTokens.LONG_TEMPLATE_ENTRY_START) {
+                    && ((LeafPsiElement) previousElement).getElementType() == KtTokens.LONG_TEMPLATE_ENTRY_START) {
                 editor.getDocument().insertString(offset, "}");
                 return Result.STOP;
             }

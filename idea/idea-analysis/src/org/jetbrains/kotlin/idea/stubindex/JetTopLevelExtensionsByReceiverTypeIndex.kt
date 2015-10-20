@@ -20,9 +20,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndexKey
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
-public class JetTopLevelExtensionsByReceiverTypeIndex private constructor() : StringStubIndexExtension<JetCallableDeclaration>() {
+public class JetTopLevelExtensionsByReceiverTypeIndex private constructor() : StringStubIndexExtension<KtCallableDeclaration>() {
 
     override fun getKey() = KEY
 
@@ -30,7 +30,7 @@ public class JetTopLevelExtensionsByReceiverTypeIndex private constructor() : St
             = super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project))
 
     companion object {
-        private val KEY = KotlinIndexUtil.createIndexKey<String, JetCallableDeclaration>(javaClass<JetTopLevelExtensionsByReceiverTypeIndex>())
+        private val KEY = KotlinIndexUtil.createIndexKey<String, KtCallableDeclaration>(javaClass<JetTopLevelExtensionsByReceiverTypeIndex>())
         private val SEPARATOR = '\n'
 
         public val INSTANCE: JetTopLevelExtensionsByReceiverTypeIndex = JetTopLevelExtensionsByReceiverTypeIndex()

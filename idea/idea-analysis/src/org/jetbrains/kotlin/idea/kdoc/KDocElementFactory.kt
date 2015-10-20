@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.kdoc
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetFunction
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtFunction
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 class KDocElementFactory(val project: Project) {
     public fun createKDocFromText(text: String): KDoc {
         val fileText = text + " fun foo { }"
-        val function = JetPsiFactory(project).createDeclaration<JetFunction>(fileText)
+        val function = KtPsiFactory(project).createDeclaration<KtFunction>(fileText)
         return PsiTreeUtil.findChildOfType(function, javaClass<KDoc>())!!
     }
 

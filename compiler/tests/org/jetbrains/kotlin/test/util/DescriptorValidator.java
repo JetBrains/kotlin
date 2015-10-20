@@ -24,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.types.KtType;
 import org.junit.Assert;
 
 import java.io.PrintStream;
@@ -83,7 +83,7 @@ public class DescriptorValidator {
             return this;
         }
 
-        protected void validateScope(@NotNull JetScope scope, @NotNull DiagnosticCollector collector) {
+        protected void validateScope(@NotNull KtScope scope, @NotNull DiagnosticCollector collector) {
             for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
                 if (recursiveFilter.apply(descriptor)) {
                     descriptor.accept(new ScopeValidatorVisitor(collector), scope);
@@ -93,7 +93,7 @@ public class DescriptorValidator {
 
         private void validateType(
                 @NotNull DeclarationDescriptor descriptor,
-                @Nullable JetType type,
+                @Nullable KtType type,
                 @NotNull DiagnosticCollector collector
         ) {
             if (type == null) {
@@ -134,9 +134,9 @@ public class DescriptorValidator {
         private void validateTypes(
                 DeclarationDescriptor descriptor,
                 DiagnosticCollector collector,
-                Collection<JetType> types
+                Collection<KtType> types
         ) {
-            for (JetType type : types) {
+            for (KtType type : types) {
                 validateType(descriptor, type, collector);
             }
         }
@@ -163,8 +163,8 @@ public class DescriptorValidator {
                 DeclarationDescriptor descriptor,
                 DiagnosticCollector collector,
                 String name,
-                JetType expected,
-                JetType actual
+                KtType expected,
+                KtType actual
         ) {
             if (expected.isError() && actual.isError()) {
                 assertEquals(descriptor, collector, name, expected.toString(), actual.toString());
@@ -235,7 +235,7 @@ public class DescriptorValidator {
         ) {
             validateTypeParameters(collector, descriptor.getTypeConstructor().getParameters());
 
-            Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+            Collection<KtType> supertypes = descriptor.getTypeConstructor().getSupertypes();
             if (supertypes.isEmpty() && descriptor.getKind() != ClassKind.INTERFACE
                 && !KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor)) {
                 report(collector, descriptor, "No supertypes for non-trait");
@@ -357,7 +357,7 @@ public class DescriptorValidator {
 
     }
 
-    private static class ScopeValidatorVisitor implements DeclarationDescriptorVisitor<Void, JetScope> {
+    private static class ScopeValidatorVisitor implements DeclarationDescriptorVisitor<Void, KtScope> {
         private final DiagnosticCollector collector;
 
         public ScopeValidatorVisitor(DiagnosticCollector collector) {
@@ -369,7 +369,7 @@ public class DescriptorValidator {
         }
 
         private void assertFound(
-                @NotNull JetScope scope,
+                @NotNull KtScope scope,
                 @NotNull DeclarationDescriptor expected,
                 @Nullable DeclarationDescriptor found,
                 boolean shouldBeSame
@@ -383,7 +383,7 @@ public class DescriptorValidator {
         }
 
         private void assertFound(
-                @NotNull JetScope scope,
+                @NotNull KtScope scope,
                 @NotNull DeclarationDescriptor expected,
                 @NotNull Collection<? extends DeclarationDescriptor> found
         ) {
@@ -394,14 +394,14 @@ public class DescriptorValidator {
 
         @Override
         public Void visitPackageFragmentDescriptor(
-                PackageFragmentDescriptor descriptor, JetScope scope
+                PackageFragmentDescriptor descriptor, KtScope scope
         ) {
             return null;
         }
 
         @Override
         public Void visitPackageViewDescriptor(
-                PackageViewDescriptor descriptor, JetScope scope
+                PackageViewDescriptor descriptor, KtScope scope
         ) {
             assertFound(scope, descriptor, scope.getPackage(descriptor.getName()), false);
             return null;
@@ -409,7 +409,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitVariableDescriptor(
-                VariableDescriptor descriptor, JetScope scope
+                VariableDescriptor descriptor, KtScope scope
         ) {
             assertFound(scope, descriptor, scope.getProperties(descriptor.getName(), NoLookupLocation.FROM_TEST));
             return null;
@@ -417,7 +417,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitFunctionDescriptor(
-                FunctionDescriptor descriptor, JetScope scope
+                FunctionDescriptor descriptor, KtScope scope
         ) {
             assertFound(scope, descriptor, scope.getFunctions(descriptor.getName(), NoLookupLocation.FROM_TEST));
             return null;
@@ -425,7 +425,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitTypeParameterDescriptor(
-                TypeParameterDescriptor descriptor, JetScope scope
+                TypeParameterDescriptor descriptor, KtScope scope
         ) {
             assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
             return null;
@@ -433,7 +433,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitClassDescriptor(
-                ClassDescriptor descriptor, JetScope scope
+                ClassDescriptor descriptor, KtScope scope
         ) {
             assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
             return null;
@@ -441,7 +441,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitModuleDeclaration(
-                ModuleDescriptor descriptor, JetScope scope
+                ModuleDescriptor descriptor, KtScope scope
         ) {
             report(descriptor, "Module found in scope: " + scope);
             return null;
@@ -449,7 +449,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitConstructorDescriptor(
-                ConstructorDescriptor descriptor, JetScope scope
+                ConstructorDescriptor descriptor, KtScope scope
         ) {
             report(descriptor, "Constructor found in scope: " + scope);
             return null;
@@ -457,7 +457,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitScriptDescriptor(
-                ScriptDescriptor descriptor, JetScope scope
+                ScriptDescriptor descriptor, KtScope scope
         ) {
             report(descriptor, "Script found in scope: " + scope);
             return null;
@@ -465,21 +465,21 @@ public class DescriptorValidator {
 
         @Override
         public Void visitPropertyDescriptor(
-                PropertyDescriptor descriptor, JetScope scope
+                PropertyDescriptor descriptor, KtScope scope
         ) {
             return visitVariableDescriptor(descriptor, scope);
         }
 
         @Override
         public Void visitValueParameterDescriptor(
-                ValueParameterDescriptor descriptor, JetScope scope
+                ValueParameterDescriptor descriptor, KtScope scope
         ) {
             return visitVariableDescriptor(descriptor, scope);
         }
 
         @Override
         public Void visitPropertyGetterDescriptor(
-                PropertyGetterDescriptor descriptor, JetScope scope
+                PropertyGetterDescriptor descriptor, KtScope scope
         ) {
             report(descriptor, "Getter found in scope: " + scope);
             return null;
@@ -487,7 +487,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitPropertySetterDescriptor(
-                PropertySetterDescriptor descriptor, JetScope scope
+                PropertySetterDescriptor descriptor, KtScope scope
         ) {
             report(descriptor, "Setter found in scope: " + scope);
             return null;
@@ -495,7 +495,7 @@ public class DescriptorValidator {
 
         @Override
         public Void visitReceiverParameterDescriptor(
-                ReceiverParameterDescriptor descriptor, JetScope scope
+                ReceiverParameterDescriptor descriptor, KtScope scope
         ) {
             report(descriptor, "Receiver parameter found in scope: " + scope);
             return null;

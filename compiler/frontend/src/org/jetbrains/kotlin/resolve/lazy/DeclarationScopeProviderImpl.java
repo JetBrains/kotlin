@@ -42,38 +42,38 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
     @Override
     @NotNull
     public LexicalScope getResolutionScopeForDeclaration(@NotNull PsiElement elementOfDeclaration) {
-        JetDeclaration jetDeclaration = JetStubbedPsiUtil.getPsiOrStubParent(elementOfDeclaration, JetDeclaration.class, false);
+        KtDeclaration ktDeclaration = KtStubbedPsiUtil.getPsiOrStubParent(elementOfDeclaration, KtDeclaration.class, false);
 
-        assert !(elementOfDeclaration instanceof JetDeclaration) || jetDeclaration == elementOfDeclaration :
+        assert !(elementOfDeclaration instanceof KtDeclaration) || ktDeclaration == elementOfDeclaration :
                 "For JetDeclaration element getParentOfType() should return itself.";
-        assert jetDeclaration != null : "Should be contained inside declaration.";
+        assert ktDeclaration != null : "Should be contained inside declaration.";
 
-        JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(jetDeclaration);
+        KtDeclaration parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(ktDeclaration);
 
-        if (jetDeclaration instanceof JetPropertyAccessor) {
-            parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(parentDeclaration, JetDeclaration.class);
+        if (ktDeclaration instanceof KtPropertyAccessor) {
+            parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(parentDeclaration, KtDeclaration.class);
         }
 
         if (parentDeclaration == null) {
-            return fileScopeProvider.getFileScope((JetFile) elementOfDeclaration.getContainingFile());
+            return fileScopeProvider.getFileScope((KtFile) elementOfDeclaration.getContainingFile());
         }
 
-        if (parentDeclaration instanceof JetClassOrObject) {
-            JetClassOrObject classOrObject = (JetClassOrObject) parentDeclaration;
+        if (parentDeclaration instanceof KtClassOrObject) {
+            KtClassOrObject classOrObject = (KtClassOrObject) parentDeclaration;
             LazyClassDescriptor classDescriptor = (LazyClassDescriptor) lazyDeclarationResolver.getClassDescriptor(classOrObject, NoLookupLocation.WHEN_GET_DECLARATION_SCOPE);
-            if (jetDeclaration instanceof JetClassInitializer || jetDeclaration instanceof JetProperty) {
+            if (ktDeclaration instanceof KtClassInitializer || ktDeclaration instanceof KtProperty) {
                 return classDescriptor.getScopeForInitializerResolution();
             }
-            if (jetDeclaration instanceof JetObjectDeclaration
-                || (jetDeclaration instanceof JetClass && !((JetClass) jetDeclaration).isInner())) {
+            if (ktDeclaration instanceof KtObjectDeclaration
+                || (ktDeclaration instanceof KtClass && !((KtClass) ktDeclaration).isInner())) {
                 return classDescriptor.getScopeForStaticMemberDeclarationResolution();
             }
 
             return classDescriptor.getScopeForMemberDeclarationResolution();
         }
 
-        throw new IllegalStateException("Don't call this method for local declarations: " + jetDeclaration + "\n" +
-                                        PsiUtilsKt.getElementTextWithContext(jetDeclaration));
+        throw new IllegalStateException("Don't call this method for local declarations: " + ktDeclaration + "\n" +
+                                        PsiUtilsKt.getElementTextWithContext(ktDeclaration));
     }
 
     @NotNull

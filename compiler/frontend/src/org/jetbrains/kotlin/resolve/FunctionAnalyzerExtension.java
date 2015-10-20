@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.inline.InlineAnalyzerExtension;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 
@@ -30,7 +30,7 @@ import java.util.Map;
 public class FunctionAnalyzerExtension {
 
     public interface AnalyzerExtension {
-        void process(@NotNull FunctionDescriptor descriptor, @NotNull JetNamedFunction function, @NotNull BindingTrace trace);
+        void process(@NotNull FunctionDescriptor descriptor, @NotNull KtNamedFunction function, @NotNull BindingTrace trace);
     }
 
     @NotNull private final BindingTrace trace;
@@ -40,8 +40,8 @@ public class FunctionAnalyzerExtension {
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
-        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
-            JetNamedFunction function = entry.getKey();
+        for (Map.Entry<KtNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
+            KtNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
 
             for (AnalyzerExtension extension : getExtensions(functionDescriptor)) {

@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.Mover
 import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-public class KotlinChangePackageRefactoring(val file: JetFile) {
+public class KotlinChangePackageRefactoring(val file: KtFile) {
     private val project = file.getProject()
 
     fun run(newFqName: FqName) {
@@ -42,7 +42,7 @@ public class KotlinChangePackageRefactoring(val file: JetFile) {
         val declarationProcessor = MoveKotlinTopLevelDeclarationsProcessor(
                 project,
                 MoveKotlinTopLevelDeclarationsOptions(
-                        elementsToMove = file.getDeclarations().filterIsInstance<JetNamedDeclaration>(),
+                        elementsToMove = file.getDeclarations().filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = object: KotlinMoveTarget {
                             override val packageWrapper = PackageWrapper(file.getManager(), newFqName.asString())
 

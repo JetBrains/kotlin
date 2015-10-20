@@ -19,27 +19,27 @@ package org.jetbrains.kotlin.js.translate.general;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetDeclarationContainer;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetVisitor;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtDeclarationContainer;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtVisitor;
 
 /**
  * This class is a base class for all visitors.
  */
-public abstract class TranslatorVisitor<T> extends JetVisitor<T, TranslationContext> {
+public abstract class TranslatorVisitor<T> extends KtVisitor<T, TranslationContext> {
 
     protected abstract T emptyResult(@NotNull TranslationContext context);
 
     @Override
-    public T visitJetElement(@NotNull JetElement expression, TranslationContext context) {
+    public T visitJetElement(@NotNull KtElement expression, TranslationContext context) {
         context.bindingTrace().report(ErrorsJs.NOT_SUPPORTED.on(expression, expression));
         return emptyResult(context);
     }
 
-    public final void traverseContainer(@NotNull JetDeclarationContainer jetClass,
+    public final void traverseContainer(@NotNull KtDeclarationContainer jetClass,
             @NotNull TranslationContext context) {
-        for (JetDeclaration declaration : jetClass.getDeclarations()) {
+        for (KtDeclaration declaration : jetClass.getDeclarations()) {
             declaration.accept(this, context);
         }
     }

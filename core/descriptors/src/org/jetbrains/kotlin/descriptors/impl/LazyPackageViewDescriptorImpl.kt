@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -39,9 +39,9 @@ public class LazyPackageViewDescriptorImpl(
         module.packageFragmentProvider.getPackageFragments(fqName)
     }
 
-    override val memberScope: JetScope = LazyScopeAdapter(storageManager.createLazyValue {
+    override val memberScope: KtScope = LazyScopeAdapter(storageManager.createLazyValue {
         if (fragments.isEmpty()) {
-            JetScope.Empty
+            KtScope.Empty
         }
         else {
             val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)

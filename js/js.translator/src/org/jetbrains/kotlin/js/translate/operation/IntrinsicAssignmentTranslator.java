@@ -21,9 +21,9 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.psi.JetBinaryExpression;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.psi.KtBinaryExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken;
@@ -33,12 +33,12 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
 
     @NotNull
-    public static JsExpression doTranslate(@NotNull JetBinaryExpression expression,
+    public static JsExpression doTranslate(@NotNull KtBinaryExpression expression,
                                            @NotNull TranslationContext context) {
         return (new IntrinsicAssignmentTranslator(expression, context)).translate();
     }
 
-    private IntrinsicAssignmentTranslator(@NotNull JetBinaryExpression expression,
+    private IntrinsicAssignmentTranslator(@NotNull KtBinaryExpression expression,
                                           @NotNull TranslationContext context) {
         super(expression, context);
     }
@@ -53,7 +53,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translateAsAssignmentOperation() {
-        if (expression.getLeft() instanceof JetSimpleNameExpression) {
+        if (expression.getLeft() instanceof KtSimpleNameExpression) {
             return translateAsPlainAssignmentOperation();
         }
         return translateAsAssignToCounterpart();
@@ -69,9 +69,9 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsBinaryOperator getCounterpartOperator() {
-        JetToken assignmentOperationToken = getOperationToken(expression);
+        KtToken assignmentOperationToken = getOperationToken(expression);
         assert OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(assignmentOperationToken);
-        JetToken counterpartToken = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(assignmentOperationToken);
+        KtToken counterpartToken = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(assignmentOperationToken);
         assert OperatorTable.hasCorrespondingBinaryOperator(counterpartToken) :
                 "Unsupported token encountered: " + counterpartToken.toString();
         return OperatorTable.getBinaryOperator(counterpartToken);
@@ -85,7 +85,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsBinaryOperator getAssignmentOperator() {
-        JetToken token = getOperationToken(expression);
+        KtToken token = getOperationToken(expression);
         assert OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(token);
         assert OperatorTable.hasCorrespondingBinaryOperator(token) :
                 "Unsupported token encountered: " + token.toString();

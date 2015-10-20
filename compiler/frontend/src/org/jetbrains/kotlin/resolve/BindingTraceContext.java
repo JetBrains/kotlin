@@ -21,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.*;
@@ -67,7 +67,7 @@ public class BindingTraceContext implements BindingTrace {
 
         @Nullable
         @Override
-        public JetType getType(@NotNull JetExpression expression) {
+        public KtType getType(@NotNull KtExpression expression) {
             return BindingTraceContext.this.getType(expression);
         }
 
@@ -131,13 +131,13 @@ public class BindingTraceContext implements BindingTrace {
 
     @Nullable
     @Override
-    public JetType getType(@NotNull JetExpression expression) {
+    public KtType getType(@NotNull KtExpression expression) {
         JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
         return typeInfo != null ? typeInfo.getType() : null;
     }
 
     @Override
-    public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
+    public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
         JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
         typeInfo = typeInfo != null ? typeInfo.replaceType(type) : TypeInfoFactoryKt.createTypeInfo(type);
         record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo);

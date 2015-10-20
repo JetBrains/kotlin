@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 public interface BodyResolveCache {
-    public open fun resolveFunctionBody(function: JetNamedFunction): BindingContext
+    public open fun resolveFunctionBody(function: KtNamedFunction): BindingContext
 
     public object ThrowException : BodyResolveCache {
-        public override fun resolveFunctionBody(function: JetNamedFunction): BindingContext {
+        public override fun resolveFunctionBody(function: KtNamedFunction): BindingContext {
             throw UnsupportedOperationException()
         }
     }

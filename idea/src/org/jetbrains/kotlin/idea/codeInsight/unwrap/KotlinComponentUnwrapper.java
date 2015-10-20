@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtExpression;
 
 public abstract class KotlinComponentUnwrapper extends KotlinUnwrapRemoveBase {
     public KotlinComponentUnwrapper(String key) {
@@ -29,29 +29,29 @@ public abstract class KotlinComponentUnwrapper extends KotlinUnwrapRemoveBase {
     }
 
     @Nullable
-    protected abstract JetExpression getExpressionToUnwrap(@NotNull JetElement target);
+    protected abstract KtExpression getExpressionToUnwrap(@NotNull KtElement target);
 
     @NotNull
-    protected JetElement getEnclosingElement(@NotNull JetElement element) {
+    protected KtElement getEnclosingElement(@NotNull KtElement element) {
         return element;
     }
 
     @Override
     public boolean isApplicableTo(PsiElement e) {
-        if (!(e instanceof JetElement)) return false;
+        if (!(e instanceof KtElement)) return false;
 
-        JetExpression expressionToUnwrap = getExpressionToUnwrap((JetElement) e);
+        KtExpression expressionToUnwrap = getExpressionToUnwrap((KtElement) e);
         return expressionToUnwrap != null && canExtractExpression(expressionToUnwrap,
-                                                                  (JetElement) getEnclosingElement((JetElement) e).getParent());
+                                                                  (KtElement) getEnclosingElement((KtElement) e).getParent());
     }
 
     @Override
     protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-        JetElement targetElement = (JetElement) element;
-        JetExpression expressionToUnwrap = getExpressionToUnwrap(targetElement);
+        KtElement targetElement = (KtElement) element;
+        KtExpression expressionToUnwrap = getExpressionToUnwrap(targetElement);
         assert expressionToUnwrap != null;
 
-        JetElement enclosingElement = getEnclosingElement(targetElement);
+        KtElement enclosingElement = getEnclosingElement(targetElement);
         context.extractFromExpression(expressionToUnwrap, enclosingElement);
         context.delete(enclosingElement);
     }

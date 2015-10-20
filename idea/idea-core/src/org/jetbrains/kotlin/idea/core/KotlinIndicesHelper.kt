@@ -30,14 +30,14 @@ import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.receiverTypes
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
@@ -60,7 +60,7 @@ public class KotlinIndicesHelper(
     }
 
     public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
-        val declarations = HashSet<JetNamedDeclaration>()
+        val declarations = HashSet<KtNamedDeclaration>()
         declarations.addTopLevelNonExtensionCallablesByName(JetFunctionShortNameIndex.getInstance(), name)
         declarations.addTopLevelNonExtensionCallablesByName(JetPropertyShortNameIndex.getInstance(), name)
         return declarations.flatMap {
@@ -73,11 +73,11 @@ public class KotlinIndicesHelper(
         }.filter { it.getExtensionReceiverParameter() == null && descriptorFilter(it) }
     }
 
-    private fun MutableSet<JetNamedDeclaration>.addTopLevelNonExtensionCallablesByName(
-            index: StringStubIndexExtension<out JetCallableDeclaration>,
+    private fun MutableSet<KtNamedDeclaration>.addTopLevelNonExtensionCallablesByName(
+            index: StringStubIndexExtension<out KtCallableDeclaration>,
             name: String
     ) {
-        index.get(name, project, scope).filterTo(this) { it.getParent() is JetFile && it.getReceiverTypeReference() == null }
+        index.get(name, project, scope).filterTo(this) { it.getParent() is KtFile && it.getReceiverTypeReference() == null }
     }
 
     public fun getTopLevelCallables(nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
@@ -92,7 +92,7 @@ public class KotlinIndicesHelper(
     public fun getCallableTopLevelExtensions(
             nameFilter: (String) -> Boolean,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
-            position: JetExpression,
+            position: KtExpression,
             bindingContext: BindingContext
     ): Collection<CallableDescriptor> {
         val receiverTypes = callTypeAndReceiver.receiverTypes(bindingContext, position, moduleDescriptor, predictableSmartCastsOnly = false)
@@ -114,7 +114,7 @@ public class KotlinIndicesHelper(
         return findSuitableExtensions(declarations, receiverTypes, callTypeAndReceiver.callType)
     }
 
-    private fun MutableCollection<String>.addTypeNames(type: JetType) {
+    private fun MutableCollection<String>.addTypeNames(type: KtType) {
         val constructor = type.getConstructor()
         addIfNotNull(constructor.getDeclarationDescriptor()?.getName()?.asString())
         constructor.getSupertypes().forEach { addTypeNames(it) }
@@ -124,8 +124,8 @@ public class KotlinIndicesHelper(
      * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
      */
     private fun findSuitableExtensions(
-            declarations: Sequence<JetCallableDeclaration>,
-            receiverTypes: Collection<JetType>,
+            declarations: Sequence<KtCallableDeclaration>,
+            receiverTypes: Collection<KtType>,
             callType: CallType<*>
     ): Collection<CallableDescriptor> {
         val result = LinkedHashSet<CallableDescriptor>()

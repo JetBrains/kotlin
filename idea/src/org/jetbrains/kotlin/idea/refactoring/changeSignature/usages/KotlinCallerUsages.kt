@@ -25,17 +25,17 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBod
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinCallerUsage(element: JetNamedDeclaration): JetUsageInfo<JetNamedDeclaration>(element) {
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetNamedDeclaration, allUsages: Array<out UsageInfo>): Boolean {
+public class KotlinCallerUsage(element: KtNamedDeclaration): JetUsageInfo<KtNamedDeclaration>(element) {
+    override fun processUsage(changeInfo: JetChangeInfo, element: KtNamedDeclaration, allUsages: Array<out UsageInfo>): Boolean {
         // Do not process function twice
         if (changeInfo.getAffectedCallables().any { it is JetCallableDefinitionUsage<*> && it.getElement() == element }) return true
 
         val parameterList = when (element) {
-            is JetFunction -> element.getValueParameterList()
-            is JetClass -> element.createPrimaryConstructorParameterListIfAbsent()
+            is KtFunction -> element.getValueParameterList()
+            is KtClass -> element.createPrimaryConstructorParameterListIfAbsent()
             else -> null
         } ?: return true
-        val psiFactory = JetPsiFactory(getProject())
+        val psiFactory = KtPsiFactory(getProject())
         changeInfo.getNonReceiverParameters()
                 .withIndex()
                 .filter { it.value.isNewParameter }
@@ -50,10 +50,10 @@ public class KotlinCallerUsage(element: JetNamedDeclaration): JetUsageInfo<JetNa
     }
 }
 
-public class KotlinCallerCallUsage(element: JetCallElement): JetUsageInfo<JetCallElement>(element) {
-    override fun processUsage(changeInfo: JetChangeInfo, element: JetCallElement, allUsages: Array<out UsageInfo>): Boolean {
+public class KotlinCallerCallUsage(element: KtCallElement): JetUsageInfo<KtCallElement>(element) {
+    override fun processUsage(changeInfo: JetChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
         val argumentList = element.getValueArgumentList() ?: return true
-        val psiFactory = JetPsiFactory(getProject())
+        val psiFactory = KtPsiFactory(getProject())
         val isNamedCall = argumentList.getArguments().any { it.getArgumentName() != null }
         changeInfo.getNonReceiverParameters()
                 .filter { it.isNewParameter }

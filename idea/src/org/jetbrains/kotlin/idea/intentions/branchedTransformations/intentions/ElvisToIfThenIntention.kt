@@ -23,21 +23,21 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 
-public class ElvisToIfThenIntention : JetSelfTargetingRangeIntention<JetBinaryExpression>(javaClass(), "Replace elvis expression with 'if' expression"), LowPriorityAction {
-    override fun applicabilityRange(element: JetBinaryExpression): TextRange? {
-        return if (element.getOperationToken() == JetTokens.ELVIS && element.getLeft() != null && element.getRight() != null)
+public class ElvisToIfThenIntention : JetSelfTargetingRangeIntention<KtBinaryExpression>(javaClass(), "Replace elvis expression with 'if' expression"), LowPriorityAction {
+    override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
+        return if (element.getOperationToken() == KtTokens.ELVIS && element.getLeft() != null && element.getRight() != null)
             element.getOperationReference().getTextRange()
         else
             null
     }
 
-    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        val left = JetPsiUtil.safeDeparenthesize(element.getLeft()!!)
-        val right = JetPsiUtil.safeDeparenthesize(element.getRight()!!)
+    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
+        val left = KtPsiUtil.safeDeparenthesize(element.getLeft()!!)
+        val right = KtPsiUtil.safeDeparenthesize(element.getRight()!!)
 
         val leftIsStable = left.isStableVariable()
 

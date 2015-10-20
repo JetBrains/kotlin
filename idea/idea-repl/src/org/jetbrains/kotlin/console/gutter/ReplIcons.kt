@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.console.gutter
 
 import com.intellij.icons.AllIcons
-import org.jetbrains.kotlin.idea.JetIcons
+import org.jetbrains.kotlin.idea.KtIcons
 import javax.swing.Icon
 
 public data class IconWithTooltip(val icon: Icon, val tooltip: String?)
@@ -25,7 +25,7 @@ public data class IconWithTooltip(val icon: Icon, val tooltip: String?)
 public object ReplIcons {
     public val BUILD_WARNING_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.Ide.Warning_notifications, null)
     public val HISTORY_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.MessageHistory, "History of executed commands")
-    public val EDITOR_INDICATOR: IconWithTooltip = IconWithTooltip(JetIcons.LAUNCH, "Write your commands here")
+    public val EDITOR_INDICATOR: IconWithTooltip = IconWithTooltip(KtIcons.LAUNCH, "Write your commands here")
     public val EDITOR_READLINE_INDICATOR: IconWithTooltip = IconWithTooltip(AllIcons.General.Balloon, "Waiting for input...")
     public val COMMAND_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.General.Run, "Executed command")
     public val READLINE_MARKER: IconWithTooltip = IconWithTooltip(AllIcons.Icons.Ide.SpeedSearchPrompt, "Input line")

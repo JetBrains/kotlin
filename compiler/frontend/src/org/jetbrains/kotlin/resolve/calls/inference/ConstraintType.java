@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.text.MessageFormat;
 
@@ -40,7 +40,7 @@ public enum ConstraintType implements Comparable<ConstraintType> {
     }
 
     @NotNull
-    public SubtypingConstraint assertSubtyping(@NotNull JetType subtype, @NotNull JetType supertype) {
+    public SubtypingConstraint assertSubtyping(@NotNull KtType subtype, @NotNull KtType supertype) {
         return new SubtypingConstraint(this, subtype, supertype);
     }
 

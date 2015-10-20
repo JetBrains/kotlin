@@ -25,12 +25,12 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.FormatterUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.JetNodeTypes.*
+import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
 
@@ -64,7 +64,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             val parameterWithDocCommentRule = {
                 parent: ASTBlock, left: ASTBlock, right: ASTBlock ->
-                if (right.getNode().getFirstChildNode().getElementType() == JetTokens.DOC_COMMENT) {
+                if (right.getNode().getFirstChildNode().getElementType() == KtTokens.DOC_COMMENT) {
                     Spacing.createSpacing(0, 0, 1, true, settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
                 }
                 else {

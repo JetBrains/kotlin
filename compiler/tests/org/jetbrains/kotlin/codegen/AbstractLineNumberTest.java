@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -41,7 +39,6 @@ import org.jetbrains.org.objectweb.asm.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -71,9 +68,9 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
         super.setUp();
 
         KotlinCoreEnvironment environment = createEnvironment();
-        JetFile psiFile = JetTestUtils.createFile(LINE_NUMBER_FUN + ".kt",
+        KtFile psiFile = JetTestUtils.createFile(LINE_NUMBER_FUN + ".kt",
                                                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n",
-                                               environment.getProject());
+                                                 environment.getProject());
 
         OutputFileCollection outputFiles =
                 GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, environment);
@@ -81,7 +78,7 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private Pair<JetFile, KotlinCoreEnvironment> createPsiFile(@NotNull String filename) {
+    private Pair<KtFile, KotlinCoreEnvironment> createPsiFile(@NotNull String filename) {
         File file = new File(filename);
         KotlinCoreEnvironment environment = createEnvironment();
 
@@ -97,8 +94,8 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     }
 
     private void doTest(@NotNull String filename, boolean custom) {
-        Pair<JetFile, KotlinCoreEnvironment> fileAndEnv = createPsiFile(filename);
-        JetFile psiFile = fileAndEnv.getFirst();
+        Pair<KtFile, KotlinCoreEnvironment> fileAndEnv = createPsiFile(filename);
+        KtFile psiFile = fileAndEnv.getFirst();
         KotlinCoreEnvironment environment = fileAndEnv.getSecond();
 
         GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile, environment);
@@ -146,7 +143,7 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private static List<Integer> extractCustomLineNumbersFromSource(@NotNull JetFile file) {
+    private static List<Integer> extractCustomLineNumbersFromSource(@NotNull KtFile file) {
         String fileContent = file.getText();
         List<Integer> lineNumbers = Lists.newArrayList();
         String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");
@@ -164,7 +161,7 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private static List<Integer> extractSelectedLineNumbersFromSource(@NotNull JetFile file) {
+    private static List<Integer> extractSelectedLineNumbersFromSource(@NotNull KtFile file) {
         String fileContent = file.getText();
         List<Integer> lineNumbers = Lists.newArrayList();
         String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");

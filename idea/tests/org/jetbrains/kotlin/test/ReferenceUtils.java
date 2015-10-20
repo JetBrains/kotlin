@@ -23,8 +23,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetClass;
-import org.jetbrains.kotlin.psi.JetObjectDeclaration;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtObjectDeclaration;
 import org.junit.Assert;
 
 public final class ReferenceUtils {
@@ -34,9 +34,9 @@ public final class ReferenceUtils {
     public static String renderAsGotoImplementation(@NotNull PsiElement element) {
         PsiElement navigationElement = element.getNavigationElement();
 
-        if (navigationElement instanceof JetObjectDeclaration && ((JetObjectDeclaration) navigationElement).isCompanion()) {
+        if (navigationElement instanceof KtObjectDeclaration && ((KtObjectDeclaration) navigationElement).isCompanion()) {
             //default presenter return null for companion object
-            JetClass containingClass = PsiTreeUtil.getParentOfType(navigationElement, JetClass.class);
+            KtClass containingClass = PsiTreeUtil.getParentOfType(navigationElement, KtClass.class);
             assert containingClass != null;
             return "companion object of " + renderAsGotoImplementation(containingClass);
         }

@@ -20,14 +20,14 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 public class CopyKotlinFileHandler : CopyHandlerDelegateBase() {
     private val delegate = CopyFilesOrDirectoriesHandler()
 
     private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
         return elements
-                .map { it.getContainingFile() as? JetFile ?: return null }
+                .map { it.getContainingFile() as? KtFile ?: return null }
                 .toTypedArray()
     }
 

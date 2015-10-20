@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.PackagePartProvider;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class GenerationUtils {
 
     @NotNull
     public static ClassFileFactory compileFileGetClassFileFactoryForTest(
-            @NotNull JetFile psiFile,
+            @NotNull KtFile psiFile,
             @NotNull KotlinCoreEnvironment environment
     ) {
         return compileFileGetGenerationStateForTest(psiFile, environment).getFactory();
@@ -44,7 +44,7 @@ public class GenerationUtils {
 
     @NotNull
     public static GenerationState compileFileGetGenerationStateForTest(
-            @NotNull JetFile psiFile,
+            @NotNull KtFile psiFile,
             @NotNull KotlinCoreEnvironment environment
     ) {
         AnalysisResult analysisResult =
@@ -53,12 +53,12 @@ public class GenerationUtils {
     }
 
     @NotNull
-    public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
+    public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<KtFile> files) {
         return compileManyFilesGetGenerationStateForTest(project, files, PackagePartProvider.Companion.getEMPTY());
     }
 
     @NotNull
-    public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files,
+    public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<KtFile> files,
             @NotNull PackagePartProvider packagePartProvider
     ) {
         AnalysisResult analysisResult = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
@@ -70,7 +70,7 @@ public class GenerationUtils {
     public static GenerationState compileFilesGetGenerationState(
             @NotNull Project project,
             @NotNull AnalysisResult analysisResult,
-            @NotNull List<JetFile> files,
+            @NotNull List<KtFile> files,
             boolean useTypeTableInSerializer
     ) {
         analysisResult.throwIfError();

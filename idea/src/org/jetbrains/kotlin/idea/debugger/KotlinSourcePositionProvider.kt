@@ -60,13 +60,13 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
 
     private fun computeSourcePosition(descriptor: LocalVariableDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
         val place = PositionUtil.getContextElement(context) ?: return null
-        if (place.getContainingFile() !is JetFile) return null
+        if (place.getContainingFile() !is KtFile) return null
 
         val contextElement = KotlinCodeFragmentFactory.getContextElement(place) ?: return null
 
-        val codeFragment = JetPsiFactory(project).createExpressionCodeFragment(descriptor.getName(), contextElement)
+        val codeFragment = KtPsiFactory(project).createExpressionCodeFragment(descriptor.getName(), contextElement)
         val expression = codeFragment.getContentElement()
-        if (expression is JetSimpleNameExpression) {
+        if (expression is KtSimpleNameExpression) {
             val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
             val declarationDescriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, expression, false)
             val sourceElement = declarationDescriptor?.getSource()
@@ -89,7 +89,7 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
         }
 
         val type = descriptor.getField().declaringType()
-        val myClass = findClassByType(project, type, context)?.getNavigationElement() as? JetClassOrObject ?: return null
+        val myClass = findClassByType(project, type, context)?.getNavigationElement() as? KtClassOrObject ?: return null
 
         val field = myClass.getDeclarations().firstOrNull { fieldName == it.getName() } ?: return null
 
@@ -111,7 +111,7 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
         if (position != null) {
             val element = position.getElementAt()
             if (element != null) {
-                return element.getStrictParentOfType<JetClassOrObject>()
+                return element.getStrictParentOfType<KtClassOrObject>()
             }
         }
         return null

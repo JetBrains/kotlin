@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.Renderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -41,10 +41,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -83,17 +83,17 @@ public object Renderers {
 
     public val ELEMENT_TEXT: Renderer<PsiElement> = Renderer { it.getText() }
 
-    public val DECLARATION_NAME: Renderer<JetNamedDeclaration> = Renderer { it.getNameAsSafeName().asString() }
+    public val DECLARATION_NAME: Renderer<KtNamedDeclaration> = Renderer { it.getNameAsSafeName().asString() }
 
-    public val RENDER_CLASS_OR_OBJECT: Renderer<JetClassOrObject> = Renderer {
-        classOrObject: JetClassOrObject ->
+    public val RENDER_CLASS_OR_OBJECT: Renderer<KtClassOrObject> = Renderer {
+        classOrObject: KtClassOrObject ->
         val name = if (classOrObject.getName() != null) " '" + classOrObject.getName() + "'" else ""
-        if (classOrObject is JetClass) "Class" + name else "Object" + name
+        if (classOrObject is KtClass) "Class" + name else "Object" + name
     }
 
     public val RENDER_CLASS_OR_OBJECT_NAME: Renderer<ClassDescriptor> = Renderer { it.renderKindWithName() }
 
-    public val RENDER_TYPE: Renderer<JetType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
+    public val RENDER_TYPE: Renderer<KtType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
 
     public val RENDER_POSITION_VARIANCE: Renderer<Variance> = Renderer {
         variance: Variance ->
@@ -179,18 +179,18 @@ public object Renderers {
             val receiverType = DescriptorUtils.getReceiverParameterType(substitutedDescriptor.getExtensionReceiverParameter())
 
             val errorPositions = Sets.newHashSet<ConstraintPosition>()
-            val parameterTypes = Lists.newArrayList<JetType>()
+            val parameterTypes = Lists.newArrayList<KtType>()
             for (valueParameterDescriptor in substitutedDescriptor.getValueParameters()) {
                 parameterTypes.add(valueParameterDescriptor.getType())
                 if (valueParameterDescriptor.getIndex() >= inferenceErrorData.valueArgumentsTypes.size()) continue
                 val actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.getIndex())
-                if (!JetTypeChecker.DEFAULT.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
+                if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
                     errorPositions.add(VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()))
                 }
             }
 
             if (receiverType != null && inferenceErrorData.receiverArgumentType != null
-                && !JetTypeChecker.DEFAULT.isSubtypeOf(inferenceErrorData.receiverArgumentType, receiverType)) {
+                && !KotlinTypeChecker.DEFAULT.isSubtypeOf(inferenceErrorData.receiverArgumentType, receiverType)) {
                 errorPositions.add(RECEIVER_POSITION.position())
             }
 
@@ -279,11 +279,11 @@ public object Renderers {
                 .table(newTable()
                                .descriptor(inferenceErrorData.descriptor))
 
-        var violatedUpperBound: JetType? = null
+        var violatedUpperBound: KtType? = null
         for (upperBound in typeParameterDescriptor.getUpperBounds()) {
             val upperBoundWithSubstitutedInferredTypes = systemWithoutWeakConstraints.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT)
             if (upperBoundWithSubstitutedInferredTypes != null
-                && !JetTypeChecker.DEFAULT.isSubtypeOf(inferredValueForTypeParameter, upperBoundWithSubstitutedInferredTypes)) {
+                && !KotlinTypeChecker.DEFAULT.isSubtypeOf(inferredValueForTypeParameter, upperBoundWithSubstitutedInferredTypes)) {
                 violatedUpperBound = upperBoundWithSubstitutedInferredTypes
                 break
             }
@@ -356,9 +356,9 @@ public object Renderers {
         }.toString()
     }
 
-    private fun renderTypes(types: Collection<JetType>) = StringUtil.join(types, { RENDER_TYPE.render(it) }, ", ")
+    private fun renderTypes(types: Collection<KtType>) = StringUtil.join(types, { RENDER_TYPE.render(it) }, ", ")
 
-    public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<JetType>> = Renderer { renderTypes(it) }
+    public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<KtType>> = Renderer { renderTypes(it) }
 
     private fun renderConstraintSystem(constraintSystem: ConstraintSystem, renderTypeBounds: Renderer<TypeBounds>): String {
         val typeVariables = constraintSystem.getTypeVariables()

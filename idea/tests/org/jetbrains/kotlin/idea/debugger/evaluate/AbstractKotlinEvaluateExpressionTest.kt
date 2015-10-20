@@ -51,7 +51,7 @@ import org.apache.log4j.spi.LoggingEvent
 import org.jetbrains.eval4j.ObjectValue
 import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerTestBase
 import org.jetbrains.kotlin.idea.debugger.KotlinFrameExtraVariablesProvider
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -357,7 +357,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             try {
 
                 val evaluator =
-                        EvaluatorBuilderImpl.build(TextWithImportsImpl(codeFragmentKind, text, "", JetFileType.INSTANCE),
+                        EvaluatorBuilderImpl.build(TextWithImportsImpl(codeFragmentKind, text, "", KotlinFileType.INSTANCE),
                                                    contextElement,
                                                    sourcePosition)
 

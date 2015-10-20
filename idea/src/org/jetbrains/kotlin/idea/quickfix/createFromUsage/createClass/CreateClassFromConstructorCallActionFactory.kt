@@ -30,20 +30,20 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.Collections
 
-public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<JetCallExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetCallExpression? {
+public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<KtCallExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtCallExpression? {
         val diagElement = diagnostic.psiElement
-        if (diagElement.getNonStrictParentOfType<JetTypeReference>() != null) return null
+        if (diagElement.getNonStrictParentOfType<KtTypeReference>() != null) return null
 
-        val callExpr = diagElement.parent as? JetCallExpression ?: return null
+        val callExpr = diagElement.parent as? KtCallExpression ?: return null
         return if (callExpr.calleeExpression == diagElement) callExpr else null
     }
 
-    override fun getPossibleClassKinds(element: JetCallExpression, diagnostic: Diagnostic): List<ClassKind> {
-        val inAnnotationEntry = diagnostic.psiElement.getNonStrictParentOfType<JetAnnotationEntry>() != null
+    override fun getPossibleClassKinds(element: KtCallExpression, diagnostic: Diagnostic): List<ClassKind> {
+        val inAnnotationEntry = diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>() != null
 
         val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
-        val file = element.containingFile as? JetFile ?: return emptyList()
+        val file = element.containingFile as? KtFile ?: return emptyList()
         val call = element.getCall(context) ?: return emptyList()
         val targetParent = getTargetParentByCall(call, file) ?: return emptyList()
 
@@ -54,25 +54,25 @@ public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageF
         return classKind.singletonList()
     }
 
-    override fun extractFixData(element: JetCallExpression, diagnostic: Diagnostic): ClassInfo? {
+    override fun extractFixData(element: KtCallExpression, diagnostic: Diagnostic): ClassInfo? {
         val diagElement = diagnostic.psiElement
-        if (diagElement.getNonStrictParentOfType<JetTypeReference>() != null) return null
+        if (diagElement.getNonStrictParentOfType<KtTypeReference>() != null) return null
 
-        val inAnnotationEntry = diagElement.getNonStrictParentOfType<JetAnnotationEntry>() != null
+        val inAnnotationEntry = diagElement.getNonStrictParentOfType<KtAnnotationEntry>() != null
 
-        val callExpr = diagElement.parent as? JetCallExpression ?: return null
+        val callExpr = diagElement.parent as? KtCallExpression ?: return null
         if (callExpr.calleeExpression != diagElement) return null
 
-        val calleeExpr = callExpr.calleeExpression as? JetSimpleNameExpression ?: return null
+        val calleeExpr = callExpr.calleeExpression as? KtSimpleNameExpression ?: return null
 
         val name = calleeExpr.getReferencedName()
         if (!inAnnotationEntry && !name.checkClassName()) return null
 
         val callParent = callExpr.parent
         val fullCallExpr =
-                if (callParent is JetQualifiedExpression && callParent.selectorExpression == callExpr) callParent else callExpr
+                if (callParent is KtQualifiedExpression && callParent.selectorExpression == callExpr) callParent else callExpr
 
-        val file = fullCallExpr.containingFile as? JetFile ?: return null
+        val file = fullCallExpr.containingFile as? KtFile ?: return null
 
         val (context, moduleDescriptor) = callExpr.analyzeFullyAndGetResult()
 

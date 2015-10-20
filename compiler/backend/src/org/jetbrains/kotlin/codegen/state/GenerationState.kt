@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetScript
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -45,7 +45,7 @@ public class GenerationState @JvmOverloads constructor(
         builderFactory: ClassBuilderFactory,
         public val module: ModuleDescriptor,
         bindingContext: BindingContext,
-        public val files: List<JetFile>,
+        public val files: List<KtFile>,
         disableCallAssertions: Boolean = true,
         disableParamAssertions: Boolean = true,
         public val generateDeclaredClassFilter: GenerationState.GenerateClassFilter = GenerationState.GenerateClassFilter.GENERATE_ALL,
@@ -66,20 +66,20 @@ public class GenerationState @JvmOverloads constructor(
         public val progress: Progress = Progress.DEAF
 ) {
     public abstract class GenerateClassFilter {
-        public abstract fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean
-        public abstract fun shouldGenerateClass(classOrObject: JetClassOrObject): Boolean
-        public abstract fun shouldGeneratePackagePart(jetFile: JetFile): Boolean
-        public abstract fun shouldGenerateScript(script: JetScript): Boolean
+        public abstract fun shouldAnnotateClass(classOrObject: KtClassOrObject): Boolean
+        public abstract fun shouldGenerateClass(classOrObject: KtClassOrObject): Boolean
+        public abstract fun shouldGeneratePackagePart(jetFile: KtFile): Boolean
+        public abstract fun shouldGenerateScript(script: KtScript): Boolean
 
         companion object {
             public val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
-                override fun shouldAnnotateClass(classOrObject: JetClassOrObject): Boolean = true
+                override fun shouldAnnotateClass(classOrObject: KtClassOrObject): Boolean = true
 
-                override fun shouldGenerateClass(classOrObject: JetClassOrObject): Boolean = true
+                override fun shouldGenerateClass(classOrObject: KtClassOrObject): Boolean = true
 
-                override fun shouldGenerateScript(script: JetScript): Boolean = true
+                override fun shouldGenerateScript(script: KtScript): Boolean = true
 
-                override fun shouldGeneratePackagePart(jetFile: JetFile): Boolean = true
+                override fun shouldGeneratePackagePart(jetFile: KtFile): Boolean = true
             }
         }
     }

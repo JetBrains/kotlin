@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.junit.Assert;
 
@@ -120,12 +120,12 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                 ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), PluginTestCaseBase.mockJdk());
             }
 
-            DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) getFile());
+            DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) getFile());
 
             doTestFor(pathToFile, intentionAction, fileText);
 
             if (InTextDirectivesUtils.isDirectiveDefined(fileText, "// CHECK_ERRORS_AFTER")) {
-                DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) getFile());
+                DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) getFile());
             }
         }
         finally {

@@ -8,21 +8,35 @@ fun elements(): List<GenericFunction> {
     templates add f("contains(element: T)") {
         operator(true)
 
+        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns `true` if [element] is found in the collection." }
+        customSignature(Iterables, ArraysOfObjects, Sequences) { "contains(element: @kotlin.internal.NoInfer T)" }
         returns("Boolean")
-        body {
+        body(Iterables) {
             """
-            if (this is Collection)
-                return contains(element)
-            return indexOf(element) >= 0
+                if (this is Collection)
+                    return contains(element)
+                return indexOf(element) >= 0
             """
         }
-        exclude(Strings, Lists, Collections)
         body(ArraysOfPrimitives, ArraysOfObjects, Sequences) {
             """
             return indexOf(element) >= 0
             """
         }
+    }
+
+
+    templates add f("contains(element: T)") {
+        operator(true)
+        only(Iterables, Sequences, ArraysOfObjects)
+        doc { "Returns `true` if [element] is found in the collection." }
+        returns("Boolean")
+        deprecate(Deprecation("Use 'containsRaw' instead.", "containsRaw(element)"))
+        annotations("""
+            @kotlin.jvm.JvmName("containsAny")
+            @kotlin.internal.LowPriorityInOverloadResolution
+        """.trimIndent())
     }
 
     templates add f("containsRaw(element: Any?)") {
@@ -41,8 +55,9 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("indexOf(element: T)") {
-        exclude(Strings, Lists) // has native implementation
+        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
+        customSignature(Iterables, ArraysOfObjects, Sequences) { "indexOf(element: @kotlin.internal.NoInfer T)" }
         returns("Int")
         body { f ->
             """
@@ -87,6 +102,18 @@ fun elements(): List<GenericFunction> {
         }
     }
 
+    templates add f("indexOf(element: T)") {
+        only(Iterables, Sequences, ArraysOfObjects)
+        doc { "Returns first index of [element], or -1 if the collection does not contain element." }
+        returns("Int")
+        deprecate(Deprecation("Use 'indexOfRaw' instead.", "indexOfRaw(element)"))
+        annotations("""
+            @kotlin.jvm.JvmName("indexOfAny")
+            @kotlin.internal.LowPriorityInOverloadResolution
+            @Suppress("NOTHING_TO_INLINE")
+        """.trimIndent())
+    }
+
     templates add f("indexOfRaw(element: Any?)") {
         only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc {
@@ -104,8 +131,9 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("lastIndexOf(element: T)") {
-        exclude(Strings, Lists) // has native implementation
+        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns last index of [element], or -1 if the collection does not contain element." }
+        customSignature(Iterables, ArraysOfObjects, Sequences) { "lastIndexOf(element: @kotlin.internal.NoInfer T)" }
         returns("Int")
         body { f ->
             """
@@ -149,6 +177,18 @@ fun elements(): List<GenericFunction> {
             return -1
            """
         }
+    }
+
+    templates add f("lastIndexOf(element: T)") {
+        only(Iterables, Sequences, ArraysOfObjects)
+        doc { "Returns last index of [element], or -1 if the collection does not contain element." }
+        returns("Int")
+        deprecate(Deprecation("Use 'indexOfRaw' instead.", "indexOfRaw(element)"))
+        annotations("""
+            @kotlin.jvm.JvmName("lastIndexOfAny")
+            @kotlin.internal.LowPriorityInOverloadResolution
+            @Suppress("NOTHING_TO_INLINE")
+        """.trimIndent())
     }
 
     templates add f("lastIndexOfRaw(element: Any?)") {

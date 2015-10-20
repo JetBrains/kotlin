@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -33,12 +33,12 @@ import java.util.*
 
 public class MultifileClassPartCodegen(
         v: ClassBuilder,
-        file: JetFile,
+        file: KtFile,
         private val filePartType: Type,
         private val multifileClassType: Type,
         partContext: FieldOwnerContext<*>,
         state: GenerationState
-) : MemberCodegen<JetFile>(state, null, partContext, file, v) {
+) : MemberCodegen<KtFile>(state, null, partContext, file, v) {
     override fun generate() {
         if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) return
         super.generate()
@@ -58,7 +58,7 @@ public class MultifileClassPartCodegen(
 
     override fun generateBody() {
         for (declaration in element.declarations) {
-            if (declaration is JetNamedFunction || declaration is JetProperty) {
+            if (declaration is KtNamedFunction || declaration is KtProperty) {
                 genFunctionOrProperty(declaration)
             }
         }
@@ -72,11 +72,11 @@ public class MultifileClassPartCodegen(
         val members = ArrayList<DeclarationDescriptor>()
         for (declaration in element.declarations) {
             when (declaration) {
-                is JetNamedFunction -> {
+                is KtNamedFunction -> {
                     val functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration)
                     members.add(functionDescriptor ?: throw AssertionError("Function ${declaration.name} is not bound in ${element.name}"))
                 }
-                is JetProperty -> {
+                is KtProperty -> {
                     val property = bindingContext.get(BindingContext.VARIABLE, declaration)
                     members.add(property ?: throw AssertionError("Property ${declaration.name} is not bound in ${element.name}"))
                 }

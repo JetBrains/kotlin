@@ -62,17 +62,17 @@ internal class ParameterNameExpression(
         val offset = context.getStartOffset()
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         val editor = context.getEditor()!!
-        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as JetFile
+        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as KtFile
         val elementAt = file.findElementAt(offset)
-        val declaration = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetFunction>(), javaClass<JetClass>()) ?: return arrayOf()
+        val declaration = PsiTreeUtil.getParentOfType(elementAt, javaClass<KtFunction>(), javaClass<KtClass>()) ?: return arrayOf()
         val parameterList = when (declaration) {
-            is JetFunction -> declaration.getValueParameterList()!!
-            is JetClass -> declaration.getPrimaryConstructorParameterList()!!
+            is KtFunction -> declaration.getValueParameterList()!!
+            is KtClass -> declaration.getPrimaryConstructorParameterList()!!
             else -> throw AssertionError("Unexpected declaration: ${declaration.getText()}")
         }
 
         // add names based on selected type
-        val parameter = elementAt?.getStrictParentOfType<JetParameter>()
+        val parameter = elementAt?.getStrictParentOfType<KtParameter>()
         if (parameter != null) {
             val parameterTypeRef = parameter.getTypeReference()
             if (parameterTypeRef != null) {
@@ -147,9 +147,9 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         val editor = context.getEditor()!!
-        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as JetFile
+        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as KtFile
         val elementAt = file.findElementAt(offset)
-        val declaration = elementAt?.getStrictParentOfType<JetNamedDeclaration>() ?: return TextResult("")
+        val declaration = elementAt?.getStrictParentOfType<KtNamedDeclaration>() ?: return TextResult("")
 
         val renderedTypeParameters = LinkedHashSet<RenderedTypeParameter>()
         renderedTypeParameters.addAll(mandatoryTypeParameters)

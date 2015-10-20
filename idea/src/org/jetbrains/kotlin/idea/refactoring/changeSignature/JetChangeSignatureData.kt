@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.Collections
@@ -55,8 +55,8 @@ public class JetChangeSignatureData(
         receiver = createReceiverInfoIfNeeded()
 
         val valueParameters = when {
-            baseDeclaration is JetFunction -> baseDeclaration.getValueParameters()
-            baseDeclaration is JetClass -> baseDeclaration.getPrimaryConstructorParameters()
+            baseDeclaration is KtFunction -> baseDeclaration.getValueParameters()
+            baseDeclaration is KtClass -> baseDeclaration.getPrimaryConstructorParameters()
             else -> null
         }
         parameters = baseDescriptor.getValueParameters()
@@ -75,8 +75,8 @@ public class JetChangeSignatureData(
     }
 
     private fun createReceiverInfoIfNeeded(): JetParameterInfo? {
-        val callable = baseDeclaration as? JetCallableDeclaration ?: return null
-        val bodyScope = (callable as? JetFunction)?.getBodyExpression()?.let { it.analyze()[BindingContext.RESOLUTION_SCOPE, it] }
+        val callable = baseDeclaration as? KtCallableDeclaration ?: return null
+        val bodyScope = (callable as? KtFunction)?.getBodyExpression()?.let { it.analyze()[BindingContext.RESOLUTION_SCOPE, it] }
         val paramNames = baseDescriptor.getValueParameters().map { it.getName().asString() }
         val validator = bodyScope?.let { bodyScope ->
             CollectingNameValidator(paramNames) {
@@ -106,14 +106,14 @@ public class JetChangeSignatureData(
 
     override val affectedCallables: Collection<UsageInfo> by lazy {
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
-            val primaryDeclaration = primaryFunction.getDeclaration() as? JetCallableDeclaration
+            val primaryDeclaration = primaryFunction.getDeclaration() as? KtCallableDeclaration
             val lightMethods = primaryDeclaration?.toLightMethods() ?: Collections.emptyList()
             lightMethods.flatMap { baseMethod ->
                 OverridingMethodsSearch
                         .search(baseMethod)
                         .map { overridingMethod ->
                             if (overridingMethod is KotlinLightMethod) {
-                                val overridingDeclaration = overridingMethod.namedUnwrappedElement as JetNamedDeclaration
+                                val overridingDeclaration = overridingMethod.namedUnwrappedElement as KtNamedDeclaration
                                 val overridingDescriptor = overridingDeclaration.resolveToDescriptor() as CallableDescriptor
                                 JetCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
                             }

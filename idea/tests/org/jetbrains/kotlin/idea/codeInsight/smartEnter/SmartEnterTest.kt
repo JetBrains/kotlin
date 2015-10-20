@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight.smartEnter
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 
 class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
@@ -1032,7 +1032,7 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
     }
 
     fun doTest(before: String, after: String) {
-        myFixture.configureByText(JetFileType.INSTANCE, before)
+        myFixture.configureByText(KotlinFileType.INSTANCE, before)
         myFixture.performEditorAction(IdeActions.ACTION_EDITOR_COMPLETE_STATEMENT)
         myFixture.checkResult(after)
     }

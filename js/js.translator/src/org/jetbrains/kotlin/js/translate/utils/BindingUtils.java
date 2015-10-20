@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.List;
@@ -60,56 +60,56 @@ public final class BindingUtils {
 
     @NotNull
     public static ClassDescriptor getClassDescriptor(@NotNull BindingContext context,
-            @NotNull JetClassOrObject declaration) {
+            @NotNull KtClassOrObject declaration) {
         return BindingContextUtils.getNotNull(context, BindingContext.CLASS, declaration);
     }
 
     @NotNull
     public static FunctionDescriptor getFunctionDescriptor(@NotNull BindingContext context,
-            @NotNull JetDeclarationWithBody declaration) {
+            @NotNull KtDeclarationWithBody declaration) {
         return getDescriptorForExpression(context, declaration, FunctionDescriptor.class);
     }
 
     @NotNull
     public static PropertyDescriptor getPropertyDescriptor(@NotNull BindingContext context,
-            @NotNull JetProperty declaration) {
+            @NotNull KtProperty declaration) {
         return getDescriptorForExpression(context, declaration, PropertyDescriptor.class);
     }
 
     @NotNull
-    private static JetParameter getParameterForDescriptor(@NotNull ValueParameterDescriptor descriptor) {
+    private static KtParameter getParameterForDescriptor(@NotNull ValueParameterDescriptor descriptor) {
         PsiElement result = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
-        assert result instanceof JetParameter : message(descriptor, "ValueParameterDescriptor should have corresponding JetParameter");
-        return (JetParameter) result;
+        assert result instanceof KtParameter : message(descriptor, "ValueParameterDescriptor should have corresponding JetParameter");
+        return (KtParameter) result;
     }
 
-    public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClassOrObject classDeclaration) {
+    public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull KtClassOrObject classDeclaration) {
         ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
         List<ClassDescriptor> superclassDescriptors = DescriptorUtils.getSuperclassDescriptors(classDescriptor);
         return (JsDescriptorUtils.findAncestorClass(superclassDescriptors) != null);
     }
 
     @NotNull
-    public static JetType getTypeByReference(@NotNull BindingContext context,
-            @NotNull JetTypeReference typeReference) {
+    public static KtType getTypeByReference(@NotNull BindingContext context,
+            @NotNull KtTypeReference typeReference) {
         return BindingContextUtils.getNotNull(context, BindingContext.TYPE, typeReference);
     }
 
     @NotNull
     public static ClassDescriptor getClassDescriptorForTypeReference(@NotNull BindingContext context,
-            @NotNull JetTypeReference typeReference) {
+            @NotNull KtTypeReference typeReference) {
         return DescriptorUtils.getClassDescriptorForType(getTypeByReference(context, typeReference));
     }
 
     @Nullable
     public static PropertyDescriptor getPropertyDescriptorForConstructorParameter(@NotNull BindingContext context,
-            @NotNull JetParameter parameter) {
+            @NotNull KtParameter parameter) {
         return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
     }
 
     @Nullable
     public static DeclarationDescriptor getDescriptorForReferenceExpression(@NotNull BindingContext context,
-            @NotNull JetReferenceExpression reference) {
+            @NotNull KtReferenceExpression reference) {
         if (BindingContextUtils.isExpressionWithValidReference(reference, context)) {
             return BindingContextUtils.getNotNull(context, BindingContext.REFERENCE_TARGET, reference);
         }
@@ -118,20 +118,20 @@ public final class BindingUtils {
 
     @Nullable
     public static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
-            @NotNull JetReferenceExpression reference) {
+            @NotNull KtReferenceExpression reference) {
         return context.get(BindingContext.REFERENCE_TARGET, reference);
     }
 
-    public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull JetExpression expression) {
+    public static boolean isVariableReassignment(@NotNull BindingContext context, @NotNull KtExpression expression) {
         return BindingContextUtils.getNotNull(context, BindingContext.VARIABLE_REASSIGNMENT, expression);
     }
 
     @Nullable
     public static CallableDescriptor getCallableDescriptorForOperationExpression(
             @NotNull BindingContext context,
-            @NotNull JetOperationExpression expression
+            @NotNull KtOperationExpression expression
     ) {
-        JetSimpleNameExpression operationReference = expression.getOperationReference();
+        KtSimpleNameExpression operationReference = expression.getOperationReference();
         DeclarationDescriptor descriptorForReferenceExpression =
                 getNullableDescriptorForReferenceExpression(context, operationReference);
 
@@ -149,7 +149,7 @@ public final class BindingUtils {
     }
 
     @Nullable
-    public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression) {
+    public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull KtExpression expression) {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context);
         if (compileTimeValue != null) {
             return getCompileTimeValue(context, expression, compileTimeValue);
@@ -158,17 +158,17 @@ public final class BindingUtils {
     }
 
     @Nullable
-    public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull JetExpression expression, @NotNull CompileTimeConstant<?> constant) {
-        JetType expectedType = context.getType(expression);
+    public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull KtExpression expression, @NotNull CompileTimeConstant<?> constant) {
+        KtType expectedType = context.getType(expression);
         return constant.getValue(expectedType == null ? TypeUtils.NO_EXPECTED_TYPE : expectedType);
     }
 
     @NotNull
-    public static JetExpression getDefaultArgument(@NotNull ValueParameterDescriptor parameterDescriptor) {
+    public static KtExpression getDefaultArgument(@NotNull ValueParameterDescriptor parameterDescriptor) {
         ValueParameterDescriptor descriptorWhichDeclaresDefaultValue =
                 getOriginalDescriptorWhichDeclaresDefaultValue(parameterDescriptor);
-        JetParameter psiParameter = getParameterForDescriptor(descriptorWhichDeclaresDefaultValue);
-        JetExpression defaultValue = psiParameter.getDefaultValue();
+        KtParameter psiParameter = getParameterForDescriptor(descriptorWhichDeclaresDefaultValue);
+        KtExpression defaultValue = psiParameter.getDefaultValue();
         assert defaultValue != null : message(parameterDescriptor, "No default value found in PSI");
         return defaultValue;
     }
@@ -187,31 +187,31 @@ public final class BindingUtils {
 
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getIteratorFunction(@NotNull BindingContext context,
-            @NotNull JetExpression rangeExpression) {
+            @NotNull KtExpression rangeExpression) {
         return BindingContextUtils.getNotNull(context, BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, rangeExpression);
     }
 
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getNextFunction(@NotNull BindingContext context,
-            @NotNull JetExpression rangeExpression) {
+            @NotNull KtExpression rangeExpression) {
         return BindingContextUtils.getNotNull(context, BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, rangeExpression);
     }
 
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getHasNextCallable(@NotNull BindingContext context,
-            @NotNull JetExpression rangeExpression) {
+            @NotNull KtExpression rangeExpression) {
         return BindingContextUtils.getNotNull(context, BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, rangeExpression);
     }
 
     @NotNull
-    public static JetType getTypeForExpression(@NotNull BindingContext context,
-            @NotNull JetExpression expression) {
+    public static KtType getTypeForExpression(@NotNull BindingContext context,
+            @NotNull KtExpression expression) {
         return BindingContextUtils.getTypeNotNull(context, expression);
     }
 
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getResolvedCallForArrayAccess(@NotNull BindingContext context,
-            @NotNull JetArrayAccessExpression arrayAccessExpression,
+            @NotNull KtArrayAccessExpression arrayAccessExpression,
             boolean isGet) {
         return BindingContextUtils.getNotNull(context, isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression);
     }

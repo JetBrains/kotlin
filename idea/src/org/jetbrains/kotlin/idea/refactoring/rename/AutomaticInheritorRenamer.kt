@@ -28,9 +28,9 @@ import com.intellij.refactoring.rename.naming.InheritorRenamer
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.KtClass
 
-public class AutomaticInheritorRenamer(klass: JetClass, newName: String): AutomaticRenamer() {
+public class AutomaticInheritorRenamer(klass: KtClass, newName: String): AutomaticRenamer() {
     init {
         val lightClass = LightClassUtil.getPsiClass(klass)
         if (lightClass != null) {
@@ -50,12 +50,12 @@ public class AutomaticInheritorRenamer(klass: JetClass, newName: String): Automa
 }
 
 public class AutomaticInheritorRenamerFactory : AutomaticRenamerFactory {
-    override fun isApplicable(element: PsiElement) = element is JetClass
+    override fun isApplicable(element: PsiElement) = element is KtClass
     override fun getOptionName() = RefactoringBundle.message("rename.inheritors")
     override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameInheritors()
     override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameInheritors(enabled)
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>): AutomaticRenamer {
-        return AutomaticInheritorRenamer(element as JetClass, newName)
+        return AutomaticInheritorRenamer(element as KtClass, newName)
     }
 }

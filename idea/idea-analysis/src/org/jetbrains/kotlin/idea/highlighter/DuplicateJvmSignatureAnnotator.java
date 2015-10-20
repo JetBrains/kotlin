@@ -27,22 +27,22 @@ import org.jetbrains.kotlin.idea.caches.resolve.GetModuleInfoKt;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 public class DuplicateJvmSignatureAnnotator implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(element instanceof JetFile) && !(element instanceof JetDeclaration)) return;
+        if (!(element instanceof KtFile) && !(element instanceof KtDeclaration)) return;
         if (!ProjectRootsUtil.isInProjectSource(element)) return;
 
         PsiFile file = element.getContainingFile();
-        if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != JvmPlatform.INSTANCE$) return;
+        if (!(file instanceof KtFile) || TargetPlatformDetector.getPlatform((KtFile) file) != JvmPlatform.INSTANCE$) return;
 
-        Diagnostics otherDiagnostics = ResolutionUtils.analyzeFully((JetElement) element).getDiagnostics();
+        Diagnostics otherDiagnostics = ResolutionUtils.analyzeFully((KtElement) element).getDiagnostics();
         GlobalSearchScope moduleScope = GetModuleInfoKt.getModuleInfo(element).contentScope();
         Diagnostics diagnostics = DuplicateJvmSignatureUtilKt.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
 

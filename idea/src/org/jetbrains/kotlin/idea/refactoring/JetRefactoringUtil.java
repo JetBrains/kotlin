@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -103,7 +103,7 @@ public class JetRefactoringUtil {
 
     @NotNull
     public static List<? extends PsiElement> checkSuperMethods(
-            @NotNull JetDeclaration declaration,
+            @NotNull KtDeclaration declaration,
             @Nullable Collection<PsiElement> ignore,
             @NotNull String actionStringKey
     ) {
@@ -120,7 +120,7 @@ public class JetRefactoringUtil {
         Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor = new HashMap<PsiElement, CallableDescriptor>();
         for (CallableDescriptor overriddenDescriptor : DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
             PsiElement overriddenDeclaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, overriddenDescriptor);
-            if (PsiTreeUtil.instanceOf(overriddenDeclaration, JetNamedFunction.class, JetProperty.class, PsiMethod.class)) {
+            if (PsiTreeUtil.instanceOf(overriddenDeclaration, KtNamedFunction.class, KtProperty.class, PsiMethod.class)) {
                 overriddenElementsToDescriptor.put(overriddenDeclaration, overriddenDescriptor);
             }
         }
@@ -136,7 +136,7 @@ public class JetRefactoringUtil {
 
     @NotNull
     private static List<? extends PsiElement> askUserForMethodsToSearch(
-            @NotNull JetDeclaration declaration,
+            @NotNull KtDeclaration declaration,
             @NotNull CallableDescriptor declarationDescriptor,
             @NotNull Map<PsiElement, CallableDescriptor> overriddenElementsToDescriptor,
             @NotNull List<String> superClasses,
@@ -177,7 +177,7 @@ public class JetRefactoringUtil {
 
                         PsiElement element = entry.getKey();
                         CallableDescriptor descriptor = entry.getValue();
-                        if (element instanceof JetNamedFunction || element instanceof JetProperty) {
+                        if (element instanceof KtNamedFunction || element instanceof KtProperty) {
                             description = formatClassDescriptor(descriptor.getContainingDeclaration());
                         }
                         else {
@@ -240,10 +240,10 @@ public class JetRefactoringUtil {
     @NotNull
     public static String formatJavaOrLightMethod(@NotNull PsiMethod method) {
         PsiElement originalDeclaration = LightClassUtilsKt.getUnwrapped(method);
-        if (originalDeclaration instanceof JetDeclaration) {
-            JetDeclaration jetDeclaration = (JetDeclaration) originalDeclaration;
-            BindingContext bindingContext = ResolutionUtils.analyze(jetDeclaration, BodyResolveMode.FULL);
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetDeclaration);
+        if (originalDeclaration instanceof KtDeclaration) {
+            KtDeclaration ktDeclaration = (KtDeclaration) originalDeclaration;
+            BindingContext bindingContext = ResolutionUtils.analyze(ktDeclaration, BodyResolveMode.FULL);
+            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration);
 
             if (descriptor != null) return formatFunctionDescriptor(descriptor);
         }
@@ -251,7 +251,7 @@ public class JetRefactoringUtil {
     }
 
     @NotNull
-    public static String formatClass(@NotNull JetClassOrObject classOrObject) {
+    public static String formatClass(@NotNull KtClassOrObject classOrObject) {
         BindingContext bindingContext = ResolutionUtils.analyze(classOrObject, BodyResolveMode.FULL);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
@@ -317,9 +317,9 @@ public class JetRefactoringUtil {
         int parameterIndex = JetPsiUtilKt.parameterIndex(LightClassUtilsKt.getUnwrapped(parameter));
 
         if (method instanceof KotlinLightMethod) {
-            JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-            if (declaration instanceof JetFunction) {
-                result.add(((JetFunction) declaration).getValueParameters().get(parameterIndex));
+            KtDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+            if (declaration instanceof KtFunction) {
+                result.add(((KtFunction) declaration).getValueParameters().get(parameterIndex));
             }
         }
         else {
@@ -328,7 +328,7 @@ public class JetRefactoringUtil {
     }
 
     public interface SelectExpressionCallback {
-        void run(@Nullable JetExpression expression);
+        void run(@Nullable KtExpression expression);
     }
 
     public static void selectExpression(
@@ -356,59 +356,59 @@ public class JetRefactoringUtil {
         }
     }
 
-    public static List<JetExpression> getSmartSelectSuggestions(
+    public static List<KtExpression> getSmartSelectSuggestions(
             @NotNull PsiFile file,
             int offset
     ) throws IntroduceRefactoringException {
         if (offset < 0) {
-            return new ArrayList<JetExpression>();
+            return new ArrayList<KtExpression>();
         }
 
         PsiElement element = file.findElementAt(offset);
         if (element == null) {
-            return new ArrayList<JetExpression>();
+            return new ArrayList<KtExpression>();
         }
         if (element instanceof PsiWhiteSpace) {
             return getSmartSelectSuggestions(file, offset - 1);
         }
 
-        List<JetExpression> expressions = new ArrayList<JetExpression>();
-        while (element != null && !(element instanceof JetBlockExpression && !(element.getParent() instanceof JetFunctionLiteral)) &&
-               !(element instanceof JetNamedFunction)
-               && !(element instanceof JetClassBody)) {
-            if (element instanceof JetExpression && !(element instanceof JetStatementExpression)) {
+        List<KtExpression> expressions = new ArrayList<KtExpression>();
+        while (element != null && !(element instanceof KtBlockExpression && !(element.getParent() instanceof KtFunctionLiteral)) &&
+               !(element instanceof KtNamedFunction)
+               && !(element instanceof KtClassBody)) {
+            if (element instanceof KtExpression && !(element instanceof KtStatementExpression)) {
                 boolean addExpression = true;
 
-                if (JetPsiUtil.isLabelIdentifierExpression(element)) {
+                if (KtPsiUtil.isLabelIdentifierExpression(element)) {
                     addExpression = false;
                 }
-                else if (element.getParent() instanceof JetQualifiedExpression) {
-                    JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) element.getParent();
+                else if (element.getParent() instanceof KtQualifiedExpression) {
+                    KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) element.getParent();
                     if (qualifiedExpression.getReceiverExpression() != element) {
                         addExpression = false;
                     }
                 }
-                else if (element.getParent() instanceof JetCallElement
-                         || element.getParent() instanceof JetThisExpression
-                         || PsiTreeUtil.getParentOfType(element, JetSuperExpression.class) != null) {
+                else if (element.getParent() instanceof KtCallElement
+                         || element.getParent() instanceof KtThisExpression
+                         || PsiTreeUtil.getParentOfType(element, KtSuperExpression.class) != null) {
                     addExpression = false;
                 }
-                else if (element.getParent() instanceof JetOperationExpression) {
-                    JetOperationExpression operationExpression = (JetOperationExpression) element.getParent();
+                else if (element.getParent() instanceof KtOperationExpression) {
+                    KtOperationExpression operationExpression = (KtOperationExpression) element.getParent();
                     if (operationExpression.getOperationReference() == element) {
                         addExpression = false;
                     }
                 }
                 if (addExpression) {
-                    JetExpression expression = (JetExpression)element;
+                    KtExpression expression = (KtExpression)element;
                     BindingContext bindingContext = ResolutionUtils.analyze(expression, BodyResolveMode.FULL);
-                    JetType expressionType = bindingContext.getType(expression);
+                    KtType expressionType = bindingContext.getType(expression);
                     if (expressionType == null || !KotlinBuiltIns.isUnit(expressionType)) {
                         expressions.add(expression);
                     }
                 }
             }
-            else if (element instanceof JetTypeElement) {
+            else if (element instanceof KtTypeElement) {
                 expressions.clear();
             }
             element = element.getParent();
@@ -420,7 +420,7 @@ public class JetRefactoringUtil {
             @NotNull Editor editor, @NotNull PsiFile file, int offset,
             boolean failOnEmptySuggestion,
             @NotNull final SelectExpressionCallback callback) throws IntroduceRefactoringException {
-        List<JetExpression> expressions = getSmartSelectSuggestions(file, offset);
+        List<KtExpression> expressions = getSmartSelectSuggestions(file, offset);
         if (expressions.size() == 0) {
             if (failOnEmptySuggestion) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
             return;
@@ -432,7 +432,7 @@ public class JetRefactoringUtil {
         }
 
         final DefaultListModel model = new DefaultListModel();
-        for (JetExpression expression : expressions) {
+        for (KtExpression expression : expressions) {
             model.addElement(expression);
         }
 
@@ -444,7 +444,7 @@ public class JetRefactoringUtil {
             @Override
             public Component getListCellRendererComponent(@NotNull JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component rendererComponent = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                JetExpression element = (JetExpression) value;
+                KtExpression element = (KtExpression) value;
                 if (element.isValid()) {
                     setText(getExpressionShortText(element));
                 }
@@ -458,7 +458,7 @@ public class JetRefactoringUtil {
                 highlighter.dropHighlight();
                 int selectedIndex = list.getSelectedIndex();
                 if (selectedIndex < 0) return;
-                JetExpression expression = (JetExpression) model.get(selectedIndex);
+                KtExpression expression = (KtExpression) model.get(selectedIndex);
                 List<PsiElement> toExtract = new ArrayList<PsiElement>();
                 toExtract.add(expression);
                 highlighter.highlight(expression, toExtract);
@@ -470,7 +470,7 @@ public class JetRefactoringUtil {
                 setRequestFocus(true).setItemChoosenCallback(new Runnable() {
             @Override
             public void run() {
-                callback.run((JetExpression) list.getSelectedValue());
+                callback.run((KtExpression) list.getSelectedValue());
             }
         }).addListener(new JBPopupAdapter() {
             @Override
@@ -481,15 +481,15 @@ public class JetRefactoringUtil {
         
     }
 
-    public static String getExpressionShortText(@NotNull JetElement element) { //todo: write appropriate implementation
+    public static String getExpressionShortText(@NotNull KtElement element) { //todo: write appropriate implementation
         return StringUtilKt.collapseSpaces(StringUtil.shortenTextWithEllipsis(element.getText(), 53, 0));
     }
 
     @Nullable
-    private static JetExpression findExpression(
+    private static KtExpression findExpression(
             @NotNull PsiFile file, int startOffset, int endOffset, boolean failOnNoExpression
     ) throws IntroduceRefactoringException {
-        JetExpression element = CodeInsightUtils.findExpression(file, startOffset, endOffset);
+        KtExpression element = CodeInsightUtils.findExpression(file, startOffset, endOffset);
         if (element == null) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
 

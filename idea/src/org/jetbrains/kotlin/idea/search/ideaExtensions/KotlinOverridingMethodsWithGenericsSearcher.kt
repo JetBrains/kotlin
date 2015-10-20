@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
@@ -38,7 +38,7 @@ public class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMeth
         val method = p.method
         if (method !is KotlinLightMethod) return true
 
-        val declaration = method.getOrigin() as? JetCallableDeclaration
+        val declaration = method.getOrigin() as? KtCallableDeclaration
         if (declaration == null) return true
 
         val callDescriptor = runReadAction { declaration.resolveToDescriptor() }
@@ -59,7 +59,7 @@ public class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMeth
         })
     }
 
-    private fun findOverridingMethod(inheritor: PsiClass, callableDeclaration: JetCallableDeclaration): PsiMethod? {
+    private fun findOverridingMethod(inheritor: PsiClass, callableDeclaration: KtCallableDeclaration): PsiMethod? {
         // Leave Java classes search to JavaOverridingMethodsSearcher
         if (inheritor !is KotlinLightClass) return null
 

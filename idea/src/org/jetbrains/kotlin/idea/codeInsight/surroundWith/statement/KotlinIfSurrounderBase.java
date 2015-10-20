@@ -26,10 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.MoveDeclarationsOutHelper;
-import org.jetbrains.kotlin.psi.JetBlockExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetIfExpression;
-import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtBlockExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtIfExpression;
+import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 
 public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder {
 
@@ -43,12 +43,12 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
             return null;
         }
 
-        JetIfExpression ifExpression = (JetIfExpression) JetPsiFactoryKt.JetPsiFactory(project).createExpression(getCodeTemplate());
-        ifExpression = (JetIfExpression) container.addAfter(ifExpression, statements[statements.length - 1]);
+        KtIfExpression ifExpression = (KtIfExpression) KtPsiFactoryKt.KtPsiFactory(project).createExpression(getCodeTemplate());
+        ifExpression = (KtIfExpression) container.addAfter(ifExpression, statements[statements.length - 1]);
 
         // TODO move a comment for first statement
 
-        JetBlockExpression thenBranch = (JetBlockExpression) ifExpression.getThen();
+        KtBlockExpression thenBranch = (KtBlockExpression) ifExpression.getThen();
         assert thenBranch != null : "Then branch should exist for created if expression: " + ifExpression.getText();
         // Add statements in then branch of created if
         KotlinSurrounderUtils.addStatementsInBlock(thenBranch, statements);
@@ -58,7 +58,7 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
 
         ifExpression = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(ifExpression);
 
-        JetExpression condition = ifExpression.getCondition();
+        KtExpression condition = ifExpression.getCondition();
         assert condition != null : "Condition should exists for created if expression: " + ifExpression.getText();
         // Delete condition from created if
         TextRange range = condition.getTextRange();

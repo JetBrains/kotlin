@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.codegen.CodegenTestFiles;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil;
-import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.idea.KotlinFileType;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -133,7 +133,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
     private class FilesWriter {
         private final boolean isFullJdk;
 
-        public List<JetFile> files = new ArrayList<JetFile>();
+        public List<KtFile> files = new ArrayList<KtFile>();
         private KotlinCoreEnvironment environment;
 
         private FilesWriter(boolean isFullJdk) {
@@ -161,11 +161,11 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
 
         public void writeFilesOnDisk() {
             writeFiles(files);
-            files = new ArrayList<JetFile>();
+            files = new ArrayList<KtFile>();
             environment = createEnvironment(isFullJdk);
         }
 
-        private void writeFiles(List<JetFile> filesToCompile) {
+        private void writeFiles(List<KtFile> filesToCompile) {
             System.out.println("Generating " + filesToCompile.size() + " files...");
             OutputFileCollection outputFiles;
             try {
@@ -207,7 +207,7 @@ public class CodegenTestsOnAndroidGenerator extends UsefulTestCase {
                     processFiles(printer, listFiles, holderFull, holderMock);
                 }
             }
-            else if (!FileUtilRt.getExtension(file.getName()).equals(JetFileType.INSTANCE.getDefaultExtension())) {
+            else if (!FileUtilRt.getExtension(file.getName()).equals(KotlinFileType.INSTANCE.getDefaultExtension())) {
                 // skip non kotlin files
             }
             else {

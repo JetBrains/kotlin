@@ -22,13 +22,13 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpression, private val getter: Boolean) : JetSimpleReference<JetNameReferenceExpression>(expression) {
+sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpression, private val getter: Boolean) : KtSimpleReference<KtNameReferenceExpression>(expression) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val descriptors = super.getTargetDescriptors(context)
         if (descriptors.none { it is SyntheticJavaPropertyDescriptor }) return emptyList()
@@ -65,11 +65,11 @@ sealed class SyntheticPropertyAccessorReference(expression: JetNameReferenceExpr
         }
         if (newName == null) return expression //TODO: handle the case when get/set becomes ordinary method
 
-        val nameIdentifier = JetPsiFactory(expression).createNameIdentifier(newName.getIdentifier())
+        val nameIdentifier = KtPsiFactory(expression).createNameIdentifier(newName.getIdentifier())
         expression.getReferencedNameElement().replace(nameIdentifier)
         return expression
     }
 
-    public class Getter(expression: JetNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, true)
-    public class Setter(expression: JetNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, false)
+    public class Getter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, true)
+    public class Setter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, false)
 }

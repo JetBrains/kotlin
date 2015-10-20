@@ -38,14 +38,14 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
             return null;
         }
 
-        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(project);
-        JetCallExpression callExpression = (JetCallExpression) psiFactory.createExpression("run {\n}");
-        callExpression = (JetCallExpression) container.addAfter(callExpression, statements[statements.length - 1]);
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(project);
+        KtCallExpression callExpression = (KtCallExpression) psiFactory.createExpression("run {\n}");
+        callExpression = (KtCallExpression) container.addAfter(callExpression, statements[statements.length - 1]);
         container.addBefore(psiFactory.createWhiteSpace(), callExpression);
 
-        JetFunctionLiteralExpression bodyExpression = callExpression.getFunctionLiteralArguments().get(0).getFunctionLiteral();
+        KtFunctionLiteralExpression bodyExpression = callExpression.getFunctionLiteralArguments().get(0).getFunctionLiteral();
         assert bodyExpression != null : "Body expression should exists for " + callExpression.getText();
-        JetBlockExpression blockExpression = bodyExpression.getBodyExpression();
+        KtBlockExpression blockExpression = bodyExpression.getBodyExpression();
         assert blockExpression != null : "JetBlockExpression should exists for " + callExpression.getText();
         //Add statements in function literal block
         KotlinSurrounderUtils.addStatementsInBlock(blockExpression, statements);
@@ -55,7 +55,7 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
 
         callExpression = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(callExpression);
 
-        JetExpression literalName = callExpression.getCalleeExpression();
+        KtExpression literalName = callExpression.getCalleeExpression();
         assert literalName != null : "Run expression should have callee expression " + callExpression.getText();
         return literalName.getTextRange();
     }

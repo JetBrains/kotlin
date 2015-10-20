@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager;
 
 import javax.inject.Inject;
@@ -65,8 +65,8 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject, @NotNull LookupLocation location) {
-        JetScope scope = getMemberScopeDeclaredIn(classOrObject, location);
+    public ClassDescriptor getClassDescriptor(@NotNull KtClassOrObject classOrObject, @NotNull LookupLocation location) {
+        KtScope scope = getMemberScopeDeclaredIn(classOrObject, location);
 
         // Why not use the result here. Because it may be that there is a redeclaration:
         //     class A {} class A { fun foo(): A<completion here>}
@@ -93,31 +93,31 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    public DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration) {
+    public DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration) {
         return resolveToDescriptor(declaration, /*track =*/true);
     }
 
     @NotNull
-    private DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration, final boolean track) {
-        DeclarationDescriptor result = declaration.accept(new JetVisitor<DeclarationDescriptor, Void>() {
+    private DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration, final boolean track) {
+        DeclarationDescriptor result = declaration.accept(new KtVisitor<DeclarationDescriptor, Void>() {
             @NotNull
-            private LookupLocation lookupLocationFor(@NotNull JetDeclaration declaration, boolean isTopLevel) {
+            private LookupLocation lookupLocationFor(@NotNull KtDeclaration declaration, boolean isTopLevel) {
                 return isTopLevel && track ? new KotlinLookupLocation(declaration) : NoLookupLocation.WHEN_RESOLVE_DECLARATION;
             }
 
             @Override
-            public DeclarationDescriptor visitClass(@NotNull JetClass klass, Void data) {
+            public DeclarationDescriptor visitClass(@NotNull KtClass klass, Void data) {
                 return getClassDescriptor(klass, lookupLocationFor(klass, klass.isTopLevel()));
             }
 
             @Override
-            public DeclarationDescriptor visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, Void data) {
+            public DeclarationDescriptor visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, Void data) {
                 return getClassDescriptor(declaration, lookupLocationFor(declaration, declaration.isTopLevel()));
             }
 
             @Override
-            public DeclarationDescriptor visitTypeParameter(@NotNull JetTypeParameter parameter, Void data) {
-                JetTypeParameterListOwner ownerElement = PsiTreeUtil.getParentOfType(parameter, JetTypeParameterListOwner.class);
+            public DeclarationDescriptor visitTypeParameter(@NotNull KtTypeParameter parameter, Void data) {
+                KtTypeParameterListOwner ownerElement = PsiTreeUtil.getParentOfType(parameter, KtTypeParameterListOwner.class);
                 assert ownerElement != null : "Owner not found for type parameter: " + parameter.getText();
                 DeclarationDescriptor ownerDescriptor = resolveToDescriptor(ownerElement, /*track =*/false);
 
@@ -145,18 +145,18 @@ public class LazyDeclarationResolver {
             }
 
             @Override
-            public DeclarationDescriptor visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
+            public DeclarationDescriptor visitNamedFunction(@NotNull KtNamedFunction function, Void data) {
                 LookupLocation location = lookupLocationFor(function, function.isTopLevel());
-                JetScope scopeForDeclaration = getMemberScopeDeclaredIn(function, location);
+                KtScope scopeForDeclaration = getMemberScopeDeclaredIn(function, location);
                 scopeForDeclaration.getFunctions(function.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 
             @Override
-            public DeclarationDescriptor visitParameter(@NotNull JetParameter parameter, Void data) {
+            public DeclarationDescriptor visitParameter(@NotNull KtParameter parameter, Void data) {
                 PsiElement grandFather = parameter.getParent().getParent();
-                if (grandFather instanceof JetPrimaryConstructor) {
-                    JetClassOrObject jetClass = ((JetPrimaryConstructor) grandFather).getContainingClassOrObject();
+                if (grandFather instanceof KtPrimaryConstructor) {
+                    KtClassOrObject jetClass = ((KtPrimaryConstructor) grandFather).getContainingClassOrObject();
                     // This is a primary constructor parameter
                     ClassDescriptor classDescriptor = getClassDescriptor(jetClass, lookupLocationFor(jetClass, false));
                     if (parameter.hasValOrVar()) {
@@ -170,14 +170,14 @@ public class LazyDeclarationResolver {
                         return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
                     }
                 }
-                else if (grandFather instanceof JetNamedFunction) {
-                    FunctionDescriptor function = (FunctionDescriptor) visitNamedFunction((JetNamedFunction) grandFather, data);
+                else if (grandFather instanceof KtNamedFunction) {
+                    FunctionDescriptor function = (FunctionDescriptor) visitNamedFunction((KtNamedFunction) grandFather, data);
                     function.getValueParameters();
                     return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
                 }
-                else if (grandFather instanceof JetSecondaryConstructor) {
+                else if (grandFather instanceof KtSecondaryConstructor) {
                     ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) visitSecondaryConstructor(
-                            (JetSecondaryConstructor) grandFather, data
+                            (KtSecondaryConstructor) grandFather, data
                     );
                     constructorDescriptor.getValueParameters();
                     return getBindingContext().get(BindingContext.VALUE_PARAMETER, parameter);
@@ -189,32 +189,32 @@ public class LazyDeclarationResolver {
             }
 
             @Override
-            public DeclarationDescriptor visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, Void data) {
-                getClassDescriptor((JetClassOrObject) constructor.getParent().getParent(), lookupLocationFor(constructor, false)).getConstructors();
+            public DeclarationDescriptor visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor, Void data) {
+                getClassDescriptor((KtClassOrObject) constructor.getParent().getParent(), lookupLocationFor(constructor, false)).getConstructors();
                 return getBindingContext().get(BindingContext.CONSTRUCTOR, constructor);
             }
 
             @Override
-            public DeclarationDescriptor visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, Void data) {
+            public DeclarationDescriptor visitPrimaryConstructor(@NotNull KtPrimaryConstructor constructor, Void data) {
                 getClassDescriptor(constructor.getContainingClassOrObject(), lookupLocationFor(constructor, false)).getConstructors();
                 return getBindingContext().get(BindingContext.CONSTRUCTOR, constructor);
             }
 
             @Override
-            public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
+            public DeclarationDescriptor visitProperty(@NotNull KtProperty property, Void data) {
                 LookupLocation location = lookupLocationFor(property, property.isTopLevel());
-                JetScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
+                KtScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
                 scopeForDeclaration.getProperties(property.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 
             @Override
-            public DeclarationDescriptor visitScript(@NotNull JetScript script, Void data) {
+            public DeclarationDescriptor visitScript(@NotNull KtScript script, Void data) {
                 return topLevelDescriptorProvider.getScriptDescriptor(script);
             }
 
             @Override
-            public DeclarationDescriptor visitJetElement(@NotNull JetElement element, Void data) {
+            public DeclarationDescriptor visitJetElement(@NotNull KtElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
                                                    PsiUtilsKt.getElementTextWithContext(element));
             }
@@ -226,18 +226,18 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    /*package*/ JetScope getMemberScopeDeclaredIn(@NotNull JetDeclaration declaration, @NotNull LookupLocation location) {
-        JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(declaration);
+    /*package*/ KtScope getMemberScopeDeclaredIn(@NotNull KtDeclaration declaration, @NotNull LookupLocation location) {
+        KtDeclaration parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(declaration);
         boolean isTopLevel = parentDeclaration == null;
         if (isTopLevel) { // for top level declarations we search directly in package because of possible conflicts with imports
-            FqName fqName = ((JetFile) declaration.getContainingFile()).getPackageFqName();
+            FqName fqName = ((KtFile) declaration.getContainingFile()).getPackageFqName();
             LazyPackageDescriptor packageDescriptor = topLevelDescriptorProvider.getPackageFragment(fqName);
             assert packageDescriptor != null;
             return packageDescriptor.getMemberScope();
         }
         else {
-            if (parentDeclaration instanceof JetClassOrObject) {
-                return getClassDescriptor((JetClassOrObject) parentDeclaration, location).getUnsubstitutedMemberScope();
+            if (parentDeclaration instanceof KtClassOrObject) {
+                return getClassDescriptor((KtClassOrObject) parentDeclaration, location).getUnsubstitutedMemberScope();
             } else {
                 throw new IllegalStateException("Don't call this method for local declarations: " + declaration + "\n" +
                                                 PsiUtilsKt.getElementTextWithContext(declaration));

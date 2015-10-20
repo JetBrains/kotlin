@@ -37,17 +37,17 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final DataFlowInfo outerDataFlowInfo;
 
-    private final Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
-    private final Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> anonymousInitializers = Maps.newLinkedHashMap();
-    private final Set<JetFile> files = new LinkedHashSet<JetFile>();
-    private final Map<JetSecondaryConstructor, ConstructorDescriptor> secondaryConstructors = Maps.newLinkedHashMap();
+    private final Map<KtClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
+    private final Map<KtClassInitializer, ClassDescriptorWithResolutionScopes> anonymousInitializers = Maps.newLinkedHashMap();
+    private final Set<KtFile> files = new LinkedHashSet<KtFile>();
+    private final Map<KtSecondaryConstructor, ConstructorDescriptor> secondaryConstructors = Maps.newLinkedHashMap();
 
-    private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
-    private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
-    private final Map<JetParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
-    private Map<JetCallableDeclaration, CallableMemberDescriptor> members = null;
+    private final Map<KtNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
+    private final Map<KtProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
+    private final Map<KtParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
+    private Map<KtCallableDeclaration, CallableMemberDescriptor> members = null;
 
-    private final Map<JetScript, ScriptDescriptor> scripts = Maps.newLinkedHashMap();
+    private final Map<KtScript, ScriptDescriptor> scripts = Maps.newLinkedHashMap();
 
     private final TopDownAnalysisMode topDownAnalysisMode;
     private final DeclarationScopeProvider declarationScopeProvider;
@@ -90,57 +90,57 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     }
 
     @Override
-    public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
+    public Map<KtClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
         return classes;
     }
 
     @Override
-    public Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers() {
+    public Map<KtClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers() {
         return anonymousInitializers;
     }
 
     @Override
-    public Map<JetSecondaryConstructor, ConstructorDescriptor> getSecondaryConstructors() {
+    public Map<KtSecondaryConstructor, ConstructorDescriptor> getSecondaryConstructors() {
         return secondaryConstructors;
     }
 
     @Override
-    public Collection<JetFile> getFiles() {
+    public Collection<KtFile> getFiles() {
         return files;
     }
 
-    public void addFile(@NotNull JetFile file) {
+    public void addFile(@NotNull KtFile file) {
         files.add(file);
     }
 
     @Override
     @NotNull
-    public Map<JetScript, ScriptDescriptor> getScripts() {
+    public Map<KtScript, ScriptDescriptor> getScripts() {
         return scripts;
     }
 
-    public Map<JetParameter, PropertyDescriptor> getPrimaryConstructorParameterProperties() {
+    public Map<KtParameter, PropertyDescriptor> getPrimaryConstructorParameterProperties() {
         return primaryConstructorParameterProperties;
     }
 
     @Override
-    public Map<JetProperty, PropertyDescriptor> getProperties() {
+    public Map<KtProperty, PropertyDescriptor> getProperties() {
         return properties;
     }
 
     @Nullable
     @Override
-    public LexicalScope getDeclaringScope(@NotNull JetDeclaration declaration) {
+    public LexicalScope getDeclaringScope(@NotNull KtDeclaration declaration) {
         return declarationScopeProvider.getResolutionScopeForDeclaration(declaration);
     }
 
     @Override
-    public Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions() {
+    public Map<KtNamedFunction, SimpleFunctionDescriptor> getFunctions() {
         return functions;
     }
 
     @NotNull
-    public Map<JetCallableDeclaration, CallableMemberDescriptor> getMembers() {
+    public Map<KtCallableDeclaration, CallableMemberDescriptor> getMembers() {
         if (members == null) {
             members = Maps.newLinkedHashMap();
             members.putAll(functions);

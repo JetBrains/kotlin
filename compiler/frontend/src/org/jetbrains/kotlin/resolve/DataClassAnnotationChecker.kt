@@ -20,19 +20,19 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
 
 
 public class DataClassAnnotationChecker : DeclarationChecker {
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
         if (descriptor !is ClassDescriptor) return
-        if (declaration !is JetClassOrObject) return
+        if (declaration !is KtClassOrObject) return
 
         if (descriptor.isData) {
             if (descriptor.unsubstitutedPrimaryConstructor == null && descriptor.constructors.isNotEmpty()) {

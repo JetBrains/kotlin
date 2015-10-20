@@ -21,20 +21,20 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
 
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
-        if (file !is JetFile) return -1
+        if (file !is KtFile) return -1
 
         val element = file.findElementAt(start)
                               ?.siblings(forward = false, withItself = false)
@@ -53,22 +53,22 @@ public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int)
             = -1
 
-    private fun getPropertyAndAssignment(element: PsiElement): Pair<JetProperty, JetBinaryExpression>? {
-        val property = element as? JetProperty ?: return null
+    private fun getPropertyAndAssignment(element: PsiElement): Pair<KtProperty, KtBinaryExpression>? {
+        val property = element as? KtProperty ?: return null
         if (property.hasInitializer()) return null
 
         val assignment = element.siblings(forward = true, withItself = false)
-                                 .firstOrNull { !isToSkip(it) } as? JetBinaryExpression ?: return null
-        if (assignment.getOperationToken() != JetTokens.EQ) return null
+                                 .firstOrNull { !isToSkip(it) } as? KtBinaryExpression ?: return null
+        if (assignment.getOperationToken() != KtTokens.EQ) return null
 
-        val left = assignment.getLeft() as? JetSimpleNameExpression ?: return null
+        val left = assignment.getLeft() as? KtSimpleNameExpression ?: return null
         if (assignment.getRight() == null) return null
         if (left.getReferencedName() != property.getName()) return null
 
         return property to assignment
     }
 
-    private fun doJoin(property: JetProperty, assignment: JetBinaryExpression) {
+    private fun doJoin(property: KtProperty, assignment: KtBinaryExpression) {
         property.setInitializer(assignment.getRight())
         property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment) //TODO: should we delete range?
     }
@@ -76,7 +76,7 @@ public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
     private fun isToSkip(element: PsiElement): Boolean {
         return when (element) {
             is PsiWhiteSpace -> StringUtil.getLineBreakCount(element.getText()!!) <= 1 // do not skip blank line
-            else -> element.getNode()!!.getElementType() == JetTokens.SEMICOLON
+            else -> element.getNode()!!.getElementType() == KtTokens.SEMICOLON
         }
     }
 }

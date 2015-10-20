@@ -30,14 +30,14 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 
-public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<JetAnnotationEntry> {
-    private final JetAnnotationEntry annotationEntry;
-    private JetClass annotationClass;
+public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnotationEntry> {
+    private final KtAnnotationEntry annotationEntry;
+    private KtClass annotationClass;
 
-    public MakeClassAnAnnotationClassFix(@NotNull JetAnnotationEntry annotationEntry) {
+    public MakeClassAnAnnotationClassFix(@NotNull KtAnnotationEntry annotationEntry) {
         super(annotationEntry);
         this.annotationEntry = annotationEntry;
     }
@@ -48,20 +48,20 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<JetAnnot
             return false;
         }
 
-        JetTypeReference typeReference = annotationEntry.getTypeReference();
+        KtTypeReference typeReference = annotationEntry.getTypeReference();
         if (typeReference == null) {
             return false;
         }
 
-        JetSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(typeReference, JetSimpleNameExpression.class);
+        KtSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(typeReference, KtSimpleNameExpression.class);
         if (referenceExpression == null) {
             return false;
         }
 
         PsiReference reference = ReferenceUtilKt.getMainReference(referenceExpression);
         PsiElement target = reference.resolve();
-        if (target instanceof JetClass) {
-            annotationClass = (JetClass) target;
+        if (target instanceof KtClass) {
+            annotationClass = (KtClass) target;
             return QuickFixUtil.canModifyElement(annotationClass);
         }
 
@@ -81,16 +81,16 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<JetAnnot
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull JetFile file) throws IncorrectOperationException {
-        JetPsiFactory factory = new JetPsiFactory(annotationClass.getProject());
-        JetModifierList list = annotationClass.getModifierList();
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
+        KtPsiFactory factory = new KtPsiFactory(annotationClass.getProject());
+        KtModifierList list = annotationClass.getModifierList();
         PsiElement added;
         if (list == null) {
-            JetModifierList newModifierList = factory.createModifierList(JetTokens.ANNOTATION_KEYWORD);
+            KtModifierList newModifierList = factory.createModifierList(KtTokens.ANNOTATION_KEYWORD);
             added = annotationClass.addBefore(newModifierList, annotationClass.getClassOrInterfaceKeyword());
         }
         else {
-            PsiElement entry = factory.createModifier(JetTokens.ANNOTATION_KEYWORD);
+            PsiElement entry = factory.createModifier(KtTokens.ANNOTATION_KEYWORD);
             added = list.addBefore(entry, list.getFirstChild());
         }
         annotationClass.addAfter(factory.createWhiteSpace(), added);
@@ -102,7 +102,7 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<JetAnnot
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                JetAnnotationEntry annotation = QuickFixUtil.getParentElementOfType(diagnostic, JetAnnotationEntry.class);
+                KtAnnotationEntry annotation = QuickFixUtil.getParentElementOfType(diagnostic, KtAnnotationEntry.class);
                 return annotation == null ? null : new MakeClassAnAnnotationClassFix(annotation);
             }
         };

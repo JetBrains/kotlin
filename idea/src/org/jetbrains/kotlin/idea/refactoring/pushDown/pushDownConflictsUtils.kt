@@ -25,9 +25,9 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.refactoring.pullUp.renderForConflicts
-import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -47,14 +47,14 @@ fun analyzePushDownConflicts(context: KotlinPushDownContext,
 
     val conflicts = MultiMap<PsiElement, String>()
 
-    val membersToPush = ArrayList<JetNamedDeclaration>()
-    val membersToKeepAbstract = ArrayList<JetNamedDeclaration>()
+    val membersToPush = ArrayList<KtNamedDeclaration>()
+    val membersToKeepAbstract = ArrayList<KtNamedDeclaration>()
     for (info in context.membersToMove) {
         val member = info.member
-        if (!info.isChecked || (member is JetClassOrObject && info.overrides != null)) continue
+        if (!info.isChecked || (member is KtClassOrObject && info.overrides != null)) continue
 
         membersToPush += member
-        if ((member is JetNamedFunction || member is JetProperty)
+        if ((member is KtNamedFunction || member is KtProperty)
             && info.isToAbstract
             && (context.memberDescriptors[member] as CallableMemberDescriptor).modality != Modality.ABSTRACT) {
             membersToKeepAbstract += member
@@ -72,10 +72,10 @@ private fun checkConflicts(
         conflicts: MultiMap<PsiElement, String>,
         context: KotlinPushDownContext,
         targetClass: PsiElement,
-        membersToKeepAbstract: List<JetNamedDeclaration>,
-        membersToPush: ArrayList<JetNamedDeclaration>
+        membersToKeepAbstract: List<KtNamedDeclaration>,
+        membersToPush: ArrayList<KtNamedDeclaration>
 ) {
-    if (targetClass !is JetClassOrObject) {
+    if (targetClass !is KtClassOrObject) {
         conflicts.putValue(
                 targetClass,
                 "Non-Kotlin ${RefactoringUIUtil.getDescription(targetClass, false)} won't be affected by the refactoring"
@@ -87,7 +87,7 @@ private fun checkConflicts(
     val substitutor = getTypeSubstitutor(context.sourceClassDescriptor.defaultType, targetClassDescriptor.defaultType)
                       ?: TypeSubstitutor.EMPTY
 
-    if (!context.sourceClass.isInterface() && targetClass is JetClass && targetClass.isInterface()) {
+    if (!context.sourceClass.isInterface() && targetClass is KtClass && targetClass.isInterface()) {
         val message = "${targetClassDescriptor.renderForConflicts()} " +
                       "inherits from ${context.sourceClassDescriptor.renderForConflicts()}.\n" +
                       "It won't be affected by the refactoring"
@@ -105,22 +105,22 @@ private fun checkConflicts(
 private fun checkMemberClashing(
         conflicts: MultiMap<PsiElement, String>,
         context: KotlinPushDownContext,
-        member: JetNamedDeclaration,
-        membersToKeepAbstract: List<JetNamedDeclaration>,
+        member: KtNamedDeclaration,
+        membersToKeepAbstract: List<KtNamedDeclaration>,
         substitutor: TypeSubstitutor,
-        targetClass: JetClassOrObject,
+        targetClass: KtClassOrObject,
         targetClassDescriptor: ClassDescriptor) {
     when (member) {
-        is JetNamedFunction, is JetProperty -> {
+        is KtNamedFunction, is KtProperty -> {
             val memberDescriptor = context.memberDescriptors[member] as CallableMemberDescriptor
             val clashingDescriptor = targetClassDescriptor.findCallableMemberBySignature(memberDescriptor.substitute(substitutor) as CallableMemberDescriptor)
-            val clashingDeclaration = clashingDescriptor?.source?.getPsi() as? JetNamedDeclaration
+            val clashingDeclaration = clashingDescriptor?.source?.getPsi() as? KtNamedDeclaration
             if (clashingDescriptor != null && clashingDeclaration != null) {
                 if (memberDescriptor.modality != Modality.ABSTRACT && member !in membersToKeepAbstract) {
                     val message = "${targetClassDescriptor.renderForConflicts()} already contains ${clashingDescriptor.renderForConflicts()}"
                     conflicts.putValue(clashingDeclaration, CommonRefactoringUtil.capitalize(message))
                 }
-                if (!clashingDeclaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+                if (!clashingDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                     val message = "${clashingDescriptor.renderForConflicts()} in ${targetClassDescriptor.renderForConflicts()} " +
                                   "will override corresponding member of ${context.sourceClassDescriptor.renderForConflicts()} " +
                                   "after refactoring"
@@ -129,9 +129,9 @@ private fun checkMemberClashing(
             }
         }
 
-        is JetClassOrObject -> {
+        is KtClassOrObject -> {
             targetClass.declarations
-                    .filterIsInstance<JetClassOrObject>()
+                    .filterIsInstance<KtClassOrObject>()
                     .firstOrNull() { it.name == member.name }
                     ?.let {
                         val message = "${targetClassDescriptor.renderForConflicts()} " +
@@ -145,14 +145,14 @@ private fun checkMemberClashing(
 private fun checkSuperCalls(
         conflicts: MultiMap<PsiElement, String>,
         context: KotlinPushDownContext,
-        member: JetNamedDeclaration,
-        membersToPush: ArrayList<JetNamedDeclaration>
+        member: KtNamedDeclaration,
+        membersToPush: ArrayList<KtNamedDeclaration>
 ) {
     member.accept(
-            object : JetTreeVisitorVoid() {
-                override fun visitSuperExpression(expression: JetSuperExpression) {
+            object : KtTreeVisitorVoid() {
+                override fun visitSuperExpression(expression: KtSuperExpression) {
                     val qualifiedExpression = expression.getQualifiedExpressionForReceiver() ?: return
-                    val refExpr = qualifiedExpression.selectorExpression.getCalleeExpressionIfAny() as? JetSimpleNameExpression ?: return
+                    val refExpr = qualifiedExpression.selectorExpression.getCalleeExpressionIfAny() as? KtSimpleNameExpression ?: return
                     for (descriptor in refExpr.mainReference.resolveToDescriptors(context.sourceClassContext)) {
                         val memberDescriptor = descriptor as? CallableMemberDescriptor ?: continue
                         val containingClass = memberDescriptor.containingDeclaration as? ClassDescriptor ?: continue
@@ -172,11 +172,11 @@ private fun checkSuperCalls(
 private fun checkExternalUsages(
         conflicts: MultiMap<PsiElement, String>,
         context: KotlinPushDownContext,
-        member: JetNamedDeclaration,
+        member: KtNamedDeclaration,
         targetClassDescriptor: ClassDescriptor
 ) {
     for (ref in ReferencesSearch.search(member, member.resolveScope, false)) {
-        val calleeExpr = ref.element as? JetSimpleNameExpression ?: continue
+        val calleeExpr = ref.element as? KtSimpleNameExpression ?: continue
         val resolvedCall = calleeExpr.getResolvedCall(context.resolutionFacade.analyze(calleeExpr)) ?: continue
         val callElement = resolvedCall.call.callElement
         val dispatchReceiver = resolvedCall.dispatchReceiver
@@ -191,7 +191,7 @@ private fun checkExternalUsages(
 private fun checkVisibility(
         conflicts: MultiMap<PsiElement, String>,
         context: KotlinPushDownContext,
-        member: JetNamedDeclaration,
+        member: KtNamedDeclaration,
         targetClassDescriptor: ClassDescriptor
 ) {
     fun reportConflictIfAny(targetDescriptor: DeclarationDescriptor) {
@@ -206,12 +206,12 @@ private fun checkVisibility(
     }
 
     member.accept(
-            object : JetTreeVisitorVoid() {
-                override fun visitReferenceExpression(expression: JetReferenceExpression) {
+            object : KtTreeVisitorVoid() {
+                override fun visitReferenceExpression(expression: KtReferenceExpression) {
                     super.visitReferenceExpression(expression)
 
                     expression.references
-                            .flatMap { (it as? JetReference)?.resolveToDescriptors(context.sourceClassContext) ?: emptyList() }
+                            .flatMap { (it as? KtReference)?.resolveToDescriptors(context.sourceClassContext) ?: emptyList() }
                             .forEach(::reportConflictIfAny)
 
                 }

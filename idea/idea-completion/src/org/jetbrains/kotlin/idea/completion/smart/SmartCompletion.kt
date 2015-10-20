@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.isAlmostEverything
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -48,7 +48,7 @@ interface InheritanceItemsSearcher {
 }
 
 class SmartCompletion(
-        private val expression: JetExpression,
+        private val expression: KtExpression,
         private val resolutionFacade: ResolutionFacade,
         private val bindingContext: BindingContext,
         private val moduleDescriptor: ModuleDescriptor,
@@ -69,7 +69,7 @@ class SmartCompletion(
         is CallTypeAndReceiver.SAFE,
         is CallTypeAndReceiver.INFIX,
         is CallTypeAndReceiver.CALLABLE_REFERENCE ->
-            expression.parent as JetExpression
+            expression.parent as KtExpression
 
         else -> // actually no smart completion for such places
             expression
@@ -104,26 +104,26 @@ class SmartCompletion(
     public val descriptorsToSkip: Set<DeclarationDescriptor> by lazy<Set<DeclarationDescriptor>>(LazyThreadSafetyMode.NONE) {
         val parent = expressionWithType.getParent()
         when (parent) {
-            is JetBinaryExpression -> {
+            is KtBinaryExpression -> {
                 if (parent.getRight() == expressionWithType) {
                     val operationToken = parent.getOperationToken()
-                    if (operationToken == JetTokens.EQ || operationToken in COMPARISON_TOKENS) {
+                    if (operationToken == KtTokens.EQ || operationToken in COMPARISON_TOKENS) {
                         val left = parent.getLeft()
-                        if (left is JetReferenceExpression) {
+                        if (left is KtReferenceExpression) {
                             return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
                         }
                     }
                 }
             }
 
-            is JetWhenConditionWithExpression -> {
-                val entry = parent.getParent() as JetWhenEntry
-                val whenExpression = entry.getParent() as JetWhenExpression
+            is KtWhenConditionWithExpression -> {
+                val entry = parent.getParent() as KtWhenEntry
+                val whenExpression = entry.getParent() as KtWhenExpression
                 val subject = whenExpression.getSubjectExpression() ?: return@lazy emptySet()
 
                 val descriptorsToSkip = HashSet<DeclarationDescriptor>()
 
-                if (subject is JetSimpleNameExpression) {
+                if (subject is KtSimpleNameExpression) {
                     val variable = bindingContext[BindingContext.REFERENCE_TARGET, subject] as? VariableDescriptor
                     if (variable != null) {
                         descriptorsToSkip.add(variable)
@@ -135,10 +135,10 @@ class SmartCompletion(
                 if (classDescriptor != null && DescriptorUtils.isEnumClass(classDescriptor)) {
                     val conditions = whenExpression.getEntries()
                             .flatMap { it.getConditions().toList() }
-                            .filterIsInstance<JetWhenConditionWithExpression>()
+                            .filterIsInstance<KtWhenConditionWithExpression>()
                     for (condition in conditions) {
-                        val selectorExpr = (condition.getExpression() as? JetDotQualifiedExpression)
-                                                   ?.getSelectorExpression() as? JetReferenceExpression ?: continue
+                        val selectorExpr = (condition.getExpression() as? KtDotQualifiedExpression)
+                                                   ?.getSelectorExpression() as? KtReferenceExpression ?: continue
                         val target = bindingContext[BindingContext.REFERENCE_TARGET, selectorExpr] as? ClassDescriptor ?: continue
                         if (DescriptorUtils.isEnumEntry(target)) {
                             descriptorsToSkip.add(target)
@@ -203,7 +203,7 @@ class SmartCompletion(
                 TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
                         .addTo(items, inheritanceSearchers, expectedInfos)
 
-                if (expression is JetSimpleNameExpression) {
+                if (expression is KtSimpleNameExpression) {
                     StaticMembers(bindingContext, lookupElementFactory).addToCollection(items, expectedInfos, expression, descriptorsToSkip)
                 }
 
@@ -212,10 +212,10 @@ class SmartCompletion(
                 if (!forBasicCompletion) {
                     LambdaItems.addToCollection(items, expectedInfos)
 
-                    val whenCondition = expressionWithType.parent as? JetWhenConditionWithExpression
+                    val whenCondition = expressionWithType.parent as? KtWhenConditionWithExpression
                     if (whenCondition != null) {
-                        val entry = whenCondition.parent as JetWhenEntry
-                        val whenExpression = entry.parent as JetWhenExpression
+                        val entry = whenCondition.parent as KtWhenEntry
+                        val whenExpression = entry.parent as KtWhenExpression
                         val entries = whenExpression.entries
                         if (whenExpression.elseExpression == null && entry == entries.last() && entries.size() != 1) {
                             val lookupElement = LookupElementBuilder.create("else").bold().withTailText(" ->")
@@ -266,7 +266,7 @@ class SmartCompletion(
         }
     }
 
-    private fun MutableCollection<LookupElement>.addThisItems(place: JetExpression, expectedInfos: Collection<ExpectedInfo>, smartCastCalculator: SmartCastCalculator) {
+    private fun MutableCollection<LookupElement>.addThisItems(place: KtExpression, expectedInfos: Collection<ExpectedInfo>, smartCastCalculator: SmartCastCalculator) {
         if (shouldCompleteThisItems(prefixMatcher)) {
             val items = thisExpressionItems(bindingContext, place, prefixMatcher.getPrefix(), resolutionFacade)
             for (item in items) {
@@ -279,7 +279,7 @@ class SmartCompletion(
         }
     }
 
-    private fun calcExpectedInfos(expression: JetExpression): Collection<ExpectedInfo> {
+    private fun calcExpectedInfos(expression: KtExpression): Collection<ExpectedInfo> {
         // if our expression is initializer of implicitly typed variable - take type of variable from original file (+ the same for function)
         val declaration = implicitlyTypedDeclarationFromInitializer(expression)
         if (declaration != null) {
@@ -309,11 +309,11 @@ class SmartCompletion(
         //TODO: we could always give higher priority to results with outer call expected type used
     }
 
-    private fun implicitlyTypedDeclarationFromInitializer(expression: JetExpression): JetDeclaration? {
+    private fun implicitlyTypedDeclarationFromInitializer(expression: KtExpression): KtDeclaration? {
         val parent = expression.getParent()
         when (parent) {
-            is JetVariableDeclaration -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
-            is JetNamedFunction -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
+            is KtVariableDeclaration -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
+            is KtNamedFunction -> if (expression == parent.getInitializer() && parent.getTypeReference() == null) return parent
         }
         return null
     }
@@ -366,15 +366,15 @@ class SmartCompletion(
     }
 
     private fun buildForAsTypePosition(): Collection<LookupElement>? {
-        val binaryExpression = ((expression.getParent() as? JetUserType)
-                ?.getParent() as? JetTypeReference)
-                    ?.getParent() as? JetBinaryExpressionWithTypeRHS
+        val binaryExpression = ((expression.getParent() as? KtUserType)
+                ?.getParent() as? KtTypeReference)
+                    ?.getParent() as? KtBinaryExpressionWithTypeRHS
                         ?: return null
         val elementType = binaryExpression.getOperationReference().getReferencedNameElementType()
-        if (elementType != JetTokens.AS_KEYWORD && elementType != JetTokens.AS_SAFE) return null
+        if (elementType != KtTokens.AS_KEYWORD && elementType != KtTokens.AS_SAFE) return null
         val expectedInfos = calcExpectedInfos(binaryExpression)
 
-        val expectedInfosGrouped: Map<JetType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.type?.makeNotNullable() }
+        val expectedInfosGrouped: Map<KtType?, List<ExpectedInfo>> = expectedInfos.groupBy { it.fuzzyType?.type?.makeNotNullable() }
 
         val items = ArrayList<LookupElement>()
         for ((type, infos) in expectedInfosGrouped) {

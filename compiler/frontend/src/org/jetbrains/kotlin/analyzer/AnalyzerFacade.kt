@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.impl.LazyModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.createModule
@@ -92,7 +92,7 @@ public class ResolverForProjectImpl<M : ModuleInfo>(
 }
 
 public data class ModuleContent(
-        public val syntheticFiles: Collection<JetFile>,
+        public val syntheticFiles: Collection<KtFile>,
         public val moduleContentScope: GlobalSearchScope
 )
 

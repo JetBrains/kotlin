@@ -25,16 +25,16 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetConstantExpression;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetUnaryExpression;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtConstantExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtUnaryExpression;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCompileTimeValue;
@@ -49,20 +49,20 @@ public final class UnaryOperationTranslator {
 
     @NotNull
     public static JsExpression translate(
-            @NotNull JetUnaryExpression expression,
+            @NotNull KtUnaryExpression expression,
             @NotNull TranslationContext context
     ) {
         IElementType operationToken = expression.getOperationReference().getReferencedNameElementType();
-        if (operationToken == JetTokens.EXCLEXCL) {
-            JetExpression baseExpression = getBaseExpression(expression);
-            JetType type = BindingContextUtils.getTypeNotNull(context.bindingContext(), baseExpression);
+        if (operationToken == KtTokens.EXCLEXCL) {
+            KtExpression baseExpression = getBaseExpression(expression);
+            KtType type = BindingContextUtils.getTypeNotNull(context.bindingContext(), baseExpression);
             JsExpression translatedExpression = translateAsExpression(baseExpression, context);
             return type.isMarkedNullable() ? sure(translatedExpression, context) : translatedExpression;
         }
 
-        if (operationToken == JetTokens.MINUS) {
-            JetExpression baseExpression = getBaseExpression(expression);
-            if (baseExpression instanceof JetConstantExpression) {
+        if (operationToken == KtTokens.MINUS) {
+            KtExpression baseExpression = getBaseExpression(expression);
+            if (baseExpression instanceof KtConstantExpression) {
                 CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
                 assert compileTimeValue != null : message(expression, "Expression is not compile time value: " + expression.getText() + " ");
                 Object value = getCompileTimeValue(context.bindingContext(), expression, compileTimeValue);
@@ -85,8 +85,8 @@ public final class UnaryOperationTranslator {
         return CallTranslator.translate(context, resolvedCall, baseExpression);
     }
 
-    private static boolean isExclForBinaryEqualLikeExpr(@NotNull JetUnaryExpression expression, @NotNull JsExpression baseExpression) {
-        if (getOperationToken(expression).equals(JetTokens.EXCL)) {
+    private static boolean isExclForBinaryEqualLikeExpr(@NotNull KtUnaryExpression expression, @NotNull JsExpression baseExpression) {
+        if (getOperationToken(expression).equals(KtTokens.EXCL)) {
             if (baseExpression instanceof JsBinaryOperation) {
                 return isEqualLikeOperator(((JsBinaryOperation) baseExpression).getOperator());
             }

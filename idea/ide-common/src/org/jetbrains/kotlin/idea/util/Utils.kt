@@ -19,23 +19,23 @@ package org.jetbrains.kotlin.idea.util
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public fun JetFunctionLiteral.findLabelAndCall(): Pair<Name?, JetCallExpression?> {
-    val literalParent = (this.getParent() as JetFunctionLiteralExpression).getParent()
+public fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
+    val literalParent = (this.getParent() as KtFunctionLiteralExpression).getParent()
 
-    fun JetValueArgument.callExpression(): JetCallExpression? {
+    fun KtValueArgument.callExpression(): KtCallExpression? {
         val parent = getParent()
-        return (if (parent is JetValueArgumentList) parent else this).getParent() as? JetCallExpression
+        return (if (parent is KtValueArgumentList) parent else this).getParent() as? KtCallExpression
     }
 
     when (literalParent) {
-        is JetLabeledExpression -> {
-            val callExpression = (literalParent.getParent() as? JetValueArgument)?.callExpression()
+        is KtLabeledExpression -> {
+            val callExpression = (literalParent.getParent() as? KtValueArgument)?.callExpression()
             return Pair(literalParent.getLabelNameAsName(), callExpression)
         }
 
-        is JetValueArgument -> {
+        is KtValueArgument -> {
             val callExpression = literalParent.callExpression()
-            val label = (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedNameAsName()
+            val label = (callExpression?.getCalleeExpression() as? KtSimpleNameExpression)?.getReferencedNameAsName()
             return Pair(label, callExpression)
         }
 

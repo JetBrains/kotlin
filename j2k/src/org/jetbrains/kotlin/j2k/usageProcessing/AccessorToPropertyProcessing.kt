@@ -55,33 +55,33 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
     else
         object : ExternalCodeProcessor {
             override fun processUsage(reference: PsiReference): Array<PsiReference>? {
-                val nameExpr = reference.getElement() as? JetSimpleNameExpression ?: return null
-                val callExpr = nameExpr.getParent() as? JetCallExpression ?: return null
+                val nameExpr = reference.getElement() as? KtSimpleNameExpression ?: return null
+                val callExpr = nameExpr.getParent() as? KtCallExpression ?: return null
 
                 val arguments = callExpr.getValueArguments()
 
-                val factory = JetPsiFactory(nameExpr.getProject())
+                val factory = KtPsiFactory(nameExpr.getProject())
                 var propertyNameExpr = factory.createSimpleName(propertyName)
                 if (accessorKind == AccessorKind.GETTER) {
                     if (arguments.size() != 0) return null // incorrect call
-                    propertyNameExpr = callExpr.replace(propertyNameExpr) as JetSimpleNameExpression
+                    propertyNameExpr = callExpr.replace(propertyNameExpr) as KtSimpleNameExpression
                     return propertyNameExpr.getReferences()
                 }
                 else {
                     val value = arguments.singleOrNull()?.getArgumentExpression() ?: return null
-                    var assignment = factory.createExpression("a = b") as JetBinaryExpression
+                    var assignment = factory.createExpression("a = b") as KtBinaryExpression
                     assignment.getRight()!!.replace(value)
 
-                    val qualifiedExpression = callExpr.getParent() as? JetQualifiedExpression
+                    val qualifiedExpression = callExpr.getParent() as? KtQualifiedExpression
                     if (qualifiedExpression != null && qualifiedExpression.getSelectorExpression() == callExpr) {
                         callExpr.replace(propertyNameExpr)
                         assignment.getLeft()!!.replace(qualifiedExpression)
-                        assignment = qualifiedExpression.replace(assignment) as JetBinaryExpression
-                        return (assignment.getLeft() as JetQualifiedExpression).getSelectorExpression()!!.getReferences()
+                        assignment = qualifiedExpression.replace(assignment) as KtBinaryExpression
+                        return (assignment.getLeft() as KtQualifiedExpression).getSelectorExpression()!!.getReferences()
                     }
                     else {
                         assignment.getLeft()!!.replace(propertyNameExpr)
-                        assignment = callExpr.replace(assignment) as JetBinaryExpression
+                        assignment = callExpr.replace(assignment) as KtBinaryExpression
                         return assignment.getLeft()!!.getReferences()
                     }
                 }

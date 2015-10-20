@@ -22,14 +22,14 @@ import com.google.common.collect.ImmutableMap
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.ModificationTracker
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
 public class CompositeBindingContext private constructor(
         private val delegates: List<BindingContext>
 ) : BindingContext {
-    override fun getType(expression: JetExpression): JetType? {
+    override fun getType(expression: KtExpression): KtType? {
         return delegates.asSequence().map { it.getType(expression) }.firstOrNull { it != null }
     }
 

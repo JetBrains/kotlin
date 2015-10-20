@@ -31,7 +31,7 @@ import java.util.*
 // Writes to: maps
 
 public class WritableScopeImpl @JvmOverloads constructor(
-        outerScope: JetScope,
+        outerScope: KtScope,
         private val ownerDeclarationDescriptor: DeclarationDescriptor,
         override val redeclarationHandler: RedeclarationHandler,
         private val debugName: String,
@@ -39,7 +39,7 @@ public class WritableScopeImpl @JvmOverloads constructor(
         private val labeledDeclaration: DeclarationDescriptor? = null
 ) : AbstractScopeAdapter(), WritableScope, WritableScopeStorage {
 
-    override val workerScope: JetScope = if (outerScope is WritableScope) outerScope.takeSnapshot() else outerScope
+    override val workerScope: KtScope = if (outerScope is WritableScope) outerScope.takeSnapshot() else outerScope
 
     override val addedDescriptors = SmartList<DeclarationDescriptor>()
 
@@ -76,7 +76,7 @@ public class WritableScopeImpl @JvmOverloads constructor(
         }
     }
 
-    override fun takeSnapshot(): JetScope {
+    override fun takeSnapshot(): KtScope {
         checkMayRead()
         if (lastSnapshot == null || lastSnapshot!!.descriptorLimit != addedDescriptors.size()) {
             lastSnapshot = Snapshot(addedDescriptors.size())
@@ -165,7 +165,7 @@ public class WritableScopeImpl @JvmOverloads constructor(
         p.println("}")
     }
 
-    private inner class Snapshot(val descriptorLimit: Int) : JetScope by this@WritableScopeImpl {
+    private inner class Snapshot(val descriptorLimit: Int) : KtScope by this@WritableScopeImpl {
         override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
             checkMayRead()
             changeLockLevel(WritableScope.LockLevel.READING)

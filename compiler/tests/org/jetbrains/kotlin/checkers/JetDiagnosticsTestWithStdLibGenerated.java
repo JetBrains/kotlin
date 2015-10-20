@@ -696,6 +696,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
 
+            @TestMetadata("internalAnnotationsOnTypes.kt")
+            public void testInternalAnnotationsOnTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/internalAnnotationsOnTypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noInferAnnotation.kt")
             public void testNoInferAnnotation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferAnnotation.kt");

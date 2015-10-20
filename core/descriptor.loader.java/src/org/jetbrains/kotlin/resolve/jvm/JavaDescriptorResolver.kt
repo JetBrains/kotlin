@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 
 public var PLATFORM_TYPES: Boolean = true

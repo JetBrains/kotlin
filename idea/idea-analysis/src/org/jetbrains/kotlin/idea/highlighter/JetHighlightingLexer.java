@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.lexer.LayeredLexer;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.kotlin.kdoc.lexer.KDocLexer;
-import org.jetbrains.kotlin.lexer.JetLexer;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KotlinLexer;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
 public class JetHighlightingLexer extends LayeredLexer {
     public JetHighlightingLexer() {
-        super(new JetLexer());
+        super(new KotlinLexer());
 
-        registerSelfStoppingLayer(new KDocLexer(), new IElementType[]{JetTokens.DOC_COMMENT}, IElementType.EMPTY_ARRAY);
+        registerSelfStoppingLayer(new KDocLexer(), new IElementType[]{KtTokens.DOC_COMMENT}, IElementType.EMPTY_ARRAY);
     }
 }

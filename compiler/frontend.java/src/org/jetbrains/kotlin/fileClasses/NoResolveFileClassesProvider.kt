@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.fileClasses
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 
 public object NoResolveFileClassesProvider : JvmFileClassesProvider {
-    override fun getFileClassInfo(file: JetFile): JvmFileClassInfo =
+    override fun getFileClassInfo(file: KtFile): JvmFileClassInfo =
             JvmFileClassUtil.getFileClassInfo(file, JvmFileClassUtil.parseJvmNameOnFileNoResolve(file))
 }

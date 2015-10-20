@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTaskHolder
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.JetTypeImpl
+import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KtTypeImpl
 import org.jetbrains.kotlin.utils.Printer
 import java.lang.reflect.Constructor
 import java.lang.reflect.GenericDeclaration
@@ -62,7 +62,7 @@ class LazyOperationsLog(
     public fun getText(): String {
         val groupedByOwner = records.groupByTo(IdentityHashMap()) {
             val owner = it.data.fieldOwner
-            if (owner is JetScope) owner.getContainingDeclaration() else owner
+            if (owner is KtScope) owner.getContainingDeclaration() else owner
         }.map { Pair(it.getKey(), it.getValue()) }
 
         return groupedByOwner.map {
@@ -118,7 +118,7 @@ class LazyOperationsLog(
 
         sb.append(" = ${render(data.result)}")
 
-        if (data.fieldOwner is JetScope) {
+        if (data.fieldOwner is KtScope) {
             sb.append(" // through ${render(data.fieldOwner)}")
         }
 
@@ -159,7 +159,7 @@ class LazyOperationsLog(
                 val text = when {
                     typeProto.hasClassName() -> context.nameResolver.getClassId(typeProto.className).asSingleFqName().asString()
                     typeProto.hasTypeParameter() -> {
-                        val classifier = (o as JetType).constructor.declarationDescriptor!!
+                        val classifier = (o as KtType).constructor.declarationDescriptor!!
                         "" + classifier.name + " in " + DescriptorUtils.getFqName(classifier.containingDeclaration)
                     }
                     else -> "???"
@@ -183,7 +183,7 @@ class LazyOperationsLog(
                     sb.append(" }")
                 }
             }
-            o is JetTypeImpl -> {
+            o is KtTypeImpl -> {
                 StringBuilder {
                     append(o.getConstructor())
                     if (!o.getArguments().isEmpty()) {

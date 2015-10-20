@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
@@ -43,12 +43,12 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
     protected fun doTest(fileName: String) {
         myFixture.configureByFile(fileName)
 
-        val file = myFixture.file as JetFile
+        val file = myFixture.file as KtFile
 
         val lastChild = file.allChildren.filter { it !is PsiWhiteSpace }.last()
         val expectedResultText = when (lastChild.node.elementType) {
-            JetTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length() - 2).trim()
-            JetTokens.EOL_COMMENT -> lastChild.text.substring(2).trim()
+            KtTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length() - 2).trim()
+            KtTokens.EOL_COMMENT -> lastChild.text.substring(2).trim()
             else -> error("Unexpected last file child")
         }
 

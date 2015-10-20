@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.psi.stubs.impl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetAnnotationUseSiteTarget
+import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 public class KotlinAnnotationUseSiteTargetStubImpl(
         parent: StubElement<out PsiElement>?,
         private val target: StringRef
-) : KotlinStubBaseImpl<JetAnnotationUseSiteTarget>(parent, JetStubElementTypes.ANNOTATION_TARGET), KotlinAnnotationUseSiteTargetStub {
+) : KotlinStubBaseImpl<KtAnnotationUseSiteTarget>(parent, KtStubElementTypes.ANNOTATION_TARGET), KotlinAnnotationUseSiteTargetStub {
 
     override fun getUseSiteTarget() = target.string
 

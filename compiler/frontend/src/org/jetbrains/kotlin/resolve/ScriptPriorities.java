@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.resolve;
 
 import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetScript;
+import org.jetbrains.kotlin.psi.KtScript;
 
 // SCRIPT: Resolve declarations in scripts
 public class ScriptPriorities {
 
-    public static final Key<Integer> PRIORITY_KEY = Key.create(JetScript.class.getName() + ".priority");
+    public static final Key<Integer> PRIORITY_KEY = Key.create(KtScript.class.getName() + ".priority");
 
-    public static int getScriptPriority(@NotNull JetScript script) {
+    public static int getScriptPriority(@NotNull KtScript script) {
         Integer priority = script.getUserData(PRIORITY_KEY);
         return priority == null ? 0 : priority;
     }

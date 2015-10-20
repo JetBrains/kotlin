@@ -37,10 +37,10 @@ public interface Call {
     ReceiverValue getDispatchReceiver();
 
     @Nullable
-    JetExpression getCalleeExpression();
+    KtExpression getCalleeExpression();
 
     @Nullable
-    JetValueArgumentList getValueArgumentList();
+    KtValueArgumentList getValueArgumentList();
 
     @ReadOnly
     @NotNull
@@ -52,13 +52,13 @@ public interface Call {
 
     @ReadOnly
     @NotNull
-    List<JetTypeProjection> getTypeArguments();
+    List<KtTypeProjection> getTypeArguments();
 
     @Nullable
-    JetTypeArgumentList getTypeArgumentList();
+    KtTypeArgumentList getTypeArgumentList();
 
     @NotNull
-    JetElement getCallElement();
+    KtElement getCallElement();
 
     enum CallType {
         DEFAULT, ARRAY_GET_METHOD, ARRAY_SET_METHOD, INVOKE

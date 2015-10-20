@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.completion
 
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 
@@ -28,7 +28,7 @@ fun renderDataFlowValue(value: DataFlowValue): String? {
 
     fun renderId(id: Any?): String? {
         return when (id) {
-            is JetExpression -> id.getText()
+            is KtExpression -> id.getText()
             is ThisReceiver -> "this@${id.getDeclarationDescriptor().getName()}"
             is VariableDescriptor -> id.getName().asString()
             is PackageViewDescriptor -> id.fqName.asString()

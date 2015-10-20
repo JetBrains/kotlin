@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
@@ -80,11 +80,11 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static List<JetType> getSupertypesWithoutFakes(ClassDescriptor descriptor) {
-        Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
-        return ContainerUtil.filter(supertypes, new Condition<JetType>() {
+    public static List<KtType> getSupertypesWithoutFakes(ClassDescriptor descriptor) {
+        Collection<KtType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+        return ContainerUtil.filter(supertypes, new Condition<KtType>() {
             @Override
-            public boolean value(JetType type) {
+            public boolean value(KtType type) {
                 ClassDescriptor classDescriptor = getClassDescriptorForType(type);
 
                 return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString()) &&
@@ -160,8 +160,8 @@ public final class JsDescriptorUtils {
     }
 
     @Nullable
-    public static Name getNameIfStandardType(@NotNull JetExpression expression, @NotNull TranslationContext context) {
-        JetType type = context.bindingContext().getType(expression);
+    public static Name getNameIfStandardType(@NotNull KtExpression expression, @NotNull TranslationContext context) {
+        KtType type = context.bindingContext().getType(expression);
         return type != null ? DescriptorUtilsKt.getNameIfStandardType(type) : null;
     }
 

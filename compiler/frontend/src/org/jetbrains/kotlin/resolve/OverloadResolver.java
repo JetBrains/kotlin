@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetObjectDeclaration;
-import org.jetbrains.kotlin.psi.JetSecondaryConstructor;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtObjectDeclaration;
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor;
 
 import java.util.Collection;
 import java.util.Map;
@@ -54,7 +54,7 @@ public class OverloadResolver {
         MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages = MultiMap.create();
         fillGroupedConstructors(c, inClasses, inPackages);
 
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
+        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
         }
         checkOverloadsInPackages(c, inPackages);
@@ -117,12 +117,12 @@ public class OverloadResolver {
         }
     }
 
-    private static String nameForErrorMessage(ClassDescriptor classDescriptor, JetClassOrObject jetClass) {
+    private static String nameForErrorMessage(ClassDescriptor classDescriptor, KtClassOrObject jetClass) {
         String name = jetClass.getName();
         if (name != null) {
             return name;
         }
-        if (jetClass instanceof JetObjectDeclaration) {
+        if (jetClass instanceof KtObjectDeclaration) {
             // must be companion object
             name = classDescriptor.getContainingDeclaration().getName().asString();
             return "companion object " + name;
@@ -132,7 +132,7 @@ public class OverloadResolver {
     }
 
     private void checkOverloadsInAClass(
-            ClassDescriptorWithResolutionScopes classDescriptor, JetClassOrObject klass,
+            ClassDescriptorWithResolutionScopes classDescriptor, KtClassOrObject klass,
             Collection<ConstructorDescriptor> nestedClassConstructors
     ) {
         MultiMap<Name, CallableMemberDescriptor> functionsByName = MultiMap.create();
@@ -162,8 +162,8 @@ public class OverloadResolver {
     }
 
     @NotNull
-    private Set<Pair<JetDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<CallableMemberDescriptor> functions) {
-        Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newLinkedHashSet();
+    private Set<Pair<KtDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<CallableMemberDescriptor> functions) {
+        Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newLinkedHashSet();
         for (CallableMemberDescriptor member : functions) {
             for (CallableMemberDescriptor member2 : functions) {
                 if (member == member2 || isConstructorsOfDifferentRedeclaredClasses(member, member2)) {
@@ -172,9 +172,9 @@ public class OverloadResolver {
 
                 OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(member, member2);
                 if (!overloadable.isSuccess() && member.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
-                    JetDeclaration jetDeclaration = (JetDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
-                    if (jetDeclaration != null) {
-                        redeclarations.add(Pair.create(jetDeclaration, member));
+                    KtDeclaration ktDeclaration = (KtDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
+                    if (ktDeclaration != null) {
+                        redeclarations.add(Pair.create(ktDeclaration, member));
                     }
                 }
             }
@@ -195,21 +195,21 @@ public class OverloadResolver {
     }
 
     private void reportRedeclarations(@NotNull String functionContainer,
-            @NotNull Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations) {
-        for (Pair<JetDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
+            @NotNull Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations) {
+        for (Pair<KtDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
             CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
             if (DescriptorToSourceUtils.isTopLevelMainFunction(memberDescriptor, mainFunctionDetector)) return;
 
-            JetDeclaration jetDeclaration = redeclaration.getFirst();
+            KtDeclaration ktDeclaration = redeclaration.getFirst();
             if (memberDescriptor instanceof PropertyDescriptor) {
-                trace.report(Errors.REDECLARATION.on(jetDeclaration, memberDescriptor.getName().asString()));
+                trace.report(Errors.REDECLARATION.on(ktDeclaration, memberDescriptor.getName().asString()));
             }
             else {
-                String containingClassName = jetDeclaration instanceof JetSecondaryConstructor ?
-                                               ((JetSecondaryConstructor) jetDeclaration).getContainingClassOrObject().getName() : null;
+                String containingClassName = ktDeclaration instanceof KtSecondaryConstructor ?
+                                             ((KtSecondaryConstructor) ktDeclaration).getContainingClassOrObject().getName() : null;
 
                 trace.report(Errors.CONFLICTING_OVERLOADS.on(
-                        jetDeclaration, memberDescriptor,
+                        ktDeclaration, memberDescriptor,
                         containingClassName != null ? containingClassName : functionContainer));
             }
         }

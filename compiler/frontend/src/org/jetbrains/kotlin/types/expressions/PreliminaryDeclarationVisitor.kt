@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-class PreliminaryDeclarationVisitor(val declaration: JetDeclaration): AssignedVariablesSearcher() {
+class PreliminaryDeclarationVisitor(val declaration: KtDeclaration): AssignedVariablesSearcher() {
 
-    override fun writers(variableDescriptor: VariableDescriptor): MutableSet<JetDeclaration?> {
+    override fun writers(variableDescriptor: VariableDescriptor): MutableSet<KtDeclaration?> {
         lazyTrigger
         return super.writers(variableDescriptor)
     }
@@ -37,11 +37,11 @@ class PreliminaryDeclarationVisitor(val declaration: JetDeclaration): AssignedVa
 
     companion object {
 
-        fun createForExpression(expression: JetExpression, trace: BindingTrace) {
-            expression.getStrictParentOfType<JetDeclaration>()?.let { createForDeclaration(it, trace) }
+        fun createForExpression(expression: KtExpression, trace: BindingTrace) {
+            expression.getStrictParentOfType<KtDeclaration>()?.let { createForDeclaration(it, trace) }
         }
 
-        fun createForDeclaration(declaration: JetDeclaration, trace: BindingTrace) {
+        fun createForDeclaration(declaration: KtDeclaration, trace: BindingTrace) {
             // TODO: find top-most declaration (but not class!!!)
             // TODO: check if already exists
             val visitor = PreliminaryDeclarationVisitor(declaration)
@@ -52,8 +52,8 @@ class PreliminaryDeclarationVisitor(val declaration: JetDeclaration): AssignedVa
         fun getVisitorByVariable(variableDescriptor: VariableDescriptor, bindingContext: BindingContext): PreliminaryDeclarationVisitor? {
             // Search for preliminary visitor of parent descriptor
             val containingDescriptor = variableDescriptor.containingDeclaration
-            var currentDeclaration: JetDeclaration? =
-                    DescriptorToSourceUtils.descriptorToDeclaration(containingDescriptor) as? JetDeclaration ?: return null
+            var currentDeclaration: KtDeclaration? =
+                    DescriptorToSourceUtils.descriptorToDeclaration(containingDescriptor) as? KtDeclaration ?: return null
             var preliminaryVisitor = bindingContext.get(BindingContext.PRELIMINARY_VISITOR, currentDeclaration)
             while (preliminaryVisitor == null && currentDeclaration != null) {
                 currentDeclaration = currentDeclaration.getStrictParentOfType()

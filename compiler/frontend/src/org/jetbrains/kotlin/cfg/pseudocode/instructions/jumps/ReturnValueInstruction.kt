@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.cfg.Label
 import java.util.Collections
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
-import org.jetbrains.kotlin.psi.JetReturnExpression
+import org.jetbrains.kotlin.psi.KtReturnExpression
 
 public class ReturnValueInstruction(
-        returnExpression: JetExpression,
+        returnExpression: KtExpression,
         lexicalScope: LexicalScope,
         targetLabel: Label,
         public val returnedValue: PseudoValue
@@ -46,8 +46,8 @@ public class ReturnValueInstruction(
     }
 
     override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction {
-        return ReturnValueInstruction((element as JetExpression), lexicalScope, newLabel, returnedValue)
+        return ReturnValueInstruction((element as KtExpression), lexicalScope, newLabel, returnedValue)
     }
 
-    public val returnExpressionIfAny: JetReturnExpression? = element as? JetReturnExpression
+    public val returnExpressionIfAny: KtReturnExpression? = element as? KtReturnExpression
 }

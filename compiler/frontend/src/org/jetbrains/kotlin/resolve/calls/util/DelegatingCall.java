@@ -53,13 +53,13 @@ public class DelegatingCall implements Call {
 
     @Override
     @Nullable
-    public JetExpression getCalleeExpression() {
+    public KtExpression getCalleeExpression() {
         return delegate.getCalleeExpression();
     }
 
     @Override
     @Nullable
-    public JetValueArgumentList getValueArgumentList() {
+    public KtValueArgumentList getValueArgumentList() {
         return delegate.getValueArgumentList();
     }
 
@@ -78,19 +78,19 @@ public class DelegatingCall implements Call {
 
     @Override
     @NotNull
-    public List<JetTypeProjection> getTypeArguments() {
+    public List<KtTypeProjection> getTypeArguments() {
         return delegate.getTypeArguments();
     }
 
     @Override
     @Nullable
-    public JetTypeArgumentList getTypeArgumentList() {
+    public KtTypeArgumentList getTypeArgumentList() {
         return delegate.getTypeArgumentList();
     }
 
     @NotNull
     @Override
-    public JetElement getCallElement() {
+    public KtElement getCallElement() {
         return delegate.getCallElement();
     }
 

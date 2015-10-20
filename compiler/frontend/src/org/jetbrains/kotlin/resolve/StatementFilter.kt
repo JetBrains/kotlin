@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 
 public open class StatementFilter {
 
-    public open val filter: ((JetExpression) -> Boolean)?
+    public open val filter: ((KtExpression) -> Boolean)?
         get() = null
 
     companion object {
@@ -31,9 +31,9 @@ public open class StatementFilter {
     }
 }
 
-fun StatementFilter.filterStatements(block: JetBlockExpression): List<JetExpression> {
-    if (filter == null || block is JetPsiUtil.JetExpressionWrapper) return block.getStatements()
+fun StatementFilter.filterStatements(block: KtBlockExpression): List<KtExpression> {
+    if (filter == null || block is KtPsiUtil.KtExpressionWrapper) return block.getStatements()
     return block.getStatements().filter { filter!!(it) }
 }
 
-fun StatementFilter.getLastStatementInABlock(block: JetBlockExpression) = filterStatements(block).lastOrNull()
+fun StatementFilter.getLastStatementInABlock(block: KtBlockExpression) = filterStatements(block).lastOrNull()

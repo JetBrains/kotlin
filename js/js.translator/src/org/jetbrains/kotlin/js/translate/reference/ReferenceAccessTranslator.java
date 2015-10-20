@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +34,7 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptor
 public final class ReferenceAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
 
     @NotNull
-    /*package*/ static ReferenceAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
+    /*package*/ static ReferenceAccessTranslator newInstance(@NotNull KtSimpleNameExpression expression,
                                                              @NotNull TranslationContext context) {
         DeclarationDescriptor referenceDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert referenceDescriptor != null : "JetSimpleName expression must reference a descriptor " + expression.getText();

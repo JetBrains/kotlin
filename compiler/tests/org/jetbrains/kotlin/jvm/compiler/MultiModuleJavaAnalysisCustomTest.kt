@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
@@ -47,7 +47,7 @@ import java.util.HashMap
 
 public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
 
-    private class TestModule(val _name: String, val kotlinFiles: List<JetFile>, val javaFilesScope: GlobalSearchScope,
+    private class TestModule(val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
                              val _dependencies: TestModule.() -> List<TestModule>) :
             ModuleInfo {
         override fun dependencies() = _dependencies()

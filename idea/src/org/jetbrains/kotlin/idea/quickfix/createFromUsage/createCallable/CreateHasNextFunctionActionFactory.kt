@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object CreateHasNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetForExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())
+object CreateHasNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtForExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtForExpression? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtForExpression>())
     }
 
-    override fun createCallableInfo(element: JetForExpression, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtForExpression, diagnostic: Diagnostic): CallableInfo? {
         val diagnosticWithParameters =
                 DiagnosticFactory.cast(diagnostic, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
         val ownerType = TypeInfo(diagnosticWithParameters.a, Variance.IN_VARIANCE)

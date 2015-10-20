@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
-import org.jetbrains.kotlin.psi.JetCallableReferenceExpression
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.ArrayList
 
 object CallableReferenceTranslator {
 
-    fun translate(expression: JetCallableReferenceExpression, context: TranslationContext): JsExpression {
+    fun translate(expression: KtCallableReferenceExpression, context: TranslationContext): JsExpression {
         val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.getCallableReference())
         return when (descriptor) {
             is PropertyDescriptor ->
@@ -43,12 +43,12 @@ object CallableReferenceTranslator {
         }
     }
 
-    private fun reportNotSupported(context: TranslationContext, expression: JetCallableReferenceExpression): JsExpression {
+    private fun reportNotSupported(context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
         context.bindingTrace().report(ErrorsJs.REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED.on(expression, expression))
         return context.getEmptyExpression()
     }
 
-    private fun translateForFunction(descriptor: FunctionDescriptor, context: TranslationContext, expression: JetCallableReferenceExpression): JsExpression {
+    private fun translateForFunction(descriptor: FunctionDescriptor, context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
         return when {
         // TODO Support for callable reference to builtin functions and members
             JsDescriptorUtils.isBuiltin(descriptor) ->
@@ -64,7 +64,7 @@ object CallableReferenceTranslator {
         }
     }
 
-    private fun translateForProperty(descriptor: PropertyDescriptor, context: TranslationContext, expression: JetCallableReferenceExpression): JsExpression {
+    private fun translateForProperty(descriptor: PropertyDescriptor, context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
         return when {
         // TODO Support for callable reference to builtin properties
             JsDescriptorUtils.isBuiltin(descriptor) ->

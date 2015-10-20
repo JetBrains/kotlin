@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.js.translate.expression
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.kotlin.psi.JetTryExpression
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtTryExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToBlock
 
 public class TryTranslator(
-        val expression: JetTryExpression,
+        val expression: KtTryExpression,
         context: TranslationContext
 ) : AbstractTranslator(context) {
     public fun translate(): JsTry {
@@ -40,7 +40,7 @@ public class TryTranslator(
         return JsTry(tryBlock, catchBlock, finallyBlock)
     }
 
-    private fun translateAsBlock(expression: JetExpression?): JsBlock? {
+    private fun translateAsBlock(expression: KtExpression?): JsBlock? {
         if (expression == null) return null
 
         val statement = translateAsStatementAndMergeInBlockIfNeeded(expression, context())

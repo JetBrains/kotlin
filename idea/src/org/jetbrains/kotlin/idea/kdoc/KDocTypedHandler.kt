@@ -26,8 +26,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 public class KDocTypedHandler(): TypedHandlerDelegate() {
@@ -44,7 +44,7 @@ public class KDocTypedHandler(): TypedHandlerDelegate() {
 
     private fun overwriteClosingBracket(c: Char, editor: Editor, file: PsiFile): Boolean {
         if (c != ']' && c != ')') return false
-        if (file !is JetFile) return false
+        if (file !is KtFile) return false
         if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return false
 
         val offset = editor.getCaretModel().getOffset()
@@ -59,7 +59,7 @@ public class KDocTypedHandler(): TypedHandlerDelegate() {
                 ']' -> {
                     // if the bracket is not part of a link, it will be part of KDOC_TEXT, not a separate RBRACKET element
                     element.getParentOfType<KDoc>(false) != null
-                           && (elementType == JetTokens.RBRACKET || (offset > 0 && chars[offset - 1] == '['))
+                           && (elementType == KtTokens.RBRACKET || (offset > 0 && chars[offset - 1] == '['))
                 }
 
                 ')' -> elementType == KDocTokens.MARKDOWN_INLINE_LINK
@@ -72,7 +72,7 @@ public class KDocTypedHandler(): TypedHandlerDelegate() {
 
     private fun handleBracketTyped(c: Char, project: Project, editor: Editor, file: PsiFile): Boolean {
         if (c != '[' && c != '(') return false
-        if (file !is JetFile) return false
+        if (file !is KtFile) return false
         if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return false
 
         val offset = editor.getCaretModel().getOffset()

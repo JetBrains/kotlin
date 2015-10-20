@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
@@ -55,9 +55,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
-    internal val memberScope: JetScope get() = descriptor.defaultType.memberScope
+    internal val memberScope: KtScope get() = descriptor.defaultType.memberScope
 
-    internal val staticScope: JetScope get() = descriptor.staticScope
+    internal val staticScope: KtScope get() = descriptor.staticScope
 
     override val members: Collection<KCallable<*>>
         get() = getMembers(memberScope, declaredOnly = false, nonExtensions = true, extensions = true)

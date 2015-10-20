@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.frontend.di.createContainerForLazyLocalClassifierAna
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -60,7 +60,7 @@ public class LocalClassifierAnalyzer(
             scope: LexicalWritableScope?,
             context: ExpressionTypingContext,
             containingDeclaration: DeclarationDescriptor,
-            classOrObject: JetClassOrObject
+            classOrObject: KtClassOrObject
     ) {
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
         val moduleContext = globalContext.withProject(classOrObject.getProject()).withModule(module)
@@ -92,7 +92,7 @@ public class LocalClassifierAnalyzer(
 
 class LocalClassDescriptorHolder(
         val writableScope: LexicalWritableScope?,
-        val myClass: JetClassOrObject,
+        val myClass: KtClassOrObject,
         val containingDeclaration: DeclarationDescriptor,
         val storageManager: StorageManager,
         val expressionTypingContext: ExpressionTypingContext,
@@ -108,7 +108,7 @@ class LocalClassDescriptorHolder(
     fun isMyClass(element: PsiElement): Boolean = element == myClass
     fun insideMyClass(element: PsiElement): Boolean = PsiTreeUtil.isAncestor(myClass, element, false)
 
-    fun getClassDescriptor(classOrObject: JetClassOrObject, declarationScopeProvider: DeclarationScopeProvider): ClassDescriptor {
+    fun getClassDescriptor(classOrObject: KtClassOrObject, declarationScopeProvider: DeclarationScopeProvider): ClassDescriptor {
         assert(isMyClass(classOrObject)) { "Called on a wrong class: ${classOrObject.getDebugText()}" }
         if (classDescriptor == null) {
             classDescriptor = LazyClassDescriptor(
@@ -144,7 +144,7 @@ class LocalClassDescriptorHolder(
         return classDescriptor!!
     }
 
-    fun getResolutionScopeForClass(classOrObject: JetClassOrObject): LexicalScope {
+    fun getResolutionScopeForClass(classOrObject: KtClassOrObject): LexicalScope {
         assert (isMyClass(classOrObject)) { "Called on a wrong class: ${classOrObject.getDebugText()}" }
         return expressionTypingContext.scope
     }
@@ -157,7 +157,7 @@ class LocalLazyDeclarationResolver(
         topLevelDescriptorProvider : TopLevelDescriptorProvider
 ) : LazyDeclarationResolver(globalContext, trace, topLevelDescriptorProvider) {
 
-    override fun getClassDescriptor(classOrObject: JetClassOrObject, location: LookupLocation): ClassDescriptor {
+    override fun getClassDescriptor(classOrObject: KtClassOrObject, location: LookupLocation): ClassDescriptor {
         if (localClassDescriptorManager.isMyClass(classOrObject)) {
             return localClassDescriptorManager.getClassDescriptor(classOrObject, scopeProvider)
         }
@@ -173,7 +173,7 @@ class DeclarationScopeProviderForLocalClassifierAnalyzer(
 ) : DeclarationScopeProviderImpl(lazyDeclarationResolver, fileScopeProvider) {
     override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): LexicalScope {
         if (localClassDescriptorManager.isMyClass(elementOfDeclaration)) {
-            return localClassDescriptorManager.getResolutionScopeForClass(elementOfDeclaration as JetClassOrObject)
+            return localClassDescriptorManager.getResolutionScopeForClass(elementOfDeclaration as KtClassOrObject)
         }
         return super.getResolutionScopeForDeclaration(elementOfDeclaration)
     }

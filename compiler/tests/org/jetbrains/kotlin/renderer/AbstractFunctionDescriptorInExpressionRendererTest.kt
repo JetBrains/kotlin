@@ -22,10 +22,10 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
+import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
@@ -37,17 +37,17 @@ import java.io.File
 abstract public class AbstractFunctionDescriptorInExpressionRendererTest : KotlinTestWithEnvironment() {
     public fun doTest(path: String) {
         val fileText = FileUtil.loadFile(File(path), true)
-        val file = JetPsiFactory(getProject()).createFile(fileText)
+        val file = KtPsiFactory(getProject()).createFile(fileText)
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(file).bindingContext
 
         val descriptors = arrayListOf<DeclarationDescriptor>()
 
-        file.accept(object : JetTreeVisitorVoid() {
-            override fun visitNamedFunction(function: JetNamedFunction) {
+        file.accept(object : KtTreeVisitorVoid() {
+            override fun visitNamedFunction(function: KtNamedFunction) {
                 function.acceptChildren(this)
                 descriptors.addIfNotNull(bindingContext.get(BindingContext.FUNCTION, function) as? FunctionExpressionDescriptor)
             }
-            override fun visitFunctionLiteralExpression(expression: JetFunctionLiteralExpression) {
+            override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
                 expression.acceptChildren(this)
                 descriptors.add(bindingContext.get(BindingContext.FUNCTION, expression.getFunctionLiteral())!!)
             }

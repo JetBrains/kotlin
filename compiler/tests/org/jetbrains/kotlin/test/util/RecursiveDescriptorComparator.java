@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
@@ -128,7 +128,7 @@ public class RecursiveDescriptorComparator {
                 ClassDescriptor klass = (ClassDescriptor) descriptor;
                 appendSubDescriptors(descriptor, module,
                                      klass.getDefaultType().getMemberScope(), klass.getConstructors(), printer);
-                JetScope staticScope = klass.getStaticScope();
+                KtScope staticScope = klass.getStaticScope();
                 if (!staticScope.getAllDescriptors().isEmpty()) {
                     printer.println();
                     printer.println("// Static members");
@@ -185,7 +185,7 @@ public class RecursiveDescriptorComparator {
     private void appendSubDescriptors(
             @NotNull DeclarationDescriptor descriptor,
             @NotNull ModuleDescriptor module,
-            @NotNull JetScope memberScope,
+            @NotNull KtScope memberScope,
             @NotNull Collection<? extends DeclarationDescriptor> extraSubDescriptors,
             @NotNull Printer printer
     ) {

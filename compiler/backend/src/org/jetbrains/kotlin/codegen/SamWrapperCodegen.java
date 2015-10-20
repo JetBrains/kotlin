@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -58,13 +58,13 @@ public class SamWrapperCodegen {
         this.parentCodegen = parentCodegen;
     }
 
-    public Type genWrapper(@NotNull JetFile file) {
+    public Type genWrapper(@NotNull KtFile file) {
         // Name for generated class, in form of whatever$1
         FqName fqName = getWrapperName(file);
         Type asmType = asmTypeByFqNameWithoutInnerClasses(fqName);
 
         // e.g. (T, T) -> Int
-        JetType functionType = samType.getKotlinFunctionType();
+        KtType functionType = samType.getKotlinFunctionType();
 
         ClassDescriptor classDescriptor = new ClassDescriptorImpl(
                 samType.getJavaClassDescriptor().getContainingDeclaration(),
@@ -140,7 +140,7 @@ public class SamWrapperCodegen {
             Type functionType,
             ClassBuilder cv,
             SimpleFunctionDescriptor erasedInterfaceFunction,
-            JetType functionJetType
+            KtType functionJetType
     ) {
         // using root context to avoid creating ClassDescriptor and everything else
         FunctionCodegen codegen = new FunctionCodegen(state.getRootContext().intoClass(
@@ -168,7 +168,7 @@ public class SamWrapperCodegen {
     }
 
     @NotNull
-    private FqName getWrapperName(@NotNull JetFile containingFile) {
+    private FqName getWrapperName(@NotNull KtFile containingFile) {
         FqName fileClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
         JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
         int hash = PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +

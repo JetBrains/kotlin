@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureC
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Convert receiver to parameter"), LowPriorityAction {
-    override fun isApplicableTo(element: JetTypeReference): Boolean {
-        return (element.getParent() as? JetNamedFunction)?.getReceiverTypeReference() == element
+public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndependentIntention<KtTypeReference>(javaClass(), "Convert receiver to parameter"), LowPriorityAction {
+    override fun isApplicableTo(element: KtTypeReference): Boolean {
+        return (element.getParent() as? KtNamedFunction)?.getReceiverTypeReference() == element
     }
 
     private fun configureChangeSignature(): JetChangeSignatureConfiguration {
@@ -43,8 +43,8 @@ public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndepen
 
     override fun startInWriteAction() = false
 
-    override fun applyTo(element: JetTypeReference, editor: Editor) {
-        val function = element.getParent() as? JetNamedFunction ?: return
+    override fun applyTo(element: KtTypeReference, editor: Editor) {
+        val function = element.getParent() as? KtNamedFunction ?: return
         val context = function.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
         runChangeSignature(element.project, descriptor, configureChangeSignature(), element, getText())

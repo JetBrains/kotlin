@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -27,7 +27,7 @@ public class SafeCallChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         val operationNode = resolvedCall.call.callOperationNode ?: return
 
-        if (operationNode.elementType == JetTokens.SAFE_ACCESS && resolvedCall.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) {
+        if (operationNode.elementType == KtTokens.SAFE_ACCESS && resolvedCall.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) {
             context.trace.report(Errors.UNEXPECTED_SAFE_CALL.on(operationNode.psi))
         }
     }

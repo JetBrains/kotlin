@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetLiteralStringTemplateEntry
-import org.jetbrains.kotlin.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -69,7 +69,7 @@ public class JsCallChecker(
         if (context.isAnnotationContext || !resolvedCall.isJsCall()) return
 
         val expression = resolvedCall.getCall().getCallElement()
-        if (expression !is JetCallExpression) return
+        if (expression !is KtCallExpression) return
 
         val arguments = expression.getValueArgumentList()?.getArguments()
         val argument = arguments?.firstOrNull()?.getArgumentExpression() ?: return
@@ -102,7 +102,7 @@ public class JsCallChecker(
 }
 
 class JsCodeErrorReporter(
-        private val nodeToReport: JetExpression,
+        private val nodeToReport: KtExpression,
         private val code: String,
         private val trace: BindingTrace
 ) : ErrorReporter {
@@ -116,7 +116,7 @@ class JsCodeErrorReporter(
     }
 
     private fun report(
-            diagnosticFactory: DiagnosticFactory1<JetExpression, JsCallData>,
+            diagnosticFactory: DiagnosticFactory1<KtExpression, JsCallData>,
             message: String,
             startPosition: CodePosition,
             endPosition: CodePosition
@@ -173,8 +173,8 @@ private fun String.offsetOf(position: CodePosition): Int {
     return length()
 }
 
-private val JetExpression.isConstantStringLiteral: Boolean
-    get() = this is JetStringTemplateExpression && getEntries().all { it is JetLiteralStringTemplateEntry }
+private val KtExpression.isConstantStringLiteral: Boolean
+    get() = this is KtStringTemplateExpression && getEntries().all { it is KtLiteralStringTemplateEntry }
 
 open class JsCallData(val reportRange: TextRange, val message: String)
 

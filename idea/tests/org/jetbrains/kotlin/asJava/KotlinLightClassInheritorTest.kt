@@ -21,8 +21,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
 
 public class KotlinLightClassInheritorTest : JetLightCodeInsightFixtureTestCase() {
@@ -47,8 +47,8 @@ public class KotlinLightClassInheritorTest : JetLightCodeInsightFixtureTestCase(
     }
 
     private fun doTestInheritorByText(text: String, superQName: String, checkDeep: Boolean) {
-        val file = myFixture.configureByText("A.kt", text) as JetFile
-        val jetClass = file.declarations.filterIsInstance<JetClass>().single()
+        val file = myFixture.configureByText("A.kt", text) as KtFile
+        val jetClass = file.declarations.filterIsInstance<KtClass>().single()
         val psiClass = LightClassGenerationSupport.getInstance(project).getPsiClass(jetClass)!!
         val baseClass = JavaPsiFacade.getInstance(project).findClass(superQName, GlobalSearchScope.allScope(project))!!
         Assert.assertTrue(psiClass.isInheritor(baseClass, checkDeep))

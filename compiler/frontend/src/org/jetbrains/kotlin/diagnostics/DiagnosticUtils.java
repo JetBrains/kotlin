@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 
@@ -66,7 +66,7 @@ public class DiagnosticUtils {
         }
     }
 
-    public static String atLocation(JetExpression expression) {
+    public static String atLocation(KtExpression expression) {
         return atLocation(expression.getNode());
     }
 

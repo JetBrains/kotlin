@@ -20,9 +20,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 public class KotlinImportDirectiveStubImpl(
         parent: StubElement<PsiElement>,
@@ -30,7 +30,7 @@ public class KotlinImportDirectiveStubImpl(
         private val isAllUnder: Boolean,
         private val importedFqName: StringRef?,
         private val aliasName: StringRef?,
-        private val isValid: Boolean) : KotlinStubBaseImpl<JetImportDirective>(parent, JetStubElementTypes.IMPORT_DIRECTIVE), KotlinImportDirectiveStub {
+        private val isValid: Boolean) : KotlinStubBaseImpl<KtImportDirective>(parent, KtStubElementTypes.IMPORT_DIRECTIVE), KotlinImportDirectiveStub {
 
     override fun isAbsoluteInRootPackage(): Boolean = isAbsoluteInRootPackage
     override fun isAllUnder(): Boolean = isAllUnder

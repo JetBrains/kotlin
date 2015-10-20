@@ -28,10 +28,10 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.findUsages.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 class DelegatingFindMemberUsagesHandler(
-        val declaration: JetNamedDeclaration,
+        val declaration: KtNamedDeclaration,
         val elementsToSearch: Collection<PsiElement>,
         val factory: KotlinFindUsagesHandlerFactory
 ) : FindUsagesHandler(declaration) {
@@ -44,7 +44,7 @@ class DelegatingFindMemberUsagesHandler(
 
     private fun getHandlerAndOptions(element: PsiElement, options: FindUsagesOptions?): HandlerAndOptions? {
         return when (element) {
-            is JetNamedDeclaration ->
+            is KtNamedDeclaration ->
                 HandlerAndOptions(KotlinFindMemberUsagesHandler.getInstance(element, elementsToSearch, factory), options)
 
             is PsiMethod ->

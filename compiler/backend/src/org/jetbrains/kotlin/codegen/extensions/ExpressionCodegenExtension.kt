@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.*
 
@@ -50,7 +50,7 @@ public interface ExpressionCodegenExtension {
     public fun generateClassSyntheticParts(
             classBuilder: ClassBuilder,
             state: GenerationState,
-            classOrObject: JetClassOrObject,
+            classOrObject: KtClassOrObject,
             descriptor: ClassDescriptor
     ) {}
 }

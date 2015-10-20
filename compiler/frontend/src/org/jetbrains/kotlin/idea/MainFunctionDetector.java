@@ -21,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.JetAnnotationEntry;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
+import org.jetbrains.kotlin.psi.KtAnnotationEntry;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.Variance;
 
@@ -36,14 +36,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class MainFunctionDetector {
-    private final NotNullFunction<JetNamedFunction, FunctionDescriptor> getFunctionDescriptor;
+    private final NotNullFunction<KtNamedFunction, FunctionDescriptor> getFunctionDescriptor;
 
     /** Assumes that the function declaration is already resolved and the descriptor can be found in the {@code bindingContext}. */
     public MainFunctionDetector(@NotNull final BindingContext bindingContext) {
-        this.getFunctionDescriptor = new NotNullFunction<JetNamedFunction, FunctionDescriptor>() {
+        this.getFunctionDescriptor = new NotNullFunction<KtNamedFunction, FunctionDescriptor>() {
             @NotNull
             @Override
-            public FunctionDescriptor fun(JetNamedFunction function) {
+            public FunctionDescriptor fun(KtNamedFunction function) {
                 SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
                 if (functionDescriptor == null) {
                     throw new IllegalStateException("No descriptor resolved for " + function + " " + function.getText());
@@ -53,15 +53,15 @@ public class MainFunctionDetector {
         };
     }
 
-    public MainFunctionDetector(@NotNull NotNullFunction<JetNamedFunction, FunctionDescriptor> functionResolver) {
+    public MainFunctionDetector(@NotNull NotNullFunction<KtNamedFunction, FunctionDescriptor> functionResolver) {
         this.getFunctionDescriptor = functionResolver;
     }
 
-    public boolean hasMain(@NotNull List<JetDeclaration> declarations) {
+    public boolean hasMain(@NotNull List<KtDeclaration> declarations) {
         return findMainFunction(declarations) != null;
     }
 
-    public boolean isMain(@NotNull JetNamedFunction function) {
+    public boolean isMain(@NotNull KtNamedFunction function) {
         if (function.isLocal()) {
             return false;
         }
@@ -89,13 +89,13 @@ public class MainFunctionDetector {
         if (parameters.size() != 1) return false;
 
         ValueParameterDescriptor parameter = parameters.get(0);
-        JetType parameterType = parameter.getType();
+        KtType parameterType = parameter.getType();
         if (!KotlinBuiltIns.isArray(parameterType)) return false;
 
         List<TypeProjection> typeArguments = parameterType.getArguments();
         if (typeArguments.size() != 1) return false;
 
-        JetType typeArgument = typeArguments.get(0).getType();
+        KtType typeArgument = typeArguments.get(0).getType();
         if (!KotlinBuiltIns.isString(typeArgument)) {
             return false;
         }
@@ -112,9 +112,9 @@ public class MainFunctionDetector {
     }
 
     @Nullable
-    public JetNamedFunction getMainFunction(@NotNull Collection<JetFile> files) {
-        for (JetFile file : files) {
-            JetNamedFunction mainFunction = findMainFunction(file.getDeclarations());
+    public KtNamedFunction getMainFunction(@NotNull Collection<KtFile> files) {
+        for (KtFile file : files) {
+            KtNamedFunction mainFunction = findMainFunction(file.getDeclarations());
             if (mainFunction != null) {
                 return mainFunction;
             }
@@ -123,10 +123,10 @@ public class MainFunctionDetector {
     }
 
     @Nullable
-    private JetNamedFunction findMainFunction(@NotNull List<JetDeclaration> declarations) {
-        for (JetDeclaration declaration : declarations) {
-            if (declaration instanceof JetNamedFunction) {
-                JetNamedFunction candidateFunction = (JetNamedFunction) declaration;
+    private KtNamedFunction findMainFunction(@NotNull List<KtDeclaration> declarations) {
+        for (KtDeclaration declaration : declarations) {
+            if (declaration instanceof KtNamedFunction) {
+                KtNamedFunction candidateFunction = (KtNamedFunction) declaration;
                 if (isMain(candidateFunction)) {
                     return candidateFunction;
                 }
@@ -145,8 +145,8 @@ public class MainFunctionDetector {
         return functionDescriptor.getName().asString();
     }
 
-    private static boolean hasAnnotationWithExactNumberOfArguments(@NotNull JetNamedFunction function, int number) {
-        for (JetAnnotationEntry entry : function.getAnnotationEntries()) {
+    private static boolean hasAnnotationWithExactNumberOfArguments(@NotNull KtNamedFunction function, int number) {
+        for (KtAnnotationEntry entry : function.getAnnotationEntries()) {
             if (entry.getValueArguments().size() == number) {
                 return true;
             }

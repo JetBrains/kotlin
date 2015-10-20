@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.idea.project
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
-val JetElement.platform: TargetPlatform
+val KtElement.platform: TargetPlatform
     get() = TargetPlatformDetector.getPlatform(getContainingJetFile())

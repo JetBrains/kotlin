@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.types.Variance
 import java.util.Collections
 
-object CreateGetFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetArrayAccessExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetArrayAccessExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetArrayAccessExpression>())
+object CreateGetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtArrayAccessExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtArrayAccessExpression? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtArrayAccessExpression>())
     }
 
-    override fun createCallableInfo(element: JetArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
         val arrayExpr = element.arrayExpression ?: return null
 
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)

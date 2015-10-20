@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -119,7 +119,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             TestModule testModule = entry.getKey();
             List<? extends TestFile> testFilesInModule = entry.getValue();
 
-            List<JetFile> jetFiles = getJetFiles(testFilesInModule, true);
+            List<KtFile> jetFiles = getJetFiles(testFilesInModule, true);
 
             ModuleDescriptorImpl module = modules.get(testModule);
             BindingTrace moduleTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
@@ -234,7 +234,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
     protected void analyzeModuleContents(
             @NotNull ModuleContext moduleContext,
-            @NotNull List<JetFile> jetFiles,
+            @NotNull List<KtFile> jetFiles,
             @NotNull BindingTrace moduleTrace
     ) {
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
@@ -366,8 +366,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         return moduleDescriptor;
     }
 
-    private static void checkAllResolvedCallsAreCompleted(@NotNull List<JetFile> jetFiles, @NotNull BindingContext bindingContext) {
-        for (JetFile file : jetFiles) {
+    private static void checkAllResolvedCallsAreCompleted(@NotNull List<KtFile> jetFiles, @NotNull BindingContext bindingContext) {
+        for (KtFile file : jetFiles) {
             if (!AnalyzingUtils.getSyntaxErrorRanges(file).isEmpty()) {
                 return;
             }
@@ -375,7 +375,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         ImmutableMap<Call, ResolvedCall<?>> resolvedCallsEntries = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL);
         for (Map.Entry<Call, ResolvedCall<?>> entry : resolvedCallsEntries.entrySet()) {
-            JetElement element = entry.getKey().getCallElement();
+            KtElement element = entry.getKey().getCallElement();
             ResolvedCall<?> resolvedCall = entry.getValue();
 
             DiagnosticUtils.LineAndColumn lineAndColumn =
@@ -393,7 +393,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         Set<DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>>> diagnosticsStoringResolvedCalls1 = Sets.newHashSet(
                 OVERLOAD_RESOLUTION_AMBIGUITY, NONE_APPLICABLE, CANNOT_COMPLETE_RESOLVE, UNRESOLVED_REFERENCE_WRONG_RECEIVER,
                 ASSIGN_OPERATOR_AMBIGUITY, ITERATOR_AMBIGUITY);
-        Set<DiagnosticFactory2<JetExpression, ? extends Comparable<? extends Comparable<?>>, Collection<? extends ResolvedCall<?>>>>
+        Set<DiagnosticFactory2<KtExpression, ? extends Comparable<? extends Comparable<?>>, Collection<? extends ResolvedCall<?>>>>
                 diagnosticsStoringResolvedCalls2 = Sets.newHashSet(
                 COMPONENT_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE);
         Diagnostics diagnostics = bindingContext.getDiagnostics();

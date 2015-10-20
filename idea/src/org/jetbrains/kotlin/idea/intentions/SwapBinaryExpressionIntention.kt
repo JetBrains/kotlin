@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
-import org.jetbrains.kotlin.lexer.JetTokens.*
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Flip binary expression"), LowPriorityAction {
+public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<KtBinaryExpression>(javaClass(), "Flip binary expression"), LowPriorityAction {
     companion object {
         private val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
 
@@ -35,7 +35,7 @@ public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinary
                                         setOf("xor", "or", "and", "equals", "identityEquals")
     }
 
-    override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
+    override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         val opRef = element.getOperationReference()
         if (!opRef.getTextRange().containsOffset(caretOffset)) return false
 
@@ -53,7 +53,7 @@ public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinary
         return false
     }
 
-    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
         // Have to use text here to preserve names like "plus"
         val operator = element.getOperationReference().getText()!!
         val convertedOperator = when (operator) {
@@ -69,19 +69,19 @@ public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinary
         val leftCopy = left.copied()
         left.replace(rightCopy)
         right.replace(leftCopy)
-        element.replace(JetPsiFactory(element).createExpressionByPattern("$0 $convertedOperator $1" , element.getLeft()!!, element.getRight()!!))
+        element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $convertedOperator $1" , element.getLeft()!!, element.getRight()!!))
     }
 
-    private fun leftSubject(element: JetBinaryExpression): JetExpression? {
-        return firstDescendantOfTighterPrecedence(element.getLeft(), JetPsiPrecedences.getPrecedence(element), JetBinaryExpression::getRight)
+    private fun leftSubject(element: KtBinaryExpression): KtExpression? {
+        return firstDescendantOfTighterPrecedence(element.getLeft(), JetPsiPrecedences.getPrecedence(element), KtBinaryExpression::getRight)
     }
 
-    private fun rightSubject(element: JetBinaryExpression): JetExpression? {
-        return firstDescendantOfTighterPrecedence(element.getRight(), JetPsiPrecedences.getPrecedence(element), JetBinaryExpression::getLeft)
+    private fun rightSubject(element: KtBinaryExpression): KtExpression? {
+        return firstDescendantOfTighterPrecedence(element.getRight(), JetPsiPrecedences.getPrecedence(element), KtBinaryExpression::getLeft)
     }
 
-    private fun firstDescendantOfTighterPrecedence(expression: JetExpression?, precedence: Int, getChild: JetBinaryExpression.() -> JetExpression?): JetExpression? {
-        if (expression is JetBinaryExpression) {
+    private fun firstDescendantOfTighterPrecedence(expression: KtExpression?, precedence: Int, getChild: KtBinaryExpression.() -> KtExpression?): KtExpression? {
+        if (expression is KtBinaryExpression) {
             val expressionPrecedence = JetPsiPrecedences.getPrecedence(expression)
             if (!JetPsiPrecedences.isTighter(expressionPrecedence, precedence)) {
                 return firstDescendantOfTighterPrecedence(expression.getChild(), precedence, getChild)

@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDec
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
-import org.jetbrains.kotlin.psi.JetElement;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.psi.KtElement;
+import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -55,9 +55,9 @@ public class CFGraphToDotFilePrinter {
         int i = 0;
         for (Pseudocode pseudocode : pseudocodes) {
             String label;
-            JetElement correspondingElement = pseudocode.getCorrespondingElement();
-            if (correspondingElement instanceof JetNamedDeclaration) {
-                JetNamedDeclaration namedDeclaration = (JetNamedDeclaration) correspondingElement;
+            KtElement correspondingElement = pseudocode.getCorrespondingElement();
+            if (correspondingElement instanceof KtNamedDeclaration) {
+                KtNamedDeclaration namedDeclaration = (KtNamedDeclaration) correspondingElement;
                 label = namedDeclaration.getName();
             }
             else {

@@ -20,15 +20,15 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
@@ -40,11 +40,11 @@ public class FakeCallResolver(
             context: ExpressionTypingContext,
             receiver: ReceiverValue,
             name: Name,
-            callElement: JetExpression?,
-            vararg argumentTypes: JetType
+            callElement: KtExpression?,
+            vararg argumentTypes: KtType
     ): OverloadResolutionResults<FunctionDescriptor> {
         val traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name)
-        val fakeArguments = ArrayList<JetExpression>()
+        val fakeArguments = ArrayList<KtExpression>()
         for (type in argumentTypes) {
             fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(project, traceWithFakeArgumentInfo, "fakeArgument" + fakeArguments.size(), type))
         }
@@ -55,7 +55,7 @@ public class FakeCallResolver(
             context: ExpressionTypingContext,
             receiver: ReceiverValue,
             name: Name,
-            callElement: JetExpression
+            callElement: KtExpression
     ): OverloadResolutionResults<FunctionDescriptor> {
         return resolveFakeCall(receiver, context, emptyList(), name, callElement)
     }
@@ -63,9 +63,9 @@ public class FakeCallResolver(
     public fun resolveFakeCall(
             receiver: ReceiverValue,
             context: ExpressionTypingContext,
-            valueArguments: List<JetExpression>,
+            valueArguments: List<KtExpression>,
             name: Name,
-            callElement: JetExpression
+            callElement: KtExpression
     ): OverloadResolutionResults<FunctionDescriptor> {
         return makeAndResolveFakeCall(receiver, context, valueArguments, name, callElement).second
     }
@@ -73,9 +73,9 @@ public class FakeCallResolver(
     public fun makeAndResolveFakeCall(
             receiver: ReceiverValue,
             context: ExpressionTypingContext,
-            valueArguments: List<JetExpression>,
+            valueArguments: List<KtExpression>,
             name: Name,
-            callElement: JetExpression?
+            callElement: KtExpression?
     ): Pair<Call, OverloadResolutionResults<FunctionDescriptor>> {
         val fakeTrace = TemporaryBindingTrace.create(context.trace, "trace to resolve fake call for", name)
         val fakeBindingTrace = context.replaceBindingTrace(fakeTrace)
@@ -92,12 +92,12 @@ public class FakeCallResolver(
     public fun makeAndResolveFakeCallInContext(
             receiver: ReceiverValue,
             context: ExpressionTypingContext,
-            valueArguments: List<JetExpression>,
+            valueArguments: List<KtExpression>,
             name: Name,
-            callElement: JetExpression?,
-            onSuccess: (JetSimpleNameExpression) -> Unit = doNothing()
+            callElement: KtExpression?,
+            onSuccess: (KtSimpleNameExpression) -> Unit = doNothing()
     ): Pair<Call, OverloadResolutionResults<FunctionDescriptor>> {
-        val fake = JetPsiFactory(project).createSimpleName(name.asString())
+        val fake = KtPsiFactory(project).createSimpleName(name.asString())
         val call = CallMaker.makeCallWithExpressions(callElement ?: fake, receiver, null, fake, valueArguments)
         val results = callResolver.resolveCallWithGivenName(context, call, fake, name)
 

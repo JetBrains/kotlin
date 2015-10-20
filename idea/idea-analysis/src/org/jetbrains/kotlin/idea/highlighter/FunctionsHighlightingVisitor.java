@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -37,7 +37,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     }
 
     @Override
-    public void visitNamedFunction(@NotNull JetNamedFunction function) {
+    public void visitNamedFunction(@NotNull KtNamedFunction function) {
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (nameIdentifier != null) {
             NameHighlighter.highlightName(holder, nameIdentifier, JetHighlightingColors.FUNCTION_DECLARATION);
@@ -47,13 +47,13 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     }
 
     @Override
-    public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
-        JetConstructorCalleeExpression calleeExpression = call.getCalleeExpression();
-        JetTypeReference typeRef = calleeExpression.getTypeReference();
+    public void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call) {
+        KtConstructorCalleeExpression calleeExpression = call.getCalleeExpression();
+        KtTypeReference typeRef = calleeExpression.getTypeReference();
         if (typeRef != null) {
-            JetTypeElement typeElement = typeRef.getTypeElement();
-            if (typeElement instanceof JetUserType) {
-                JetSimpleNameExpression nameExpression = ((JetUserType)typeElement).getReferenceExpression();
+            KtTypeElement typeElement = typeRef.getTypeElement();
+            if (typeElement instanceof KtUserType) {
+                KtSimpleNameExpression nameExpression = ((KtUserType)typeElement).getReferenceExpression();
                 if (nameExpression != null) {
                     NameHighlighter.highlightName(holder, nameExpression, JetHighlightingColors.CONSTRUCTOR_CALL);
                 }
@@ -63,10 +63,10 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     }
 
     @Override
-    public void visitCallExpression(@NotNull JetCallExpression expression) {
-        JetExpression callee = expression.getCalleeExpression();
+    public void visitCallExpression(@NotNull KtCallExpression expression) {
+        KtExpression callee = expression.getCalleeExpression();
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
-        if (callee instanceof JetReferenceExpression && resolvedCall != null) {
+        if (callee instanceof KtReferenceExpression && resolvedCall != null) {
             CallableDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
 
             if (DynamicCallsKt.isDynamic(calleeDescriptor)) {
@@ -103,13 +103,13 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             return false;
         }
 
-        JetType defaultType = ((ClassDescriptor) parent).getDefaultType();
+        KtType defaultType = ((ClassDescriptor) parent).getDefaultType();
 
         if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(defaultType)) {
             return true;
         }
 
-        for (JetType supertype : TypeUtils.getAllSupertypes(defaultType)) {
+        for (KtType supertype : TypeUtils.getAllSupertypes(defaultType)) {
             if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(supertype)) {
                 return true;
             }

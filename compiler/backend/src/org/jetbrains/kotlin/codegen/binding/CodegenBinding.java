@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
 import org.jetbrains.kotlin.util.slicedMap.Slices;
@@ -58,11 +58,11 @@ public class CodegenBinding {
 
     public static final WritableSlice<ClassDescriptor, Collection<ClassDescriptor>> INNER_CLASSES = Slices.createSimpleSlice();
 
-    public static final WritableSlice<JetExpression, SamType> SAM_VALUE = Slices.createSimpleSlice();
+    public static final WritableSlice<KtExpression, SamType> SAM_VALUE = Slices.createSimpleSlice();
 
-    public static final WritableSlice<JetCallElement, JetExpression> SAM_CONSTRUCTOR_TO_ARGUMENT = Slices.createSimpleSlice();
+    public static final WritableSlice<KtCallElement, KtExpression> SAM_CONSTRUCTOR_TO_ARGUMENT = Slices.createSimpleSlice();
 
-    public static final WritableSlice<JetWhenExpression, WhenByEnumsMapping> MAPPING_FOR_WHEN_BY_ENUM = Slices.createSimpleSlice();
+    public static final WritableSlice<KtWhenExpression, WhenByEnumsMapping> MAPPING_FOR_WHEN_BY_ENUM = Slices.createSimpleSlice();
 
     public static final WritableSlice<String, List<WhenByEnumsMapping>> MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE =
             Slices.createSimpleSlice();
@@ -76,12 +76,12 @@ public class CodegenBinding {
 
     public static void initTrace(@NotNull GenerationState state) {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(state);
-        for (JetFile file : allFilesInPackages(state.getBindingContext(), state.getFiles())) {
+        for (KtFile file : allFilesInPackages(state.getBindingContext(), state.getFiles())) {
             file.accept(visitor);
         }
     }
 
-    public static boolean enumEntryNeedSubclass(BindingContext bindingContext, JetEnumEntry enumEntry) {
+    public static boolean enumEntryNeedSubclass(BindingContext bindingContext, KtEnumEntry enumEntry) {
         return enumEntryNeedSubclass(bindingContext, bindingContext.get(CLASS, enumEntry));
     }
 
@@ -99,7 +99,7 @@ public class CodegenBinding {
 
     // SCRIPT: Generate asmType for script, move to ScriptingUtil
     @NotNull
-    public static Type asmTypeForScriptPsi(BindingContext bindingContext, @NotNull JetScript script) {
+    public static Type asmTypeForScriptPsi(BindingContext bindingContext, @NotNull KtScript script) {
         ScriptDescriptor scriptDescriptor = bindingContext.get(SCRIPT, script);
         if (scriptDescriptor == null) {
             throw new IllegalStateException("Script descriptor not found by PSI " + script);
@@ -117,9 +117,9 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull JetElement expression) {
-        if (expression instanceof JetObjectLiteralExpression) {
-            expression = ((JetObjectLiteralExpression) expression).getObjectDeclaration();
+    public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull KtElement expression) {
+        if (expression instanceof KtObjectLiteralExpression) {
+            expression = ((KtObjectLiteralExpression) expression).getObjectDeclaration();
         }
 
         ClassDescriptor descriptor = bindingContext.get(CLASS, expression);
@@ -165,7 +165,7 @@ public class CodegenBinding {
             @NotNull Type asmType,
             @NotNull JvmFileClassesProvider fileClassesManager
     ) {
-        JetElement element = (JetElement) descriptorToDeclaration(classDescriptor);
+        KtElement element = (KtElement) descriptorToDeclaration(classDescriptor);
         assert element != null : "No source element for " + classDescriptor;
 
         MutableClosure closure = new MutableClosure(classDescriptor, enclosing);
@@ -201,7 +201,7 @@ public class CodegenBinding {
     // SCRIPT: register asmType for script, move to ScriptingUtil
     public static void registerClassNameForScript(
             @NotNull BindingTrace trace,
-            @NotNull JetScript script,
+            @NotNull KtScript script,
             @NotNull Type asmType,
             @NotNull JvmFileClassesProvider fileClassesManager
     ) {
@@ -215,7 +215,7 @@ public class CodegenBinding {
                 new ClassDescriptorImpl(descriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
                                         Collections.singleton(DescriptorUtilsKt.getBuiltIns(descriptor).getAnyType()),
                                         KotlinSourceElementKt.toSourceElement(script));
-        classDescriptor.initialize(JetScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
+        classDescriptor.initialize(KtScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
 
         recordClosure(trace, classDescriptor, null, asmType, fileClassesManager);
 
@@ -223,39 +223,39 @@ public class CodegenBinding {
     }
 
     @NotNull
-    private static Collection<JetFile> allFilesInPackages(BindingContext bindingContext, Collection<JetFile> files) {
+    private static Collection<KtFile> allFilesInPackages(BindingContext bindingContext, Collection<KtFile> files) {
         // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
         // for scripts especially in case of REPL
 
         // SCRIPT: collect fq names for files that are not scripts
         HashSet<FqName> names = new HashSet<FqName>();
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             if (!file.isScript()) {
                 names.add(file.getPackageFqName());
             }
         }
 
-        HashSet<JetFile> answer = new HashSet<JetFile>();
+        HashSet<KtFile> answer = new HashSet<KtFile>();
         answer.addAll(files);
 
         for (FqName name : names) {
-            Collection<JetFile> jetFiles = bindingContext.get(PACKAGE_TO_FILES, name);
+            Collection<KtFile> jetFiles = bindingContext.get(PACKAGE_TO_FILES, name);
             if (jetFiles != null) {
                 answer.addAll(jetFiles);
             }
         }
 
-        List<JetFile> sortedAnswer = new ArrayList<JetFile>(answer);
-        Collections.sort(sortedAnswer, new Comparator<JetFile>() {
+        List<KtFile> sortedAnswer = new ArrayList<KtFile>(answer);
+        Collections.sort(sortedAnswer, new Comparator<KtFile>() {
             @NotNull
-            private String path(JetFile file) {
+            private String path(KtFile file) {
                 VirtualFile virtualFile = file.getVirtualFile();
                 assert virtualFile != null : "VirtualFile is null for JetFile: " + file.getName();
                 return virtualFile.getPath();
             }
 
             @Override
-            public int compare(@NotNull JetFile first, @NotNull JetFile second) {
+            public int compare(@NotNull KtFile first, @NotNull KtFile second) {
                 return path(first).compareTo(path(second));
             }
         });

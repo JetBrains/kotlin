@@ -31,15 +31,15 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.idea.JetIcons;
+import org.jetbrains.kotlin.idea.KotlinFileType;
+import org.jetbrains.kotlin.idea.KtIcons;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 
 import java.util.Map;
 
 public class NewKotlinFileAction extends CreateFileFromTemplateAction implements DumbAware {
     public NewKotlinFileAction() {
-        super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file or class", JetFileType.INSTANCE.getIcon());
+        super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file or class", KotlinFileType.INSTANCE.getIcon());
     }
 
     @Override
@@ -56,11 +56,11 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction implements
     protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
         builder
                 .setTitle("New Kotlin File/Class")
-                .addKind("File", JetFileType.INSTANCE.getIcon(), "Kotlin File")
-                .addKind("Class", JetIcons.CLASS, "Kotlin Class")
-                .addKind("Interface", JetIcons.TRAIT, "Kotlin Interface")
-                .addKind("Enum class", JetIcons.ENUM, "Kotlin Enum")
-                .addKind("Object", JetIcons.OBJECT, "Kotlin Object");
+                .addKind("File", KotlinFileType.INSTANCE.getIcon(), "Kotlin File")
+                .addKind("Class", KtIcons.CLASS, "Kotlin Class")
+                .addKind("Interface", KtIcons.TRAIT, "Kotlin Interface")
+                .addKind("Enum class", KtIcons.ENUM, "Kotlin Enum")
+                .addKind("Object", KtIcons.OBJECT, "Kotlin Object");
     }
 
     @Override

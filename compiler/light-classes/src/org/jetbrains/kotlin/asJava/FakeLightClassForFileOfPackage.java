@@ -26,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtFile;
 
 /**
  * This class serves as a workaround for usages of {@link JavaElementFinder#findClasses} which eventually only need names of files
@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.psi.JetFile;
  */
 public class FakeLightClassForFileOfPackage extends AbstractLightClass implements KotlinLightClass, JetJavaMirrorMarker {
     private final KotlinLightClassForFacade delegate;
-    private final JetFile file;
+    private final KtFile file;
 
     public FakeLightClassForFileOfPackage(
-            @NotNull PsiManager manager, @NotNull KotlinLightClassForFacade delegate, @NotNull JetFile file
+            @NotNull PsiManager manager, @NotNull KotlinLightClassForFacade delegate, @NotNull KtFile file
     ) {
         super(manager);
         this.delegate = delegate;
@@ -51,7 +51,7 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
 
     @Nullable
     @Override
-    public JetClassOrObject getOrigin() {
+    public KtClassOrObject getOrigin() {
         return null;
     }
 

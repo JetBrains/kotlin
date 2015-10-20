@@ -25,8 +25,8 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 
 public class KotlinOverrideHierarchyProvider: HierarchyProvider {
@@ -48,4 +48,4 @@ public class KotlinOverrideHierarchyProvider: HierarchyProvider {
 }
 
 fun PsiElement.isOverrideHierarchyElement(): Boolean
-        = this is PsiMethod || this is JetNamedFunction || this is JetProperty
+        = this is PsiMethod || this is KtNamedFunction || this is KtProperty

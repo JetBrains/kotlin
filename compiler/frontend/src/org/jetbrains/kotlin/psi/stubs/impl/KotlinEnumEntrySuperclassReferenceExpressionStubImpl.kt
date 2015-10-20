@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.psi.stubs.impl
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetEnumEntrySuperclassReferenceExpression
+import org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 public class KotlinEnumEntrySuperclassReferenceExpressionStubImpl(parent: StubElement<*>, private val referencedName: StringRef)
-    : KotlinStubBaseImpl<JetEnumEntrySuperclassReferenceExpression>(parent, JetStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION), KotlinEnumEntrySuperclassReferenceExpressionStub {
+    : KotlinStubBaseImpl<KtEnumEntrySuperclassReferenceExpression>(parent, KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION), KotlinEnumEntrySuperclassReferenceExpressionStub {
 
     override fun getReferencedName() = referencedName.getString()
 }

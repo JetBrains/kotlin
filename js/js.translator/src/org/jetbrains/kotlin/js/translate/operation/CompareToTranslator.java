@@ -24,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
-import org.jetbrains.kotlin.lexer.JetToken;
-import org.jetbrains.kotlin.psi.JetBinaryExpression;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.psi.KtBinaryExpression;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
@@ -36,7 +36,7 @@ import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 public final class CompareToTranslator extends AbstractTranslator {
 
     public static boolean isCompareToCall(
-            @NotNull JetToken operationToken,
+            @NotNull KtToken operationToken,
             @Nullable CallableDescriptor operationDescriptor
     ) {
         if (!OperatorConventions.COMPARISON_OPERATIONS.contains(operationToken) || operationDescriptor == null) return false;
@@ -45,16 +45,16 @@ public final class CompareToTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static JsExpression translate(@NotNull JetBinaryExpression expression,
+    public static JsExpression translate(@NotNull KtBinaryExpression expression,
             @NotNull TranslationContext context) {
         return (new CompareToTranslator(expression, context)).translate();
     }
 
     @NotNull
-    private final JetBinaryExpression expression;
+    private final KtBinaryExpression expression;
 
     private CompareToTranslator(
-            @NotNull JetBinaryExpression expression,
+            @NotNull KtBinaryExpression expression,
             @NotNull TranslationContext context
     ) {
         super(context);

@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 
 class AllClassesCompletion(private val parameters: CompletionParameters,
@@ -51,12 +51,12 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
                 .getKotlinClasses({ prefixMatcher.prefixMatches(it) }, kindFilter)
                 .forEach { classDescriptorCollector(it) }
 
-        if (!ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as JetFile)) {
+        if (!ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as KtFile)) {
             addAdaptedJavaCompletion(javaClassCollector)
         }
     }
 
-    private fun collectClassesFromScope(scope: JetScope, collector: (ClassDescriptor) -> Unit) {
+    private fun collectClassesFromScope(scope: KtScope, collector: (ClassDescriptor) -> Unit) {
         for (descriptor in scope.getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS)) {
             if (descriptor is ClassDescriptor) {
                 if (kindFilter(descriptor.kind) && prefixMatcher.prefixMatches(descriptor.name.asString())) {

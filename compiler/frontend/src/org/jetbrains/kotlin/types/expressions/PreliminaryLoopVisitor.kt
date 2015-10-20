@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.psi.JetLoopExpression
+import org.jetbrains.kotlin.psi.KtLoopExpression
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import java.util.*
@@ -50,7 +50,7 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
     companion object {
 
         @JvmStatic
-        fun visitLoop(loopExpression: JetLoopExpression): PreliminaryLoopVisitor {
+        fun visitLoop(loopExpression: KtLoopExpression): PreliminaryLoopVisitor {
             val visitor = PreliminaryLoopVisitor()
             loopExpression.accept(visitor, null)
             return visitor

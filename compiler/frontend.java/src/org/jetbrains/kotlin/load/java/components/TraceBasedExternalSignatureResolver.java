@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.AlternativeFieldSignatureData;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.SignaturesPropagationData;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,8 +55,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
     public PropagatedMethodSignature resolvePropagatedSignature(
             @NotNull JavaMethod method,
             @NotNull ClassDescriptor owner,
-            @NotNull JetType returnType,
-            @Nullable JetType receiverType,
+            @NotNull KtType returnType,
+            @Nullable KtType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> typeParameters
     ) {
@@ -72,8 +72,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
     public AlternativeMethodSignature resolveAlternativeMethodSignature(
             @NotNull JavaMember methodOrConstructor,
             boolean hasSuperMethods,
-            @Nullable JetType returnType,
-            @Nullable JetType receiverType,
+            @Nullable KtType returnType,
+            @Nullable KtType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> typeParameters,
             boolean hasStableParameterNames
@@ -102,7 +102,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
     @NotNull
     public AlternativeFieldSignature resolveAlternativeFieldSignature(
             @NotNull JavaField field,
-            @NotNull JetType returnType,
+            @NotNull KtType returnType,
             boolean isVar
     ) {
         AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(field, returnType, project, isVar);

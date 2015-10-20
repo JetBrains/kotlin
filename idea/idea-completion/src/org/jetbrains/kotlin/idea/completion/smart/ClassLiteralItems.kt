@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.completion.createLookupElementForType
 import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
@@ -39,7 +39,7 @@ object ClassLiteralItems {
             lookupElementFactory: LookupElementFactory,
             isJvmModule: Boolean
     ) {
-        val typeAndSuffixToExpectedInfos = LinkedHashMap<Pair<JetType, String>, MutableList<ExpectedInfo>>()
+        val typeAndSuffixToExpectedInfos = LinkedHashMap<Pair<KtType, String>, MutableList<ExpectedInfo>>()
 
         for (expectedInfo in expectedInfos) {
             val fuzzyType = expectedInfo.fuzzyType ?: continue

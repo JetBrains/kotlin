@@ -31,8 +31,8 @@ import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import javax.swing.Icon
 
 public class KotlinLightClassForFacade private constructor(
@@ -40,7 +40,7 @@ public class KotlinLightClassForFacade private constructor(
         private val facadeClassFqName: FqName,
         private val searchScope: GlobalSearchScope,
         private val lightClassDataCache: CachedValue<KotlinFacadeLightClassData>,
-        files: Collection<JetFile>,
+        files: Collection<KtFile>,
         private val deprecated: Boolean
 ) : KotlinWrappingLightClass(manager), JetJavaMirrorMarker {
 
@@ -100,7 +100,7 @@ public class KotlinLightClassForFacade private constructor(
         }
     }
 
-    public val files: Collection<JetFile> = files.toSet() // needed for hashCode
+    public val files: Collection<KtFile> = files.toSet() // needed for hashCode
 
     private val hashCode: Int =
             computeHashCode()
@@ -118,7 +118,7 @@ public class KotlinLightClassForFacade private constructor(
         lightClassDataCache.value.javaFileStub
     }
 
-    override fun getOrigin(): JetClassOrObject? = null
+    override fun getOrigin(): KtClassOrObject? = null
 
     override fun getFqName(): FqName = facadeClassFqName
 
@@ -240,7 +240,7 @@ public class KotlinLightClassForFacade private constructor(
                 manager: PsiManager,
                 facadeClassFqName: FqName,
                 searchScope: GlobalSearchScope,
-                files: Collection<JetFile>
+                files: Collection<KtFile>
         ): KotlinLightClassForFacade? {
             if (files.any { LightClassUtil.belongsToKotlinBuiltIns(it) }) {
                 return null

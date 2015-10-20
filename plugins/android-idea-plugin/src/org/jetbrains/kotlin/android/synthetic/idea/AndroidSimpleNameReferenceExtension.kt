@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.android.synthetic.idea
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper
 import org.jetbrains.kotlin.android.synthetic.isAndroidSyntheticElement
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 public class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
-    override fun isReferenceTo(reference: JetSimpleNameReference, element: PsiElement): Boolean? {
-        val resolvedElement = reference.resolve() as? JetProperty ?: return null
+    override fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement): Boolean? {
+        val resolvedElement = reference.resolve() as? KtProperty ?: return null
 
         if (isAndroidSyntheticElement(resolvedElement)) {
             if (element is ValueResourceElementWrapper) {
@@ -37,7 +37,7 @@ public class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension 
         return null
     }
 
-    override fun handleElementRename(reference: JetSimpleNameReference, psiFactory: JetPsiFactory, newElementName: String): PsiElement? {
+    override fun handleElementRename(reference: KtSimpleNameReference, psiFactory: KtPsiFactory, newElementName: String): PsiElement? {
         return if (newElementName.startsWith("@+id/"))
             psiFactory.createNameIdentifier(newElementName.substring(newElementName.indexOf('/') + 1))
         else

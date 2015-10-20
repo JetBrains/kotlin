@@ -23,7 +23,7 @@ public interface TypeProjection {
     Variance getProjectionKind();
 
     @NotNull
-    JetType getType();
+    KtType getType();
 
     boolean isStarProjection();
 }

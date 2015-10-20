@@ -24,7 +24,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.junit.Assert;
 
@@ -33,7 +33,7 @@ import java.io.IOException;
 public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
     @NonNls
     protected final String myFullDataPath;
-    private JetFile myFile;
+    private KtFile myFile;
 
     public JetLiteFixture(@NonNls String dataPath) {
         myFullDataPath = getTestDataPath() + "/" + dataPath;
@@ -43,7 +43,7 @@ public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
         myFullDataPath = getTestDataPath();
     }
 
-    protected JetFile getFile() {
+    protected KtFile getFile() {
         return myFile;
     }
 
@@ -66,7 +66,7 @@ public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
         return JetTestUtils.doLoadFile(myFullDataPath, name);
     }
 
-    protected JetFile createPsiFile(@Nullable String testName, @Nullable String fileName, String text) {
+    protected KtFile createPsiFile(@Nullable String testName, @Nullable String fileName, String text) {
         if (fileName == null) {
             Assert.assertNotNull(testName);
             fileName = testName + ".kt";
@@ -74,7 +74,7 @@ public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
         return JetTestUtils.createFile(fileName, text, getProject());
     }
 
-    protected JetFile loadPsiFile(String name) {
+    protected KtFile loadPsiFile(String name) {
         try {
             return createPsiFile(name, null, loadFile(name));
         } catch (IOException e) {
@@ -100,8 +100,8 @@ public abstract class JetLiteFixture extends KotlinTestWithEnvironment {
         myFile = createCheckAndReturnPsiFile(name, null, text);
     }
 
-    protected JetFile createCheckAndReturnPsiFile(String testName, String fileName, String text) {
-        JetFile myFile = createPsiFile(testName, fileName, text);
+    protected KtFile createCheckAndReturnPsiFile(String testName, String fileName, String text) {
+        KtFile myFile = createPsiFile(testName, fileName, text);
         ensureParsed(myFile);
         assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
         assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));

@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.special
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 public class MarkInstruction(
-        element: JetElement,
+        element: KtElement,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {
 

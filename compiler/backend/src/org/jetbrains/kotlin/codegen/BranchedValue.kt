@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -214,7 +214,7 @@ class NumberCompare(
     override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int {
         when (operandType) {
             Type.FLOAT_TYPE, Type.DOUBLE_TYPE -> {
-                if (opToken == JetTokens.GT || opToken == JetTokens.GTEQ) {
+                if (opToken == KtTokens.GT || opToken == KtTokens.GTEQ) {
                     v.cmpl(operandType)
                 }
                 else {
@@ -234,12 +234,12 @@ class NumberCompare(
     companion object {
         fun getNumberCompareOpcode(opToken: IElementType): Int {
             return when (opToken) {
-                JetTokens.EQEQ, JetTokens.EQEQEQ -> IFNE
-                JetTokens.EXCLEQ, JetTokens.EXCLEQEQEQ -> IFEQ
-                JetTokens.GT -> IFLE
-                JetTokens.GTEQ -> IFLT
-                JetTokens.LT -> IFGE
-                JetTokens.LTEQ -> IFGT
+                KtTokens.EQEQ, KtTokens.EQEQEQ -> IFNE
+                KtTokens.EXCLEQ, KtTokens.EXCLEQEQEQ -> IFEQ
+                KtTokens.GT -> IFLE
+                KtTokens.GTEQ -> IFLT
+                KtTokens.LT -> IFGE
+                KtTokens.LTEQ -> IFGT
                 else -> {
                     throw UnsupportedOperationException("Don't know how to generate this condJump: " + opToken)
                 }
@@ -258,8 +258,8 @@ class ObjectCompare(
     companion object {
         fun getObjectCompareOpcode(opToken: IElementType): Int {
             return when (opToken) {
-                JetTokens.EQEQEQ -> IF_ACMPNE
-                JetTokens.EXCLEQEQEQ -> IF_ACMPEQ
+                KtTokens.EQEQEQ -> IF_ACMPNE
+                KtTokens.EXCLEQEQEQ -> IF_ACMPEQ
                 else -> throw UnsupportedOperationException("don't know how to generate this condjump")
             }
         }

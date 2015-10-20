@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -223,7 +223,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
-    public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<JetFile> files) {
+    public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         PackageCodegen codegen = package2codegen.get(fqName);
         if (codegen == null) {
@@ -235,7 +235,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
-    public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<JetFile> files) {
+    public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         MultifileClassCodegen codegen = multifileClass2codegen.get(facadeFqName);
         if (codegen == null) {
@@ -341,7 +341,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @TestOnly
-    public List<JetFile> getInputFiles() {
+    public List<KtFile> getInputFiles() {
         return state.getFiles();
     }
 }

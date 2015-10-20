@@ -20,8 +20,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil;
-import org.jetbrains.kotlin.lexer.JetKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtKeywordToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
@@ -54,11 +54,11 @@ public class GenerateKeywordStrings {
         p.pushIndent();
 
         List<String> strings = new ArrayList<String>();
-        for (IElementType type : JetTokens.KEYWORDS.getTypes()) {
-            assert type instanceof JetKeywordToken : "Not a keyword in JetTokens.KEYWORDS: " + type;
-            JetKeywordToken keyword = (JetKeywordToken) type;
-            assert !keyword.isSoft() : "Soft keyword in JetTokens.KEYWORDS: " + keyword.getValue();
-            if (keyword != JetTokens.AS_SAFE && keyword != JetTokens.NOT_IN && keyword != JetTokens.NOT_IS) {
+        for (IElementType type : KtTokens.KEYWORDS.getTypes()) {
+            assert type instanceof KtKeywordToken : "Not a keyword in KtTokens.KEYWORDS: " + type;
+            KtKeywordToken keyword = (KtKeywordToken) type;
+            assert !keyword.isSoft() : "Soft keyword in KtTokens.KEYWORDS: " + keyword.getValue();
+            if (keyword != KtTokens.AS_SAFE && keyword != KtTokens.NOT_IN && keyword != KtTokens.NOT_IS) {
                 strings.add(keyword.getValue());
             }
         }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getUnaryPlusOrMinusOperatorFunctionName
@@ -50,8 +50,8 @@ import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -144,7 +144,7 @@ public class TaskPrioritizer(
             val value: ReceiverValue,
             private val context: ResolutionContext<*>
     ) {
-        val types: Collection<JetType> by lazy { smartCastManager.getSmartCastVariants(value, context) }
+        val types: Collection<KtType> by lazy { smartCastManager.getSmartCastVariants(value, context) }
     }
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForExplicitReceiver(
@@ -341,7 +341,7 @@ public class TaskPrioritizer(
     private fun createLookupLocation(c: TaskPrioritizerContext<*, *>) = KotlinLookupLocation(c.context.call.run {
         calleeExpression?.let {
             // Can't use getContainingJetFile() because we can get from IDE an element with JavaDummyHolder as containing file
-            if ((it.containingFile as? JetFile)?.doNotAnalyze == null) it else null
+            if ((it.containingFile as? KtFile)?.doNotAnalyze == null) it else null
         }
         ?: callElement
     })
@@ -455,7 +455,7 @@ public class TaskPrioritizer(
         if (dispatchReceiver == null) return true
         val receivers = scope.getImplicitReceiversHierarchy()
         for (receiver in receivers) {
-            if (JetTypeChecker.DEFAULT.isSubtypeOf(receiver.getType(), dispatchReceiver.getType())) {
+            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(receiver.getType(), dispatchReceiver.getType())) {
                 // TODO : Smartcasts & nullability
                 candidate.setDispatchReceiver(dispatchReceiver.getValue())
                 return true

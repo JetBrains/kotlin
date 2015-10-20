@@ -21,14 +21,14 @@ import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.psi.JetElementImplStub
+import org.jetbrains.kotlin.psi.KtElementImplStub
 import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
 import java.lang.reflect.Method
 import java.util.ArrayList
 
-public open class KotlinStubBaseImpl<T : JetElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) : StubBase<T>(parent, elementType) {
+public open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?, elementType: IStubElementType<*, *>) : StubBase<T>(parent, elementType) {
 
     override fun toString(): String {
         val stubInterface = this.javaClass.getInterfaces().filter { it.getName().contains("Stub") }.single()
@@ -75,7 +75,7 @@ public open class KotlinStubBaseImpl<T : JetElementImplStub<*>>(parent: StubElem
     }
 
     companion object {
-        private val LOGGER: Logger = Logger.getInstance(javaClass<KotlinStubBaseImpl<JetElementImplStub<*>>>())
+        private val LOGGER: Logger = Logger.getInstance(javaClass<KotlinStubBaseImpl<KtElementImplStub<*>>>())
 
         private val BASE_STUB_INTERFACES = listOf(javaClass<KotlinStubWithFqName<*>>(), javaClass<KotlinClassOrObjectStub<*>>(), javaClass<NamedStub<*>>(), javaClass<KotlinCallableStubBase<*>>())
     }

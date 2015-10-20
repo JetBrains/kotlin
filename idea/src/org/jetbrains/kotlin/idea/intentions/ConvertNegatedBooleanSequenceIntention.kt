@@ -17,27 +17,27 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetSingleValueToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.LinkedList
 
 
-public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(
+public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
         javaClass(), "Replace negated sequence with DeMorgan equivalent") {
 
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        if (element.getParent() is JetBinaryExpression) return false // operate only on the longest sequence
+    override fun isApplicableTo(element: KtBinaryExpression): Boolean {
+        if (element.getParent() is KtBinaryExpression) return false // operate only on the longest sequence
         val opToken = element.getOperationToken()
-        if (opToken != JetTokens.ANDAND && opToken != JetTokens.OROR) return false
+        if (opToken != KtTokens.ANDAND && opToken != KtTokens.OROR) return false
 
         return splitBooleanSequence(element) != null
     }
 
-    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
         val operatorText = when(element.getOperationToken()) {
-            JetTokens.ANDAND -> JetTokens.OROR.getValue()
-            JetTokens.OROR -> JetTokens.ANDAND.getValue()
+            KtTokens.ANDAND -> KtTokens.OROR.getValue()
+            KtTokens.OROR -> KtTokens.ANDAND.getValue()
             else -> throw IllegalArgumentException() // checked in isApplicableTo
         }
 
@@ -47,34 +47,34 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetInde
                 "!(${bareExpressions.last()}", { negated, expression -> "$expression $operatorText $negated" }
         )
 
-        val newExpression = JetPsiFactory(element).createExpression("$negatedExpression)")
+        val newExpression = KtPsiFactory(element).createExpression("$negatedExpression)")
 
         val insertedElement = element.replace(newExpression)
-        val insertedElementParent = insertedElement.getParent() as? JetParenthesizedExpression ?: return
+        val insertedElementParent = insertedElement.getParent() as? KtParenthesizedExpression ?: return
 
-        if (JetPsiUtil.areParenthesesUseless(insertedElementParent)) {
+        if (KtPsiUtil.areParenthesesUseless(insertedElementParent)) {
             insertedElementParent.replace(insertedElement)
         }
     }
 
-    private fun splitBooleanSequence(expression: JetBinaryExpression): List<JetPrefixExpression>? {
-        val itemList = LinkedList<JetPrefixExpression>()
+    private fun splitBooleanSequence(expression: KtBinaryExpression): List<KtPrefixExpression>? {
+        val itemList = LinkedList<KtPrefixExpression>()
         val firstOperator = expression.getOperationToken()
 
-        var currentItem: JetBinaryExpression? = expression
+        var currentItem: KtBinaryExpression? = expression
         while (currentItem != null) {
             if (currentItem.getOperationToken() != firstOperator) return null //Boolean sequence must be homogeneous
 
-            val rightChild = currentItem.getRight() as? JetPrefixExpression ?: return null
+            val rightChild = currentItem.getRight() as? KtPrefixExpression ?: return null
             itemList.add(rightChild)
 
             val leftChild = currentItem.getLeft()
             when (leftChild) {
-                is JetPrefixExpression -> itemList.add(leftChild)
-                !is JetBinaryExpression -> return null
+                is KtPrefixExpression -> itemList.add(leftChild)
+                !is KtBinaryExpression -> return null
             }
 
-            currentItem = leftChild as? JetBinaryExpression
+            currentItem = leftChild as? KtBinaryExpression
         }
 
         return itemList

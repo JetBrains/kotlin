@@ -42,29 +42,29 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         PsiElement element = queryParameters.getElement();
         SearchScope scope = queryParameters.getScope();
 
-        if (element instanceof JetClass) {
-            return processClassImplementations((JetClass) element, consumer);
+        if (element instanceof KtClass) {
+            return processClassImplementations((KtClass) element, consumer);
         }
 
-        if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
-            return processFunctionImplementations((JetFunction) element, scope, consumer);
+        if (element instanceof KtNamedFunction || element instanceof KtSecondaryConstructor) {
+            return processFunctionImplementations((KtFunction) element, scope, consumer);
         }
 
-        if (element instanceof JetProperty) {
-            return processPropertyImplementations((JetProperty) element, scope, consumer);
+        if (element instanceof KtProperty) {
+            return processPropertyImplementations((KtProperty) element, scope, consumer);
         }
 
-        if (element instanceof JetParameter) {
-            JetParameter parameter = (JetParameter) element;
-            if (JetPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
-                return processPropertyImplementations((JetParameter) element, scope, consumer);
+        if (element instanceof KtParameter) {
+            KtParameter parameter = (KtParameter) element;
+            if (KtPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
+                return processPropertyImplementations((KtParameter) element, scope, consumer);
             }
         }
 
         return true;
      }
 
-    private static boolean processClassImplementations(final JetClass klass, Processor<PsiElement> consumer) {
+    private static boolean processClassImplementations(final KtClass klass, Processor<PsiElement> consumer) {
         PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
             @Override
             public PsiClass compute() {
@@ -77,7 +77,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         return true;
     }
 
-    private static boolean processFunctionImplementations(final JetFunction function, SearchScope scope, Processor<PsiElement> consumer) {
+    private static boolean processFunctionImplementations(final KtFunction function, SearchScope scope, Processor<PsiElement> consumer) {
         PsiMethod psiMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
             @Override
             public PsiMethod compute() {
@@ -92,7 +92,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         return true;
     }
 
-    private static boolean processPropertyImplementations(@NotNull final JetParameter parameter, @NotNull SearchScope scope, @NotNull Processor<PsiElement> consumer) {
+    private static boolean processPropertyImplementations(@NotNull final KtParameter parameter, @NotNull SearchScope scope, @NotNull Processor<PsiElement> consumer) {
         LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
                     @Override
@@ -104,7 +104,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer);
     }
 
-    private static boolean processPropertyImplementations(@NotNull final JetProperty property, @NotNull SearchScope scope, @NotNull Processor<PsiElement> consumer) {
+    private static boolean processPropertyImplementations(@NotNull final KtProperty property, @NotNull SearchScope scope, @NotNull Processor<PsiElement> consumer) {
         LightClassUtil.PropertyAccessorsPsiMethods accessorsPsiMethods = ApplicationManager.getApplication().runReadAction(
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
                     @Override
@@ -124,12 +124,12 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
             for (PsiMethod implementation : implementations) {
                 PsiElement mirrorElement = implementation instanceof KotlinLightMethod
                                            ? ((KotlinLightMethod) implementation).getOrigin() : null;
-                if (mirrorElement instanceof JetProperty || mirrorElement instanceof JetParameter) {
+                if (mirrorElement instanceof KtProperty || mirrorElement instanceof KtParameter) {
                     if (!consumer.process(mirrorElement)) {
                         return false;
                     }
                 }
-                else if (mirrorElement instanceof JetPropertyAccessor && mirrorElement.getParent() instanceof JetProperty) {
+                else if (mirrorElement instanceof KtPropertyAccessor && mirrorElement.getParent() instanceof KtProperty) {
                     if (!consumer.process(mirrorElement.getParent())) {
                         return false;
                     }

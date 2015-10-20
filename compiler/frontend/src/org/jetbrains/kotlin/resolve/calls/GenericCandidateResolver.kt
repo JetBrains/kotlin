@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.TypeUtils.makeConstantSubstitutor
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 
@@ -94,7 +94,7 @@ class GenericCandidateResolver(
         val receiverArgument = candidateCall.getExtensionReceiver()
         val receiverParameter = candidate.getExtensionReceiverParameter()
         if (receiverArgument.exists() && receiverParameter != null) {
-            var receiverType: JetType? = if (context.candidateCall.isSafeCall())
+            var receiverType: KtType? = if (context.candidateCall.isSafeCall())
                 TypeUtils.makeNotNullable(receiverArgument.getType())
             else
                 receiverArgument.getType()
@@ -140,11 +140,11 @@ class GenericCandidateResolver(
     }
 
     private fun addConstraintForNestedCall(
-            argumentExpression: JetExpression?,
+            argumentExpression: KtExpression?,
             constraintPosition: ConstraintPosition,
             constraintSystem: ConstraintSystem,
             context: CallCandidateResolutionContext<*>,
-            effectiveExpectedType: JetType
+            effectiveExpectedType: KtType
     ): Boolean {
         val resolutionResults = getResolutionResultsCachedData(argumentExpression, context)?.resolutionResults
         if (resolutionResults == null || !resolutionResults.isSingleResult()) return false
@@ -175,11 +175,11 @@ class GenericCandidateResolver(
     }
 
     private fun updateResultTypeForSmartCasts(
-            type: JetType?,
-            argumentExpression: JetExpression?,
+            type: KtType?,
+            argumentExpression: KtExpression?,
             context: ResolutionContext<*>
-    ): JetType? {
-        val deparenthesizedArgument = JetPsiUtil.getLastElementDeparenthesized(argumentExpression, context.statementFilter)
+    ): KtType? {
+        val deparenthesizedArgument = KtPsiUtil.getLastElementDeparenthesized(argumentExpression, context.statementFilter)
         if (deparenthesizedArgument == null || type == null) return type
 
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context)
@@ -188,7 +188,7 @@ class GenericCandidateResolver(
         val possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue)
         if (possibleTypes.isEmpty()) return type
 
-        return TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, possibleTypes)
+        return TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes)
     }
 
     public fun <D : CallableDescriptor> completeTypeInferenceDependentOnFunctionArgumentsForCall(
@@ -218,7 +218,7 @@ class GenericCandidateResolver(
     }
 
     private fun <D : CallableDescriptor> addConstraintForFunctionLiteral(
-            functionLiteral: JetFunction,
+            functionLiteral: KtFunction,
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
             constraintSystem: ConstraintSystem,
@@ -245,7 +245,7 @@ class GenericCandidateResolver(
             val temporaryToResolveFunctionLiteral = TemporaryTraceAndCache.create(
                     context, "trace to resolve function literal with expected return type", argumentExpression)
 
-            val statementExpression = JetPsiUtil.getExpressionOrLastStatementInBlock(functionLiteral.getBodyExpression()) ?: return
+            val statementExpression = KtPsiUtil.getExpressionOrLastStatementInBlock(functionLiteral.getBodyExpression()) ?: return
             val mismatch = BooleanArray(1)
             val errorInterceptingTrace = ExpressionTypingUtils.makeTraceInterceptingTypeMismatch(
                     temporaryToResolveFunctionLiteral.trace, statementExpression, mismatch)
@@ -268,7 +268,7 @@ class GenericCandidateResolver(
     }
 
     private fun <D : CallableDescriptor> addConstraintForCallableReference(
-            callableReference: JetCallableReferenceExpression,
+            callableReference: KtCallableReferenceExpression,
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
             constraintSystem: ConstraintSystem,
@@ -284,11 +284,11 @@ class GenericCandidateResolver(
     }
 
     private fun <D : CallableDescriptor> getExpectedTypeForCallableReference(
-            callableReference: JetCallableReferenceExpression,
+            callableReference: KtCallableReferenceExpression,
             constraintSystem: ConstraintSystem,
             context: CallCandidateResolutionContext<D>,
-            effectiveExpectedType: JetType
-    ): JetType? {
+            effectiveExpectedType: KtType
+    ): KtType? {
         val substitutedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
         if (substitutedType != null && !TypeUtils.isDontCarePlaceholder(substitutedType))
             return substitutedType
@@ -301,11 +301,11 @@ class GenericCandidateResolver(
     }
 
     private fun <D : CallableDescriptor> getResolvedTypeForCallableReference(
-            callableReference: JetCallableReferenceExpression,
+            callableReference: KtCallableReferenceExpression,
             context: CallCandidateResolutionContext<D>,
-            expectedType: JetType,
+            expectedType: KtType,
             valueArgument: ValueArgument
-    ): JetType? {
+    ): KtType? {
         val dataFlowInfoForArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(valueArgument)
         val expectedTypeWithoutReturnType = if (!hasUnknownReturnType(expectedType)) replaceReturnTypeByUnknown(expectedType) else expectedType
         val newContext = context
@@ -319,7 +319,7 @@ class GenericCandidateResolver(
     }
 }
 
-fun getResolutionResultsCachedData(expression: JetExpression?, context: ResolutionContext<*>): ResolutionResultsCache.CachedData? {
+fun getResolutionResultsCachedData(expression: KtExpression?, context: ResolutionContext<*>): ResolutionResultsCache.CachedData? {
     if (!ExpressionTypingUtils.dependsOnExpectedType(expression)) return null
     val argumentCall = expression?.getCall(context.trace.getBindingContext()) ?: return null
 

@@ -26,9 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetPsiFactory;
-import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
+import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 
 public abstract class JetCallableParameterTableModel extends ParameterTableModelBase<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>> {
     private final Project project;
@@ -50,9 +50,9 @@ public abstract class JetCallableParameterTableModel extends ParameterTableModel
         if (parameterInfo == null) {
             parameterInfo = new JetParameterInfo(methodDescriptor.getBaseDescriptor(), -1, "", null, null, null, JetValVar.None, null);
         }
-        JetPsiFactory psiFactory = JetPsiFactoryKt.JetPsiFactory(project);
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(project);
         PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
-        JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
+        KtExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
         PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(
                 defaultValueForCall != null ? defaultValueForCall.getText() : "",
                 myDefaultValueContext

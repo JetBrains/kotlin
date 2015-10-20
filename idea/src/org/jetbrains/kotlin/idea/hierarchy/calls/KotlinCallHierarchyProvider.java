@@ -30,7 +30,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 
 public class KotlinCallHierarchyProvider implements HierarchyProvider {
     @Override
@@ -42,7 +42,7 @@ public class KotlinCallHierarchyProvider implements HierarchyProvider {
         if (element == null) return null;
 
         element = HierarchyUtils.getCallHierarchyElement(element);
-        if (element instanceof JetFile) return null;
+        if (element instanceof KtFile) return null;
 
         return element;
     }

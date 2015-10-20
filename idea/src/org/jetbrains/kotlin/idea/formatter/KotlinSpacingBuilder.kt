@@ -24,9 +24,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.common.AbstractBlock
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.ArrayList
 
 class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
@@ -118,8 +118,8 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
 
             if (spacing != null) {
                 // TODO: it's a severe hack but I don't know how to implement it in other way
-                if (child1.getNode().getElementType() == JetTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
-                    val isBeforeBlock = child2.getNode().getElementType() == JetNodeTypes.BLOCK || child2.getNode().getFirstChildNode()?.getElementType() == JetNodeTypes.BLOCK
+                if (child1.getNode().getElementType() == KtTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
+                    val isBeforeBlock = child2.getNode().getElementType() == KtNodeTypes.BLOCK || child2.getNode().getFirstChildNode()?.getElementType() == KtNodeTypes.BLOCK
                     val keepBlankLines = if (isBeforeBlock) 0 else codeStyleSettings.KEEP_BLANK_LINES_IN_CODE
                     return Spacing.createSpacing(0, 0, 1, true, keepBlankLines)
                 }

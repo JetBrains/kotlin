@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import com.intellij.psi.PsiElement
 
 public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
@@ -50,7 +50,7 @@ public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
     public fun doTest(filePath: String) {
         val text = JetTestUtils.doLoadFile(File(filePath))!!
 
-        val jetFile = JetPsiFactory(getProject()).createFile(text.replace("<caret>", ""))
+        val jetFile = KtPsiFactory(getProject()).createFile(text.replace("<caret>", ""))
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile, environment).bindingContext
 
         val (element, cachedCall) = buildCachedCall(bindingContext, jetFile, text)
@@ -64,10 +64,10 @@ public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
     }
 
     open protected fun buildCachedCall(
-            bindingContext: BindingContext, jetFile: JetFile, text: String
+            bindingContext: BindingContext, jetFile: KtFile, text: String
     ): Pair<PsiElement?, ResolvedCall<out CallableDescriptor>?> {
         val element = jetFile.findElementAt(text.indexOf("<caret>"))!!
-        val expression = element.getStrictParentOfType<JetExpression>()
+        val expression = element.getStrictParentOfType<KtExpression>()
 
         val cachedCall = expression?.getParentResolvedCall(bindingContext, strict = false)
         return Pair(element, cachedCall)

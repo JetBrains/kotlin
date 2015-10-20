@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.CaptureKind;
 
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
@@ -38,7 +38,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
+    public void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression) {
         DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, expression);
         if (target == null) {
             return;
@@ -56,20 +56,20 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitProperty(@NotNull JetProperty property) {
+    public void visitProperty(@NotNull KtProperty property) {
         visitVariableDeclaration(property);
         super.visitProperty(property);
     }
 
     @Override
-    public void visitParameter(@NotNull JetParameter parameter) {
+    public void visitParameter(@NotNull KtParameter parameter) {
         visitVariableDeclaration(parameter);
         super.visitParameter(parameter);
     }
 
     @Override
-    public void visitExpression(@NotNull JetExpression expression) {
-        JetType smartCast = bindingContext.get(SMARTCAST, expression);
+    public void visitExpression(@NotNull KtExpression expression) {
+        KtType smartCast = bindingContext.get(SMARTCAST, expression);
         if (smartCast != null) {
             holder.createInfoAnnotation(expression, "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)).setTextAttributes(
                 JetHighlightingColors.SMART_CAST_VALUE);
@@ -77,7 +77,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         super.visitExpression(expression);
     }
 
-    private void visitVariableDeclaration(JetNamedDeclaration declaration) {
+    private void visitVariableDeclaration(KtNamedDeclaration declaration) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, declaration);
         PsiElement nameIdentifier = declaration.getNameIdentifier();
         if (nameIdentifier != null && declarationDescriptor != null) {

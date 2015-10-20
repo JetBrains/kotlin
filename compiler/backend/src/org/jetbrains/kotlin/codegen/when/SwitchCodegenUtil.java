@@ -34,18 +34,18 @@ import java.util.List;
 
 public class SwitchCodegenUtil {
     public static boolean checkAllItemsAreConstantsSatisfying(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             @NotNull BindingContext bindingContext,
             Function1<ConstantValue<?>, Boolean> predicate
     ) {
-        for (JetWhenEntry entry : expression.getEntries()) {
-            for (JetWhenCondition condition : entry.getConditions()) {
-                if (!(condition instanceof JetWhenConditionWithExpression)) {
+        for (KtWhenEntry entry : expression.getEntries()) {
+            for (KtWhenCondition condition : entry.getConditions()) {
+                if (!(condition instanceof KtWhenConditionWithExpression)) {
                     return false;
                 }
 
                 // ensure that expression is constant
-                JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
+                KtExpression patternExpression = ((KtWhenConditionWithExpression) condition).getExpression();
 
                 if (patternExpression == null) return false;
 
@@ -61,12 +61,12 @@ public class SwitchCodegenUtil {
 
     @NotNull
     public static Iterable<ConstantValue<?>> getAllConstants(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             @NotNull BindingContext bindingContext
     ) {
         List<ConstantValue<?>> result = new ArrayList<ConstantValue<?>>();
 
-        for (JetWhenEntry entry : expression.getEntries()) {
+        for (KtWhenEntry entry : expression.getEntries()) {
             addConstantsFromEntry(result, entry, bindingContext);
         }
 
@@ -75,13 +75,13 @@ public class SwitchCodegenUtil {
 
     private static void addConstantsFromEntry(
             @NotNull List<ConstantValue<?>> result,
-            @NotNull JetWhenEntry entry,
+            @NotNull KtWhenEntry entry,
             @NotNull BindingContext bindingContext
     ) {
-        for (JetWhenCondition condition : entry.getConditions()) {
-            if (!(condition instanceof JetWhenConditionWithExpression)) continue;
+        for (KtWhenCondition condition : entry.getConditions()) {
+            if (!(condition instanceof KtWhenConditionWithExpression)) continue;
 
-            JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
+            KtExpression patternExpression = ((KtWhenConditionWithExpression) condition).getExpression();
 
             assert patternExpression != null : "expression in when should not be null";
             result.add(ExpressionCodegen.getCompileTimeConstant(patternExpression, bindingContext));
@@ -90,7 +90,7 @@ public class SwitchCodegenUtil {
 
     @NotNull
     public static Iterable<ConstantValue<?>> getConstantsFromEntry(
-            @NotNull JetWhenEntry entry,
+            @NotNull KtWhenEntry entry,
             @NotNull BindingContext bindingContext
     ) {
         List<ConstantValue<?>> result = new ArrayList<ConstantValue<?>>();
@@ -100,7 +100,7 @@ public class SwitchCodegenUtil {
 
     @Nullable
     public static SwitchCodegen buildAppropriateSwitchCodegenIfPossible(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             boolean isStatement,
             @NotNull ExpressionCodegen codegen
     ) {
@@ -129,7 +129,7 @@ public class SwitchCodegenUtil {
     }
 
     private static boolean isThereConstantEntriesButNulls(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             @NotNull BindingContext bindingContext
     ) {
         for (ConstantValue<?> constant : getAllConstants(expression, bindingContext)) {
@@ -140,7 +140,7 @@ public class SwitchCodegenUtil {
     }
 
     private static boolean isIntegralConstantsSwitch(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             @NotNull Type subjectType,
             @NotNull BindingContext bindingContext
     ) {
@@ -161,7 +161,7 @@ public class SwitchCodegenUtil {
     }
 
     private static boolean isStringConstantsSwitch(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             @NotNull Type subjectType,
             @NotNull BindingContext bindingContext
     ) {

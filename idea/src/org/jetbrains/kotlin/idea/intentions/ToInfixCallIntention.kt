@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ToInfixCallIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace with infix function call") {
-    override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
-        val calleeExpr = element.getCalleeExpression() as? JetNameReferenceExpression ?: return false
+public class ToInfixCallIntention : JetSelfTargetingIntention<KtCallExpression>(javaClass(), "Replace with infix function call") {
+    override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
+        val calleeExpr = element.getCalleeExpression() as? KtNameReferenceExpression ?: return false
         if (!calleeExpr.getTextRange().containsOffset(caretOffset)) return false
 
-        val dotQualified = element.getParent() as? JetDotQualifiedExpression ?: return false
+        val dotQualified = element.getParent() as? KtDotQualifiedExpression ?: return false
 
         if (element.getTypeArgumentList() != null) return false
 
@@ -47,13 +47,13 @@ public class ToInfixCallIntention : JetSelfTargetingIntention<JetCallExpression>
         return true
     }
 
-    override fun applyTo(element: JetCallExpression, editor: Editor) {
-        val dotQualified = element.getParent() as JetDotQualifiedExpression
+    override fun applyTo(element: KtCallExpression, editor: Editor) {
+        val dotQualified = element.getParent() as KtDotQualifiedExpression
         val receiver = dotQualified.getReceiverExpression()
         val argument = element.getValueArguments().single().getArgumentExpression()!!
         val name = element.getCalleeExpression()!!.getText()
 
-        val newCall = JetPsiFactory(element).createExpressionByPattern("$0 $name $1", receiver, argument)
+        val newCall = KtPsiFactory(element).createExpressionByPattern("$0 $name $1", receiver, argument)
         dotQualified.replace(newCall)
     }
 }

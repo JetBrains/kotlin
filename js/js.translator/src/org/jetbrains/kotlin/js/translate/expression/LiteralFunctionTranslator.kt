@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescripto
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
-    fun translate(declaration: JetDeclarationWithBody): JsExpression {
+    fun translate(declaration: KtDeclarationWithBody): JsExpression {
         val invokingContext = context()
         val descriptor = getFunctionDescriptor(invokingContext.bindingContext(), declaration)
 

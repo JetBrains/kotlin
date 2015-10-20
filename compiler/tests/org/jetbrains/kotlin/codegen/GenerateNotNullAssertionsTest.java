@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -185,7 +185,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
     }
 
     private void assertNoIntrinsicsMethodIsCalledInMyClasses(boolean noClassFileIsAnError) {
-        for (JetFile jetFile : myFiles.getPsiFiles()) {
+        for (KtFile jetFile : myFiles.getPsiFiles()) {
             String fileClassName = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile).getFileClassFqName().asString();
             assertNoIntrinsicsMethodIsCalled(fileClassName, noClassFileIsAnError);
         }

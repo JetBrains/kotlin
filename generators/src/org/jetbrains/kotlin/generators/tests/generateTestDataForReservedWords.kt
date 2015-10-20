@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.generators.tests.reservedWords
 
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
 import java.io.File
 
-val MODIFIER_KEYWORDS = JetTokens.MODIFIER_KEYWORDS_ARRAY.map { it.getValue() }.toSet()
+val MODIFIER_KEYWORDS = KtTokens.MODIFIER_KEYWORDS_ARRAY.map { it.getValue() }.toSet()
 
 val commonCases: CaseBuilder.(String, String) -> Unit = { testByName, testByRef ->
     case("val", "val $KEYWORD_MARKER: Int", " = 0", testByName)

@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class ClassDeclarationChecker : DeclarationChecker {
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (declaration !is JetClassOrObject || declaration is JetObjectDeclaration || declaration is JetEnumEntry) return
+        if (declaration !is KtClassOrObject || declaration is KtObjectDeclaration || declaration is KtEnumEntry) return
 
         // hack to avoid to get diagnostics when compile kotlin builtins
         val fqNameUnsafe = DescriptorUtils.getFqName(descriptor)

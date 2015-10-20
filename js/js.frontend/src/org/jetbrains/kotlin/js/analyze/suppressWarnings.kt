@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.js.PredefinedAnnotation.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
@@ -42,7 +42,7 @@ public class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticsWithS
         if (diagnostic.getFactory() != Errors.UNINITIALIZED_VARIABLE) return false
 
         @Suppress("UNCHECKED_CAST")
-        val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<JetSimpleNameExpression, VariableDescriptor>
+        val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<KtSimpleNameExpression, VariableDescriptor>
 
         val variableDescriptor = diagnosticWithParameters.getA()
 
@@ -54,6 +54,6 @@ public class SuppressWarningsFromExternalModules : DiagnosticsWithSuppression.Di
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {
         val file = diagnostic.getPsiFile()
         return diagnostic.getSeverity() == Severity.WARNING &&
-               file is JetFile && file.getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME) != null
+               file is KtFile && file.getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME) != null
     }
 }

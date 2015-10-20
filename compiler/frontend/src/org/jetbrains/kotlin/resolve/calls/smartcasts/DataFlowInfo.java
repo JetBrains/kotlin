@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +35,7 @@ public interface DataFlowInfo {
     Map<DataFlowValue, Nullability> getCompleteNullabilityInfo();
 
     @NotNull
-    SetMultimap<DataFlowValue, JetType> getCompleteTypeInfo();
+    SetMultimap<DataFlowValue, KtType> getCompleteTypeInfo();
 
     @NotNull
     Nullability getNullability(@NotNull DataFlowValue key);
@@ -45,7 +45,7 @@ public interface DataFlowInfo {
      * are NOT included. So it's quite possible to get an empty set here.
      */
     @NotNull
-    Set<JetType> getPossibleTypes(@NotNull DataFlowValue key);
+    Set<KtType> getPossibleTypes(@NotNull DataFlowValue key);
 
     /**
      * Call this function to clear all data flow information about
@@ -73,7 +73,7 @@ public interface DataFlowInfo {
     DataFlowInfo disequate(@NotNull DataFlowValue a, @NotNull DataFlowValue b);
 
     @NotNull
-    DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull JetType type);
+    DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull KtType type);
 
     /**
      * Call this function to add data flow information from other to this and return sum as the result

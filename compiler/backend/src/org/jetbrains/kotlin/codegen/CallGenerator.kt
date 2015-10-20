@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -57,7 +57,7 @@ abstract class CallGenerator {
 
         override fun genValueAndPut(
                 valueParameterDescriptor: ValueParameterDescriptor,
-                argumentExpression: JetExpression,
+                argumentExpression: KtExpression,
                 parameterType: Type,
                 parameterIndex: Int) {
             val value = codegen.gen(argumentExpression)
@@ -118,7 +118,7 @@ abstract class CallGenerator {
 
     abstract fun genValueAndPut(
             valueParameterDescriptor: ValueParameterDescriptor,
-            argumentExpression: JetExpression,
+            argumentExpression: KtExpression,
             parameterType: Type,
             parameterIndex: Int)
 

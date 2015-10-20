@@ -25,25 +25,25 @@ import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
 import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.ui.FormBuilder
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.awt.BorderLayout
 
-public abstract class AbstractKotlinInplaceIntroducer<D: JetNamedDeclaration>(
+public abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
         localVariable: D?,
-        expression: JetExpression?,
-        occurrences: Array<JetExpression>,
+        expression: KtExpression?,
+        occurrences: Array<KtExpression>,
         title: String,
         project: Project,
         editor: Editor
-): AbstractInplaceIntroducer<D, JetExpression>(project, editor, expression, localVariable, occurrences, title, JetFileType.INSTANCE) {
+): AbstractInplaceIntroducer<D, KtExpression>(project, editor, expression, localVariable, occurrences, title, KotlinFileType.INSTANCE) {
     protected fun initFormComponents(init: FormBuilder.() -> Unit) {
         myWholePanel.setLayout(BorderLayout())
 
@@ -74,13 +74,13 @@ public abstract class AbstractKotlinInplaceIntroducer<D: JetNamedDeclaration>(
             declaration: D,
             marker: RangeMarker,
             exprText: String?
-    ): JetExpression? {
+    ): KtExpression? {
         if (exprText == null || !declaration.isValid()) return null
 
         return containingFile
                 .findElementAt(marker.getStartOffset())
-                ?.getNonStrictParentOfType<JetSimpleNameExpression>()
-                ?.replaced(JetPsiFactory(myProject).createExpression(exprText))
+                ?.getNonStrictParentOfType<KtSimpleNameExpression>()
+                ?.replaced(KtPsiFactory(myProject).createExpression(exprText))
     }
 
     override fun updateTitle(declaration: D?) = updateTitle(declaration, null)

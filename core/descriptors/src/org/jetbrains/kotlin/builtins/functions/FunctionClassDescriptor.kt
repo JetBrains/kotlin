@@ -108,7 +108,7 @@ public class FunctionClassDescriptor(
         }
 
         private val supertypes = storageManager.createLazyValue {
-            val result = ArrayList<JetType>(2)
+            val result = ArrayList<KtType>(2)
 
             fun add(packageFragment: PackageFragmentDescriptor, name: Name) {
                 val descriptor = packageFragment.getMemberScope().getClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
@@ -121,7 +121,7 @@ public class FunctionClassDescriptor(
                     TypeProjectionImpl(it.getDefaultType())
                 }
 
-                result.add(JetTypeImpl.create(Annotations.EMPTY, descriptor, false, arguments))
+                result.add(KtTypeImpl.create(Annotations.EMPTY, descriptor, false, arguments))
             }
 
             // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
@@ -140,7 +140,7 @@ public class FunctionClassDescriptor(
 
         override fun getParameters() = parameters
 
-        override fun getSupertypes(): Collection<JetType> = supertypes()
+        override fun getSupertypes(): Collection<KtType> = supertypes()
 
         override fun getDeclarationDescriptor() = this@FunctionClassDescriptor
         override fun isDenotable() = true

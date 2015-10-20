@@ -25,22 +25,22 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetTypeParameter
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintsUtil
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 public class AddGenericUpperBoundFix(
-        typeParameter: JetTypeParameter,
-        upperBound: JetType
-) : KotlinQuickFixAction<JetTypeParameter>(typeParameter) {
+        typeParameter: KtTypeParameter,
+        upperBound: KtType
+) : KotlinQuickFixAction<KtTypeParameter>(typeParameter) {
     private val renderedUpperBound: String = IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBound)
 
     override fun getText() = "Add '$renderedUpperBound' as upper bound for ${element.name}"
@@ -52,10 +52,10 @@ public class AddGenericUpperBoundFix(
         return (element.name != null && element.extendsBound == null)
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         assert(element.extendsBound == null) { "Don't know what to do with existing bounds" }
 
-        val typeReference = JetPsiFactory(project).createType(renderedUpperBound)
+        val typeReference = KtPsiFactory(project).createType(renderedUpperBound)
         val insertedTypeReference = element.setExtendsBound(typeReference)!!
 
         ShortenReferences.DEFAULT.process(insertedTypeReference)
@@ -100,12 +100,12 @@ public class AddGenericUpperBoundFix(
             }.filterNotNull()
         }
 
-        private fun createAction(argument: JetType, upperBound: JetType): IntentionAction? {
+        private fun createAction(argument: KtType, upperBound: KtType): IntentionAction? {
             if (!upperBound.constructor.isDenotable) return null
 
             val typeParameterDescriptor = (argument.constructor.declarationDescriptor as? TypeParameterDescriptor) ?: return null
             val typeParameterDeclaration =
-                    (DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor) as? JetTypeParameter) ?: return null
+                    (DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor) as? KtTypeParameter) ?: return null
 
             return AddGenericUpperBoundFix(typeParameterDeclaration, upperBound)
         }

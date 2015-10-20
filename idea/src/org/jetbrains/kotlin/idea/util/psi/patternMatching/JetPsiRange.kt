@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.util.psi.patternMatching
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.KtElement
 import java.util.ArrayList
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
@@ -67,8 +67,8 @@ public interface JetPsiRange {
 
         val matches = ArrayList<Match>()
         scope.accept(
-                object: JetTreeVisitorVoid() {
-                    override fun visitJetElement(element: JetElement) {
+                object: KtTreeVisitorVoid() {
+                    override fun visitJetElement(element: KtElement) {
                         val range = element
                                 .siblings()
                                 .filter(SIGNIFICANT_FILTER)

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.List;
 
@@ -29,16 +29,16 @@ public class InferenceErrorData {
     @NotNull
     public final ConstraintSystem constraintSystem;
     @Nullable
-    public final JetType receiverArgumentType;
+    public final KtType receiverArgumentType;
     @NotNull
-    public final JetType expectedType;
+    public final KtType expectedType;
     @NotNull
-    public final List<JetType> valueArgumentsTypes;
+    public final List<KtType> valueArgumentsTypes;
 
 
     private InferenceErrorData(
             @NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
-            @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @NotNull JetType expectedType
+            @NotNull List<KtType> valueArgumentsTypes, @Nullable KtType receiverArgumentType, @NotNull KtType expectedType
     ) {
         this.descriptor = descriptor;
         this.constraintSystem = constraintSystem;
@@ -49,7 +49,7 @@ public class InferenceErrorData {
 
     @NotNull
     public static InferenceErrorData create(@NotNull CallableDescriptor descriptor, @NotNull ConstraintSystem constraintSystem,
-            @NotNull List<JetType> valueArgumentsTypes, @Nullable JetType receiverArgumentType, @NotNull JetType expectedType) {
+            @NotNull List<KtType> valueArgumentsTypes, @Nullable KtType receiverArgumentType, @NotNull KtType expectedType) {
         return new InferenceErrorData(descriptor, constraintSystem, valueArgumentsTypes, receiverArgumentType, expectedType);
     }
 }

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 
@@ -34,12 +34,12 @@ public abstract class FunctionGenerationStrategy {
     );
 
     public static class FunctionDefault extends CodegenBased<CallableDescriptor> {
-        private final JetDeclarationWithBody declaration;
+        private final KtDeclarationWithBody declaration;
 
         public FunctionDefault(
                 @NotNull GenerationState state,
                 @NotNull CallableDescriptor descriptor,
-                @NotNull JetDeclarationWithBody declaration
+                @NotNull KtDeclarationWithBody declaration
         ) {
             super(state, descriptor);
             this.declaration = declaration;

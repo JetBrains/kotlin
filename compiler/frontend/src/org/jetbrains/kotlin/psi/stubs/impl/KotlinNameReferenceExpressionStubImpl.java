@@ -19,17 +19,17 @@ package org.jetbrains.kotlin.psi.stubs.impl;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression;
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<JetNameReferenceExpression> implements
+public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<KtNameReferenceExpression> implements
                                                                                                        KotlinNameReferenceExpressionStub {
     @NotNull
     private final StringRef referencedName;
 
     public KotlinNameReferenceExpressionStubImpl(StubElement parent, @NotNull StringRef referencedName) {
-        super(parent, JetStubElementTypes.REFERENCE_EXPRESSION);
+        super(parent, KtStubElementTypes.REFERENCE_EXPRESSION);
         this.referencedName = referencedName;
     }
 

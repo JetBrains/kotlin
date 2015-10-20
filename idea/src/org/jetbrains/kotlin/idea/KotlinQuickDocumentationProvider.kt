@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.kdoc.KDocFinder
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -54,7 +54,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
     }
 
     override fun getDocumentationElementForLink(psiManager: PsiManager, link: String, context: PsiElement?): PsiElement? {
-        if (context !is JetElement) {
+        if (context !is KtElement) {
             return null
         }
 
@@ -88,7 +88,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
         }
 
         private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
-            if (element is JetDeclaration) {
+            if (element is KtDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
             else if (element is KotlinLightElement<*, *>) {
@@ -97,7 +97,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             }
 
             if (quickNavigation) {
-                val referenceExpression = originalElement?.getNonStrictParentOfType<JetReferenceExpression>()
+                val referenceExpression = originalElement?.getNonStrictParentOfType<KtReferenceExpression>()
                 if (referenceExpression != null) {
                     val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
                     val declarationDescriptor = context[BindingContext.REFERENCE_TARGET, referenceExpression]
@@ -113,7 +113,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             return null
         }
 
-        private fun renderKotlinDeclaration(declaration: JetDeclaration, quickNavigation: Boolean): String {
+        private fun renderKotlinDeclaration(declaration: KtDeclaration, quickNavigation: Boolean): String {
             val context = declaration.analyze(BodyResolveMode.PARTIAL)
             val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 

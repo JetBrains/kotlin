@@ -48,12 +48,12 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
     val defaultOptions = FindUsagesOptions(project)
 
     public override fun canFindUsages(element: PsiElement): Boolean =
-            element is JetClassOrObject ||
-            element is JetNamedFunction ||
-            element is JetProperty ||
-            element is JetParameter ||
-            element is JetTypeParameter ||
-            element is JetConstructor<*>
+            element is KtClassOrObject ||
+            element is KtNamedFunction ||
+            element is KtProperty ||
+            element is KtParameter ||
+            element is KtTypeParameter ||
+            element is KtConstructor<*>
 
     public fun createFindUsagesHandlerNoQuestions(element: PsiElement): FindUsagesHandler {
         return createFindUsagesHandler(element, forHighlightUsages = false, canAsk = false)
@@ -73,10 +73,10 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
 
     private fun createFindUsagesHandlerNoDecoration(element: PsiElement, canAsk: Boolean): FindUsagesHandler {
         when (element) {
-            is JetClassOrObject ->
+            is KtClassOrObject ->
                 return KotlinFindClassUsagesHandler(element, this)
 
-            is JetParameter -> {
+            is KtParameter -> {
                 if (canAsk) {
                     val function = element.ownerFunction
                     if (function != null && function.isOverridable()) {
@@ -101,8 +101,8 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
                 return KotlinFindMemberUsagesHandler.getInstance(element, factory = this)
             }
 
-            is JetNamedFunction, is JetProperty, is JetConstructor<*> -> {
-                val declaration = element as JetNamedDeclaration
+            is KtNamedFunction, is KtProperty, is KtConstructor<*> -> {
+                val declaration = element as KtNamedDeclaration
 
                 if (!canAsk) {
                     return KotlinFindMemberUsagesHandler.getInstance(declaration, factory = this)
@@ -112,7 +112,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
                 return handlerForMultiple(declaration, declarationsToSearch)
             }
 
-            is JetTypeParameter ->
+            is KtTypeParameter ->
                 return KotlinTypeParameterFindUsagesHandler(element, this)
 
             else ->
@@ -120,13 +120,13 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
         }
     }
 
-    private fun handlerForMultiple(originalDeclaration: JetNamedDeclaration, declarations: Collection<PsiElement>): FindUsagesHandler {
+    private fun handlerForMultiple(originalDeclaration: KtNamedDeclaration, declarations: Collection<PsiElement>): FindUsagesHandler {
         return when (declarations.size()) {
             0 -> FindUsagesHandler.NULL_HANDLER
 
             1 -> {
                 val target = declarations.single().unwrapped ?: return FindUsagesHandler.NULL_HANDLER
-                if (target is JetNamedDeclaration) {
+                if (target is KtNamedDeclaration) {
                     KotlinFindMemberUsagesHandler.getInstance(target, factory = this)
                 }
                 else {
@@ -138,7 +138,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
         }
     }
 
-    private fun askWhetherShouldSearchForParameterInOverridingMethods(parameter: JetParameter): Boolean {
+    private fun askWhetherShouldSearchForParameterInOverridingMethods(parameter: KtParameter): Boolean {
         return Messages.showOkCancelDialog(parameter.project,
                                            FindBundle.message("find.parameter.usages.in.overriding.methods.prompt", parameter.name),
                                            FindBundle.message("find.parameter.usages.in.overriding.methods.title"),

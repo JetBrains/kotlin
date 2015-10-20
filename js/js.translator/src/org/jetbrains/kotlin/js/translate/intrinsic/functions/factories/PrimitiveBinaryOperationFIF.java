@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
-import org.jetbrains.kotlin.lexer.JetToken;
+import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -179,7 +179,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
     @NotNull
     private static JsBinaryOperator getOperator(@NotNull FunctionDescriptor descriptor) {
-        JetToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptor.getName());
+        KtToken token = OperatorConventions.BINARY_OPERATION_NAMES.inverse().get(descriptor.getName());
         if (token == null) {
             token = OperatorConventions.BOOLEAN_OPERATIONS.inverse().get(descriptor.getName());
         }

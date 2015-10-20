@@ -35,19 +35,19 @@ import java.util.regex.Pattern;
 
 public class JetPsiUtilTest extends JetLiteFixture {
     public void testUnquotedIdentifier() {
-        Assert.assertEquals("", JetPsiUtil.unquoteIdentifier(""));
-        Assert.assertEquals("a2", JetPsiUtil.unquoteIdentifier("a2"));
-        Assert.assertEquals("", JetPsiUtil.unquoteIdentifier("``"));
-        Assert.assertEquals("a2", JetPsiUtil.unquoteIdentifier("`a2`"));
+        Assert.assertEquals("", KtPsiUtil.unquoteIdentifier(""));
+        Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifier("a2"));
+        Assert.assertEquals("", KtPsiUtil.unquoteIdentifier("``"));
+        Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifier("`a2`"));
     }
 
     public void testUnquotedIdentifierOrFieldReference() {
-        Assert.assertEquals("", JetPsiUtil.unquoteIdentifierOrFieldReference(""));
-        Assert.assertEquals("a2", JetPsiUtil.unquoteIdentifierOrFieldReference("a2"));
-        Assert.assertEquals("", JetPsiUtil.unquoteIdentifierOrFieldReference("``"));
-        Assert.assertEquals("a2", JetPsiUtil.unquoteIdentifierOrFieldReference("`a2`"));
-        Assert.assertEquals("$a2", JetPsiUtil.unquoteIdentifierOrFieldReference("$a2"));
-        Assert.assertEquals("$a2", JetPsiUtil.unquoteIdentifierOrFieldReference("$`a2`"));
+        Assert.assertEquals("", KtPsiUtil.unquoteIdentifierOrFieldReference(""));
+        Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifierOrFieldReference("a2"));
+        Assert.assertEquals("", KtPsiUtil.unquoteIdentifierOrFieldReference("``"));
+        Assert.assertEquals("a2", KtPsiUtil.unquoteIdentifierOrFieldReference("`a2`"));
+        Assert.assertEquals("$a2", KtPsiUtil.unquoteIdentifierOrFieldReference("$a2"));
+        Assert.assertEquals("$a2", KtPsiUtil.unquoteIdentifierOrFieldReference("$`a2`"));
     }
 
     public void testConvertToImportPath() {
@@ -71,18 +71,18 @@ public class JetPsiUtilTest extends JetLiteFixture {
 
     public void testIsLocalClass() throws IOException {
         String text = FileUtil.loadFile(new File(getTestDataPath() + "/psiUtil/isLocalClass.kt"), true);
-        JetClass aClass = JetPsiFactoryKt.JetPsiFactory(getProject()).createClass(text);
+        KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(text);
 
         @SuppressWarnings("unchecked")
-        Collection<JetClassOrObject> classOrObjects = PsiTreeUtil.collectElementsOfType(aClass, JetClassOrObject.class);
+        Collection<KtClassOrObject> classOrObjects = PsiTreeUtil.collectElementsOfType(aClass, KtClassOrObject.class);
 
-        for (JetClassOrObject classOrObject : classOrObjects) {
+        for (KtClassOrObject classOrObject : classOrObjects) {
             String classOrObjectName = classOrObject.getName();
             if (classOrObjectName != null && classOrObjectName.contains("Local")) {
-                assertTrue("JetPsiUtil.isLocalClass should return true for " + classOrObjectName, JetPsiUtil.isLocal(classOrObject));
+                assertTrue("JetPsiUtil.isLocalClass should return true for " + classOrObjectName, KtPsiUtil.isLocal(classOrObject));
             }
             else {
-                assertFalse("JetPsiUtil.isLocalClass should return false for " + classOrObjectName, JetPsiUtil.isLocal(classOrObject));
+                assertFalse("JetPsiUtil.isLocalClass should return false for " + classOrObjectName, KtPsiUtil.isLocal(classOrObject));
             }
         }
     }
@@ -101,8 +101,8 @@ public class JetPsiUtilTest extends JetLiteFixture {
     }
 
     private ImportPath getImportPathFromParsed(String text) {
-        JetImportDirective importDirective =
-                PsiTreeUtil.findChildOfType(JetPsiFactoryKt.JetPsiFactory(getProject()).createFile(text), JetImportDirective.class);
+        KtImportDirective importDirective =
+                PsiTreeUtil.findChildOfType(KtPsiFactoryKt.KtPsiFactory(getProject()).createFile(text), KtImportDirective.class);
 
         assertNotNull("At least one import directive is expected", importDirective);
 
@@ -113,7 +113,7 @@ public class JetPsiUtilTest extends JetLiteFixture {
         String trueResultString = "/*true*/";
         String falseResultString = "/*false*/";
 
-        JetFile file = loadPsiFile(new File("psiUtil/" + getTestName(true) + ".kt").getPath());
+        KtFile file = loadPsiFile(new File("psiUtil/" + getTestName(true) + ".kt").getPath());
         String text = file.getText();
 
         // /*true*/|/*false*/
@@ -124,13 +124,13 @@ public class JetPsiUtilTest extends JetLiteFixture {
             boolean expected = trueResultString.equals(matcher.group());
             int offset = matcher.end();
 
-            JetSimpleNameExpression expression = PsiTreeUtil.findElementOfClassAtOffset(file, offset, JetSimpleNameExpression.class, true);
+            KtSimpleNameExpression expression = PsiTreeUtil.findElementOfClassAtOffset(file, offset, KtSimpleNameExpression.class, true);
 
             String modifiedWithOffset = new StringBuilder(text).insert(offset, "<======caret======>").toString();
 
             Assert.assertNotNull("Can't find expression in text:\n" + modifiedWithOffset, expression);
             Assert.assertSame(expected + " result was expected at\n" + modifiedWithOffset,
-                              expected, JetPsiUtil.isSelectorInQualified(expression));
+                              expected, KtPsiUtil.isSelectorInQualified(expression));
         }
     }
 }

@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.intrinsic.objects.ObjectIntrinsic;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
-import org.jetbrains.kotlin.psi.JetReferenceExpression;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtReferenceExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 public class CompanionObjectAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
     @NotNull
     /*package*/ static CompanionObjectAccessTranslator newInstance(
-            @NotNull JetSimpleNameExpression expression,
+            @NotNull KtSimpleNameExpression expression,
             @NotNull TranslationContext context
     ) {
         DeclarationDescriptor referenceDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
@@ -49,7 +49,7 @@ public class CompanionObjectAccessTranslator extends AbstractTranslator implemen
     }
 
     /*package*/ static boolean isCompanionObjectReference(
-            @NotNull JetReferenceExpression expression,
+            @NotNull KtReferenceExpression expression,
             @NotNull TranslationContext context
     ) {
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);

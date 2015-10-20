@@ -43,7 +43,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull JetType type) {
+    public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull KtType type) {
         List<CallableMemberDescriptor> abstractMembers = new ArrayList<CallableMemberDescriptor>();
         for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
             if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
@@ -53,7 +53,7 @@ public class SingleAbstractMethodUtils {
         return abstractMembers;
     }
 
-    private static JetType fixProjections(@NotNull JetType functionType) {
+    private static KtType fixProjections(@NotNull KtType functionType) {
         //removes redundant projection kinds and detects conflicts
 
         List<TypeParameterDescriptor> typeParameters = functionType.getConstructor().getParameters();
@@ -76,7 +76,7 @@ public class SingleAbstractMethodUtils {
         }
         ClassifierDescriptor classifier = functionType.getConstructor().getDeclarationDescriptor();
         assert classifier instanceof ClassDescriptor : "Not class: " + classifier;
-        return JetTypeImpl.create(
+        return KtTypeImpl.create(
                 functionType.getAnnotations(),
                 functionType.getConstructor(),
                 functionType.isMarkedNullable(),
@@ -86,21 +86,21 @@ public class SingleAbstractMethodUtils {
     }
 
     @Nullable
-    public static JetType getFunctionTypeForSamType(@NotNull JetType samType) {
+    public static KtType getFunctionTypeForSamType(@NotNull KtType samType) {
         // e.g. samType == Comparator<String>?
 
         ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();
         if (classifier instanceof JavaClassDescriptor) {
             // Function2<T, T, Int>
-            JetType functionTypeDefault = ((JavaClassDescriptor) classifier).getFunctionTypeForSamInterface();
+            KtType functionTypeDefault = ((JavaClassDescriptor) classifier).getFunctionTypeForSamInterface();
 
             if (functionTypeDefault != null) {
                 // Function2<String, String, Int>?
-                JetType substitute = TypeSubstitutor.create(samType).substitute(functionTypeDefault, Variance.INVARIANT);
+                KtType substitute = TypeSubstitutor.create(samType).substitute(functionTypeDefault, Variance.INVARIANT);
 
                 if (substitute == null) return null;
 
-                JetType type = fixProjections(substitute);
+                KtType type = fixProjections(substitute);
                 if (type == null) return null;
 
                 if (JavaDescriptorResolverKt.getPLATFORM_TYPES() && FlexibleTypesKt.isNullabilityFlexible(samType)) {
@@ -114,11 +114,11 @@ public class SingleAbstractMethodUtils {
     }
 
     @NotNull
-    public static JetType getFunctionTypeForAbstractMethod(@NotNull FunctionDescriptor function) {
-        JetType returnType = function.getReturnType();
+    public static KtType getFunctionTypeForAbstractMethod(@NotNull FunctionDescriptor function) {
+        KtType returnType = function.getReturnType();
         assert returnType != null : "function is not initialized: " + function;
         List<ValueParameterDescriptor> valueParameters = function.getValueParameters();
-        List<JetType> parameterTypes = new ArrayList<JetType>(valueParameters.size());
+        List<KtType> parameterTypes = new ArrayList<KtType>(valueParameters.size());
         for (ValueParameterDescriptor parameter : valueParameters) {
             parameterTypes.add(parameter.getType());
         }
@@ -151,9 +151,9 @@ public class SingleAbstractMethodUtils {
 
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(samInterface.getTypeConstructor().getParameters(), result);
 
-        JetType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
+        KtType parameterTypeUnsubstituted = getFunctionTypeForSamType(samInterface.getDefaultType());
         assert parameterTypeUnsubstituted != null : "couldn't get function type for SAM type " + samInterface.getDefaultType();
-        JetType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
+        KtType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
                                        ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
@@ -163,7 +163,7 @@ public class SingleAbstractMethodUtils {
                 /* isNoinline = */ false,
                 null, SourceElement.NO_SOURCE);
 
-        JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
+        KtType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + samInterface.getDefaultType() +
                                     ", substitutor = " + typeParameters.substitutor;
 
@@ -180,7 +180,7 @@ public class SingleAbstractMethodUtils {
         return result;
     }
 
-    public static boolean isSamType(@NotNull JetType type) {
+    public static boolean isSamType(@NotNull KtType type) {
         return getFunctionTypeForSamType(type) != null;
     }
 
@@ -201,7 +201,7 @@ public class SingleAbstractMethodUtils {
             public void initialize(
                     @NotNull List<TypeParameterDescriptor> typeParameters,
                     @NotNull List<ValueParameterDescriptor> valueParameters,
-                    @NotNull JetType returnType
+                    @NotNull KtType returnType
             ) {
                 result.initialize(
                         null,
@@ -224,7 +224,7 @@ public class SingleAbstractMethodUtils {
             public void initialize(
                     @NotNull List<TypeParameterDescriptor> typeParameters,
                     @NotNull List<ValueParameterDescriptor> valueParameters,
-                    @NotNull JetType returnType
+                    @NotNull KtType returnType
             ) {
                 result.initialize(typeParameters, valueParameters, original.getVisibility());
                 result.setReturnType(returnType);
@@ -240,11 +240,11 @@ public class SingleAbstractMethodUtils {
     ) {
         TypeParameters typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), adapter);
 
-        JetType returnTypeUnsubstituted = original.getReturnType();
+        KtType returnTypeUnsubstituted = original.getReturnType();
         assert returnTypeUnsubstituted != null : "Creating SAM adapter for not initialized original: " + original;
 
         TypeSubstitutor substitutor = typeParameters.substitutor;
-        JetType returnType = substitutor.substitute(returnTypeUnsubstituted, Variance.INVARIANT);
+        KtType returnType = substitutor.substitute(returnTypeUnsubstituted, Variance.INVARIANT);
         assert returnType != null : "couldn't substitute type: " + returnTypeUnsubstituted +
                                         ", substitutor = " + substitutor;
 
@@ -264,10 +264,10 @@ public class SingleAbstractMethodUtils {
         List<ValueParameterDescriptor> originalValueParameters = original.getValueParameters();
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(originalValueParameters.size());
         for (ValueParameterDescriptor originalParam : originalValueParameters) {
-            JetType originalType = originalParam.getType();
-            JetType functionType = getFunctionTypeForSamType(originalType);
-            JetType newTypeUnsubstituted = functionType != null ? functionType : originalType;
-            JetType newType = substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
+            KtType originalType = originalParam.getType();
+            KtType functionType = getFunctionTypeForSamType(originalType);
+            KtType newTypeUnsubstituted = functionType != null ? functionType : originalType;
+            KtType newType = substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
             assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + substitutor;
 
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
@@ -295,8 +295,8 @@ public class SingleAbstractMethodUtils {
             TypeParameterDescriptor traitTypeParameter = mapEntry.getKey();
             TypeParameterDescriptorImpl funTypeParameter = mapEntry.getValue();
 
-            for (JetType upperBound : traitTypeParameter.getUpperBounds()) {
-                JetType upperBoundSubstituted = typeParametersSubstitutor.substitute(upperBound, Variance.INVARIANT);
+            for (KtType upperBound : traitTypeParameter.getUpperBounds()) {
+                KtType upperBoundSubstituted = typeParametersSubstitutor.substitute(upperBound, Variance.INVARIANT);
                 assert upperBoundSubstituted != null : "couldn't substitute type: " + upperBound + ", substitutor = " + typeParametersSubstitutor;
                 funTypeParameter.addUpperBound(upperBoundSubstituted);
             }
@@ -345,7 +345,7 @@ public class SingleAbstractMethodUtils {
         public abstract void initialize(
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
-                @NotNull JetType returnType
+                @NotNull KtType returnType
         );
     }
 

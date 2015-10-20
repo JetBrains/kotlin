@@ -18,14 +18,11 @@ package org.jetbrains.kotlin.load.kotlin.nativeDeclarations
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
-import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
@@ -35,7 +32,7 @@ public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
 
 public class NativeFunChecker : DeclarationChecker {
     override fun check(
-            declaration: JetDeclaration,
+            declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
@@ -50,7 +47,7 @@ public class NativeFunChecker : DeclarationChecker {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
         }
 
-        if (descriptor !is ConstructorDescriptor && declaration is JetDeclarationWithBody && declaration.hasBody()) {
+        if (descriptor !is ConstructorDescriptor && declaration is KtDeclarationWithBody && declaration.hasBody()) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_HAVE_BODY.on(declaration))
         }
 

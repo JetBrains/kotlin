@@ -28,8 +28,8 @@ import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetNamedDeclaration;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 
 import javax.swing.*;
 
@@ -95,17 +95,17 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
 
     @Override
     public void configureLabelComponent(@NotNull SimpleColoredComponent coloredComponent) {
-        Utils.configureLabelComponent(coloredComponent, (JetNamedDeclaration) getPsiElement());
+        Utils.configureLabelComponent(coloredComponent, (KtNamedDeclaration) getPsiElement());
     }
 
     @Override
     protected void addUsagesOptions(JPanel optionsPanel) {
         super.addUsagesOptions(optionsPanel);
 
-        JetNamedDeclaration property = (JetNamedDeclaration) getPsiElement();
+        KtNamedDeclaration property = (KtNamedDeclaration) getPsiElement();
 
-        boolean isAbstract = property.hasModifier(JetTokens.ABSTRACT_KEYWORD);
-        boolean isOpen = property.hasModifier(JetTokens.OPEN_KEYWORD);
+        boolean isAbstract = property.hasModifier(KtTokens.ABSTRACT_KEYWORD);
+        boolean isOpen = property.hasModifier(KtTokens.OPEN_KEYWORD);
         if (isOpen || isAbstract) {
             cbOverrides = addCheckboxToPanel(
                     isAbstract

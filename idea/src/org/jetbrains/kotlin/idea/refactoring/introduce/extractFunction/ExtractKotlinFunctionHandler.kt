@@ -25,10 +25,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtBlockExpression
 import kotlin.test.fail
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
@@ -52,11 +52,11 @@ public class ExtractKotlinFunctionHandler(
 
     fun doInvoke(
             editor: Editor,
-            file: JetFile,
+            file: KtFile,
             elements: List<PsiElement>,
             targetSibling: PsiElement
     ) {
-        val adjustedElements = (elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements
+        val adjustedElements = (elements.singleOrNull() as? KtBlockExpression)?.getStatements() ?: elements
         val extractionData = ExtractionData(file, adjustedElements.toRange(false), targetSibling)
         ExtractionEngine(helper).run(editor, extractionData) {
             processDuplicates(it.duplicateReplacers, file.getProject(), editor)
@@ -74,7 +74,7 @@ public class ExtractKotlinFunctionHandler(
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        if (file !is JetFile) return
+        if (file !is KtFile) return
         selectElements(editor, file) { elements, targetSibling -> doInvoke(editor, file, elements, targetSibling) }
     }
 

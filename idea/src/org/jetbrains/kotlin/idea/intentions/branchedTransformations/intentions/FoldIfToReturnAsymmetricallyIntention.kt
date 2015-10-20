@@ -22,23 +22,23 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
-public class FoldIfToReturnAsymmetricallyIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
-    override fun applicabilityRange(element: JetIfExpression): TextRange? {
+public class FoldIfToReturnAsymmetricallyIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with return") {
+    override fun applicabilityRange(element: KtIfExpression): TextRange? {
         if (BranchedFoldingUtils.getFoldableBranchedReturn(element.getThen()) == null || element.getElse() != null) {
             return null
         }
 
-        val nextElement = JetPsiUtil.skipTrailingWhitespacesAndComments(element) as? JetReturnExpression
+        val nextElement = KtPsiUtil.skipTrailingWhitespacesAndComments(element) as? KtReturnExpression
         if (nextElement?.getReturnedExpression() == null) return null
         return element.getIfKeyword().getTextRange()
     }
 
-    override fun applyTo(element: JetIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor) {
         val condition = element.getCondition()!!
         val thenBranch = element.getThen()!!
-        val elseBranch = JetPsiUtil.skipTrailingWhitespacesAndComments(element) as JetReturnExpression
+        val elseBranch = KtPsiUtil.skipTrailingWhitespacesAndComments(element) as KtReturnExpression
 
-        val psiFactory = JetPsiFactory(element)
+        val psiFactory = KtPsiFactory(element)
         var newIfExpression = psiFactory.createIf(condition, thenBranch, elseBranch)
 
         val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.getThen()!!)!!

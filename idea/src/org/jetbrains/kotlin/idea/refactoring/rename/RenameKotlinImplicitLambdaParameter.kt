@@ -26,12 +26,12 @@ import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
 import org.jetbrains.kotlin.idea.intentions.isAutoCreatedItUsage
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 public class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
         val nameExpression = PsiTreeUtil.findElementOfClassAtOffset(
-                file, editor.getCaretModel().getOffset(), javaClass<JetNameReferenceExpression>(), false)
+                file, editor.getCaretModel().getOffset(), javaClass<KtNameReferenceExpression>(), false)
 
         return nameExpression != null && isAutoCreatedItUsage(nameExpression)
     }

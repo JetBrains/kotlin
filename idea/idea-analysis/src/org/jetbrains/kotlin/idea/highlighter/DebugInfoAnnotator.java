@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.checkers.DebugInfoUtil;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.JetCodeFragment;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetReferenceExpression;
+import org.jetbrains.kotlin.psi.KtCodeFragment;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 /**
@@ -45,26 +45,26 @@ public class DebugInfoAnnotator implements Annotator {
             return;
         }
 
-        if (element instanceof JetFile && !(element instanceof JetCodeFragment)) {
-            JetFile file = (JetFile) element;
+        if (element instanceof KtFile && !(element instanceof KtCodeFragment)) {
+            KtFile file = (KtFile) element;
             try {
                 BindingContext bindingContext = ResolutionUtils.analyzeFully(file);
                 DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
                     @Override
-                    public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {
+                    public void reportElementWithErrorType(@NotNull KtReferenceExpression expression) {
                         holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element")
                                 .setTextAttributes(JetHighlightingColors.RESOLVED_TO_ERROR);
                     }
 
                     @Override
-                    public void reportMissingUnresolved(@NotNull JetReferenceExpression expression) {
+                    public void reportMissingUnresolved(@NotNull KtReferenceExpression expression) {
                         holder.createErrorAnnotation(expression,
                                                      "[DEBUG] Reference is not resolved to anything, but is not marked unresolved")
                                 .setTextAttributes(JetHighlightingColors.DEBUG_INFO);
                     }
 
                     @Override
-                    public void reportUnresolvedWithTarget(@NotNull JetReferenceExpression expression, @NotNull String target) {
+                    public void reportUnresolvedWithTarget(@NotNull KtReferenceExpression expression, @NotNull String target) {
                         holder.createErrorAnnotation(expression, "[DEBUG] Reference marked as unresolved is actually resolved to " + target)
                                 .setTextAttributes(JetHighlightingColors.DEBUG_INFO);
                     }

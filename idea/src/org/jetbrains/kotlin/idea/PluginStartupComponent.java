@@ -65,7 +65,7 @@ public class PluginStartupComponent implements ApplicationComponent {
             @Override
             public void documentChanged(DocumentEvent e) {
                 VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(e.getDocument());
-                if (virtualFile != null && virtualFile.getFileType() == JetFileType.INSTANCE) {
+                if (virtualFile != null && virtualFile.getFileType() == KotlinFileType.INSTANCE) {
                     KotlinPluginUpdater.Companion.getInstance().kotlinFileEdited();
                 }
             }

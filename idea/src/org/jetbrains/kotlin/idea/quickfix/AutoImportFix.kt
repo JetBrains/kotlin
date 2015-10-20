@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.CachedValueProperty
@@ -52,7 +52,7 @@ import java.util.*
 /**
  * Check possibility and perform fix for unresolved references.
  */
-public class AutoImportFix(element: JetSimpleNameExpression) : KotlinQuickFixAction<JetSimpleNameExpression>(element), HighPriorityAction, HintAction {
+public class AutoImportFix(element: KtSimpleNameExpression) : KotlinQuickFixAction<KtSimpleNameExpression>(element), HighPriorityAction, HintAction {
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
 
     @Volatile private var anySuggestionFound: Boolean? = null
@@ -88,7 +88,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : KotlinQuickFixAct
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
             = (super.isAvailable(project, editor, file)) && (anySuggestionFound ?: !suggestions.isEmpty())
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
             createAction(project, editor!!).execute()
         }
@@ -101,10 +101,10 @@ public class AutoImportFix(element: JetSimpleNameExpression) : KotlinQuickFixAct
     private fun createAction(project: Project, editor: Editor) = KotlinAddImportAction(project, editor, element, suggestions)
 
     companion object : JetSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<JetSimpleNameExpression>? {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtSimpleNameExpression>? {
             // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
             val psiElement = diagnostic.getPsiElement()
-            if (psiElement is JetSimpleNameExpression) {
+            if (psiElement is KtSimpleNameExpression) {
                 return AutoImportFix(psiElement)
             }
 
@@ -115,10 +115,10 @@ public class AutoImportFix(element: JetSimpleNameExpression) : KotlinQuickFixAct
 
         private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION ) { QuickFixes.getInstance().getDiagnostics(this) }
 
-        public fun computeSuggestions(element: JetSimpleNameExpression): Collection<DeclarationDescriptor> {
+        public fun computeSuggestions(element: KtSimpleNameExpression): Collection<DeclarationDescriptor> {
             if (!element.isValid()) return emptyList()
 
-            val file = element.getContainingFile() as? JetFile ?: return emptyList()
+            val file = element.getContainingFile() as? KtFile ?: return emptyList()
 
             val callTypeAndReceiver = CallTypeAndReceiver.detect(element)
             if (callTypeAndReceiver is CallTypeAndReceiver.UNKNOWN) return emptyList()
@@ -128,7 +128,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : KotlinQuickFixAct
 
             var referenceName = element.getReferencedName()
             if (element.getIdentifier() == null) {
-                val conventionName = JetPsiUtil.getConventionName(element)
+                val conventionName = KtPsiUtil.getConventionName(element)
                 if (conventionName != null) {
                     referenceName = conventionName.asString()
                 }
@@ -157,7 +157,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : KotlinQuickFixAct
 
             val indicesHelper = KotlinIndicesHelper(element.getResolutionFacade(), searchScope, ::isVisible, true)
 
-            if (!element.isImportDirectiveExpression() && !JetPsiUtil.isSelectorInQualified(element)) {
+            if (!element.isImportDirectiveExpression() && !KtPsiUtil.isSelectorInQualified(element)) {
                 if (ProjectStructureUtil.isJsKotlinModule(file)) {
                     indicesHelper.getKotlinClasses({ it == referenceName }, { true }).filterTo(result, ::filterByCallType)
 

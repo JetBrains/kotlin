@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.when;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.HashSet;
@@ -36,7 +36,7 @@ public class MappingsClassesForWhenByEnum {
         this.mappingsCodegen = new MappingClassesForWhenByEnumCodegen(state);
     }
 
-    public void generateMappingsClassForExpression(@NotNull JetWhenExpression expression) {
+    public void generateMappingsClassForExpression(@NotNull KtWhenExpression expression) {
         WhenByEnumsMapping mapping = state.getBindingContext().get(CodegenBinding.MAPPING_FOR_WHEN_BY_ENUM, expression);
 
         assert mapping != null : "mapping class should not be requested for non enum when";

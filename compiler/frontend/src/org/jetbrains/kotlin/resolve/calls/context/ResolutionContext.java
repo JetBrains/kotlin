@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 /**
@@ -38,7 +38,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public final LexicalScope scope;
     @NotNull
-    public final JetType expectedType;
+    public final KtType expectedType;
     @NotNull
     public final DataFlowInfo dataFlowInfo;
     @NotNull
@@ -60,7 +60,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     protected ResolutionContext(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
@@ -87,7 +87,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
@@ -116,7 +116,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     }
 
     @NotNull
-    public Context replaceExpectedType(@Nullable JetType newExpectedType) {
+    public Context replaceExpectedType(@Nullable KtType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
         return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, statementFilter,

@@ -21,8 +21,8 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtDeclaration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,14 +34,15 @@ public final class JetProjectViewUtil {
     private JetProjectViewUtil() {
     }
 
-    public static Collection<AbstractTreeNode> getClassOrObjectChildren(JetClassOrObject classOrObject, Project project,
+    public static Collection<AbstractTreeNode> getClassOrObjectChildren(
+            KtClassOrObject classOrObject, Project project,
                                                                         ViewSettings settings) {
         if (classOrObject != null && settings.isShowMembers()) {
             Collection<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
-            List<JetDeclaration> declarations = classOrObject.getDeclarations();
-            for (JetDeclaration declaration : declarations) {
-                if (declaration instanceof JetClassOrObject) {
-                    result.add(new JetClassOrObjectTreeNode(project, (JetClassOrObject) declaration, settings));
+            List<KtDeclaration> declarations = classOrObject.getDeclarations();
+            for (KtDeclaration declaration : declarations) {
+                if (declaration instanceof KtClassOrObject) {
+                    result.add(new JetClassOrObjectTreeNode(project, (KtClassOrObject) declaration, settings));
                 }
                 else {
                     result.add(new JetDeclarationTreeNode(project, declaration, settings));

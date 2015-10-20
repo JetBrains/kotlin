@@ -29,16 +29,16 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentInt
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.psi.JetPackageDirective
+import org.jetbrains.kotlin.psi.KtPackageDirective
 
-public class ChangePackageIntention: JetSelfTargetingOffsetIndependentIntention<JetPackageDirective>(javaClass(), "Change package") {
+public class ChangePackageIntention: JetSelfTargetingOffsetIndependentIntention<KtPackageDirective>(javaClass(), "Change package") {
     companion object {
         private val PACKAGE_NAME_VAR = "PACKAGE_NAME"
     }
 
-    override fun isApplicableTo(element: JetPackageDirective) = element.getPackageNameExpression() != null
+    override fun isApplicableTo(element: KtPackageDirective) = element.getPackageNameExpression() != null
 
-    override fun applyTo(element: JetPackageDirective, editor: Editor) {
+    override fun applyTo(element: KtPackageDirective, editor: Editor) {
         if (ApplicationManager.getApplication().isUnitTestMode()) {
             throw UnsupportedOperationException("Do not call applyTo() in the test mode")
         }

@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.idea.presentation;
 
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
-import org.jetbrains.kotlin.psi.JetParameter;
+import org.jetbrains.kotlin.psi.KtParameter;
 
-public class JetParameterPresenter implements ItemPresentationProvider<JetParameter> {
+public class JetParameterPresenter implements ItemPresentationProvider<KtParameter> {
     @Override
-    public ItemPresentation getPresentation(JetParameter item) {
+    public ItemPresentation getPresentation(KtParameter item) {
         return new JetDefaultNamedDeclarationPresentation(item);
     }
 }

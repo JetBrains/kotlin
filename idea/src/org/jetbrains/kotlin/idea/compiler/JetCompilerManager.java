@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.PrintStream;
@@ -47,7 +47,7 @@ public class JetCompilerManager extends AbstractProjectComponent {
 
     public JetCompilerManager(Project project, CompilerManager manager) {
         super(project);
-        manager.addCompilableFileType(JetFileType.INSTANCE);
+        manager.addCompilableFileType(KotlinFileType.INSTANCE);
         manager.addCompilationStatusListener(new CompilationStatusListener() {
             @Override
             public void compilationFinished(boolean aborted, int errors, int warnings, CompileContext compileContext) {

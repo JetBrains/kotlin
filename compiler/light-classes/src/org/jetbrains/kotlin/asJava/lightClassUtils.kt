@@ -27,69 +27,69 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
+public fun KtClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
 
-public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
+public fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {
-            is JetClassOrObject -> LightClassUtil.getPsiClass(this).singletonOrEmptyList()
-            is JetNamedFunction,
-            is JetSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as JetFunction)
-            is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
-            is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
-            is JetParameter -> ArrayList<PsiNamedElement>().let { elements ->
+            is KtClassOrObject -> LightClassUtil.getPsiClass(this).singletonOrEmptyList()
+            is KtNamedFunction,
+            is KtSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as KtFunction)
+            is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
+            is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
+            is KtParameter -> ArrayList<PsiNamedElement>().let { elements ->
                 toPsiParameters().toCollection(elements)
                 LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
 
                 elements
             }
-            is JetTypeParameter -> toPsiTypeParameters()
+            is KtTypeParameter -> toPsiTypeParameters()
             else -> listOf()
         }
 
 public fun PsiElement.toLightMethods(): List<PsiMethod> =
         when (this) {
-            is JetFunction -> LightClassUtil.getLightClassMethods(this)
-            is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
-            is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
-            is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
-            is JetClass -> LightClassUtil.getPsiClass(this)?.getConstructors()?.first().singletonOrEmptyList()
+            is KtFunction -> LightClassUtil.getLightClassMethods(this)
+            is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
+            is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
+            is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
+            is KtClass -> LightClassUtil.getPsiClass(this)?.getConstructors()?.first().singletonOrEmptyList()
             is PsiMethod -> this.singletonList()
             else -> listOf()
         }
 
 public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
         when (this) {
-            is JetFunction -> LightClassUtil.getLightClassMethod(this)
-            is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).getter
-            is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).getter
-            is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this)
+            is KtFunction -> LightClassUtil.getLightClassMethod(this)
+            is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).getter
+            is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this).getter
+            is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this)
             is PsiMethod -> this
             else -> null
         }
 
-public fun JetParameter.toPsiParameters(): Collection<PsiParameter> {
-    val paramList = getNonStrictParentOfType<JetParameterList>() ?: return emptyList()
+public fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
+    val paramList = getNonStrictParentOfType<KtParameterList>() ?: return emptyList()
 
     val paramIndex = paramList.getParameters().indexOf(this)
     val owner = paramList.getParent()
-    val lightParamIndex = if (owner is JetDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
+    val lightParamIndex = if (owner is KtDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
     val methods: Collection<PsiMethod> =
             when (owner) {
-                is JetFunction -> LightClassUtil.getLightClassMethods(owner)
-                is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(owner)
+                is KtFunction -> LightClassUtil.getLightClassMethods(owner)
+                is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(owner)
                 else -> null
             } ?: return emptyList()
 
     return methods.map { it.getParameterList().getParameters()[lightParamIndex] }
 }
 
-public fun JetTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
-    val paramList = getNonStrictParentOfType<JetTypeParameterList>()
+public fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
+    val paramList = getNonStrictParentOfType<KtTypeParameterList>()
     if (paramList == null) return listOf()
 
     val paramIndex = paramList.getParameters().indexOf(this)
-    val jetDeclaration = paramList.getNonStrictParentOfType<JetDeclaration>() ?: return listOf()
+    val jetDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return listOf()
     val lightOwners = jetDeclaration.toLightElements()
 
     return lightOwners.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).getTypeParameters()[paramIndex] }
@@ -103,8 +103,8 @@ public val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()
 
 
-val JetClassOrObject.hasInterfaceDefaultImpls: Boolean
-    get() = this is JetClass && isInterface()
+val KtClassOrObject.hasInterfaceDefaultImpls: Boolean
+    get() = this is KtClass && isInterface()
 
 private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)

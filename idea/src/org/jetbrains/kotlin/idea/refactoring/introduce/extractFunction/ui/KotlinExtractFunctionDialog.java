@@ -29,13 +29,13 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -129,7 +129,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         functionNameField = new NameSuggestionsField(
                 ArrayUtil.toStringArray(extractableCodeDescriptor.getSuggestedNames()),
                 project,
-                JetFileType.INSTANCE
+                KotlinFileType.INSTANCE
         );
         functionNameField.addDataChangedListener(
                 new NameSuggestionsField.DataChanged() {
@@ -142,7 +142,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         functionNamePanel.add(functionNameField, BorderLayout.CENTER);
         functionNameLabel.setLabelFor(functionNameField);
 
-        List<JetType> possibleReturnTypes = ExtractableCodeDescriptorKt.getPossibleReturnTypes(extractableCodeDescriptor.getControlFlow());
+        List<KtType> possibleReturnTypes = ExtractableCodeDescriptorKt.getPossibleReturnTypes(extractableCodeDescriptor.getControlFlow());
         if (possibleReturnTypes.size() > 1) {
             DefaultComboBoxModel returnTypeBoxModel = new DefaultComboBoxModel(possibleReturnTypes.toArray());
             returnTypeBox.setModel(returnTypeBoxModel);
@@ -158,7 +158,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                                 boolean cellHasFocus
                         ) {
                             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                            setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((JetType) value));
+                            setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((KtType) value));
                             return this;
                         }
                     }
@@ -262,7 +262,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                                    getVisibility(),
                                    parameterTablePanel.getReceiverInfo(),
                                    parameterTablePanel.getParameterInfos(),
-                                   (JetType) returnTypeBox.getSelectedItem());
+                                   (KtType) returnTypeBox.getSelectedItem());
     }
 
     @NotNull
@@ -276,7 +276,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             @NotNull String newVisibility,
             @Nullable KotlinParameterTablePanel.ParameterInfo newReceiverInfo,
             @NotNull List<KotlinParameterTablePanel.ParameterInfo> newParameterInfos,
-            @Nullable JetType returnType
+            @Nullable KtType returnType
     ) {
         Map<Parameter, Parameter> oldToNewParameters = ContainerUtil.newLinkedHashMap();
         for (KotlinParameterTablePanel.ParameterInfo parameterInfo : newParameterInfos) {

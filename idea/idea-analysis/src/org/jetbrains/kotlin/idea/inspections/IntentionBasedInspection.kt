@@ -32,9 +32,9 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 
-public abstract class IntentionBasedInspection<TElement : JetElement>(
+public abstract class IntentionBasedInspection<TElement : KtElement>(
         public val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
         protected val problemText: String?,
         protected val elementType: Class<TElement>
@@ -43,7 +43,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
     constructor(intention: JetSelfTargetingRangeIntention<TElement>, additionalChecker: (TElement) -> Boolean = { true })
     : this(listOf(IntentionData(intention, additionalChecker)), null, intention.elementType)
 
-    public data class IntentionData<TElement : JetElement>(
+    public data class IntentionData<TElement : KtElement>(
             val intention: JetSelfTargetingRangeIntention<TElement>,
             val additionalChecker: (TElement) -> Boolean = { true }
     )
@@ -88,7 +88,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
         get() = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
     /* we implement IntentionAction to provide isAvailable which will be used to hide outdated items and make sure we never call 'invoke' for such item */
-    private class IntentionBasedQuickFix<TElement : JetElement>(
+    private class IntentionBasedQuickFix<TElement : KtElement>(
             private val intention: JetSelfTargetingRangeIntention<TElement>,
             private val text: String,
             private val additionalChecker: (TElement) -> Boolean,

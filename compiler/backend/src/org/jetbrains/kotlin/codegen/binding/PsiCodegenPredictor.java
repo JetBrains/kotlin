@@ -40,8 +40,8 @@ public final class PsiCodegenPredictor {
             @NotNull JvmFileClassesProvider fileClassesManager
     ) {
         PsiElement element = descriptorToDeclaration(descriptor);
-        if (element instanceof JetDeclaration) {
-            String classNameFromPsi = getPredefinedJvmInternalName((JetDeclaration) element, fileClassesManager);
+        if (element instanceof KtDeclaration) {
+            String classNameFromPsi = getPredefinedJvmInternalName((KtDeclaration) element, fileClassesManager);
             assert classNameFromPsi == null || Type.getObjectType(classNameFromPsi).equals(nameFromDescriptors) :
                     String.format("Invalid algorithm for getting qualified name from psi! Predicted: %s, actual %s\n" +
                                   "Element: %s", classNameFromPsi, nameFromDescriptors, element.getText());
@@ -55,13 +55,13 @@ public final class PsiCodegenPredictor {
      */
     @Nullable
     public static String getPredefinedJvmInternalName(
-            @NotNull JetDeclaration declaration,
+            @NotNull KtDeclaration declaration,
             @NotNull JvmFileClassesProvider fileClassesProvider
     ) {
         // TODO: Method won't work for declarations inside companion objects
         // TODO: Method won't give correct class name for traits implementations
 
-        JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(declaration);
+        KtDeclaration parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(declaration);
 
         String parentInternalName;
         if (parentDeclaration != null) {
@@ -71,30 +71,30 @@ public final class PsiCodegenPredictor {
             }
         }
         else {
-            JetFile containingFile = declaration.getContainingJetFile();
+            KtFile containingFile = declaration.getContainingJetFile();
 
-            if (declaration instanceof JetNamedFunction) {
-                Name name = ((JetNamedFunction) declaration).getNameAsName();
+            if (declaration instanceof KtNamedFunction) {
+                Name name = ((KtNamedFunction) declaration).getNameAsName();
                 return name == null ? null : FileClasses.getFileClassInternalName(fileClassesProvider, containingFile) + "$" + name.asString();
             }
 
             parentInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(containingFile.getPackageFqName());
         }
 
-        if (!PsiTreeUtil.instanceOf(declaration, JetClass.class, JetObjectDeclaration.class, JetNamedFunction.class, JetProperty.class) ||
-                isEnumEntryWithoutBody(declaration)) {
+        if (!PsiTreeUtil.instanceOf(declaration, KtClass.class, KtObjectDeclaration.class, KtNamedFunction.class, KtProperty.class) ||
+            isEnumEntryWithoutBody(declaration)) {
             // Other subclasses are not valid for class name prediction.
             // For example JetFunctionLiteral
             return null;
         }
 
-        Name name = ((JetNamedDeclaration) declaration).getNameAsName();
+        Name name = ((KtNamedDeclaration) declaration).getNameAsName();
         if (name == null) {
             return null;
         }
 
-        if (declaration instanceof JetNamedFunction) {
-            if (!(parentDeclaration instanceof JetClass || parentDeclaration instanceof JetObjectDeclaration)) {
+        if (declaration instanceof KtNamedFunction) {
+            if (!(parentDeclaration instanceof KtClass || parentDeclaration instanceof KtObjectDeclaration)) {
                 // Can't generate predefined name for internal functions
                 return null;
             }
@@ -102,7 +102,7 @@ public final class PsiCodegenPredictor {
 
         // NOTE: looks like a bug - for class in getter of top level property class name will be $propertyName$ClassName but not
         // PackageClassName$propertyName$ClassName
-        if (declaration instanceof JetProperty) {
+        if (declaration instanceof KtProperty) {
             return parentInternalName + "$" + name.asString();
         }
 
@@ -113,11 +113,11 @@ public final class PsiCodegenPredictor {
         return parentInternalName + (parentDeclaration == null ? "/" : "$") + name.asString();
     }
 
-    private static boolean isEnumEntryWithoutBody(JetDeclaration declaration) {
-        if (!(declaration instanceof JetEnumEntry)) {
+    private static boolean isEnumEntryWithoutBody(KtDeclaration declaration) {
+        if (!(declaration instanceof KtEnumEntry)) {
             return false;
         }
-        JetClassBody body = ((JetEnumEntry) declaration).getBody();
+        KtClassBody body = ((KtEnumEntry) declaration).getBody();
         return body == null || body.getDeclarations().size() == 0;
     }
 }

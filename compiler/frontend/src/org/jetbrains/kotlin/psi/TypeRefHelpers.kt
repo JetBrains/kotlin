@@ -16,33 +16,33 @@
 
 package org.jetbrains.kotlin.psi.typeRefHelpers
 
-import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiErrorElement
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetFunctionType
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-fun getTypeReference(declaration: JetCallableDeclaration): JetTypeReference? {
+fun getTypeReference(declaration: KtCallableDeclaration): KtTypeReference? {
     return declaration.getFirstChild()!!.siblings(forward = true)
-            .dropWhile { it.getNode()!!.getElementType() != JetTokens.COLON }
-            .firstIsInstanceOrNull<JetTypeReference>()
+            .dropWhile { it.getNode()!!.getElementType() != KtTokens.COLON }
+            .firstIsInstanceOrNull<KtTypeReference>()
 }
 
-fun setTypeReference(declaration: JetCallableDeclaration, addAfter: PsiElement?, typeRef: JetTypeReference?): JetTypeReference? {
+fun setTypeReference(declaration: KtCallableDeclaration, addAfter: PsiElement?, typeRef: KtTypeReference?): KtTypeReference? {
     val oldTypeRef = getTypeReference(declaration)
     if (typeRef != null) {
         if (oldTypeRef != null) {
-            return oldTypeRef.replace(typeRef) as JetTypeReference
+            return oldTypeRef.replace(typeRef) as KtTypeReference
         }
         else {
             var anchor = addAfter ?: declaration.getNameIdentifier()?.siblings(forward = true)?.firstOrNull { it is PsiErrorElement }
-            val newTypeRef = declaration.addAfter(typeRef, anchor) as JetTypeReference
-            declaration.addAfter(JetPsiFactory(declaration.getProject()).createColon(), anchor)
+            val newTypeRef = declaration.addAfter(typeRef, anchor) as KtTypeReference
+            declaration.addAfter(KtPsiFactory(declaration.getProject()).createColon(), anchor)
             return newTypeRef
         }
     }
@@ -56,22 +56,22 @@ fun setTypeReference(declaration: JetCallableDeclaration, addAfter: PsiElement?,
     }
 }
 
-fun JetCallableDeclaration.setReceiverTypeReference(typeRef: JetTypeReference?): JetTypeReference? {
-    val needParentheses = typeRef != null && typeRef.typeElement is JetFunctionType && !typeRef.hasParentheses()
+fun KtCallableDeclaration.setReceiverTypeReference(typeRef: KtTypeReference?): KtTypeReference? {
+    val needParentheses = typeRef != null && typeRef.typeElement is KtFunctionType && !typeRef.hasParentheses()
     val oldTypeRef = getReceiverTypeReference()
     if (typeRef != null) {
         val newTypeRef =
                 if (oldTypeRef != null) {
-                    oldTypeRef.replace(typeRef) as JetTypeReference
+                    oldTypeRef.replace(typeRef) as KtTypeReference
                 }
                 else {
                     val anchor = getNameIdentifier() ?: valueParameterList
-                    val newTypeRef = addBefore(typeRef, anchor) as JetTypeReference
-                    addAfter(JetPsiFactory(getProject()).createDot(), newTypeRef)
+                    val newTypeRef = addBefore(typeRef, anchor) as KtTypeReference
+                    addAfter(KtPsiFactory(getProject()).createDot(), newTypeRef)
                     newTypeRef
                 }
         if (needParentheses) {
-            val argList = JetPsiFactory(getProject()).createCallArguments("()")
+            val argList = KtPsiFactory(getProject()).createCallArguments("()")
             newTypeRef.addBefore(argList.getLeftParenthesis()!!, newTypeRef.getFirstChild())
             newTypeRef.add(argList.getRightParenthesis()!!)
         }
@@ -79,7 +79,7 @@ fun JetCallableDeclaration.setReceiverTypeReference(typeRef: JetTypeReference?):
     }
     else {
         if (oldTypeRef != null) {
-            val dot = oldTypeRef.siblings(forward = true).firstOrNull { it.getNode().getElementType() == JetTokens.DOT }
+            val dot = oldTypeRef.siblings(forward = true).firstOrNull { it.getNode().getElementType() == KtTokens.DOT }
             deleteChildRange(oldTypeRef, dot ?: oldTypeRef)
         }
         return null

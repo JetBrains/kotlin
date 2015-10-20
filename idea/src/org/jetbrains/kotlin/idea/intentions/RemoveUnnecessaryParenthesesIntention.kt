@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.KtParenthesizedExpression
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 
-public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingIntention<JetParenthesizedExpression>(javaClass(), "Remove unnecessary parentheses") {
-    override fun isApplicableTo(element: JetParenthesizedExpression, caretOffset: Int): Boolean {
+public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingIntention<KtParenthesizedExpression>(javaClass(), "Remove unnecessary parentheses") {
+    override fun isApplicableTo(element: KtParenthesizedExpression, caretOffset: Int): Boolean {
         val expression = element.getExpression() ?: return false
-        if (!JetPsiUtil.areParenthesesUseless(element)) return false
+        if (!KtPsiUtil.areParenthesesUseless(element)) return false
         return !expression.getTextRange().containsInside(caretOffset)
     }
 
-    override fun applyTo(element: JetParenthesizedExpression, editor: Editor) {
+    override fun applyTo(element: KtParenthesizedExpression, editor: Editor) {
         element.replace(element.getExpression()!!)
     }
 }

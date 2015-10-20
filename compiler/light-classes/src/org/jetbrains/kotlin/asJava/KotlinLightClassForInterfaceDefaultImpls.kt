@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
 public open class KotlinLightClassForInterfaceDefaultImpls(
         manager: PsiManager,
         classFqName: FqName,
-        classOrObject: JetClassOrObject)
+        classOrObject: KtClassOrObject)
 : KotlinLightClassForExplicitDeclaration(manager, classFqName, classOrObject){
 
     override fun copy(): PsiElement {
-        return KotlinLightClassForInterfaceDefaultImpls(manager, classFqName, classOrObject.copy() as JetClassOrObject)
+        return KotlinLightClassForInterfaceDefaultImpls(manager, classFqName, classOrObject.copy() as KtClassOrObject)
     }
 
     override fun getTypeParameterList(): PsiTypeParameterList? = null

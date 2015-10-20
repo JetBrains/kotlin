@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
@@ -33,7 +33,7 @@ class ClassResolutionScopesSupport(
         private val classDescriptor: ClassDescriptor,
         storageManager: StorageManager,
         private val getOuterScope: () -> LexicalScope,
-        private val primaryConstructorParameters: List<JetParameter>? = null
+        private val primaryConstructorParameters: List<KtParameter>? = null
 ) {
     private fun scopeWithGenerics(parent: LexicalScope, debugName: String): LexicalScopeImpl {
         return LexicalScopeImpl(parent, classDescriptor, false, null, debugName) {
@@ -108,7 +108,7 @@ class ClassResolutionScopesSupport(
             ownerDescriptor: DeclarationDescriptor,
             classDescriptor: ClassDescriptor
     ): LexicalScope {
-        val staticScopes = ArrayList<JetScope>(3)
+        val staticScopes = ArrayList<KtScope>(3)
 
         // todo filter fake overrides
         staticScopes.add(classDescriptor.staticScope)

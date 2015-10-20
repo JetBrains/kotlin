@@ -60,11 +60,11 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.Severity;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
@@ -74,7 +74,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
@@ -148,7 +148,7 @@ public class JetTestUtils {
 
                 @Nullable
                 @Override
-                public JetType getType(@NotNull JetExpression expression) {
+                public KtType getType(@NotNull KtExpression expression) {
                     return DUMMY_TRACE.getType(expression);
                 }
 
@@ -183,13 +183,13 @@ public class JetTestUtils {
 
         @Nullable
         @Override
-        public JetType getType(@NotNull JetExpression expression) {
+        public KtType getType(@NotNull KtExpression expression) {
             JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
             return typeInfo != null ? typeInfo.getType() : null;
         }
 
         @Override
-        public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
+        public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
         }
 
         @Override
@@ -231,7 +231,7 @@ public class JetTestUtils {
 
                 @Nullable
                 @Override
-                public JetType getType(@NotNull JetExpression expression) {
+                public KtType getType(@NotNull KtExpression expression) {
                     return DUMMY_EXCEPTION_ON_ERROR_TRACE.getType(expression);
                 }
 
@@ -264,12 +264,12 @@ public class JetTestUtils {
 
         @Nullable
         @Override
-        public JetType getType(@NotNull JetExpression expression) {
+        public KtType getType(@NotNull KtExpression expression) {
             return null;
         }
 
         @Override
-        public void recordType(@NotNull JetExpression expression, @Nullable JetType type) {
+        public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
         }
 
         @Override
@@ -287,7 +287,7 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static AnalysisResult analyzeFile(@NotNull JetFile file, @NotNull KotlinCoreEnvironment environment) {
+    public static AnalysisResult analyzeFile(@NotNull KtFile file, @NotNull KotlinCoreEnvironment environment) {
         return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file, environment);
     }
 
@@ -384,7 +384,7 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static JetFile createFile(@NotNull @NonNls final String name, @NotNull String text, @NotNull Project project) {
+    public static KtFile createFile(@NotNull @NonNls final String name, @NotNull String text, @NotNull Project project) {
         String shortName = name.substring(name.lastIndexOf('/') + 1);
         shortName = shortName.substring(shortName.lastIndexOf('\\') + 1);
         LightVirtualFile virtualFile = new LightVirtualFile(shortName, KotlinLanguage.INSTANCE, text) {
@@ -399,7 +399,7 @@ public class JetTestUtils {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         PsiFileFactoryImpl factory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         //noinspection ConstantConditions
-        return (JetFile) factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
+        return (KtFile) factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
     }
 
     public static String doLoadFile(String myFullDataPath, String name) throws IOException {
@@ -460,7 +460,7 @@ public class JetTestUtils {
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
         List<ContentRoot> paths = environment.getConfiguration().get(CommonConfigurationKeys.CONTENT_ROOTS);
         if (paths == null) return;
-        List<JetFile> jetFiles = Lists.newArrayList();
+        List<KtFile> jetFiles = Lists.newArrayList();
         for (ContentRoot root : paths) {
             if (!(root instanceof KotlinSourceRoot)) continue;
 
@@ -691,14 +691,14 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static String getLastCommentInFile(@NotNull JetFile file) {
+    public static String getLastCommentInFile(@NotNull KtFile file) {
         return CollectionsKt.first(getLastCommentsInFile(file, CommentType.ALL, true));
     }
 
     @NotNull
-    public static List<String> getLastCommentsInFile(@NotNull JetFile file, CommentType commentType, boolean assertMustExist) {
+    public static List<String> getLastCommentsInFile(@NotNull KtFile file, CommentType commentType, boolean assertMustExist) {
         PsiElement lastChild = file.getLastChild();
-        if (lastChild != null && lastChild.getNode().getElementType().equals(JetTokens.WHITE_SPACE)) {
+        if (lastChild != null && lastChild.getNode().getElementType().equals(KtTokens.WHITE_SPACE)) {
             lastChild = lastChild.getPrevSibling();
         }
         assert lastChild != null;
@@ -706,13 +706,13 @@ public class JetTestUtils {
         List<String> comments = ContainerUtil.newArrayList();
 
         while (true) {
-            if (lastChild.getNode().getElementType().equals(JetTokens.BLOCK_COMMENT)) {
+            if (lastChild.getNode().getElementType().equals(KtTokens.BLOCK_COMMENT)) {
                 if (commentType == CommentType.ALL || commentType == CommentType.BLOCK_COMMENT) {
                     String lastChildText = lastChild.getText();
                     comments.add(lastChildText.substring(2, lastChildText.length() - 2).trim());
                 }
             }
-            else if (lastChild.getNode().getElementType().equals(JetTokens.EOL_COMMENT)) {
+            else if (lastChild.getNode().getElementType().equals(KtTokens.EOL_COMMENT)) {
                 if (commentType == CommentType.ALL || commentType == CommentType.LINE_COMMENT) {
                     comments.add(lastChild.getText().substring(2).trim());
                 }
@@ -894,14 +894,14 @@ public class JetTestUtils {
     }
 
     @NotNull
-    public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
+    public static KtFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
         String text = FileUtil.loadFile(ioFile, true);
-        return JetPsiFactoryKt.JetPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
+        return KtPsiFactoryKt.KtPsiFactory(project).createPhysicalFile(ioFile.getName(), text);
     }
 
     @NotNull
-    public static List<JetFile> loadToJetFiles(@NotNull KotlinCoreEnvironment environment, @NotNull List<File> files) throws IOException {
-        List<JetFile> jetFiles = Lists.newArrayList();
+    public static List<KtFile> loadToJetFiles(@NotNull KotlinCoreEnvironment environment, @NotNull List<File> files) throws IOException {
+        List<KtFile> jetFiles = Lists.newArrayList();
         for (File file : files) {
             jetFiles.add(loadJetFile(environment.getProject(), file));
         }

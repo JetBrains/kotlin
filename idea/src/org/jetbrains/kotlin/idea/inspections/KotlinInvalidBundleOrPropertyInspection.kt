@@ -39,8 +39,8 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
     override fun getDisplayName() = CodeInsightBundle.message("inspection.unresolved.property.key.reference.name")
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : JetVisitorVoid() {
-            private fun processResourceBundleReference(ref: ResourceBundleReference, template: JetStringTemplateExpression) {
+        return object : KtVisitorVoid() {
+            private fun processResourceBundleReference(ref: ResourceBundleReference, template: KtStringTemplateExpression) {
                 if (ref.resolve() == null) {
                     holder.registerProblem(
                             template,
@@ -51,7 +51,7 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                 }
             }
 
-            private fun processPropertyReference(ref: PropertyReference, template: JetStringTemplateExpression) {
+            private fun processPropertyReference(ref: PropertyReference, template: KtStringTemplateExpression) {
                 val property = ref.resolve() as? Property
                 if (property == null) {
                     holder.registerProblem(
@@ -64,10 +64,10 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                     return
                 }
 
-                val argument = template.parents.firstIsInstanceOrNull<JetValueArgument>() ?: return
-                if (argument.getArgumentExpression() != JetPsiUtil.deparenthesize(template) ) return
+                val argument = template.parents.firstIsInstanceOrNull<KtValueArgument>() ?: return
+                if (argument.getArgumentExpression() != KtPsiUtil.deparenthesize(template) ) return
 
-                val callExpression = argument.getStrictParentOfType<JetCallExpression>() ?: return
+                val callExpression = argument.getStrictParentOfType<KtCallExpression>() ?: return
                 val resolvedCall = callExpression.getResolvedCall(callExpression.analyze(BodyResolveMode.PARTIAL)) ?: return
 
                 val resolvedArguments = resolvedCall.valueArgumentsByIndex ?: return
@@ -91,7 +91,7 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                 }
             }
 
-            override fun visitStringTemplateExpression(expression: JetStringTemplateExpression) {
+            override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
                 for (ref in expression.references) {
                     when (ref) {
                         is ResourceBundleReference -> processResourceBundleReference(ref, expression)

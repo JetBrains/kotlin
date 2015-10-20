@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public interface ReceiverValue {
     ReceiverValue NO_RECEIVER = new ReceiverValue() {
         @NotNull
         @Override
-        public JetType getType() {
+        public KtType getType() {
             throw new UnsupportedOperationException("NO_RECEIVER.getType()");
         }
 
@@ -41,7 +41,7 @@ public interface ReceiverValue {
     ReceiverValue IRRELEVANT_RECEIVER = new ReceiverValue() {
         @NotNull
         @Override
-        public JetType getType() {
+        public KtType getType() {
             throw new UnsupportedOperationException("IRRELEVANT_RECEIVER.getType()");
         }
 
@@ -57,7 +57,7 @@ public interface ReceiverValue {
     };
 
     @NotNull
-    JetType getType();
+    KtType getType();
 
     boolean exists();
 }

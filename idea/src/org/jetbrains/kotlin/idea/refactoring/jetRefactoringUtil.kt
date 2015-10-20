@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -90,18 +90,18 @@ fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     return data
 }
 
-fun getOrCreateKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile? =
-        (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir)) as? JetFile
+fun getOrCreateKotlinFile(fileName: String, targetDir: PsiDirectory): KtFile? =
+        (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir)) as? KtFile
 
 fun createKotlinFile(fileName: String,
                      targetDir: PsiDirectory,
-                     packageName: String? = targetDir.getPackage()?.qualifiedName): JetFile {
+                     packageName: String? = targetDir.getPackage()?.qualifiedName): KtFile {
     targetDir.checkCreateFile(fileName)
     val file = PsiFileFactory.getInstance(targetDir.getProject()).createFileFromText(
-            fileName, JetFileType.INSTANCE, if (!packageName.isNullOrBlank()) "package $packageName \n\n" else ""
+            fileName, KotlinFileType.INSTANCE, if (!packageName.isNullOrBlank()) "package $packageName \n\n" else ""
     )
 
-    return targetDir.add(file) as JetFile
+    return targetDir.add(file) as KtFile
 }
 
 public fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance().findFileByIoFile(this)
@@ -118,7 +118,7 @@ public fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? = PsiMana
 
 public fun PsiElement.getUsageContext(): PsiElement {
     return when (this) {
-        is JetElement -> PsiTreeUtil.getParentOfType(this, javaClass<JetNamedDeclaration>(), javaClass<JetFile>())!!
+        is KtElement -> PsiTreeUtil.getParentOfType(this, javaClass<KtNamedDeclaration>(), javaClass<KtFile>())!!
         else -> ConflictsUtil.getContainer(this)
     }
 }
@@ -126,43 +126,43 @@ public fun PsiElement.getUsageContext(): PsiElement {
 public fun PsiElement.isInJavaSourceRoot(): Boolean =
         !JavaProjectRootsUtil.isOutsideJavaSourceRoot(getContainingFile())
 
-public inline fun JetFile.createTempCopy(textTransform: (String) -> String): JetFile {
-    val tmpFile = JetPsiFactory(this).createAnalyzableFile(getName(), textTransform(getText() ?: ""), this)
+public inline fun KtFile.createTempCopy(textTransform: (String) -> String): KtFile {
+    val tmpFile = KtPsiFactory(this).createAnalyzableFile(getName(), textTransform(getText() ?: ""), this)
     tmpFile.setOriginalFile(this)
     tmpFile.suppressDiagnosticsInDebugMode = suppressDiagnosticsInDebugMode
     return tmpFile
 }
 
-public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<JetElement> {
-    val containers = ArrayList<JetElement>()
+public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<KtElement> {
+    val containers = ArrayList<KtElement>()
 
     var objectFound = false
     val parents = if (strict) parents else parentsWithSelf
     for (element in parents) {
         val isValidContainer = when (element) {
-            is JetFile -> true
-            is JetClassBody -> !objectFound || element.parent is JetObjectDeclaration
-            is JetBlockExpression -> !objectFound
+            is KtFile -> true
+            is KtClassBody -> !objectFound || element.parent is KtObjectDeclaration
+            is KtBlockExpression -> !objectFound
             else -> false
         }
         if (!isValidContainer) continue
 
-        containers.add(element as JetElement)
+        containers.add(element as KtElement)
 
-        ((element as? JetClassBody)?.parent as? JetObjectDeclaration)?.let { objectFound = true }
+        ((element as? KtClassBody)?.parent as? KtObjectDeclaration)?.let { objectFound = true }
     }
 
     return containers
 }
 
-public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<JetElement> {
+public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<KtElement> {
     fun getEnclosingDeclaration(element: PsiElement, strict: Boolean): PsiElement? {
         return (if (strict) element.parents else element.parentsWithSelf)
                 .filter {
-                    (it is JetDeclarationWithBody && it !is JetFunctionLiteral)
-                    || it is JetClassInitializer
-                    || it is JetClassBody
-                    || it is JetFile
+                    (it is KtDeclarationWithBody && it !is KtFunctionLiteral)
+                    || it is KtClassInitializer
+                    || it is KtClassBody
+                    || it is KtFile
                 }
                 .firstOrNull()
     }
@@ -170,19 +170,19 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
     if (includeAll) return getAllExtractionContainers(strict)
 
     val enclosingDeclaration = getEnclosingDeclaration(this, strict)?.let {
-        if (it is JetDeclarationWithBody || it is JetClassInitializer) getEnclosingDeclaration(it, true) else it
+        if (it is KtDeclarationWithBody || it is KtClassInitializer) getEnclosingDeclaration(it, true) else it
     }
 
     return when (enclosingDeclaration) {
-        is JetFile -> Collections.singletonList(enclosingDeclaration)
-        is JetClassBody -> getAllExtractionContainers(strict).filterIsInstance<JetClassBody>()
+        is KtFile -> Collections.singletonList(enclosingDeclaration)
+        is KtClassBody -> getAllExtractionContainers(strict).filterIsInstance<KtClassBody>()
         else -> {
             val targetContainer = when (enclosingDeclaration) {
-                is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-                is JetClassInitializer -> enclosingDeclaration.getBody()
+                is KtDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
+                is KtClassInitializer -> enclosingDeclaration.getBody()
                 else -> null
             }
-            if (targetContainer is JetBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
+            if (targetContainer is KtBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
         }
     }
 }
@@ -321,15 +321,15 @@ fun PsiElement.getLineCount(): Int {
 
 fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
 
-public fun JetElement.getContextForContainingDeclarationBody(): BindingContext? {
-    val enclosingDeclaration = getStrictParentOfType<JetDeclaration>()
+public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
+    val enclosingDeclaration = getStrictParentOfType<KtDeclaration>()
     val bodyElement = when (enclosingDeclaration) {
-        is JetDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-        is JetWithExpressionInitializer -> enclosingDeclaration.getInitializer()
-        is JetMultiDeclaration -> enclosingDeclaration.getInitializer()
-        is JetParameter -> enclosingDeclaration.getDefaultValue()
-        is JetClassInitializer -> enclosingDeclaration.getBody()
-        is JetClass -> {
+        is KtDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
+        is KtWithExpressionInitializer -> enclosingDeclaration.getInitializer()
+        is KtMultiDeclaration -> enclosingDeclaration.getInitializer()
+        is KtParameter -> enclosingDeclaration.getDefaultValue()
+        is KtClassInitializer -> enclosingDeclaration.getBody()
+        is KtClass -> {
             val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
             if (delegationSpecifierList.isAncestor(this)) this else null
         }
@@ -350,19 +350,19 @@ public fun chooseContainerElement<T>(
             containers,
             object : PsiElementListCellRenderer<PsiElement>() {
                 private fun PsiElement.renderName(): String {
-                    if (this is JetPropertyAccessor) {
-                        return (getParent() as JetProperty).renderName() + if (isGetter()) ".get" else ".set"
+                    if (this is KtPropertyAccessor) {
+                        return (getParent() as KtProperty).renderName() + if (isGetter()) ".get" else ".set"
                     }
-                    if (this is JetObjectDeclaration && this.isCompanion()) {
-                        return "Companion object of ${getStrictParentOfType<JetClassOrObject>()?.renderName() ?: "<anonymous>"}"
+                    if (this is KtObjectDeclaration && this.isCompanion()) {
+                        return "Companion object of ${getStrictParentOfType<KtClassOrObject>()?.renderName() ?: "<anonymous>"}"
                     }
                     return (this as? PsiNamedElement)?.getName() ?: "<anonymous>"
                 }
 
                 private fun PsiElement.renderDeclaration(): String? {
                     val descriptor = when {
-                        this is JetFile -> getName()
-                        this is JetElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+                        this is KtFile -> getName()
+                        this is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
                         this is PsiMember -> getJavaMemberDescriptor()
                         else -> null
                     } ?: return null
@@ -381,8 +381,8 @@ public fun chooseContainerElement<T>(
 
                 private fun PsiElement.getRepresentativeElement(): PsiElement {
                     return when (this) {
-                        is JetBlockExpression -> (getParent() as? JetDeclarationWithBody) ?: this
-                        is JetClassBody -> getParent() as JetClassOrObject
+                        is KtBlockExpression -> (getParent() as? KtDeclarationWithBody) ?: this
+                        is KtClassBody -> getParent() as KtClassOrObject
                         else -> this
                     }
                 }
@@ -430,7 +430,7 @@ public fun PsiElement.canRefactor(): Boolean {
     return when {
         this is PsiPackage ->
             getDirectories().any { it.canRefactor() }
-        this is JetElement,
+        this is KtElement,
         this is PsiMember && getLanguage() == JavaLanguage.INSTANCE,
         this is PsiDirectory ->
             isWritable() && ProjectRootsUtil.isInProjectSource(this)
@@ -478,7 +478,7 @@ private fun copyTypeParameters<T>(
     }
 }
 
-public fun createJavaMethod(function: JetFunction, targetClass: PsiClass): PsiMethod {
+public fun createJavaMethod(function: KtFunction, targetClass: PsiClass): PsiMethod {
     val template = LightClassUtil.getLightClassMethod(function)
                    ?: throw AssertionError("Can't generate light method: ${function.getElementTextWithContext()}")
     return createJavaMethod(template, targetClass)
@@ -526,7 +526,7 @@ public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMeth
     return method
 }
 
-fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
+fun createJavaField(property: KtProperty, targetClass: PsiClass): PsiField {
     val template = LightClassUtil.getLightClassPropertyMethods(property).getter
                    ?: throw AssertionError("Can't generate light method: ${property.getElementTextWithContext()}")
 
@@ -545,7 +545,7 @@ fun createJavaField(property: JetProperty, targetClass: PsiClass): PsiField {
     return field
 }
 
-fun createJavaClass(klass: JetClass, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
+fun createJavaClass(klass: KtClass, targetClass: PsiClass?, forcePlainClass: Boolean = false): PsiClass {
     val kind = if (forcePlainClass) ClassKind.CLASS else (klass.resolveToDescriptor() as ClassDescriptor).getKind()
 
     val factory = PsiElementFactory.SERVICE.getInstance(klass.getProject())
@@ -619,14 +619,14 @@ fun PsiElement.j2kText(): String? {
     return j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
 }
 
-fun PsiExpression.j2k(): JetExpression? {
+fun PsiExpression.j2k(): KtExpression? {
     val text = j2kText() ?: return null
-    return JetPsiFactory(project).createExpression(text)
+    return KtPsiFactory(project).createExpression(text)
 }
 
-fun PsiMember.j2k(): JetNamedDeclaration? {
+fun PsiMember.j2k(): KtNamedDeclaration? {
     val text = j2kText() ?: return null
-    return JetPsiFactory(project).createDeclaration(text)
+    return KtPsiFactory(project).createDeclaration(text)
 }
 
 public fun (() -> Any).runRefactoringWithPostprocessing(
@@ -664,7 +664,7 @@ public fun (() -> Any).runRefactoringWithPostprocessing(
 }
 
 @Throws(ConfigurationException::class)
-public fun JetElement.validateElement(errorMessage: String) {
+public fun KtElement.validateElement(errorMessage: String) {
     try {
         AnalyzingUtils.checkForSyntacticErrors(this)
     }
@@ -694,18 +694,18 @@ public fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier
 
 public fun FqNameBase.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
 
-public fun JetClass.createPrimaryConstructorIfAbsent(): JetPrimaryConstructor {
+public fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {
     val constructor = getPrimaryConstructor()
     if (constructor != null) return constructor
     var anchor: PsiElement? = typeParameterList
     if (anchor == null) anchor = nameIdentifier
     if (anchor == null) anchor = lastChild
-    return addAfter(JetPsiFactory(project).createPrimaryConstructor(), anchor) as JetPrimaryConstructor
+    return addAfter(KtPsiFactory(project).createPrimaryConstructor(), anchor) as KtPrimaryConstructor
 }
 
-public fun JetClass.createPrimaryConstructorParameterListIfAbsent(): JetParameterList {
+public fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterList {
     val constructor = createPrimaryConstructorIfAbsent()
     val parameterList = constructor.valueParameterList
     if (parameterList != null) return parameterList
-    return constructor.add(JetPsiFactory(project).createParameterList("()")) as JetParameterList
+    return constructor.add(KtPsiFactory(project).createParameterList("()")) as KtParameterList
 }

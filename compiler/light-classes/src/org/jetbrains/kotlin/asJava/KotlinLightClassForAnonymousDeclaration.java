@@ -26,9 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.Collection;
 
@@ -37,7 +37,7 @@ class KotlinLightClassForAnonymousDeclaration extends KotlinLightClassForExplici
 
     private SoftReference<PsiClassType> cachedBaseType = null;
 
-    KotlinLightClassForAnonymousDeclaration(@NotNull PsiManager manager, @NotNull FqName name, @NotNull JetClassOrObject classOrObject) {
+    KotlinLightClassForAnonymousDeclaration(@NotNull PsiManager manager, @NotNull FqName name, @NotNull KtClassOrObject classOrObject) {
         super(manager, name, classOrObject);
     }
 
@@ -52,11 +52,11 @@ class KotlinLightClassForAnonymousDeclaration extends KotlinLightClassForExplici
         ClassDescriptor descriptor = getDescriptor();
         if (descriptor == null) return CommonClassNames.JAVA_LANG_OBJECT;
 
-        Collection<JetType> superTypes = descriptor.getTypeConstructor().getSupertypes();
+        Collection<KtType> superTypes = descriptor.getTypeConstructor().getSupertypes();
 
         if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT;
 
-        JetType superType = superTypes.iterator().next();
+        KtType superType = superTypes.iterator().next();
         DeclarationDescriptor superClassDescriptor = superType.getConstructor().getDeclarationDescriptor();
 
         if (superClassDescriptor == null) {

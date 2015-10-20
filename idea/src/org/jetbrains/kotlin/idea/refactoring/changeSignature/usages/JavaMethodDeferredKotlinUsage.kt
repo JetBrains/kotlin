@@ -20,21 +20,21 @@ import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.psi.JetConstructorDelegationCall
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.types.KtType
 
 public abstract class JavaMethodDeferredKotlinUsage<T : PsiElement>(element: T) : UsageInfo(element) {
     abstract fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<T>
 }
 
 public class DeferredSAMUsage(
-        val functionLiteral: JetFunctionLiteral,
+        val functionLiteral: KtFunctionLiteral,
         val functionDescriptor: FunctionDescriptor,
-        val samCallType: JetType
-): JavaMethodDeferredKotlinUsage<JetFunctionLiteral>(functionLiteral) {
+        val samCallType: KtType
+): JavaMethodDeferredKotlinUsage<KtFunctionLiteral>(functionLiteral) {
         override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetFunctionLiteral> {
                 return object : JavaMethodKotlinUsageWithDelegate<JetFunctionLiteral>(functionLiteral, javaMethodChangeInfo) {
                         override val delegateUsage = JetCallableDefinitionUsage(
@@ -47,20 +47,20 @@ public class DeferredSAMUsage(
 }
 
 public class DeferredJavaMethodKotlinCallerUsage(
-        val declaration: JetNamedDeclaration
-) : JavaMethodDeferredKotlinUsage<JetNamedDeclaration>(declaration) {
-    override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetNamedDeclaration> {
-        return object : JavaMethodKotlinUsageWithDelegate<JetNamedDeclaration>(declaration, javaMethodChangeInfo) {
+        val declaration: KtNamedDeclaration
+) : JavaMethodDeferredKotlinUsage<KtNamedDeclaration>(declaration) {
+    override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtNamedDeclaration> {
+        return object : JavaMethodKotlinUsageWithDelegate<KtNamedDeclaration>(declaration, javaMethodChangeInfo) {
             override val delegateUsage = KotlinCallerUsage(declaration)
         }
     }
 }
 
 public class JavaConstructorDeferredUsageInDelegationCall(
-        val delegationCall: JetConstructorDelegationCall
-) : JavaMethodDeferredKotlinUsage<JetConstructorDelegationCall>(delegationCall) {
-    override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetConstructorDelegationCall> {
-        return object : JavaMethodKotlinUsageWithDelegate<JetConstructorDelegationCall>(delegationCall, javaMethodChangeInfo) {
+        val delegationCall: KtConstructorDelegationCall
+) : JavaMethodDeferredKotlinUsage<KtConstructorDelegationCall>(delegationCall) {
+    override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtConstructorDelegationCall> {
+        return object : JavaMethodKotlinUsageWithDelegate<KtConstructorDelegationCall>(delegationCall, javaMethodChangeInfo) {
             override val delegateUsage = JetConstructorDelegationCallUsage(delegationCall, javaMethodChangeInfo)
         }
     }

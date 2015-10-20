@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
-import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -34,33 +34,33 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.util.*
 
 public class JetParameterInfo(
         val callableDescriptor: CallableDescriptor,
         val originalIndex: Int = -1,
         private var name: String,
-        type: JetType? = null,
-        var defaultValueForParameter: JetExpression? = null,
-        var defaultValueForCall: JetExpression? = null,
+        type: KtType? = null,
+        var defaultValueForParameter: KtExpression? = null,
+        var defaultValueForCall: KtExpression? = null,
         var valOrVar: JetValVar = JetValVar.None,
-        val modifierList: JetModifierList? = null
+        val modifierList: KtModifierList? = null
 ): ParameterInfo {
-    val originalType: JetType? = type
+    val originalType: KtType? = type
     var currentTypeText: String = getOldTypeText()
 
     public val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>
 
     init {
-        val file = defaultValueForCall?.getContainingFile() as? JetFile
+        val file = defaultValueForCall?.getContainingFile() as? KtFile
         defaultValueParameterReferences =
                 if (defaultValueForCall != null && file != null && (file.isPhysical() || file.analysisContext != null)) {
                     val project = file.getProject()
                     val map = LinkedHashMap<PsiReference, DeclarationDescriptor>()
 
                     defaultValueForCall!!.accept(
-                            object : JetTreeVisitorVoid() {
+                            object : KtTreeVisitorVoid() {
                                 private fun selfParameterOrNull(parameter: DeclarationDescriptor?): ValueParameterDescriptor? {
                                     return if (parameter is ValueParameterDescriptor &&
                                                compareDescriptors(project, parameter.getContainingDeclaration(), callableDescriptor)) {
@@ -87,8 +87,8 @@ public class JetParameterInfo(
                                 }
 
                                 private fun getRelevantDescriptor(
-                                        expression: JetSimpleNameExpression,
-                                        ref: JetReference
+                                        expression: KtSimpleNameExpression,
+                                        ref: KtReference
                                 ): DeclarationDescriptor? {
                                     val context = expression.analyze(BodyResolveMode.PARTIAL)
 
@@ -96,7 +96,7 @@ public class JetParameterInfo(
                                     if (descriptor is ValueParameterDescriptor) return selfParameterOrNull(descriptor)
 
                                     if (descriptor is PropertyDescriptor && callableDescriptor is ConstructorDescriptor) {
-                                        val parameter = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? JetParameter
+                                        val parameter = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtParameter
                                         return parameter?.let { selfParameterOrNull(context[BindingContext.VALUE_PARAMETER, it]) }
                                     }
 
@@ -111,7 +111,7 @@ public class JetParameterInfo(
                                     return null
                                 }
 
-                                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                                     val ref = expression.mainReference
                                     val descriptor = getRelevantDescriptor(expression, ref) ?: return
                                     map[ref] = descriptor
@@ -186,7 +186,7 @@ public class JetParameterInfo(
         if (originalIndex < 0) return !inheritedCallable.hasExpectedType()
 
         val inheritedParameterDescriptor = inheritedFunctionDescriptor.getValueParameters().get(originalIndex)
-        val parameter = DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor) as? JetParameter ?: return false
+        val parameter = DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor) as? KtParameter ?: return false
         return parameter.getTypeReference() != null
     }
 

@@ -23,7 +23,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Pair
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
-import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.*
 
@@ -32,7 +32,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
         val expression = findExpressionInner(elementAtCaret, true) ?: return null
 
         val expressionText = getElementInfo(expression) { it.getText() }
-        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expressionText, "", JetFileType.INSTANCE)
+        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expressionText, "", KotlinFileType.INSTANCE)
     }
 
     override fun findExpression(elementAtCaret: PsiElement, allowMethodCalls: Boolean): Pair<PsiElement, TextRange>? {
@@ -44,9 +44,9 @@ class KotlinEditorTextProvider : EditorTextProvider {
 
     companion object {
 
-        fun <T> getElementInfo(expr: JetExpression, f: (PsiElement) -> T): T {
+        fun <T> getElementInfo(expr: KtExpression, f: (PsiElement) -> T): T {
             var expressionText = f(expr)
-            if (expr is JetProperty) {
+            if (expr is KtProperty) {
                 val nameIdentifier = expr.getNameIdentifier()
                 if (nameIdentifier != null) {
                     expressionText = f(nameIdentifier)
@@ -55,13 +55,13 @@ class KotlinEditorTextProvider : EditorTextProvider {
             return expressionText
         }
 
-        fun findExpressionInner(element: PsiElement, allowMethodCalls: Boolean): JetExpression? {
+        fun findExpressionInner(element: PsiElement, allowMethodCalls: Boolean): KtExpression? {
             if (!isAcceptedAsCodeFragmentContext(element)) return null
 
-            val jetElement = PsiTreeUtil.getParentOfType(element, javaClass<JetElement>())
+            val jetElement = PsiTreeUtil.getParentOfType(element, javaClass<KtElement>())
             if (jetElement == null) return null
 
-            if (jetElement is JetProperty) {
+            if (jetElement is KtProperty) {
                 val nameIdentifier = jetElement.getNameIdentifier()
                 if (nameIdentifier == element) {
                     return jetElement
@@ -72,23 +72,23 @@ class KotlinEditorTextProvider : EditorTextProvider {
             if (parent == null) return null
 
             val newExpression = when (parent) {
-                is JetThisExpression,
-                is JetSuperExpression,
-                is JetReferenceExpression -> {
+                is KtThisExpression,
+                is KtSuperExpression,
+                is KtReferenceExpression -> {
                     val pparent = parent.getParent()
                     when (pparent) {
-                        is JetQualifiedExpression -> pparent
+                        is KtQualifiedExpression -> pparent
                         else -> parent
                     }
                 }
-                is JetQualifiedExpression -> {
+                is KtQualifiedExpression -> {
                     if (parent.getReceiverExpression() != jetElement) {
                         parent
                     } else {
                         null
                     }
                 }
-                is JetOperationExpression -> {
+                is KtOperationExpression -> {
                     if (parent.getOperationReference() == jetElement) {
                         parent
                     } else {
@@ -99,24 +99,24 @@ class KotlinEditorTextProvider : EditorTextProvider {
             }
 
             if (!allowMethodCalls && newExpression != null) {
-                fun PsiElement.isCall() = this is JetCallExpression || this is JetOperationExpression || this is JetArrayAccessExpression
+                fun PsiElement.isCall() = this is KtCallExpression || this is KtOperationExpression || this is KtArrayAccessExpression
 
                 if (newExpression.isCall() ||
-                        newExpression is JetQualifiedExpression && newExpression.getSelectorExpression()!!.isCall()) {
+                        newExpression is KtQualifiedExpression && newExpression.getSelectorExpression()!!.isCall()) {
                     return null
                 }
             }
 
             return when {
-                newExpression is JetExpression -> newExpression
-                jetElement is JetSimpleNameExpression -> jetElement
+                newExpression is KtExpression -> newExpression
+                jetElement is KtSimpleNameExpression -> jetElement
                 else -> null
             }
 
         }
 
         private val NOT_ACCEPTED_AS_CONTEXT_TYPES =
-                arrayOf(javaClass<JetUserType>(), javaClass<JetImportDirective>(), javaClass<JetPackageDirective>())
+                arrayOf(javaClass<KtUserType>(), javaClass<KtImportDirective>(), javaClass<KtPackageDirective>())
 
         fun isAcceptedAsCodeFragmentContext(element: PsiElement): Boolean {
             return element.javaClass !in NOT_ACCEPTED_AS_CONTEXT_TYPES &&

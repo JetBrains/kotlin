@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -41,9 +41,9 @@ public class KotlinReferenceImporter : ReferenceImporter {
             = autoImportReferenceAtCursor(editor, file, allowCaretNearRef = false)
 
     override fun autoImportReferenceAt(editor: Editor, file: PsiFile, offset: Int): Boolean {
-        if (file !is JetFile) return false
+        if (file !is KtFile) return false
 
-        val nameExpression = file.findElementAt(offset)?.parent as? JetSimpleNameExpression ?: return false
+        val nameExpression = file.findElementAt(offset)?.parent as? KtSimpleNameExpression ?: return false
 
         return nameExpression.autoImport(editor, file)
     }
@@ -52,7 +52,7 @@ public class KotlinReferenceImporter : ReferenceImporter {
 
         // TODO: use in table cell
         public fun autoImportReferenceAtCursor(editor: Editor, file: PsiFile, allowCaretNearRef: Boolean): Boolean {
-            if (file !is JetFile) return false
+            if (file !is KtFile) return false
 
             val caretOffset = editor.caretModel.offset
             val document = editor.document
@@ -61,7 +61,7 @@ public class KotlinReferenceImporter : ReferenceImporter {
             val endOffset = document.getLineEndOffset(lineNumber)
 
             val elements = file.elementsInRange(TextRange(startOffset, endOffset))
-                    .flatMap { it.collectDescendantsOfType<JetSimpleNameExpression>() }
+                    .flatMap { it.collectDescendantsOfType<KtSimpleNameExpression>() }
             for (element in elements) {
                 if (!allowCaretNearRef && element.endOffset == caretOffset) continue
 
@@ -73,13 +73,13 @@ public class KotlinReferenceImporter : ReferenceImporter {
             return false
         }
 
-        protected fun hasUnresolvedImportWhichCanImport(file: JetFile, name: String): Boolean {
+        protected fun hasUnresolvedImportWhichCanImport(file: KtFile, name: String): Boolean {
             return file.importDirectives.any {
                 it.targetDescriptors().isEmpty() && (it.isAllUnder || it.importPath?.importedName?.asString() == name)
             }
         }
 
-        private fun JetSimpleNameExpression.autoImport(editor: Editor, file: JetFile): Boolean {
+        private fun KtSimpleNameExpression.autoImport(editor: Editor, file: KtFile): Boolean {
             if (!CodeInsightSettings.getInstance().ADD_UNAMBIGIOUS_IMPORTS_ON_THE_FLY) return false
             if (!DaemonListeners.canChangeFileSilently(file)) return false
             if (hasUnresolvedImportWhichCanImport(file, getReferencedName())) return false

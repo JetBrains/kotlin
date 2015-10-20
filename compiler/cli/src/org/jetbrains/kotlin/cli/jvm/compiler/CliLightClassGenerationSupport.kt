@@ -36,15 +36,15 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
@@ -79,11 +79,11 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         trace.setKotlinCodeAnalyzer(codeAnalyzer)
     }
 
-    override fun getContextForPackage(files: Collection<JetFile>): LightClassConstructionContext {
+    override fun getContextForPackage(files: Collection<KtFile>): LightClassConstructionContext {
         return getContext()
     }
 
-    override fun getContextForClassOrObject(classOrObject: JetClassOrObject): LightClassConstructionContext {
+    override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
         return getContext()
     }
 
@@ -91,29 +91,29 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         return LightClassConstructionContext(bindingContext, module)
     }
 
-    override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<JetClassOrObject> {
+    override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
         return ResolveSessionUtils.getClassDescriptorsByFqName(module, fqName).map {
             val element = DescriptorToSourceUtils.getSourceFromDescriptor(it)
-            if (element is JetClassOrObject && PsiSearchScopeUtil.isInScope(searchScope, element)) {
+            if (element is KtClassOrObject && PsiSearchScopeUtil.isInScope(searchScope, element)) {
                 element
             }
             else null
         }.filterNotNull()
     }
 
-    override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<JetFile> {
+    override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
         return bindingContext.get(BindingContext.PACKAGE_TO_FILES, fqName)?.filter {
             PsiSearchScopeUtil.isInScope(searchScope, it)
         } ?: emptyList()
     }
 
     override fun findClassOrObjectDeclarationsInPackage(
-            packageFqName: FqName, searchScope: GlobalSearchScope): Collection<JetClassOrObject> {
+            packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
         val files = findFilesForPackage(packageFqName, searchScope)
-        val result = SmartList<JetClassOrObject>()
+        val result = SmartList<KtClassOrObject>()
         for (file in files) {
             for (declaration in file.declarations) {
-                if (declaration is JetClassOrObject) {
+                if (declaration is KtClassOrObject) {
                     result.add(declaration)
                 }
             }
@@ -127,7 +127,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> {
         val packageView = module.getPackage(fqn)
-        val members = packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, JetScope.ALL_NAME_FILTER)
+        val members = packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, KtScope.ALL_NAME_FILTER)
         return ContainerUtil.mapNotNull(members, object : Function<DeclarationDescriptor, FqName> {
             override fun `fun`(member: DeclarationDescriptor): FqName? {
                 if (member is PackageViewDescriptor) {
@@ -138,11 +138,11 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         })
     }
 
-    override fun getPsiClass(classOrObject: JetClassOrObject): PsiClass? {
+    override fun getPsiClass(classOrObject: KtClassOrObject): PsiClass? {
         return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject)
     }
 
-    override fun resolveClassToDescriptor(classOrObject: JetClassOrObject): ClassDescriptor? {
+    override fun resolveClassToDescriptor(classOrObject: KtClassOrObject): ClassDescriptor? {
         return bindingContext.get(BindingContext.CLASS, classOrObject)
     }
 
@@ -154,7 +154,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
                 KotlinLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade))
     }
 
-    override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<JetFile> {
+    override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
         if (facadeFqName.isRoot) return emptyList()
 
         return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(facadeFqName.parent(), scope)).filter {
@@ -162,7 +162,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         }
     }
 
-    override fun getContextForFacade(files: Collection<JetFile>): LightClassConstructionContext {
+    override fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext {
         return getContext()
     }
 
@@ -200,8 +200,8 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
 
             if (value == null) {
                 if (BindingContext.FUNCTION === slice || BindingContext.VARIABLE === slice) {
-                    if (key is JetDeclaration) {
-                        if (!JetPsiUtil.isLocal(key)) {
+                    if (key is KtDeclaration) {
+                        if (!KtPsiUtil.isLocal(key)) {
                             kotlinCodeAnalyzer!!.resolveToDescriptor(key)
                             return super.get<K, V>(slice, key)
                         }

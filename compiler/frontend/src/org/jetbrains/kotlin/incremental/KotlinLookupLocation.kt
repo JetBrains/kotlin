@@ -17,6 +17,6 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 
-class KotlinLookupLocation(val element: JetElement) : LookupLocation
+class KotlinLookupLocation(val element: KtElement) : LookupLocation

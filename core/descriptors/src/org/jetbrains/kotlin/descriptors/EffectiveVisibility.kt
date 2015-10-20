@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeConstructor
 
 sealed class EffectiveVisibility(val name: String) {
@@ -231,9 +231,9 @@ sealed class EffectiveVisibility(val name: String) {
                     lowerBound(visibility.forVisibility(this), this?.forClass(classes + this@forClass) ?: Public)
                 }
 
-        fun JetType.forType() = forType(emptySet())
+        fun KtType.forType() = forType(emptySet())
 
-        private fun JetType.forType(types: Set<JetType>): EffectiveVisibility =
+        private fun KtType.forType(types: Set<KtType>): EffectiveVisibility =
                 if (this in types) Public
                 else lowerBound(constructor.forTypeConstructor(),
                                 arguments.map { it.type.forType(types + this) } )

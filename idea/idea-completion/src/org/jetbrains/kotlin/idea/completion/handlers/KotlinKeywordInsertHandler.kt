@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.completion.handlers
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.KtTokens.*
 
 object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
     private val NO_SPACE_AFTER = listOf(THIS_KEYWORD,

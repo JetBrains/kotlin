@@ -23,11 +23,11 @@ import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.JetTypeParameter;
-import org.jetbrains.kotlin.psi.JetTypeParameterListOwner;
+import org.jetbrains.kotlin.psi.KtTypeParameter;
+import org.jetbrains.kotlin.psi.KtTypeParameterListOwner;
 
 public class KotlinLightTypeParameter
-        extends AbstractLightClass implements PsiTypeParameter, KotlinLightElement<JetTypeParameter, PsiTypeParameter> {
+        extends AbstractLightClass implements PsiTypeParameter, KotlinLightElement<KtTypeParameter, PsiTypeParameter> {
     private final PsiTypeParameterListOwner owner;
     private final int index;
     private final String name;
@@ -50,8 +50,8 @@ public class KotlinLightTypeParameter
 
     @NotNull
     @Override
-    public JetTypeParameter getOrigin() {
-        JetTypeParameterListOwner jetOwner = (JetTypeParameterListOwner) LightClassUtilsKt.getUnwrapped(owner);
+    public KtTypeParameter getOrigin() {
+        KtTypeParameterListOwner jetOwner = (KtTypeParameterListOwner) LightClassUtilsKt.getUnwrapped(owner);
         assert (jetOwner != null) : "Invalid type parameter owner: " + owner;
 
         return jetOwner.getTypeParameters().get(index);

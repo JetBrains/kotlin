@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.completion.shortenReferences
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -45,7 +45,7 @@ class StaticMembers(
 ) {
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
-                               context: JetSimpleNameExpression,
+                               context: KtSimpleNameExpression,
                                enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
         val expectedInfosByClass = expectedInfos.groupBy {
@@ -62,7 +62,7 @@ class StaticMembers(
             collection: MutableCollection<LookupElement>,
             classDescriptor: ClassDescriptor,
             expectedInfos: Collection<ExpectedInfo>,
-            context: JetSimpleNameExpression,
+            context: KtSimpleNameExpression,
             enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return

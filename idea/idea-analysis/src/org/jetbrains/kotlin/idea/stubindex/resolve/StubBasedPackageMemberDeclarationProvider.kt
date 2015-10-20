@@ -42,10 +42,10 @@ public class StubBasedPackageMemberDeclarationProvider(
         private val searchScope: GlobalSearchScope
 ) : PackageMemberDeclarationProvider {
 
-    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<JetDeclaration> {
-        val result = ArrayList<JetDeclaration>()
+    override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration> {
+        val result = ArrayList<KtDeclaration>()
 
-        fun addFromIndex(index: StringStubIndexExtension<out JetNamedDeclaration>) {
+        fun addFromIndex(index: StringStubIndexExtension<out KtNamedDeclaration>) {
             index.get(fqName.asString(), project, searchScope).filterTo(result) { nameFilter(it.getNameAsSafeName()) }
         }
 
@@ -69,11 +69,11 @@ public class StubBasedPackageMemberDeclarationProvider(
                 .map { JetClassInfoUtil.createClassLikeInfo(it) }
     }
 
-    override fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction> {
+    override fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction> {
         return JetTopLevelFunctionFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
-    override fun getPropertyDeclarations(name: Name): Collection<JetProperty> {
+    override fun getPropertyDeclarations(name: Name): Collection<KtProperty> {
         return JetTopLevelPropertyFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
@@ -81,7 +81,7 @@ public class StubBasedPackageMemberDeclarationProvider(
         return PackageIndexUtil.getSubPackageFqNames(fqName, searchScope, project, nameFilter)
     }
 
-    override fun getPackageFiles(): Collection<JetFile> {
+    override fun getPackageFiles(): Collection<KtFile> {
        return PackageIndexUtil.findFilesWithExactPackage(fqName, searchScope, project)
     }
 

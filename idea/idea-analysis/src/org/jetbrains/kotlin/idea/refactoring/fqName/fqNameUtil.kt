@@ -22,7 +22,7 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.ImportPath
 
 /**
@@ -37,7 +37,7 @@ public fun PsiElement.getKotlinFqName(): FqName? {
             val prefix = element.getContainingClass()?.getQualifiedName()
             FqName(if (prefix != null) "$prefix.$name" else name)
         }
-        is JetNamedDeclaration -> element.getFqName()
+        is KtNamedDeclaration -> element.getFqName()
         else -> null
     }
 }

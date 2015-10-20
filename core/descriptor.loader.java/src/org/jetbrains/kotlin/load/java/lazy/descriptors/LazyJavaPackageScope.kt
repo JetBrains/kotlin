@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaPackageScope(
@@ -75,7 +75,7 @@ public class LazyJavaPackageScope(
                 c.components.deserializedDescriptorResolver.readData(binaryClass, DeserializedDescriptorResolver.KOTLIN_PACKAGE_FACADE)
             }
 
-            JetScope.Empty
+            KtScope.Empty
         }
         else {
             c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, containingDeclaration.kotlinBinaryClasses)

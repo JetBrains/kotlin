@@ -17,26 +17,26 @@
 package org.jetbrains.kotlin.resolve.calls.inference;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public class SubtypingConstraint {
     private final ConstraintType type;
-    private final JetType subtype;
-    private final JetType supertype;
+    private final KtType subtype;
+    private final KtType supertype;
 
-    public SubtypingConstraint(@NotNull ConstraintType type, @NotNull JetType subtype, @NotNull JetType supertype) {
+    public SubtypingConstraint(@NotNull ConstraintType type, @NotNull KtType subtype, @NotNull KtType supertype) {
         this.type = type;
         this.subtype = subtype;
         this.supertype = supertype;
     }
 
     @NotNull
-    public JetType getSubtype() {
+    public KtType getSubtype() {
         return subtype;
     }
 
     @NotNull
-    public JetType getSupertype() {
+    public KtType getSupertype() {
         return supertype;
     }
 

@@ -18,21 +18,21 @@ package org.jetbrains.kotlin.load.java.sam
 
 import org.jetbrains.kotlin.load.java.components.SamConversionResolver
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.ArrayList
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 public object SamConversionResolverImpl : SamConversionResolver {
-    override fun resolveSamConstructor(name: Name, scope: JetScope): SamConstructorDescriptor? {
+    override fun resolveSamConstructor(name: Name, scope: KtScope): SamConstructorDescriptor? {
         val classifier = scope.getClassifier(name) as? LazyJavaClassDescriptor ?: return null
         if (classifier.getFunctionTypeForSamInterface() == null) return null
         return SingleAbstractMethodUtils.createSamConstructorFunction(scope.getContainingDeclaration(), classifier)
@@ -51,7 +51,7 @@ public object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveFunctionTypeIfSamInterface(
             classDescriptor: JavaClassDescriptor,
             resolveMethod: (JavaMethod) -> FunctionDescriptor
-    ): JetType? {
+    ): KtType? {
         val jClass = (classDescriptor.getSource() as? JavaSourceElement)?.javaElement as? JavaClass ?: return null
         val samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(jClass) ?: return null
         val abstractMethod = if (jClass.getFqName() == samInterfaceMethod.getContainingClass().getFqName()) {
@@ -63,7 +63,7 @@ public object SamConversionResolverImpl : SamConversionResolver {
         return SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod)
     }
 
-    private fun findFunctionWithMostSpecificReturnType(supertypes: Set<JetType>): SimpleFunctionDescriptor {
+    private fun findFunctionWithMostSpecificReturnType(supertypes: Set<KtType>): SimpleFunctionDescriptor {
         val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size())
         for (supertype in supertypes) {
             val abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype)
@@ -79,7 +79,7 @@ public object SamConversionResolverImpl : SamConversionResolver {
             val candidateReturnType = candidate.getReturnType()
             val currentMostSpecificReturnType = currentMostSpecificType.getReturnType()
             assert(candidateReturnType != null && currentMostSpecificReturnType != null) { "$candidate, $currentMostSpecificReturnType" }
-            if (JetTypeChecker.DEFAULT.isSubtypeOf(candidateReturnType!!, currentMostSpecificReturnType!!)) {
+            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateReturnType!!, currentMostSpecificReturnType!!)) {
                 currentMostSpecificType = candidate
             }
         }

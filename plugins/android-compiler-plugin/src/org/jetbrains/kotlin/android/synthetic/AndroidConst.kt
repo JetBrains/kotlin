@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.lexer.JetKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 
 public object AndroidConst {
     val ANDROID_USER_PACKAGE: Key<String> = Key.create<String>("ANDROID_USER_PACKAGE")
@@ -50,8 +50,8 @@ public object AndroidConst {
 
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "blink")
 
-    val ESCAPED_IDENTIFIERS = (JetTokens.KEYWORDS.types + JetTokens.SOFT_KEYWORDS.types)
-            .map { it as? JetKeywordToken }.filterNotNull().map { it.value }.toSet()
+    val ESCAPED_IDENTIFIERS = (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types)
+            .map { it as? KtKeywordToken }.filterNotNull().map { it.value }.toSet()
 
     val FQNAME_RESOLVE_PACKAGES = listOf("android.widget", "android.webkit", "android.view")
 }

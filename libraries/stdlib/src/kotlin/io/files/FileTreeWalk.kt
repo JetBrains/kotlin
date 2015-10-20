@@ -295,7 +295,7 @@ public fun File.walkBottomUp(): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP)
  *
  * @param function the function to call on each file.
  */
-@Deprecated("It's recommended to use walkTopDown() / walkBottomUp()")
+@Deprecated("It's recommended to use walkTopDown() / walkBottomUp()", ReplaceWith("walkTopDown().forEach(function)"))
 public fun File.recurse(function: (File) -> Unit): Unit {
-    walkTopDown().forEach { function(it) }
+    walkTopDown().forEach(function)
 }

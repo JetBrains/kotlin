@@ -42,16 +42,16 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
+public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
     protected constructor(declaration: T, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory)
     : KotlinFindUsagesHandler<T>(declaration, elementsToSearch, factory) {
 
-    private class Function(declaration: JetFunction,
+    private class Function(declaration: KtFunction,
                            elementsToSearch: Collection<PsiElement>,
-                           factory: KotlinFindUsagesHandlerFactory) : KotlinFindMemberUsagesHandler<JetFunction>(declaration, elementsToSearch, factory) {
+                           factory: KotlinFindUsagesHandlerFactory) : KotlinFindMemberUsagesHandler<KtFunction>(declaration, elementsToSearch, factory) {
 
         override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions = factory.findFunctionOptions
 
@@ -79,7 +79,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
         }
     }
 
-    private class Property(declaration: JetNamedDeclaration, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory) : KotlinFindMemberUsagesHandler<JetNamedDeclaration>(declaration, elementsToSearch, factory) {
+    private class Property(declaration: KtNamedDeclaration, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory) : KotlinFindMemberUsagesHandler<KtNamedDeclaration>(declaration, elementsToSearch, factory) {
 
         override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions = factory.findPropertyOptions
 
@@ -133,7 +133,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
 
             val psiMethods = when (element) {
                 is PsiMethod -> listOf(element)
-                is JetFunction -> runReadAction { LightClassUtil.getLightClassMethods(element) }
+                is KtFunction -> runReadAction { LightClassUtil.getLightClassMethods(element) }
                 else -> listOf<PsiMethod>()
             }
             for (psiMethod in psiMethods) {
@@ -161,10 +161,10 @@ public abstract class KotlinFindMemberUsagesHandler<T : JetNamedDeclaration>
 
     companion object {
 
-        public fun getInstance(declaration: JetNamedDeclaration,
+        public fun getInstance(declaration: KtNamedDeclaration,
                                elementsToSearch: Collection<PsiElement> = emptyList(),
-                               factory: KotlinFindUsagesHandlerFactory): KotlinFindMemberUsagesHandler<out JetNamedDeclaration> {
-            return if (declaration is JetFunction)
+                               factory: KotlinFindUsagesHandlerFactory): KotlinFindMemberUsagesHandler<out KtNamedDeclaration> {
+            return if (declaration is KtFunction)
                 Function(declaration, elementsToSearch, factory)
             else
                 Property(declaration, elementsToSearch, factory)

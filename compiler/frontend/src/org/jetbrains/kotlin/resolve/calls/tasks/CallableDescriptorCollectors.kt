@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.resolve.LibrarySourceHacks
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
 import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
@@ -40,16 +40,16 @@ public interface CallableDescriptorCollector<D : CallableDescriptor> {
 
     public fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<D>
+    public fun getNonExtensionsByName(scope: KtScope, name: Name, location: LookupLocation): Collection<D>
 
     // todo this is hack for static members priority
     public fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<D>
+    public fun getMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getStaticMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<D>
+    public fun getStaticMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation): Collection<D>
+    public fun getExtensionsByName(scope: KtScope, name: Name, receiverTypes: Collection<KtType>, location: LookupLocation): Collection<D>
 }
 
 private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.withDefaultFilter() = filtered { !LibrarySourceHacks.shouldSkip(it) }
@@ -103,11 +103,11 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
         }
     }
 
-    override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getNonExtensionsByName(scope: KtScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return scope.getFunctions(name, location).filter { it.extensionReceiverParameter == null } + getConstructors(scope, name, location)
     }
 
-    override fun getMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         val receiverScope = receiver.memberScope
         val members = receiverScope.getFunctions(name, location)
         val constructors = getConstructors(receiverScope, name, location, { !isStaticNestedClass(it) })
@@ -125,11 +125,11 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
         return members + constructors
     }
 
-    override fun getStaticMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getStaticMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return getConstructors(receiver.memberScope, name, location, { isStaticNestedClass(it) })
     }
 
-    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getExtensionsByName(scope: KtScope, name: Name, receiverTypes: Collection<KtType>, location: LookupLocation): Collection<FunctionDescriptor> {
         val functions = scope.getFunctions(name, location)
         val (extensions, nonExtensions) = functions.partition { it.extensionReceiverParameter != null }
         val syntheticExtensions = scope.getSyntheticExtensionFunctions(receiverTypes, name, location)
@@ -143,7 +143,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
     }
 
     private fun getConstructors(
-            scope: JetScope, name: Name,
+            scope: KtScope, name: Name,
             location: LookupLocation,
             filterClassPredicate: (ClassDescriptor) -> Boolean = { true }
     ): Collection<FunctionDescriptor> {
@@ -182,14 +182,14 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         }
     }
 
-    private fun getFakeDescriptorForObject(scope: JetScope, name: Name, location: LookupLocation): VariableDescriptor? {
+    private fun getFakeDescriptorForObject(scope: KtScope, name: Name, location: LookupLocation): VariableDescriptor? {
         val classifier = scope.getClassifier(name, location)
         if (classifier !is ClassDescriptor || !classifier.hasClassObjectType) return null
 
         return FakeCallableDescriptorForObject(classifier)
     }
 
-    override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getNonExtensionsByName(scope: KtScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         val localVariable = scope.getLocalVariable(name)
         if (localVariable != null) {
             return setOf(localVariable)
@@ -199,18 +199,18 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         return if (fakeDescriptor != null) properties + fakeDescriptor else properties
     }
 
-    override fun getMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         val memberScope = receiver.memberScope
         val properties = memberScope.getProperties(name, location)
         val fakeDescriptor = getFakeDescriptorForObject(memberScope, name, location)
         return if (fakeDescriptor != null) properties + fakeDescriptor else properties
     }
 
-    override fun getStaticMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getStaticMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return listOf()
     }
 
-    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getExtensionsByName(scope: KtScope, name: Name, receiverTypes: Collection<KtType>, location: LookupLocation): Collection<VariableDescriptor> {
         // property may have an extension function type, we check the applicability later to avoid an early computing of deferred types
         return scope.getLocalVariable(name).singletonOrEmptyList() +
                scope.getProperties(name, location) +
@@ -232,19 +232,19 @@ private object PropertyCollector : CallableDescriptorCollector<VariableDescripto
         return filterProperties(VARIABLES_COLLECTOR.getStaticInheritanceByName(lexicalScope, name, location))
     }
 
-    override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getNonExtensionsByName(scope: KtScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return filterProperties(VARIABLES_COLLECTOR.getNonExtensionsByName(scope, name, location))
     }
 
-    override fun getMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return filterProperties(VARIABLES_COLLECTOR.getMembersByName(receiver, name, location))
     }
 
-    override fun getStaticMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getStaticMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return filterProperties(VARIABLES_COLLECTOR.getStaticMembersByName(receiver, name, location))
     }
 
-    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getExtensionsByName(scope: KtScope, name: Name, receiverTypes: Collection<KtType>, location: LookupLocation): Collection<VariableDescriptor> {
         return filterProperties(VARIABLES_COLLECTOR.getExtensionsByName(scope, name, receiverTypes, location))
     }
 
@@ -262,19 +262,19 @@ private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.filtered(fil
             return delegate.getStaticInheritanceByName(lexicalScope, name, location)
         }
 
-        override fun getNonExtensionsByName(scope: JetScope, name: Name, location: LookupLocation): Collection<D> {
+        override fun getNonExtensionsByName(scope: KtScope, name: Name, location: LookupLocation): Collection<D> {
             return delegate.getNonExtensionsByName(scope, name, location).filter(filter)
         }
 
-        override fun getMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<D> {
+        override fun getMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<D> {
             return delegate.getMembersByName(receiver, name, location).filter(filter)
         }
 
-        override fun getStaticMembersByName(receiver: JetType, name: Name, location: LookupLocation): Collection<D> {
+        override fun getStaticMembersByName(receiver: KtType, name: Name, location: LookupLocation): Collection<D> {
             return delegate.getStaticMembersByName(receiver, name, location).filter(filter)
         }
 
-        override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation): Collection<D> {
+        override fun getExtensionsByName(scope: KtScope, name: Name, receiverTypes: Collection<KtType>, location: LookupLocation): Collection<D> {
             return delegate.getExtensionsByName(scope, name, receiverTypes, location).filter(filter)
         }
 

@@ -35,17 +35,17 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.HashSet
 
-public class CreateCallableFromUsageFix<E : JetElement>(
+public class CreateCallableFromUsageFix<E : KtElement>(
         originalExpression: E,
         callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, false)
 
-public class CreateExtensionCallableFromUsageFix<E : JetElement>(
+public class CreateExtensionCallableFromUsageFix<E : KtElement>(
         originalExpression: E,
         callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, true), LowPriorityAction
 
-public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
+public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         originalExpression: E,
         val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
@@ -56,14 +56,14 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
             if (receiverSet.size() > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
 
-            val possibleContainerSet = callableInfos.mapTo(HashSet<List<JetElement>>()) { it.possibleContainers }
+            val possibleContainerSet = callableInfos.mapTo(HashSet<List<KtElement>>()) { it.possibleContainers }
             if (possibleContainerSet.size() > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
         }
     }
 
     private fun getDeclaration(descriptor: ClassifierDescriptor, project: Project): PsiElement? {
         if (descriptor is FunctionClassDescriptor) {
-            val psiFactory = JetPsiFactory(project)
+            val psiFactory = KtPsiFactory(project)
             val syntheticClass = psiFactory.createClass(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(descriptor))
             return psiFactory.createAnalyzableFile("${descriptor.name.asString()}.kt", "", element).add(syntheticClass)
         }
@@ -73,7 +73,7 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
     private fun getDeclarationIfApplicable(project: Project, candidate: TypeCandidate): PsiElement? {
         val descriptor = candidate.theType.constructor.declarationDescriptor ?: return null
         val declaration = getDeclaration(descriptor, project) ?: return null
-        if (declaration !is JetClassOrObject && declaration !is PsiClass) return null
+        if (declaration !is KtClassOrObject && declaration !is PsiClass) return null
         return if (isExtension || declaration.canRefactor()) declaration else null
     }
 
@@ -105,7 +105,7 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
-        if (file !is JetFile) return false
+        if (file !is KtFile) return false
 
         val receiverInfo = callableInfos.first().receiverTypeInfo
 
@@ -131,11 +131,11 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
         }
     }
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val callableInfo = callableInfos.first()
 
         val callableBuilder =
-                CallableBuilderConfiguration(callableInfos, element as JetElement, file, editor!!, isExtension).createBuilder()
+                CallableBuilderConfiguration(callableInfos, element as KtElement, file, editor!!, isExtension).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement
@@ -164,7 +164,7 @@ public abstract class CreateCallableFromUsageFixBase<E : JetElement>(
             }
 
             chooseContainerElementIfNecessary(callableInfo.possibleContainers, editor, popupTitle, true, { it }) {
-                val container = if (it is JetClassBody) it.parent as JetClassOrObject else it
+                val container = if (it is KtClassBody) it.parent as KtClassOrObject else it
                 runBuilder(CallablePlacement.NoReceiver(container))
             }
         }

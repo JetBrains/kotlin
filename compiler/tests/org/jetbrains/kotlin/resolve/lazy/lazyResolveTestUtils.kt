@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 
 public fun createResolveSessionForFiles(
         project: Project,
-        syntheticFiles: Collection<JetFile>,
+        syntheticFiles: Collection<KtFile>,
         addBuiltIns: Boolean
 ): ResolveSession {
     val projectContext = ProjectContext(project)

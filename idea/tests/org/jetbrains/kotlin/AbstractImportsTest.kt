@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
@@ -51,7 +51,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
 
             fixture.configureByFile(testPath)
 
-            val file = fixture.getFile() as JetFile
+            val file = fixture.getFile() as KtFile
 
             val fileText = file.getText()
 
@@ -77,7 +77,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
         }
     }
 
-    protected abstract fun doTest(file: JetFile)
+    protected abstract fun doTest(file: KtFile)
 
     protected open val nameCountToUseStarImportDefault: Int
         get() = 1

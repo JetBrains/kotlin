@@ -25,17 +25,17 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.kotlin.psi.JetPsiUtil;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtPsiUtil;
+import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.BooleanValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -56,12 +56,12 @@ public class CompileTimeConstantUtils {
             "kotlin.shortArrayOf", "kotlin.byteArrayOf", "kotlin.booleanArrayOf"
     );
 
-    public static void checkConstructorParametersType(@NotNull List<JetParameter> parameters, @NotNull BindingTrace trace) {
-        for (JetParameter parameter : parameters) {
+    public static void checkConstructorParametersType(@NotNull List<KtParameter> parameters, @NotNull BindingTrace trace) {
+        for (KtParameter parameter : parameters) {
             VariableDescriptor parameterDescriptor = trace.getBindingContext().get(VALUE_PARAMETER, parameter);
             if (parameterDescriptor == null) continue;
-            JetType parameterType = parameterDescriptor.getType();
-            JetTypeReference typeReference = parameter.getTypeReference();
+            KtType parameterType = parameterDescriptor.getType();
+            KtTypeReference typeReference = parameter.getTypeReference();
             if (typeReference != null) {
                 if (parameterType.isMarkedNullable()) {
                     trace.report(NULLABLE_TYPE_OF_ANNOTATION_MEMBER.on(typeReference));
@@ -73,7 +73,7 @@ public class CompileTimeConstantUtils {
         }
     }
 
-    private static boolean isAcceptableTypeForAnnotationParameter(@NotNull JetType parameterType) {
+    private static boolean isAcceptableTypeForAnnotationParameter(@NotNull KtType parameterType) {
         ClassDescriptor typeDescriptor = TypeUtils.getClassDescriptor(parameterType);
         if (typeDescriptor == null) {
             return false;
@@ -91,7 +91,7 @@ public class CompileTimeConstantUtils {
         if (KotlinBuiltIns.isArray(parameterType)) {
             List<TypeProjection> arguments = parameterType.getArguments();
             if (arguments.size() == 1) {
-                JetType arrayType = arguments.get(0).getType();
+                KtType arrayType = arguments.get(0).getType();
                 if (arrayType.isMarkedNullable()) {
                     return false;
                 }
@@ -125,11 +125,11 @@ public class CompileTimeConstantUtils {
     }
 
     public static boolean canBeReducedToBooleanConstant(
-            @Nullable JetExpression expression,
+            @Nullable KtExpression expression,
             @NotNull BindingTrace trace,
             @Nullable Boolean expectedValue
     ) {
-        JetExpression effectiveExpression = JetPsiUtil.deparenthesize(expression);
+        KtExpression effectiveExpression = KtPsiUtil.deparenthesize(expression);
 
         if (effectiveExpression == null) return false;
 

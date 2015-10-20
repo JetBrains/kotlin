@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJa
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -83,7 +83,7 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
     }
 
     @JvmStatic
-    public fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<JetFile>): List<JetFile> {
+    public fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<KtFile>): List<KtFile> {
         val allFiles = ArrayList(baseFiles)
         for (externalDeclarationsProvider in ExternalDeclarationsProvider.getInstances(project)) {
             allFiles.addAll(externalDeclarationsProvider.getExternalDeclarations(moduleInfo))

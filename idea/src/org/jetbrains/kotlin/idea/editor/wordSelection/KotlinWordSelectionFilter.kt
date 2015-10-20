@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.idea.editor.wordSelection
 
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.JetNodeTypes.*
-import org.jetbrains.kotlin.psi.JetContainerNode
+import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.psi.KtContainerNode
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 
@@ -28,8 +28,8 @@ public class KotlinWordSelectionFilter : Condition<PsiElement>{
         if (e.getLanguage() != KotlinLanguage.INSTANCE) return true
 
         if (KotlinListSelectioner.canSelect(e)) return false
-        if (e is JetContainerNode) return false
-        if (e.getParent().getFirstChild().getNextSibling() == null && e.getParent() !is JetContainerNode) return false // skip nodes with the same range as their parent
+        if (e is KtContainerNode) return false
+        if (e.getParent().getFirstChild().getNextSibling() == null && e.getParent() !is KtContainerNode) return false // skip nodes with the same range as their parent
 
         return when (e.getNode().getElementType()) {
             BLOCK, KDocElementTypes.KDOC_SECTION -> false

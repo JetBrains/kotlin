@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.types.checker;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeProjection;
 
@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.types.TypeProjection;
  * Methods of this class return true to continue type checking and false to fail
  */
 public interface TypeCheckingProcedureCallbacks {
-    boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, @NotNull TypeCheckingProcedure typeCheckingProcedure);
+    boolean assertEqualTypes(@NotNull KtType a, @NotNull KtType b, @NotNull TypeCheckingProcedure typeCheckingProcedure);
 
     boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
 
-    boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure);
+    boolean assertSubtype(@NotNull KtType subtype, @NotNull KtType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure);
 
-    boolean capture(@NotNull JetType type, @NotNull TypeProjection typeProjection);
+    boolean capture(@NotNull KtType type, @NotNull TypeProjection typeProjection);
 
-    boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype);
+    boolean noCorrespondingSupertype(@NotNull KtType subtype, @NotNull KtType supertype);
 }

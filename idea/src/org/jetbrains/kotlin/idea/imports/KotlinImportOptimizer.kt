@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.withNoFileScope
@@ -47,13 +47,13 @@ import java.util.*
 
 public class KotlinImportOptimizer() : ImportOptimizer {
 
-    override fun supports(file: PsiFile?) = file is JetFile
+    override fun supports(file: PsiFile?) = file is KtFile
 
     override fun processFile(file: PsiFile?) = Runnable() {
-        OptimizeProcess(file as JetFile).execute()
+        OptimizeProcess(file as KtFile).execute()
     }
 
-    private class OptimizeProcess(private val file: JetFile) {
+    private class OptimizeProcess(private val file: KtFile) {
         public fun execute() {
             val oldImports = file.importDirectives
             if (oldImports.isEmpty()) return
@@ -68,7 +68,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         }
     }
 
-    private class CollectUsedDescriptorsVisitor(val file: JetFile) : JetVisitorVoid() {
+    private class CollectUsedDescriptorsVisitor(val file: KtFile) : KtVisitorVoid() {
         private val _descriptors = HashSet<DeclarationDescriptor>()
         private val currentPackageName = file.packageFqName
 
@@ -80,21 +80,21 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             element.acceptChildren(this)
         }
 
-        override fun visitImportList(importList: JetImportList) {
+        override fun visitImportList(importList: KtImportList) {
         }
 
-        override fun visitPackageDirective(directive: JetPackageDirective) {
+        override fun visitPackageDirective(directive: KtPackageDirective) {
         }
 
-        override fun visitJetElement(element: JetElement) {
+        override fun visitJetElement(element: KtElement) {
             for (reference in element.references) {
-                if (reference !is JetReference) continue
+                if (reference !is KtReference) continue
 
-                val referencedName = (element as? JetNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
+                val referencedName = (element as? KtNameReferenceExpression)?.getReferencedNameAsName() //TODO: other types of references
 
                 val bindingContext = element.analyze()
                 //class qualifiers that refer to companion objects should be considered (containing) class references
-                val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? JetReferenceExpression]?.let { listOf(it) }
+                val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? KtReferenceExpression]?.let { listOf(it) }
                               ?: reference.resolveToDescriptors(bindingContext)
                 for (target in targets) {
                     val importableFqName = target.importableFqName ?: continue
@@ -117,10 +117,10 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             super.visitJetElement(element)
         }
 
-        private fun isAccessibleAsMember(target: DeclarationDescriptor, place: JetElement, bindingContext: BindingContext): Boolean {
+        private fun isAccessibleAsMember(target: DeclarationDescriptor, place: KtElement, bindingContext: BindingContext): Boolean {
             if (target.containingDeclaration !is ClassDescriptor) return false
 
-            fun isInScope(scope: JetScope): Boolean {
+            fun isInScope(scope: KtScope): Boolean {
                 return when (target) {
                     is FunctionDescriptor ->
                         scope.getFunctions(target.name, NoLookupLocation.FROM_IDE).contains(target)
@@ -144,14 +144,14 @@ public class KotlinImportOptimizer() : ImportOptimizer {
     }
 
     companion object {
-        public fun collectDescriptorsToImport(file: JetFile): Set<DeclarationDescriptor> {
+        public fun collectDescriptorsToImport(file: KtFile): Set<DeclarationDescriptor> {
             val visitor = CollectUsedDescriptorsVisitor(file)
             file.accept(visitor)
             return visitor.descriptors
         }
 
         public fun prepareOptimizedImports(
-                file: JetFile,
+                file: KtFile,
                 descriptorsToImport: Collection<DeclarationDescriptor>
         ): List<ImportPath>? {
             val importInsertHelper = ImportInsertHelper.getInstance(file.project)
@@ -217,7 +217,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 append("package ").append(file.packageFqName.render()).append("\n")
                 importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.pathStr }.joinTo(this, "\n")
             }.toString()
-            val fileWithImports = JetPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
+            val fileWithImports = KtPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
             val scope = fileWithImports.getResolutionFacade().getFileTopLevelScope(fileWithImports)
 
             for (fqName in classNamesToCheck) {
@@ -249,7 +249,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             return sortedImportsToGenerate
         }
 
-        private fun buildAliasImportMap(file: JetFile): Map<Name, FqName> {
+        private fun buildAliasImportMap(file: KtFile): Map<Name, FqName> {
             val imports = file.importDirectives
             val aliasImports = HashMap<Name, FqName>()
             for (import in imports) {
@@ -262,10 +262,10 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             return aliasImports
         }
 
-        public fun replaceImports(file: JetFile, imports: List<ImportPath>) {
+        public fun replaceImports(file: KtFile, imports: List<ImportPath>) {
             val importList = file.importList!!
             val oldImports = importList.imports
-            val psiFactory = JetPsiFactory(file.project)
+            val psiFactory = KtPsiFactory(file.project)
             for (importPath in imports) {
                 importList.addBefore(psiFactory.createImportDirective(importPath), oldImports.lastOrNull()) // insert into the middle to keep collapsed state
             }

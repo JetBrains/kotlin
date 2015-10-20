@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 public class BasicCallResolutionContext extends CallResolutionContext<BasicCallResolutionContext> {
     private BasicCallResolutionContext(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull Call call,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull CheckArgumentTypesMode checkArguments,
@@ -54,7 +54,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull Call call,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ContextDependency contextDependency,
             @NotNull CheckArgumentTypesMode checkArguments,
@@ -90,7 +90,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull JetType expectedType,
+            @NotNull KtType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,

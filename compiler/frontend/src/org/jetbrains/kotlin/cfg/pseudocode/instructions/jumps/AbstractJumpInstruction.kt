@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstructionImpl
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public abstract class AbstractJumpInstruction(
-        element: JetElement,
+        element: KtElement,
         public val targetLabel: Label,
         lexicalScope: LexicalScope
 ) : JetElementInstructionImpl(element, lexicalScope), JumpInstruction {

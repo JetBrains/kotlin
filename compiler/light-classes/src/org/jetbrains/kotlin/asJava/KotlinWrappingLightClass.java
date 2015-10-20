@@ -48,7 +48,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
 
     @Nullable
     @Override
-    public abstract JetClassOrObject getOrigin();
+    public abstract KtClassOrObject getOrigin();
 
     @NotNull
     @Override
@@ -121,11 +121,11 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
         return ContainerUtil.map(getDelegate().getFields(), new Function<PsiField, PsiField>() {
             @Override
             public PsiField fun(PsiField field) {
-                JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
-                if (declaration instanceof JetEnumEntry) {
+                KtDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
+                if (declaration instanceof KtEnumEntry) {
                     assert field instanceof PsiEnumConstant : "Field delegate should be an enum constant (" + field.getName() + "):\n" +
                                                               PsiUtilsKt.getElementTextWithContext(declaration);
-                    JetEnumEntry enumEntry = (JetEnumEntry) declaration;
+                    KtEnumEntry enumEntry = (KtEnumEntry) declaration;
                     PsiEnumConstant enumConstant = (PsiEnumConstant) field;
                     FqName enumConstantFqName = new FqName(getFqName().asString() + "." + enumEntry.getName());
                     KotlinLightClassForEnumEntry initializingClass =
@@ -148,9 +148,9 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
         return ArraysKt.map(getDelegate().getMethods(), new Function1<PsiMethod, PsiMethod>() {
             @Override
             public PsiMethod invoke(PsiMethod method) {
-                JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(method);
-                if (declaration instanceof JetPropertyAccessor) {
-                    declaration = PsiTreeUtil.getParentOfType(declaration, JetProperty.class);
+                KtDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(method);
+                if (declaration instanceof KtPropertyAccessor) {
+                    declaration = PsiTreeUtil.getParentOfType(declaration, KtProperty.class);
                 }
 
                 if (declaration != null) {
@@ -177,7 +177,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
 
     @Override
     public String getText() {
-        JetClassOrObject origin = getOrigin();
+        KtClassOrObject origin = getOrigin();
         return origin == null ? null : origin.getText();
     }
 
@@ -187,18 +187,18 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
         return KotlinLanguage.INSTANCE;
     }
 
-    private boolean isTraitFakeOverride(@NotNull JetDeclaration originMethodDeclaration) {
-        if (!(originMethodDeclaration instanceof JetNamedFunction ||
-              originMethodDeclaration instanceof JetPropertyAccessor ||
-              originMethodDeclaration instanceof JetProperty)) {
+    private boolean isTraitFakeOverride(@NotNull KtDeclaration originMethodDeclaration) {
+        if (!(originMethodDeclaration instanceof KtNamedFunction ||
+              originMethodDeclaration instanceof KtPropertyAccessor ||
+              originMethodDeclaration instanceof KtProperty)) {
             return false;
         }
 
-        JetClassOrObject parentOfMethodOrigin = PsiTreeUtil.getParentOfType(originMethodDeclaration, JetClassOrObject.class);
-        JetClassOrObject thisClassDeclaration = getOrigin();
+        KtClassOrObject parentOfMethodOrigin = PsiTreeUtil.getParentOfType(originMethodDeclaration, KtClassOrObject.class);
+        KtClassOrObject thisClassDeclaration = getOrigin();
 
         // Method was generated from declaration in some other trait
-        return (parentOfMethodOrigin != null && thisClassDeclaration != parentOfMethodOrigin && JetPsiUtil.isTrait(parentOfMethodOrigin));
+        return (parentOfMethodOrigin != null && thisClassDeclaration != parentOfMethodOrigin && KtPsiUtil.isTrait(parentOfMethodOrigin));
     }
 
     @Override

@@ -24,49 +24,49 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 
-public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarationWithBody>(
+public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<KtDeclarationWithBody>(
         javaClass(), "Convert to block body"
 ), LowPriorityAction {
-    override fun isApplicableTo(element: JetDeclarationWithBody, caretOffset: Int): Boolean {
-        if (element is JetFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
+    override fun isApplicableTo(element: KtDeclarationWithBody, caretOffset: Int): Boolean {
+        if (element is KtFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
 
         when (element) {
-            is JetNamedFunction -> {
+            is KtNamedFunction -> {
                 val returnType = element.returnType() ?: return false
                 if (!element.hasDeclaredReturnType() && returnType.isError()) return false// do not convert when type is implicit and unknown
                 return true
             }
 
-            is JetPropertyAccessor -> return true
+            is KtPropertyAccessor -> return true
 
             else -> error("Unknown declaration type: $element")
         }
     }
 
-    override fun allowCaretInsideElement(element: PsiElement) = element !is JetDeclaration
+    override fun allowCaretInsideElement(element: PsiElement) = element !is KtDeclaration
 
-    override fun applyTo(element: JetDeclarationWithBody, editor: Editor) {
+    override fun applyTo(element: KtDeclarationWithBody, editor: Editor) {
         convert(element)
     }
 
     companion object {
-        public fun convert(declaration: JetDeclarationWithBody): JetDeclarationWithBody {
+        public fun convert(declaration: KtDeclarationWithBody): KtDeclarationWithBody {
             val body = declaration.getBodyExpression()!!
 
-            fun generateBody(returnsValue: Boolean): JetExpression {
+            fun generateBody(returnsValue: Boolean): KtExpression {
                 val bodyType = body.analyze().getType(body)
                 val needReturn = returnsValue &&
                                  (bodyType == null || (!KotlinBuiltIns.isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
 
-                val factory = JetPsiFactory(declaration)
+                val factory = KtPsiFactory(declaration)
                 val statement = if (needReturn) factory.createExpressionByPattern("return $0", body) else body
                 return factory.createSingleStatementBlock(statement)
             }
 
             val newBody = when (declaration) {
-                is JetNamedFunction -> {
+                is KtNamedFunction -> {
                     val returnType = declaration.returnType()!!
                     if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.isUnit(returnType)) {
                         declaration.setType(returnType)
@@ -74,7 +74,7 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
                     generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
                 }
 
-                is JetPropertyAccessor -> generateBody(declaration.isGetter())
+                is KtPropertyAccessor -> generateBody(declaration.isGetter())
 
                 else -> throw RuntimeException("Unknown declaration type: $declaration")
             }
@@ -84,7 +84,7 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
             return declaration
         }
 
-        private fun JetNamedFunction.returnType(): JetType? {
+        private fun KtNamedFunction.returnType(): KtType? {
             val descriptor = analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] ?: return null
             return (descriptor as FunctionDescriptor).getReturnType()
         }

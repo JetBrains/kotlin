@@ -24,24 +24,24 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetForExpression
-import org.jetbrains.kotlin.types.JetTypeImpl
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.types.KtTypeImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
-object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactory<JetForExpression>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): JetForExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>())
+object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtForExpression>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtForExpression? {
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtForExpression>())
     }
 
-    override fun createCallableInfo(element: JetForExpression, diagnostic: Diagnostic): CallableInfo? {
-        val file = diagnostic.psiFile as? JetFile ?: return null
+    override fun createCallableInfo(element: KtForExpression, diagnostic: Diagnostic): CallableInfo? {
+        val file = diagnostic.psiFile as? KtFile ?: return null
         val iterableExpr = element.loopRange ?: return null
-        val variableExpr: JetExpression = ((element.loopParameter ?: element.multiParameter) ?: return null) as JetExpression
+        val variableExpr: KtExpression = ((element.loopParameter ?: element.multiParameter) ?: return null) as KtExpression
         val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
 
         val (bindingContext, moduleDescriptor) = file.analyzeFullyAndGetResult()
@@ -52,7 +52,7 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)
-        val newReturnJetType = JetTypeImpl.create(returnJetType.annotations,
+        val newReturnJetType = KtTypeImpl.create(returnJetType.annotations,
                                            returnJetType.constructor,
                                            returnJetType.isMarkedNullable,
                                            returnJetTypeArguments,

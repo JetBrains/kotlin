@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.lexer.JetSingleValueToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -41,12 +41,12 @@ fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean
         return result
     }
 
-    if (this !is JetDeclaration || JetPsiUtil.isLocal(this)) return Collections.emptyList()
+    if (this !is KtDeclaration || KtPsiUtil.isLocal(this)) return Collections.emptyList()
 
     when (this) {
-        is JetProperty ->
+        is KtProperty ->
             return LightClassUtil.getLightClassPropertyMethods(this).toNameList()
-        is JetParameter ->
+        is KtParameter ->
             if (hasValOrVar()) {
                 return LightClassUtil.getLightClassPropertyMethods(this).toNameList()
             }
@@ -56,8 +56,8 @@ fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean
 }
 
 public fun PsiNamedElement.getClassNameForCompanionObject(): String? {
-    return if (this is JetObjectDeclaration && this.isCompanion()) {
-        getNonStrictParentOfType<JetClass>()?.getName()
+    return if (this is KtObjectDeclaration && this.isCompanion()) {
+        getNonStrictParentOfType<KtClass>()?.getName()
     } else {
         null
     }
@@ -67,17 +67,17 @@ public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
     val name = getName()
     return when {
         name == null || !Name.isValidIdentifier(name) -> Collections.emptyList<String>()
-        this is JetParameter -> {
+        this is KtParameter -> {
             val componentFunctionName = this.dataClassComponentFunction()?.name
             if (componentFunctionName == null) return Collections.emptyList<String>()
 
-            return listOf(componentFunctionName.asString(), JetTokens.LPAR.getValue())
+            return listOf(componentFunctionName.asString(), KtTokens.LPAR.getValue())
         }
-        else -> Name.identifier(name).getOperationSymbolsToSearch().map { (it as JetSingleValueToken).getValue() }
+        else -> Name.identifier(name).getOperationSymbolsToSearch().map { (it as KtSingleValueToken).getValue() }
     }
 }
 
-fun JetParameter.dataClassComponentFunction(): FunctionDescriptor? {
+fun KtParameter.dataClassComponentFunction(): FunctionDescriptor? {
     if (!hasValOrVar()) return null
 
     // Forcing full resolve of owner class: otherwise DATA_CLASS_COMPONENT_FUNCTION won't be calculated.

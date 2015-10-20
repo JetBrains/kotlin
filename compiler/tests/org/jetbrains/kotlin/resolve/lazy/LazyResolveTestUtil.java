@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
@@ -41,11 +41,11 @@ public class LazyResolveTestUtil {
 
     @NotNull
     public static ModuleDescriptor resolveProject(@NotNull Project project, @NotNull KotlinCoreEnvironment environment) {
-        return resolve(project, Collections.<JetFile>emptyList(), environment);
+        return resolve(project, Collections.<KtFile>emptyList(), environment);
     }
 
     @NotNull
-    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull List<JetFile> sourceFiles, @NotNull KotlinCoreEnvironment environment) {
+    public static ModuleDescriptor resolve(@NotNull Project project, @NotNull List<KtFile> sourceFiles, @NotNull KotlinCoreEnvironment environment) {
         return resolve(project, new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), sourceFiles, environment);
     }
 
@@ -53,7 +53,7 @@ public class LazyResolveTestUtil {
     public static ModuleDescriptor resolve(
             @NotNull Project project,
             @NotNull BindingTrace trace,
-            @NotNull List<JetFile> sourceFiles,
+            @NotNull List<KtFile> sourceFiles,
             @NotNull KotlinCoreEnvironment environment
     ) {
         ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, JvmResolveUtil.TEST_MODULE_NAME);
@@ -68,25 +68,25 @@ public class LazyResolveTestUtil {
 
     @NotNull
     public static KotlinCodeAnalyzer resolveLazilyWithSession(
-            @NotNull List<JetFile> files,
+            @NotNull List<KtFile> files,
             @NotNull KotlinCoreEnvironment environment,
             boolean addBuiltIns
     ) {
         return LazyResolveTestUtilsKt.createResolveSessionForFiles(environment.getProject(), files, addBuiltIns);
     }
 
-    public static ModuleDescriptor resolveLazily(List<JetFile> files, KotlinCoreEnvironment environment) {
+    public static ModuleDescriptor resolveLazily(List<KtFile> files, KotlinCoreEnvironment environment) {
         return resolveLazily(files, environment, true);
     }
 
-    public static ModuleDescriptor resolveLazily(List<JetFile> files, KotlinCoreEnvironment environment, boolean addBuiltIns) {
+    public static ModuleDescriptor resolveLazily(List<KtFile> files, KotlinCoreEnvironment environment, boolean addBuiltIns) {
         return resolveLazilyWithSession(files, environment, addBuiltIns).getModuleDescriptor();
     }
 
     @NotNull
-    public static Set<Name> getTopLevelPackagesFromFileList(@NotNull List<JetFile> files) {
+    public static Set<Name> getTopLevelPackagesFromFileList(@NotNull List<KtFile> files) {
         Set<Name> shortNames = Sets.newLinkedHashSet();
-        for (JetFile file : files) {
+        for (KtFile file : files) {
             List<Name> packageFqNameSegments = file.getPackageFqName().pathSegments();
             Name name = packageFqNameSegments.isEmpty() ? SpecialNames.ROOT_PACKAGE : packageFqNameSegments.get(0);
             shortNames.add(name);

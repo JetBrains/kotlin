@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.idea.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetExpressionWithLabel;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
-import org.jetbrains.kotlin.psi.JetVisitorVoid;
+import org.jetbrains.kotlin.psi.KtExpressionWithLabel;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
+import org.jetbrains.kotlin.psi.KtVisitorVoid;
 
-class LabelsHighlightingVisitor extends JetVisitorVoid {
+class LabelsHighlightingVisitor extends KtVisitorVoid {
     private final AnnotationHolder holder;
 
     LabelsHighlightingVisitor(AnnotationHolder holder) {
@@ -30,8 +30,8 @@ class LabelsHighlightingVisitor extends JetVisitorVoid {
     }
 
     @Override
-    public void visitExpressionWithLabel(@NotNull JetExpressionWithLabel expression) {
-        JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+    public void visitExpressionWithLabel(@NotNull KtExpressionWithLabel expression) {
+        KtSimpleNameExpression targetLabel = expression.getTargetLabel();
         if (targetLabel != null) {
             NameHighlighter.highlightName(holder, targetLabel, JetHighlightingColors.LABEL);
         }

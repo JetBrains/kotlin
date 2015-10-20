@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeSubstitution;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
@@ -30,19 +30,19 @@ import java.util.List;
 
 public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor, ClassOrPackageFragmentDescriptor {
     @NotNull
-    JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
+    KtScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
 
     @NotNull
-    JetScope getMemberScope(@NotNull TypeSubstitution typeSubstitution);
+    KtScope getMemberScope(@NotNull TypeSubstitution typeSubstitution);
 
     @NotNull
-    JetScope getUnsubstitutedMemberScope();
+    KtScope getUnsubstitutedMemberScope();
 
     @NotNull
-    JetScope getUnsubstitutedInnerClassesScope();
+    KtScope getUnsubstitutedInnerClassesScope();
 
     @NotNull
-    JetScope getStaticScope();
+    KtScope getStaticScope();
 
     @NotNull
     @ReadOnly
@@ -57,7 +57,7 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
      */
     @NotNull
     @Override
-    JetType getDefaultType();
+    KtType getDefaultType();
 
     @NotNull
     @Override

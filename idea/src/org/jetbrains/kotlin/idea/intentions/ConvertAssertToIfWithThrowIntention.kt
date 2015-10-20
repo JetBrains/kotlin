@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace 'assert' with 'if' statement"), LowPriorityAction {
-    override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
+public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<KtCallExpression>(javaClass(), "Replace 'assert' with 'if' statement"), LowPriorityAction {
+    override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
         val callee = element.getCalleeExpression() ?: return false
         if (!callee.getTextRange().containsOffset(caretOffset)) return false
 
@@ -41,13 +41,13 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
         return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).asString() == "kotlin.assert"
     }
 
-    override fun applyTo(element: JetCallExpression, editor: Editor) {
+    override fun applyTo(element: KtCallExpression, editor: Editor) {
         val args = element.getValueArguments()
         val conditionText = args[0]?.getArgumentExpression()?.getText() ?: return
         val functionLiteral = element.getFunctionLiteralArguments().singleOrNull()
         val messageIsFunction = messageIsFunction(element)
 
-        val psiFactory = JetPsiFactory(element)
+        val psiFactory = KtPsiFactory(element)
 
         val messageExpr = when {
             args.size() == 2 -> args[1]?.getArgumentExpression() ?: return
@@ -60,17 +60,17 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
         // shorten java.lang.AssertionError
         ShortenReferences.DEFAULT.process(ifExpression.getThen()!!)
 
-        val ifCondition = ifExpression.getCondition() as JetPrefixExpression
+        val ifCondition = ifExpression.getCondition() as KtPrefixExpression
         ifCondition.getBaseExpression()!!.replace(psiFactory.createExpression(conditionText))
 
-        val thrownExpression = ((ifExpression.getThen() as JetBlockExpression).getStatements().single() as JetThrowExpression).getThrownExpression()
-        val assertionErrorCall = if (thrownExpression is JetCallExpression)
+        val thrownExpression = ((ifExpression.getThen() as KtBlockExpression).getStatements().single() as KtThrowExpression).getThrownExpression()
+        val assertionErrorCall = if (thrownExpression is KtCallExpression)
             thrownExpression
         else
-            (thrownExpression as JetDotQualifiedExpression).getSelectorExpression() as JetCallExpression
+            (thrownExpression as KtDotQualifiedExpression).getSelectorExpression() as KtCallExpression
 
         val message = psiFactory.createExpression(
-                if (messageIsFunction && messageExpr is JetCallableReferenceExpression) {
+                if (messageIsFunction && messageExpr is KtCallableReferenceExpression) {
                     messageExpr.getCallableReference().getText() + "()"
                 }
                 else if (messageIsFunction) {
@@ -85,24 +85,24 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
         simplifyConditionIfPossible(ifExpression)
     }
 
-    private fun messageIsFunction(callExpr: JetCallExpression): Boolean {
+    private fun messageIsFunction(callExpr: KtCallExpression): Boolean {
         val resolvedCall = callExpr.getResolvedCall(callExpr.analyze()) ?: return false
         val valParameters = resolvedCall.getResultingDescriptor().getValueParameters()
         return valParameters.size() > 1 && !KotlinBuiltIns.isAny(valParameters[1].type)
     }
 
-    private fun simplifyConditionIfPossible(ifExpression: JetIfExpression) {
-        val condition = ifExpression.getCondition() as JetPrefixExpression
+    private fun simplifyConditionIfPossible(ifExpression: KtIfExpression) {
+        val condition = ifExpression.getCondition() as KtPrefixExpression
         val simplifier = SimplifyNegatedBinaryExpressionIntention()
         if (simplifier.isApplicableTo(condition)) {
             simplifier.applyTo(condition)
         }
     }
 
-    private fun replaceWithIfThenThrowExpression(original: JetCallExpression): JetIfExpression {
-        val replacement = JetPsiFactory(original).createExpression("if (!true) { throw java.lang.AssertionError(\"\") }") as JetIfExpression
+    private fun replaceWithIfThenThrowExpression(original: KtCallExpression): KtIfExpression {
+        val replacement = KtPsiFactory(original).createExpression("if (!true) { throw java.lang.AssertionError(\"\") }") as KtIfExpression
         val parent = original.getParent()
-        return if (parent is JetDotQualifiedExpression)
+        return if (parent is KtDotQualifiedExpression)
             parent.replaced(replacement)
         else
             original.replaced(replacement)

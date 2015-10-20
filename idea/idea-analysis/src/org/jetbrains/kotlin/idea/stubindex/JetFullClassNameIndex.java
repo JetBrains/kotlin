@@ -21,12 +21,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 
 import java.util.Collection;
 
-public class JetFullClassNameIndex extends StringStubIndexExtension<JetClassOrObject> {
-    private static final StubIndexKey<String, JetClassOrObject> KEY = KotlinIndexUtil.createIndexKey(JetFullClassNameIndex.class);
+public class JetFullClassNameIndex extends StringStubIndexExtension<KtClassOrObject> {
+    private static final StubIndexKey<String, KtClassOrObject> KEY = KotlinIndexUtil.createIndexKey(JetFullClassNameIndex.class);
 
     private static final JetFullClassNameIndex ourInstance = new JetFullClassNameIndex();
 
@@ -39,13 +39,13 @@ public class JetFullClassNameIndex extends StringStubIndexExtension<JetClassOrOb
 
     @NotNull
     @Override
-    public StubIndexKey<String, JetClassOrObject> getKey() {
+    public StubIndexKey<String, KtClassOrObject> getKey() {
         return KEY;
     }
 
     @NotNull
     @Override
-    public Collection<JetClassOrObject> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<KtClassOrObject> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return super.get(fqName, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 }

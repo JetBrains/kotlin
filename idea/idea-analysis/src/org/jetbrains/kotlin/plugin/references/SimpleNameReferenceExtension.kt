@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.plugin.references
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 public interface SimpleNameReferenceExtension {
     companion object {
         public val EP_NAME: ExtensionPointName<SimpleNameReferenceExtension> = ExtensionPointName.create("org.jetbrains.kotlin.simpleNameReferenceExtension")!!
     }
 
-    fun isReferenceTo(reference: JetSimpleNameReference, element: PsiElement): Boolean?
-    fun handleElementRename(reference: JetSimpleNameReference, psiFactory: JetPsiFactory, newElementName: String): PsiElement?
+    fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement): Boolean?
+    fun handleElementRename(reference: KtSimpleNameReference, psiFactory: KtPsiFactory, newElementName: String): PsiElement?
 }

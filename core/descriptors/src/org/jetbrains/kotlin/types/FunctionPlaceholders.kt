@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 class FunctionPlaceholders(private val builtIns: KotlinBuiltIns) {
     fun createFunctionPlaceholderType(
-            argumentTypes: List<JetType>,
+            argumentTypes: List<KtType>,
             hasDeclaredArguments: Boolean
-    ): JetType {
+    ): KtType {
         return ErrorUtils.createErrorTypeWithCustomConstructor(
                 "function placeholder type",
                 FunctionPlaceholderTypeConstructor(argumentTypes, hasDeclaredArguments, builtIns)
@@ -33,13 +33,13 @@ class FunctionPlaceholders(private val builtIns: KotlinBuiltIns) {
     }
 }
 
-val JetType?.isFunctionPlaceholder: Boolean
+val KtType?.isFunctionPlaceholder: Boolean
     get() {
         return this != null && constructor is FunctionPlaceholderTypeConstructor
     }
 
 class FunctionPlaceholderTypeConstructor(
-        val argumentTypes: List<JetType>,
+        val argumentTypes: List<KtType>,
         val hasDeclaredArguments: Boolean,
         private val kotlinBuiltIns: KotlinBuiltIns
 ) : TypeConstructor {
@@ -49,7 +49,7 @@ class FunctionPlaceholderTypeConstructor(
         return errorTypeConstructor.parameters
     }
 
-    override fun getSupertypes(): Collection<JetType> {
+    override fun getSupertypes(): Collection<KtType> {
         return errorTypeConstructor.supertypes
     }
 

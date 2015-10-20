@@ -30,27 +30,27 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.generate
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicatesSilently
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer.ControlWrapper
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import javax.swing.*
 import javax.swing.event.PopupMenuEvent
 
 public class KotlinInplacePropertyIntroducer(
-        property: JetProperty,
+        property: KtProperty,
         editor: Editor,
         project: Project,
         title: String,
         doNotChangeVar: Boolean,
-        exprType: JetType?,
+        exprType: KtType?,
         extractionResult: ExtractionResult,
         private val availableTargets: List<ExtractionTarget>
-): KotlinInplaceVariableIntroducer<JetProperty>(
-        property, editor, project, title, JetExpression.EMPTY_ARRAY, null, false, property, false, doNotChangeVar, exprType, false
+): KotlinInplaceVariableIntroducer<KtProperty>(
+        property, editor, project, title, KtExpression.EMPTY_ARRAY, null, false, property, false, doNotChangeVar, exprType, false
 ) {
     init {
         assert(availableTargets.isNotEmpty()) { "No targets available: ${property.getElementTextWithContext()}" }
@@ -66,7 +66,7 @@ public class KotlinInplacePropertyIntroducer(
             runWriteActionAndRestartRefactoring {
                 with (extractionResult.config) {
                     extractionResult = copy(generatorOptions = generatorOptions.copy(target = currentTarget)).generateDeclaration(property)
-                    property = extractionResult.declaration as JetProperty
+                    property = extractionResult.declaration as KtProperty
                     myElementToRename = property
                 }
             }
@@ -75,9 +75,9 @@ public class KotlinInplacePropertyIntroducer(
 
     private var replaceAll: Boolean = true
 
-    protected var property: JetProperty
+    protected var property: KtProperty
         get() = myDeclaration
-        set(value: JetProperty) {
+        set(value: KtProperty) {
             myDeclaration = value
         }
 
@@ -158,7 +158,7 @@ public class KotlinInplacePropertyIntroducer(
     }
 
     override fun checkLocalScope(): PsiElement? {
-        return myElementToRename.parentsWithSelf.first { it is JetClassOrObject || it is JetFile }
+        return myElementToRename.parentsWithSelf.first { it is KtClassOrObject || it is KtFile }
     }
 
     override fun moveOffsetAfter(success: Boolean) {

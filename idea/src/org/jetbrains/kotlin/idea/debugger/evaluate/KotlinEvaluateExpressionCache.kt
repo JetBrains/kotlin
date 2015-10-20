@@ -20,13 +20,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.psi.JetCodeFragment
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import java.util.ArrayList
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.apache.log4j.Logger
@@ -47,10 +47,10 @@ class KotlinEvaluateExpressionCache(val project: Project) {
         fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinEvaluateExpressionCache>())!!
 
         fun getOrCreateCompiledData(
-                codeFragment: JetCodeFragment,
+                codeFragment: KtCodeFragment,
                 sourcePosition: SourcePosition,
                 evaluationContext: EvaluationContextImpl,
-                create: (JetCodeFragment, SourcePosition) -> CompiledDataDescriptor
+                create: (KtCodeFragment, SourcePosition) -> CompiledDataDescriptor
         ): CompiledDataDescriptor {
             val evaluateExpressionCache = getInstance(codeFragment.getProject())
 
@@ -96,12 +96,12 @@ class KotlinEvaluateExpressionCache(val project: Project) {
     class ParametersDescriptor : Iterable<Parameter> {
         private val list = ArrayList<Parameter>()
 
-        fun add(name: String, jetType: JetType, value: Value? = null) {
+        fun add(name: String, jetType: KtType, value: Value? = null) {
             list.add(Parameter(name, jetType, value))
         }
 
         override fun iterator() = list.iterator()
     }
 
-    data class Parameter(val callText: String, val type: JetType, val value: Value? = null)
+    data class Parameter(val callText: String, val type: KtType, val value: Value? = null)
 }

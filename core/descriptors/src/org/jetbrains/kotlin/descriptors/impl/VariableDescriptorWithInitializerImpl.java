@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.LazyType;
 
 public abstract class VariableDescriptorWithInitializerImpl extends VariableDescriptorImpl {
@@ -36,7 +36,7 @@ public abstract class VariableDescriptorWithInitializerImpl extends VariableDesc
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @Nullable JetType outType,
+            @Nullable KtType outType,
             boolean isVar,
             @NotNull SourceElement source
     ) {

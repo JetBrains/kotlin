@@ -170,7 +170,7 @@ public class ValueArgumentsToParametersMapper {
                 ValueArgumentName argumentName = argument.getArgumentName();
                 assert argumentName != null;
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(argumentName.getAsName());
-                JetReferenceExpression nameReference = argumentName.getReferenceExpression();
+                KtReferenceExpression nameReference = argumentName.getReferenceExpression();
                 if (!candidate.hasStableParameterNames() && nameReference != null) {
                     report(NAMED_ARGUMENTS_NOT_ALLOWED.on(
                             nameReference,
@@ -259,7 +259,7 @@ public class ValueArgumentsToParametersMapper {
             List<? extends FunctionLiteralArgument> functionLiteralArguments = call.getFunctionLiteralArguments();
             if (!functionLiteralArguments.isEmpty()) {
                 FunctionLiteralArgument functionLiteralArgument = functionLiteralArguments.get(0);
-                JetExpression possiblyLabeledFunctionLiteral = functionLiteralArgument.getArgumentExpression();
+                KtExpression possiblyLabeledFunctionLiteral = functionLiteralArgument.getArgumentExpression();
 
                 if (valueParameters.isEmpty()) {
                     report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
@@ -283,7 +283,7 @@ public class ValueArgumentsToParametersMapper {
                 }
 
                 for (int i = 1; i < functionLiteralArguments.size(); i++) {
-                    JetExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
+                    KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
                     report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
                     setStatus(WEAK_ERROR);
                 }

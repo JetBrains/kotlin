@@ -53,7 +53,7 @@ public class TypeDeserializer(
             get() = typeParameterDescriptors().values().toReadOnlyList()
 
     // TODO: don't load identical types from TypeTable more than once
-    fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): JetType {
+    fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): KtType {
         if (proto.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(proto.flexibleTypeCapabilitiesId)
             val capabilities = c.components.flexibleTypeCapabilitiesDeserializer.capabilitiesById(id) ?:

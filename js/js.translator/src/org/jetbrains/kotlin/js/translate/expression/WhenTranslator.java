@@ -31,22 +31,22 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 
 public final class WhenTranslator extends AbstractTranslator {
     @Nullable
-    public static JsNode translate(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
+    public static JsNode translate(@NotNull KtWhenExpression expression, @NotNull TranslationContext context) {
         return new WhenTranslator(expression, context).translate();
     }
 
     @NotNull
-    private final JetWhenExpression whenExpression;
+    private final KtWhenExpression whenExpression;
 
     @Nullable
     private final JsExpression expressionToMatch;
 
-    private WhenTranslator(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
+    private WhenTranslator(@NotNull KtWhenExpression expression, @NotNull TranslationContext context) {
         super(context);
 
         whenExpression = expression;
 
-        JetExpression subject = expression.getSubjectExpression();
+        KtExpression subject = expression.getSubjectExpression();
         if (subject != null) {
             JsExpression subjectExpression = Translation.translateAsExpression(subject, context);
             if (TranslationUtils.isCacheNeeded(subjectExpression)) {
@@ -68,7 +68,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
         JsIf currentIf = null;
         JsIf resultIf = null;
-        for (JetWhenEntry entry : whenExpression.getEntries()) {
+        for (KtWhenEntry entry : whenExpression.getEntries()) {
             JsBlock statementBlock = new JsBlock();
             JsStatement statement = translateEntryExpression(entry, context(), statementBlock);
 
@@ -99,17 +99,17 @@ public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private static JsStatement translateEntryExpression(
-            @NotNull JetWhenEntry entry,
+            @NotNull KtWhenEntry entry,
             @NotNull TranslationContext context,
             @NotNull JsBlock block) {
-        JetExpression expressionToExecute = entry.getExpression();
+        KtExpression expressionToExecute = entry.getExpression();
         assert expressionToExecute != null : "WhenEntry should have whenExpression to execute.";
         return Translation.translateAsStatement(expressionToExecute, context, block);
     }
 
     @NotNull
-    private JsExpression translateConditions(@NotNull JetWhenEntry entry, @NotNull TranslationContext context) {
-        JetWhenCondition[] conditions = entry.getConditions();
+    private JsExpression translateConditions(@NotNull KtWhenEntry entry, @NotNull TranslationContext context) {
+        KtWhenCondition[] conditions = entry.getConditions();
 
         assert conditions.length > 0 : "When entry (not else) should have at least one condition";
 
@@ -126,7 +126,7 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression translateOrCondition(@NotNull JsExpression leftExpression, @NotNull JetWhenCondition condition, @NotNull TranslationContext context) {
+    private JsExpression translateOrCondition(@NotNull JsExpression leftExpression, @NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
         TranslationContext rightContext = context.innerBlock();
         JsExpression rightExpression = translateCondition(condition, rightContext);
         context.moveVarsFrom(rightContext);
@@ -143,15 +143,15 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression translateCondition(@NotNull JetWhenCondition condition, @NotNull TranslationContext context) {
-        if ((condition instanceof JetWhenConditionIsPattern) || (condition instanceof JetWhenConditionWithExpression)) {
+    private JsExpression translateCondition(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
+        if ((condition instanceof KtWhenConditionIsPattern) || (condition instanceof KtWhenConditionWithExpression)) {
             return translatePatternCondition(condition, context);
         }
         throw new AssertionError("Unsupported when condition " + condition.getClass());
     }
 
     @NotNull
-    private JsExpression translatePatternCondition(@NotNull JetWhenCondition condition, @NotNull TranslationContext context) {
+    private JsExpression translatePatternCondition(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
         JsExpression patternMatchExpression = translateWhenConditionToBooleanExpression(condition, context);
         if (isNegated(condition)) {
             return negated(patternMatchExpression);
@@ -160,30 +160,30 @@ public final class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression translateWhenConditionToBooleanExpression(@NotNull JetWhenCondition condition, @NotNull TranslationContext context) {
-        if (condition instanceof JetWhenConditionIsPattern) {
-            return translateIsCondition((JetWhenConditionIsPattern) condition, context);
+    private JsExpression translateWhenConditionToBooleanExpression(@NotNull KtWhenCondition condition, @NotNull TranslationContext context) {
+        if (condition instanceof KtWhenConditionIsPattern) {
+            return translateIsCondition((KtWhenConditionIsPattern) condition, context);
         }
-        else if (condition instanceof JetWhenConditionWithExpression) {
-            return translateExpressionCondition((JetWhenConditionWithExpression) condition, context);
+        else if (condition instanceof KtWhenConditionWithExpression) {
+            return translateExpressionCondition((KtWhenConditionWithExpression) condition, context);
         }
         throw new AssertionError("Wrong type of JetWhenCondition");
     }
 
     @NotNull
-    private JsExpression translateIsCondition(@NotNull JetWhenConditionIsPattern conditionIsPattern, @NotNull TranslationContext context) {
+    private JsExpression translateIsCondition(@NotNull KtWhenConditionIsPattern conditionIsPattern, @NotNull TranslationContext context) {
         JsExpression expressionToMatch = getExpressionToMatch();
         assert expressionToMatch != null : "An is-check is not allowed in when() without subject.";
 
-        JetTypeReference typeReference = conditionIsPattern.getTypeReference();
+        KtTypeReference typeReference = conditionIsPattern.getTypeReference();
         assert typeReference != null : "An is-check must have a type reference.";
 
         return Translation.patternTranslator(context).translateIsCheck(expressionToMatch, typeReference);
     }
 
     @NotNull
-    private JsExpression translateExpressionCondition(@NotNull JetWhenConditionWithExpression condition, @NotNull TranslationContext context) {
-        JetExpression patternExpression = condition.getExpression();
+    private JsExpression translateExpressionCondition(@NotNull KtWhenConditionWithExpression condition, @NotNull TranslationContext context) {
+        KtExpression patternExpression = condition.getExpression();
         assert patternExpression != null : "Expression pattern should have an expression.";
 
         JsExpression expressionToMatch = getExpressionToMatch();
@@ -200,9 +200,9 @@ public final class WhenTranslator extends AbstractTranslator {
         return expressionToMatch;
     }
 
-    private static boolean isNegated(@NotNull JetWhenCondition condition) {
-        if (condition instanceof JetWhenConditionIsPattern) {
-            return ((JetWhenConditionIsPattern)condition).isNegated();
+    private static boolean isNegated(@NotNull KtWhenCondition condition) {
+        if (condition instanceof KtWhenConditionIsPattern) {
+            return ((KtWhenConditionIsPattern)condition).isNegated();
         }
         return false;
     }

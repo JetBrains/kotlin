@@ -47,9 +47,9 @@ import org.jetbrains.kotlin.idea.util.DebuggerUtils;
 import org.jetbrains.kotlin.idea.util.InfinitePeriodicalTask;
 import org.jetbrains.kotlin.idea.util.LongRunningReadTask;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetScript;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.utils.StringsKt;
 
@@ -81,7 +81,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 return null;
             }
 
-            JetFile file = location.getJetFile();
+            KtFile file = location.getJetFile();
             if (file == null || !ProjectRootsUtil.isInProjectSource(file)) {
                 return null;
             }
@@ -105,7 +105,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         @NotNull
         @Override
         protected String processRequest(@NotNull Location location) {
-            JetFile jetFile = location.getJetFile();
+            KtFile jetFile = location.getJetFile();
             assert jetFile != null;
 
             return getBytecodeForFile(jetFile, enableInline.isSelected(), enableAssertions.isSelected(), enableOptimization.isSelected());
@@ -189,7 +189,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     // public for tests
     @NotNull
     public static String getBytecodeForFile(
-            final JetFile jetFile,
+            final KtFile jetFile,
             boolean enableInline,
             boolean enableAssertions,
             boolean enableOptimization
@@ -201,32 +201,32 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
             BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(jetFile)).getBindingContext();
 
-            kotlin.Pair<BindingContext, List<JetFile>> result = DebuggerUtils.analyzeInlinedFunctions(
+            kotlin.Pair<BindingContext, List<KtFile>> result = DebuggerUtils.analyzeInlinedFunctions(
                     resolutionFacade, bindingContextForFile, jetFile, !enableInline
             );
 
             BindingContext bindingContext = result.getFirst();
-            List<JetFile> toProcess = result.getSecond();
+            List<KtFile> toProcess = result.getSecond();
 
             GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
 
                 @Override
-                public boolean shouldGeneratePackagePart(JetFile file) {
+                public boolean shouldGeneratePackagePart(KtFile file) {
                     return file == jetFile;
                 }
 
                 @Override
-                public boolean shouldAnnotateClass(JetClassOrObject classOrObject) {
+                public boolean shouldAnnotateClass(KtClassOrObject classOrObject) {
                     return true;
                 }
 
                 @Override
-                public boolean shouldGenerateClass(JetClassOrObject classOrObject) {
+                public boolean shouldGenerateClass(KtClassOrObject classOrObject) {
                     return classOrObject.getContainingJetFile() == jetFile;
                 }
 
                 @Override
-                public boolean shouldGenerateScript(JetScript script) {
+                public boolean shouldGenerateScript(KtScript script) {
                     return script.getContainingJetFile() == jetFile;
                 }
             };

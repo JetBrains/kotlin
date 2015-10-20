@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.parsing
 
 import com.intellij.lang.WhitespacesAndCommentsBinder
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import com.intellij.openapi.util.text.StringUtil
 
 object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
@@ -28,7 +28,7 @@ object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
 
         // 1. bind doc comment
         for (idx in tokens.indices.reversed()) {
-            if (tokens[idx] == JetTokens.DOC_COMMENT) return idx
+            if (tokens[idx] == KtTokens.DOC_COMMENT) return idx
         }
 
         // 2. bind plain comments
@@ -36,10 +36,10 @@ object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
         tokens@ for (idx in tokens.indices.reversed()) {
             val tokenType = tokens[idx]
             when (tokenType) {
-                JetTokens.WHITE_SPACE -> if (StringUtil.getLineBreakCount(getter[idx]) > 1) break@tokens
+                KtTokens.WHITE_SPACE -> if (StringUtil.getLineBreakCount(getter[idx]) > 1) break@tokens
 
-                in JetTokens.COMMENTS -> {
-                    if (idx == 0 || tokens[idx - 1] == JetTokens.WHITE_SPACE && StringUtil.containsLineBreak(getter[idx - 1])) {
+                in KtTokens.COMMENTS -> {
+                    if (idx == 0 || tokens[idx - 1] == KtTokens.WHITE_SPACE && StringUtil.containsLineBreak(getter[idx - 1])) {
                         result = idx
                     }
                 }
@@ -58,7 +58,7 @@ object PrecedingDocCommentsBinder : WhitespacesAndCommentsBinder {
         if (tokens.isEmpty()) return 0
 
         for (idx in tokens.indices.reversed()) {
-            if (tokens[idx] == JetTokens.DOC_COMMENT) return idx
+            if (tokens[idx] == KtTokens.DOC_COMMENT) return idx
         }
 
         return tokens.size()
@@ -75,9 +75,9 @@ object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
         tokens@ for (idx in tokens.indices) {
             val tokenType = tokens[idx]
             when (tokenType) {
-                JetTokens.WHITE_SPACE -> if (StringUtil.containsLineBreak(getter[idx])) break@tokens
+                KtTokens.WHITE_SPACE -> if (StringUtil.containsLineBreak(getter[idx])) break@tokens
 
-                JetTokens.EOL_COMMENT, JetTokens.BLOCK_COMMENT -> result = idx + 1
+                KtTokens.EOL_COMMENT, KtTokens.BLOCK_COMMENT -> result = idx + 1
 
                 else -> break@tokens
             }

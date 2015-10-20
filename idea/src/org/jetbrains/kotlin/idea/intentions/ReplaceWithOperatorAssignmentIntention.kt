@@ -23,26 +23,26 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetNameReferenceExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<JetBinaryExpression>(ReplaceWithOperatorAssignmentIntention())
+public class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<KtBinaryExpression>(ReplaceWithOperatorAssignmentIntention())
 
-public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Replace with operator-assignment") {
+public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Replace with operator-assignment") {
 
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        if (element.getOperationToken() != JetTokens.EQ) return false
-        val left = element.getLeft() as? JetNameReferenceExpression ?: return false
-        val right = element.getRight() as? JetBinaryExpression ?: return false
+    override fun isApplicableTo(element: KtBinaryExpression): Boolean {
+        if (element.getOperationToken() != KtTokens.EQ) return false
+        val left = element.getLeft() as? KtNameReferenceExpression ?: return false
+        val right = element.getRight() as? KtBinaryExpression ?: return false
         if (right.getLeft() == null || right.getRight() == null) return false
 
         return checkExpressionRepeat(left, right)
     }
 
-    private fun checkExpressionRepeat(variableExpression: JetNameReferenceExpression, expression: JetBinaryExpression): Boolean {
+    private fun checkExpressionRepeat(variableExpression: KtNameReferenceExpression, expression: KtBinaryExpression): Boolean {
         val context = expression.analyze()
         val descriptor = context[BindingContext.REFERENCE_TARGET, expression.getOperationReference()]?.getContainingDeclaration()
         val isPrimitiveOperation = descriptor is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(descriptor.getDefaultType())
@@ -61,7 +61,7 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
                 isPrimitiveOperation && isCommutative(operationToken)
             }
 
-            expressionLeft is JetBinaryExpression -> {
+            expressionLeft is KtBinaryExpression -> {
                 val sameCommutativeOperation = expressionLeft.getOperationToken() == operationToken && isCommutative(operationToken)
                 isPrimitiveOperation && sameCommutativeOperation && checkExpressionRepeat(variableExpression, expressionLeft)
             }
@@ -72,23 +72,23 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
         }
     }
 
-    private fun isCommutative(operationToken: IElementType) = operationToken == JetTokens.PLUS || operationToken == JetTokens.MUL
-    private fun isArithmeticOperation(operationToken: IElementType) = operationToken == JetTokens.PLUS ||
-                                                                       operationToken == JetTokens.MINUS ||
-                                                                       operationToken == JetTokens.MUL ||
-                                                                       operationToken == JetTokens.DIV ||
-                                                                       operationToken == JetTokens.PERC
+    private fun isCommutative(operationToken: IElementType) = operationToken == KtTokens.PLUS || operationToken == KtTokens.MUL
+    private fun isArithmeticOperation(operationToken: IElementType) = operationToken == KtTokens.PLUS ||
+                                                                       operationToken == KtTokens.MINUS ||
+                                                                       operationToken == KtTokens.MUL ||
+                                                                       operationToken == KtTokens.DIV ||
+                                                                       operationToken == KtTokens.PERC
 
-    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+    override fun applyTo(element: KtBinaryExpression, editor: Editor) {
         val replacement = buildOperatorAssignmentText(
-                element.getLeft() as JetNameReferenceExpression,
-                element.getRight() as JetBinaryExpression,
+                element.getLeft() as KtNameReferenceExpression,
+                element.getRight() as KtBinaryExpression,
                 ""
         )
-        element.replace(JetPsiFactory(element).createExpression(replacement))
+        element.replace(KtPsiFactory(element).createExpression(replacement))
     }
 
-    tailrec private fun buildOperatorAssignmentText(variableExpression: JetNameReferenceExpression, expression: JetBinaryExpression, tail: String): String {
+    tailrec private fun buildOperatorAssignmentText(variableExpression: KtNameReferenceExpression, expression: KtBinaryExpression, tail: String): String {
         val operationText = expression.getOperationReference().getText()
         val variableName = variableExpression.getText()
 
@@ -99,8 +99,8 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
 
             variableExpression.matches(expression.getRight()) -> "$variableName $operationText= ${expression.getLeft()!!.getText()}".appendTail()
 
-            expression.getLeft() is JetBinaryExpression ->
-                buildOperatorAssignmentText(variableExpression, expression.getLeft() as JetBinaryExpression, "$operationText ${expression.getRight()!!.getText()}".appendTail())
+            expression.getLeft() is KtBinaryExpression ->
+                buildOperatorAssignmentText(variableExpression, expression.getLeft() as KtBinaryExpression, "$operationText ${expression.getRight()!!.getText()}".appendTail())
 
             else -> tail
         }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DeprecationLevelValue
@@ -50,12 +50,12 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
 
     override fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) {
         // Do not check types in annotation entries to prevent cycles in resolve, rely on call message
-        val annotationEntry = JetStubbedPsiUtil.getPsiOrStubParent(element, javaClass<JetAnnotationEntry>(), true)
+        val annotationEntry = KtStubbedPsiUtil.getPsiOrStubParent(element, javaClass<KtAnnotationEntry>(), true)
         if (annotationEntry != null && annotationEntry.getCalleeExpression()!!.getConstructorReferenceExpression() == element)
             return
 
         // Do not check types in calls to super constructor in extends list, rely on call message
-        val superExpression = JetStubbedPsiUtil.getPsiOrStubParent(element, javaClass<JetDelegatorToSuperCall>(), true)
+        val superExpression = KtStubbedPsiUtil.getPsiOrStubParent(element, javaClass<KtDelegatorToSuperCall>(), true)
         if (superExpression != null && superExpression.getCalleeExpression().getConstructorReferenceExpression() == element)
             return
 
@@ -76,8 +76,8 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
         return Errors.DEPRECATION.on(element, descriptor.original, message)
     }
 
-    private val PROPERTY_SET_OPERATIONS = TokenSet.create(JetTokens.EQ, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ,
-                                                          JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS)
+    private val PROPERTY_SET_OPERATIONS = TokenSet.create(KtTokens.EQ, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ,
+                                                          KtTokens.DIVEQ, KtTokens.PERCEQ, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS)
 
     fun propertyGetterWorkaround(
             resolvedCall: ResolvedCall<*>?,
@@ -86,7 +86,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             expression: PsiElement
     ) {
         // property getters do not come as callable yet, so we analyse surroundings to check for deprecation annotation on getter
-        val binaryExpression = PsiTreeUtil.getParentOfType<JetBinaryExpression>(expression, javaClass<JetBinaryExpression>())
+        val binaryExpression = PsiTreeUtil.getParentOfType<KtBinaryExpression>(expression, javaClass<KtBinaryExpression>())
         if (binaryExpression != null) {
             val left = binaryExpression.getLeft()
             if (left == expression) {
@@ -95,7 +95,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
                     return
             }
 
-            val jetReferenceExpressions = PsiTreeUtil.getChildrenOfType<JetReferenceExpression>(left, javaClass<JetReferenceExpression>())
+            val jetReferenceExpressions = PsiTreeUtil.getChildrenOfType<KtReferenceExpression>(left, javaClass<KtReferenceExpression>())
             if (jetReferenceExpressions != null) {
                 for (expr in jetReferenceExpressions) {
                     if (expr == expression) {
@@ -107,7 +107,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             }
         }
 
-        val unaryExpression = PsiTreeUtil.getParentOfType(expression, javaClass<JetUnaryExpression>())
+        val unaryExpression = PsiTreeUtil.getParentOfType(expression, javaClass<KtUnaryExpression>())
         if (unaryExpression != null) {
             val operation = unaryExpression.getOperationReference().getReferencedNameElementType()
             if (operation != null && operation in PROPERTY_SET_OPERATIONS)
@@ -115,7 +115,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
 
         }
 
-        val callableExpression = PsiTreeUtil.getParentOfType(expression, javaClass<JetCallableReferenceExpression>())
+        val callableExpression = PsiTreeUtil.getParentOfType(expression, javaClass<KtCallableReferenceExpression>())
         if (callableExpression != null && callableExpression.getCallableReference() == expression) {
             return // skip Type::property
         }

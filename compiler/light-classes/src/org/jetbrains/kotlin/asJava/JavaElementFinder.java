@@ -32,12 +32,11 @@ import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNamesUtilKt;
-import org.jetbrains.kotlin.psi.JetClassOrObject;
-import org.jetbrains.kotlin.psi.JetEnumEntry;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtEnumEntry;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker;
 
 import java.util.Collection;
@@ -128,11 +127,11 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     private void findClassesAndObjects(FqName qualifiedName, GlobalSearchScope scope, List<PsiClass> answer) {
         findInterfaceDefaultImpls(qualifiedName, scope, answer);
 
-        Collection<JetClassOrObject> classOrObjectDeclarations =
+        Collection<KtClassOrObject> classOrObjectDeclarations =
                 lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName, scope);
 
-        for (JetClassOrObject declaration : classOrObjectDeclarations) {
-            if (!(declaration instanceof JetEnumEntry)) {
+        for (KtClassOrObject declaration : classOrObjectDeclarations) {
+            if (!(declaration instanceof KtEnumEntry)) {
                 PsiClass lightClass = LightClassUtil.INSTANCE$.getPsiClass(declaration);
                 if (lightClass != null) {
                     answer.add(lightClass);
@@ -146,7 +145,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         if (!qualifiedName.shortName().asString().equals(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)) return;
 
-        for (JetClassOrObject classOrObject : lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
+        for (KtClassOrObject classOrObject : lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
             if (LightClassUtilsKt.getHasInterfaceDefaultImpls(classOrObject)) {
                 PsiClass interfaceClass = LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
                 if (interfaceClass != null) {
@@ -164,12 +163,12 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     public Set<String> getClassNames(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
-        Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
+        Collection<KtClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
 
         Set<String> answer = Sets.newHashSet();
         answer.addAll(lightClassGenerationSupport.getFacadeNames(packageFQN, scope));
 
-        for (JetClassOrObject declaration : declarations) {
+        for (KtClassOrObject declaration : declarations) {
             String name = declaration.getName();
             if (name != null) {
                 answer.add(name);
@@ -190,7 +189,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         // allScope() because the contract says that the whole project
         GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
         if (lightClassGenerationSupport.packageExists(fqName, allScope)) {
-            return new JetLightPackage(psiManager, fqName, allScope);
+            return new KotlinLightPackage(psiManager, fqName, allScope);
         }
 
         return null;
@@ -206,7 +205,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         Collection<PsiPackage> answer = Collections2.transform(subpackages, new Function<FqName, PsiPackage>() {
             @Override
             public PsiPackage apply(@Nullable FqName input) {
-                return new JetLightPackage(psiManager, input, scope);
+                return new KotlinLightPackage(psiManager, input, scope);
             }
         });
 
@@ -221,8 +220,8 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         answer.addAll(lightClassGenerationSupport.getFacadeClassesInPackage(packageFQN, scope));
 
-        Collection<JetClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
-        for (JetClassOrObject declaration : declarations) {
+        Collection<KtClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
+        for (KtClassOrObject declaration : declarations) {
             PsiClass aClass = LightClassUtil.INSTANCE$.getPsiClass(declaration);
             if (aClass != null) {
                 answer.add(aClass);
@@ -236,7 +235,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     @NotNull
     public PsiFile[] getPackageFiles(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
-        Collection<JetFile> result = lightClassGenerationSupport.findFilesForPackage(packageFQN, scope);
+        Collection<KtFile> result = lightClassGenerationSupport.findFilesForPackage(packageFQN, scope);
         return result.toArray(new PsiFile[result.size()]);
     }
 
@@ -246,10 +245,10 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         return new Condition<PsiFile>() {
             @Override
             public boolean value(PsiFile input) {
-                if (!(input instanceof JetFile)) {
+                if (!(input instanceof KtFile)) {
                     return true;
                 }
-                return psiPackage.getQualifiedName().equals(((JetFile) input).getPackageFqName().asString());
+                return psiPackage.getQualifiedName().equals(((KtFile) input).getPackageFqName().asString());
             }
         };
     }

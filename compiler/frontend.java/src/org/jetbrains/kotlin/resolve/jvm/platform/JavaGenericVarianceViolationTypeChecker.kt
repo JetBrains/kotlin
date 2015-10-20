@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.resolve.jvm.platform
 
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeTag
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
 public object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
@@ -38,9 +38,9 @@ public object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // val x: MutableList<String>
     // JavaClass.fillWithDefaultObjects(x) // using `x` after this call may lead to CCE
     override fun checkType(
-            expression: JetExpression,
-            expressionType: JetType,
-            expressionTypeWithSmartCast: JetType,
+            expression: KtExpression,
+            expressionType: KtType,
+            expressionTypeWithSmartCast: KtType,
             c: ResolutionContext<*>
     ) {
         val expectedType = c.expectedType
@@ -82,7 +82,7 @@ public object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
             if (lowerParameters[index].variance == Variance.INVARIANT
                 && upperParameters[index].variance == Variance.OUT_VARIANCE
                 && lowerArgument.projectionKind != Variance.OUT_VARIANCE
-                && !JetTypeChecker.DEFAULT.equalTypes(correspondingSubType.arguments[index].type, lowerArgument.type)
+                && !KotlinTypeChecker.DEFAULT.equalTypes(correspondingSubType.arguments[index].type, lowerArgument.type)
             ) {
                 c.trace.report(ErrorsJvm.JAVA_TYPE_MISMATCH.on(expression, expressionTypeWithSmartCast, expectedType))
             }

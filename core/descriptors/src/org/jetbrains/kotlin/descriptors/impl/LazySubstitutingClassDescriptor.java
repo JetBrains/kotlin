@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.types.*;
 
@@ -68,9 +68,9 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         if (typeConstructor == null) {
             TypeSubstitutor substitutor = getSubstitutor();
 
-            Collection<JetType> originalSupertypes = originalTypeConstructor.getSupertypes();
-            Collection<JetType> supertypes = new ArrayList<JetType>(originalSupertypes.size());
-            for (JetType supertype : originalSupertypes) {
+            Collection<KtType> originalSupertypes = originalTypeConstructor.getSupertypes();
+            Collection<KtType> supertypes = new ArrayList<KtType>(originalSupertypes.size());
+            for (KtType supertype : originalSupertypes) {
                 supertypes.add(substitutor.substitute(supertype, Variance.INVARIANT));
             }
 
@@ -89,8 +89,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
-        JetScope memberScope = original.getMemberScope(typeArguments);
+    public KtScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        KtScope memberScope = original.getMemberScope(typeArguments);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
@@ -99,8 +99,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public JetScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
-        JetScope memberScope = original.getMemberScope(typeSubstitution);
+    public KtScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
+        KtScope memberScope = original.getMemberScope(typeSubstitution);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
@@ -109,8 +109,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public JetScope getUnsubstitutedMemberScope() {
-        JetScope memberScope = original.getUnsubstitutedMemberScope();
+    public KtScope getUnsubstitutedMemberScope() {
+        KtScope memberScope = original.getUnsubstitutedMemberScope();
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
@@ -119,15 +119,15 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public JetScope getStaticScope() {
+    public KtScope getStaticScope() {
         return original.getStaticScope();
     }
 
     @NotNull
     @Override
-    public JetType getDefaultType() {
+    public KtType getDefaultType() {
         List<TypeProjection> typeProjections = TypeUtils.getDefaultTypeProjections(getTypeConstructor().getParameters());
-        return JetTypeImpl.create(
+        return KtTypeImpl.create(
                 getAnnotations(),
                 this,
                 false,
@@ -233,7 +233,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public JetScope getUnsubstitutedInnerClassesScope() {
+    public KtScope getUnsubstitutedInnerClassesScope() {
         return original.getUnsubstitutedInnerClassesScope();
     }
 

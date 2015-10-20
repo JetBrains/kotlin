@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -56,15 +56,15 @@ internal class ProjectResolutionFacade(
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
             {
                 val resolverProvider = moduleResolverProvider
-                val results = object : SLRUCache<JetFile, PerFileAnalysisCache>(2, 3) {
-                    override fun createValue(file: JetFile?): PerFileAnalysisCache {
+                val results = object : SLRUCache<KtFile, PerFileAnalysisCache>(2, 3) {
+                    override fun createValue(file: KtFile?): PerFileAnalysisCache {
                         return PerFileAnalysisCache(file!!, resolverProvider.resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider)
                     }
                 }
                 CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolverProvider.exceptionTracker)
             }, false)
 
-    fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalysisResult {
+    fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
         val slruCache = synchronized(analysisResults) {
             analysisResults.getValue()!!
@@ -97,15 +97,15 @@ internal class ResolutionFacadeImpl(
     override val moduleDescriptor: ModuleDescriptor
         get() = projectFacade.findModuleDescriptor(moduleInfo)
 
-    override fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
+    override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
         val resolveElementCache = getFrontendService(element, javaClass<ResolveElementCache>())
         return resolveElementCache.resolveToElement(element, bodyResolveMode)
     }
 
-    override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult
+    override fun analyzeFullyAndGetResult(elements: Collection<KtElement>): AnalysisResult
             = projectFacade.getAnalysisResultsForElements(elements)
 
-    override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
+    override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor {
         val resolveSession = projectFacade.resolverForModuleInfo(declaration.getModuleInfo()).componentProvider.get<ResolveSession>()
         return resolveSession.resolveToDescriptor(declaration)
     }

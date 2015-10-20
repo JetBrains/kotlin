@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -168,10 +168,10 @@ public final class TranslationUtils {
     }
 
     @Nullable
-    public static JsExpression translateInitializerForProperty(@NotNull JetProperty declaration,
+    public static JsExpression translateInitializerForProperty(@NotNull KtProperty declaration,
             @NotNull TranslationContext context) {
         JsExpression jsInitExpression = null;
-        JetExpression initializer = declaration.getInitializer();
+        KtExpression initializer = declaration.getInitializer();
         if (initializer != null) {
             jsInitExpression = Translation.translateAsExpression(initializer, context);
         }
@@ -180,51 +180,51 @@ public final class TranslationUtils {
 
     @NotNull
     public static JsExpression translateBaseExpression(@NotNull TranslationContext context,
-            @NotNull JetUnaryExpression expression) {
-        JetExpression baseExpression = PsiUtils.getBaseExpression(expression);
+            @NotNull KtUnaryExpression expression) {
+        KtExpression baseExpression = PsiUtils.getBaseExpression(expression);
         return Translation.translateAsExpression(baseExpression, context);
     }
 
     @NotNull
     public static JsExpression translateLeftExpression(@NotNull TranslationContext context,
-            @NotNull JetBinaryExpression expression) {
+            @NotNull KtBinaryExpression expression) {
         return translateLeftExpression(context, expression, context.dynamicContext().jsBlock());
     }
 
     @NotNull
     public static JsExpression translateLeftExpression(
             @NotNull TranslationContext context,
-            @NotNull JetBinaryExpression expression,
+            @NotNull KtBinaryExpression expression,
             @NotNull JsBlock block
     ) {
-        JetExpression left = expression.getLeft();
+        KtExpression left = expression.getLeft();
         assert left != null : "Binary expression should have a left expression: " + expression.getText();
         return Translation.translateAsExpression(left, context, block);
     }
 
     @NotNull
     public static JsExpression translateRightExpression(@NotNull TranslationContext context,
-            @NotNull JetBinaryExpression expression) {
+            @NotNull KtBinaryExpression expression) {
         return translateRightExpression(context, expression, context.dynamicContext().jsBlock());
     }
 
     @NotNull
     public static JsExpression translateRightExpression(
             @NotNull TranslationContext context,
-            @NotNull JetBinaryExpression expression,
+            @NotNull KtBinaryExpression expression,
             @NotNull JsBlock block) {
-        JetExpression rightExpression = expression.getRight();
+        KtExpression rightExpression = expression.getRight();
         assert rightExpression != null : "Binary expression should have a right expression";
         return Translation.translateAsExpression(rightExpression, context, block);
     }
 
     public static boolean hasCorrespondingFunctionIntrinsic(@NotNull TranslationContext context,
-            @NotNull JetOperationExpression expression) {
+            @NotNull KtOperationExpression expression) {
         CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
 
         if (operationDescriptor == null || !(operationDescriptor instanceof FunctionDescriptor)) return true;
 
-        JetType returnType = operationDescriptor.getReturnType();
+        KtType returnType = operationDescriptor.getReturnType();
         if (returnType != null && (KotlinBuiltIns.isChar(returnType) || KotlinBuiltIns.isLong(returnType))) return false;
 
         if (context.intrinsics().getFunctionIntrinsic((FunctionDescriptor) operationDescriptor).exists()) return true;

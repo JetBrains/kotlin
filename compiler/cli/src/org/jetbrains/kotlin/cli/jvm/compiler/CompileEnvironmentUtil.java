@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.codegen.ClassFileFactory;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -137,7 +137,7 @@ public class CompileEnvironmentUtil {
     }
 
     @NotNull
-    public static List<JetFile> getJetFiles(
+    public static List<KtFile> getJetFiles(
             @NotNull final Project project,
             @NotNull Collection<String> sourceRoots,
             @NotNull Function1<String, Unit> reportError
@@ -145,7 +145,7 @@ public class CompileEnvironmentUtil {
         final VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
 
         final Set<VirtualFile> processedFiles = Sets.newHashSet();
-        final List<JetFile> result = Lists.newArrayList();
+        final List<KtFile> result = Lists.newArrayList();
 
         for (String sourceRootPath : sourceRoots) {
             if (sourceRootPath == null) {
@@ -157,7 +157,7 @@ public class CompileEnvironmentUtil {
                 reportError.invoke("Source file or directory not found: " + sourceRootPath);
                 continue;
             }
-            if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
+            if (!vFile.isDirectory() && vFile.getFileType() != KotlinFileType.INSTANCE) {
                 reportError.invoke("Source entry is not a Kotlin file: " + sourceRootPath);
                 continue;
             }
@@ -170,8 +170,8 @@ public class CompileEnvironmentUtil {
                         if (virtualFile != null && !processedFiles.contains(virtualFile)) {
                             processedFiles.add(virtualFile);
                             PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-                            if (psiFile instanceof JetFile) {
-                                result.add((JetFile) psiFile);
+                            if (psiFile instanceof KtFile) {
+                                result.add((KtFile) psiFile);
                             }
                         }
                     }

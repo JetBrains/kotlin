@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -62,17 +62,17 @@ public class TypeResolver(
         }
     }
 
-    public fun resolveType(scope: LexicalScope, typeReference: JetTypeReference, trace: BindingTrace, checkBounds: Boolean): JetType {
+    public fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KtType {
         // bare types are not allowed
         return resolveType(TypeResolutionContext(scope, trace, checkBounds, false), typeReference)
     }
 
-    private fun resolveType(c: TypeResolutionContext, typeReference: JetTypeReference): JetType {
+    private fun resolveType(c: TypeResolutionContext, typeReference: KtTypeReference): KtType {
         assert(!c.allowBareTypes) { "Use resolvePossiblyBareType() when bare types are allowed" }
         return resolvePossiblyBareType(c, typeReference).getActualType()
     }
 
-    public fun resolvePossiblyBareType(c: TypeResolutionContext, typeReference: JetTypeReference): PossiblyBareType {
+    public fun resolvePossiblyBareType(c: TypeResolutionContext, typeReference: KtTypeReference): PossiblyBareType {
         val cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference)
         if (cachedType != null) return type(cachedType)
 
@@ -106,7 +106,7 @@ public class TypeResolver(
         return type
     }
 
-    private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: JetTypeReference): PossiblyBareType {
+    private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: KtTypeReference): PossiblyBareType {
         val annotations = annotationResolver.resolveAnnotationsWithoutArguments(c.scope, typeReference.getAnnotationEntries(), c.trace)
 
         val typeElement = typeReference.typeElement
@@ -136,7 +136,7 @@ public class TypeResolver(
      *
      *  todo: find another way after release
      */
-    private fun forceResolveTypeContents(type: JetType) {
+    private fun forceResolveTypeContents(type: KtType) {
         type.annotations // force read type annotations
         if (type.isFlexible()) {
             forceResolveTypeContents(type.flexibility().lowerBound)
@@ -152,10 +152,10 @@ public class TypeResolver(
         }
     }
 
-    private fun resolveTypeElement(c: TypeResolutionContext, annotations: Annotations, typeElement: JetTypeElement?): PossiblyBareType {
+    private fun resolveTypeElement(c: TypeResolutionContext, annotations: Annotations, typeElement: KtTypeElement?): PossiblyBareType {
         var result: PossiblyBareType? = null
-        typeElement?.accept(object : JetVisitorVoid() {
-            override fun visitUserType(type: JetUserType) {
+        typeElement?.accept(object : KtVisitorVoid() {
+            override fun visitUserType(type: KtUserType) {
                 val classifierDescriptor = resolveClass(c.scope, type, c.trace)
                 if (classifierDescriptor == null) {
                     val arguments = resolveTypeProjections(c, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments())
@@ -180,7 +180,7 @@ public class TypeResolver(
                         result = if (scopeForTypeParameter is ErrorUtils.ErrorScope)
                                     type(ErrorUtils.createErrorType("?"))
                                  else
-                                    type(JetTypeImpl.create(
+                                    type(KtTypeImpl.create(
                                             annotations,
                                             classifierDescriptor.getTypeConstructor(),
                                             TypeUtils.hasNullableLowerBound(classifierDescriptor),
@@ -234,7 +234,7 @@ public class TypeResolver(
                                     )
                                     return
                                 }
-                                val resultingType = JetTypeImpl.create(annotations, classifierDescriptor, false, arguments)
+                                val resultingType = KtTypeImpl.create(annotations, classifierDescriptor, false, arguments)
                                 result = type(resultingType)
                                 if (c.checkBounds) {
                                     val substitutor = TypeSubstitutor.create(resultingType)
@@ -254,16 +254,16 @@ public class TypeResolver(
                 }
             }
 
-            override fun visitNullableType(nullableType: JetNullableType) {
+            override fun visitNullableType(nullableType: KtNullableType) {
                 val innerType = nullableType.getInnerType()
                 val baseType = resolveTypeElement(c, annotations, innerType)
-                if (baseType.isNullable() || innerType is JetNullableType || innerType is JetDynamicType) {
+                if (baseType.isNullable() || innerType is KtNullableType || innerType is KtDynamicType) {
                     c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
                 }
                 result = baseType.makeNullable()
             }
 
-            override fun visitFunctionType(type: JetFunctionType) {
+            override fun visitFunctionType(type: KtFunctionType) {
                 val receiverTypeRef = type.getReceiverTypeReference()
                 type.parameters.forEach { identifierChecker.checkDeclaration(it, c.trace) }
                 val receiverType = if (receiverTypeRef == null) null else resolveType(c.noBareTypes(), receiverTypeRef)
@@ -278,22 +278,22 @@ public class TypeResolver(
                 result = type(moduleDescriptor.builtIns.getFunctionType(annotations, receiverType, parameterTypes, returnType))
             }
 
-            override fun visitDynamicType(type: JetDynamicType) {
+            override fun visitDynamicType(type: KtDynamicType) {
                 result = type(dynamicCallableDescriptors.dynamicType)
                 if (!dynamicTypesSettings.dynamicTypesAllowed) {
                     c.trace.report(UNSUPPORTED.on(type, "Dynamic types are not supported in this context"))
                 }
             }
 
-            override fun visitSelfType(type: JetSelfType) {
+            override fun visitSelfType(type: KtSelfType) {
                 c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
             }
 
-            override fun visitJetElement(element: JetElement) {
+            override fun visitJetElement(element: KtElement) {
                 c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
             }
 
-            private fun checkParameterInFunctionType(param: JetParameter) {
+            private fun checkParameterInFunctionType(param: KtParameter) {
                 if (param.hasDefaultValue()) {
                     c.trace.report(Errors.UNSUPPORTED.on(param.defaultValue!!, "default value of parameter in function type"))
                 }
@@ -306,7 +306,7 @@ public class TypeResolver(
 
                 val modifierList = param.modifierList
                 if (modifierList != null) {
-                    JetTokens.MODIFIER_KEYWORDS_ARRAY
+                    KtTokens.MODIFIER_KEYWORDS_ARRAY
                             .map { modifierList.getModifier(it) }
                             .filterNotNull()
                             .forEach { c.trace.report(Errors.UNSUPPORTED.on(it, "modifier on parameter in function type"))
@@ -322,7 +322,7 @@ public class TypeResolver(
         return result ?: type(ErrorUtils.createErrorType(typeElement?.getDebugText() ?: "No type element"))
     }
 
-    private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): JetScope {
+    private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): KtScope {
         if (c.checkBounds) {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope()
         }
@@ -333,12 +333,12 @@ public class TypeResolver(
         }
     }
 
-    private fun resolveTypeProjections(c: TypeResolutionContext, constructor: TypeConstructor, argumentElements: List<JetTypeProjection>): List<TypeProjection> {
+    private fun resolveTypeProjections(c: TypeResolutionContext, constructor: TypeConstructor, argumentElements: List<KtTypeProjection>): List<TypeProjection> {
         return argumentElements.mapIndexed { i, argumentElement ->
 
             val projectionKind = argumentElement.getProjectionKind()
             ModifierCheckerCore.check(argumentElement, c.trace, null)
-            if (projectionKind == JetProjectionKind.STAR) {
+            if (projectionKind == KtProjectionKind.STAR) {
                 val parameters = constructor.getParameters()
                 if (parameters.size() > i) {
                     val parameterDescriptor = parameters[i]
@@ -368,7 +368,7 @@ public class TypeResolver(
         }
     }
 
-    public fun resolveClass(scope: LexicalScope, userType: JetUserType, trace: BindingTrace): ClassifierDescriptor? {
+    public fun resolveClass(scope: LexicalScope, userType: KtUserType, trace: BindingTrace): ClassifierDescriptor? {
         if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
             for (typeArgument in userType.qualifier!!.typeArguments) {
                 typeArgument.typeReference?.let {
@@ -386,11 +386,11 @@ public class TypeResolver(
 
     companion object {
         @JvmStatic
-        public fun resolveProjectionKind(projectionKind: JetProjectionKind): Variance {
+        public fun resolveProjectionKind(projectionKind: KtProjectionKind): Variance {
             return when (projectionKind) {
-                JetProjectionKind.IN -> IN_VARIANCE
-                JetProjectionKind.OUT -> OUT_VARIANCE
-                JetProjectionKind.NONE -> INVARIANT
+                KtProjectionKind.IN -> IN_VARIANCE
+                KtProjectionKind.OUT -> OUT_VARIANCE
+                KtProjectionKind.NONE -> INVARIANT
                 else -> // NOTE: Star projections must be handled before this method is called
                     throw IllegalStateException("Illegal projection kind:" + projectionKind)
             }

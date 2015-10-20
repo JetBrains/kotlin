@@ -52,10 +52,10 @@ import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.junit.Assert
 import java.io.File
@@ -116,7 +116,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                 val psiManager = PsiManager.getInstance(myProject)
                 val visitor = object : VirtualFileVisitor<Any>() {
                     override fun visitFile(file: VirtualFile): Boolean {
-                        (psiManager.findFile(file) as? JetFile)?.let { DirectiveBasedActionUtils.checkForUnexpectedErrors(it) }
+                        (psiManager.findFile(file) as? KtFile)?.let { DirectiveBasedActionUtils.checkForUnexpectedErrors(it) }
                         return true
                     }
                 }
@@ -221,7 +221,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         doTestCommittingDocuments { rootDir, rootAfter ->
             val mainFile = rootDir.findChild(mainFilePath)!!
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
-            val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as JetFile
+            val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as KtFile
 
             val fileFqn = jetFile.getPackageFqName()
             Assert.assertTrue("File '${mainFilePath}' should have package containing ${fqn}", fileFqn.isSubpackageOf(fqn))
@@ -263,7 +263,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     }
 
     private fun doRenameInKotlinClassOrPackage(
-            renameParamsObject: JsonObject, context: TestContext, findDescriptorToRename: (JetScope) -> DeclarationDescriptor
+            renameParamsObject: JsonObject, context: TestContext, findDescriptorToRename: (KtScope) -> DeclarationDescriptor
     ) {
         val classIdStr = renameParamsObject.getNullableString("classId")
         val packageFqnStr = renameParamsObject.getNullableString("packageFqn")
@@ -280,7 +280,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         doTestCommittingDocuments { rootDir, rootAfter ->
             val mainFile = rootDir.findChild(mainFilePath)!!
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
-            val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as JetFile
+            val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as KtFile
 
             val module = jetFile.analyzeFullyAndGetResult().moduleDescriptor
 

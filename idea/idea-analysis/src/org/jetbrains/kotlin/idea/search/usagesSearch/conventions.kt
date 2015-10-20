@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
 import com.google.common.collect.ImmutableSet
-import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DelegatedPropertyResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
-        .builder<JetToken>()
+public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
+        .builder<KtToken>()
         .addAll(UNARY_OPERATION_NAMES.keySet())
         .addAll(BINARY_OPERATION_NAMES.keySet())
         .addAll(ASSIGNMENT_OPERATIONS.keySet())
@@ -34,31 +34,31 @@ public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .addAll(EQUALS_OPERATIONS)
         .addAll(IDENTITY_EQUALS_OPERATIONS)
         .addAll(IN_OPERATIONS)
-        .add(JetTokens.LBRACKET)
-        .add(JetTokens.BY_KEYWORD)
+        .add(KtTokens.LBRACKET)
+        .add(KtTokens.BY_KEYWORD)
         .build()
 
 public val INDEXING_OPERATION_NAMES = setOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
 
 public val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier("setValue"))
 
-public val IN_OPERATIONS_TO_SEARCH = setOf(JetTokens.IN_KEYWORD)
+public val IN_OPERATIONS_TO_SEARCH = setOf(KtTokens.IN_KEYWORD)
 
-public val COMPARISON_OPERATIONS_TO_SEARCH = setOf(JetTokens.LT, JetTokens.GT)
+public val COMPARISON_OPERATIONS_TO_SEARCH = setOf(KtTokens.LT, KtTokens.GT)
 
-public fun Name.getOperationSymbolsToSearch(): Set<JetToken> {
+public fun Name.getOperationSymbolsToSearch(): Set<KtToken> {
     when (this) {
         OperatorNameConventions.COMPARE_TO -> return COMPARISON_OPERATIONS_TO_SEARCH
         OperatorNameConventions.EQUALS -> return EQUALS_OPERATIONS
         OperatorNameConventions.IDENTITY_EQUALS -> return IDENTITY_EQUALS_OPERATIONS
         OperatorNameConventions.CONTAINS -> return IN_OPERATIONS_TO_SEARCH
         OperatorNameConventions.ITERATOR -> return IN_OPERATIONS_TO_SEARCH
-        in INDEXING_OPERATION_NAMES -> return setOf(JetTokens.LBRACKET)
-        in DELEGATE_ACCESSOR_NAMES -> return setOf(JetTokens.BY_KEYWORD)
-        DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(JetTokens.BY_KEYWORD)
+        in INDEXING_OPERATION_NAMES -> return setOf(KtTokens.LBRACKET)
+        in DELEGATE_ACCESSOR_NAMES -> return setOf(KtTokens.BY_KEYWORD)
+        DelegatedPropertyResolver.PROPERTY_DELEGATED_FUNCTION_NAME -> return setOf(KtTokens.BY_KEYWORD)
     }
 
-    if (isComponentLike(this)) return setOf(JetTokens.LPAR)
+    if (isComponentLike(this)) return setOf(KtTokens.LPAR)
 
     val unaryOp = UNARY_OPERATION_NAMES_WITH_DEPRECATED_INVERTED[this]
     if (unaryOp != null) return setOf(unaryOp)

@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetMultiDeclaration
-import org.jetbrains.kotlin.psi.JetMultiDeclarationEntry
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtMultiDeclaration
+import org.jetbrains.kotlin.psi.KtMultiDeclarationEntry
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 public class MultiDeclarationResolver(
         private val fakeCallResolver: FakeCallResolver,
@@ -41,9 +41,9 @@ public class MultiDeclarationResolver(
 ) {
     public fun defineLocalVariablesFromMultiDeclaration(
             writableScope: LexicalWritableScope,
-            multiDeclaration: JetMultiDeclaration,
+            multiDeclaration: KtMultiDeclaration,
             receiver: ReceiverValue,
-            reportErrorsOn: JetExpression,
+            reportErrorsOn: KtExpression,
             context: ExpressionTypingContext
     ) {
         for ((componentIndex, entry) in multiDeclaration.getEntries().withIndex()) {
@@ -52,7 +52,7 @@ public class MultiDeclarationResolver(
             val expectedType = getExpectedTypeForComponent(context, entry)
             val results = fakeCallResolver.resolveFakeCall(context.replaceExpectedType(expectedType), receiver, componentName, entry)
 
-            var componentType: JetType? = null
+            var componentType: KtType? = null
             if (results.isSuccess()) {
                 context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.getResultingCall())
 
@@ -60,7 +60,7 @@ public class MultiDeclarationResolver(
                 symbolUsageValidator.validateCall(null, functionDescriptor, context.trace, entry)
 
                 componentType = functionDescriptor.getReturnType()
-                if (componentType != null && !TypeUtils.noExpectedType(expectedType) && !JetTypeChecker.DEFAULT.isSubtypeOf(componentType, expectedType)) {
+                if (componentType != null && !TypeUtils.noExpectedType(expectedType) && !KotlinTypeChecker.DEFAULT.isSubtypeOf(componentType, expectedType)) {
                     context.trace.report(Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(reportErrorsOn, componentName, componentType, expectedType))
                 }
             }
@@ -82,7 +82,7 @@ public class MultiDeclarationResolver(
         }
     }
 
-    private fun getExpectedTypeForComponent(context: ExpressionTypingContext, entry: JetMultiDeclarationEntry): JetType {
+    private fun getExpectedTypeForComponent(context: ExpressionTypingContext, entry: KtMultiDeclarationEntry): KtType {
         val entryTypeRef = entry.getTypeReference() ?: return TypeUtils.NO_EXPECTED_TYPE
         return typeResolver.resolveType(context.scope, entryTypeRef, context.trace, true)
     }

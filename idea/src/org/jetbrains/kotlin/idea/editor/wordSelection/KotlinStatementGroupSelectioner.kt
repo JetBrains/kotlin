@@ -21,7 +21,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.psi.*
  */
 public class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement): Boolean {
-        if (e !is JetExpression && e !is JetWhenEntry && e !is PsiComment) return false
+        if (e !is KtExpression && e !is KtWhenEntry && e !is PsiComment) return false
         val parent = e.getParent()
-        return parent is JetBlockExpression || parent is JetWhenExpression || parent is JetFunctionLiteral
+        return parent is KtBlockExpression || parent is KtWhenExpression || parent is KtFunctionLiteral
     }
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
@@ -43,7 +43,7 @@ public class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() 
 
         val startElement = e.siblings(forward = false, withItself = false)
                 .firstOrNull { // find preceding '{' or blank line
-                    it is LeafPsiElement && it.getElementType() == JetTokens.LBRACE ||
+                    it is LeafPsiElement && it.getElementType() == KtTokens.LBRACE ||
                         it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
                 }
                 ?.siblings(forward = true, withItself = false)
@@ -52,7 +52,7 @@ public class KotlinStatementGroupSelectioner : ExtendWordSelectionHandlerBase() 
 
         val endElement = e.siblings(forward = true, withItself = false)
                 .firstOrNull { // find next '}' or blank line
-                    it is LeafPsiElement && it.getElementType() == JetTokens.RBRACE ||
+                    it is LeafPsiElement && it.getElementType() == KtTokens.RBRACE ||
                         it is PsiWhiteSpace && it.getText()!!.count { it == '\n' } > 1
                 }
                 ?.siblings(forward = false, withItself = false)

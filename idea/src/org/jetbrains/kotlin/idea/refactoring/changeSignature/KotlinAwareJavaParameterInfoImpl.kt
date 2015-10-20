@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.psi.PsiType
 import com.intellij.refactoring.changeSignature.ParameterInfoImpl
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.KtExpression
 
 public class KotlinAwareJavaParameterInfoImpl(
         oldParameterIndex: Int,
         name: String,
         type: PsiType,
-        val kotlinDefaultValue: JetExpression?
+        val kotlinDefaultValue: KtExpression?
 ): ParameterInfoImpl(oldParameterIndex, name, type, kotlinDefaultValue?.getText() ?: "")

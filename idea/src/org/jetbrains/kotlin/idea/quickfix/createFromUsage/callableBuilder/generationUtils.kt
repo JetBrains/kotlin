@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public fun setupEditorSelection(editor: Editor, declaration: JetNamedDeclaration) {
+public fun setupEditorSelection(editor: Editor, declaration: KtNamedDeclaration) {
     val caretModel = editor.caretModel
     val selectionModel = editor.selectionModel
 
-    if (declaration is JetSecondaryConstructor) {
+    if (declaration is KtSecondaryConstructor) {
         caretModel.moveToOffset(declaration.getConstructorKeyword().endOffset)
     }
     else {
@@ -46,15 +46,15 @@ public fun setupEditorSelection(editor: Editor, declaration: JetNamedDeclaration
     }
 
     when (declaration) {
-        is JetNamedFunction, is JetSecondaryConstructor -> {
-            ((declaration as JetFunction).bodyExpression as? JetBlockExpression)?.let {
+        is KtNamedFunction, is KtSecondaryConstructor -> {
+            ((declaration as KtFunction).bodyExpression as? KtBlockExpression)?.let {
                 positionBetween(it.lBrace!!, it.rBrace!!)
             }
         }
-        is JetClassOrObject -> {
+        is KtClassOrObject -> {
             caretModel.moveToOffset(declaration.startOffset)
         }
-        is JetProperty -> {
+        is KtProperty -> {
             caretModel.moveToOffset(declaration.endOffset)
         }
     }

@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.keysToMap
@@ -46,7 +46,7 @@ public class KotlinCacheService(val project: Project) {
         public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
     }
 
-    public fun getResolutionFacade(elements: List<JetElement>): ResolutionFacade {
+    public fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
         return getFacadeToAnalyzeFiles(elements.map { it.getContainingJetFile() })
     }
 
@@ -87,7 +87,7 @@ public class KotlinCacheService(val project: Project) {
 
     private fun librariesFacade(platform: TargetPlatform) = globalFacadesPerPlatform[platform]!!.facadeForLibraries
 
-    private fun createFacadeForSyntheticFiles(files: Set<JetFile>): ProjectResolutionFacade {
+    private fun createFacadeForSyntheticFiles(files: Set<KtFile>): ProjectResolutionFacade {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val syntheticFileModule = files.map { it.getModuleInfo() }.toSet().single()
@@ -150,14 +150,14 @@ public class KotlinCacheService(val project: Project) {
     private val syntheticFileCachesLock = Any()
 
     private val slruCacheProvider = CachedValueProvider {
-        CachedValueProvider.Result(object : SLRUCache<Set<JetFile>, ProjectResolutionFacade>(2, 3) {
-            override fun createValue(files: Set<JetFile>): ProjectResolutionFacade {
+        CachedValueProvider.Result(object : SLRUCache<Set<KtFile>, ProjectResolutionFacade>(2, 3) {
+            override fun createValue(files: Set<KtFile>): ProjectResolutionFacade {
                 return createFacadeForSyntheticFiles(files)
             }
         }, LibraryModificationTracker.getInstance(project), ProjectRootModificationTracker.getInstance(project))
     }
 
-    private fun getFacadeForSyntheticFiles(files: Set<JetFile>): ProjectResolutionFacade {
+    private fun getFacadeForSyntheticFiles(files: Set<KtFile>): ProjectResolutionFacade {
         return synchronized(syntheticFileCachesLock) {
             //NOTE: computations inside createCacheForSyntheticFiles depend on project root structure
             // so we additionally drop the whole slru cache on change
@@ -165,7 +165,7 @@ public class KotlinCacheService(val project: Project) {
         }
     }
 
-    private fun getFacadeToAnalyzeFiles(files: Collection<JetFile>): ResolutionFacade {
+    private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
         val syntheticFiles = findSyntheticFiles(files)
         val file = files.first()
         val projectFacade = if (syntheticFiles.isNotEmpty()) {
@@ -177,17 +177,17 @@ public class KotlinCacheService(val project: Project) {
         return ResolutionFacadeImpl(projectFacade, file.getModuleInfo())
     }
 
-    private fun findSyntheticFiles(files: Collection<JetFile>) = files.map {
-        if (it is JetCodeFragment) it.getContextFile() else it
+    private fun findSyntheticFiles(files: Collection<KtFile>) = files.map {
+        if (it is KtCodeFragment) it.getContextFile() else it
     }.filterNotNull().filter {
         !ProjectRootsUtil.isInProjectSource(it)
     }.toSet()
 
-    private fun JetCodeFragment.getContextFile(): JetFile? {
+    private fun KtCodeFragment.getContextFile(): KtFile? {
         val contextElement = getContext() ?: return null
-        val contextFile = (contextElement as? JetElement)?.getContainingJetFile()
+        val contextFile = (contextElement as? KtElement)?.getContainingJetFile()
                           ?: throw AssertionError("Analyzing kotlin code fragment of type $javaClass with java context of type ${contextElement.javaClass}")
-        return if (contextFile is JetCodeFragment) contextFile.getContextFile() else contextFile
+        return if (contextFile is KtCodeFragment) contextFile.getContextFile() else contextFile
     }
 }
 
@@ -198,7 +198,7 @@ private fun globalResolveSessionProvider(
         dependencies: Collection<Any>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
         reuseDataFrom: ProjectResolutionFacade? = null,
-        syntheticFiles: Collection<JetFile> = listOf(),
+        syntheticFiles: Collection<KtFile> = listOf(),
         logProcessCanceled: Boolean = false
 ): CachedValueProvider.Result<ModuleResolverProvider> {
     val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider

@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 public abstract class AbstractAddImportTest : AbstractImportsTest() {
-    override fun doTest(file: JetFile) {
+    override fun doTest(file: KtFile) {
         var descriptorName = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// IMPORT:")
                              ?: error("No IMPORT directive defined")
 

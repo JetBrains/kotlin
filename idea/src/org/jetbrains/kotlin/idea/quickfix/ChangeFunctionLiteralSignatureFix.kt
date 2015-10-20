@@ -26,19 +26,19 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.types.KtType
 
 class ChangeFunctionLiteralSignatureFix private constructor(
-        functionLiteral: JetFunctionLiteral,
+        functionLiteral: KtFunctionLiteral,
         functionDescriptor: FunctionDescriptor,
-        private val parameterTypes: List<JetType>
+        private val parameterTypes: List<KtType>
 ) : ChangeFunctionSignatureFix(functionLiteral, functionDescriptor) {
 
     override fun getText() = "Change the signature of function literal"
 
-    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         runChangeSignature(
                 project,
                 functionDescriptor,
@@ -61,15 +61,15 @@ class ChangeFunctionLiteralSignatureFix private constructor(
                 text)
     }
 
-    companion object : KotlinSingleIntentionActionFactoryWithDelegate<JetFunctionLiteral, Data>() {
-        data class Data(val functionLiteral: JetFunctionLiteral, val descriptor: FunctionDescriptor, val parameterTypes: List<JetType>)
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtFunctionLiteral, Data>() {
+        data class Data(val functionLiteral: KtFunctionLiteral, val descriptor: FunctionDescriptor, val parameterTypes: List<KtType>)
 
-        override fun getElementOfInterest(diagnostic: Diagnostic): JetFunctionLiteral? {
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtFunctionLiteral? {
             val diagnosticWithParameters = Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic)
-            return diagnosticWithParameters.psiElement as? JetFunctionLiteral
+            return diagnosticWithParameters.psiElement as? KtFunctionLiteral
         }
 
-        override fun extractFixData(element: JetFunctionLiteral, diagnostic: Diagnostic): Data? {
+        override fun extractFixData(element: KtFunctionLiteral, diagnostic: Diagnostic): Data? {
             val descriptor = element.resolveToDescriptor() as? FunctionDescriptor ?: return null
             val parameterTypes = Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic).b
             return Data(element, descriptor, parameterTypes)

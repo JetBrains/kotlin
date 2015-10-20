@@ -36,7 +36,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
     private val myModificationTracker = modificationTracker as PsiModificationTrackerImpl
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
-        if (event.file !is JetFile) return
+        if (event.file !is KtFile) return
 
         when (event.code) {
             BEFORE_CHILDREN_CHANGE,
@@ -72,7 +72,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
     private fun processChange(parent: PsiElement?, child1: PsiElement?, child2: PsiElement?) {
         try {
             if (!isInsideCodeBlock(parent)) {
-                if (parent != null && parent.containingFile is JetFile) {
+                if (parent != null && parent.containingFile is KtFile) {
                     myModificationTracker.incCounter()
                 }
                 else {
@@ -111,10 +111,10 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             if (element == null || element.parent == null) return true
 
             //TODO: other types
-            val blockDeclaration = JetPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return false
+            val blockDeclaration = KtPsiUtil.getTopmostParentOfTypes(element, *BLOCK_DECLARATION_TYPES) ?: return false
 
             when (blockDeclaration) {
-                is JetNamedFunction -> {
+                is KtNamedFunction -> {
                     if (blockDeclaration.hasBlockBody()) {
                         return blockDeclaration.bodyExpression.isAncestor(element)
                     }
@@ -123,7 +123,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
                     }
                 }
 
-                is JetProperty -> {
+                is KtProperty -> {
                     for (accessor in blockDeclaration.accessors) {
                         if (accessor.initializer.isAncestor(element) || accessor.bodyExpression.isAncestor(element)) {
                             return true
@@ -137,13 +137,13 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             return false
         }
 
-        public fun isBlockDeclaration(declaration: JetDeclaration): Boolean {
+        public fun isBlockDeclaration(declaration: KtDeclaration): Boolean {
             return BLOCK_DECLARATION_TYPES.any { it.isInstance(declaration) }
         }
 
-        private val BLOCK_DECLARATION_TYPES = arrayOf<Class<out JetDeclaration>>(
-                javaClass<JetProperty>(),
-                javaClass<JetNamedFunction>()
+        private val BLOCK_DECLARATION_TYPES = arrayOf<Class<out KtDeclaration>>(
+                javaClass<KtProperty>(),
+                javaClass<KtNamedFunction>()
         )
     }
 }

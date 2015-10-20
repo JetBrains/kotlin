@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.psi.JetScript;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -45,15 +45,15 @@ public class ScriptBodyResolver {
     }
 
     public void resolveScriptBodies(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
+        for (Map.Entry<KtScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             ScriptDescriptor descriptor = e.getValue();
             ForceResolveUtil.forceResolveAllContents(descriptor);
         }
     }
 
     @NotNull
-    public JetType resolveScriptReturnType(
-            @NotNull JetScript script,
+    public KtType resolveScriptReturnType(
+            @NotNull KtScript script,
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull BindingTrace trace
     ) {
@@ -65,7 +65,7 @@ public class ScriptBodyResolver {
                 NO_EXPECTED_TYPE
         );
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(script, trace);
-        JetType returnType = expressionTypingServices.getBlockReturnedType(script.getBlockExpression(), CoercionStrategy.NO_COERCION, context).getType();
+        KtType returnType = expressionTypingServices.getBlockReturnedType(script.getBlockExpression(), CoercionStrategy.NO_COERCION, context).getType();
         if (returnType == null) {
             returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
         }

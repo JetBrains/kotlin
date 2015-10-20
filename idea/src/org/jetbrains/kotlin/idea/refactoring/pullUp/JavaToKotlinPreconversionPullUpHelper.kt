@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.core.refactoring.j2kText
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import java.util.*
@@ -44,7 +44,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
         private val dummyTargetClass: PsiClass,
         private val javaHelper: JavaPullUpHelper
 ) : PullUpHelper<MemberInfo> by javaHelper {
-    private val membersToDummyDeclarations = HashMap<PsiMember, JetElement>()
+    private val membersToDummyDeclarations = HashMap<PsiMember, KtElement>()
 
     private val encapsulateFieldsDescriptor = object: EncapsulateFieldsDescriptor {
         override fun getSelectedFields(): Array<out FieldDescriptor>? = arrayOf()
@@ -60,7 +60,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
     private val fieldsToUsages = HashMap<PsiField, List<EncapsulateFieldUsageInfo>>()
     private val dummyAccessorByName = HashMap<String, PsiMethod>()
 
-    private val jvmStaticAnnotation = JetPsiFactory(data.sourceClass.project).createAnnotationEntry("@kotlin.jvm.JvmStatic")
+    private val jvmStaticAnnotation = KtPsiFactory(data.sourceClass.project).createAnnotationEntry("@kotlin.jvm.JvmStatic")
 
     companion object {
         private var PsiMember.originalMember: PsiMember? by CopyableUserDataProperty(Key.create("ORIGINAL_MEMBER"))
@@ -106,10 +106,10 @@ public class JavaToKotlinPreconversionPullUpHelper(
             member.removeOverrideModifier()
         }
 
-        val targetClass = data.targetClass.unwrapped as JetClass
+        val targetClass = data.targetClass.unwrapped as KtClass
         if (member.hasModifierProperty(PsiModifier.ABSTRACT) && !movingSuperInterface) targetClass.makeAbstract()
 
-        val psiFactory = JetPsiFactory(member.project)
+        val psiFactory = KtPsiFactory(member.project)
 
         if (movingSuperInterface) {
             if (getCurrentSuperInterfaceCount() == superInterfaceCount) return
@@ -123,7 +123,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
             member.hasModifierProperty(PsiModifier.STATIC) && member !is PsiClass -> targetClass.getOrCreateCompanionObject()
             else -> targetClass
         }
-        val dummyDeclaration : JetNamedDeclaration = when (member) {
+        val dummyDeclaration : KtNamedDeclaration = when (member) {
             is PsiField -> psiFactory.createProperty("val foo = 0")
             is PsiMethod -> psiFactory.createFunction("fun foo() = 0")
             is PsiClass -> psiFactory.createClass("class Foo")
@@ -142,19 +142,19 @@ public class JavaToKotlinPreconversionPullUpHelper(
         val originalMember = member.originalMember ?: return
         originalMember.originalMember = null
 
-        val targetClass = data.targetClass.unwrapped as? JetClass ?: return
+        val targetClass = data.targetClass.unwrapped as? KtClass ?: return
         val convertedDeclaration = member.j2k() ?: return
         if (member is PsiField || member is PsiMethod) {
             val visibilityModifier = VisibilityUtil.getVisibilityModifier(member.modifierList)
             if (visibilityModifier == PsiModifier.PROTECTED || visibilityModifier == PsiModifier.PACKAGE_LOCAL) {
-                convertedDeclaration.setVisibility(JetTokens.PUBLIC_KEYWORD)
+                convertedDeclaration.setVisibility(KtTokens.PUBLIC_KEYWORD)
             }
         }
-        val newDeclaration = membersToDummyDeclarations[originalMember]?.replace(convertedDeclaration) as JetNamedDeclaration
+        val newDeclaration = membersToDummyDeclarations[originalMember]?.replace(convertedDeclaration) as KtNamedDeclaration
         if (targetClass.isInterface()) {
-            newDeclaration.removeModifier(JetTokens.ABSTRACT_KEYWORD)
+            newDeclaration.removeModifier(KtTokens.ABSTRACT_KEYWORD)
         }
-        if (member.hasModifierProperty(PsiModifier.STATIC) && newDeclaration is JetNamedFunction) {
+        if (member.hasModifierProperty(PsiModifier.STATIC) && newDeclaration is KtNamedFunction) {
             newDeclaration.addAnnotationWithSpace(jvmStaticAnnotation).addToShorteningWaitSet()
         }
 

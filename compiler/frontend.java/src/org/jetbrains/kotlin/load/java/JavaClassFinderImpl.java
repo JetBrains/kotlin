@@ -24,7 +24,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetFileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaPackage;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
@@ -64,7 +64,7 @@ public class JavaClassFinderImpl implements JavaClassFinder {
         javaSearchScope = new DelegatingGlobalSearchScope(baseScope) {
             @Override
             public boolean contains(@NotNull VirtualFile file) {
-                return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != JetFileType.INSTANCE);
+                return myBaseScope.contains(file) && (file.isDirectory() || file.getFileType() != KotlinFileType.INSTANCE);
             }
 
             //NOTE: expected by class finder to be not null

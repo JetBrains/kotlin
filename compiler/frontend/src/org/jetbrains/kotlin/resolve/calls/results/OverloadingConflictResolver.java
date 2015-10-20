@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.List;
 import java.util.Set;
@@ -164,8 +164,8 @@ public class OverloadingConflictResolver {
                 ValueParameterDescriptor fParam = fParams.get(i);
                 ValueParameterDescriptor gParam = gParams.get(i);
 
-                JetType fParamType = fParam.getType();
-                JetType gParamType = gParam.getType();
+                KtType fParamType = fParam.getType();
+                KtType gParamType = gParam.getType();
 
                 if (!typeMoreSpecific(fParamType, gParamType)) {
                     return false;
@@ -180,8 +180,8 @@ public class OverloadingConflictResolver {
                 ValueParameterDescriptor fParam = fParams.get(i);
                 ValueParameterDescriptor gParam = gParams.get(i);
 
-                JetType fParamType = fParam.getType();
-                JetType gParamType = gParam.getType();
+                KtType fParamType = fParam.getType();
+                KtType gParamType = gParam.getType();
 
                 if (!typeMoreSpecific(fParamType, gParamType)) {
                     return false;
@@ -195,7 +195,7 @@ public class OverloadingConflictResolver {
             // here we check that typeOf(a) < elementTypeOf(vf) and elementTypeOf(vg) < elementTypeOf(vf)
             if (fSize < gSize) {
                 ValueParameterDescriptor fParam = fParams.get(fSize - 1);
-                JetType fParamType = fParam.getVarargElementType();
+                KtType fParamType = fParam.getVarargElementType();
                 assert fParamType != null : "fIsVararg guarantees this";
                 for (int i = fSize - 1; i < gSize; i++) {
                     ValueParameterDescriptor gParam = gParams.get(i);
@@ -206,7 +206,7 @@ public class OverloadingConflictResolver {
             }
             else {
                 ValueParameterDescriptor gParam = gParams.get(gSize - 1);
-                JetType gParamType = gParam.getVarargElementType();
+                KtType gParamType = gParam.getVarargElementType();
                 assert gParamType != null : "gIsVararg guarantees this";
                 for (int i = gSize - 1; i < fSize; i++) {
                     ValueParameterDescriptor fParam = fParams.get(i);
@@ -221,8 +221,8 @@ public class OverloadingConflictResolver {
     }
 
     @NotNull
-    private static JetType getVarargElementTypeOrType(@NotNull ValueParameterDescriptor parameterDescriptor) {
-        JetType varargElementType = parameterDescriptor.getVarargElementType();
+    private static KtType getVarargElementTypeOrType(@NotNull ValueParameterDescriptor parameterDescriptor) {
+        KtType varargElementType = parameterDescriptor.getVarargElementType();
         if (varargElementType != null) {
             return varargElementType;
         }
@@ -238,9 +238,9 @@ public class OverloadingConflictResolver {
         return !f.getOriginal().getTypeParameters().isEmpty();
     }
 
-    private boolean typeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        boolean isSubtype = JetTypeChecker.DEFAULT.isSubtypeOf(specific, general) ||
-                    numericTypeMoreSpecific(specific, general);
+    private boolean typeMoreSpecific(@NotNull KtType specific, @NotNull KtType general) {
+        boolean isSubtype = KotlinTypeChecker.DEFAULT.isSubtypeOf(specific, general) ||
+                            numericTypeMoreSpecific(specific, general);
 
         if (!isSubtype) return false;
 
@@ -253,13 +253,13 @@ public class OverloadingConflictResolver {
         return true;
     }
 
-    private boolean numericTypeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        JetType _double = builtIns.getDoubleType();
-        JetType _float = builtIns.getFloatType();
-        JetType _long = builtIns.getLongType();
-        JetType _int = builtIns.getIntType();
-        JetType _byte = builtIns.getByteType();
-        JetType _short = builtIns.getShortType();
+    private boolean numericTypeMoreSpecific(@NotNull KtType specific, @NotNull KtType general) {
+        KtType _double = builtIns.getDoubleType();
+        KtType _float = builtIns.getFloatType();
+        KtType _long = builtIns.getLongType();
+        KtType _int = builtIns.getIntType();
+        KtType _byte = builtIns.getByteType();
+        KtType _short = builtIns.getShortType();
 
         if (TypeUtils.equalTypes(specific, _double) && TypeUtils.equalTypes(general, _float)) return true;
         if (TypeUtils.equalTypes(specific, _int)) {

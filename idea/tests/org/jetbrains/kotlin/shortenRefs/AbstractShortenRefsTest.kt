@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.shortenRefs
 
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.AbstractImportsTest
 
 public abstract class AbstractShortenRefsTest : AbstractImportsTest() {
-    override fun doTest(file: JetFile) {
+    override fun doTest(file: KtFile) {
         val selectionModel = myFixture.getEditor().getSelectionModel()
         if (!selectionModel.hasSelection()) error("No selection in input file")
         ShortenReferences { ShortenReferences.Options(removeThis = true, removeThisLabels = true) }

@@ -20,14 +20,14 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 
 public final class ErrorReportingUtils {
     private ErrorReportingUtils() {
     }
 
     @NotNull
-    public static RuntimeException reportErrorWithLocation(@NotNull JetExpression selector, @NotNull RuntimeException e) {
+    public static RuntimeException reportErrorWithLocation(@NotNull KtExpression selector, @NotNull RuntimeException e) {
         return reportErrorWithLocation(e, DiagnosticUtils.atLocation(selector));
     }
 

@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.psi.JetSuperExpression;
+import org.jetbrains.kotlin.psi.KtSuperExpression;
 
 public interface AccessorForCallableDescriptor<T extends CallableMemberDescriptor> {
     @NotNull
     T getCalleeDescriptor();
 
     @Nullable
-    JetSuperExpression getSuperCallExpression();
+    KtSuperExpression getSuperCallExpression();
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
@@ -64,7 +64,7 @@ public class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInte
             internal val delegateClassBuilder: ClassBuilder,
             val bindingContext: BindingContext
     ) : DelegatingClassBuilder() {
-        private var currentClass: JetClass? = null
+        private var currentClass: KtClass? = null
         private var currentClassName: String? = null
 
         override fun getDelegate() = delegateClassBuilder
@@ -78,7 +78,7 @@ public class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInte
                 superName: String,
                 interfaces: Array<out String>
         ) {
-            if (origin is JetClass) {
+            if (origin is KtClass) {
                 currentClass = origin
                 currentClassName = name
             }

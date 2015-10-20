@@ -20,7 +20,7 @@ import com.intellij.lang.CodeDocumentationAwareCommenter;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
 public class JetCommenter implements CodeDocumentationAwareCommenter {
     @Override
@@ -50,17 +50,17 @@ public class JetCommenter implements CodeDocumentationAwareCommenter {
 
     @Override
     public IElementType getLineCommentTokenType() {
-        return JetTokens.EOL_COMMENT;
+        return KtTokens.EOL_COMMENT;
     }
 
     @Override
     public IElementType getBlockCommentTokenType() {
-        return JetTokens.BLOCK_COMMENT;
+        return KtTokens.BLOCK_COMMENT;
     }
 
     @Override
     public IElementType getDocumentationCommentTokenType() {
-        return JetTokens.DOC_COMMENT;
+        return KtTokens.DOC_COMMENT;
     }
 
     @Override

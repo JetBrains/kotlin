@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.types.checker;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeProjection;
 
 class TypeCheckerProcedureCallbacksImpl implements TypeCheckingProcedureCallbacks {
     @Override
-    public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
+    public boolean assertEqualTypes(@NotNull KtType a, @NotNull KtType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
         return typeCheckingProcedure.equalTypes(a, b);
     }
 
@@ -33,17 +33,17 @@ class TypeCheckerProcedureCallbacksImpl implements TypeCheckingProcedureCallback
     }
 
     @Override
-    public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
+    public boolean assertSubtype(@NotNull KtType subtype, @NotNull KtType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
         return typeCheckingProcedure.isSubtypeOf(subtype, supertype);
     }
 
     @Override
-    public boolean capture(@NotNull JetType type, @NotNull TypeProjection typeProjection) {
+    public boolean capture(@NotNull KtType type, @NotNull TypeProjection typeProjection) {
         return false;
     }
 
     @Override
-    public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
+    public boolean noCorrespondingSupertype(@NotNull KtType subtype, @NotNull KtType supertype) {
         return false; // type checking fails
     }
 }

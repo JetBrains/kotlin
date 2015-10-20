@@ -21,12 +21,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.Collection;
 
-public class JetExactPackagesIndex extends StringStubIndexExtension<JetFile> {
-    private static final StubIndexKey<String, JetFile> KEY = KotlinIndexUtil.createIndexKey(JetExactPackagesIndex.class);
+public class JetExactPackagesIndex extends StringStubIndexExtension<KtFile> {
+    private static final StubIndexKey<String, KtFile> KEY = KotlinIndexUtil.createIndexKey(JetExactPackagesIndex.class);
 
     private static final JetExactPackagesIndex ourInstance = new JetExactPackagesIndex();
 
@@ -39,13 +39,13 @@ public class JetExactPackagesIndex extends StringStubIndexExtension<JetFile> {
 
     @NotNull
     @Override
-    public StubIndexKey<String, JetFile> getKey() {
+    public StubIndexKey<String, KtFile> getKey() {
         return KEY;
     }
 
     @NotNull
     @Override
-    public Collection<JetFile> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
+    public Collection<KtFile> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
         return super.get(fqName, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
     }
 }

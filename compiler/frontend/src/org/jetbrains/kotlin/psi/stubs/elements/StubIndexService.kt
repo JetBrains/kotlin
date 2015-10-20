@@ -20,7 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import java.io.IOException
@@ -44,7 +44,7 @@ public open class StubIndexService protected constructor() {
     public open fun indexAnnotation(stub: KotlinAnnotationEntryStub, sink: IndexSink) {
     }
 
-    public open fun createFileStub(file: JetFile): KotlinFileStub {
+    public open fun createFileStub(file: KtFile): KotlinFileStub {
         return KotlinFileStubImpl(file, file.packageFqNameByTree.asString(), file.isScriptByTree)
     }
 

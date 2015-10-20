@@ -42,13 +42,13 @@ public class LabelResolver {
     private LabelResolver() {}
 
     @NotNull
-    private Set<JetElement> getElementsByLabelName(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression) {
-        Set<JetElement> elements = Sets.newLinkedHashSet();
+    private Set<KtElement> getElementsByLabelName(@NotNull Name labelName, @NotNull KtSimpleNameExpression labelExpression) {
+        Set<KtElement> elements = Sets.newLinkedHashSet();
         PsiElement parent = labelExpression.getParent();
         while (parent != null) {
             Name name = getLabelNameIfAny(parent);
             if (name != null && name.equals(labelName)) {
-                elements.add(getExpressionUnderLabel((JetExpression) parent));
+                elements.add(getExpressionUnderLabel((KtExpression) parent));
             }
             parent = parent.getParent();
         }
@@ -57,51 +57,51 @@ public class LabelResolver {
 
     @Nullable
     public Name getLabelNameIfAny(@NotNull PsiElement element) {
-        if (element instanceof JetLabeledExpression) {
-            return ((JetLabeledExpression) element).getLabelNameAsName();
+        if (element instanceof KtLabeledExpression) {
+            return ((KtLabeledExpression) element).getLabelNameAsName();
         }
 
-        if (element instanceof JetFunctionLiteral) {
+        if (element instanceof KtFunctionLiteral) {
             return getLabelNameIfAny(element.getParent());
         }
 
-        if (element instanceof JetFunctionLiteralExpression) {
-            return getLabelForFunctionalExpression((JetExpression) element);
+        if (element instanceof KtFunctionLiteralExpression) {
+            return getLabelForFunctionalExpression((KtExpression) element);
         }
 
-        if (element instanceof JetNamedFunction) {
-            Name name = ((JetNamedFunction) element).getNameAsName();
+        if (element instanceof KtNamedFunction) {
+            Name name = ((KtNamedFunction) element).getNameAsName();
             if (name != null) return name;
-            return getLabelForFunctionalExpression((JetExpression) element);
+            return getLabelForFunctionalExpression((KtExpression) element);
         }
 
         return null;
     }
 
-    private Name getLabelForFunctionalExpression(@NotNull JetExpression element) {
-        if (element.getParent() instanceof JetLabeledExpression) {
+    private Name getLabelForFunctionalExpression(@NotNull KtExpression element) {
+        if (element.getParent() instanceof KtLabeledExpression) {
             return getLabelNameIfAny(element.getParent());
         }
         return getCallerName(element);
     }
 
     @NotNull
-    private JetExpression getExpressionUnderLabel(@NotNull JetExpression labeledExpression) {
-        JetExpression expression = JetPsiUtil.safeDeparenthesize(labeledExpression);
-        if (expression instanceof JetFunctionLiteralExpression) {
-            return ((JetFunctionLiteralExpression) expression).getFunctionLiteral();
+    private KtExpression getExpressionUnderLabel(@NotNull KtExpression labeledExpression) {
+        KtExpression expression = KtPsiUtil.safeDeparenthesize(labeledExpression);
+        if (expression instanceof KtFunctionLiteralExpression) {
+            return ((KtFunctionLiteralExpression) expression).getFunctionLiteral();
         }
         return expression;
     }
 
     @Nullable
-    private Name getCallerName(@NotNull JetExpression expression) {
-        JetCallExpression callExpression = getContainingCallExpression(expression);
+    private Name getCallerName(@NotNull KtExpression expression) {
+        KtCallExpression callExpression = getContainingCallExpression(expression);
         if (callExpression == null) return null;
 
-        JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression instanceof JetSimpleNameExpression) {
-            JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
+        KtExpression calleeExpression = callExpression.getCalleeExpression();
+        if (calleeExpression instanceof KtSimpleNameExpression) {
+            KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) calleeExpression;
             return nameExpression.getReferencedNameAsName();
         }
 
@@ -109,35 +109,35 @@ public class LabelResolver {
     }
 
     @Nullable
-    private JetCallExpression getContainingCallExpression(@NotNull JetExpression expression) {
+    private KtCallExpression getContainingCallExpression(@NotNull KtExpression expression) {
         PsiElement parent = expression.getParent();
-        if (parent instanceof JetFunctionLiteralArgument) {
+        if (parent instanceof KtFunctionLiteralArgument) {
             // f {}
             PsiElement call = parent.getParent();
-            if (call instanceof JetCallExpression) {
-                return (JetCallExpression) call;
+            if (call instanceof KtCallExpression) {
+                return (KtCallExpression) call;
             }
         }
 
-        if (parent instanceof JetValueArgument) {
+        if (parent instanceof KtValueArgument) {
             // f ({}) or f(p = {}) or f (fun () {})
-            JetValueArgument argument = (JetValueArgument) parent;
+            KtValueArgument argument = (KtValueArgument) parent;
             PsiElement argList = argument.getParent();
             if (argList == null) return null;
             PsiElement call = argList.getParent();
-            if (call instanceof JetCallExpression) {
-                return (JetCallExpression) call;
+            if (call instanceof KtCallExpression) {
+                return (KtCallExpression) call;
             }
         }
         return null;
     }
 
     @Nullable
-    public JetElement resolveControlLabel(
-            @NotNull JetExpressionWithLabel expression,
+    public KtElement resolveControlLabel(
+            @NotNull KtExpressionWithLabel expression,
             @NotNull ResolutionContext context
     ) {
-        JetSimpleNameExpression labelElement = expression.getTargetLabel();
+        KtSimpleNameExpression labelElement = expression.getTargetLabel();
         Name labelName = expression.getLabelNameAsName();
         if (labelElement == null || labelName == null) return null;
 
@@ -149,16 +149,16 @@ public class LabelResolver {
             return null;
         }
         if (size == 0) {
-            JetElement element = resolveNamedLabel(labelName, labelElement, context.trace);
+            KtElement element = resolveNamedLabel(labelName, labelElement, context.trace);
             if (element == null) {
                 context.trace.report(UNRESOLVED_REFERENCE.on(labelElement, labelElement));
             }
             return element;
         }
         DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
-        JetElement element;
+        KtElement element;
         if (declarationDescriptor instanceof FunctionDescriptor || declarationDescriptor instanceof ClassDescriptor) {
-            element = (JetElement) DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
+            element = (KtElement) DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor);
         }
         else {
             throw new UnsupportedOperationException(declarationDescriptor.getClass().toString()); // TODO
@@ -167,31 +167,31 @@ public class LabelResolver {
         return element;
     }
 
-    private JetElement resolveNamedLabel(
+    private KtElement resolveNamedLabel(
             @NotNull Name labelName, 
-            @NotNull JetSimpleNameExpression labelExpression, 
+            @NotNull KtSimpleNameExpression labelExpression,
             @NotNull BindingTrace trace
     ) {
-        Set<JetElement> list = getElementsByLabelName(labelName, labelExpression);
+        Set<KtElement> list = getElementsByLabelName(labelName, labelExpression);
         if (list.isEmpty()) return null;
 
         if (list.size() > 1) {
             trace.report(LABEL_NAME_CLASH.on(labelExpression));
         }
 
-        JetElement result = list.iterator().next();
+        KtElement result = list.iterator().next();
         trace.record(LABEL_TARGET, labelExpression, result);
         return result;
     }
     
     @NotNull
     public LabeledReceiverResolutionResult resolveThisOrSuperLabel(
-            @NotNull JetInstanceExpressionWithLabel expression,
+            @NotNull KtInstanceExpressionWithLabel expression,
             @NotNull ResolutionContext context,
             @NotNull Name labelName
     ) {
-        JetReferenceExpression referenceExpression = expression.getInstanceReference();
-        JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+        KtReferenceExpression referenceExpression = expression.getInstanceReference();
+        KtSimpleNameExpression targetLabel = expression.getTargetLabel();
         assert targetLabel != null : expression;
 
         Collection<DeclarationDescriptor> declarationsByLabel = ScopeUtilsKt.getDeclarationsByLabel(context.scope, labelName);
@@ -229,8 +229,8 @@ public class LabelResolver {
             return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
         }
         else if (size == 0) {
-            JetElement element = resolveNamedLabel(labelName, targetLabel, context.trace);
-            if (element instanceof JetFunctionLiteral) {
+            KtElement element = resolveNamedLabel(labelName, targetLabel, context.trace);
+            if (element instanceof KtFunctionLiteral) {
                 DeclarationDescriptor declarationDescriptor =
                         context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
                 if (declarationDescriptor instanceof FunctionDescriptor) {

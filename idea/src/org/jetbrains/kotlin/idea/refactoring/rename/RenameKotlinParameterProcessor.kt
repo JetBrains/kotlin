@@ -26,19 +26,19 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureC
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is JetParameter && element.getParent().getParent() is JetNamedFunction
+        return element is KtParameter && element.getParent().getParent() is KtNamedFunction
     }
 
     override fun renameElement(element: PsiElement, newName: String, usages: Array<out UsageInfo>, listener: RefactoringElementListener?) {
-        val function = (element as JetParameter).getParent().getParent() as JetNamedFunction
+        val function = (element as KtParameter).getParent().getParent() as KtNamedFunction
         val paramIndex = function.getValueParameters().indexOf(element)
         assert(paramIndex != -1, { "couldn't find parameter in parent ${element.getElementTextWithContext()}" })
 

@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateIn
 import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.psi.JetClass
-import org.jetbrains.kotlin.psi.JetClassInitializer
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassInitializer
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 
 class FileDeclarationVisitor(
         val context: TranslationContext,
@@ -50,17 +50,17 @@ class FileDeclarationVisitor(
         }
     }
 
-    public override fun visitClass(expression: JetClass, context: TranslationContext?): Void? {
+    public override fun visitClass(expression: KtClass, context: TranslationContext?): Void? {
         result.addAll(ClassTranslator.translate(expression, context!!))
         return null
     }
 
-    public override fun visitObjectDeclaration(declaration: JetObjectDeclaration, context: TranslationContext?): Void? {
+    public override fun visitObjectDeclaration(declaration: KtObjectDeclaration, context: TranslationContext?): Void? {
         InitializerUtils.generateObjectInitializer(declaration, initializerStatements, context!!)
         return null
     }
 
-    public override fun visitProperty(expression: JetProperty, context: TranslationContext?): Void? {
+    public override fun visitProperty(expression: KtProperty, context: TranslationContext?): Void? {
         context!! // hack
 
         super.visitProperty(expression, context)
@@ -78,7 +78,7 @@ class FileDeclarationVisitor(
         return null
     }
 
-    public override fun visitAnonymousInitializer(expression: JetClassInitializer, context: TranslationContext?): Void? {
+    public override fun visitAnonymousInitializer(expression: KtClassInitializer, context: TranslationContext?): Void? {
         expression.accept(initializerVisitor, initializerContext)
         return null
     }

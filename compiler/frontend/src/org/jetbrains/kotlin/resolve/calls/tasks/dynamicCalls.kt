@@ -21,17 +21,17 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.createDynamicType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -43,7 +43,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
 
     val dynamicType = createDynamicType(builtIns)
 
-    fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : JetScopeImpl() {
+    fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : KtScopeImpl() {
         override fun getContainingDeclaration() = owner
 
         override fun printScopeStructure(p: Printer) {
@@ -69,9 +69,9 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
          */
         private fun isAugmentedAssignmentConvention(name: Name): Boolean {
             val callee = call.getCalleeExpression()
-            if (callee is JetOperationReferenceExpression) {
+            if (callee is KtOperationReferenceExpression) {
                 val token = callee.getReferencedNameElementType()
-                if (token in JetTokens.AUGMENTED_ASSIGNMENTS && OperatorConventions.ASSIGNMENT_OPERATIONS[token] != name) {
+                if (token in KtTokens.AUGMENTED_ASSIGNMENTS && OperatorConventions.ASSIGNMENT_OPERATIONS[token] != name) {
                     return true
                 }
             }
@@ -103,7 +103,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
                 dynamicType,
                 createTypeParameters(propertyDescriptor, call),
                 createDynamicDispatchReceiverParameter(propertyDescriptor),
-                null as JetType?
+                null as KtType?
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
@@ -155,7 +155,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
     private fun createValueParameters(owner: FunctionDescriptor, call: Call): List<ValueParameterDescriptor> {
         val parameters = ArrayList<ValueParameterDescriptor>()
 
-        fun addParameter(arg : ValueArgument, outType: JetType, varargElementType: JetType?) {
+        fun addParameter(arg : ValueArgument, outType: KtType, varargElementType: KtType?) {
             val index = parameters.size()
 
             parameters.add(ValueParameterDescriptorImpl(
@@ -173,7 +173,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             ))
         }
 
-        fun getFunctionType(funLiteralExpr: JetFunctionLiteralExpression): JetType {
+        fun getFunctionType(funLiteralExpr: KtFunctionLiteralExpression): KtType {
             val funLiteral = funLiteralExpr.getFunctionLiteral()
 
             val receiverType = funLiteral.getReceiverTypeReference()?.let { dynamicType }
@@ -183,14 +183,14 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
         }
 
         for (arg in call.getValueArguments()) {
-            val outType: JetType
-            val varargElementType: JetType?
+            val outType: KtType
+            val varargElementType: KtType?
             var hasSpreadOperator = false
 
-            val argExpression = JetPsiUtil.deparenthesize(arg.getArgumentExpression())
+            val argExpression = KtPsiUtil.deparenthesize(arg.getArgumentExpression())
 
             when {
-                argExpression is JetFunctionLiteralExpression -> {
+                argExpression is KtFunctionLiteralExpression -> {
                     outType = getFunctionType(argExpression)
                     varargElementType = null
                 }
@@ -229,7 +229,7 @@ public fun DeclarationDescriptor.isDynamic(): Boolean {
 }
 
 class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
-    override fun getExtensionsByName(scope: JetScope, name: Name, receiverTypes: Collection<JetType>, location: LookupLocation): Collection<D> {
+    override fun getExtensionsByName(scope: KtScope, name: Name, receiverTypes: Collection<KtType>, location: LookupLocation): Collection<D> {
         return delegate.getExtensionsByName(scope, name, receiverTypes, location).filter {
             it.getExtensionReceiverParameter()?.getType()?.isDynamic() ?: false
         }

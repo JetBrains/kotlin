@@ -26,7 +26,7 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import com.intellij.psi.util.PsiUtilBase
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 public class KotlinShortenFQNamesProcessor : TemplateOptionalProcessor {
     override fun processText(project: Project, template: Template, document: Document, templateRange: RangeMarker, editor: Editor) {
@@ -34,7 +34,7 @@ public class KotlinShortenFQNamesProcessor : TemplateOptionalProcessor {
 
         PsiDocumentManager.getInstance(project).commitDocument(document)
 
-        val file = PsiUtilBase.getPsiFileInEditor(editor, project) as? JetFile ?: return
+        val file = PsiUtilBase.getPsiFileInEditor(editor, project) as? KtFile ?: return
         ShortenReferences.DEFAULT.process(file, templateRange.getStartOffset(), templateRange.getEndOffset())
 
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)

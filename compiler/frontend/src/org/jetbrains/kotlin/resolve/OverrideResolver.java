@@ -33,14 +33,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.utils.HashSetUtil;
 
 import java.util.*;
@@ -111,8 +111,8 @@ public class OverrideResolver {
                 }
                 //noinspection ConstantConditions
                 PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(reportOn);
-                if (element instanceof JetDeclaration) {
-                    trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element, descriptor));
+                if (element instanceof KtDeclaration) {
+                    trace.report(CANNOT_INFER_VISIBILITY.on((KtDeclaration) element, descriptor));
                 }
                 return Unit.INSTANCE$;
             }
@@ -235,13 +235,13 @@ public class OverrideResolver {
 
     private static List<CallableMemberDescriptor> getCallableMembersFromSupertypes(ClassDescriptor classDescriptor) {
         Set<CallableMemberDescriptor> r = Sets.newLinkedHashSet();
-        for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+        for (KtType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
             r.addAll(getCallableMembersFromType(supertype));
         }
         return new ArrayList<CallableMemberDescriptor>(r);
     }
 
-    private static List<CallableMemberDescriptor> getCallableMembersFromType(JetType type) {
+    private static List<CallableMemberDescriptor> getCallableMembersFromType(KtType type) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
         for (DeclarationDescriptor decl : type.getMemberScope().getAllDescriptors()) {
             if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
@@ -252,12 +252,12 @@ public class OverrideResolver {
     }
 
     private void checkOverrides(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
+        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             checkOverridesInAClass(entry.getValue(), entry.getKey());
         }
     }
 
-    private void checkOverridesInAClass(@NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull JetClassOrObject klass) {
+    private void checkOverridesInAClass(@NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull KtClassOrObject klass) {
         // Check overrides for internal consistency
         for (CallableMemberDescriptor member : classDescriptor.getDeclaredCallableMembers()) {
             checkOverrideForMember(member);
@@ -574,13 +574,13 @@ public class OverrideResolver {
             return;
         }
 
-        final JetNamedDeclaration member = (JetNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(declared);
+        final KtNamedDeclaration member = (KtNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(declared);
         if (member == null) {
             throw new IllegalStateException("declared descriptor is not resolved to declaration: " + declared);
         }
 
-        JetModifierList modifierList = member.getModifierList();
-        boolean hasOverrideNode = modifierList != null && modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
+        KtModifierList modifierList = member.getModifierList();
+        boolean hasOverrideNode = modifierList != null && modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD);
         Collection<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
 
         if (hasOverrideNode) {
@@ -687,16 +687,16 @@ public class OverrideResolver {
         TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
         if (typeSubstitutor == null) return false;
 
-        JetType superReturnType = superDescriptor.getReturnType();
+        KtType superReturnType = superDescriptor.getReturnType();
         assert superReturnType != null;
 
-        JetType subReturnType = subDescriptor.getReturnType();
+        KtType subReturnType = subDescriptor.getReturnType();
         assert subReturnType != null;
 
-        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE);
+        KtType substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
 
-        return JetTypeChecker.DEFAULT.isSubtypeOf(subReturnType, substitutedSuperReturnType);
+        return KotlinTypeChecker.DEFAULT.isSubtypeOf(subReturnType, substitutedSuperReturnType);
     }
 
     @Nullable
@@ -725,9 +725,9 @@ public class OverrideResolver {
 
         if (!superDescriptor.isVar()) return true;
 
-        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getType(), Variance.OUT_VARIANCE);
+        KtType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
-        return JetTypeChecker.DEFAULT.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
+        return KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
     }
 
     private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {
@@ -776,9 +776,9 @@ public class OverrideResolver {
 
     @NotNull
     private static PsiElement findDataModifierForDataClass(@NotNull DeclarationDescriptor dataClass) {
-        JetClass classDeclaration = (JetClass) DescriptorToSourceUtils.getSourceFromDescriptor(dataClass);
+        KtClass classDeclaration = (KtClass) DescriptorToSourceUtils.getSourceFromDescriptor(dataClass);
         if (classDeclaration != null && classDeclaration.getModifierList() != null) {
-            PsiElement modifier = classDeclaration.getModifierList().getModifier(JetTokens.DATA_KEYWORD);
+            PsiElement modifier = classDeclaration.getModifierList().getModifier(KtTokens.DATA_KEYWORD);
             if (modifier != null) {
                 return modifier;
             }
@@ -792,7 +792,7 @@ public class OverrideResolver {
             @NotNull CallableMemberDescriptor declared,
             @NotNull ClassDescriptor declaringClass
     ) {
-        for (JetType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
+        for (KtType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
             Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
             all.addAll(supertype.getMemberScope().getFunctions(declared.getName(), NoLookupLocation.UNSORTED));
             //noinspection unchecked
@@ -824,8 +824,8 @@ public class OverrideResolver {
         boolean isDeclaration = declared.getKind() == CallableMemberDescriptor.Kind.DECLARATION;
         if (isDeclaration) {
             // No check if the function is not marked as 'override'
-            JetModifierListOwner declaration = (JetModifierListOwner) DescriptorToSourceUtils.descriptorToDeclaration(declared);
-            if (declaration != null && !declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+            KtModifierListOwner declaration = (KtModifierListOwner) DescriptorToSourceUtils.descriptorToDeclaration(declared);
+            if (declaration != null && !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
                 return;
             }
         }
@@ -854,7 +854,7 @@ public class OverrideResolver {
     }
 
     private void checkNameAndDefaultForDeclaredParameter(@NotNull ValueParameterDescriptor descriptor, boolean multipleDefaultsInSuper) {
-        JetParameter parameter = (JetParameter) DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
+        KtParameter parameter = (KtParameter) DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
         assert parameter != null : "Declaration not found for parameter: " + descriptor;
 
         if (descriptor.declaresDefaultValue()) {
@@ -883,7 +883,7 @@ public class OverrideResolver {
             boolean multipleDefaultsInSuper
     ) {
         DeclarationDescriptor containingClass = containingFunction.getContainingDeclaration();
-        JetClassOrObject classElement = (JetClassOrObject) DescriptorToSourceUtils.descriptorToDeclaration(containingClass);
+        KtClassOrObject classElement = (KtClassOrObject) DescriptorToSourceUtils.descriptorToDeclaration(containingClass);
         assert classElement != null : "Declaration not found for class: " + containingClass;
 
         if (multipleDefaultsInSuper) {
@@ -915,12 +915,12 @@ public class OverrideResolver {
     }
 
     private void checkVisibility(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetCallableDeclaration, CallableMemberDescriptor> entry : c.getMembers().entrySet()) {
+        for (Map.Entry<KtCallableDeclaration, CallableMemberDescriptor> entry : c.getMembers().entrySet()) {
             checkVisibilityForMember(entry.getKey(), entry.getValue());
         }
     }
 
-    private void checkVisibilityForMember(@NotNull JetDeclaration declaration, @NotNull CallableMemberDescriptor memberDescriptor) {
+    private void checkVisibilityForMember(@NotNull KtDeclaration declaration, @NotNull CallableMemberDescriptor memberDescriptor) {
         Visibility visibility = memberDescriptor.getVisibility();
         for (CallableMemberDescriptor descriptor : memberDescriptor.getOverriddenDescriptors()) {
             Integer compare = Visibilities.compare(visibility, descriptor.getVisibility());

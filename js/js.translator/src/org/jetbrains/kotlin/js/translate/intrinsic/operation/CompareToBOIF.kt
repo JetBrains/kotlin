@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.js.translate.intrinsic.operation
 import com.google.common.collect.ImmutableSet
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.operation.OperatorTable
@@ -36,28 +36,28 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
     val PRIMITIVE_COMPARE_TO = pattern("Int|Short|Byte|Double|Float|Char|String.compareTo")
 
     private object CompareToIntrinsic : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, left, right)
         }
     }
 
     private object CompareToCharIntrinsic : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, left, JsAstUtils.charToInt(right))
         }
     }
 
     private object CompareCharToPrimitiveIntrinsic : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             return JsBinaryOperation(operator, JsAstUtils.charToInt(left), right)
         }
     }
 
     private object CompareToFunctionIntrinsic : AbstractBinaryOperationIntrinsic() {
-        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
+        override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val operator = OperatorTable.getBinaryOperator(getOperationToken(expression))
             val compareTo = JsAstUtils.compareTo(left, right)
             return JsBinaryOperation(operator, compareTo, JsNumberLiteral.ZERO)

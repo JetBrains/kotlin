@@ -21,7 +21,7 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 
 import java.util.Collections;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class AliasingContext {
     private Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors;
 
     @Nullable
-    private final Map<JetExpression, JsExpression> aliasesForExpressions;
+    private final Map<KtExpression, JsExpression> aliasesForExpressions;
 
     @Nullable
     private final AliasingContext parent;
@@ -43,7 +43,7 @@ public class AliasingContext {
     private AliasingContext(
             @Nullable AliasingContext parent,
             @Nullable Map<DeclarationDescriptor, JsExpression> aliasesForDescriptors,
-            @Nullable Map<JetExpression, JsExpression> aliasesForExpressions
+            @Nullable Map<KtExpression, JsExpression> aliasesForExpressions
     ) {
         this.parent = parent;
         this.aliasesForDescriptors = aliasesForDescriptors;
@@ -61,7 +61,7 @@ public class AliasingContext {
     }
 
     @NotNull
-    public AliasingContext withExpressionsAliased(@NotNull Map<JetExpression, JsExpression> aliasesForExpressions) {
+    public AliasingContext withExpressionsAliased(@NotNull Map<KtExpression, JsExpression> aliasesForExpressions) {
         return new AliasingContext(this, null, aliasesForExpressions);
     }
 
@@ -84,7 +84,7 @@ public class AliasingContext {
     }
 
     @Nullable
-    public JsExpression getAliasForExpression(@NotNull JetExpression element) {
+    public JsExpression getAliasForExpression(@NotNull KtExpression element) {
         JsExpression alias = aliasesForExpressions == null ? null : aliasesForExpressions.get(element);
         return alias != null || parent == null ? alias : parent.getAliasForExpression(element);
     }

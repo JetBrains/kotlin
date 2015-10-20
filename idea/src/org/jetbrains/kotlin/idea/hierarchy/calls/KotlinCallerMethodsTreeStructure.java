@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils;
-import org.jetbrains.kotlin.idea.references.JetReference;
+import org.jetbrains.kotlin.idea.references.KtReference;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UtilsKt;
 import org.jetbrains.kotlin.psi.*;
@@ -66,23 +66,23 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
     protected Object[] buildChildren(@NotNull HierarchyNodeDescriptor descriptor) {
         final PsiElement element = getTargetElement(descriptor);
 
-        JetElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
+        KtElement codeBlockForLocalDeclaration = getEnclosingElementForLocalDeclaration(element);
         if (codeBlockForLocalDeclaration != null) {
-            BindingContext bindingContext = ResolutionUtils.analyze((JetElement) element, BodyResolveMode.FULL);
+            BindingContext bindingContext = ResolutionUtils.analyze((KtElement) element, BodyResolveMode.FULL);
 
             final Map<PsiReference, PsiElement> referencesToElements = new HashMap<PsiReference, PsiElement>();
             codeBlockForLocalDeclaration.accept(new CalleeReferenceVisitorBase(bindingContext, true) {
                 @Override
-                protected void processDeclaration(JetSimpleNameExpression reference, PsiElement declaration) {
+                protected void processDeclaration(KtSimpleNameExpression reference, PsiElement declaration) {
                     if (!declaration.equals(element)) return;
 
                     //noinspection unchecked
                     PsiElement container = PsiTreeUtil.getParentOfType(
                             reference,
-                            JetNamedFunction.class, JetPropertyAccessor.class, JetClassOrObject.class
+                            KtNamedFunction.class, KtPropertyAccessor.class, KtClassOrObject.class
                     );
-                    if (container instanceof JetPropertyAccessor) {
-                        container = PsiTreeUtil.getParentOfType(container, JetProperty.class);
+                    if (container instanceof KtPropertyAccessor) {
+                        container = PsiTreeUtil.getParentOfType(container, KtProperty.class);
                     }
 
                     if (container != null) {
@@ -103,23 +103,23 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                     Collections.singleton((PsiMethod) element), descriptor, methodToDescriptorMap, searchScope, true
             );
         }
-        if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
-            Collection<PsiMethod> lightMethods = LightClassUtil.INSTANCE$.getLightClassMethods((JetFunction) element);
+        if (element instanceof KtNamedFunction || element instanceof KtSecondaryConstructor) {
+            Collection<PsiMethod> lightMethods = LightClassUtil.INSTANCE$.getLightClassMethods((KtFunction) element);
             processPsiMethodCallers(lightMethods, descriptor, methodToDescriptorMap, searchScope, false);
         }
-        if (element instanceof JetProperty) {
+        if (element instanceof KtProperty) {
             LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                    LightClassUtil.INSTANCE$.getLightClassPropertyMethods((JetProperty) element);
+                    LightClassUtil.INSTANCE$.getLightClassPropertyMethods((KtProperty) element);
             processPsiMethodCallers(propertyMethods, descriptor, methodToDescriptorMap, searchScope, false);
         }
-        if (element instanceof JetClassOrObject) {
-            JetPrimaryConstructor constructor = ((JetClassOrObject) element).getPrimaryConstructor();
+        if (element instanceof KtClassOrObject) {
+            KtPrimaryConstructor constructor = ((KtClassOrObject) element).getPrimaryConstructor();
             if (constructor != null) {
                 PsiMethod lightMethod = LightClassUtil.INSTANCE$.getLightClassMethod(constructor);
                 processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
             }
             else {
-                processJetClassOrObjectCallers((JetClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
+                processJetClassOrObjectCallers((KtClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
             }
         }
 
@@ -165,7 +165,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
     }
 
     private void processJetClassOrObjectCallers(
-            final JetClassOrObject classOrObject,
+            final KtClassOrObject classOrObject,
             HierarchyNodeDescriptor descriptor,
             Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,
             SearchScope searchScope
@@ -205,7 +205,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
         @Override
         public boolean processInReadAction(PsiReference ref) {
             // copied from Java
-            if (!(ref instanceof PsiReferenceExpression || ref instanceof JetReference)) {
+            if (!(ref instanceof PsiReferenceExpression || ref instanceof KtReference)) {
                 if (!(ref instanceof PsiElement)) {
                     return true;
                 }
@@ -232,15 +232,15 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
             }
 
             PsiElement refElement = ref.getElement();
-            if (PsiTreeUtil.getParentOfType(refElement, JetImportDirective.class, true) != null) return true;
+            if (PsiTreeUtil.getParentOfType(refElement, KtImportDirective.class, true) != null) return true;
 
             PsiElement element = HierarchyUtils.getCallHierarchyElement(refElement);
 
-            if (kotlinOnly && !(element instanceof JetNamedDeclaration)) return true;
+            if (kotlinOnly && !(element instanceof KtNamedDeclaration)) return true;
 
             // If reference belongs to property initializer, show enclosing declaration instead
-            if (element instanceof JetProperty) {
-                JetProperty property = (JetProperty) element;
+            if (element instanceof KtProperty) {
+                KtProperty property = (KtProperty) element;
                 if (PsiTreeUtil.isAncestor(property.getInitializer(), refElement, false)) {
                     element = HierarchyUtils.getCallHierarchyElement(element.getParent());
                 }

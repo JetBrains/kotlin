@@ -23,16 +23,16 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeIntersector;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +44,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST;
 public class SmartCastManager {
 
     @NotNull
-    public List<JetType> getSmartCastVariants(
+    public List<KtType> getSmartCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull ResolutionContext context
     ) {
@@ -52,34 +52,34 @@ public class SmartCastManager {
     }
 
     @NotNull
-    public List<JetType> getSmartCastVariants(
+    public List<KtType> getSmartCastVariants(
             @NotNull ReceiverValue receiverToCast,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        List<JetType> variants = Lists.newArrayList();
+        List<KtType> variants = Lists.newArrayList();
         variants.add(receiverToCast.getType());
         variants.addAll(getSmartCastVariantsExcludingReceiver(bindingContext, containingDeclarationOrModule, dataFlowInfo, receiverToCast));
         return variants;
     }
 
     @NotNull
-    public List<JetType> getSmartCastVariantsWithLessSpecificExcluded(
+    public List<KtType> getSmartCastVariantsWithLessSpecificExcluded(
             @NotNull ReceiverValue receiverToCast,
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
-        final List<JetType> variants = getSmartCastVariants(receiverToCast, bindingContext,
-                                                            containingDeclarationOrModule, dataFlowInfo);
-        return CollectionsKt.filter(variants, new Function1<JetType, Boolean>() {
+        final List<KtType> variants = getSmartCastVariants(receiverToCast, bindingContext,
+                                                           containingDeclarationOrModule, dataFlowInfo);
+        return CollectionsKt.filter(variants, new Function1<KtType, Boolean>() {
             @Override
-            public Boolean invoke(final JetType type) {
-                return !CollectionsKt.any(variants, new Function1<JetType, Boolean>() {
+            public Boolean invoke(final KtType type) {
+                return !CollectionsKt.any(variants, new Function1<KtType, Boolean>() {
                     @Override
-                    public Boolean invoke(JetType another) {
-                        return another != type && JetTypeChecker.DEFAULT.isSubtypeOf(another, type);
+                    public Boolean invoke(KtType another) {
+                        return another != type && KotlinTypeChecker.DEFAULT.isSubtypeOf(another, type);
                     }
                 });
             }
@@ -90,7 +90,7 @@ public class SmartCastManager {
      * @return variants @param receiverToCast may be cast to according to context dataFlowInfo, receiverToCast itself is NOT included
      */
     @NotNull
-    public Collection<JetType> getSmartCastVariantsExcludingReceiver(
+    public Collection<KtType> getSmartCastVariantsExcludingReceiver(
             @NotNull ResolutionContext context,
             @NotNull ReceiverValue receiverToCast
     ) {
@@ -104,7 +104,7 @@ public class SmartCastManager {
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included
      */
     @NotNull
-    public Collection<JetType> getSmartCastVariantsExcludingReceiver(
+    public Collection<KtType> getSmartCastVariantsExcludingReceiver(
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule,
             @NotNull DataFlowInfo dataFlowInfo,
@@ -119,27 +119,27 @@ public class SmartCastManager {
 
     public boolean isSubTypeBySmartCastIgnoringNullability(
             @NotNull ReceiverValue receiverArgument,
-            @NotNull JetType receiverParameterType,
+            @NotNull KtType receiverParameterType,
             @NotNull ResolutionContext context
     ) {
-        List<JetType> smartCastTypes = getSmartCastVariants(receiverArgument, context);
+        List<KtType> smartCastTypes = getSmartCastVariants(receiverArgument, context);
         return getSmartCastSubType(TypeUtils.makeNullable(receiverParameterType), smartCastTypes) != null;
     }
 
     @Nullable
-    private JetType getSmartCastSubType(
-            @NotNull JetType receiverParameterType,
-            @NotNull Collection<JetType> smartCastTypes
+    private KtType getSmartCastSubType(
+            @NotNull KtType receiverParameterType,
+            @NotNull Collection<KtType> smartCastTypes
     ) {
-        Set<JetType> subTypes = Sets.newHashSet();
-        for (JetType smartCastType : smartCastTypes) {
+        Set<KtType> subTypes = Sets.newHashSet();
+        for (KtType smartCastType : smartCastTypes) {
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(smartCastType, receiverParameterType)) {
                 subTypes.add(smartCastType);
             }
         }
         if (subTypes.isEmpty()) return null;
 
-        JetType intersection = TypeIntersector.intersectTypes(JetTypeChecker.DEFAULT, subTypes);
+        KtType intersection = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, subTypes);
         if (intersection == null || !intersection.getConstructor().isDenotable()) {
             return receiverParameterType;
         }
@@ -147,8 +147,8 @@ public class SmartCastManager {
     }
 
     private static void recordCastOrError(
-            @NotNull JetExpression expression,
-            @NotNull JetType type,
+            @NotNull KtExpression expression,
+            @NotNull KtType type,
             @NotNull BindingTrace trace,
             boolean canBeCast,
             boolean recordExpressionType
@@ -169,12 +169,12 @@ public class SmartCastManager {
     @Nullable
     public SmartCastResult checkAndRecordPossibleCast(
             @NotNull DataFlowValue dataFlowValue,
-            @NotNull JetType expectedType,
-            @Nullable JetExpression expression,
+            @NotNull KtType expectedType,
+            @Nullable KtExpression expression,
             @NotNull ResolutionContext c,
             boolean recordExpressionType
     ) {
-        for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
+        for (KtType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, expectedType)) {
                 if (expression != null) {
                     recordCastOrError(expression, possibleType, c.trace, dataFlowValue.isPredictable(), recordExpressionType);
@@ -198,7 +198,7 @@ public class SmartCastManager {
             // E.g. in case x!! when x has type of T where T is type parameter with nullable upper bounds
             // x!! is immanently not null (see DataFlowValueFactory.createDataFlowValue for expression)
             boolean immanentlyNotNull = !dataFlowValue.getImmanentNullability().canBeNull();
-            JetType nullableExpectedType = TypeUtils.makeNullable(expectedType);
+            KtType nullableExpectedType = TypeUtils.makeNullable(expectedType);
 
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(dataFlowValue.getType(), nullableExpectedType)) {
                 if (!immanentlyNotNull) {

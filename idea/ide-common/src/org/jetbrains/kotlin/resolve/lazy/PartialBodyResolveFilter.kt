@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.StatementFilter
@@ -33,8 +33,8 @@ import java.util.HashSet
 //TODO: do resolve anonymous object's body
 
 class PartialBodyResolveFilter(
-        elementToResolve: JetElement,
-        private val declaration: JetDeclaration,
+        elementToResolve: KtElement,
+        private val declaration: KtDeclaration,
         probablyNothingCallableNames: ProbablyNothingCallableNames,
         forCompletion: Boolean
 ) : StatementFilter() {
@@ -44,20 +44,20 @@ class PartialBodyResolveFilter(
     private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
     private val nothingVariableNames = HashSet(probablyNothingCallableNames.propertyNames())
 
-    override val filter: ((JetExpression) -> Boolean)? = { statementMarks.statementMark(it) != MarkLevel.NONE }
+    override val filter: ((KtExpression) -> Boolean)? = { statementMarks.statementMark(it) != MarkLevel.NONE }
 
-    val allStatementsToResolve: Collection<JetExpression>
+    val allStatementsToResolve: Collection<KtExpression>
         get() = statementMarks.allMarkedStatements()
 
     init {
         assert(declaration.isAncestor(elementToResolve))
-        assert(!JetPsiUtil.isLocal(declaration)) { "Should never be invoked on local declaration otherwise we may miss some local declarations with type Nothing" }
+        assert(!KtPsiUtil.isLocal(declaration)) { "Should never be invoked on local declaration otherwise we may miss some local declarations with type Nothing" }
 
-        declaration.forEachDescendantOfType<JetCallableDeclaration> { declaration ->
+        declaration.forEachDescendantOfType<KtCallableDeclaration> { declaration ->
             if (declaration.getTypeReference().containsProbablyNothing()) {
                 val name = declaration.getName()
                 if (name != null) {
-                    if (declaration is JetNamedFunction) {
+                    if (declaration is KtNamedFunction) {
                         nothingFunctionNames.add(name)
                     }
                     else {
@@ -73,7 +73,7 @@ class PartialBodyResolveFilter(
 
     //TODO: do..while is special case
 
-    private fun processBlock(block: JetBlockExpression): NameFilter {
+    private fun processBlock(block: KtBlockExpression): NameFilter {
         if (isValueNeeded(block)) {
             block.lastStatement()?.let { statementMarks.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
         }
@@ -82,15 +82,15 @@ class PartialBodyResolveFilter(
         val startStatement = statementMarks.lastMarkedStatement(block, MarkLevel.NEED_REFERENCE_RESOLVE) ?: return nameFilter
 
         for (statement in startStatement.siblings(forward = false)) {
-            if (statement !is JetExpression) continue
+            if (statement !is KtExpression) continue
 
-            if (statement is JetNamedDeclaration) {
+            if (statement is KtNamedDeclaration) {
                 val name = statement.getName()
                 if (name != null && nameFilter(name)) {
                     statementMarks.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
                 }
             }
-            else if (statement is JetMultiDeclaration) {
+            else if (statement is KtMultiDeclaration) {
                 if (statement.getEntries().any {
                     val name = it.getName()
                     name != null && nameFilter(name)
@@ -138,22 +138,22 @@ class PartialBodyResolveFilter(
      * Returns map from smart-cast expression names (variable name or qualified variable name) to places.
      */
     private fun potentialSmartCastPlaces(
-            statement: JetExpression,
+            statement: KtExpression,
             filter: (SmartCastName) -> Boolean = { true }
-    ): Map<SmartCastName, List<JetExpression>> {
-        val map = HashMap<SmartCastName, ArrayList<JetExpression>>(0)
+    ): Map<SmartCastName, List<KtExpression>> {
+        val map = HashMap<SmartCastName, ArrayList<KtExpression>>(0)
 
-        fun addPlace(name: SmartCastName, place: JetExpression) {
+        fun addPlace(name: SmartCastName, place: KtExpression) {
             map.getOrPut(name, { ArrayList(1) }).add(place)
         }
 
-        fun addPlaces(name: SmartCastName, places: Collection<JetExpression>) {
+        fun addPlaces(name: SmartCastName, places: Collection<KtExpression>) {
             if (places.isNotEmpty()) {
                 map.getOrPut(name, { ArrayList(places.size()) }).addAll(places)
             }
         }
 
-        fun addIfCanBeSmartCast(expression: JetExpression) {
+        fun addIfCanBeSmartCast(expression: KtExpression) {
             val name = expression.smartCastExpressionName() ?: return
             if (filter(name)) {
                 addPlace(name, expression)
@@ -161,26 +161,26 @@ class PartialBodyResolveFilter(
         }
 
         statement.accept(object : ControlFlowVisitor() {
-            override fun visitPostfixExpression(expression: JetPostfixExpression) {
+            override fun visitPostfixExpression(expression: KtPostfixExpression) {
                 expression.acceptChildren(this)
 
-                if (expression.getOperationToken() == JetTokens.EXCLEXCL) {
+                if (expression.getOperationToken() == KtTokens.EXCLEXCL) {
                     addIfCanBeSmartCast(expression.getBaseExpression() ?: return)
                 }
             }
 
-            override fun visitBinaryWithTypeRHSExpression(expression: JetBinaryExpressionWithTypeRHS) {
+            override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS) {
                 expression.acceptChildren(this)
 
-                if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.AS_KEYWORD) {
+                if (expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_KEYWORD) {
                     addIfCanBeSmartCast(expression.getLeft())
                 }
             }
 
-            override fun visitBinaryExpression(expression: JetBinaryExpression) {
+            override fun visitBinaryExpression(expression: KtBinaryExpression) {
                 expression.acceptChildren(this)
 
-                if (expression.getOperationToken() == JetTokens.ELVIS) {
+                if (expression.getOperationToken() == KtTokens.ELVIS) {
                     val left = expression.getLeft()
                     val right = expression.getRight()
                     if (left != null && right != null) {
@@ -193,14 +193,14 @@ class PartialBodyResolveFilter(
                 }
             }
 
-            override fun visitIfExpression(expression: JetIfExpression) {
+            override fun visitIfExpression(expression: KtIfExpression) {
                 val condition = expression.getCondition()
                 val thenBranch = expression.getThen()
                 val elseBranch = expression.getElse()
 
                 val (thenSmartCastNames, elseSmartCastNames) = possiblySmartCastInCondition(condition)
 
-                fun processBranchExits(smartCastNames: Collection<SmartCastName>, branch: JetExpression?) {
+                fun processBranchExits(smartCastNames: Collection<SmartCastName>, branch: KtExpression?) {
                     if (branch == null) return
                     val filteredNames = smartCastNames.filter(filter)
                     if (filteredNames.isNotEmpty()) {
@@ -237,12 +237,12 @@ class PartialBodyResolveFilter(
                 }
             }
 
-            override fun visitForExpression(expression: JetForExpression) {
+            override fun visitForExpression(expression: KtForExpression) {
                 // analyze only the loop-range expression, do not enter the loop body
                 expression.getLoopRange()?.accept(this)
             }
 
-            override fun visitWhileExpression(expression: JetWhileExpression) {
+            override fun visitWhileExpression(expression: KtWhileExpression) {
                 val condition = expression.getCondition()
                 // we need to enter the body only for "while(true)"
                 if (condition.isTrueConstant()) {
@@ -264,10 +264,10 @@ class PartialBodyResolveFilter(
      * in then (first component) and else (second component)
      * branches of an if-statement with such condition
      */
-    private fun possiblySmartCastInCondition(condition: JetExpression?): Pair<Set<SmartCastName>, Set<SmartCastName>> {
+    private fun possiblySmartCastInCondition(condition: KtExpression?): Pair<Set<SmartCastName>, Set<SmartCastName>> {
         val emptyResult = Pair(setOf<SmartCastName>(), setOf<SmartCastName>())
         when (condition) {
-            is JetBinaryExpression -> {
+            is KtBinaryExpression -> {
                 val operation = condition.getOperationToken()
                 val left = condition.getLeft() ?: return emptyResult
                 val right = condition.getRight() ?: return emptyResult
@@ -288,17 +288,17 @@ class PartialBodyResolveFilter(
                 }
 
                 when (operation) {
-                    JetTokens.EQEQ, JetTokens.EQEQEQ -> return smartCastInEq()
+                    KtTokens.EQEQ, KtTokens.EQEQEQ -> return smartCastInEq()
 
-                    JetTokens.EXCLEQ, JetTokens.EXCLEQEQEQ -> return smartCastInEq().swap()
+                    KtTokens.EXCLEQ, KtTokens.EXCLEQEQEQ -> return smartCastInEq().swap()
 
-                    JetTokens.ANDAND -> {
+                    KtTokens.ANDAND -> {
                         val casts1 = possiblySmartCastInCondition(left)
                         val casts2 = possiblySmartCastInCondition(right)
                         return Pair(casts1.first.union(casts2.first), casts1.second.intersect(casts2.second))
                     }
 
-                    JetTokens.OROR -> {
+                    KtTokens.OROR -> {
                         val casts1 = possiblySmartCastInCondition(left)
                         val casts2 = possiblySmartCastInCondition(right)
                         return Pair(casts1.first.intersect(casts2.first), casts1.second.union(casts2.second))
@@ -306,19 +306,19 @@ class PartialBodyResolveFilter(
                 }
             }
 
-            is JetIsExpression -> {
+            is KtIsExpression -> {
                 val cast = condition.getLeftHandSide().smartCastExpressionName().singletonOrEmptySet()
                 return if (condition.isNegated()) Pair(setOf(), cast) else Pair(cast, setOf())
             }
 
-            is JetPrefixExpression -> {
-                if (condition.getOperationToken() == JetTokens.EXCL) {
+            is KtPrefixExpression -> {
+                if (condition.getOperationToken() == KtTokens.EXCL) {
                     val operand = condition.getBaseExpression() ?: return emptyResult
                     return possiblySmartCastInCondition(operand).swap()
                 }
             }
 
-            is JetParenthesizedExpression -> {
+            is KtParenthesizedExpression -> {
                 val operand = condition.getExpression() ?: return emptyResult
                 return possiblySmartCastInCondition(operand)
             }
@@ -331,20 +331,20 @@ class PartialBodyResolveFilter(
      * If it's possible that the given statement never passes the execution to the next statement (that is, always exits somewhere)
      * then this function returns a collection of all places in code that are necessary to be kept to preserve this behaviour.
      */
-    private fun collectAlwaysExitPoints(statement: JetExpression?): Collection<JetExpression> {
-        val result = ArrayList<JetExpression>()
+    private fun collectAlwaysExitPoints(statement: KtExpression?): Collection<KtExpression> {
+        val result = ArrayList<KtExpression>()
         statement?.accept(object : ControlFlowVisitor() {
             var insideLoopLevel: Int = 0
 
-            override fun visitReturnExpression(expression: JetReturnExpression) {
+            override fun visitReturnExpression(expression: KtReturnExpression) {
                 result.add(expression)
             }
 
-            override fun visitThrowExpression(expression: JetThrowExpression) {
+            override fun visitThrowExpression(expression: KtThrowExpression) {
                 result.add(expression)
             }
 
-            override fun visitIfExpression(expression: JetIfExpression) {
+            override fun visitIfExpression(expression: KtIfExpression) {
                 expression.getCondition()?.accept(this)
 
                 val thenBranch = expression.getThen()
@@ -361,12 +361,12 @@ class PartialBodyResolveFilter(
                 }
             }
 
-            override fun visitForExpression(loop: JetForExpression) {
+            override fun visitForExpression(loop: KtForExpression) {
                 loop.getLoopRange()?.accept(this)
                 // do not make sense to search exits inside for as not necessary enter it at all
             }
 
-            override fun visitWhileExpression(loop: JetWhileExpression) {
+            override fun visitWhileExpression(loop: KtWhileExpression) {
                 val condition = loop.getCondition() ?: return
                 if (condition.isTrueConstant()) {
                     insideLoopLevel++
@@ -379,42 +379,42 @@ class PartialBodyResolveFilter(
                 }
             }
 
-            override fun visitDoWhileExpression(loop: JetDoWhileExpression) {
+            override fun visitDoWhileExpression(loop: KtDoWhileExpression) {
                 loop.getCondition()?.accept(this)
                 insideLoopLevel++
                 loop.getBody()?.accept(this)
                 insideLoopLevel--
             }
 
-            override fun visitBreakExpression(expression: JetBreakExpression) {
+            override fun visitBreakExpression(expression: KtBreakExpression) {
                 if (insideLoopLevel == 0 || expression.getLabelName() != null) {
                     result.add(expression)
                 }
             }
 
-            override fun visitContinueExpression(expression: JetContinueExpression) {
+            override fun visitContinueExpression(expression: KtContinueExpression) {
                 if (insideLoopLevel == 0 || expression.getLabelName() != null) {
                     result.add(expression)
                 }
             }
 
-            override fun visitCallExpression(expression: JetCallExpression) {
-                val name = (expression.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+            override fun visitCallExpression(expression: KtCallExpression) {
+                val name = (expression.getCalleeExpression() as? KtSimpleNameExpression)?.getReferencedName()
                 if (name != null && name in nothingFunctionNames) {
                     result.add(expression)
                 }
                 super.visitCallExpression(expression)
             }
 
-            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+            override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val name = expression.getReferencedName()
                 if (name in nothingVariableNames) {
                     result.add(expression)
                 }
             }
 
-            override fun visitBinaryExpression(expression: JetBinaryExpression) {
-                if (expression.getOperationToken() == JetTokens.ELVIS) {
+            override fun visitBinaryExpression(expression: KtBinaryExpression) {
+                if (expression.getOperationToken() == KtTokens.ELVIS) {
                     // do not search exits after "?:"
                     expression.getLeft()?.accept(this)
                 }
@@ -429,13 +429,13 @@ class PartialBodyResolveFilter(
     /**
      * Recursively visits code but does not enter constructs that may not affect smart casts/control flow
      */
-    private abstract class ControlFlowVisitor : JetVisitorVoid() {
-        override fun visitJetElement(element: JetElement) {
+    private abstract class ControlFlowVisitor : KtVisitorVoid() {
+        override fun visitJetElement(element: KtElement) {
             if (element.noControlFlowInside()) return
             element.acceptChildren(this)
         }
 
-        private fun JetElement.noControlFlowInside() = this is JetFunction || this is JetClass || this is JetClassBody
+        private fun KtElement.noControlFlowInside() = this is KtFunction || this is KtClass || this is KtClassBody
     }
 
     private data class SmartCastName(
@@ -457,22 +457,22 @@ class PartialBodyResolveFilter(
         }
     }
 
-    private fun JetExpression.smartCastExpressionName(): SmartCastName? {
+    private fun KtExpression.smartCastExpressionName(): SmartCastName? {
         return when (this) {
-            is JetSimpleNameExpression -> SmartCastName(null, this.getReferencedName())
+            is KtSimpleNameExpression -> SmartCastName(null, this.getReferencedName())
 
-            is JetQualifiedExpression -> {
-                val selector = getSelectorExpression() as? JetSimpleNameExpression ?: return null
+            is KtQualifiedExpression -> {
+                val selector = getSelectorExpression() as? KtSimpleNameExpression ?: return null
                 val selectorName = selector.getReferencedName()
                 val receiver = getReceiverExpression()
-                if (receiver is JetThisExpression) {
+                if (receiver is KtThisExpression) {
                     return SmartCastName(null, selectorName)
                 }
                 val receiverName = receiver.smartCastExpressionName() ?: return null
                 return SmartCastName(receiverName, selectorName)
             }
 
-            is JetThisExpression -> SmartCastName(null, null)
+            is KtThisExpression -> SmartCastName(null, null)
 
             else -> null
         }
@@ -487,9 +487,9 @@ class PartialBodyResolveFilter(
         val isEmpty: Boolean
             get() = names?.isEmpty() ?: false
 
-        fun addUsedNames(statement: JetExpression) {
+        fun addUsedNames(statement: KtExpression) {
             if (names != null) {
-                statement.forEachDescendantOfType<JetSimpleNameExpression>(canGoInside = { it !is JetBlockExpression }) {
+                statement.forEachDescendantOfType<KtSimpleNameExpression>(canGoInside = { it !is KtBlockExpression }) {
                     names!!.add(it.getReferencedName())
                 }
             }
@@ -518,74 +518,74 @@ class PartialBodyResolveFilter(
     }
 
     companion object {
-        public fun findStatementToResolve(element: JetElement, declaration: JetDeclaration): JetExpression? {
-            return element.parentsWithSelf.takeWhile { it != declaration }.firstOrNull { it.isStatement() } as JetExpression?
+        public fun findStatementToResolve(element: KtElement, declaration: KtDeclaration): KtExpression? {
+            return element.parentsWithSelf.takeWhile { it != declaration }.firstOrNull { it.isStatement() } as KtExpression?
         }
 
-        private fun JetElement.forTopLevelBlocksInside(action: (JetBlockExpression) -> Unit) {
-            forEachDescendantOfType(canGoInside = { it !is JetBlockExpression }, action = action)
+        private fun KtElement.forTopLevelBlocksInside(action: (KtBlockExpression) -> Unit) {
+            forEachDescendantOfType(canGoInside = { it !is KtBlockExpression }, action = action)
         }
 
-        private fun JetExpression?.isNullLiteral() = this?.getNode()?.getElementType() == JetNodeTypes.NULL
+        private fun KtExpression?.isNullLiteral() = this?.getNode()?.getElementType() == KtNodeTypes.NULL
 
-        private fun JetExpression?.isTrueConstant()
-                = this != null && getNode()?.getElementType() == JetNodeTypes.BOOLEAN_CONSTANT && getText() == "true"
+        private fun KtExpression?.isTrueConstant()
+                = this != null && getNode()?.getElementType() == KtNodeTypes.BOOLEAN_CONSTANT && getText() == "true"
 
         private fun <T : Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) setOf(this) else setOf()
 
         //TODO: review logic
-        private fun isValueNeeded(expression: JetExpression): Boolean {
+        private fun isValueNeeded(expression: KtExpression): Boolean {
             val parent = expression.getParent()
             return when (parent) {
-                is JetBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
+                is KtBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
 
-                is JetContainerNode -> { //TODO - not quite correct
-                    val pparent = parent.getParent() as? JetExpression
+                is KtContainerNode -> { //TODO - not quite correct
+                    val pparent = parent.getParent() as? KtExpression
                     pparent != null && isValueNeeded(pparent)
                 }
 
-                is JetDeclarationWithBody -> {
+                is KtDeclarationWithBody -> {
                     if (expression == parent.getBodyExpression())
                         !parent.hasBlockBody() && !parent.hasDeclaredReturnType()
                     else
                         true
                 }
 
-                is JetClassInitializer -> false
+                is KtClassInitializer -> false
 
                 else -> true
             }
         }
 
-        private fun JetBlockExpression.lastStatement(): JetExpression?
-                = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<JetExpression>()
+        private fun KtBlockExpression.lastStatement(): KtExpression?
+                = getLastChild()?.siblings(forward = false)?.firstIsInstanceOrNull<KtExpression>()
 
-        private fun PsiElement.isStatement() = this is JetExpression && getParent() is JetBlockExpression
+        private fun PsiElement.isStatement() = this is KtExpression && getParent() is KtBlockExpression
 
-        private fun JetTypeReference?.containsProbablyNothing()
-                = this?.typeElement?.anyDescendantOfType<JetUserType> { it.isProbablyNothing() } ?: false
+        private fun KtTypeReference?.containsProbablyNothing()
+                = this?.typeElement?.anyDescendantOfType<KtUserType> { it.isProbablyNothing() } ?: false
     }
 
     private inner class StatementMarks {
-        private val statementMarks = HashMap<JetExpression, MarkLevel>()
-        private val blockLevels = HashMap<JetBlockExpression, MarkLevel>()
+        private val statementMarks = HashMap<KtExpression, MarkLevel>()
+        private val blockLevels = HashMap<KtBlockExpression, MarkLevel>()
 
         fun mark(element: PsiElement, level: MarkLevel) {
             var e = element
             while (e != declaration) {
                 if (e.isStatement()) {
-                    markStatement(e as JetExpression, level)
+                    markStatement(e as KtExpression, level)
                 }
                 e = e.getParent()!!
             }
         }
 
-        private fun markStatement(statement: JetExpression, level: MarkLevel) {
+        private fun markStatement(statement: KtExpression, level: MarkLevel) {
             val currentLevel = statementMark(statement)
             if (currentLevel < level) {
                 statementMarks[statement] = level
 
-                val block = statement.getParent() as JetBlockExpression
+                val block = statement.getParent() as KtBlockExpression
                 val currentBlockLevel = blockLevels[block] ?: MarkLevel.NONE
                 if (currentBlockLevel < level) {
                     blockLevels[block] = level
@@ -593,17 +593,17 @@ class PartialBodyResolveFilter(
             }
         }
 
-        fun statementMark(statement: JetExpression): MarkLevel
+        fun statementMark(statement: KtExpression): MarkLevel
                 = statementMarks[statement] ?: MarkLevel.NONE
 
-        fun allMarkedStatements(): Collection<JetExpression>
+        fun allMarkedStatements(): Collection<KtExpression>
                 = statementMarks.keySet()
 
-        fun lastMarkedStatement(block: JetBlockExpression, minLevel: MarkLevel): JetExpression? {
+        fun lastMarkedStatement(block: KtBlockExpression, minLevel: MarkLevel): KtExpression? {
             val level = blockLevels[block] ?: MarkLevel.NONE
             if (level < minLevel) return null // optimization
             return block.getLastChild().siblings(forward = false)
-                    .filterIsInstance<JetExpression>()
+                    .filterIsInstance<KtExpression>()
                     .first { statementMark(it) >= minLevel }
         }
     }

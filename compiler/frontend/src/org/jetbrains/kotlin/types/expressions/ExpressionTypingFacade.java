@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 
 public interface ExpressionTypingFacade {
     @NotNull
-    JetTypeInfo safeGetTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context);
+    JetTypeInfo safeGetTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context);
 
     @NotNull
-    JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context);
+    JetTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context);
     
     @NotNull
-    JetTypeInfo getTypeInfo(@NotNull JetExpression expression, ExpressionTypingContext context, boolean isStatement);
+    JetTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context, boolean isStatement);
 }

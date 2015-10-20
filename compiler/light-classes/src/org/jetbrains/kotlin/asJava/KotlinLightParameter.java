@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
 
 import java.util.List;
 
-public class KotlinLightParameter extends LightParameter implements KotlinLightElement<JetParameter, PsiParameter> {
+public class KotlinLightParameter extends LightParameter implements KotlinLightElement<KtParameter, PsiParameter> {
     private static String getName(PsiParameter delegate, int index) {
         String name = delegate.getName();
         return name != null ? name : "p" + index;
@@ -71,27 +71,27 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
 
     @Nullable
     @Override
-    public JetParameter getOrigin() {
-        JetDeclaration declaration = method.getOrigin();
+    public KtParameter getOrigin() {
+        KtDeclaration declaration = method.getOrigin();
         if (declaration == null) return null;
 
         int jetIndex = JetPsiUtilKt.isExtensionDeclaration(declaration) ? index - 1 : index;
         if (jetIndex < 0) return null;
 
-        if (declaration instanceof JetFunction) {
-            List<JetParameter> paramList = ((JetFunction) declaration).getValueParameters();
+        if (declaration instanceof KtFunction) {
+            List<KtParameter> paramList = ((KtFunction) declaration).getValueParameters();
             return jetIndex < paramList.size() ? paramList.get(jetIndex) : null;
         }
 
         if (jetIndex != 0) return null;
 
-        JetPropertyAccessor setter = null;
-        if (declaration instanceof JetPropertyAccessor) {
-            JetPropertyAccessor accessor = (JetPropertyAccessor) declaration;
+        KtPropertyAccessor setter = null;
+        if (declaration instanceof KtPropertyAccessor) {
+            KtPropertyAccessor accessor = (KtPropertyAccessor) declaration;
             setter = accessor.isSetter() ? accessor : null;
         }
-        else if (declaration instanceof JetProperty) {
-            setter = ((JetProperty) declaration).getSetter();
+        else if (declaration instanceof KtProperty) {
+            setter = ((KtProperty) declaration).getSetter();
         }
 
         return setter != null ? setter.getParameter() : null;
@@ -100,13 +100,13 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
-        JetParameter origin = getOrigin();
+        KtParameter origin = getOrigin();
         return origin != null ? origin : super.getNavigationElement();
     }
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        JetParameter origin = getOrigin();
+        KtParameter origin = getOrigin();
         if (origin != null) {
             origin.setName(name);
         }
@@ -115,7 +115,7 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
 
     @Override
     public PsiFile getContainingFile() {
-        JetDeclaration declaration = method.getOrigin();
+        KtDeclaration declaration = method.getOrigin();
         return declaration != null ? declaration.getContainingFile() : super.getContainingFile();
     }
 
@@ -128,7 +128,7 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
     @NotNull
     @Override
     public SearchScope getUseScope() {
-        JetParameter origin = getOrigin();
+        KtParameter origin = getOrigin();
         return origin != null ? origin.getUseScope() : GlobalSearchScope.EMPTY_SCOPE;
     }
 

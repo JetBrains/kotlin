@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.util.slicedMap;
 
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class Slices {
                         " key: " + key +
                         " old value: " + oldValue + '@' + System.identityHashCode(oldValue) +
                         " new value: " + newValue + '@' + System.identityHashCode(newValue) +
-                          (key instanceof JetElement ? "\n" + PsiUtilsKt.getElementTextWithContext((JetElement) key) : ""));
+                          (key instanceof KtElement ? "\n" + PsiUtilsKt.getElementTextWithContext((KtElement) key) : ""));
             }
             return true;
         }

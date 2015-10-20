@@ -25,7 +25,7 @@ import com.intellij.refactoring.memberPullUp.PullUpHelper
 import com.intellij.refactoring.util.classMembers.MemberInfo
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import java.util.LinkedHashSet
@@ -43,8 +43,8 @@ public class JavaToKotlinPostconversionPullUpHelper(private val data: PullUpData
     override fun moveFieldInitializations(movedFields: LinkedHashSet<PsiField>?) { }
 
     override fun updateUsage(element: PsiElement?) {
-        if (element !is JetSimpleNameExpression) return
-        val qualifier = element.getReceiverExpression()?.getQualifiedElementSelector() as? JetSimpleNameExpression ?: return
+        if (element !is KtSimpleNameExpression) return
+        val qualifier = element.getReceiverExpression()?.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return
         qualifier.mainReference.bindToElement(data.targetClass.unwrapped!!)
     }
 }

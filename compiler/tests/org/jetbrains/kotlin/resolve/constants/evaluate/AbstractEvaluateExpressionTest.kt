@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.constants.evaluate
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -64,7 +64,7 @@ public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescrip
     }
 
     private fun evaluateInitializer(context: BindingContext, property: VariableDescriptor): CompileTimeConstant<*>? {
-        val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as JetProperty
+        val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as KtProperty
         val compileTimeConstant = ConstantExpressionEvaluator(property.builtIns).evaluateExpression(
                 propertyDeclaration.getInitializer()!!,
                 DelegatingBindingTrace(context, "trace for evaluating compile time constant"),

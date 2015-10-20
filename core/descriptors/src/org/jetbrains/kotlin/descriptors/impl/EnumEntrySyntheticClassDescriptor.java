@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.JetScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.utils.Printer;
@@ -47,8 +47,8 @@ import java.util.Set;
 public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
     private final ConstructorDescriptor primaryConstructor;
-    private final JetScope scope;
-    private final JetScope staticScope = new StaticScopeForKotlinClass(this);
+    private final KtScope scope;
+    private final KtScope staticScope = new StaticScopeForKotlinClass(this);
     private final NotNullLazyValue<Collection<Name>> enumMemberNames;
 
     /**
@@ -63,7 +63,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
             @NotNull SourceElement source
     ) {
-        JetType enumType = enumClass.getDefaultType();
+        KtType enumType = enumClass.getDefaultType();
 
         return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, enumMemberNames, source);
     }
@@ -71,7 +71,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private EnumEntrySyntheticClassDescriptor(
             @NotNull StorageManager storageManager,
             @NotNull ClassDescriptor containingClass,
-            @NotNull JetType supertype,
+            @NotNull KtType supertype,
             @NotNull Name name,
             @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
             @NotNull SourceElement source
@@ -93,13 +93,13 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public JetScope getUnsubstitutedMemberScope() {
+    public KtScope getUnsubstitutedMemberScope() {
         return scope;
     }
 
     @NotNull
     @Override
-    public JetScope getStaticScope() {
+    public KtScope getStaticScope() {
         return staticScope;
     }
 
@@ -172,7 +172,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         return "enum entry " + getName();
     }
 
-    private class EnumEntryScope extends JetScopeImpl {
+    private class EnumEntryScope extends KtScopeImpl {
         private final MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> functions;
         private final MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> properties;
         private final NotNullLazyValue<Collection<DeclarationDescriptor>> allDescriptors;
@@ -224,8 +224,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         }
 
         @NotNull
-        private JetScope getSupertypeScope() {
-            Collection<JetType> supertype = getTypeConstructor().getSupertypes();
+        private KtScope getSupertypeScope() {
+            Collection<KtType> supertype = getTypeConstructor().getSupertypes();
             assert supertype.size() == 1 : "Enum entry and its companion object both should have exactly one supertype: " + supertype;
             return supertype.iterator().next().getMemberScope();
         }

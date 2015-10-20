@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
-import org.jetbrains.kotlin.psi.stubs.elements.JetClassElementType
+import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.name.FqName
 
 import java.util.ArrayList
 import com.intellij.psi.PsiElement
 
 public class KotlinClassStubImpl(
-        type: JetClassElementType,
+        type: KtClassElementType,
         parent: StubElement<out PsiElement>?,
         private val qualifiedName: StringRef?,
         private val name: StringRef?,
@@ -36,7 +36,7 @@ public class KotlinClassStubImpl(
         private val isEnumEntry: Boolean,
         private val isLocal: Boolean,
         private val isTopLevel: Boolean
-) : KotlinStubBaseImpl<JetClass>(parent, type), KotlinClassStub {
+) : KotlinStubBaseImpl<KtClass>(parent, type), KotlinClassStub {
 
     override fun getFqName(): FqName? {
         val stringRef = StringRef.toString(qualifiedName)

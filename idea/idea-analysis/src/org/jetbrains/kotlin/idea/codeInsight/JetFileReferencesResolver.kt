@@ -16,37 +16,37 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import org.jetbrains.kotlin.psi.JetReferenceExpression
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
-import org.jetbrains.kotlin.psi.JetUserType
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import java.util.Collections
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import java.util.LinkedHashMap
 
 object JetFileReferencesResolver {
     fun resolve(
-            element: JetElement,
+            element: KtElement,
             resolveQualifiers: Boolean = true,
             resolveShortNames: Boolean = true
-    ): Map<JetReferenceExpression, BindingContext> {
-        return (element.getContainingFile() as? JetFile)?.let { file ->
+    ): Map<KtReferenceExpression, BindingContext> {
+        return (element.getContainingFile() as? KtFile)?.let { file ->
             resolve(file, listOf(element), resolveQualifiers, resolveShortNames)
         } ?: Collections.emptyMap()
     }
 
     fun resolve(
-            file: JetFile,
-            elements: Iterable<JetElement>? = null,
+            file: KtFile,
+            elements: Iterable<KtElement>? = null,
             resolveQualifiers: Boolean = true,
             resolveShortNames: Boolean = true
-    ): Map<JetReferenceExpression, BindingContext> {
+    ): Map<KtReferenceExpression, BindingContext> {
         val visitor = ResolveAllReferencesVisitor(file, resolveQualifiers, resolveShortNames)
         if (elements != null) {
             elements.forEach { it.accept(visitor) }
@@ -57,13 +57,13 @@ object JetFileReferencesResolver {
         return visitor.result
     }
 
-    private class ResolveAllReferencesVisitor(file: JetFile, val resolveQualifiers: Boolean, val resolveShortNames: Boolean) : JetTreeVisitorVoid() {
+    private class ResolveAllReferencesVisitor(file: KtFile, val resolveQualifiers: Boolean, val resolveShortNames: Boolean) : KtTreeVisitorVoid() {
         private val resolutionFacade = file.getResolutionFacade()
-        private val resolveMap = LinkedHashMap<JetReferenceExpression, BindingContext>()
+        private val resolveMap = LinkedHashMap<KtReferenceExpression, BindingContext>()
 
-        public val result: Map<JetReferenceExpression, BindingContext> = resolveMap
+        public val result: Map<KtReferenceExpression, BindingContext> = resolveMap
 
-        override fun visitUserType(userType: JetUserType) {
+        override fun visitUserType(userType: KtUserType) {
             if (resolveQualifiers) {
                 userType.acceptChildren(this)
             }
@@ -76,7 +76,7 @@ object JetFileReferencesResolver {
             }
         }
 
-        override fun visitQualifiedExpression(expression: JetQualifiedExpression) {
+        override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
             val receiverExpression = expression.getReceiverExpression()
             if (resolveQualifiers || resolutionFacade.analyze(expression)[BindingContext.QUALIFIER, receiverExpression] == null) {
                 receiverExpression.accept(this)
@@ -89,7 +89,7 @@ object JetFileReferencesResolver {
             expression.getSelectorExpression()?.accept(this)
         }
 
-        override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+        override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
             if (resolveShortNames) {
                 resolveMap[expression] = resolutionFacade.analyze(expression)
             }
@@ -97,5 +97,5 @@ object JetFileReferencesResolver {
     }
 }
 
-fun JetExpression.referenceExpression(): JetReferenceExpression? =
-        (if (this is JetCallExpression) getCalleeExpression() else this) as? JetReferenceExpression
+fun KtExpression.referenceExpression(): KtReferenceExpression? =
+        (if (this is KtCallExpression) getCalleeExpression() else this) as? KtReferenceExpression

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import java.lang.reflect.Modifier
 import kotlin.properties.Delegates
 import kotlin.properties.ObservableProperty
@@ -92,7 +92,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var includePropertyConstant by property(false)
     override var withoutTypeParameters by property(false)
     override var withoutSuperTypes by property(false)
-    override var typeNormalizer by property<(JetType) -> JetType>({ it })
+    override var typeNormalizer by property<(KtType) -> KtType>({ it })
     override var renderDefaultValues by property(true)
     override var flexibleTypesForCode by property(false)
     override var secondaryConstructorsAsPrimary by property(true)
@@ -107,12 +107,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var excludedAnnotationClasses by property(emptySet<FqName>())
 
-    override var excludedTypeAnnotationClasses by property(setOf(
-            FqName("org.jetbrains.annotations.ReadOnly"),
-            FqName("org.jetbrains.annotations.Mutable"),
-            FqName("org.jetbrains.annotations.NotNull"),
-            FqName("org.jetbrains.annotations.Nullable"),
-            FqName("kotlin.internal.NoInfer"),
-            FqName("kotlin.internal.Exact")
-    ))
+    override var excludedTypeAnnotationClasses by property(
+            ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
+                    + ExcludedTypeAnnotations.internalAnnotationsForResolve)
 }

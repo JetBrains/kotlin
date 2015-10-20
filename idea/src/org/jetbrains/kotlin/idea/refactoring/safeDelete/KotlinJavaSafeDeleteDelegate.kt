@@ -25,7 +25,7 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
@@ -36,15 +36,15 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
     override fun createUsageInfoForParameter(
             reference: PsiReference, usages: MutableList<UsageInfo>, parameter: PsiParameter, method: PsiMethod
     ) {
-        if (reference !is JetReference) return
+        if (reference !is KtReference) return
 
         val element = reference.getElement()
 
-        val callExpression = element.getNonStrictParentOfType<JetCallExpression>()
+        val callExpression = element.getNonStrictParentOfType<KtCallExpression>()
         if (callExpression == null) return
 
         val calleeExpression = callExpression.getCalleeExpression()
-        if (!(calleeExpression is JetReferenceExpression && calleeExpression.isAncestor(element))) return
+        if (!(calleeExpression is KtReferenceExpression && calleeExpression.isAncestor(element))) return
 
         val bindingContext = element.analyze()
 
@@ -52,13 +52,13 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
         if (descriptor == null) return
 
         val originalDeclaration = method.unwrapped
-        if (originalDeclaration !is PsiMethod && originalDeclaration !is JetDeclaration) return
+        if (originalDeclaration !is PsiMethod && originalDeclaration !is KtDeclaration) return
 
         if (originalDeclaration != DescriptorToSourceUtils.descriptorToDeclaration(descriptor)) return
 
         val args = callExpression.getValueArguments()
 
-        val namedArguments = args.filter { arg -> arg is JetValueArgument && arg.getArgumentName()?.getText() == parameter.getName() }
+        val namedArguments = args.filter { arg -> arg is KtValueArgument && arg.getArgumentName()?.getText() == parameter.getName() }
         if (!namedArguments.isEmpty()) {
             usages.add(SafeDeleteValueArgumentListUsageInfo(namedArguments.first(), parameter))
             return
@@ -72,7 +72,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
 
         val argCount = args.size()
         if (parameterIndex < argCount) {
-            usages.add(SafeDeleteValueArgumentListUsageInfo((args.get(parameterIndex) as JetValueArgument), parameter))
+            usages.add(SafeDeleteValueArgumentListUsageInfo((args.get(parameterIndex) as KtValueArgument), parameter))
         } else {
             val lambdaArgs = callExpression.getFunctionLiteralArguments()
             val lambdaIndex = parameterIndex - argCount

@@ -20,21 +20,21 @@ import com.intellij.ide.actions.QualifiedNameProvider
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
 public class KotlinQualifiedNameProvider: QualifiedNameProvider {
     override fun adjustElementToCopy(element: PsiElement?) = null
 
     override fun getQualifiedName(element: PsiElement?): String? {
         when (element) {
-            is JetClassOrObject -> return element.getFqName()?.asString()
-            is JetNamedFunction, is JetProperty -> {
-                val descriptor = (element as JetDeclaration).resolveToDescriptor()
+            is KtClassOrObject -> return element.getFqName()?.asString()
+            is KtNamedFunction, is KtProperty -> {
+                val descriptor = (element as KtDeclaration).resolveToDescriptor()
                 val fqNameUnsafe = DescriptorUtils.getFqName(descriptor)
                 if (fqNameUnsafe.isSafe()) {
                     return fqNameUnsafe.asString()

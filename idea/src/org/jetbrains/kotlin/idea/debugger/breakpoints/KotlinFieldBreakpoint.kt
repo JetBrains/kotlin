@@ -48,10 +48,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import javax.swing.Icon
 
@@ -80,17 +80,17 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    public fun getField(): JetCallableDeclaration? {
+    public fun getField(): KtCallableDeclaration? {
         val sourcePosition = getSourcePosition()
         return getProperty(sourcePosition)
     }
 
-    private fun getProperty(sourcePosition: SourcePosition?): JetCallableDeclaration? {
-        val property: JetProperty? = PositionUtil.getPsiElementAt(getProject(), javaClass(), sourcePosition)
+    private fun getProperty(sourcePosition: SourcePosition?): KtCallableDeclaration? {
+        val property: KtProperty? = PositionUtil.getPsiElementAt(getProject(), javaClass(), sourcePosition)
         if (property != null) {
             return property
         }
-        val parameter: JetParameter? = PositionUtil.getPsiElementAt(getProject(), javaClass(), sourcePosition)
+        val parameter: KtParameter? = PositionUtil.getPsiElementAt(getProject(), javaClass(), sourcePosition)
         if (parameter != null) {
             return parameter
         }
@@ -102,13 +102,13 @@ class KotlinFieldBreakpoint(
         if (property != null) {
             setFieldName(property.getName()!!)
 
-            if (property is JetProperty && property.isTopLevel()) {
+            if (property is KtProperty && property.isTopLevel()) {
                 getProperties().myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingJetFile()).fileClassFqName.asString()
             }
             else {
-                val jetClass: JetClassOrObject? = PsiTreeUtil.getParentOfType(property, javaClass())
-                if (jetClass is JetClassOrObject) {
-                    val fqName = jetClass.getFqName()
+                val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, javaClass())
+                if (ktClass is KtClassOrObject) {
+                    val fqName = ktClass.getFqName()
                     if (fqName != null) {
                         getProperties().myClassName = fqName.asString()
                     }
@@ -188,7 +188,7 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    private fun computeBreakpointType(property: JetCallableDeclaration): BreakpointType {
+    private fun computeBreakpointType(property: KtCallableDeclaration): BreakpointType {
         return runReadAction {
             val bindingContext = property.analyze()
             var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)

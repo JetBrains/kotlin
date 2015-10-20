@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -37,19 +37,19 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.LazyFileScope
 
-public fun JetElement.getResolutionFacade(): ResolutionFacade {
+public fun KtElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
 }
 
-public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
+public fun KtDeclaration.resolveToDescriptor(): DeclarationDescriptor {
     return getResolutionFacade().resolveToDescriptor(this)
 }
 
-public fun JetDeclaration.resolveToDescriptorIfAny(): DeclarationDescriptor? {
+public fun KtDeclaration.resolveToDescriptorIfAny(): DeclarationDescriptor? {
     return analyze(BodyResolveMode.PARTIAL).get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 }
 
-public fun JetFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
+public fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()
     return facade.resolveImportReference(facade.moduleDescriptor, fqName)
 }
@@ -60,24 +60,24 @@ public fun JetFile.resolveImportReference(fqName: FqName): Collection<Declaratio
 // analyzeFully - see KotlinResolveCache, KotlinResolveDataProvider
 // In the future these two approaches should be unified
 @JvmOverloads
-public fun JetElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
+public fun KtElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
     return getResolutionFacade().analyze(this, bodyResolveMode)
 }
 
-public fun JetElement.analyzeAndGetResult(): AnalysisResult {
+public fun KtElement.analyzeAndGetResult(): AnalysisResult {
     val resolutionFacade = getResolutionFacade()
     return AnalysisResult.success(resolutionFacade.analyze(this), resolutionFacade.moduleDescriptor)
 }
 
-public fun JetElement.findModuleDescriptor(): ModuleDescriptor {
+public fun KtElement.findModuleDescriptor(): ModuleDescriptor {
     return getResolutionFacade().moduleDescriptor
 }
 
-public fun JetElement.analyzeFully(): BindingContext {
+public fun KtElement.analyzeFully(): BindingContext {
     return analyzeFullyAndGetResult().bindingContext
 }
 
-public fun JetElement.analyzeFullyAndGetResult(vararg extraFiles: JetFile): AnalysisResult {
+public fun KtElement.analyzeFullyAndGetResult(vararg extraFiles: KtFile): AnalysisResult {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeFullyAndGetResult(listOf(this))
 }
 
@@ -86,7 +86,7 @@ public fun ResolutionFacade.resolveImportReference(
         moduleDescriptor: ModuleDescriptor,
         fqName: FqName
 ): Collection<DeclarationDescriptor> {
-    val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
+    val importDirective = KtPsiFactory(project).createImportDirective(ImportPath(fqName, false))
     val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
     return qualifiedExpressionResolver.processImportReference(
             importDirective, moduleDescriptor, BindingTraceContext(), packageFragmentForVisibilityCheck = null)?.getAllDescriptors() ?: emptyList()
@@ -95,13 +95,13 @@ public fun ResolutionFacade.resolveImportReference(
 //NOTE: idea default API returns module search scope for file under module but not in source or production source (for example, test data )
 // this scope can't be used to search for kotlin declarations in index in order to resolve in that case
 // see com.intellij.psi.impl.file.impl.ResolveScopeManagerImpl.getInherentResolveScope
-public fun getResolveScope(file: JetFile): GlobalSearchScope {
+public fun getResolveScope(file: KtFile): GlobalSearchScope {
     return when (file.getModuleInfo()) {
         is ModuleSourceInfo -> file.getResolveScope()
         else -> GlobalSearchScope.EMPTY_SCOPE
     }
 }
 
-public fun ResolutionFacade.getFileTopLevelScope(file: JetFile): LazyFileScope {
+public fun ResolutionFacade.getFileTopLevelScope(file: KtFile): LazyFileScope {
     return frontendService<FileScopeProvider>().getFileScope(file)
 }

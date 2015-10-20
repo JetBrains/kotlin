@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.model;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class ExpressionValueArgument implements ResolvedValueArgument {
 
     @Override
     public String toString() {
-        JetExpression expression = valueArgument.getArgumentExpression();
+        KtExpression expression = valueArgument.getArgumentExpression();
         return expression == null ? "no expression" : expression.getText();
     }
 }

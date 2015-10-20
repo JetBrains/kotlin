@@ -47,9 +47,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.FunctionPlaceholders;
 import org.jetbrains.kotlin.types.FunctionPlaceholdersKt;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.JetPsiUtil.getLastElementDeparenthesized;
+import static org.jetbrains.kotlin.psi.KtPsiUtil.getLastElementDeparenthesized;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getRecordedTypeInfo;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
@@ -94,14 +94,14 @@ public class ArgumentTypeResolver {
     }
 
     public static boolean isSubtypeOfForArgumentType(
-            @NotNull JetType actualType,
-            @NotNull JetType expectedType
+            @NotNull KtType actualType,
+            @NotNull KtType expectedType
     ) {
         if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
-            JetType functionType = ConstraintSystemImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
-            return JetTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
+            KtType functionType = ConstraintSystemImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
+            return KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
         }
-        return JetTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
+        return KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {
@@ -115,8 +115,8 @@ public class ArgumentTypeResolver {
         if (context.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) return;
 
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
-            JetExpression argumentExpression = valueArgument.getArgumentExpression();
-            if (argumentExpression != null && !(argumentExpression instanceof JetFunctionLiteralExpression)) {
+            KtExpression argumentExpression = valueArgument.getArgumentExpression();
+            if (argumentExpression != null && !(argumentExpression instanceof KtFunctionLiteralExpression)) {
                 checkArgumentTypeWithNoCallee(context, argumentExpression);
             }
         }
@@ -125,8 +125,8 @@ public class ArgumentTypeResolver {
             checkTypesForFunctionArgumentsWithNoCallee(context);
         }
 
-        for (JetTypeProjection typeProjection : context.call.getTypeArguments()) {
-            JetTypeReference typeReference = typeProjection.getTypeReference();
+        for (KtTypeProjection typeProjection : context.call.getTypeArguments()) {
+            KtTypeReference typeReference = typeProjection.getTypeReference();
             if (typeReference == null) {
                 context.trace.report(Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(typeProjection));
             }
@@ -140,27 +140,27 @@ public class ArgumentTypeResolver {
         if (context.checkArguments != CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) return;
 
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
-            JetExpression argumentExpression = valueArgument.getArgumentExpression();
+            KtExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null && isFunctionLiteralArgument(argumentExpression, context)) {
                 checkArgumentTypeWithNoCallee(context, argumentExpression);
             }
         }
     }
 
-    private void checkArgumentTypeWithNoCallee(CallResolutionContext<?> context, JetExpression argumentExpression) {
+    private void checkArgumentTypeWithNoCallee(CallResolutionContext<?> context, KtExpression argumentExpression) {
         expressionTypingServices.getTypeInfo(argumentExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
         updateResultArgumentTypeIfNotDenotable(context, argumentExpression);
     }
 
     public static boolean isFunctionLiteralArgument(
-            @NotNull JetExpression expression, @NotNull ResolutionContext context
+            @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
         return getFunctionLiteralArgumentIfAny(expression, context) != null;
     }
 
     @NotNull
-    public static JetFunction getFunctionLiteralArgument(
-            @NotNull JetExpression expression, @NotNull ResolutionContext context
+    public static KtFunction getFunctionLiteralArgument(
+            @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
         assert isFunctionLiteralArgument(expression, context);
         //noinspection ConstantConditions
@@ -168,34 +168,34 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    public static JetFunction getFunctionLiteralArgumentIfAny(
-            @NotNull JetExpression expression, @NotNull ResolutionContext context
+    public static KtFunction getFunctionLiteralArgumentIfAny(
+            @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
-        JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
-        if (deparenthesizedExpression instanceof JetFunctionLiteralExpression) {
-            return ((JetFunctionLiteralExpression) deparenthesizedExpression).getFunctionLiteral();
+        KtExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
+        if (deparenthesizedExpression instanceof KtFunctionLiteralExpression) {
+            return ((KtFunctionLiteralExpression) deparenthesizedExpression).getFunctionLiteral();
         }
-        if (deparenthesizedExpression instanceof JetFunction) {
-            return (JetFunction) deparenthesizedExpression;
+        if (deparenthesizedExpression instanceof KtFunction) {
+            return (KtFunction) deparenthesizedExpression;
         }
         return null;
     }
 
     @Nullable
-    public static JetCallableReferenceExpression getCallableReferenceExpressionIfAny(
-            @NotNull JetExpression expression,
+    public static KtCallableReferenceExpression getCallableReferenceExpressionIfAny(
+            @NotNull KtExpression expression,
             @NotNull CallResolutionContext<?> context
     ) {
-        JetExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
-        if (deparenthesizedExpression instanceof JetCallableReferenceExpression) {
-            return (JetCallableReferenceExpression) deparenthesizedExpression;
+        KtExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
+        if (deparenthesizedExpression instanceof KtCallableReferenceExpression) {
+            return (KtCallableReferenceExpression) deparenthesizedExpression;
         }
         return null;
     }
 
     @NotNull
     public JetTypeInfo getArgumentTypeInfo(
-            @Nullable JetExpression expression,
+            @Nullable KtExpression expression,
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
@@ -203,12 +203,12 @@ public class ArgumentTypeResolver {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
 
-        JetFunction functionLiteralArgument = getFunctionLiteralArgumentIfAny(expression, context);
+        KtFunction functionLiteralArgument = getFunctionLiteralArgumentIfAny(expression, context);
         if (functionLiteralArgument != null) {
             return getFunctionLiteralTypeInfo(expression, functionLiteralArgument, context, resolveArgumentsMode);
         }
 
-        JetCallableReferenceExpression callableReferenceExpression = getCallableReferenceExpressionIfAny(expression, context);
+        KtCallableReferenceExpression callableReferenceExpression = getCallableReferenceExpressionIfAny(expression, context);
         if (callableReferenceExpression != null) {
             return getCallableReferenceTypeInfo(expression, callableReferenceExpression, context, resolveArgumentsMode);
         }
@@ -225,25 +225,25 @@ public class ArgumentTypeResolver {
 
     @NotNull
     public JetTypeInfo getCallableReferenceTypeInfo(
-            @NotNull JetExpression expression,
-            @NotNull JetCallableReferenceExpression callableReferenceExpression,
+            @NotNull KtExpression expression,
+            @NotNull KtCallableReferenceExpression callableReferenceExpression,
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
-            JetType type = getShapeTypeOfCallableReference(callableReferenceExpression, context, true);
+            KtType type = getShapeTypeOfCallableReference(callableReferenceExpression, context, true);
             return TypeInfoFactoryKt.createTypeInfo(type);
         }
         return expressionTypingServices.getTypeInfo(expression, context.replaceContextDependency(INDEPENDENT));
     }
 
     @Nullable
-    public JetType getShapeTypeOfCallableReference(
-            @NotNull JetCallableReferenceExpression callableReferenceExpression,
+    public KtType getShapeTypeOfCallableReference(
+            @NotNull KtCallableReferenceExpression callableReferenceExpression,
             @NotNull CallResolutionContext<?> context,
             boolean expectedTypeIsUnknown
     ) {
-        JetType receiverType =
+        KtType receiverType =
                 CallableReferencesResolutionUtilsKt.resolveCallableReferenceReceiverType(callableReferenceExpression, context, typeResolver);
         OverloadResolutionResults<CallableDescriptor> overloadResolutionResults =
                 CallableReferencesResolutionUtilsKt.resolvePossiblyAmbiguousCallableReference(
@@ -256,42 +256,42 @@ public class ArgumentTypeResolver {
 
     @NotNull
     public JetTypeInfo getFunctionLiteralTypeInfo(
-            @NotNull JetExpression expression,
-            @NotNull JetFunction functionLiteral,
+            @NotNull KtExpression expression,
+            @NotNull KtFunction functionLiteral,
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
     ) {
         if (resolveArgumentsMode == SHAPE_FUNCTION_ARGUMENTS) {
-            JetType type = getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, true);
+            KtType type = getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, true);
             return TypeInfoFactoryKt.createTypeInfo(type, context);
         }
         return expressionTypingServices.getTypeInfo(expression, context.replaceContextDependency(INDEPENDENT));
     }
 
     @Nullable
-    public JetType getShapeTypeOfFunctionLiteral(
-            @NotNull JetFunction function,
+    public KtType getShapeTypeOfFunctionLiteral(
+            @NotNull KtFunction function,
             @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,
             boolean expectedTypeIsUnknown
     ) {
-        boolean isFunctionLiteral = function instanceof JetFunctionLiteral;
+        boolean isFunctionLiteral = function instanceof KtFunctionLiteral;
         if (function.getValueParameterList() == null && isFunctionLiteral) {
             return expectedTypeIsUnknown
                    ? functionPlaceholders
-                           .createFunctionPlaceholderType(Collections.<JetType>emptyList(), /* hasDeclaredArguments = */ false)
-                   : builtIns.getFunctionType(Annotations.Companion.getEMPTY(), null, Collections.<JetType>emptyList(), DONT_CARE);
+                           .createFunctionPlaceholderType(Collections.<KtType>emptyList(), /* hasDeclaredArguments = */ false)
+                   : builtIns.getFunctionType(Annotations.Companion.getEMPTY(), null, Collections.<KtType>emptyList(), DONT_CARE);
         }
-        List<JetParameter> valueParameters = function.getValueParameters();
+        List<KtParameter> valueParameters = function.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 trace, "trace to resolve function literal parameter types");
-        List<JetType> parameterTypes = Lists.newArrayList();
-        for (JetParameter parameter : valueParameters) {
+        List<KtType> parameterTypes = Lists.newArrayList();
+        for (KtParameter parameter : valueParameters) {
             parameterTypes.add(resolveTypeRefWithDefault(parameter.getTypeReference(), scope, temporaryTrace, DONT_CARE));
         }
-        JetType returnType = resolveTypeRefWithDefault(function.getTypeReference(), scope, temporaryTrace, DONT_CARE);
+        KtType returnType = resolveTypeRefWithDefault(function.getTypeReference(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
-        JetType receiverType = resolveTypeRefWithDefault(function.getReceiverTypeReference(), scope, temporaryTrace, null);
+        KtType receiverType = resolveTypeRefWithDefault(function.getReceiverTypeReference(), scope, temporaryTrace, null);
 
         return expectedTypeIsUnknown && isFunctionLiteral
                ? functionPlaceholders.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
@@ -299,11 +299,11 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    public JetType resolveTypeRefWithDefault(
-            @Nullable JetTypeReference returnTypeRef,
+    public KtType resolveTypeRefWithDefault(
+            @Nullable KtTypeReference returnTypeRef,
             @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,
-            @Nullable JetType defaultValue
+            @Nullable KtType defaultValue
     ) {
         if (returnTypeRef != null) {
             return typeResolver.resolveType(scope, returnTypeRef, trace, true);
@@ -336,7 +336,7 @@ public class ArgumentTypeResolver {
         infoForArguments.setInitialDataFlowInfo(initialDataFlowInfo);
 
         for (ValueArgument argument : call.getValueArguments()) {
-            JetExpression expression = argument.getArgumentExpression();
+            KtExpression expression = argument.getArgumentExpression();
             if (expression == null) continue;
 
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
@@ -347,15 +347,15 @@ public class ArgumentTypeResolver {
     }
 
     @Nullable
-    public JetType updateResultArgumentTypeIfNotDenotable(
+    public KtType updateResultArgumentTypeIfNotDenotable(
             @NotNull ResolutionContext context,
-            @NotNull JetExpression expression
+            @NotNull KtExpression expression
     ) {
-        JetType type = context.trace.getType(expression);
+        KtType type = context.trace.getType(expression);
         if (type != null && !type.getConstructor().isDenotable()) {
             if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
                 IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();
-                JetType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
+                KtType primitiveType = TypeUtils.getPrimitiveNumberType(constructor, context.expectedType);
                 constantExpressionEvaluator.updateNumberType(primitiveType, expression, context.statementFilter, context.trace);
                 return primitiveType;
             }

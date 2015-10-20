@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.project
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.LocalDescriptorResolver
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 public class IdeaLocalDescriptorResolver(
         private val resolveElementCache: ResolveElementCache
 ): LocalDescriptorResolver {
-    override fun resolveLocalDeclaration(declaration: JetDeclaration): DeclarationDescriptor {
+    override fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor {
         val context = resolveElementCache.resolveToElement(declaration, BodyResolveMode.FULL)
         return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
             ?: throw NoDescriptorForDeclarationException(declaration)

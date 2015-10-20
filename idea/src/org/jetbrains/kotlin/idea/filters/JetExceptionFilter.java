@@ -28,7 +28,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.util.DebuggerUtils;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 
 import java.util.regex.Matcher;
@@ -63,7 +63,7 @@ public class JetExceptionFilter implements Filter {
         String internalName = fullyQualifiedName.replace('.', '/');
         JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
 
-        JetFile file = DebuggerUtils.findSourceFileForClass(project, searchScope, jvmClassName, fileName);
+        KtFile file = DebuggerUtils.findSourceFileForClass(project, searchScope, jvmClassName, fileName);
 
         if (file == null) return null;
         VirtualFile virtualFile = file.getVirtualFile();

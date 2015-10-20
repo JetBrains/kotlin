@@ -67,7 +67,7 @@ public class DescriptorSubstitutor {
 
         for (TypeParameterDescriptor descriptor : typeParameters) {
             TypeParameterDescriptorImpl substituted = substitutedMap.get(descriptor);
-            for (JetType upperBound : descriptor.getUpperBounds()) {
+            for (KtType upperBound : descriptor.getUpperBounds()) {
                 substituted.getUpperBounds().add(substitutor.substitute(upperBound, Variance.INVARIANT));
             }
         }

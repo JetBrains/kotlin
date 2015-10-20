@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
-import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 public abstract class InstructionWithNext(
-        element: JetElement,
+        element: KtElement,
         lexicalScope: LexicalScope
 ) : JetElementInstructionImpl(element, lexicalScope) {
     public var next: Instruction? = null

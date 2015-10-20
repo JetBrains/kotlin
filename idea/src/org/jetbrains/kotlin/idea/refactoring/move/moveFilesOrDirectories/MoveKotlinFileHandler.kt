@@ -31,13 +31,13 @@ import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
-    internal class InternalUsagesWrapper(file: JetFile, val usages: List<UsageInfo>) : UsageInfo(file)
+    internal class InternalUsagesWrapper(file: KtFile, val usages: List<UsageInfo>) : UsageInfo(file)
 
     // This is special 'PsiElement' whose purpose is to wrap MoveKotlinTopLevelDeclarationsProcessor
     // so that it can be kept in the transition map
@@ -48,7 +48,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         override fun toString() = ""
     }
 
-    private fun JetFile.getPackageNameInfo(newParent: PsiDirectory?, clearUserData: Boolean): PackageNameInfo? {
+    private fun KtFile.getPackageNameInfo(newParent: PsiDirectory?, clearUserData: Boolean): PackageNameInfo? {
         val shouldUpdatePackageDirective = updatePackageDirective ?: packageMatchesDirectory()
         updatePackageDirective = if (clearUserData) null else shouldUpdatePackageDirective
 
@@ -65,7 +65,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     fun initMoveProcessor(psiFile: PsiFile, newParent: PsiDirectory?): MoveKotlinTopLevelDeclarationsProcessor? {
-        if (psiFile !is JetFile) return null
+        if (psiFile !is KtFile) return null
         val packageNameInfo = psiFile.getPackageNameInfo(newParent, false) ?: return null
 
         val project = psiFile.project
@@ -76,14 +76,14 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
 
             else -> DeferredJetFileKotlinMoveTarget(project, newPackageName.toSafe()) {
                 MoveFilesOrDirectoriesUtil.doMoveFile(psiFile, newParent)
-                newParent?.findFile(psiFile.name) as? JetFile
+                newParent?.findFile(psiFile.name) as? KtFile
             }
         }
 
         val declarationMoveProcessor = MoveKotlinTopLevelDeclarationsProcessor(
                 project,
                 MoveKotlinTopLevelDeclarationsOptions(
-                        elementsToMove = psiFile.declarations.filterIsInstance<JetNamedDeclaration>(),
+                        elementsToMove = psiFile.declarations.filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = moveTarget,
                         updateInternalReferences = false
                 ),
@@ -93,11 +93,11 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     override fun canProcessElement(element: PsiFile?): Boolean {
-        if (element is PsiCompiledElement || element !is JetFile) return false
+        if (element is PsiCompiledElement || element !is KtFile) return false
         return !JavaProjectRootsUtil.isOutsideJavaSourceRoot(element)
     }
 
-    fun findInternalUsages(file: JetFile, newParent: PsiDirectory): InternalUsagesWrapper {
+    fun findInternalUsages(file: KtFile, newParent: PsiDirectory): InternalUsagesWrapper {
         val packageNameInfo = file.getPackageNameInfo(newParent, false)
         val usages = packageNameInfo?.let { file.getInternalReferencesToUpdateOnPackageNameChange(it) } ?: emptyList()
         return InternalUsagesWrapper(file, usages)
@@ -109,7 +109,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
             searchInComments: Boolean,
             searchInNonJavaFiles: Boolean
     ): List<UsageInfo> {
-        if (psiFile !is JetFile) return emptyList()
+        if (psiFile !is KtFile) return emptyList()
 
         val usages = ArrayList<UsageInfo>()
         initMoveProcessor(psiFile, newParent)?.findUsages()?.let { usages += it }
@@ -124,7 +124,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     override fun updateMovedFile(file: PsiFile) {
-        if (file !is JetFile) return
+        if (file !is KtFile) return
         val newDirectory = file.parent ?: return
         val packageNameInfo = file.getPackageNameInfo(newDirectory, true) ?: return
         val newPackageName = packageNameInfo.newPackageName

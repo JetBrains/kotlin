@@ -41,13 +41,13 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
@@ -93,7 +93,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
     return map
 }
 
-public fun ThisReceiver.asExpression(resolutionScope: JetScope, psiFactory: JetPsiFactory): JetExpression? {
+public fun ThisReceiver.asExpression(resolutionScope: KtScope, psiFactory: KtPsiFactory): KtExpression? {
     val expressionFactory = resolutionScope.getImplicitReceiversWithInstanceToExpression()
                                     .entrySet()
                                     .firstOrNull { it.key.getContainingDeclaration() == this.getDeclarationDescriptor() }
@@ -103,34 +103,34 @@ public fun ThisReceiver.asExpression(resolutionScope: JetScope, psiFactory: JetP
 
 public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade): LexicalScope {
     for (parent in parentsWithSelf) {
-        if (parent is JetElement) {
+        if (parent is KtElement) {
             val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent]
             if (scope != null) return scope
         }
 
-        if (parent is JetClassBody) {
+        if (parent is KtClassBody) {
             val classDescriptor = bindingContext[BindingContext.CLASS, parent.getParent()] as? ClassDescriptorWithResolutionScopes
             if (classDescriptor != null) {
                 return classDescriptor.getScopeForMemberDeclarationResolution()
             }
         }
 
-        if (parent is JetFile) {
+        if (parent is KtFile) {
             return resolutionFacade.getFileTopLevelScope(parent)
         }
     }
     error("Not in JetFile")
 }
 
-public fun JetImportDirective.targetDescriptors(): Collection<DeclarationDescriptor> {
-    val nameExpression = importedReference?.getQualifiedElementSelector() as? JetSimpleNameExpression ?: return emptyList()
+public fun KtImportDirective.targetDescriptors(): Collection<DeclarationDescriptor> {
+    val nameExpression = importedReference?.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return emptyList()
     return nameExpression.mainReference.resolveToDescriptors(nameExpression.analyze())
 }
 
 public fun Call.resolveCandidates(
         bindingContext: BindingContext,
         resolutionFacade: ResolutionFacade,
-        expectedType: JetType = expectedType(this, bindingContext),
+        expectedType: KtType = expectedType(this, bindingContext),
         filterOutWrongReceiver: Boolean = true,
         filterOutByVisibility: Boolean = true
 ): Collection<ResolvedCall<FunctionDescriptor>> {
@@ -150,7 +150,7 @@ public fun Call.resolveCandidates(
 
     var candidates = results.allCandidates!!
 
-    if (callElement is JetConstructorDelegationCall) { // for "this(...)" delegation call exclude caller from candidates
+    if (callElement is KtConstructorDelegationCall) { // for "this(...)" delegation call exclude caller from candidates
         inDescriptor as ConstructorDescriptor
         candidates = candidates.filter { it.resultingDescriptor.original != inDescriptor.original }
     }
@@ -169,17 +169,17 @@ public fun Call.resolveCandidates(
     return candidates
 }
 
-private fun expectedType(call: Call, bindingContext: BindingContext): JetType {
-    return (call.callElement as? JetExpression)?.let {
+private fun expectedType(call: Call, bindingContext: BindingContext): KtType {
+    return (call.callElement as? KtExpression)?.let {
         bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it.getQualifiedExpressionForSelectorOrThis()]
     } ?: TypeUtils.NO_EXPECTED_TYPE
 }
 
-fun JetCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: JetExpression, canChangeTypeToSubtype: Boolean): Boolean {
+fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExpression, canChangeTypeToSubtype: Boolean): Boolean {
     val declaredType = (resolveToDescriptor() as? CallableDescriptor)?.returnType ?: return false
     val bindingContext = initializerOrBodyExpression.analyze()
     val scope = initializerOrBodyExpression.getResolutionScope(bindingContext, initializerOrBodyExpression.getResolutionFacade()).asJetScope()
     val expressionType = initializerOrBodyExpression.computeTypeInContext(scope) ?: return false
-    if (JetTypeChecker.DEFAULT.equalTypes(expressionType, declaredType)) return true
+    if (KotlinTypeChecker.DEFAULT.equalTypes(expressionType, declaredType)) return true
     return canChangeTypeToSubtype && expressionType.isSubtypeOf(declaredType)
 }

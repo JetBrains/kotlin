@@ -35,15 +35,15 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
@@ -66,12 +66,12 @@ import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class ClosureCodegen extends MemberCodegen<JetElement> {
+public class ClosureCodegen extends MemberCodegen<KtElement> {
     private final FunctionDescriptor funDescriptor;
     private final ClassDescriptor classDescriptor;
     private final SamType samType;
-    private final JetType superClassType;
-    private final List<JetType> superInterfaceTypes;
+    private final KtType superClassType;
+    private final List<KtType> superInterfaceTypes;
     private final FunctionDescriptor functionReferenceTarget;
     private final FunctionGenerationStrategy strategy;
     private final CalculatedClosure closure;
@@ -83,7 +83,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
     public ClosureCodegen(
             @NotNull GenerationState state,
-            @NotNull JetElement element,
+            @NotNull KtElement element,
             @Nullable SamType samType,
             @NotNull ClosureContext context,
             @Nullable FunctionDescriptor functionReferenceTarget,
@@ -100,10 +100,10 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         this.strategy = strategy;
 
         if (samType == null) {
-            this.superInterfaceTypes = new ArrayList<JetType>();
+            this.superInterfaceTypes = new ArrayList<KtType>();
 
-            JetType superClassType = null;
-            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+            KtType superClassType = null;
+            for (KtType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 ClassifierDescriptor classifier = supertype.getConstructor().getDeclarationDescriptor();
                 if (DescriptorUtils.isInterface(classifier)) {
                     superInterfaceTypes.add(supertype);
@@ -141,7 +141,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         sw.writeSuperclassEnd();
         String[] superInterfaceAsmTypes = new String[superInterfaceTypes.size()];
         for (int i = 0; i < superInterfaceTypes.size(); i++) {
-            JetType superInterfaceType = superInterfaceTypes.get(i);
+            KtType superInterfaceType = superInterfaceTypes.get(i);
             sw.writeInterface();
             superInterfaceAsmTypes[i] = typeMapper.mapSupertype(superInterfaceType, sw).getInternalName();
             sw.writeInterfaceEnd();
@@ -428,7 +428,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             Type type = typeMapper.mapType(captureThis);
             args.add(FieldInfo.createForHiddenField(ownerType, type, CAPTURED_THIS_FIELD));
         }
-        JetType captureReceiverType = closure.getCaptureReceiverType();
+        KtType captureReceiverType = closure.getCaptureReceiverType();
         if (captureReceiverType != null) {
             args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), CAPTURED_RECEIVER_FIELD));
         }
@@ -467,7 +467,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         ClassDescriptor elementClass = elementDescriptor.getExtensionReceiverParameter() == null
                                    ? DescriptorUtilsKt.getBuiltIns(elementDescriptor).getFunction(arity)
                                    : DescriptorUtilsKt.getBuiltIns(elementDescriptor).getExtensionFunction(arity);
-        JetScope scope = elementClass.getDefaultType().getMemberScope();
+        KtScope scope = elementClass.getDefaultType().getMemberScope();
         return scope.getFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }
 }

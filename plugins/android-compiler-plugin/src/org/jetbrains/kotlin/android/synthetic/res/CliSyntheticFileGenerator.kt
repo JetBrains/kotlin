@@ -25,7 +25,7 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 
 public open class CliSyntheticFileGenerator(
         project: Project,
@@ -43,7 +43,7 @@ public open class CliSyntheticFileGenerator(
         CliAndroidLayoutXmlFileManager(project, manifestPath, resDirectories)
     }
 
-    public override fun getSyntheticFiles(): List<JetFile> = cachedJetFiles
+    public override fun getSyntheticFiles(): List<KtFile> = cachedJetFiles
 
     override fun extractLayoutResources(files: List<PsiFile>): List<AndroidResource> {
         val resources = arrayListOf<AndroidResource>()

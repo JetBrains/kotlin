@@ -21,9 +21,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetWhenExpression
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.lexer.KtTokens
 
 import java.util.ArrayList
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
  */
 public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
-            = e is JetBlockExpression || e is JetWhenExpression
+            = e is KtBlockExpression || e is KtWhenExpression
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val result = ArrayList<TextRange>()
@@ -54,7 +54,7 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
 
     private fun findBlockContentStart(block: PsiElement): Int {
         val element = block.allChildren
-                              .dropWhile { it.getNode().getElementType() != JetTokens.LBRACE } // search for '{'
+                              .dropWhile { it.getNode().getElementType() != KtTokens.LBRACE } // search for '{'
                               .drop(1) // skip it
                               .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
                               .firstOrNull() ?: block
@@ -66,7 +66,7 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
                            .toList()
                            .asReversed()
                            .asSequence()
-                           .dropWhile { it.getNode().getElementType() != JetTokens.RBRACE } // search for '}'
+                           .dropWhile { it.getNode().getElementType() != KtTokens.RBRACE } // search for '}'
                            .drop(1) // skip it
                            .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
                            .firstOrNull() ?: block

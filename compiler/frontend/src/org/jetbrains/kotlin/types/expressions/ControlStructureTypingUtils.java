@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.Variance;
 
@@ -110,12 +110,12 @@ public class ControlStructureTypingUtils {
                 function, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
                 Name.identifier("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
 
-        JetType type = typeParameter.getDefaultType();
-        JetType nullableType = TypeUtils.makeNullable(type);
+        KtType type = typeParameter.getDefaultType();
+        KtType nullableType = TypeUtils.makeNullable(type);
 
         List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(argumentNames.size());
         for (int i = 0; i < argumentNames.size(); i++) {
-            JetType argumentType = isArgumentNullable.get(i) ? nullableType : type;
+            KtType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(
                     function, null, i, Annotations.Companion.getEMPTY(), Name.identifier(argumentNames.get(i)),
                     argumentType,
@@ -181,12 +181,12 @@ public class ControlStructureTypingUtils {
     }
 
     /*package*/ static Call createCallForSpecialConstruction(
-            @NotNull final JetExpression expression,
-            @NotNull final JetExpression calleeExpression,
-            @NotNull List<? extends JetExpression> arguments
+            @NotNull final KtExpression expression,
+            @NotNull final KtExpression calleeExpression,
+            @NotNull List<? extends KtExpression> arguments
     ) {
         final List<ValueArgument> valueArguments = Lists.newArrayList();
-        for (JetExpression argument : arguments) {
+        for (KtExpression argument : arguments) {
             valueArguments.add(CallMaker.makeValueArgument(argument));
         }
         return new Call() {
@@ -210,13 +210,13 @@ public class ControlStructureTypingUtils {
 
             @Nullable
             @Override
-            public JetExpression getCalleeExpression() {
+            public KtExpression getCalleeExpression() {
                 return calleeExpression;
             }
 
             @Nullable
             @Override
-            public JetValueArgumentList getValueArgumentList() {
+            public KtValueArgumentList getValueArgumentList() {
                 return null;
             }
 
@@ -234,19 +234,19 @@ public class ControlStructureTypingUtils {
 
             @NotNull
             @Override
-            public List<JetTypeProjection> getTypeArguments() {
+            public List<KtTypeProjection> getTypeArguments() {
                 return Collections.emptyList();
             }
 
             @Nullable
             @Override
-            public JetTypeArgumentList getTypeArgumentList() {
+            public KtTypeArgumentList getTypeArgumentList() {
                 return null;
             }
 
             @NotNull
             @Override
-            public JetElement getCallElement() {
+            public KtElement getCallElement() {
                 return expression;
             }
 
@@ -266,9 +266,9 @@ public class ControlStructureTypingUtils {
     ) {
         class CheckTypeContext {
             public BindingTrace trace;
-            public JetType expectedType;
+            public KtType expectedType;
 
-            CheckTypeContext(@NotNull BindingTrace trace, @NotNull JetType expectedType) {
+            CheckTypeContext(@NotNull BindingTrace trace, @NotNull KtType expectedType) {
                 this.trace = trace;
                 this.expectedType = expectedType;
             }
@@ -279,9 +279,9 @@ public class ControlStructureTypingUtils {
             }
         }
 
-        final JetVisitor<Boolean, CheckTypeContext> checkTypeVisitor = new JetVisitor<Boolean, CheckTypeContext>() {
+        final KtVisitor<Boolean, CheckTypeContext> checkTypeVisitor = new KtVisitor<Boolean, CheckTypeContext>() {
 
-            private boolean checkExpressionType(@NotNull JetExpression expression, CheckTypeContext c) {
+            private boolean checkExpressionType(@NotNull KtExpression expression, CheckTypeContext c) {
                 JetTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
                 if (typeInfo == null) return false;
 
@@ -298,13 +298,13 @@ public class ControlStructureTypingUtils {
                 return hasError.get();
             }
 
-            private boolean checkExpressionTypeRecursively(@Nullable JetExpression expression, CheckTypeContext c) {
+            private boolean checkExpressionTypeRecursively(@Nullable KtExpression expression, CheckTypeContext c) {
                 if (expression == null) return false;
                 return expression.accept(this, c);
             }
 
             private boolean checkSubExpressions(
-                    JetExpression firstSub, JetExpression secondSub, JetExpression expression,
+                    KtExpression firstSub, KtExpression secondSub, KtExpression expression,
                     CheckTypeContext firstContext, CheckTypeContext secondContext, CheckTypeContext context
             ) {
                 boolean errorWasReported = checkExpressionTypeRecursively(firstSub, firstContext);
@@ -313,9 +313,9 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
-            public Boolean visitIfExpression(@NotNull JetIfExpression ifExpression, CheckTypeContext c) {
-                JetExpression thenBranch = ifExpression.getThen();
-                JetExpression elseBranch = ifExpression.getElse();
+            public Boolean visitIfExpression(@NotNull KtIfExpression ifExpression, CheckTypeContext c) {
+                KtExpression thenBranch = ifExpression.getThen();
+                KtExpression elseBranch = ifExpression.getElse();
                 if (thenBranch == null || elseBranch == null) {
                     return checkExpressionType(ifExpression, c);
                 }
@@ -323,11 +323,11 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
-            public Boolean visitBlockExpression(@NotNull JetBlockExpression expression, CheckTypeContext c) {
+            public Boolean visitBlockExpression(@NotNull KtBlockExpression expression, CheckTypeContext c) {
                 if (expression.getStatements().isEmpty()) {
                     return checkExpressionType(expression, c);
                 }
-                JetExpression lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
+                KtExpression lastStatement = KtPsiUtil.getLastStatementInABlock(expression);
                 if (lastStatement != null) {
                     return checkExpressionTypeRecursively(lastStatement, c);
                 }
@@ -335,16 +335,16 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
-            public Boolean visitPostfixExpression(@NotNull JetPostfixExpression expression, CheckTypeContext c) {
-                if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
+            public Boolean visitPostfixExpression(@NotNull KtPostfixExpression expression, CheckTypeContext c) {
+                if (expression.getOperationReference().getReferencedNameElementType() == KtTokens.EXCLEXCL) {
                     return checkExpressionTypeRecursively(expression.getBaseExpression(), c.makeTypeNullable());
                 }
                 return super.visitPostfixExpression(expression, c);
             }
 
             @Override
-            public Boolean visitBinaryExpression(@NotNull JetBinaryExpression expression, CheckTypeContext c) {
-                if (expression.getOperationReference().getReferencedNameElementType() == JetTokens.ELVIS) {
+            public Boolean visitBinaryExpression(@NotNull KtBinaryExpression expression, CheckTypeContext c) {
+                if (expression.getOperationReference().getReferencedNameElementType() == KtTokens.ELVIS) {
 
                     return checkSubExpressions(expression.getLeft(), expression.getRight(), expression, c.makeTypeNullable(), c, c);
                 }
@@ -352,7 +352,7 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
-            public Boolean visitExpression(@NotNull JetExpression expression, CheckTypeContext c) {
+            public Boolean visitExpression(@NotNull KtExpression expression, CheckTypeContext c) {
                 return checkExpressionType(expression, c);
             }
         };
@@ -388,13 +388,13 @@ public class ControlStructureTypingUtils {
                 if (status.hasErrorInConstrainingTypes() || status.hasUnknownParameters()) {
                     return;
                 }
-                JetExpression expression = (JetExpression) call.getCallElement();
+                KtExpression expression = (KtExpression) call.getCallElement();
                 if (status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()
                         || status.hasTypeInferenceIncorporationError()) { // todo after KT-... remove this line
                     expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
                     return;
                 }
-                JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetNamedDeclaration.class);
+                KtDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, KtNamedDeclaration.class);
                 logError("Expression: " + (parentDeclaration != null ? parentDeclaration.getText() : expression.getText()) +
                          "\nConstraint system status: \n" + ConstraintsUtil.getDebugMessageForStatus(status));
             }
@@ -511,14 +511,14 @@ public class ControlStructureTypingUtils {
 
         @Override
         public void unsafeCall(
-                @NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke
+                @NotNull BindingTrace trace, @NotNull KtType type, boolean isCallForImplicitInvoke
         ) {
             logError();
         }
 
         @Override
         public void unnecessarySafeCall(
-                @NotNull BindingTrace trace, @NotNull JetType type
+                @NotNull BindingTrace trace, @NotNull KtType type
         ) {
             logError();
         }

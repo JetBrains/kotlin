@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
-sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
+sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         extensionsEnabled: Boolean = true
 ) : CreateCallableMemberFromUsageFactory<E>(extensionsEnabled) {
     protected abstract fun doCreateCallableInfo(
@@ -53,39 +53,39 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
             context: BindingContext,
             name: String,
             receiverType: TypeInfo,
-            possibleContainers: List<JetElement>
+            possibleContainers: List<KtElement>
     ): CallableInfo?
 
-    protected fun getExpressionOfInterest(diagnostic: Diagnostic): JetExpression? {
+    protected fun getExpressionOfInterest(diagnostic: Diagnostic): KtExpression? {
         val diagElement = diagnostic.psiElement
         if (PsiTreeUtil.getParentOfType(
                 diagElement,
-                javaClass<JetTypeReference>(), javaClass<JetAnnotationEntry>(), javaClass<JetImportDirective>()
+                javaClass<KtTypeReference>(), javaClass<KtAnnotationEntry>(), javaClass<KtImportDirective>()
         ) != null) return null
 
         return when (diagnostic.factory) {
             in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS, Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND -> {
                 val parent = diagElement.parent
-                if (parent is JetCallExpression && parent.calleeExpression == diagElement) parent else diagElement
+                if (parent is KtCallExpression && parent.calleeExpression == diagElement) parent else diagElement
             }
 
             Errors.NO_VALUE_FOR_PARAMETER,
-            Errors.TOO_MANY_ARGUMENTS -> diagElement.getNonStrictParentOfType<JetCallExpression>()
+            Errors.TOO_MANY_ARGUMENTS -> diagElement.getNonStrictParentOfType<KtCallExpression>()
 
             else -> throw AssertionError("Unexpected diagnostic: ${diagnostic.factory}")
-        } as? JetExpression
+        } as? KtExpression
     }
 
     override fun createCallableInfo(element: E, diagnostic: Diagnostic): CallableInfo? {
         val project = element.project
 
         val calleeExpr = when (element) {
-                             is JetCallExpression -> element.calleeExpression
-                             is JetSimpleNameExpression -> element
+                             is KtCallExpression -> element.calleeExpression
+                             is KtSimpleNameExpression -> element
                              else -> null
-                         } as? JetSimpleNameExpression ?: return null
+                         } as? KtSimpleNameExpression ?: return null
 
-        if (calleeExpr.getReferencedNameElementType() != JetTokens.IDENTIFIER) return null
+        if (calleeExpr.getReferencedNameElementType() != KtTokens.IDENTIFIER) return null
 
         val context = calleeExpr.analyze()
         val receiver = element.getCall(context)?.explicitReceiver ?: ReceiverValue.NO_RECEIVER
@@ -94,7 +94,7 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
         val possibleContainers =
                 if (receiverType is TypeInfo.Empty) {
                     val containers = with(element.getQualifiedExpressionForSelectorOrThis().getExtractionContainers()) {
-                        if (element is JetCallExpression) this else filter { it is JetClassBody || it is JetFile }
+                        if (element is KtCallExpression) this else filter { it is KtClassBody || it is KtFile }
                     }
                     if (containers.isNotEmpty()) containers else return null
                 }
@@ -119,17 +119,17 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
         }
     }
 
-    object Property: CreateCallableFromCallActionFactory<JetSimpleNameExpression>() {
-        override fun getElementOfInterest(diagnostic: Diagnostic): JetSimpleNameExpression? {
-            return getExpressionOfInterest(diagnostic) as? JetSimpleNameExpression
+    object Property: CreateCallableFromCallActionFactory<KtSimpleNameExpression>() {
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
+            return getExpressionOfInterest(diagnostic) as? KtSimpleNameExpression
         }
 
         override fun doCreateCallableInfo(
-                expression: JetSimpleNameExpression,
+                expression: KtSimpleNameExpression,
                 context: BindingContext,
                 name: String,
                 receiverType: TypeInfo,
-                possibleContainers: List<JetElement>
+                possibleContainers: List<KtElement>
         ): CallableInfo? {
             val fullCallExpr = expression.getQualifiedExpressionForSelectorOrThis()
             val varExpected = fullCallExpr.getAssignmentByLHS() != null
@@ -141,17 +141,17 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
         }
     }
 
-    object Function: CreateCallableFromCallActionFactory<JetCallExpression>() {
-        override fun getElementOfInterest(diagnostic: Diagnostic): JetCallExpression? {
-            return getExpressionOfInterest(diagnostic) as? JetCallExpression
+    object Function: CreateCallableFromCallActionFactory<KtCallExpression>() {
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtCallExpression? {
+            return getExpressionOfInterest(diagnostic) as? KtCallExpression
         }
 
         override fun doCreateCallableInfo(
-                expression: JetCallExpression,
+                expression: KtCallExpression,
                 context: BindingContext,
                 name: String,
                 receiverType: TypeInfo,
-                possibleContainers: List<JetElement>
+                possibleContainers: List<KtElement>
         ): CallableInfo? {
             val parameters = expression.getParameterInfos()
             val typeParameters = expression.getTypeInfoForTypeArguments()
@@ -160,24 +160,24 @@ sealed class CreateCallableFromCallActionFactory<E : JetExpression>(
         }
     }
 
-    object Constructor: CreateCallableFromCallActionFactory<JetCallExpression>() {
-        override fun getElementOfInterest(diagnostic: Diagnostic): JetCallExpression? {
-            return getExpressionOfInterest(diagnostic) as? JetCallExpression
+    object Constructor: CreateCallableFromCallActionFactory<KtCallExpression>() {
+        override fun getElementOfInterest(diagnostic: Diagnostic): KtCallExpression? {
+            return getExpressionOfInterest(diagnostic) as? KtCallExpression
         }
 
         override fun doCreateCallableInfo(
-                expression: JetCallExpression,
+                expression: KtCallExpression,
                 context: BindingContext,
                 name: String,
                 receiverType: TypeInfo,
-                possibleContainers: List<JetElement>
+                possibleContainers: List<KtElement>
         ): CallableInfo? {
             if (expression.typeArguments.isNotEmpty()) return null
 
             val constructorDescriptor = expression.getResolvedCall(context)?.resultingDescriptor as? ConstructorDescriptor
             val classDescriptor = constructorDescriptor?.containingDeclaration as? ClassDescriptor
             val klass = classDescriptor?.source?.getPsi()
-            if ((klass !is JetClass && klass !is PsiClass) || !klass.canRefactor()) return null
+            if ((klass !is KtClass && klass !is PsiClass) || !klass.canRefactor()) return null
 
             val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, expression.getQualifiedExpressionForSelectorOrThis()]
                                ?: classDescriptor!!.builtIns.nullableAnyType

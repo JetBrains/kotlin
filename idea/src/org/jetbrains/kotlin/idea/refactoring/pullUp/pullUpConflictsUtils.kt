@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
-import org.jetbrains.kotlin.idea.references.JetReference
+import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
 fun checkConflicts(project: Project,
-                   sourceClass: JetClassOrObject,
+                   sourceClass: KtClassOrObject,
                    targetClass: PsiNamedElement,
                    memberInfos: List<KotlinMemberInfo>,
                    onShowConflicts: () -> Unit = {},
@@ -89,7 +89,7 @@ internal fun KotlinPullUpData.getClashingMemberInTargetClass(memberDescriptor: C
 }
 
 private fun KotlinPullUpData.checkClashWithSuperDeclaration(
-        member: JetNamedDeclaration,
+        member: KtNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
     if (memberDescriptor is CallableMemberDescriptor) {
@@ -102,17 +102,17 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
 }
 
 private fun KotlinPullUpData.checkAccidentalOverrides(
-        member: JetNamedDeclaration,
+        member: KtNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
-    if (memberDescriptor is CallableDescriptor && !member.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+    if (memberDescriptor is CallableDescriptor && !member.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
         val memberDescriptorInTargetClass = memberDescriptor.substitute(sourceToTargetClassSubstitutor)
         if (memberDescriptorInTargetClass != null) {
             HierarchySearchRequest<PsiElement>(targetClass, targetClass.useScope)
                     .searchInheritors()
                     .asSequence()
                     .filterNot { it.unwrapped == sourceClass || it.unwrapped == targetClass }
-                    .map { it.unwrapped as? JetClassOrObject }
+                    .map { it.unwrapped as? KtClassOrObject }
                     .filterNotNull()
                     .forEach {
                         val subClassDescriptor = resolutionFacade.resolveToDescriptor(it) as ClassDescriptor
@@ -134,7 +134,7 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
 }
 
 private fun KotlinPullUpData.checkInnerClassToInterface(
-        member: JetNamedDeclaration,
+        member: KtNamedDeclaration,
         memberDescriptor: DeclarationDescriptor,
         conflicts: MultiMap<PsiElement, String>) {
     if (isInterfaceTarget && memberDescriptor is ClassDescriptor && memberDescriptor.isInner) {
@@ -163,10 +163,10 @@ private fun KotlinPullUpData.checkVisibility(
 
     val member = memberInfo.member
     val childrenToCheck = member.allChildren.toArrayList()
-    if (memberInfo.isToAbstract && member is JetCallableDeclaration) {
+    if (memberInfo.isToAbstract && member is KtCallableDeclaration) {
         when (member) {
-            is JetNamedFunction -> childrenToCheck.remove(member.bodyExpression)
-            is JetProperty -> {
+            is KtNamedFunction -> childrenToCheck.remove(member.bodyExpression)
+            is KtProperty -> {
                 childrenToCheck.remove(member.initializer)
                 childrenToCheck.remove(member.delegateExpression)
                 childrenToCheck.removeAll(member.accessors)
@@ -186,13 +186,13 @@ private fun KotlinPullUpData.checkVisibility(
 
     childrenToCheck.forEach {
         it.accept(
-                object : JetTreeVisitorVoid() {
-                    override fun visitReferenceExpression(expression: JetReferenceExpression) {
+                object : KtTreeVisitorVoid() {
+                    override fun visitReferenceExpression(expression: KtReferenceExpression) {
                         super.visitReferenceExpression(expression)
 
                         val context = resolutionFacade.analyze(expression)
                         expression.references
-                                .flatMap { (it as? JetReference)?.resolveToDescriptors(context) ?: emptyList() }
+                                .flatMap { (it as? KtReference)?.resolveToDescriptors(context) ?: emptyList() }
                                 .forEach(::reportConflictIfAny)
 
                     }

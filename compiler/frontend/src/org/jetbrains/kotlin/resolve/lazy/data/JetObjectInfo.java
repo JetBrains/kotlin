@@ -19,22 +19,22 @@ package org.jetbrains.kotlin.resolve.lazy.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.psi.JetObjectDeclaration;
-import org.jetbrains.kotlin.psi.JetTypeParameterList;
+import org.jetbrains.kotlin.psi.KtObjectDeclaration;
+import org.jetbrains.kotlin.psi.KtTypeParameterList;
 import org.jetbrains.kotlin.resolve.ModifiersChecker;
 
-public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
+public class JetObjectInfo extends JetClassOrObjectInfo<KtObjectDeclaration> {
     @NotNull
     private final ClassKind kind;
 
-    protected JetObjectInfo(@NotNull JetObjectDeclaration element) {
+    protected JetObjectInfo(@NotNull KtObjectDeclaration element) {
         super(element);
         this.kind = element.isObjectLiteral() ? ClassKind.CLASS : ClassKind.OBJECT;
     }
 
     @Nullable
     @Override
-    public JetTypeParameterList getTypeParameterList() {
+    public KtTypeParameterList getTypeParameterList() {
         return null;
     }
 

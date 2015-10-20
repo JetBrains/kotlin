@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.refactoring.memberInfo
 import com.intellij.refactoring.ui.AbstractMemberSelectionPanel
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SeparatorFactory
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
 
 public class KotlinMemberSelectionPanel(title: String,
                                         memberInfo: List<KotlinMemberInfo>,
                                         abstractColumnHeader: String?
-) : AbstractMemberSelectionPanel<JetNamedDeclaration, KotlinMemberInfo>() {
+) : AbstractMemberSelectionPanel<KtNamedDeclaration, KotlinMemberInfo>() {
     private val table = createMemberSelectionTable(memberInfo, abstractColumnHeader)
 
     init {

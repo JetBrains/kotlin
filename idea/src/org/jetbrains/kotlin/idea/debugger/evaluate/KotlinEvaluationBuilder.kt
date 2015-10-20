@@ -87,12 +87,12 @@ internal val THIS_NAME = "this"
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
-        if (codeFragment !is JetCodeFragment || position == null) {
+        if (codeFragment !is KtCodeFragment || position == null) {
             return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
         }
 
         val file = position.file
-        if (file !is JetFile) {
+        if (file !is KtFile) {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in non-kotlin context")
         }
 
@@ -107,7 +107,7 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
                     "It may happen when you've changed source file after starting a debug process.")
         }
 
-        if (codeFragment.context !is JetElement) {
+        if (codeFragment.context !is KtElement) {
             val attachments = arrayOf(attachmentByPsiFile(position.file),
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${position.line}"))
@@ -122,7 +122,7 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
 
 val logger = Logger.getInstance(javaClass<KotlinEvaluator>())
 
-class KotlinEvaluator(val codeFragment: JetCodeFragment,
+class KotlinEvaluator(val codeFragment: KtCodeFragment,
                       val sourcePosition: SourcePosition
 ) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
@@ -176,7 +176,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
     }
 
     companion object {
-        private fun extractAndCompile(codeFragment: JetCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
+        private fun extractAndCompile(codeFragment: KtCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
             codeFragment.checkForErrors(false)
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
@@ -184,7 +184,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 throw IllegalStateException("Code fragment cannot be extracted to function")
             }
             val parametersDescriptor = extractionResult.getParametersForDebugger(codeFragment)
-            val extractedFunction = extractionResult.declaration as JetNamedFunction
+            val extractedFunction = extractionResult.declaration as KtNamedFunction
 
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
 
@@ -294,14 +294,14 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return jdiValue.asJdiValue(vm, jdiValue.asmType)
         }
 
-        private fun ExtractionResult.getParametersForDebugger(fragment: JetCodeFragment): ParametersDescriptor {
+        private fun ExtractionResult.getParametersForDebugger(fragment: KtCodeFragment): ParametersDescriptor {
             return runReadAction {
                 val valuesForLabels = HashMap<String, Value>()
 
                 val contextElementFile = fragment.context?.containingFile
-                if (contextElementFile is JetCodeFragment) {
-                    contextElementFile.accept(object: JetTreeVisitorVoid() {
-                        override fun visitProperty(property: JetProperty) {
+                if (contextElementFile is KtCodeFragment) {
+                    contextElementFile.accept(object: KtTreeVisitorVoid() {
+                        override fun visitProperty(property: KtProperty) {
                             val value = property.getUserData(KotlinCodeFragmentFactory.LABEL_VARIABLE_VALUE_KEY)
                             if (value != null) {
                                 valuesForLabels.put(property.name?.quoteIfNeeded()!!, value.asValue())
@@ -341,8 +341,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         }
 
         private fun createClassFileFactory(
-                codeFragment: JetCodeFragment,
-                extractedFunction: JetNamedFunction,
+                codeFragment: KtCodeFragment,
+                extractedFunction: KtNamedFunction,
                 context: EvaluationContextImpl,
                 parameters: ParametersDescriptor
         ): ClassFileFactory {
@@ -352,10 +352,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true)
 
                 val generateClassFilter = object : GenerationState.GenerateClassFilter() {
-                    override fun shouldGeneratePackagePart(file: JetFile) = file == jetFile
-                    override fun shouldAnnotateClass(classOrObject: JetClassOrObject) = true
-                    override fun shouldGenerateClass(classOrObject: JetClassOrObject) = classOrObject.getContainingJetFile() == jetFile
-                    override fun shouldGenerateScript(script: JetScript) = false
+                    override fun shouldGeneratePackagePart(file: KtFile) = file == jetFile
+                    override fun shouldAnnotateClass(classOrObject: KtClassOrObject) = true
+                    override fun shouldGenerateClass(classOrObject: KtClassOrObject) = classOrObject.getContainingJetFile() == jetFile
+                    override fun shouldGenerateScript(script: KtScript) = false
                 }
 
                 val state = GenerationState(
@@ -398,7 +398,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             }
         }
 
-        private fun BindingTrace.recordAnonymousType(typeReference: JetTypeReference, localVariableName: String, visitor: FrameVisitor) {
+        private fun BindingTrace.recordAnonymousType(typeReference: KtTypeReference, localVariableName: String, visitor: FrameVisitor) {
             val paramAnonymousType = typeReference.debugTypeInfo
             if (paramAnonymousType != null) {
                 val declarationDescriptor = paramAnonymousType.constructor.declarationDescriptor
@@ -422,7 +422,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             throw EvaluateExceptionUtil.createEvaluateException(e)
         }
 
-        private fun JetFile.checkForErrors(analyzeInlineFunctions: Boolean): ExtendedAnalysisResult {
+        private fun KtFile.checkForErrors(analyzeInlineFunctions: Boolean): ExtendedAnalysisResult {
             return runReadAction {
                 try {
                     AnalyzingUtils.checkForSyntacticErrors(this)
@@ -452,7 +452,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             }
         }
 
-        private data class ExtendedAnalysisResult(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor, val files: List<JetFile>)
+        private data class ExtendedAnalysisResult(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor, val files: List<KtFile>)
     }
 }
 
@@ -464,10 +464,10 @@ package packageForDebugger
 !FUNCTION!
 """
 
-private fun createFileForDebugger(codeFragment: JetCodeFragment,
-                                  extractedFunction: JetNamedFunction
-): JetFile {
-    val containingContextFile = (codeFragment.context as? JetElement)?.getContainingJetFile()
+private fun createFileForDebugger(codeFragment: KtCodeFragment,
+                                  extractedFunction: KtNamedFunction
+): KtFile {
+    val containingContextFile = (codeFragment.context as? KtElement)?.getContainingJetFile()
     val importsFromContextFile = containingContextFile?.importList?.let { it.text + "\n" } ?: ""
     val packageFromContextFile = containingContextFile?.packageName?.let {
         if (it.isNotBlank()) "import $it.*\n" else null
@@ -477,7 +477,7 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
             "!IMPORT_LIST!",
             packageFromContextFile
                     + importsFromContextFile
-                    + codeFragment.importsToString().split(JetCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
+                    + codeFragment.importsToString().split(KtCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
     )
 
     val extractedFunctionText = extractedFunction.text
@@ -488,7 +488,7 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
     jetFile.suppressDiagnosticsInDebugMode = true
 
     val list = jetFile.declarations
-    val function = list.get(0) as JetNamedFunction
+    val function = list.get(0) as KtNamedFunction
 
     function.receiverTypeReference?.debugTypeInfo = extractedFunction.receiverTypeReference?.debugTypeInfo
 
@@ -501,7 +501,7 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
     return jetFile
 }
 
-private fun PsiElement.createFlexibleTypesFile(): JetFile {
+private fun PsiElement.createFlexibleTypesFile(): KtFile {
     return createJetFile(
             "FLEXIBLE_TYPES.kt",
             """
@@ -511,12 +511,12 @@ private fun PsiElement.createFlexibleTypesFile(): JetFile {
     )
 }
 
-private fun PsiElement.createJetFile(fileName: String, fileText: String): JetFile {
-    // Not using JetPsiFactory because we need a virtual file attached to the JetFile
+private fun PsiElement.createJetFile(fileName: String, fileText: String): KtFile {
+    // Not using KtPsiFactory because we need a virtual file attached to the JetFile
     val virtualFile = LightVirtualFile(fileName, KotlinLanguage.INSTANCE, fileText)
     virtualFile.charset = CharsetToolkit.UTF8_CHARSET
     val jetFile = (PsiFileFactory.getInstance(project) as PsiFileFactoryImpl)
-            .trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as JetFile
+            .trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile
     jetFile.analysisContext = this
     return jetFile
 }

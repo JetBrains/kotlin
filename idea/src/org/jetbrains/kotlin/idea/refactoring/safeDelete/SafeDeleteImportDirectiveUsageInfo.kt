@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.idea.refactoring.safeDelete
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.targetDescriptors
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.psi.JetImportDirective
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtImportDirective
 
 public class SafeDeleteImportDirectiveUsageInfo(
-        importDirective: JetImportDirective, declaration: JetDeclaration
+        importDirective: KtImportDirective, declaration: KtDeclaration
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(importDirective, declaration, importDirective.isSafeToDelete(declaration))
 
-private fun JetImportDirective.isSafeToDelete(declaration: JetDeclaration): Boolean {
+private fun KtImportDirective.isSafeToDelete(declaration: KtDeclaration): Boolean {
     val referencedDescriptor = targetDescriptors().singleOrNull() ?: return false
     return referencedDescriptor == declaration.resolveToDescriptor()
 }

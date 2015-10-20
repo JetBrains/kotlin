@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.codegen.when;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.psi.JetWhenExpression;
+import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.org.objectweb.asm.Label;
 
 public class IntegralConstantsSwitchCodegen extends SwitchCodegen {
     public IntegralConstantsSwitchCodegen(
-            @NotNull JetWhenExpression expression,
+            @NotNull KtWhenExpression expression,
             boolean isStatement,
             @NotNull ExpressionCodegen codegen
     ) {

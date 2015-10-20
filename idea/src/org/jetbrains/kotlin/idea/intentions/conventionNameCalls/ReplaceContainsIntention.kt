@@ -20,15 +20,15 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.*
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator"), HighPriorityAction {
-    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator"), HighPriorityAction {
+    override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorNameConventions.CONTAINS.asString()) return null
 
         val resolvedCall = element.toResolvedCall() ?: return null
@@ -45,14 +45,14 @@ public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQua
         return element.callExpression!!.getCalleeExpression()!!.getTextRange()
     }
 
-    override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+    override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
         val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
         val receiver = element.getReceiverExpression()
 
-        val psiFactory = JetPsiFactory(element)
+        val psiFactory = KtPsiFactory(element)
 
-        val prefixExpression = element.getParent() as? JetPrefixExpression
-        val expression = if (prefixExpression != null && prefixExpression.getOperationToken() == JetTokens.EXCL) {
+        val prefixExpression = element.getParent() as? KtPrefixExpression
+        val expression = if (prefixExpression != null && prefixExpression.getOperationToken() == KtTokens.EXCL) {
             prefixExpression.replace(psiFactory.createExpressionByPattern("$0 !in $1", argument, receiver))
         }
         else {
@@ -60,11 +60,11 @@ public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQua
         }
 
         // Append semicolon to previous statement if needed
-        if (argument is JetFunctionLiteralExpression) {
-            val previousElement = JetPsiUtil.skipSiblingsBackwardByPredicate(expression) {
-                it.getNode().getElementType() in JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
+        if (argument is KtFunctionLiteralExpression) {
+            val previousElement = KtPsiUtil.skipSiblingsBackwardByPredicate(expression) {
+                it.getNode().getElementType() in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
             }
-            if (previousElement != null && previousElement is JetExpression) {
+            if (previousElement != null && previousElement is KtExpression) {
                 previousElement.getParent()!!.addAfter(psiFactory.createSemicolon(), previousElement)
             }
         }

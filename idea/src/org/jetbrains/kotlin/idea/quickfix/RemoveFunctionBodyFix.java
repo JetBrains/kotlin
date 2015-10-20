@@ -28,14 +28,14 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetFunction;
+import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtFunction;
 
-public class RemoveFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
+public class RemoveFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
 
-    public RemoveFunctionBodyFix(@NotNull JetFunction element) {
+    public RemoveFunctionBodyFix(@NotNull KtFunction element) {
         super(element);
     }
 
@@ -57,11 +57,11 @@ public class RemoveFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        JetFunction function = (JetFunction) getElement().copy();
+    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+        KtFunction function = (KtFunction) getElement().copy();
         assert function instanceof ASTDelegatePsiElement;
         ASTDelegatePsiElement functionElementWithAst = (ASTDelegatePsiElement) function;
-        JetExpression bodyExpression = function.getBodyExpression();
+        KtExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         if (function.hasBlockBody()) {
             PsiElement prevElement = bodyExpression.getPrevSibling();
@@ -80,7 +80,7 @@ public class RemoveFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
     }
 
     private static boolean removePossiblyEquationSign(@NotNull ASTDelegatePsiElement element, @Nullable PsiElement possiblyEq) {
-        if (possiblyEq instanceof LeafPsiElement && ((LeafPsiElement)possiblyEq).getElementType() == JetTokens.EQ) {
+        if (possiblyEq instanceof LeafPsiElement && ((LeafPsiElement)possiblyEq).getElementType() == KtTokens.EQ) {
             QuickFixUtil.removePossiblyWhiteSpace(element, possiblyEq.getNextSibling());
             element.deleteChildInternal(possiblyEq.getNode());
             return true;
@@ -91,8 +91,8 @@ public class RemoveFunctionBodyFix extends KotlinQuickFixAction<JetFunction> {
     public static JetSingleIntentionActionFactory createFactory() {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<JetFunction> createAction(Diagnostic diagnostic) {
-                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+            public KotlinQuickFixAction<KtFunction> createAction(Diagnostic diagnostic) {
+                KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
                 if (function == null) return null;
                 return new RemoveFunctionBodyFix(function);
             }

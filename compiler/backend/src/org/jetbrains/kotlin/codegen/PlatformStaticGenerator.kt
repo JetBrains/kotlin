@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -73,7 +73,7 @@ class PlatformStaticGenerator(
                 }
         )
 
-        if (originElement is JetNamedFunction) {
+        if (originElement is KtNamedFunction) {
             codegen.functionCodegen.generateOverloadsWithDefaultValues(originElement, staticFunctionDescriptor, descriptor)
         }
     }

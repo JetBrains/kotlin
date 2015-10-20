@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
@@ -47,7 +47,7 @@ public interface ConstraintSystem {
      * For example, for {@code "fun <T> id(t: T) {}"} to infer <tt>T</tt> in invocation <tt>"id(1)"</tt>
      * should be generated a constraint <tt>"Int is a subtype of T"</tt> where T is a subject type, and Int is a constraining type.
      */
-    public fun addSubtypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition)
+    public fun addSubtypeConstraint(constrainingType: KtType?, subjectType: KtType, constraintPosition: ConstraintPosition)
 
     /**
      * Adds a constraint that the constraining type is a supertype of the subject type. <p/>
@@ -56,7 +56,7 @@ public interface ConstraintSystem {
      * For example, for {@code "fun <T> create() : T"} to infer <tt>T</tt> in invocation <tt>"val i: Int = create()"</tt>
      * should be generated a constraint <tt>"Int is a supertype of T"</tt> where T is a subject type, and Int is a constraining type.
      */
-    public fun addSupertypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition)
+    public fun addSupertypeConstraint(constrainingType: KtType?, subjectType: KtType, constraintPosition: ConstraintPosition)
 
     public fun getStatus(): ConstraintSystemStatus
 

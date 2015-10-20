@@ -36,23 +36,23 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
 
-    override fun isApplicable(expression: JetExpression): Boolean {
+    override fun isApplicable(expression: KtExpression): Boolean {
         if (!expression.isPhysical()) return false
         val file = expression.getContainingFile()
-        if (file !is JetCodeFragment) return false
+        if (file !is KtCodeFragment) return false
 
         val type = expression.analyze(BodyResolveMode.PARTIAL).getType(expression) ?: return false
 
-        return TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)
+        return TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)
     }
 
-    override fun surroundExpression(project: Project, editor: Editor, expression: JetExpression): TextRange? {
+    override fun surroundExpression(project: Project, editor: Editor, expression: KtExpression): TextRange? {
         val debuggerContext = DebuggerManagerEx.getInstanceEx(project).getContext()
         val debuggerSession = debuggerContext.getDebuggerSession()
         if (debuggerSession != null) {
@@ -70,12 +70,12 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
 
     private inner class SurroundWithCastWorker(
             private val myEditor: Editor,
-            expression: JetExpression,
+            expression: KtExpression,
             context: DebuggerContextImpl,
             indicator: ProgressIndicator
     ): KotlinRuntimeTypeEvaluator(myEditor, expression, context, indicator) {
 
-        override fun typeCalculationFinished(type: JetType?) {
+        override fun typeCalculationFinished(type: KtType?) {
             if (type == null) return
 
             hold()
@@ -85,13 +85,13 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
                     object : WriteCommandAction<Any>(project, CodeInsightBundle.message("command.name.surround.with.runtime.cast")) {
                         override fun run(result: Result<Any>) {
                             try {
-                                val factory = JetPsiFactory(myElement.getProject())
+                                val factory = KtPsiFactory(myElement.getProject())
 
                                 val fqName = DescriptorUtils.getFqName(type.getConstructor().getDeclarationDescriptor()!!)
-                                val parentCast = factory.createExpression("(expr as " + fqName.asString() + ")") as JetParenthesizedExpression
-                                val cast = parentCast.getExpression() as JetBinaryExpressionWithTypeRHS
+                                val parentCast = factory.createExpression("(expr as " + fqName.asString() + ")") as KtParenthesizedExpression
+                                val cast = parentCast.getExpression() as KtBinaryExpressionWithTypeRHS
                                 cast.getLeft().replace(myElement)
-                                val expr = myElement.replace(parentCast) as JetExpression
+                                val expr = myElement.replace(parentCast) as KtExpression
 
                                 ShortenReferences.DEFAULT.process(expr)
 

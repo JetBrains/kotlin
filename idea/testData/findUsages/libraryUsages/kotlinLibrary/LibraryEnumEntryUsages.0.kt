@@ -1,4 +1,4 @@
-// PSI_ELEMENT: org.jetbrains.kotlin.psi.JetEnumEntry
+// PSI_ELEMENT: org.jetbrains.kotlin.psi.KtEnumEntry
 // FIND_BY_REF
 
 package usages

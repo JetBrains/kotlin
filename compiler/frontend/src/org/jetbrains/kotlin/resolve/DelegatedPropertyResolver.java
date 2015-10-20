@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DeferredType;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.KtType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver;
@@ -49,7 +49,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.psi.JetPsiFactoryKt.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.KtPsiFactoryKt.KtPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
@@ -83,10 +83,10 @@ public class DelegatedPropertyResolver {
     }
 
     @Nullable
-    public JetType getDelegatedPropertyGetMethodReturnType(
+    public KtType getDelegatedPropertyGetMethodReturnType(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression delegateExpression,
-            @NotNull JetType delegateType,
+            @NotNull KtExpression delegateExpression,
+            @NotNull KtType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
@@ -98,17 +98,17 @@ public class DelegatedPropertyResolver {
 
     public void resolveDelegatedPropertyGetMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression delegateExpression,
-            @NotNull JetType delegateType,
+            @NotNull KtExpression delegateExpression,
+            @NotNull KtType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
-        JetType returnType = getDelegatedPropertyGetMethodReturnType(
+        KtType returnType = getDelegatedPropertyGetMethodReturnType(
                 propertyDescriptor, delegateExpression, delegateType, trace, scope);
-        JetType propertyType = propertyDescriptor.getType();
+        KtType propertyType = propertyDescriptor.getType();
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
-        if (!(propertyType instanceof DeferredType) && returnType != null && !JetTypeChecker.DEFAULT.isSubtypeOf(returnType, propertyType)) {
+        if (!(propertyType instanceof DeferredType) && returnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(returnType, propertyType)) {
             Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, propertyDescriptor.getGetter());
             assert call != null : "Call should exists for " + propertyDescriptor.getGetter();
             trace.report(DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH
@@ -118,8 +118,8 @@ public class DelegatedPropertyResolver {
 
     public void resolveDelegatedPropertySetMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression delegateExpression,
-            @NotNull JetType delegateType,
+            @NotNull KtExpression delegateExpression,
+            @NotNull KtType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
@@ -127,14 +127,14 @@ public class DelegatedPropertyResolver {
     }
 
     @NotNull
-    private static JetExpression createExpressionForProperty(@NotNull JetPsiFactory psiFactory) {
+    private static KtExpression createExpressionForProperty(@NotNull KtPsiFactory psiFactory) {
         return psiFactory.createExpression("null as " + KotlinBuiltIns.FQ_NAMES.kProperty.asSingleFqName().asString() + "<*>");
     }
 
     public void resolveDelegatedPropertyPDMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression delegateExpression,
-            @NotNull JetType delegateType,
+            @NotNull KtExpression delegateExpression,
+            @NotNull KtType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
@@ -143,8 +143,8 @@ public class DelegatedPropertyResolver {
                 traceToResolvePDMethod, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
-        JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
-        List<JetExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
+        KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
+        List<KtExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
         ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
 
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
@@ -171,8 +171,8 @@ public class DelegatedPropertyResolver {
     /* Resolve getValue() or setValue() methods from delegate */
     private void resolveDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression delegateExpression,
-            @NotNull JetType delegateType,
+            @NotNull KtExpression delegateExpression,
+            @NotNull KtType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             boolean isGet
@@ -211,9 +211,9 @@ public class DelegatedPropertyResolver {
 
         ResolvedCall<FunctionDescriptor> resultingCall = functionResults.getResultingCall();
         PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
-        if (declaration instanceof JetProperty) {
-            JetProperty property = (JetProperty) declaration;
-            JetPropertyDelegate delegate = property.getDelegate();
+        if (declaration instanceof KtProperty) {
+            KtProperty property = (KtProperty) declaration;
+            KtPropertyDelegate delegate = property.getDelegate();
             if (delegate != null) {
                 PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
 
@@ -230,8 +230,8 @@ public class DelegatedPropertyResolver {
     /* Resolve getValue() or setValue() methods from delegate */
     public OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull JetExpression delegateExpression,
-            @NotNull JetType delegateType,
+            @NotNull KtExpression delegateExpression,
+            @NotNull KtType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             boolean isGet,
@@ -240,7 +240,7 @@ public class DelegatedPropertyResolver {
         PropertyAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
         assert accessor != null : "Delegated property should have getter/setter " + propertyDescriptor + " " + delegateExpression.getText();
 
-        JetType expectedType = isComplete && isGet && !(propertyDescriptor.getType() instanceof DeferredType)
+        KtType expectedType = isComplete && isGet && !(propertyDescriptor.getType() instanceof DeferredType)
                                ? propertyDescriptor.getType() : TypeUtils.NO_EXPECTED_TYPE;
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
@@ -249,15 +249,15 @@ public class DelegatedPropertyResolver {
 
         boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
 
-        List<JetExpression> arguments = Lists.newArrayList();
-        JetPsiFactory psiFactory = JetPsiFactory(delegateExpression);
+        List<KtExpression> arguments = Lists.newArrayList();
+        KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
         arguments.add(psiFactory.createExpression(hasThis ? "this" : "null"));
         arguments.add(createExpressionForProperty(psiFactory));
 
         if (!isGet) {
-            JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(delegateExpression.getProject(), trace,
+            KtReferenceExpression fakeArgument = (KtReferenceExpression) createFakeExpressionOfType(delegateExpression.getProject(), trace,
                                                                                                       "fakeArgument" + arguments.size(),
-                                                                                                      propertyDescriptor.getType());
+                                                                                                    propertyDescriptor.getType());
             arguments.add(fakeArgument);
             List<ValueParameterDescriptor> valueParameters = accessor.getValueParameters();
             trace.record(REFERENCE_TARGET, fakeArgument, valueParameters.get(0));
@@ -280,9 +280,9 @@ public class DelegatedPropertyResolver {
                 FunctionDescriptor resultingDescriptor = additionalResolutionResult.getSecond().getResultingDescriptor();
 
                 PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor);
-                if (declaration instanceof JetProperty) {
-                    JetProperty property = (JetProperty) declaration;
-                    JetPropertyDelegate delegate = property.getDelegate();
+                if (declaration instanceof KtProperty) {
+                    KtProperty property = (KtProperty) declaration;
+                    KtPropertyDelegate delegate = property.getDelegate();
                     if (delegate != null) {
                         PsiElement byKeyword = delegate.getByKeywordNode().getPsi();
 
@@ -301,11 +301,11 @@ public class DelegatedPropertyResolver {
     }
 
     private static String renderCall(@NotNull Call call, @NotNull BindingContext context) {
-        JetExpression calleeExpression = call.getCalleeExpression();
+        KtExpression calleeExpression = call.getCalleeExpression();
         assert calleeExpression != null : "CalleeExpression should exists for fake call of convention method";
         StringBuilder builder = new StringBuilder(calleeExpression.getText());
         builder.append("(");
-        List<JetType> argumentTypes = Lists.newArrayList();
+        List<KtType> argumentTypes = Lists.newArrayList();
         for (ValueArgument argument : call.getValueArguments()) {
             argumentTypes.add(context.getType(argument.getArgumentExpression()));
 
@@ -316,9 +316,9 @@ public class DelegatedPropertyResolver {
     }
 
     @Nullable
-    public JetType resolveDelegateExpression(
-            @NotNull JetExpression delegateExpression,
-            @NotNull JetProperty jetProperty,
+    public KtType resolveDelegateExpression(
+            @NotNull KtExpression delegateExpression,
+            @NotNull KtProperty jetProperty,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull LexicalScope propertyDeclarationInnerScope,
             @NotNull LexicalScope accessorScope,
@@ -326,14 +326,14 @@ public class DelegatedPropertyResolver {
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
-        JetExpression calleeExpression = CallUtilKt.getCalleeExpressionIfAny(delegateExpression);
+        KtExpression calleeExpression = CallUtilKt.getCalleeExpressionIfAny(delegateExpression);
         ConstraintSystemCompleter completer = createConstraintSystemCompleter(
                 jetProperty, propertyDescriptor, delegateExpression, accessorScope, trace);
         if (calleeExpression != null) {
             traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer);
         }
-        JetType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
-                                                                    dataFlowInfo, traceToResolveDelegatedProperty);
+        KtType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
+                                                                   dataFlowInfo, traceToResolveDelegatedProperty);
         traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
             @Override
             public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
@@ -345,19 +345,19 @@ public class DelegatedPropertyResolver {
 
     @NotNull
     private ConstraintSystemCompleter createConstraintSystemCompleter(
-            @NotNull JetProperty property,
+            @NotNull KtProperty property,
             @NotNull final PropertyDescriptor propertyDescriptor,
-            @NotNull final JetExpression delegateExpression,
+            @NotNull final KtExpression delegateExpression,
             @NotNull final LexicalScope accessorScope,
             @NotNull final BindingTrace trace
     ) {
-        final JetType expectedType = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
+        final KtType expectedType = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         return new ConstraintSystemCompleter() {
             @Override
             public void completeConstraintSystem(
                     @NotNull ConstraintSystem constraintSystem, @NotNull ResolvedCall<?> resolvedCall
             ) {
-                JetType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
+                KtType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
                 if (returnType == null) return;
 
                 TemporaryBindingTrace traceToResolveConventionMethods =
@@ -370,7 +370,7 @@ public class DelegatedPropertyResolver {
 
                 if (conventionMethodFound(getMethodResults)) {
                     FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
-                    JetType returnTypeOfGetMethod = descriptor.getReturnType();
+                    KtType returnTypeOfGetMethod = descriptor.getReturnType();
                     if (returnTypeOfGetMethod != null) {
                         constraintSystem.addSupertypeConstraint(expectedType, returnTypeOfGetMethod, FROM_COMPLETER.position());
                     }
@@ -413,7 +413,7 @@ public class DelegatedPropertyResolver {
             private void addConstraintForThisValue(ConstraintSystem constraintSystem, FunctionDescriptor resultingDescriptor) {
                 ReceiverParameterDescriptor extensionReceiver = propertyDescriptor.getExtensionReceiverParameter();
                 ReceiverParameterDescriptor dispatchReceiver = propertyDescriptor.getDispatchReceiverParameter();
-                JetType typeOfThis =
+                KtType typeOfThis =
                         extensionReceiver != null ? extensionReceiver.getType() :
                         dispatchReceiver != null ? dispatchReceiver.getType() :
                         builtIns.getNullableNothingType();

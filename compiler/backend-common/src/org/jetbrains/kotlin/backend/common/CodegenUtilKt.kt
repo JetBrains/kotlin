@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import java.util.Comparator
@@ -38,7 +38,7 @@ public object CodegenUtilKt {
     public fun getDelegates(
             descriptor: ClassDescriptor,
             toTrait: ClassDescriptor,
-            delegateExpressionType: JetType? = null
+            delegateExpressionType: KtType? = null
     ): Map<CallableMemberDescriptor, CallableDescriptor> {
         if (delegateExpressionType?.isDynamic() ?: false) return mapOf();
 

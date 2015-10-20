@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.idea.decompiler.navigation.DecompiledNavigationUtils
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver

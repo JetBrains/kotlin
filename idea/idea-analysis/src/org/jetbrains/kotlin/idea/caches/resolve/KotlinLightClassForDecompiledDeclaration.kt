@@ -20,18 +20,18 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import org.jetbrains.kotlin.asJava.KotlinWrappingLightClass
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class KotlinLightClassForDecompiledDeclaration(
         private val clsClass: ClsClassImpl,
-        private val origin: JetClassOrObject?
+        private val origin: KtClassOrObject?
 ) : KotlinWrappingLightClass(clsClass.getManager()) {
     private val fqName = origin?.getFqName() ?: FqName(clsClass.getQualifiedName())
 
     override fun copy() = this
 
     override fun getOwnInnerClasses(): List<PsiClass> {
-        val nestedClasses = origin?.getDeclarations()?.filterIsInstance<JetClassOrObject>() ?: emptyList()
+        val nestedClasses = origin?.getDeclarations()?.filterIsInstance<KtClassOrObject>() ?: emptyList()
         return clsClass.getOwnInnerClasses().map { innerClsClass ->
             KotlinLightClassForDecompiledDeclaration(innerClsClass as ClsClassImpl,
                                                      nestedClasses.firstOrNull { innerClsClass.getName() == it.getName() })

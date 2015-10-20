@@ -255,12 +255,12 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         if (target is KotlinLightMethod) {
             val origin = target.getOrigin()
-            val isTopLevel = origin?.getStrictParentOfType<JetClassOrObject>() == null
-            if (origin is JetProperty || origin is JetPropertyAccessor || origin is JetParameter) {
-                val property = if (origin is JetPropertyAccessor)
-                    origin.getParent() as JetProperty
+            val isTopLevel = origin?.getStrictParentOfType<KtClassOrObject>() == null
+            if (origin is KtProperty || origin is KtPropertyAccessor || origin is KtParameter) {
+                val property = if (origin is KtPropertyAccessor)
+                    origin.getParent() as KtProperty
                 else
-                    origin as JetNamedDeclaration
+                    origin as KtNamedDeclaration
                 val parameterCount = target.getParameterList().getParameters().size()
                 if (parameterCount == arguments.size()) {
                     val propertyName = Identifier(property.getName()!!, isNullable).assignNoPrototype()
@@ -289,7 +289,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     }
                 }
             }
-            else if (origin is JetFunction) {
+            else if (origin is KtFunction) {
                 if (isTopLevel) {
                     result = if (origin.isExtensionDeclaration()) {
                         val qualifier = codeConverter.convertExpression(arguments.firstOrNull())
@@ -422,7 +422,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             identifier = Identifier("size()", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
-            if (target is KotlinLightField<*, *> && target.getOrigin() is JetObjectDeclaration) {
+            if (target is KotlinLightField<*, *> && target.getOrigin() is KtObjectDeclaration) {
                 result = codeConverter.convertExpression(qualifier)
                 return
             }

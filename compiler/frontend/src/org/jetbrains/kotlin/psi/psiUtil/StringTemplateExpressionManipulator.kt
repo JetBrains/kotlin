@@ -17,23 +17,23 @@
 package org.jetbrains.kotlin.psi.psiUtil
 
 import com.intellij.psi.AbstractElementManipulator
-import org.jetbrains.kotlin.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import com.intellij.openapi.util.text.StringUtil
 
-public class StringTemplateExpressionManipulator: AbstractElementManipulator<JetStringTemplateExpression>() {
-    override fun handleContentChange(element: JetStringTemplateExpression, range: TextRange, newContent: String): JetStringTemplateExpression? {
+public class StringTemplateExpressionManipulator: AbstractElementManipulator<KtStringTemplateExpression>() {
+    override fun handleContentChange(element: KtStringTemplateExpression, range: TextRange, newContent: String): KtStringTemplateExpression? {
         val node = element.getNode()
         val content = if (node.getFirstChildNode().getTextLength() == 1) StringUtil.escapeStringCharacters(newContent) else newContent
         val oldText = node.getText()
         val newText = oldText.substring(0, range.getStartOffset()) + content + oldText.substring(range.getEndOffset())
-        val expression = JetPsiFactory(element.getProject()).createExpression(newText)
+        val expression = KtPsiFactory(element.getProject()).createExpression(newText)
         node.replaceAllChildrenToChildrenOf(expression.getNode())
         return node.getPsi(javaClass())
     }
 
-    override fun getRangeInElement(element: JetStringTemplateExpression): TextRange {
+    override fun getRangeInElement(element: KtStringTemplateExpression): TextRange {
         return element.getContentRange()
     }
 }

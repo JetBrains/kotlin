@@ -22,8 +22,8 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getFunctionLiteralArgumentName
@@ -38,29 +38,29 @@ public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T 
     return if (result is T)
         result
     else
-        (result as JetParenthesizedExpression).getExpression() as T
+        (result as KtParenthesizedExpression).getExpression() as T
 }
 
 @Suppress("UNCHECKED_CAST")
 public fun <T: PsiElement> T.copied(): T = copy() as T
 
-public fun JetFunctionLiteralArgument.moveInsideParentheses(bindingContext: BindingContext): JetCallExpression {
+public fun KtFunctionLiteralArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
     return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
 }
 
-public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
-        replacement: JetExpression,
+public fun KtFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
+        replacement: KtExpression,
         bindingContext: BindingContext
-): JetCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getFunctionLiteralArgumentName(bindingContext))
+): KtCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getFunctionLiteralArgumentName(bindingContext))
 
-public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
-        replacement: JetExpression,
+public fun KtFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
+        replacement: KtExpression,
         functionLiteralArgumentName: Name?
-): JetCallExpression {
-    val oldCallExpression = getParent() as JetCallExpression
-    val newCallExpression = oldCallExpression.copy() as JetCallExpression
+): KtCallExpression {
+    val oldCallExpression = getParent() as KtCallExpression
+    val newCallExpression = oldCallExpression.copy() as KtCallExpression
 
-    val psiFactory = JetPsiFactory(getProject())
+    val psiFactory = KtPsiFactory(getProject())
     val argument = if (newCallExpression.getValueArgumentsInParentheses().any { it.isNamed() }) {
         psiFactory.createArgument(replacement, functionLiteralArgumentName)
     }
@@ -80,17 +80,17 @@ public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
     else {
         functionLiteralArgument.replace(valueArgumentList)
     }
-    return oldCallExpression.replace(newCallExpression) as JetCallExpression
+    return oldCallExpression.replace(newCallExpression) as KtCallExpression
 }
 
-public fun JetCallExpression.moveFunctionLiteralOutsideParentheses() {
+public fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     assert(getFunctionLiteralArguments().isEmpty())
     val argumentList = getValueArgumentList()!!
     val argument = argumentList.getArguments().last()
     val expression = argument.getArgumentExpression()!!
     assert(expression.unpackFunctionLiteral() != null)
 
-    val dummyCall = JetPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as JetCallExpression
+    val dummyCall = KtPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as KtCallExpression
     val functionLiteralArgument = dummyCall.getFunctionLiteralArguments().single()
     this.add(functionLiteralArgument)
     if (argumentList.getArguments().size() > 1) {
@@ -101,9 +101,9 @@ public fun JetCallExpression.moveFunctionLiteralOutsideParentheses() {
     }
 }
 
-public fun JetBlockExpression.appendElement(element: JetElement, addNewLine: Boolean = false): JetElement {
+public fun KtBlockExpression.appendElement(element: KtElement, addNewLine: Boolean = false): KtElement {
     val rBrace = getRBrace()
-    val newLine = JetPsiFactory(this).createNewLine()
+    val newLine = KtPsiFactory(this).createNewLine()
     val anchor = if (rBrace == null) {
         val lastChild = getLastChild()
         if (lastChild !is PsiWhiteSpace) addAfter(newLine, lastChild)!! else lastChild
@@ -111,7 +111,7 @@ public fun JetBlockExpression.appendElement(element: JetElement, addNewLine: Boo
     else {
         rBrace.getPrevSibling()!!
     }
-    val addedElement = addAfter(element, anchor)!! as JetElement
+    val addedElement = addAfter(element, anchor)!! as KtElement
     if (addNewLine) {
         addAfter(newLine, addedElement)
     }
@@ -159,21 +159,21 @@ public fun PsiElement.deleteSingle() {
     CodeEditUtil.removeChild(getParent()?.getNode() ?: return, getNode() ?: return)
 }
 
-public fun JetClass.getOrCreateCompanionObject() : JetObjectDeclaration {
+public fun KtClass.getOrCreateCompanionObject() : KtObjectDeclaration {
     getCompanionObjects().firstOrNull()?.let { return it }
-    return addDeclaration(JetPsiFactory(this).createCompanionObject()) as JetObjectDeclaration
+    return addDeclaration(KtPsiFactory(this).createCompanionObject()) as KtObjectDeclaration
 }
 
 //TODO: code style option whether to insert redundant 'public' keyword or not
-public fun JetDeclaration.setVisibility(visibilityModifier: JetModifierKeywordToken) {
-    val defaultVisibilityKeyword = if (hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+public fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToken) {
+    val defaultVisibilityKeyword = if (hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
         (resolveToDescriptor() as? CallableMemberDescriptor)
                 ?.overriddenDescriptors
                 ?.let { OverridingUtil.findMaxVisibility(it) }
                 ?.toKeywordToken()
     }
     else {
-        JetTokens.DEFAULT_VISIBILITY_KEYWORD
+        KtTokens.DEFAULT_VISIBILITY_KEYWORD
     }
 
     if (visibilityModifier == defaultVisibilityKeyword) {

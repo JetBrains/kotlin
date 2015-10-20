@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class ForceResolveUtil {
         return descriptor;
     }
 
-    public static void forceResolveAllContents(@NotNull JetScope scope) {
+    public static void forceResolveAllContents(@NotNull KtScope scope) {
         forceResolveAllContents(scope.getAllDescriptors());
     }
 
@@ -47,8 +47,8 @@ public class ForceResolveUtil {
         }
     }
 
-    public static void forceResolveAllContents(@NotNull Collection<JetType> types) {
-        for (JetType type : types) {
+    public static void forceResolveAllContents(@NotNull Collection<KtType> types) {
+        for (KtType type : types) {
             forceResolveAllContents(type);
         }
     }
@@ -87,7 +87,7 @@ public class ForceResolveUtil {
     }
 
     @Nullable
-    public static JetType forceResolveAllContents(@Nullable JetType type) {
+    public static KtType forceResolveAllContents(@Nullable KtType type) {
         if (type == null) return null;
 
         forceResolveAllContents(type.getAnnotations());

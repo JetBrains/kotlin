@@ -24,26 +24,26 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class ClassUsageReplacementStrategy(
-        typeReplacement: JetUserType?,
+        typeReplacement: KtUserType?,
         constructorReplacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression?,
         private val project: Project
 ) : UsageReplacementStrategy {
 
-    private val factory = JetPsiFactory(project)
+    private val factory = KtPsiFactory(project)
 
     private val typeReplacement = typeReplacement?.check { it.referenceExpression != null }
     private val typeReplacementQualifierAsExpression = typeReplacement?.qualifier?.let { factory.createExpression(it.text) }
 
     private val constructorReplacementStrategy = constructorReplacement?.let { CallableUsageReplacementStrategy(it) }
 
-    override fun createReplacer(usage: JetSimpleNameExpression): (() -> JetElement)? {
-        if (usage !is JetNameReferenceExpression) return null
+    override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement)? {
+        if (usage !is KtNameReferenceExpression) return null
 
         constructorReplacementStrategy?.createReplacer(usage)?.let { return it }
 
         val parent = usage.parent
         when (parent) {
-            is JetUserType -> {
+            is KtUserType -> {
                 if (typeReplacement == null) return null
                 return {
                     val replaced = parent.replaced(typeReplacement)
@@ -51,7 +51,7 @@ class ClassUsageReplacementStrategy(
                 } //TODO: type arguments and type arguments of outer class are lost
             }
 
-            is JetCallExpression -> {
+            is KtCallExpression -> {
                 if (usage != parent.calleeExpression) return null
                 when {
 //                    constructorReplacementStrategy != null -> return constructorReplacementStrategy.createReplacer(usage)
@@ -64,7 +64,7 @@ class ClassUsageReplacementStrategy(
         }
     }
 
-    private fun replaceConstructorCallWithOtherTypeConstruction(callExpression: JetCallExpression): JetElement {
+    private fun replaceConstructorCallWithOtherTypeConstruction(callExpression: KtCallExpression): KtElement {
         callExpression.calleeExpression!!.replace(typeReplacement!!.referenceExpression!!)
 
         val expressionToReplace = callExpression.getQualifiedExpressionForSelectorOrThis()

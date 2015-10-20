@@ -30,56 +30,56 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
-public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCallableDeclaration>(javaClass(), "Specify type explicitly"), LowPriorityAction {
-    override fun isApplicableTo(element: JetCallableDeclaration, caretOffset: Int): Boolean {
-        if (element.getContainingFile() is JetCodeFragment) return false
-        if (element is JetFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?
-        if (element is JetConstructor<*>) return false
+public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<KtCallableDeclaration>(javaClass(), "Specify type explicitly"), LowPriorityAction {
+    override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
+        if (element.getContainingFile() is KtCodeFragment) return false
+        if (element is KtFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?
+        if (element is KtConstructor<*>) return false
         if (element.getTypeReference() != null) return false
 
         if (getTypeForDeclaration(element).isError()) return false
 
-        val initializer = (element as? JetWithExpressionInitializer)?.getInitializer()
+        val initializer = (element as? KtWithExpressionInitializer)?.getInitializer()
         if (initializer != null && initializer.getTextRange().containsOffset(caretOffset)) return false
 
-        if (element is JetNamedFunction && element.hasBlockBody()) return false
+        if (element is KtNamedFunction && element.hasBlockBody()) return false
 
-        setText(if (element is JetFunction) "Specify return type explicitly" else "Specify type explicitly")
+        setText(if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly")
 
         return true
     }
 
-    override fun applyTo(element: JetCallableDeclaration, editor: Editor) {
+    override fun applyTo(element: KtCallableDeclaration, editor: Editor) {
         val type = getTypeForDeclaration(element)
         addTypeAnnotation(editor, element, type)
     }
 
     companion object {
-        public fun getTypeForDeclaration(declaration: JetCallableDeclaration): JetType {
+        public fun getTypeForDeclaration(declaration: KtCallableDeclaration): KtType {
             val descriptor = declaration.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
             val type = (descriptor as? CallableDescriptor)?.getReturnType()
             return type ?: ErrorUtils.createErrorType("null type")
         }
 
-        public fun createTypeExpressionForTemplate(exprType: JetType): Expression {
+        public fun createTypeExpressionForTemplate(exprType: KtType): Expression {
             val descriptor = exprType.getConstructor().getDeclarationDescriptor()
             val isAnonymous = descriptor != null && DescriptorUtils.isAnonymousObject(descriptor)
 
             val allSupertypes = TypeUtils.getAllSupertypes(exprType)
-            val types = if (isAnonymous) ArrayList<JetType>() else arrayListOf(exprType)
+            val types = if (isAnonymous) ArrayList<KtType>() else arrayListOf(exprType)
             types.addAll(allSupertypes)
 
-            return object : ChooseValueExpression<JetType>(types, types.first()) {
-                override fun getLookupString(element: JetType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
-                override fun getResult(element: JetType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
+            return object : ChooseValueExpression<KtType>(types, types.first()) {
+                override fun getLookupString(element: KtType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
+                override fun getResult(element: KtType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
             }
         }
 
-        public fun addTypeAnnotation(editor: Editor?, declaration: JetCallableDeclaration, exprType: JetType) {
+        public fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KtType) {
             if (editor != null) {
                 addTypeAnnotationWithTemplate(editor, declaration, exprType)
             }
@@ -88,7 +88,7 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
             }
         }
 
-        public fun createTypeReferencePostprocessor(declaration: JetCallableDeclaration): TemplateEditingAdapter {
+        public fun createTypeReferencePostprocessor(declaration: KtCallableDeclaration): TemplateEditingAdapter {
             return object : TemplateEditingAdapter() {
                 override fun templateFinished(template: Template?, brokenOff: Boolean) {
                     val typeRef = declaration.getTypeReference()
@@ -99,7 +99,7 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
             }
         }
 
-        private fun addTypeAnnotationWithTemplate(editor: Editor, declaration: JetCallableDeclaration, exprType: JetType) {
+        private fun addTypeAnnotationWithTemplate(editor: Editor, declaration: KtCallableDeclaration, exprType: KtType) {
             assert(!exprType.isError()) { "Unexpected error type, should have been checked before: " + declaration.getElementTextWithContext() + ", type = " + exprType }
 
             val project = declaration.getProject()

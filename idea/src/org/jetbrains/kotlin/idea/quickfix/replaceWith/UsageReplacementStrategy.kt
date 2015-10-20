@@ -21,17 +21,17 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 interface UsageReplacementStrategy {
-    fun createReplacer(usage: JetSimpleNameExpression): (() -> JetElement)?
+    fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement)?
 
     companion object {
-        fun build(element: JetSimpleNameExpression, replaceWith: ReplaceWith, recheckAnnotation: Boolean): UsageReplacementStrategy? {
+        fun build(element: KtSimpleNameExpression, replaceWith: ReplaceWith, recheckAnnotation: Boolean): UsageReplacementStrategy? {
             val resolutionFacade = element.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             var target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null

@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
-import org.jetbrains.kotlin.lexer.JetKeywordToken
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
-import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ModifierCheckerCore
@@ -46,14 +46,14 @@ object KeywordCompletion {
                                             TYPE_ALIAS_KEYWORD)
     private val ALL_KEYWORDS = (KEYWORDS.getTypes() + SOFT_KEYWORDS.getTypes())
             .filter { it !in NON_ACTUAL_KEYWORDS }
-            .map { it as JetKeywordToken }
+            .map { it as KtKeywordToken }
 
     private val DEFAULT_DUMMY_POSTFIX = " X"
     private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(FILE_KEYWORD to ":")
 
     private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
-    private val COMPOUND_KEYWORDS = mapOf<JetKeywordToken, JetKeywordToken>(
+    private val COMPOUND_KEYWORDS = mapOf<KtKeywordToken, KtKeywordToken>(
             COMPANION_KEYWORD to OBJECT_KEYWORD,
             ENUM_KEYWORD to CLASS_KEYWORD,
             ANNOTATION_KEYWORD to CLASS_KEYWORD
@@ -100,15 +100,15 @@ object KeywordCompletion {
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),
-            ParentFilter(ClassFilter(javaClass<JetLiteralStringTemplateEntry>())),
-            ParentFilter(ClassFilter(javaClass<JetConstantExpression>())),
+            ParentFilter(ClassFilter(javaClass<KtLiteralStringTemplateEntry>())),
+            ParentFilter(ClassFilter(javaClass<KtConstantExpression>())),
             LeftNeighbour(TextFilter(".")),
             LeftNeighbour(TextFilter("?."))
     ))
 
     private class CommentFilter() : ElementFilter {
         override fun isAcceptable(element : Any?, context : PsiElement?)
-                = (element is PsiElement) && JetPsiUtil.isInComment(element)
+                = (element is PsiElement) && KtPsiUtil.isInComment(element)
 
         override fun isClassAcceptable(hintClass: Class<out Any?>)
                 = true
@@ -125,23 +125,23 @@ object KeywordCompletion {
         }
     }
 
-    private fun buildFilter(position: PsiElement): (JetKeywordToken) -> Boolean {
+    private fun buildFilter(position: PsiElement): (KtKeywordToken) -> Boolean {
         var parent = position.getParent()
         var prevParent = position
         while (parent != null) {
             when (parent) {
-                is JetBlockExpression -> {
+                is KtBlockExpression -> {
                     return buildFilterWithContext("fun foo() { ", prevParent, position)
                 }
 
-                is JetWithExpressionInitializer -> {
+                is KtWithExpressionInitializer -> {
                     val initializer = parent.getInitializer()
                     if (prevParent == initializer) {
                         return buildFilterWithContext("val v = ", initializer!!, position)
                     }
                 }
 
-                is JetParameter -> {
+                is KtParameter -> {
                     val default = parent.getDefaultValue()
                     if (prevParent == default) {
                         return buildFilterWithContext("val v = ", default!!, position)
@@ -149,11 +149,11 @@ object KeywordCompletion {
                 }
             }
 
-            if (parent is JetDeclaration) {
+            if (parent is KtDeclaration) {
                 val scope = parent.parent
                 when (scope) {
-                    is JetClassOrObject -> {
-                        if (parent is JetPrimaryConstructor) {
+                    is KtClassOrObject -> {
+                        if (parent is KtPrimaryConstructor) {
                             return buildFilterWithReducedContext("class X ", parent, position)
                         }
                         else {
@@ -161,7 +161,7 @@ object KeywordCompletion {
                         }
                     }
 
-                    is JetFile -> return buildFilterWithReducedContext("", parent, position)
+                    is KtFile -> return buildFilterWithReducedContext("", parent, position)
                 }
             }
 
@@ -174,7 +174,7 @@ object KeywordCompletion {
 
     private fun buildFilterWithContext(prefixText: String,
                                        contextElement: PsiElement,
-                                       position: PsiElement): (JetKeywordToken) -> Boolean {
+                                       position: PsiElement): (KtKeywordToken) -> Boolean {
         val offset = position.getStartOffsetInAncestor(contextElement)
         val truncatedContext = contextElement.getText()!!.substring(0, offset)
         return buildFilterByText(prefixText + truncatedContext, contextElement.getProject())
@@ -182,15 +182,15 @@ object KeywordCompletion {
 
     private fun buildFilterWithReducedContext(prefixText: String,
                                               contextElement: PsiElement?,
-                                              position: PsiElement): (JetKeywordToken) -> Boolean {
+                                              position: PsiElement): (KtKeywordToken) -> Boolean {
         val builder = StringBuilder()
         buildReducedContextBefore(builder, position, contextElement)
         return buildFilterByText(prefixText + builder.toString(), position.getProject())
     }
 
 
-    private fun buildFilterByText(prefixText: String, project: Project): (JetKeywordToken) -> Boolean {
-        val psiFactory = JetPsiFactory(project)
+    private fun buildFilterByText(prefixText: String, project: Project): (KtKeywordToken) -> Boolean {
+        val psiFactory = KtPsiFactory(project)
         return fun (keywordTokenType): Boolean {
             val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: DEFAULT_DUMMY_POSTFIX
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
@@ -203,37 +203,37 @@ object KeywordCompletion {
 
                 elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }?.parentsWithSelf?.any { it is PsiErrorElement } ?: false -> return false
 
-                keywordTokenType !is JetModifierKeywordToken -> return true
+                keywordTokenType !is KtModifierKeywordToken -> return true
 
                 else -> {
-                    if (elementAt.parent !is JetModifierList) return true
+                    if (elementAt.parent !is KtModifierList) return true
                     val container = elementAt.parent.parent
                     val possibleTargets = when (container) {
-                        is JetParameter -> {
-                            if (container.ownerFunction is JetPrimaryConstructor)
+                        is KtParameter -> {
+                            if (container.ownerFunction is KtPrimaryConstructor)
                                 listOf(VALUE_PARAMETER, MEMBER_PROPERTY)
                             else
                                 listOf(VALUE_PARAMETER)
                         }
 
-                        is JetTypeParameter -> listOf(TYPE_PARAMETER)
+                        is KtTypeParameter -> listOf(TYPE_PARAMETER)
 
-                        is JetEnumEntry -> listOf(ENUM_ENTRY)
+                        is KtEnumEntry -> listOf(ENUM_ENTRY)
 
-                        is JetClassBody -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, INNER_CLASS, MEMBER_FUNCTION, MEMBER_PROPERTY, FUNCTION, PROPERTY)
+                        is KtClassBody -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, INNER_CLASS, MEMBER_FUNCTION, MEMBER_PROPERTY, FUNCTION, PROPERTY)
 
-                        is JetFile -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, FUNCTION, PROPERTY)
+                        is KtFile -> listOf(CLASS_ONLY, INTERFACE, OBJECT, ENUM_CLASS, ANNOTATION_CLASS, TOP_LEVEL_FUNCTION, TOP_LEVEL_PROPERTY, FUNCTION, PROPERTY)
 
                         else -> null
                     }
                     val modifierTargets = ModifierCheckerCore.possibleTargetMap[keywordTokenType]
                     if (modifierTargets != null && possibleTargets != null && possibleTargets.none { it in modifierTargets }) return false
 
-                    val ownerDeclaration = container?.getParentOfType<JetDeclaration>(strict = true)
+                    val ownerDeclaration = container?.getParentOfType<KtDeclaration>(strict = true)
                     val parentTarget = when (ownerDeclaration) {
                         null -> KotlinTarget.FILE
 
-                        is JetClass -> {
+                        is KtClass -> {
                             when {
                                 ownerDeclaration.isInterface() -> KotlinTarget.INTERFACE
                                 ownerDeclaration.isEnum() -> KotlinTarget.ENUM_CLASS
@@ -243,7 +243,7 @@ object KeywordCompletion {
                             }
                         }
 
-                        is JetObjectDeclaration -> if (ownerDeclaration.isObjectLiteral()) KotlinTarget.OBJECT_LITERAL else KotlinTarget.OBJECT
+                        is KtObjectDeclaration -> if (ownerDeclaration.isObjectLiteral()) KotlinTarget.OBJECT_LITERAL else KotlinTarget.OBJECT
 
                         else -> return true
                     }
@@ -260,7 +260,7 @@ object KeywordCompletion {
         }
     }
 
-    private fun IElementType.matchesKeyword(keywordType: JetKeywordToken): Boolean {
+    private fun IElementType.matchesKeyword(keywordType: KtKeywordToken): Boolean {
         return when(this) {
             keywordType -> true
             NOT_IN -> keywordType == IN_KEYWORD
@@ -276,11 +276,11 @@ object KeywordCompletion {
 
         buildReducedContextBefore(builder, parent, scope)
 
-        val prevDeclaration = position.siblings(forward = false, withItself = false).firstOrNull { it is JetDeclaration }
+        val prevDeclaration = position.siblings(forward = false, withItself = false).firstOrNull { it is KtDeclaration }
 
         var child = parent.getFirstChild()
         while (child != position) {
-            if (child is JetDeclaration) {
+            if (child is KtDeclaration) {
                 if (child == prevDeclaration) {
                     builder.appendReducedText(child)
                 }
@@ -301,7 +301,7 @@ object KeywordCompletion {
         else {
             while (child != null) {
                 when (child) {
-                    is JetBlockExpression, is JetClassBody -> append("{}")
+                    is KtBlockExpression, is KtClassBody -> append("{}")
                     else -> appendReducedText(child)
                 }
 

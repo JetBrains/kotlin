@@ -21,12 +21,12 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -37,15 +37,15 @@ import java.util.*
  */
 abstract class TypeInfo(val variance: Variance) {
     object Empty: TypeInfo(Variance.INVARIANT) {
-        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> = Collections.emptyList()
+        override fun getPossibleTypes(builder: CallableBuilder): List<KtType> = Collections.emptyList()
     }
 
-    class ByExpression(val expression: JetExpression, variance: Variance): TypeInfo(variance) {
+    class ByExpression(val expression: KtExpression, variance: Variance): TypeInfo(variance) {
         override val possibleNamesFromExpression: Array<String> by lazy {
             KotlinNameSuggester.suggestNamesByExpressionOnly(expression, { true }).toTypedArray()
         }
 
-        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
+        override fun getPossibleTypes(builder: CallableBuilder): List<KtType> =
                 expression.guessTypes(
                         context = builder.currentFileContext,
                         module = builder.currentFileModule,
@@ -53,25 +53,25 @@ abstract class TypeInfo(val variance: Variance) {
                 ).flatMap { it.getPossibleSupertypes(variance, builder) }
     }
 
-    class ByTypeReference(val typeReference: JetTypeReference, variance: Variance): TypeInfo(variance) {
-        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
+    class ByTypeReference(val typeReference: KtTypeReference, variance: Variance): TypeInfo(variance) {
+        override fun getPossibleTypes(builder: CallableBuilder): List<KtType> =
                 builder.currentFileContext[BindingContext.TYPE, typeReference].getPossibleSupertypes(variance, builder)
     }
 
-    class ByType(val theType: JetType, variance: Variance): TypeInfo(variance) {
-        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
+    class ByType(val theType: KtType, variance: Variance): TypeInfo(variance) {
+        override fun getPossibleTypes(builder: CallableBuilder): List<KtType> =
                 theType.getPossibleSupertypes(variance, builder)
     }
 
     class ByReceiverType(variance: Variance): TypeInfo(variance) {
-        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
+        override fun getPossibleTypes(builder: CallableBuilder): List<KtType> =
                 (builder.placement as CallablePlacement.WithReceiver).receiverTypeCandidate.theType.getPossibleSupertypes(variance, builder)
     }
 
     abstract class DelegatingTypeInfo(val delegate: TypeInfo): TypeInfo(delegate.variance) {
         override val substitutionsAllowed: Boolean = delegate.substitutionsAllowed
         override val possibleNamesFromExpression: Array<String> get() = delegate.possibleNamesFromExpression
-        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> = delegate.getPossibleTypes(builder)
+        override fun getPossibleTypes(builder: CallableBuilder): List<KtType> = delegate.getPossibleTypes(builder)
     }
 
     class NoSubstitutions(delegate: TypeInfo): DelegatingTypeInfo(delegate) {
@@ -85,9 +85,9 @@ abstract class TypeInfo(val variance: Variance) {
     open val substitutionsAllowed: Boolean = true
     open val staticContextRequired: Boolean = false
     open val possibleNamesFromExpression: Array<String> get() = ArrayUtil.EMPTY_STRING_ARRAY
-    abstract fun getPossibleTypes(builder: CallableBuilder): List<JetType>
+    abstract fun getPossibleTypes(builder: CallableBuilder): List<KtType>
 
-    protected fun JetType?.getPossibleSupertypes(variance: Variance, callableBuilder: CallableBuilder): List<JetType> {
+    protected fun KtType?.getPossibleSupertypes(variance: Variance, callableBuilder: CallableBuilder): List<KtType> {
         if (this == null || ErrorUtils.containsErrorType(this)) {
             return Collections.singletonList(callableBuilder.currentFileModule.builtIns.anyType)
         }
@@ -99,15 +99,15 @@ abstract class TypeInfo(val variance: Variance) {
     }
 }
 
-fun TypeInfo(expressionOfType: JetExpression, variance: Variance): TypeInfo = TypeInfo.ByExpression(expressionOfType, variance)
-fun TypeInfo(typeReference: JetTypeReference, variance: Variance): TypeInfo = TypeInfo.ByTypeReference(typeReference, variance)
-fun TypeInfo(theType: JetType, variance: Variance): TypeInfo = TypeInfo.ByType(theType, variance)
+fun TypeInfo(expressionOfType: KtExpression, variance: Variance): TypeInfo = TypeInfo.ByExpression(expressionOfType, variance)
+fun TypeInfo(typeReference: KtTypeReference, variance: Variance): TypeInfo = TypeInfo.ByTypeReference(typeReference, variance)
+fun TypeInfo(theType: KtType, variance: Variance): TypeInfo = TypeInfo.ByType(theType, variance)
 
 fun TypeInfo.noSubstitutions(): TypeInfo = (this as? TypeInfo.NoSubstitutions) ?: TypeInfo.NoSubstitutions(this)
 
 fun TypeInfo.forceNotNull(): TypeInfo {
     class ForcedNotNull(delegate: TypeInfo): TypeInfo.DelegatingTypeInfo(delegate) {
-        override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =
+        override fun getPossibleTypes(builder: CallableBuilder): List<KtType> =
                 super.getPossibleTypes(builder).map { it.makeNotNullable() }
     }
 
@@ -133,7 +133,7 @@ abstract class CallableInfo (
         val name: String,
         val receiverTypeInfo: TypeInfo,
         val returnTypeInfo: TypeInfo,
-        val possibleContainers: List<JetElement>,
+        val possibleContainers: List<KtElement>,
         val typeParameterInfos: List<TypeInfo>
 ) {
     abstract val kind: CallableKind
@@ -143,7 +143,7 @@ abstract class CallableInfo (
 class FunctionInfo(name: String,
                    receiverTypeInfo: TypeInfo,
                    returnTypeInfo: TypeInfo,
-                   possibleContainers: List<JetElement> = Collections.emptyList(),
+                   possibleContainers: List<KtElement> = Collections.emptyList(),
                    override val parameterInfos: List<ParameterInfo> = Collections.emptyList(),
                    typeParameterInfos: List<TypeInfo> = Collections.emptyList(),
                    val isOperator: Boolean = false
@@ -169,7 +169,7 @@ class PropertyInfo(name: String,
                    receiverTypeInfo: TypeInfo,
                    returnTypeInfo: TypeInfo,
                    val writable: Boolean,
-                   possibleContainers: List<JetElement> = Collections.emptyList(),
+                   possibleContainers: List<KtElement> = Collections.emptyList(),
                    typeParameterInfos: List<TypeInfo> = Collections.emptyList()
 ) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos) {
     override val kind: CallableKind get() = CallableKind.PROPERTY

@@ -48,9 +48,9 @@ public class CodeFragmentAnalyzer(
     public var resolveElementCache: ResolveElementCache? = null
         @Inject set
 
-    public fun analyzeCodeFragment(codeFragment: JetCodeFragment, trace: BindingTrace, bodyResolveMode: BodyResolveMode) {
+    public fun analyzeCodeFragment(codeFragment: KtCodeFragment, trace: BindingTrace, bodyResolveMode: BodyResolveMode) {
         val codeFragmentExpression = codeFragment.getContentElement()
-        if (codeFragmentExpression !is JetExpression) return
+        if (codeFragmentExpression !is KtExpression) return
 
         val (scopeForContextElement, dataFlowInfo) = getScopeAndDataFlowForAnalyzeFragment(codeFragment) {
             resolveElementCache!!.resolveToElement(it, bodyResolveMode)
@@ -68,18 +68,18 @@ public class CodeFragmentAnalyzer(
     }
 
     //TODO: this code should be moved into debugger which should set correct context for its code fragment
-    private fun JetExpression.correctContextForExpression(): JetExpression {
+    private fun KtExpression.correctContextForExpression(): KtExpression {
         return when (this) {
-                   is JetProperty -> this.getDelegateExpressionOrInitializer()
-                   is JetFunctionLiteral -> this.getBodyExpression()?.getStatements()?.lastOrNull()
-                   is JetDeclarationWithBody -> this.getBodyExpression()
-                   is JetBlockExpression -> this.getStatements().lastOrNull()
+                   is KtProperty -> this.getDelegateExpressionOrInitializer()
+                   is KtFunctionLiteral -> this.getBodyExpression()?.getStatements()?.lastOrNull()
+                   is KtDeclarationWithBody -> this.getBodyExpression()
+                   is KtBlockExpression -> this.getStatements().lastOrNull()
                    else -> {
-                       val previousSibling = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<JetExpression>()
+                       val previousSibling = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtExpression>()
                        if (previousSibling != null) return previousSibling
                        for (parent in this.parents) {
-                           if (parent is JetWhenEntry || parent is JetIfExpression || parent is JetBlockExpression) return this
-                           if (parent is JetExpression) return parent
+                           if (parent is KtWhenEntry || parent is KtIfExpression || parent is KtBlockExpression) return this
+                           if (parent is KtExpression) return parent
                        }
                        null
                    }
@@ -87,23 +87,23 @@ public class CodeFragmentAnalyzer(
     }
 
     private fun getScopeAndDataFlowForAnalyzeFragment(
-            codeFragment: JetCodeFragment,
-            resolveToElement: (JetElement) -> BindingContext
+            codeFragment: KtCodeFragment,
+            resolveToElement: (KtElement) -> BindingContext
     ): Pair<LexicalScope, DataFlowInfo>? {
         val context = codeFragment.getContext()
-        if (context !is JetExpression) return null
+        if (context !is KtExpression) return null
 
         val scopeForContextElement: LexicalScope?
         val dataFlowInfo: DataFlowInfo
 
         when (context) {
-            is JetPrimaryConstructor -> {
+            is KtPrimaryConstructor -> {
                 val descriptor = resolveSession.getClassDescriptor(context.getContainingClassOrObject(), NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
                 scopeForContextElement = descriptor.getScopeForInitializerResolution()
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
-            is JetSecondaryConstructor -> {
+            is KtSecondaryConstructor -> {
                 val correctedContext = context.getDelegationCall().calleeExpression!!
 
                 val contextForElement = resolveToElement(correctedContext)
@@ -111,13 +111,13 @@ public class CodeFragmentAnalyzer(
                 scopeForContextElement = contextForElement[BindingContext.LEXICAL_SCOPE, correctedContext]
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
-            is JetClassOrObject -> {
+            is KtClassOrObject -> {
                 val descriptor = resolveSession.getClassDescriptor(context, NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
                 scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
-            is JetExpression -> {
+            is KtExpression -> {
                 val correctedContext = context.correctContextForExpression()
 
                 val contextForElement = resolveToElement(correctedContext)
@@ -125,7 +125,7 @@ public class CodeFragmentAnalyzer(
                 scopeForContextElement = contextForElement[BindingContext.LEXICAL_SCOPE, correctedContext]
                 dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
             }
-            is JetFile -> {
+            is KtFile -> {
                 scopeForContextElement = resolveSession.getFileScopeProvider().getFileScope(context)
                 dataFlowInfo = DataFlowInfo.EMPTY
             }

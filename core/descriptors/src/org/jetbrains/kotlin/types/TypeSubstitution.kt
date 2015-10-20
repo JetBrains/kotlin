@@ -17,28 +17,31 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 public abstract class TypeSubstitution {
     companion object {
         @JvmStatic
         public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
-            override fun get(key: JetType) = null
+            override fun get(key: KtType) = null
             override fun isEmpty() = true
             override fun toString() = "Empty TypeSubstitution"
         }
     }
 
-    public abstract fun get(key: JetType): TypeProjection?
+    public abstract fun get(key: KtType): TypeProjection?
 
     public open fun isEmpty(): Boolean = false
 
     public open fun approximateCapturedTypes(): Boolean = false
 
+    public open fun filterAnnotations(annotations: Annotations) = annotations
+
     public fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
 }
 
 public abstract class TypeConstructorSubstitution : TypeSubstitution() {
-    override fun get(key: JetType) = get(key.constructor)
+    override fun get(key: KtType) = get(key.constructor)
 
     public abstract fun get(key: TypeConstructor): TypeProjection?
 
@@ -79,7 +82,7 @@ public class IndexedParametersSubstitution(
 
     override fun isEmpty(): Boolean = arguments.isEmpty()
 
-    override fun get(key: JetType): TypeProjection? {
+    override fun get(key: KtType): TypeProjection? {
         val parameter = key.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return null
         val index = parameter.index
 
@@ -91,7 +94,7 @@ public class IndexedParametersSubstitution(
     }
 }
 
-public fun JetType.computeNewSubstitution(
+public fun KtType.computeNewSubstitution(
     newParameters: List<TypeParameterDescriptor>,
     newArguments: List<TypeProjection>
 ): TypeSubstitution {
@@ -115,7 +118,7 @@ private class CompositeTypeSubstitution(
     private val second: TypeSubstitution
 ) : TypeSubstitution() {
 
-    override fun get(key: JetType): TypeProjection? {
+    override fun get(key: KtType): TypeProjection? {
         val firstResult = first[key] ?: return second[key]
         return second.buildSubstitutor().substitute(firstResult)
     }
@@ -123,4 +126,16 @@ private class CompositeTypeSubstitution(
     override fun isEmpty() = first.isEmpty() && second.isEmpty()
     //
     override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
+
+    override fun filterAnnotations(annotations: Annotations): Annotations = second.filterAnnotations(first.filterAnnotations(annotations))
+}
+
+public open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSubstitution() {
+    override fun get(key: KtType) = substitution.get(key)
+
+    override fun isEmpty() = substitution.isEmpty()
+
+    override fun approximateCapturedTypes() = substitution.approximateCapturedTypes()
+
+    override fun filterAnnotations(annotations: Annotations) = substitution.filterAnnotations(annotations)
 }

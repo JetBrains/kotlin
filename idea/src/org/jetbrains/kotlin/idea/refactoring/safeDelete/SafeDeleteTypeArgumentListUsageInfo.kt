@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
 
 public class SafeDeleteTypeArgumentListUsageInfo(
-        typeProjection: JetTypeProjection, parameter: JetTypeParameter
+        typeProjection: KtTypeProjection, parameter: KtTypeParameter
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(typeProjection, parameter, true) {
     public override fun deleteElement() {
         getElement()?.deleteElementAndCleanParent()

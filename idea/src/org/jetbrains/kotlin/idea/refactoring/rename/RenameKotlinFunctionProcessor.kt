@@ -27,16 +27,16 @@ import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.JetFunction
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
 public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is JetNamedFunction || (element is KotlinLightMethod && element.getOrigin() is JetNamedFunction)
+        return element is KtNamedFunction || (element is KotlinLightMethod && element.getOrigin() is KtNamedFunction)
     }
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
@@ -49,7 +49,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         val substitutedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
 
         return when (substitutedJavaElement) {
-            is KotlinLightMethod -> substitutedJavaElement.getOrigin() as? JetNamedFunction
+            is KotlinLightMethod -> substitutedJavaElement.getOrigin() as? KtNamedFunction
             else -> substitutedJavaElement
         }
     }
@@ -64,13 +64,13 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     override fun renameElement(element: PsiElement?, newName: String?, usages: Array<out UsageInfo>?, listener: RefactoringElementListener?) {
         super.renameElement(element, newName, usages, listener)
 
-        (element?.unwrapped as? JetNamedDeclaration)?.let { dropOverrideKeywordIfNecessary(it) }
+        (element?.unwrapped as? KtNamedDeclaration)?.let { dropOverrideKeywordIfNecessary(it) }
     }
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {
         is KotlinLightMethod -> element
-        is JetNamedFunction, is JetSecondaryConstructor -> runReadAction {
-            LightClassUtil.getLightClassMethod(element as JetFunction)
+        is KtNamedFunction, is KtSecondaryConstructor -> runReadAction {
+            LightClassUtil.getLightClassMethod(element as KtFunction)
         }
         else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
     }

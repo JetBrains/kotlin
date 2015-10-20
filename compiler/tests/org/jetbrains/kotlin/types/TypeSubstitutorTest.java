@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetPsiFactoryKt;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -56,7 +56,7 @@ import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
-    private JetScope scope;
+    private KtScope scope;
     private ContainerForTests container;
 
     @Override
@@ -79,16 +79,16 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         super.tearDown();
     }
 
-    private JetScope getContextScope() throws IOException {
+    private KtScope getContextScope() throws IOException {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"), true);
-        JetFile jetFile = JetPsiFactoryKt.JetPsiFactory(getProject()).createFile(text);
+        KtFile jetFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile(text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
-        JetScope topLevelDeclarations = module.getPackage(FqName.ROOT).getMemberScope();
+        KtScope topLevelDeclarations = module.getPackage(FqName.ROOT).getMemberScope();
         ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
         assert contextClass instanceof ClassDescriptor;
-        WritableScopeImpl typeParameters = new WritableScopeImpl(JetScope.Empty.INSTANCE$, module, RedeclarationHandler.THROW_EXCEPTION,
-                                      "Type parameter scope");
+        WritableScopeImpl typeParameters = new WritableScopeImpl(KtScope.Empty.INSTANCE$, module, RedeclarationHandler.THROW_EXCEPTION,
+                                                                 "Type parameter scope");
         for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
             typeParameters.addClassifierDescriptor(parameterDescriptor);
         }
@@ -102,12 +102,12 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {
-        JetType initialType = resolveType(initialTypeStr);
+        KtType initialType = resolveType(initialTypeStr);
 
         Map<TypeConstructor, TypeProjection> map = stringsToSubstitutionMap(substitutionStrs);
         TypeSubstitutor substitutor = TypeSubstitutor.create(map);
 
-        JetType result = substitutor.substitute(initialType, Variance.INVARIANT);
+        KtType result = substitutor.substitute(initialType, Variance.INVARIANT);
 
         if (expectedTypeStr == null) {
             assertNull(result);
@@ -129,7 +129,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
             assertTrue(typeParameterName + " is not a type parameter: " + classifier, classifier instanceof TypeParameterDescriptor);
 
             String typeStr = "C<" + replacementProjectionString + ">";
-            JetType typeWithArgument = resolveType(typeStr);
+            KtType typeWithArgument = resolveType(typeStr);
             assert !typeWithArgument.getArguments().isEmpty() : "No arguments: " + typeWithArgument + " from " + typeStr;
 
             map.put(classifier.getTypeConstructor(), typeWithArgument.getArguments().get(0));
@@ -137,11 +137,11 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         return map;
     }
 
-    private JetType resolveType(String typeStr) {
-        JetTypeReference jetTypeReference = JetPsiFactoryKt.JetPsiFactory(getProject()).createType(typeStr);
+    private KtType resolveType(String typeStr) {
+        KtTypeReference jetTypeReference = KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr);
         AnalyzingUtils.checkForSyntacticErrors(jetTypeReference);
         BindingTrace trace = new BindingTraceContext();
-        JetType type = container.getTypeResolver().resolveType(ScopeUtilsKt.asLexicalScope(scope), jetTypeReference, trace, true);
+        KtType type = container.getTypeResolver().resolveType(ScopeUtilsKt.asLexicalScope(scope), jetTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
             fail("Errors:\n" + StringUtil.join(
                     trace.getBindingContext().getDiagnostics(),

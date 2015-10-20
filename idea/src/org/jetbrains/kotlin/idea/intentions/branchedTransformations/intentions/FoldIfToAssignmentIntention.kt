@@ -20,19 +20,19 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.KtIfExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class FoldIfToAssignmentIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with assignment") {
-    override fun applicabilityRange(element: JetIfExpression): TextRange? {
+public class FoldIfToAssignmentIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with assignment") {
+    override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getThen()) ?: return null
         val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getElse()) ?: return null
         if (!BranchedFoldingUtils.checkAssignmentsMatch(thenAssignment, elseAssignment)) return null
         return element.getIfKeyword().getTextRange()
     }
 
-    override fun applyTo(element: JetIfExpression, editor: Editor) {
+    override fun applyTo(element: KtIfExpression, editor: Editor) {
         var thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getThen()!!)!!
         val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getElse()!!)!!
 
@@ -42,6 +42,6 @@ public class FoldIfToAssignmentIntention : JetSelfTargetingRangeIntention<JetIfE
         thenAssignment.replace(thenAssignment.getRight()!!)
         elseAssignment.replace(elseAssignment.getRight()!!)
 
-        element.replace(JetPsiFactory(element).createExpressionByPattern("$0 $1 $2", leftText, op, element))
+        element.replace(KtPsiFactory(element).createExpressionByPattern("$0 $1 $2", leftText, op, element))
     }
 }

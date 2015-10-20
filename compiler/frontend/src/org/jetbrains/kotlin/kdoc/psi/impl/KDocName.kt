@@ -17,17 +17,17 @@
 package org.jetbrains.kotlin.kdoc.psi.impl
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.psi.JetElementImpl
+import org.jetbrains.kotlin.psi.KtElementImpl
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 /**
  * A single part of a qualified name in the tag subject or link.
  */
-public class KDocName(node: ASTNode): JetElementImpl(node) {
+public class KDocName(node: ASTNode): KtElementImpl(node) {
     public fun getContainingDoc(): KDoc {
         val kdoc = getStrictParentOfType<KDoc>()
         return kdoc ?: throw IllegalStateException("KDocName must be inside a KDoc")
@@ -45,7 +45,7 @@ public class KDocName(node: ASTNode): JetElementImpl(node) {
      * the range of the element excluding the qualifier and dot, if present).
      */
     public fun getNameTextRange(): TextRange {
-        val dot = getNode().findChildByType(JetTokens.DOT)
+        val dot = getNode().findChildByType(KtTokens.DOT)
         val textRange = getTextRange()
         val nameStart = if (dot != null) dot.getTextRange().getEndOffset() - textRange.getStartOffset() else 0
         return TextRange(nameStart, textRange.getLength())

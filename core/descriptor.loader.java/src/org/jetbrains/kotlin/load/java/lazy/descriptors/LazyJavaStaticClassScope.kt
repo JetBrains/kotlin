@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesProperty
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.KtType
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaStaticClassScope(
@@ -117,7 +117,7 @@ public class LazyJavaStaticClassScope(
 
     private fun getStaticPropertiesFromJavaSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
 
-        fun getStaticProperties(supertype: JetType): Iterable<PropertyDescriptor> {
+        fun getStaticProperties(supertype: KtType): Iterable<PropertyDescriptor> {
             val superTypeDescriptor = supertype.constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
 
             val staticScope = superTypeDescriptor.staticScope
