@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.load.kotlin
 
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -198,7 +200,12 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
                 if (implClassName != null) {
                     // TODO: store accurate name for nested traits
-                    return kotlinClassFinder.findKotlinClass(ClassId(classId.packageFqName, implClassName))
+                    val implClassId =
+                        if (implClassName.asString().endsWith(JvmAbi.DEFAULT_IMPLS_SUFFIX))
+                            ClassId(classId.packageFqName, FqName(implClassName.asString().replace(JvmAbi.DEFAULT_IMPLS_SUFFIX, "." + JvmAbi.DEFAULT_IMPLS_CLASS_NAME)), false)
+                        else
+                            ClassId(classId.packageFqName, implClassName)
+                    return kotlinClassFinder.findKotlinClass(implClassId)
                 }
 
                 if (isStaticFieldInOuter && classId.isNestedClass) {
