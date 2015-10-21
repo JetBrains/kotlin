@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
+import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.*

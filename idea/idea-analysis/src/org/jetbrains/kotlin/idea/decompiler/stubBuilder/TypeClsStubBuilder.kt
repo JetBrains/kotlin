@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.ANNOTATIONS_COPIED_TO_TYPES
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -47,7 +47,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
             val isTopLevelClass = !it.isNestedClass
-            isTopLevelClass && it.asSingleFqName() in JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES
+            isTopLevelClass && it.asSingleFqName() in ANNOTATIONS_COPIED_TO_TYPES
         }
 
         val effectiveParent =

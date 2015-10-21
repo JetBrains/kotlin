@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.READ_ONLY
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NOT_NULL
@@ -35,26 +35,10 @@ enum class NullabilityQualifier {
     NOT_NULL
 }
 
-private val NULLABLE_ANNOTATIONS = listOf(
-        JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
-)
-
-private val NOT_NULL_ANNOTATIONS = listOf(
-        JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
-)
-
 enum class MutabilityQualifier {
     READ_ONLY,
     MUTABLE
 }
-
-private val READ_ONLY_ANNOTATIONS = listOf(
-        JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION
-)
-
-private val MUTABLE_ANNOTATIONS = listOf(
-        JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION
-)
 
 class JavaTypeQualifiers(
         val nullability: NullabilityQualifier?,

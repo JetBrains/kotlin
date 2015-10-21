@@ -62,15 +62,6 @@ public final class JvmAnnotationNames {
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");
     public static final FqName ENHANCED_MUTABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedMutability");
 
-    // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
-    // See also DescriptorRendererOptions#excludedTypeAnnotationClasses
-    public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = SetsKt.setOf(
-            JETBRAINS_READONLY_ANNOTATION,
-            JETBRAINS_MUTABLE_ANNOTATION,
-            JETBRAINS_NOT_NULL_ANNOTATION,
-            JETBRAINS_NULLABLE_ANNOTATION
-    );
-
     private static final Set<JvmClassName> SPECIAL_ANNOTATIONS = new HashSet<JvmClassName>();
     private static final Set<JvmClassName> NULLABILITY_ANNOTATIONS = new HashSet<JvmClassName>();
     private static final Set<JvmClassName> SPECIAL_META_ANNOTATIONS = new HashSet<JvmClassName>();
