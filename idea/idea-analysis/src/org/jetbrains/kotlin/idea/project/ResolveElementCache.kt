@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIn
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
@@ -436,12 +437,10 @@ public class ResolveElementCache(
 
         bodyResolver.resolvePropertyAccessors(bodyResolveContext, property, descriptor)
 
-        forceResolveAnnotations(property)
+        forceResolveAnnotationsInside(property)
 
         for (accessor in property.getAccessors()) {
             JetFlowInformationProvider(accessor, trace).checkDeclaration()
-
-            forceResolveAnnotations(accessor)
         }
 
         return trace
@@ -457,7 +456,7 @@ public class ResolveElementCache(
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveFunctionBody(DataFlowInfo.EMPTY, trace, namedFunction, functionDescriptor, scope)
 
-        forceResolveAnnotations(namedFunction)
+        forceResolveAnnotationsInside(namedFunction)
 
         return trace
     }
@@ -472,7 +471,7 @@ public class ResolveElementCache(
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveSecondaryConstructorBody(DataFlowInfo.EMPTY, trace, constructor, constructorDescriptor, scope)
 
-        forceResolveAnnotations(constructor)
+        forceResolveAnnotationsInside(constructor)
 
         return trace
     }
@@ -500,15 +499,16 @@ public class ResolveElementCache(
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, classInitializer, classOrObjectDescriptor)
 
-        forceResolveAnnotations(classInitializer)
+        forceResolveAnnotationsInside(classInitializer)
 
         return trace
     }
 
-    private fun forceResolveAnnotations(declaration: KtModifierListOwner) {
-        for (annotationEntry in declaration.annotationEntries) {
-            val annotationDescriptor = resolveSession.bindingContext[BindingContext.ANNOTATION, annotationEntry] ?: continue
-            ForceResolveUtil.forceResolveAllContents(annotationDescriptor)
+    private fun forceResolveAnnotationsInside(element: KtElement) {
+        element.forEachDescendantOfType<KtAnnotationEntry>(canGoInside = { it !is KtBlockExpression }) { entry ->
+            resolveSession.bindingContext[BindingContext.ANNOTATION, entry]?.let {
+                ForceResolveUtil.forceResolveAllContents(it)
+            }
         }
     }
 

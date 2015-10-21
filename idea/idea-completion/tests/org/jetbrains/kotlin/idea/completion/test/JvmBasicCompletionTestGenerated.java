@@ -753,6 +753,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("ForType.kt")
+            public void testForType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/ForType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FunctionAnnotation1.kt")
             public void testFunctionAnnotation1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/FunctionAnnotation1.kt");
