@@ -103,7 +103,7 @@ public class KotlinAddImportAction(
         return true
     }
 
-    protected fun getImportSelectionPopup(): BaseListPopupStep<Variant> {
+    private fun getImportSelectionPopup(): BaseListPopupStep<Variant> {
         return object : BaseListPopupStep<Variant>(JetBundle.message("imports.chooser.title"), variants) {
             override fun isAutoSelectionEnabled() = false
 
