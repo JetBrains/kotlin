@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.typeEnhacement
+package org.jetbrains.kotlin.load.java.typeEnhancement
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.typeEnhacement.MutabilityQualifier.MUTABLE
-import org.jetbrains.kotlin.load.java.typeEnhacement.MutabilityQualifier.READ_ONLY
-import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NOT_NULL
-import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NULLABLE
+import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.MUTABLE
+import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.READ_ONLY
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NOT_NULL
+import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier.NULLABLE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
