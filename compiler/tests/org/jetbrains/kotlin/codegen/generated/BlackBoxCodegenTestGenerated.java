@@ -3367,6 +3367,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt6694ExactAnnotationForElvis.kt")
+        public void testKt6694ExactAnnotationForElvis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/elvis/kt6694ExactAnnotationForElvis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/elvis/primitive.kt");
