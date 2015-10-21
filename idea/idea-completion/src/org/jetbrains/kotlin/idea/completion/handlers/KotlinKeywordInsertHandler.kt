@@ -44,7 +44,7 @@ object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val keyword = item.lookupString
         if (keyword !in NO_SPACE_AFTER) {
-            WithTailInsertHandler.spaceTail().postHandleInsert(context, item)
+            WithTailInsertHandler.SPACE.postHandleInsert(context, item)
         }
     }
 }

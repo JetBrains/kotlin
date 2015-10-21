@@ -65,31 +65,31 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
 
         Tail.COMMA -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.commaTail().handleInsert(context, getDelegate())
+                WithTailInsertHandler.COMMA.handleInsert(context, getDelegate())
             }
         }
 
         Tail.RPARENTH -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.rparenthTail().handleInsert(context, getDelegate())
+                WithTailInsertHandler.RPARENTH.handleInsert(context, getDelegate())
             }
         }
 
         Tail.RBRACKET -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.rbracketTail().handleInsert(context, getDelegate())
+                WithTailInsertHandler.RBRACKET.handleInsert(context, getDelegate())
             }
         }
 
         Tail.ELSE -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.elseTail().handleInsert(context, getDelegate())
+                WithTailInsertHandler.ELSE.handleInsert(context, getDelegate())
             }
         }
 
         Tail.RBRACE -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.rbraceTail().handleInsert(context, getDelegate())
+                WithTailInsertHandler.RBRACE.handleInsert(context, getDelegate())
             }
         }
     }
