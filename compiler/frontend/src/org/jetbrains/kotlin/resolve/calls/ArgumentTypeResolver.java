@@ -149,7 +149,7 @@ public class ArgumentTypeResolver {
 
     private void checkArgumentTypeWithNoCallee(CallResolutionContext<?> context, KtExpression argumentExpression) {
         expressionTypingServices.getTypeInfo(argumentExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
-        updateResultArgumentTypeIfNotDenotable(context, argumentExpression, null);
+        updateResultArgumentTypeIfNotDenotable(context, argumentExpression);
     }
 
     public static boolean isFunctionLiteralArgument(
@@ -349,10 +349,9 @@ public class ArgumentTypeResolver {
     @Nullable
     public KotlinType updateResultArgumentTypeIfNotDenotable(
             @NotNull ResolutionContext context,
-            @NotNull KtExpression expression,
-            @Nullable KotlinType argumentType
+            @NotNull KtExpression expression
     ) {
-        KotlinType type = (argumentType != null) ? argumentType : context.trace.getType(expression);
+        KotlinType type = context.trace.getType(expression);
         if (type != null && !type.getConstructor().isDenotable()) {
             if (type.getConstructor() instanceof IntegerValueTypeConstructor) {
                 IntegerValueTypeConstructor constructor = (IntegerValueTypeConstructor) type.getConstructor();
@@ -361,6 +360,6 @@ public class ArgumentTypeResolver {
                 return primitiveType;
             }
         }
-        return type;
+        return null;
     }
 }
