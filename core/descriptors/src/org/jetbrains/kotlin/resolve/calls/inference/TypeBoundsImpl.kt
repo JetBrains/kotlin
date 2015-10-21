@@ -147,7 +147,8 @@ public class TypeBoundsImpl(
 
         // Only type mentioned in bounds might be the result
         val typesInBoundsSet = bounds.filter { it.isProper && it.constrainingType.constructor.isDenotable }.map { it.constrainingType }.toSet()
-        if (typesInBoundsSet.contains(possibleAnswer)) return true
+        // Flexible types are equal to inflexible
+        if (typesInBoundsSet.any { KotlinTypeChecker.DEFAULT.equalTypes(it, possibleAnswer) }) return true
 
         // For non-denotable number types only, no valid types are mentioned, so common supertype is valid
         val numberLowerBounds = filterBounds(bounds, LOWER_BOUND).filter { it.constructor is IntegerValueTypeConstructor }
