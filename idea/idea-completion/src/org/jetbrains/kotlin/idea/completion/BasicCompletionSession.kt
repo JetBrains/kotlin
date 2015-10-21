@@ -35,15 +35,14 @@ import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
@@ -266,6 +265,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         KeywordValues.process(keywordValueConsumer, callTypeAndReceiver, bindingContext, resolutionFacade, moduleDescriptor, isJvmModule)
 
         val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
+        val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
         KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix, isJvmModule) { lookupElement ->
             val keyword = lookupElement.lookupString
             if (keyword in keywordsToSkip) return@complete
@@ -309,11 +309,35 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
                 "get" -> {
                     collector.addElement(lookupElement)
+
+                    if (!isUseSiteAnnotationTarget) { //TODO: use code style settings
+                        collector.addElement(createKeywordWithSuffixLookupElement(keyword, "() = ", ""))
+                        collector.addElement(createKeywordWithSuffixLookupElement(keyword, "() {", "}"))
+                    }
+                }
+
+                "set" -> {
+                    collector.addElement(lookupElement)
+
+                    if (!isUseSiteAnnotationTarget) { //TODO: use code style settings
+                        collector.addElement(createKeywordWithSuffixLookupElement(keyword, "(value) {", "}"))
+                        collector.addElement(createKeywordWithSuffixLookupElement(keyword, "(value) = ", ""))
+                    }
                 }
 
                 else -> collector.addElement(lookupElement)
             }
         }
+    }
+
+    private fun createKeywordWithSuffixLookupElement(keyword: String, textBeforeCaret: String, textAfterCaret: String): LookupElementBuilder {
+        return LookupElementBuilder.create(KeywordLookupObject(), keyword + textBeforeCaret + textAfterCaret)
+                .withPresentableText(keyword)
+                .bold()
+                .withTailText(textBeforeCaret + textAfterCaret)
+                .withInsertHandler { insertionContext, lookupElement ->
+                    insertionContext.editor.moveCaret(insertionContext.editor.caretModel.offset - textAfterCaret.length)
+                }
     }
 
     private fun completeNonImported() {

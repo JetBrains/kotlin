@@ -1,4 +1,4 @@
-package propertiesSetter
+package propertiesGetter
 
 class TestClass {
     val a : Int

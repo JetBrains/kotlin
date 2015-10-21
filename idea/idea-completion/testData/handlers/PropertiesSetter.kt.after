@@ -1,6 +1,0 @@
-package propertiesSetter
-
-class TestClass {
-    val a : Int
-        get()<caret>
-}

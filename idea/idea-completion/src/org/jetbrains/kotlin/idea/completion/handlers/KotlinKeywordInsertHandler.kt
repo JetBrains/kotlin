@@ -39,7 +39,9 @@ object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
                                         FILE_KEYWORD,
                                         CATCH_KEYWORD,
                                         FINALLY_KEYWORD,
-                                        DYNAMIC_KEYWORD).map { it.getValue() } + "companion object"
+                                        DYNAMIC_KEYWORD,
+                                        GET_KEYWORD,
+                                        SET_KEYWORD).map { it.value } + "companion object"
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val keyword = item.lookupString
