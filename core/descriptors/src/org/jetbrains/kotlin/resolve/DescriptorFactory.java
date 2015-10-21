@@ -50,17 +50,7 @@ public class DescriptorFactory {
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations
     ) {
-        return createSetter(propertyDescriptor, annotations, true, false);
-    }
-
-    @NotNull
-    public static PropertySetterDescriptorImpl createSetter(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull Annotations annotations,
-            boolean isDefault,
-            boolean isExternal
-    ) {
-        return createSetter(propertyDescriptor, annotations, isDefault, isExternal, propertyDescriptor.getVisibility());
+        return createSetter(propertyDescriptor, annotations, true, false, propertyDescriptor.getSource());
     }
 
     @NotNull
@@ -69,12 +59,24 @@ public class DescriptorFactory {
             @NotNull Annotations annotations,
             boolean isDefault,
             boolean isExternal,
-            @NotNull Visibility visibility
+            @NotNull SourceElement sourceElement
+    ) {
+        return createSetter(propertyDescriptor, annotations, isDefault, isExternal, propertyDescriptor.getVisibility(), sourceElement);
+    }
+
+    @NotNull
+    public static PropertySetterDescriptorImpl createSetter(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull Annotations annotations,
+            boolean isDefault,
+            boolean isExternal,
+            @NotNull Visibility visibility,
+            @NotNull SourceElement sourceElement
     ) {
         PropertySetterDescriptorImpl setterDescriptor =
                 new PropertySetterDescriptorImpl(propertyDescriptor, annotations, propertyDescriptor.getModality(),
                                                  visibility, !isDefault, isDefault, isExternal,
-                                                 CallableMemberDescriptor.Kind.DECLARATION, null, propertyDescriptor.getSource());
+                                                 CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement);
         setterDescriptor.initializeDefault();
         return setterDescriptor;
     }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
+import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.findUsages.JavaClassFindUsagesOptions
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions
 import com.intellij.find.findUsages.JavaVariableFindUsagesOptions
@@ -35,6 +36,8 @@ public class KotlinClassFindUsagesOptions(project: Project) : JavaClassFindUsage
 
 public interface KotlinCallableFindUsagesOptions {
     public var searchOverrides: Boolean
+
+    fun toJavaOptions(project: Project): FindUsagesOptions?
 }
 
 public class KotlinFunctionFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaMethodFindUsagesOptions(project) {
@@ -43,37 +46,36 @@ public class KotlinFunctionFindUsagesOptions(project: Project): KotlinCallableFi
         set(value: Boolean) {
             isOverridingMethods = value
         }
-}
 
-fun KotlinFunctionFindUsagesOptions.toJavaMethodOptions(project: Project): JavaMethodFindUsagesOptions {
-    val javaOptions = JavaMethodFindUsagesOptions(project)
-    javaOptions.fastTrack = fastTrack
-    javaOptions.isCheckDeepInheritance = isCheckDeepInheritance
-    javaOptions.isImplementingMethods = isImplementingMethods
-    javaOptions.isIncludeInherited = isIncludeInherited
-    javaOptions.isIncludeOverloadUsages = isIncludeOverloadUsages
-    javaOptions.isOverridingMethods = isOverridingMethods
-    javaOptions.isSearchForTextOccurrences = isSearchForTextOccurrences
-    javaOptions.isSkipImportStatements = isSkipImportStatements
-    javaOptions.isUsages = isUsages
-    javaOptions.searchScope = searchScope
-    
-    return javaOptions
-}
+    override fun toJavaOptions(project: Project): FindUsagesOptions? {
+        val javaOptions = JavaMethodFindUsagesOptions(project)
+        javaOptions.fastTrack = fastTrack
+        javaOptions.isCheckDeepInheritance = isCheckDeepInheritance
+        javaOptions.isImplementingMethods = isImplementingMethods
+        javaOptions.isIncludeInherited = isIncludeInherited
+        javaOptions.isIncludeOverloadUsages = isIncludeOverloadUsages
+        javaOptions.isOverridingMethods = isOverridingMethods
+        javaOptions.isSearchForTextOccurrences = isSearchForTextOccurrences
+        javaOptions.isSkipImportStatements = isSkipImportStatements
+        javaOptions.isUsages = isUsages
+        javaOptions.searchScope = searchScope
 
-fun KotlinPropertyFindUsagesOptions.toJavaVariableOptions(project: Project): JavaVariableFindUsagesOptions {
-    val javaOptions = JavaVariableFindUsagesOptions(project)
-    javaOptions.fastTrack = fastTrack
-    javaOptions.isSearchForTextOccurrences = isSearchForTextOccurrences
-    javaOptions.isSkipImportStatements = isSkipImportStatements
-    javaOptions.isReadAccess = isReadAccess
-    javaOptions.isWriteAccess = isWriteAccess
-    javaOptions.isUsages = isUsages
-    javaOptions.searchScope = searchScope
-    return javaOptions
+        return javaOptions
+    }
 }
 
 public class KotlinPropertyFindUsagesOptions(project: Project): KotlinCallableFindUsagesOptions, JavaVariableFindUsagesOptions(project) {
     override var searchOverrides: Boolean = false
-}
 
+    override fun toJavaOptions(project: Project): JavaVariableFindUsagesOptions {
+        val javaOptions = JavaVariableFindUsagesOptions(project)
+        javaOptions.fastTrack = fastTrack
+        javaOptions.isSearchForTextOccurrences = isSearchForTextOccurrences
+        javaOptions.isSkipImportStatements = isSkipImportStatements
+        javaOptions.isReadAccess = isReadAccess
+        javaOptions.isWriteAccess = isWriteAccess
+        javaOptions.isUsages = isUsages
+        javaOptions.searchScope = searchScope
+        return javaOptions
+    }
+}

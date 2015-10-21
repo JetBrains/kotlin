@@ -21,12 +21,15 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.SmartList
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
@@ -36,10 +39,37 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
+    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
+        return SmartList<DeclarationDescriptor>().apply {
+            // Replace Java property with its accessor(s)
+            for (descriptor in super.getTargetDescriptors(context)) {
+                val sizeBefore = size
+
+                if (descriptor !is JavaPropertyDescriptor) {
+                    add(descriptor)
+                    continue
+                }
+
+                val readWriteAccess = expression.readWriteAccess(true)
+                descriptor.getter?.let {
+                    if (readWriteAccess.isRead) add(it)
+                }
+                descriptor.setter?.let {
+                    if (readWriteAccess.isWrite) add(it)
+                }
+
+                if (size == sizeBefore) {
+                    add(descriptor)
+                }
+            }
+        }
+    }
+
     override fun isReferenceTo(element: PsiElement?): Boolean {
         if (element != null) {
             if (!canBeReferenceTo(element)) return false

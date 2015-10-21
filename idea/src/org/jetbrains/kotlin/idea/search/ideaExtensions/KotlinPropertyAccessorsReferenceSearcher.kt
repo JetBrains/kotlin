@@ -19,14 +19,12 @@ package org.jetbrains.kotlin.idea.search.ideaExtensions
 import com.intellij.openapi.application.QueryExecutorBase
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.synthetic.JavaSyntheticPropertiesScope
@@ -37,7 +35,7 @@ public class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiR
         val method = queryParameters.getMethod()
         val propertyName = propertyName(method) ?: return
 
-        val onlyKotlinFiles = restrictToKotlinSources(queryParameters.getEffectiveSearchScope())
+        val onlyKotlinFiles = queryParameters.getEffectiveSearchScope().restrictToKotlinSources()
 
         queryParameters.getOptimizer()!!.searchWord(
                 propertyName,
@@ -57,12 +55,5 @@ public class KotlinPropertyAccessorsReferenceSearcher() : QueryExecutorBase<PsiR
         val syntheticExtensionsScope = JavaSyntheticPropertiesScope(LockBasedStorageManager())
         val property = SyntheticJavaPropertyDescriptor.findByGetterOrSetter(functionDescriptor, syntheticExtensionsScope) ?: return null
         return property.getName().asString()
-    }
-
-    private fun restrictToKotlinSources(originalScope: SearchScope): SearchScope {
-        return when (originalScope) {
-            is GlobalSearchScope -> GlobalSearchScope.getScopeRestrictedByFileTypes(originalScope, KotlinFileType.INSTANCE)
-            else -> originalScope
-        }
     }
 }

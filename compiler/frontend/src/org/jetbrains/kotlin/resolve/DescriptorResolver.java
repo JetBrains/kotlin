@@ -1047,7 +1047,7 @@ public class DescriptorResolver {
         else if (property.isVar()) {
             Annotations setterAnnotations = annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER);
             setterDescriptor = DescriptorFactory.createSetter(propertyDescriptor, setterAnnotations, !property.hasDelegate(),
-                                                              /* isExternal = */ false);
+                                                              /* isExternal = */ false, propertyDescriptor.getSource());
         }
 
         if (!property.isVar()) {

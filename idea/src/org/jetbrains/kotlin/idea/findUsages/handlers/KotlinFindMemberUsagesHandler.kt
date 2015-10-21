@@ -21,13 +21,11 @@ import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.*
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
@@ -128,17 +126,14 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                                                                     scope = options.searchScope,
                                                                     kotlinOptions = createKotlinReferencesSearchOptions(options))
 
-            val query = applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))
-            if (!query.forEach(referenceProcessor)) return false
-
-            val psiMethods = when (element) {
-                is PsiMethod -> listOf(element)
-                is KtFunction -> runReadAction { LightClassUtil.getLightClassMethods(element) }
-                else -> listOf<PsiMethod>()
+            with(applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))) {
+                if (!forEach(referenceProcessor)) return false
             }
-            for (psiMethod in psiMethods) {
-                val query = applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, options.searchScope, true))
-                if (!query.forEach(referenceProcessor)) return false
+
+            for (psiMethod in runReadAction { element.toLightMethods() }) {
+                with(applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, options.searchScope, true))) {
+                    if (!forEach(referenceProcessor)) return false
+                }
             }
         }
 

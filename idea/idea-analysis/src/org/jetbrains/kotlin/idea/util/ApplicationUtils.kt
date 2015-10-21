@@ -25,6 +25,11 @@ public fun runReadAction<T>(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
 }
 
+public fun <T> Project.runReadActionInSmartMode(action: () -> T): T {
+    if (ApplicationManager.getApplication().isReadAccessAllowed) return action()
+    return DumbService.getInstance(this).runReadActionInSmartMode<T>(action)
+}
+
 public fun runWriteAction<T>(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
 }
