@@ -143,7 +143,8 @@ public class DescriptorFactory {
 
         KotlinType type = getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType());
 
-        PropertyGetterDescriptorImpl getter = createDefaultGetter(values, Annotations.Companion.getEMPTY());
+        PropertyGetterDescriptorImpl getter = createGetter(
+                values, Annotations.Companion.getEMPTY(), /* isDefault = */ false, /* isExternal = */ false);
 
         values.initialize(getter, null);
         getter.initialize(type);
