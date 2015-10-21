@@ -124,4 +124,22 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/SpaceAfterImport.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("UseSiteAnnotationTarget1.kt")
+    public void testUseSiteAnnotationTarget1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("UseSiteAnnotationTarget2.kt")
+    public void testUseSiteAnnotationTarget2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("UseSiteAnnotationTarget3.kt")
+    public void testUseSiteAnnotationTarget3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget3.kt");
+        doTest(fileName);
+    }
 }

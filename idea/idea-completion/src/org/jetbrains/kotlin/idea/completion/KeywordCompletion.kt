@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
+import org.jetbrains.kotlin.idea.completion.handlers.UseSiteAnnotationTargetInsertHandler
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -83,12 +85,16 @@ object KeywordCompletion {
 
             if (!parserFilter(keywordToken)) continue
 
+            val insertHandler = if (position.prevLeaf()?.node?.elementType == KtTokens.AT)
+                UseSiteAnnotationTargetInsertHandler
+            else if (keywordToken !in FUNCTION_KEYWORDS)
+                KotlinKeywordInsertHandler
+            else
+                KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false)
+
             val element = LookupElementBuilder.create(KeywordLookupObject(), keyword)
                     .bold()
-                    .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
-                                           KotlinKeywordInsertHandler
-                                       else
-                                           KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false))
+                    .withInsertHandler(insertHandler)
             consumer(element)
         }
     }
