@@ -4,7 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.os.Bundle
 import java.io.File
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 open class Fragment {
     open fun getActivity(): Activity = throw Exception("Function getActivity() is not overridden")

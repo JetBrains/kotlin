@@ -3,8 +3,8 @@ package com.myapp
 import android.app.Activity
 import android.view.View
 import android.widget.*
-import kotlinx.android.synthetic.layout.*
-import kotlinx.android.synthetic.layout1.*
+import kotlinx.android.synthetic.main.layout.*
+import kotlinx.android.synthetic.main.layout1.*
 
 class R {
     class id {

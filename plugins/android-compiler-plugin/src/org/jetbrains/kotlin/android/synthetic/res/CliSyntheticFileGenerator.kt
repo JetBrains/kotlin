@@ -20,17 +20,17 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiFile
-import java.io.ByteArrayInputStream
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
 import org.jetbrains.kotlin.psi.KtFile
+import java.io.ByteArrayInputStream
 
 public open class CliSyntheticFileGenerator(
         project: Project,
         private val manifestPath: String,
-        private val resDirectories: List<String>
+        private val variants: List<AndroidVariant>
 ) : SyntheticFileGenerator(project) {
 
     private val cachedJetFiles by lazy {
@@ -40,7 +40,7 @@ public open class CliSyntheticFileGenerator(
     }
 
     override val layoutXmlFileManager: CliAndroidLayoutXmlFileManager by lazy {
-        CliAndroidLayoutXmlFileManager(project, manifestPath, resDirectories)
+        CliAndroidLayoutXmlFileManager(project, manifestPath, variants)
     }
 
     public override fun getSyntheticFiles(): List<KtFile> = cachedJetFiles

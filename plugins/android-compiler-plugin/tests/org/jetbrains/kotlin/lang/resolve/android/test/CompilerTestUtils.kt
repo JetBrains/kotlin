@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponen
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFile
+import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -52,7 +53,7 @@ class CliSyntheticFileGeneratorForConversionTest(
         manifestPath: String,
         resDirectories: List<String>,
         private val supportV4: Boolean
-) : CliSyntheticFileGenerator(project, manifestPath, resDirectories) {
+) : CliSyntheticFileGenerator(project, manifestPath, listOf(AndroidVariant.createMainVariant(resDirectories))) {
 
     fun gen() = generateSyntheticFiles(false, supportV4)
 
@@ -67,8 +68,8 @@ fun UsefulTestCase.createAndroidTestEnvironment(
         manifestPath: String,
         supportV4: Boolean
 ): KotlinCoreEnvironment {
-    configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPaths)
-    configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
+    configuration.put(AndroidConfigurationKeys.VARIANT, resPaths)
+    configuration.put(AndroidConfigurationKeys.PACKAGE, manifestPath)
 
     val myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val project = myEnvironment.project

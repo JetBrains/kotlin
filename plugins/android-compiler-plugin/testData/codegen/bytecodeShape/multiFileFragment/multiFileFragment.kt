@@ -2,8 +2,8 @@ package com.myapp
 
 import android.app.Activity
 import android.app.Fragment
-import kotlinx.android.synthetic.layout.*
-import kotlinx.android.synthetic.layout1.*
+import kotlinx.android.synthetic.main.layout.*
+import kotlinx.android.synthetic.main.layout1.*
 
 class MyActivity: Activity() {
     val button = this.login

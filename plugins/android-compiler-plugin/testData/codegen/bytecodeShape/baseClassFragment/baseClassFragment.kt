@@ -1,7 +1,7 @@
 package com.myapp
 
 import android.app.Fragment
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 fun Fragment.a() {
     val x = login

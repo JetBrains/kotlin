@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenEx
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
 import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
-import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
-import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
+import org.jetbrains.kotlin.android.synthetic.res.*
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CliOption
@@ -47,30 +44,30 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public object AndroidConfigurationKeys {
-    public val ANDROID_RES_PATH: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create<List<String>>("android resources search path")
-    public val ANDROID_MANIFEST: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("android manifest file")
+    public val VARIANT: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create<List<String>>("Android build variant")
+    public val PACKAGE: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("application package fq name")
 }
 
 public class AndroidCommandLineProcessor : CommandLineProcessor {
     companion object {
         public val ANDROID_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.android"
 
-        public val RESOURCE_PATH_OPTION: CliOption = CliOption("androidRes", "<path>", "Android resources path", allowMultipleOccurrences = true)
-        public val MANIFEST_FILE_OPTION: CliOption = CliOption("androidManifest", "<path>", "Android manifest file")
+        public val VARIANT_OPTION: CliOption = CliOption("variant", "<name;path>", "Android build variant", allowMultipleOccurrences = true)
+        public val PACKAGE_OPTION: CliOption = CliOption("package", "<fq name>", "Application package")
     }
 
     override val pluginId: String = ANDROID_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<CliOption> = listOf(RESOURCE_PATH_OPTION, MANIFEST_FILE_OPTION)
+    override val pluginOptions: Collection<CliOption> = listOf(VARIANT_OPTION, PACKAGE_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
-            RESOURCE_PATH_OPTION -> {
-                val paths = configuration.getList(AndroidConfigurationKeys.ANDROID_RES_PATH).toArrayList()
+            VARIANT_OPTION -> {
+                val paths = configuration.getList(AndroidConfigurationKeys.VARIANT).toArrayList()
                 paths.add(value)
-                configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, paths)
+                configuration.put(AndroidConfigurationKeys.VARIANT, paths)
             }
-            MANIFEST_FILE_OPTION -> configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, value)
+            PACKAGE_OPTION -> configuration.put(AndroidConfigurationKeys.PACKAGE, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -86,14 +83,16 @@ public class CliAndroidDeclarationsProvider(private val project: Project) : Exte
 public class AndroidComponentRegistrar : ComponentRegistrar {
 
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val androidResPath = configuration.get(AndroidConfigurationKeys.ANDROID_RES_PATH)
-        val androidManifest = configuration.get(AndroidConfigurationKeys.ANDROID_MANIFEST)
+        val applicationPackage = configuration.get(AndroidConfigurationKeys.PACKAGE)
+        val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.map { parseVariant(it) }?.filterNotNull() ?: emptyList()
 
-        if (androidResPath != null && androidManifest != null) {
-            val xmlProcessor = CliSyntheticFileGenerator(project, androidManifest, androidResPath)
+        if (variants.isNotEmpty() && !applicationPackage.isNullOrBlank()) {
+            val xmlProcessor = CliSyntheticFileGenerator(project, applicationPackage!!, variants)
 
             project.registerService(SyntheticFileGenerator::class.java, xmlProcessor)
-            project.registerService(AndroidLayoutXmlFileManager::class.java, CliAndroidLayoutXmlFileManager(project, androidManifest, androidResPath))
+
+            val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage, variants)
+            project.registerService(AndroidLayoutXmlFileManager::class.java, layoutXmlFileManager)
 
             ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
             ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
@@ -101,6 +100,12 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
             Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesAndroid())
             ClassBuilderInterceptorExtension.registerExtension(project, AndroidOnDestroyClassBuilderInterceptorExtension())
         }
+    }
+
+    private fun parseVariant(s: String): AndroidVariant? {
+        val parts = s.split(';')
+        if (parts.size < 2) return null
+        return AndroidVariant(parts[0], parts.drop(0))
     }
 }
 

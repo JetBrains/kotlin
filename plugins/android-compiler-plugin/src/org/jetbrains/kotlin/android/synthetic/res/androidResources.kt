@@ -18,13 +18,19 @@ package org.jetbrains.kotlin.android.synthetic.res
 
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 
-public class AndroidModuleInfo(val applicationPackage: String, resDirectories: List<String>) {
+class AndroidVariant(val name: String, val resDirectories: List<String>) {
+    val packageName: String = name
+    val isMainVariant: Boolean
+        get() = name == "main"
 
-    override fun equals(other: Any?) = other is AndroidModuleInfo && applicationPackage == other.applicationPackage
+    companion object {
+        fun createMainVariant(resDirectories: List<String>) = AndroidVariant("main", resDirectories)
+    }
+}
 
+public class AndroidModule(val applicationPackage: String, val variants: List<AndroidVariant>) {
+    override fun equals(other: Any?) = other is AndroidModule && applicationPackage == other.applicationPackage
     override fun hashCode() = applicationPackage.hashCode()
-
-    val resDirectories = resDirectories.sorted()
 }
 
 public abstract class AndroidResource(val id: String) {

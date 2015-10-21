@@ -27,15 +27,25 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.psi.KtProperty
 import java.util.*
 
-public abstract class AndroidLayoutXmlFileManager(val project: Project) {
+class AndroidVariantData(val variant: AndroidVariant, private val layouts: Map<String, List<PsiFile>>): Map<String, List<PsiFile>> by layouts
+class AndroidModuleData(val module: AndroidModule, private val variants: List<AndroidVariantData>): Iterable<AndroidVariantData> by variants {
+    companion object {
+        val EMPTY = AndroidModuleData(AndroidModule("android", listOf()), listOf())
+    }
+}
 
-    public abstract val androidModuleInfo: AndroidModuleInfo?
+abstract class AndroidLayoutXmlFileManager(val project: Project) {
+
+    public abstract val androidModule: AndroidModule?
 
     public open fun propertyToXmlAttributes(property: KtProperty): List<PsiElement> = listOf()
 
-    public fun getLayoutXmlFiles(): Map<String, List<PsiFile>> {
-        val info = androidModuleInfo ?: return mapOf()
+    public fun getLayoutXmlFiles(): AndroidModuleData {
+        val androidModule = androidModule ?: return AndroidModuleData.EMPTY
+        return AndroidModuleData(androidModule, androidModule.variants.map { getVariantData(it) })
+    }
 
+    public fun getVariantData(variant: AndroidVariant): AndroidVariantData {
         val psiManager = PsiManager.getInstance(project)
         val fileManager = VirtualFileManager.getInstance()
 
@@ -53,11 +63,11 @@ public abstract class AndroidLayoutXmlFileManager(val project: Project) {
             return allChildren
         }
 
-        val resDirectories = info.resDirectories.map { fileManager.findFileByUrl("file://$it") }
+        val resDirectories = variant.resDirectories.map { fileManager.findFileByUrl("file://$it") }
         val allChildren = resDirectories.flatMap { it?.getAllChildren() ?: listOf() }
 
         val allLayoutFiles = allChildren.filter { it.parent.name.startsWith("layout") && it.name.toLowerCase().endsWith(".xml") }
-        val allLayoutPsiFiles = allLayoutFiles.fold(ArrayList<PsiFile>(allLayoutFiles.size())) { list, file ->
+        val allLayoutPsiFiles = allLayoutFiles.fold(ArrayList<PsiFile>(allLayoutFiles.size)) { list, file ->
             val psiFile = psiManager.findFile(file)
             if (psiFile != null && psiFile.parent != null) {
                 list += psiFile
@@ -67,9 +77,9 @@ public abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
         val layoutNameToXmlFiles = allLayoutPsiFiles
                 .groupBy { it.name.substringBeforeLast('.') }
-                .mapValues { it.getValue().sortedBy { it.parent!!.name.length() } }
+                .mapValues { it.value.sortedBy { it.parent!!.name.length } }
 
-        return layoutNameToXmlFiles
+        return AndroidVariantData(variant, layoutNameToXmlFiles)
     }
 
     companion object {

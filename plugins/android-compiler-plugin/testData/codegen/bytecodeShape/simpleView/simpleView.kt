@@ -2,7 +2,7 @@ package com.myapp
 
 import android.view.View
 import android.app.Activity
-import kotlinx.android.synthetic.layout.view.*
+import kotlinx.android.synthetic.main.layout.view.*
 
 public class MyActivity : Activity() {
     init { View(this).login }

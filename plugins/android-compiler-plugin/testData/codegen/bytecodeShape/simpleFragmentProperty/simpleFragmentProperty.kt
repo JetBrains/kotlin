@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.Fragment
 import android.os.Bundle
 import java.io.File
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 public class MyActivity : Activity() {
     init { fragm }

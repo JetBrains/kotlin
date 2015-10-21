@@ -47,16 +47,18 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
     protected open fun generateSyntheticFiles(generateCommonFiles: Boolean, supportV4: Boolean): List<AndroidSyntheticFile> {
         val commonFiles = if (generateCommonFiles) generateCommonFiles(supportV4) else listOf()
 
-        return layoutXmlFileManager.getLayoutXmlFiles().flatMap { entry ->
-            val files = entry.getValue()
-            val resources = extractLayoutResources(files)
+        return layoutXmlFileManager.getLayoutXmlFiles().flatMap { variantData ->
+            variantData.flatMap { entry ->
+                val files = entry.value
+                val resources = extractLayoutResources(files)
 
-            val layoutName = entry.getKey()
+                val layoutName = entry.key
 
-            val mainLayoutFile = renderMainLayoutFile(layoutName, resources, supportV4)
-            val viewLayoutFile = renderViewLayoutFile(layoutName, resources)
-
-            listOf(mainLayoutFile, viewLayoutFile)
+                arrayListOf<AndroidSyntheticFile>().apply {
+                    this += renderMainLayoutFiles(variantData.variant, layoutName, resources, supportV4)
+                    this += renderViewLayoutFiles(variantData.variant, layoutName, resources)
+                }
+            }
         }.filterNotNull() + commonFiles
     }
 
@@ -79,34 +81,59 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     protected abstract fun checkIfClassExist(fqName: String): Boolean
 
-    private fun renderMainLayoutFile(layoutName: String, resources: List<AndroidResource>, supportV4: Boolean): AndroidSyntheticFile {
-        return renderLayoutFile(layoutName + AndroidConst.LAYOUT_POSTFIX, escapeAndroidIdentifier(layoutName), resources) {
+    private fun renderMainLayoutFiles(
+            variant: AndroidVariant,
+            layoutName: String,
+            resources: List<AndroidResource>,
+            supportV4: Boolean
+    ): List<AndroidSyntheticFile> {
+        return renderLayoutFile(variant, layoutName + AndroidConst.LAYOUT_POSTFIX, escapeAndroidIdentifier(layoutName), resources) {
             val properties = it.mainProperties.toArrayList()
             if (supportV4) properties.addAll(it.mainPropertiesForSupportV4)
             properties
         }
     }
 
-    private fun renderViewLayoutFile(layoutName: String, resources: List<AndroidResource>): AndroidSyntheticFile {
-        return renderLayoutFile(layoutName + AndroidConst.VIEW_LAYOUT_POSTFIX,
+    private fun renderViewLayoutFiles(
+            variant: AndroidVariant,
+            layoutName: String,
+            resources: List<AndroidResource>
+    ): List<AndroidSyntheticFile> {
+        return renderLayoutFile(variant, layoutName + AndroidConst.VIEW_LAYOUT_POSTFIX,
                                 escapeAndroidIdentifier(layoutName) + ".view", resources) { it.viewProperties }
     }
 
     private fun renderLayoutFile(
+            variant: AndroidVariant,
             filename: String,
-            packageSegment: String,
+            layoutName: String,
             resources: List<AndroidResource>,
-            properties: (AndroidResource) -> List<Pair<String, String>>): AndroidSyntheticFile {
-        return renderSyntheticFile(filename) {
-            writePackage(AndroidConst.SYNTHETIC_PACKAGE + "." + packageSegment)
-            writeAndroidImports()
+            properties: (AndroidResource) -> List<Pair<String, String>>): List<AndroidSyntheticFile> {
+        fun render(defaultVariant: Boolean = false): AndroidSyntheticFile {
+            val fullFilename = (if (defaultVariant) "" else "${variant.name}_") + filename
+            return renderSyntheticFile(fullFilename) {
+                val packageName = if (defaultVariant)
+                    AndroidConst.SYNTHETIC_PACKAGE + "." + layoutName
+                else
+                    AndroidConst.SYNTHETIC_PACKAGE + '.' + variant.name + '.' + layoutName
 
-            for (res in resources) {
-                properties(res).forEach { property ->
-                    writeSyntheticProperty(property.first, res, property.second)
+                writePackage(packageName)
+                writeAndroidImports()
+
+                for (res in resources) {
+                    properties(res).forEach { property ->
+                        if (defaultVariant) {
+                            val deprecatedText = "Use the property from the 'main' variant instead"
+                            val import = AndroidConst.SYNTHETIC_PACKAGE + '.' + variant.name + '.' + layoutName + '.' + res.id
+                            writeText("@Deprecated(\"$deprecatedText\", ReplaceWith(\"${res.id}\", \"$import\"))")
+                        }
+                        writeSyntheticProperty(property.first, res, property.second)
+                    }
                 }
             }
         }
+
+        return if (variant.isMainVariant) listOf(render(), render(true)) else listOf(render())
     }
 
     private fun renderSyntheticFile(filename: String, init: KotlinStringWriter.() -> Unit): AndroidSyntheticFile {
@@ -199,7 +226,7 @@ public abstract class SyntheticFileGenerator(protected val project: Project) {
 
     protected fun generateSyntheticJetFiles(files: List<AndroidSyntheticFile>): List<KtFile> {
         val psiManager = PsiManager.getInstance(project)
-        val applicationPackage = layoutXmlFileManager.androidModuleInfo?.applicationPackage
+        val applicationPackage = layoutXmlFileManager.androidModule?.applicationPackage
 
         return files.mapIndexed { index, syntheticFile ->
             val fileName = AndroidConst.SYNTHETIC_FILENAME_PREFIX + syntheticFile.name + ".kt"

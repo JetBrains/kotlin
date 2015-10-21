@@ -6,7 +6,7 @@ import android.content.Context
 import android.view.View
 import android.widget.*
 import org.my.cool.MyButton
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 class R {
     class id {

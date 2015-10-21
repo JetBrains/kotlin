@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.fail
 
 public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
 
@@ -39,13 +37,21 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         val parser = CliSyntheticFileGeneratorForConversionTest(
                 jetCoreEnvironment.project, File(testDirectory.parentFile, "AndroidManifest.xml").path, layoutPaths, supportV4)
 
-        val actual = parser.gen().toMap { it.name }
+        val actual = parser.gen().toMapBy { it.name }
 
         val expectedLayoutFiles = testDirectory
                 .listFiles { it.isFile && it.name.endsWith(".kt") }
-                ?.toMap { it.name.substringBefore(".kt") } ?: mapOf()
+                ?.toMapBy { it.name.substringBefore(".kt") } ?: mapOf()
 
-        assertEquals(expectedLayoutFiles.size(), actual.size())
+        if (expectedLayoutFiles.size == 0 && actual.size > 0) {
+            for (file in actual) {
+                val syntheticFile = file.value
+                File(testDirectory, syntheticFile.name + ".kt").writeText(syntheticFile.contents)
+            }
+            fail("No expected synthetic .kt files found, generated from actual")
+        }
+
+        assertEquals(expectedLayoutFiles.size, actual.size)
 
         for ((name, file) in expectedLayoutFiles) {
             val actualContents = actual[name]
