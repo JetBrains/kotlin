@@ -1,5 +1,6 @@
 @<caret>[]
 
+// EXIST: file
 // EXIST: class
 // EXIST: fun
 // EXIST: interface

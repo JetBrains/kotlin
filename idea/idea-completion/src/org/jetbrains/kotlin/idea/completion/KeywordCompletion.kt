@@ -49,7 +49,7 @@ object KeywordCompletion {
             .map { it as KtKeywordToken }
 
     private val DEFAULT_DUMMY_POSTFIX = " X"
-    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(FILE_KEYWORD to ":")
+    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(FILE_KEYWORD to ":X")
 
     private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
