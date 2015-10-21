@@ -293,14 +293,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable KtSuperExpression superCallExpression) {
-        return getAccessor(descriptor, false, null, superCallExpression);
+        return getAccessor(descriptor, FieldAccessorKind.NORMAL, null, superCallExpression);
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
     public <D extends CallableMemberDescriptor> D getAccessor(
             @NotNull D possiblySubstitutedDescriptor,
-            boolean isForBackingFieldInOuterClass,
+            @NotNull FieldAccessorKind accessorKind,
             @Nullable KotlinType delegateType,
             @Nullable KtSuperExpression superCallExpression
     ) {
@@ -315,11 +315,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
         AccessorForCallableDescriptor<?> accessor = accessors.get(key);
         if (accessor != null) {
-            assert !isForBackingFieldInOuterClass ||
-                   accessor instanceof AccessorForPropertyBackingFieldInOuterClass : "There is already exists accessor with isForBackingFieldInOuterClass = false in this context";
+            assert accessorKind == FieldAccessorKind.NORMAL ||
+                   accessor instanceof AccessorForPropertyBackingField : "There is already exists accessor with isForBackingField = false in this context";
             return (D) accessor;
         }
-        String nameSuffix = SyntheticAccessorUtilKt.getAccessorNameSuffix(descriptor, key.superCallLabelTarget, isForBackingFieldInOuterClass);
+        String nameSuffix = SyntheticAccessorUtilKt.getAccessorNameSuffix(descriptor, key.superCallLabelTarget, accessorKind);
         if (descriptor instanceof SimpleFunctionDescriptor) {
             accessor = new AccessorForFunctionDescriptor(
                     (FunctionDescriptor) descriptor, contextDescriptor, superCallExpression, nameSuffix
@@ -329,13 +329,18 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             accessor = new AccessorForConstructorDescriptor((ConstructorDescriptor) descriptor, contextDescriptor, superCallExpression);
         }
         else if (descriptor instanceof PropertyDescriptor) {
-            if (isForBackingFieldInOuterClass) {
-                accessor = new AccessorForPropertyBackingFieldInOuterClass((PropertyDescriptor) descriptor, contextDescriptor,
-                                                                           delegateType, nameSuffix);
-            }
-            else {
-                accessor = new AccessorForPropertyDescriptor((PropertyDescriptor) descriptor, contextDescriptor,
-                                                             superCallExpression, nameSuffix);
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+            switch (accessorKind) {
+                case NORMAL:
+                    accessor = new AccessorForPropertyDescriptor(propertyDescriptor, contextDescriptor, superCallExpression, nameSuffix);
+                    break;
+                case IN_CLASS_COMPANION:
+                    accessor = new AccessorForPropertyBackingFieldInClassCompanion(propertyDescriptor, contextDescriptor,
+                                                                                   delegateType, nameSuffix);
+                    break;
+                case FIELD_FROM_LOCAL:
+                    accessor = new AccessorForPropertyBackingFieldFromLocal(propertyDescriptor, contextDescriptor, nameSuffix);
+                    break;
             }
         }
         else {

@@ -9,6 +9,12 @@ class A {
     fun `access$getFoo$cp`(): Int = 1
     fun `access$setFoo$cp`(d: Int) {}
 
+    val bar = 0
+        get() = { field }()
+
+    //synthetic field convention accessor
+    fun `access$getBar$lp`(a: A): Int = 7
+
     companion object {
         private var foo = 1;
 
@@ -26,7 +32,7 @@ class A {
     fun test() {
         {
             foo = 2;
-            foo
+            foo + bar
         }()
     }
 }

@@ -389,7 +389,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         KtExpression initializer = property.getDelegateExpressionOrInitializer();
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, true, StackValue.LOCAL_0);
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, false, null, true, StackValue.LOCAL_0);
 
         propValue.store(codegen.gen(initializer), codegen.v);
     }
@@ -613,10 +613,11 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
-                                         !isCompanionObject(accessor.getContainingDeclaration());
+                    boolean syntheticBackingField = accessor instanceof AccessorForPropertyBackingFieldFromLocal;
+                    boolean forceField = (AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
+                                         !isCompanionObject(accessor.getContainingDeclaration())) || syntheticBackingField;
                     StackValue property = codegen.intermediateValueForProperty(
-                            original, forceField, accessor.getSuperCallExpression(), true, StackValue.none()
+                            original, forceField, syntheticBackingField, accessor.getSuperCallExpression(), true, StackValue.none()
                     );
 
                     InstructionAdapter iv = codegen.v;

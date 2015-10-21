@@ -18,14 +18,23 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
 
-fun getAccessorNameSuffix(descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?, isForBackingFieldInOuterClass: Boolean): String {
+enum class FieldAccessorKind(val suffix: String) {
+    NORMAL("p"),
+    IN_CLASS_COMPANION("cp"),
+    FIELD_FROM_LOCAL("lp");
+
+    override fun toString() = suffix
+}
+
+fun getAccessorNameSuffix(descriptor: CallableMemberDescriptor, superCallDescriptor: ClassDescriptor?,
+                          accessorKind: FieldAccessorKind): String {
     val suffix = when (descriptor) {
         is ConstructorDescriptor ->
             return "will be ignored"
         is SimpleFunctionDescriptor ->
             descriptor.name.asString()
         is PropertyDescriptor ->
-            descriptor.name.asString() + "$" + (if (isForBackingFieldInOuterClass) "cp" else "p")
+            descriptor.name.asString() + "$" + accessorKind
         else ->
             throw UnsupportedOperationException("Do not know how to create accessor for descriptor " + descriptor)
     }

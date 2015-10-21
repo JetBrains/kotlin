@@ -2016,7 +2016,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
 
-            return intermediateValueForProperty(propertyDescriptor, directToField, superExpression, receiver);
+            return intermediateValueForProperty(propertyDescriptor, directToField, directToField, superExpression, false, receiver);
         }
 
         if (descriptor instanceof ClassDescriptor) {
@@ -2140,12 +2140,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @Nullable KtSuperExpression superExpression,
             @NotNull StackValue receiver
     ) {
-        return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, false, receiver);
+        return intermediateValueForProperty(propertyDescriptor, forceField, false, superExpression, false, receiver);
+    }
+
+    private CodegenContext getBackingFieldContext(
+            @NotNull FieldAccessorKind accessorKind,
+            @NotNull DeclarationDescriptor containingDeclaration
+    ) {
+        switch (accessorKind) {
+            case NORMAL: return context.getParentContext();
+            // For companion object property, backing field lives in object containing class
+            // Otherwise, it lives in its containing declaration
+            case IN_CLASS_COMPANION: return context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
+            case FIELD_FROM_LOCAL: return context.findParentContextWithDescriptor(containingDeclaration);
+            default: throw new IllegalStateException();
+        }
     }
 
     public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
+            boolean syntheticBackingField,
             @Nullable KtSuperExpression superExpression,
             boolean skipAccessorsForPrivateFieldInOuterClass,
             StackValue receiver
@@ -2156,7 +2171,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
-        boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        FieldAccessorKind fieldAccessorKind = FieldAccessorKind.NORMAL;
+        boolean isBackingFieldInClassCompanion = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        if (isBackingFieldInClassCompanion && forceField) {
+            fieldAccessorKind = FieldAccessorKind.IN_CLASS_COMPANION;
+        }
+        else if (syntheticBackingField && context.getParentContext().getContextDescriptor() != containingDeclaration) {
+            fieldAccessorKind = FieldAccessorKind.FIELD_FROM_LOCAL;
+        }
         boolean isStaticBackingField = DescriptorUtils.isStaticDeclaration(propertyDescriptor) ||
                                        AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor);
         boolean isSuper = superExpression != null;
@@ -2168,28 +2190,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         CallableMethod callableGetter = null;
         CallableMethod callableSetter = null;
 
-        CodegenContext backingFieldContext;
-        boolean changeOwnerOnTypeMapping;
+        CodegenContext backingFieldContext = getBackingFieldContext(fieldAccessorKind, containingDeclaration);
+        DeclarationDescriptor ownerDescriptor = containingDeclaration;
         boolean skipPropertyAccessors;
 
-        if (isBackingFieldInAnotherClass && forceField) {
-            backingFieldContext = context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
+        if (fieldAccessorKind != FieldAccessorKind.NORMAL) {
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || skipAccessorsForPrivateFieldInOuterClass;
             if (!skipPropertyAccessors) {
                 //noinspection ConstantConditions
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(
-                        propertyDescriptor, true, delegateType, superExpression
+                        propertyDescriptor, fieldAccessorKind, delegateType, superExpression
                 );
-                changeOwnerOnTypeMapping = !(propertyDescriptor instanceof AccessorForPropertyBackingFieldInOuterClass);
-            }
-            else {
-                changeOwnerOnTypeMapping = true;
+                assert propertyDescriptor instanceof AccessorForPropertyBackingField :
+                        "Unexpected accessor descriptor: " + propertyDescriptor;
+                ownerDescriptor = propertyDescriptor;
             }
         }
         else {
-            backingFieldContext = context.getParentContext();
-            changeOwnerOnTypeMapping = isBackingFieldInAnotherClass;
+            if (!isBackingFieldInClassCompanion) {
+                ownerDescriptor = propertyDescriptor;
+            }
             skipPropertyAccessors = forceField;
         }
 
@@ -2226,8 +2247,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
         }
 
-        Type backingFieldOwner =
-                typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor);
+        Type backingFieldOwner = typeMapper.mapOwner(ownerDescriptor);
 
         String fieldName;
         if (isExtensionProperty && !isDelegatedProperty) {
