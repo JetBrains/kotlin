@@ -32,9 +32,20 @@ class MathTest {
         assertEquals(BigDecimal("-2"), -a)
         assertEquals(BigDecimal("-2"), -a % b)
     }
+
+
+    @test fun testToBigInteger() {
+        expect(1.0f.toBigInteger()) { BigInteger.ONE }
+        expect(1.0.toBigInteger()) { BigInteger.ONE }
+        expect(1.toBigInteger()) { BigInteger.ONE }
+        expect(1L.toBigInteger()) { BigInteger.ONE }
+        expect(1.toShort().toBigInteger()) { BigInteger.ONE }
+        expect(1.toByte().toBigInteger()) { BigInteger.ONE }
+    }
 }
 
 fun main(args: Array<String>) {
     MathTest().testBigInteger()
     MathTest().testBigDecimal()
+    MathTest().testToBigInteger()
 }
