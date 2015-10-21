@@ -23,11 +23,11 @@ import java.util.HashMap
 class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) : DefaultHandler() {
 
     override fun startDocument() {
-        super<DefaultHandler>.startDocument()
+        super.startDocument()
     }
 
     override fun endDocument() {
-        super<DefaultHandler>.endDocument()
+        super.endDocument()
     }
 
     override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
@@ -47,7 +47,7 @@ class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) :
 
 public fun Attributes.toMap(): HashMap<String, String> {
     val res = HashMap<String, String>()
-    for (index in 0..getLength() - 1) {
+    for (index in 0..length - 1) {
         val attrName = getLocalName(index)!!
         val attrVal = getValue(index)!!
         res[attrName] = attrVal

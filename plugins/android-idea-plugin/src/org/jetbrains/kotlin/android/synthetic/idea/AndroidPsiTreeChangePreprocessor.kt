@@ -75,7 +75,7 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
             val module = projectFileIndex.getModuleForFile(xmlFile.virtualFile)
 
             if (module != null) {
-                val resourceManager = AndroidLayoutXmlFileManager.getInstance(module)
+                val resourceManager = AndroidLayoutXmlFileManager.getInstance(module) ?: return false
                 val resDirectories = resourceManager.getModuleResDirectories()
                 val baseDirectory = xmlFile.parent?.parent?.virtualFile
 

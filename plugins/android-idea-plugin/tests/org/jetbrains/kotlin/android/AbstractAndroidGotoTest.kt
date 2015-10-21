@@ -31,9 +31,9 @@ public abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
         val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");
         f.configureFromExistingVirtualFile(virtualFile)
 
-        val resolved = GotoDeclarationAction.findTargetElement(f.getProject(), f.getEditor(), f.getCaretOffset())
-        if (f.getElementAtCaret() !is KtProperty) kotlin.test.fail("element at caret must be a property, not a ${f.getElementAtCaret().javaClass}")
-        kotlin.test.assertEquals("\"@+id/${(f.getElementAtCaret() as KtProperty).getName()}\"", resolved?.getText())
+        val resolved = GotoDeclarationAction.findTargetElement(f.project, f.editor, f.caretOffset)
+        if (f.elementAtCaret !is KtProperty) kotlin.test.fail("element at caret must be a property, not a ${f.elementAtCaret.javaClass}")
+        kotlin.test.assertEquals("\"@+id/${(f.elementAtCaret as KtProperty).name}\"", resolved?.text)
 
     }
 }

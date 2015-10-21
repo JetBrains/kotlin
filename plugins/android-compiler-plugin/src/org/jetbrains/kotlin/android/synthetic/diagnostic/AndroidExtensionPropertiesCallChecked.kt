@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.android.synthetic.diagnostic
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
-import org.jetbrains.kotlin.android.synthetic.CliAndroidDeclarationsProvider
 import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid.*
-import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 
 public class AndroidExtensionPropertiesCallChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {

@@ -31,7 +31,7 @@ public class IDEAndroidExternalDeclarationsProvider(private val project: Project
         if (moduleInfo !is ModuleSourceInfo) return listOf()
 
         val module = moduleInfo.module
-        val parser = ModuleServiceManager.getService(module, javaClass<SyntheticFileGenerator>()) as? IDESyntheticFileGenerator
+        val parser = ModuleServiceManager.getService(module, SyntheticFileGenerator::class.java) as? IDESyntheticFileGenerator
         val syntheticFiles = parser?.getSyntheticFiles()
         syntheticFiles?.forEach { it.moduleInfo = moduleInfo }
 

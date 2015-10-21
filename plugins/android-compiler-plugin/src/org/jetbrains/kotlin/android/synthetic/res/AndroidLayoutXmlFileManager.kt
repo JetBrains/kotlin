@@ -65,17 +65,17 @@ public abstract class AndroidLayoutXmlFileManager(val project: Project) {
             list
         }
 
-        val layoutNameToXmls = allLayoutPsiFiles
+        val layoutNameToXmlFiles = allLayoutPsiFiles
                 .groupBy { it.name.substringBeforeLast('.') }
                 .mapValues { it.getValue().sortedBy { it.parent!!.name.length() } }
 
-        return layoutNameToXmls
+        return layoutNameToXmlFiles
     }
 
     companion object {
-        public fun getInstance(module: Module): AndroidLayoutXmlFileManager {
-            val service = ModuleServiceManager.getService(module, javaClass<AndroidLayoutXmlFileManager>())
-            return service ?: module.getComponent(javaClass<AndroidLayoutXmlFileManager>())!!
+        public fun getInstance(module: Module): AndroidLayoutXmlFileManager? {
+            val service = ModuleServiceManager.getService(module, AndroidLayoutXmlFileManager::class.java)
+            return service ?: module.getComponent(AndroidLayoutXmlFileManager::class.java)
         }
     }
 

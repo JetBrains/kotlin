@@ -85,7 +85,7 @@ public open class CliSyntheticFileGenerator(
     }
 
     private companion object {
-        private val LOG: Logger = Logger.getInstance(javaClass)
+        private val LOG: Logger = Logger.getInstance(CliSyntheticFileGenerator::class.java)
     }
 }
 

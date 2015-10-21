@@ -33,16 +33,16 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
 
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
-        if (sourceElement is LeafPsiElement && sourceElement.getParent() is KtSimpleNameExpression) {
-            val resolved = KtSimpleNameReference(sourceElement.getParent() as KtSimpleNameExpression).resolve()
+        if (sourceElement is LeafPsiElement && sourceElement.parent is KtSimpleNameExpression) {
+            val resolved = KtSimpleNameReference(sourceElement.parent as KtSimpleNameExpression).resolve()
             val property = resolved as? KtProperty ?: return null
 
             val moduleInfo = sourceElement.getModuleInfo()
             if (moduleInfo !is ModuleSourceInfo) return null
 
-            val parser = ModuleServiceManager.getService(moduleInfo.module, javaClass<SyntheticFileGenerator>())!!
+            val parser = ModuleServiceManager.getService(moduleInfo.module, SyntheticFileGenerator::class.java)!!
             val psiElements = parser.layoutXmlFileManager.propertyToXmlAttributes(property)
-            val valueElements = psiElements.map { (it as? XmlAttribute)?.getValueElement() as? PsiElement }.filterNotNull()
+            val valueElements = psiElements.map { (it as? XmlAttribute)?.valueElement as? PsiElement }.filterNotNull()
             if (valueElements.isNotEmpty()) return valueElements.toTypedArray()
         }
         return null

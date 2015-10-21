@@ -41,7 +41,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
-        val layoutPaths = File(path).listFiles { it.name.startsWith("layout") && it.isDirectory() }!!.map { "$path${it.name}/" }
+        val layoutPaths = File(path).listFiles { it.name.startsWith("layout") && it.isDirectory }!!.map { "$path${it.name}/" }
         val manifestPath = path + "AndroidManifest.xml"
         val supportV4 = File(path).name.startsWith("support")
         myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths, manifestPath, supportV4)
@@ -83,7 +83,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
                         if (additionalFiles != null) files.add(relativePath(file))
                     }
                     else -> {
-                        if (file.getName().endsWith(".kt")) files.add(relativePath(file))
+                        if (file.name.endsWith(".kt")) files.add(relativePath(file))
                     }
                 }
                 return true

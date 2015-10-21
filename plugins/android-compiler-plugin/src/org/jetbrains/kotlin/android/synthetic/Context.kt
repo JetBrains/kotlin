@@ -67,12 +67,6 @@ open class Context(val buffer: StringBuffer = StringBuffer(), private var indent
         return child
     }
 
-    public fun adopt<T : Context>(c: T, inheritIndent: Boolean = true): T {
-        children.add(c)
-        if (inheritIndent) c.currentIndent = currentIndent
-        return c
-    }
-
     public fun absorbChildren(noIndent: Boolean = true) {
         for (child in children) {
             child.absorbChildren()

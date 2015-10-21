@@ -30,13 +30,13 @@ public class SamePluginVersionsTest {
 
     private fun extractIdeaVersion(pluginFile: File, pluginXml: String): Pair<String, String> {
         val matcher = IDEA_VERSION_PATTERN.matcher(pluginXml)
-        assertTrue("Can't find tag <idea-version> in ${pluginFile.getAbsolutePath()}", matcher.find())
+        assertTrue("Can't find tag <idea-version> in ${pluginFile.absolutePath}", matcher.find())
         return matcher.group(1) to matcher.group(2)
     }
 
     private fun extractPluginVersion(pluginFile: File, pluginXml: String): String {
         val matcher = PLUGIN_VERSION_PATTERN.matcher(pluginXml)
-        assertTrue("Can't find tag <version> in ${pluginFile.getAbsolutePath()}", matcher.find())
+        assertTrue("Can't find tag <version> in ${pluginFile.absolutePath}", matcher.find())
         return matcher.group(1)
     }
 

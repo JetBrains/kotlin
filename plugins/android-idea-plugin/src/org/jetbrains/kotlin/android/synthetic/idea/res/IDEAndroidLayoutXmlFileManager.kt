@@ -30,7 +30,7 @@ public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutX
     override val androidModuleInfo: AndroidModuleInfo? by lazy { module.androidFacet?.toAndroidModuleInfo() }
 
     override fun propertyToXmlAttributes(property: KtProperty): List<PsiElement> {
-        val fqPath = property.getFqName()?.pathSegments() ?: return listOf()
+        val fqPath = property.fqName?.pathSegments() ?: return listOf()
         if (fqPath.size() <= AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
 
         val layoutPackageName = fqPath[AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH].asString()
