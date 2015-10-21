@@ -1254,7 +1254,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (KtDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof KtProperty) {
                 KtProperty property = (KtProperty) declaration;
-                KtExpression initializer = property.getInitializer();
+                KtExpression initializer = property.getDelegateExpressionOrInitializer();
                 if (initializer != null) {
                     initializer.accept(visitor);
                 }
