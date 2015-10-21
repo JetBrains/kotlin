@@ -85,21 +85,27 @@ object KeywordCompletion {
 
             if (!parserFilter(keywordToken)) continue
 
-            val insertHandler = if (position.prevLeaf()?.node?.elementType == KtTokens.AT)
+            var element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold()
+
+            val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
+
+            val insertHandler = if (isUseSiteAnnotationTarget)
                 UseSiteAnnotationTargetInsertHandler
             else if (keywordToken !in FUNCTION_KEYWORDS)
                 KotlinKeywordInsertHandler
             else
                 KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false)
+            element = element.withInsertHandler(insertHandler)
 
-            val element = LookupElementBuilder.create(KeywordLookupObject(), keyword)
-                    .bold()
-                    .withInsertHandler(insertHandler)
+            if (isUseSiteAnnotationTarget) {
+                element = element.withPresentableText(keyword + ":")
+            }
+
             consumer(element)
         }
     }
 
-    private val FUNCTION_KEYWORDS = listOf(GET_KEYWORD, SET_KEYWORD, CONSTRUCTOR_KEYWORD)
+    private val FUNCTION_KEYWORDS = listOf(CONSTRUCTOR_KEYWORD)
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),

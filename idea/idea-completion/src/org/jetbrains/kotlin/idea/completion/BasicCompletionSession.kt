@@ -307,6 +307,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                     }
                 }
 
+                "get" -> {
+                    collector.addElement(lookupElement)
+                }
+
                 else -> collector.addElement(lookupElement)
             }
         }

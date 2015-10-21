@@ -1,11 +1,11 @@
 @<caret>[]
 
-// EXIST: file
-// EXIST: field
-// EXIST: get
-// EXIST: set
-// EXIST: param
-// EXIST: setparam
-// EXIST: property
-// EXIST: receiver
+// EXIST: { itemText: "file:" }
+// EXIST: { itemText: "field:" }
+// EXIST: { itemText: "get:" }
+// EXIST: { itemText: "set:" }
+// EXIST: { itemText: "param:" }
+// EXIST: { itemText: "setparam:" }
+// EXIST: { itemText: "property:" }
+// EXIST: { itemText: "receiver:" }
 // NOTHING_ELSE
