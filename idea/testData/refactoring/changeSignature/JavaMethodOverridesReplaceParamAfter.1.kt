@@ -1,17 +1,17 @@
 open class X: A() {
-    fun foo(x: Int): String? {
+    override fun foo(x: Int): String? {
         return super.foo(1) + 1
     }
 }
 
 open class Y: B() {
-    fun foo(x: Int): String? {
+    override fun foo(x: Int): String? {
         return s.length * 2
     }
 }
 
 open class Z: X() {
-    fun foo(x: Int): String? {
+    override fun foo(x: Int): String? {
         return s.length
     }
 }

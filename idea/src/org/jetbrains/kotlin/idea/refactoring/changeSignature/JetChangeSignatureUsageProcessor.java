@@ -23,6 +23,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -59,6 +60,8 @@ import org.jetbrains.kotlin.idea.refactoring.CallableRefactoringKt;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions;
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UtilsKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ScopeUtils;
@@ -253,6 +256,22 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
     }
 
+    private static Set<PsiReference> findReferences(PsiElement functionPsi) {
+        Set<PsiReference> result = new LinkedHashSet<PsiReference>();
+
+        SearchScope searchScope = functionPsi.getUseScope();
+        KotlinReferencesSearchOptions options = new KotlinReferencesSearchOptions(true, false, false, false);
+        KotlinReferencesSearchParameters parameters = new KotlinReferencesSearchParameters(functionPsi, searchScope, false, null, options);
+        result.addAll(ReferencesSearch.search(parameters).findAll());
+        if (functionPsi instanceof KtProperty || functionPsi instanceof KtParameter) {
+            for (PsiMethod lightMethod : LightClassUtilsKt.toLightMethods(functionPsi)) {
+                result.addAll(MethodReferencesSearch.search(lightMethod, searchScope, true).findAll());
+            }
+        }
+
+        return result;
+    }
+
     private static void findOneMethodUsages(
             @NotNull final JetCallableDefinitionUsage<?> functionUsageInfo,
             final JetChangeInfo changeInfo,
@@ -267,7 +286,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         PsiElement functionPsi = functionUsageInfo.getElement();
         if (functionPsi == null) return;
 
-        for (PsiReference reference : ReferencesSearch.search(functionPsi, functionPsi.getUseScope())) {
+        for (PsiReference reference : findReferences(functionPsi)) {
             PsiElement element = reference.getElement();
 
             if (functionPsi instanceof KtClass && reference.resolve() != functionPsi) continue;

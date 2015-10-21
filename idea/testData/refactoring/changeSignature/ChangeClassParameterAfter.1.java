@@ -34,5 +34,11 @@ class Test {
 
         new J().getS();
         new J().setS(4);
+
+        new D().getS();
+        new D().setS(5);
+
+        new E().getS();
+        new E().setS(6);
     }
 }

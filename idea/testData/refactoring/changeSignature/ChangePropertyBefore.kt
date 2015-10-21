@@ -1,18 +1,35 @@
+public inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
+
 open class A {
     open var <caret>p: Int = 1
 }
 
-class B: A() {
-    override var p: Int = 2
+class AA : A() {
+    override var p: Int = 1
+}
+
+class B : J() {
+    override var p: Int = 1
 }
 
 fun test() {
-    val t1 = A().p
-    A().p = 1
+    with(A()) {
+        val t = p
+        p = 3
+    }
 
-    val t2 = B().p
-    B().p = 2
+    with(AA()) {
+        val t = p
+        p = 3
+    }
 
-    val t3 = J().getP()
-    J().setP(3)
+    with(J()) {
+        val t = p
+        p = 3
+    }
+
+    with(B()) {
+        val t = p
+        p = 3
+    }
 }
