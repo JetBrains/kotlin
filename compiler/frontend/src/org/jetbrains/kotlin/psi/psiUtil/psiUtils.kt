@@ -69,6 +69,12 @@ public fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement?
 public fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement?
         = PsiTreeUtil.nextLeaf(this, skipEmptyElements)
 
+public val PsiElement.prevLeafs: Sequence<PsiElement>
+    get() = sequence({ prevLeaf() }, { it.prevLeaf() })
+
+public val PsiElement.nextLeafs: Sequence<PsiElement>
+    get() = sequence({ nextLeaf() }, { it.nextLeaf() })
+
 public fun PsiElement.prevLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
     var leaf = prevLeaf()
     while (leaf != null && !filter(leaf)) {

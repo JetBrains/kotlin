@@ -1,10 +1,11 @@
 @<caret>[]
 
 // EXIST: file
-// EXIST: class
-// EXIST: fun
-// EXIST: interface
-// EXIST: object
-// EXIST: val
-// EXIST: var
+// EXIST: field
+// EXIST: get
+// EXIST: set
+// EXIST: param
+// EXIST: setparam
+// EXIST: property
+// EXIST: receiver
 // NOTHING_ELSE

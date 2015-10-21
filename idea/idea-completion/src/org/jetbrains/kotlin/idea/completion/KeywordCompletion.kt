@@ -48,9 +48,6 @@ object KeywordCompletion {
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as KtKeywordToken }
 
-    private val DEFAULT_DUMMY_POSTFIX = " X"
-    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(FILE_KEYWORD to ":X")
-
     private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
     private val COMPOUND_KEYWORDS = mapOf<KtKeywordToken, KtKeywordToken>(
@@ -192,7 +189,7 @@ object KeywordCompletion {
     private fun buildFilterByText(prefixText: String, project: Project): (KtKeywordToken) -> Boolean {
         val psiFactory = KtPsiFactory(project)
         return fun (keywordTokenType): Boolean {
-            val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: DEFAULT_DUMMY_POSTFIX
+            val postfix = if (prefixText.endsWith("@")) ":X" else " X"
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
             val elementAt = file.findElementAt(prefixText.length())!!
 
@@ -201,7 +198,7 @@ object KeywordCompletion {
 
                 elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> return false
 
-                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }?.parentsWithSelf?.any { it is PsiErrorElement } ?: false -> return false
+                isErrorElementBefore(elementAt) -> return false
 
                 keywordTokenType !is KtModifierKeywordToken -> return true
 
@@ -258,6 +255,15 @@ object KeywordCompletion {
                 }
             }
         }
+    }
+
+    private fun isErrorElementBefore(token: PsiElement): Boolean {
+        for (leaf in token.prevLeafs) {
+            if (leaf is PsiWhiteSpace || leaf is PsiComment) continue
+            if (leaf.parentsWithSelf.any { it is PsiErrorElement } ) return true
+            if (leaf.textLength != 0) break
+        }
+        return false
     }
 
     private fun IElementType.matchesKeyword(keywordType: KtKeywordToken): Boolean {
