@@ -26,6 +26,7 @@ import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -310,18 +311,18 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 "get" -> {
                     collector.addElement(lookupElement)
 
-                    if (!isUseSiteAnnotationTarget) { //TODO: use code style settings
-                        collector.addElement(createKeywordWithSuffixLookupElement(keyword, "() = ", ""))
-                        collector.addElement(createKeywordWithSuffixLookupElement(keyword, "() {", "}"))
+                    if (!isUseSiteAnnotationTarget) {
+                        collector.addElement(createKeywordConstructLookupElement(keyword, "val v:Int get()=caret", "caret"))
+                        collector.addElement(createKeywordConstructLookupElement(keyword, "val v:Int get(){caret}", "caret", trimSpacesAroundCaret = true))
                     }
                 }
 
                 "set" -> {
                     collector.addElement(lookupElement)
 
-                    if (!isUseSiteAnnotationTarget) { //TODO: use code style settings
-                        collector.addElement(createKeywordWithSuffixLookupElement(keyword, "(value) {", "}"))
-                        collector.addElement(createKeywordWithSuffixLookupElement(keyword, "(value) = ", ""))
+                    if (!isUseSiteAnnotationTarget) {
+                        collector.addElement(createKeywordConstructLookupElement(keyword, "var v:Int set(value)=caret", "caret"))
+                        collector.addElement(createKeywordConstructLookupElement(keyword, "var v:Int set(value){caret}", "caret", trimSpacesAroundCaret = true))
                     }
                 }
 
@@ -330,13 +331,38 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
     }
 
-    private fun createKeywordWithSuffixLookupElement(keyword: String, textBeforeCaret: String, textAfterCaret: String): LookupElementBuilder {
-        return LookupElementBuilder.create(KeywordLookupObject(), keyword + textBeforeCaret + textAfterCaret)
+    private fun createKeywordConstructLookupElement(
+            keyword: String,
+            fileTextToReformat: String,
+            caretPlaceHolder: String,
+            trimSpacesAroundCaret: Boolean = false
+    ): LookupElement {
+        val file = KtPsiFactory(project).createFile(fileTextToReformat)
+        CodeStyleManager.getInstance(project).reformat(file)
+        val newFileText = file.text
+
+        val keywordOffset = newFileText.indexOf(keyword)
+        assert(keywordOffset >= 0)
+        val keywordEndOffset = keywordOffset + keyword.length
+
+        val caretOffset = newFileText.indexOf(caretPlaceHolder)
+        assert(caretOffset >= 0)
+        assert(caretOffset >= keywordEndOffset)
+
+        var tailBeforeCaret = newFileText.substring(keywordEndOffset, caretOffset)
+        var tailAfterCaret = newFileText.substring(caretOffset + caretPlaceHolder.length)
+
+        if (trimSpacesAroundCaret) {
+            tailBeforeCaret = tailBeforeCaret.trimEnd()
+            tailAfterCaret = tailAfterCaret.trimStart()
+        }
+
+        return LookupElementBuilder.create(KeywordLookupObject(), keyword + tailBeforeCaret + tailAfterCaret)
                 .withPresentableText(keyword)
                 .bold()
-                .withTailText(textBeforeCaret + textAfterCaret)
+                .withTailText(tailBeforeCaret + tailAfterCaret)
                 .withInsertHandler { insertionContext, lookupElement ->
-                    insertionContext.editor.moveCaret(insertionContext.editor.caretModel.offset - textAfterCaret.length)
+                    insertionContext.editor.moveCaret(insertionContext.editor.caretModel.offset - tailAfterCaret.length)
                 }
     }
 
