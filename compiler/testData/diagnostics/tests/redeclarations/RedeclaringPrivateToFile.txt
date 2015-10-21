@@ -1,0 +1,33 @@
+package
+
+package a {
+    private val validProp: kotlin.Int = 1
+    private val validProp: kotlin.Int = 1
+    public val validProp: kotlin.Int = 1
+    private fun invalidFun1(): kotlin.Unit
+    private fun invalidFun1(): kotlin.Unit
+    private fun invalidFun2(): kotlin.Unit
+    public fun invalidFun2(): kotlin.Unit
+    internal fun invalidFun3(): kotlin.Unit
+    public fun invalidFun3(): kotlin.Unit
+    internal fun invalidFun4(): kotlin.Unit
+    private fun invalidFun4(): kotlin.Unit
+    public fun invalidFun4(): kotlin.Unit
+    private fun validFun(): kotlin.Unit
+    private fun validFun(): kotlin.Unit
+    public fun validFun(): kotlin.Unit
+    public fun validFun2(/*0*/ a: a.A): a.A
+    public fun validFun2(/*0*/ b: a.B): a.B
+
+    public interface A {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface B : a.A {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

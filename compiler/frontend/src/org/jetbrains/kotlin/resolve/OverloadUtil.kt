@@ -31,42 +31,32 @@ object OverloadUtil {
     /**
      * Does not check names.
      */
-    public @JvmStatic fun isOverloadable(a: CallableDescriptor, b: CallableDescriptor): OverloadCompatibilityInfo {
+    public @JvmStatic fun isOverloadable(a: CallableDescriptor, b: CallableDescriptor): Boolean {
         val abc = braceCount(a)
         val bbc = braceCount(b)
 
         if (abc != bbc) {
-            return OverloadCompatibilityInfo.success()
+            return true
         }
 
-        val overrideCompatibilityInfo = isOverloadableBy(a, b)
-        when (overrideCompatibilityInfo.result) {
-            OVERRIDABLE, CONFLICT -> return OverloadCompatibilityInfo.someError()
-            INCOMPATIBLE -> return OverloadCompatibilityInfo.success()
-            else -> throw IllegalStateException()
-        }
-    }
-
-    private fun isOverloadableBy(
-            superDescriptor: CallableDescriptor,
-            subDescriptor: CallableDescriptor): OverridingUtil.OverrideCompatibilityInfo {
-        val receiverAndParameterResult = OverridingUtil.checkReceiverAndParameterCount(superDescriptor, subDescriptor)
+        val receiverAndParameterResult = OverridingUtil.checkReceiverAndParameterCount(a, b)
         if (receiverAndParameterResult != null) {
-            return receiverAndParameterResult
+            return receiverAndParameterResult.result == INCOMPATIBLE
         }
 
-        val superValueParameters = OverridingUtil.compiledValueParameters(superDescriptor)
-        val subValueParameters = OverridingUtil.compiledValueParameters(subDescriptor)
+        val aValueParameters = OverridingUtil.compiledValueParameters(a)
+        val bValueParameters = OverridingUtil.compiledValueParameters(b)
 
-        for (i in superValueParameters.indices) {
-            val superValueParameterType = OverridingUtil.getUpperBound(superValueParameters[i])
-            val subValueParameterType = OverridingUtil.getUpperBound(subValueParameters[i])
-            if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType) || oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
-                return OverridingUtil.OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE)
+        for (i in aValueParameters.indices) {
+            val superValueParameterType = OverridingUtil.getUpperBound(aValueParameters[i])
+            val subValueParameterType = OverridingUtil.getUpperBound(bValueParameters[i])
+            if (!KotlinTypeChecker.DEFAULT.equalTypes(superValueParameterType, subValueParameterType) ||
+                    oneMoreSpecificThanAnother(subValueParameterType, superValueParameterType)) {
+                return true
             }
         }
 
-        return OverridingUtil.OverrideCompatibilityInfo.success()
+        return false
     }
 
     private fun braceCount(a: CallableDescriptor): Int =
@@ -76,17 +66,6 @@ object OverloadUtil {
                 is ConstructorDescriptor -> 1
                 else -> throw IllegalStateException()
             }
-
-    class OverloadCompatibilityInfo(val isSuccess: Boolean, val message: String) {
-        companion object {
-
-            private val SUCCESS = OverloadCompatibilityInfo(true, "SUCCESS")
-
-            fun success() = SUCCESS
-
-            fun someError() = OverloadCompatibilityInfo(false, "XXX")
-        }
-    }
 
     public @JvmStatic fun groupModulePackageMembersByFqName(
             c: BodiesResolveContext,
@@ -104,7 +83,7 @@ object OverloadUtil {
             scope.getProperties(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filterIsInstance<CallableMemberDescriptor>()
         }
 
-        // TODO handle constructor redeclarations in modules. See also https://youtrack.jetbrains.com/issue/KT-3632
+        // TODO handle constructor redeclarations in modules. See also: https://youtrack.jetbrains.com/issue/KT-3632
         packageMembersByName.putAllValues(constructorsInPackages)
 
         return packageMembersByName
@@ -146,4 +125,31 @@ object OverloadUtil {
         return possibleOverloads.filter { DescriptorUtils.getContainingModule(it) == containingModule }
     }
 
+    private fun MemberDescriptor.isPrivate() = Visibilities.isPrivate(this.visibility)
+
+    public @JvmStatic fun getPossibleRedeclarationGroups(members: Collection<CallableMemberDescriptor>): Collection<Collection<CallableMemberDescriptor>> {
+        val result = arrayListOf<Collection<CallableMemberDescriptor>>()
+
+        val nonPrivates = members.filter { !it.isPrivate() }
+        if (nonPrivates.size > 1) {
+            result.add(nonPrivates)
+        }
+
+        val bySourceFile = MultiMap.createSmart<SourceFile, CallableMemberDescriptor>()
+        for (member in members) {
+            val sourceFile = DescriptorUtils.getContainingSourceFile(member)
+            if (sourceFile != SourceFile.NO_SOURCE_FILE) {
+                bySourceFile.putValue(sourceFile, member)
+            }
+        }
+
+        for ((sourceFile, membersInFile) in bySourceFile.entrySet()) {
+            // File member groups are interesting in redeclaration check if at least one file member is private.
+            if (membersInFile.size > 1 && membersInFile.any { it.isPrivate() }) {
+                result.add(membersInFile)
+            }
+        }
+
+        return result
+    }
 }

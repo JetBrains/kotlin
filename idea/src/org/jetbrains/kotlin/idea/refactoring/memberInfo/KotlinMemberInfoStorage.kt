@@ -43,7 +43,7 @@ public class KotlinMemberInfoStorage(
 
         return when {
             descriptor1 is FunctionDescriptor && descriptor is FunctionDescriptor -> {
-                !OverloadUtil.isOverloadable(descriptor1, descriptor).isSuccess
+                !OverloadUtil.isOverloadable(descriptor1, descriptor)
             }
             descriptor1 is PropertyDescriptor && descriptor is PropertyDescriptor,
             descriptor1 is ClassDescriptor && descriptor is ClassDescriptor -> true

@@ -109,17 +109,7 @@ public class DeclarationResolver(
     }
 
     private fun getTopLevelDescriptorsByFqName(topLevelDescriptorProvider: TopLevelDescriptorProvider, fqName: FqName, location: LookupLocation): Set<DeclarationDescriptor> {
-        val parentFqName = fqName.parent()
-
         val descriptors = HashSet<DeclarationDescriptor>()
-
-        val parentFragment = topLevelDescriptorProvider.getPackageFragment(parentFqName)
-        if (parentFragment != null) {
-            // Filter out extension properties
-            descriptors.addAll(parentFragment.getMemberScope().getProperties(fqName.shortName(), location).filter {
-                it.getExtensionReceiverParameter() == null
-            })
-        }
 
         descriptors.addIfNotNull(topLevelDescriptorProvider.getPackageFragment(fqName))
         descriptors.addAll(topLevelDescriptorProvider.getTopLevelClassDescriptors(fqName, location))
