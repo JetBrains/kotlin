@@ -939,6 +939,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/throwable.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("valuesInsideEnum.kt")
+        public void testValuesInsideEnum() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/valuesInsideEnum.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/casts")
