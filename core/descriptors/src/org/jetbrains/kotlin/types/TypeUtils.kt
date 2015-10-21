@@ -101,7 +101,7 @@ fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypePro
 }
 
 fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
-    if (newAnnotations.isEmpty()) return this
+    if (annotations.isEmpty() && newAnnotations.isEmpty()) return this
     return object : DelegatingType() {
         override fun getDelegate() = this@replaceAnnotations
 

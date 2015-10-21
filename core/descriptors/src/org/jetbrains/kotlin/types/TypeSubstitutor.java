@@ -240,7 +240,7 @@ public class TypeSubstitutor {
                 return containedOrCapturedTypeParameters.contains(key.getConstructor()) ? substitution.get(key) : null;
             }
         };
-        KotlinType substitutedType = KotlinTypeImpl.create(type.getAnnotations(),   // Old annotations. This is questionable
+        KotlinType substitutedType = KotlinTypeImpl.create(substitution.filterAnnotations(type.getAnnotations()),   // Old annotations. This is questionable
                                                            type.getConstructor(),             // The same constructor
                                                            type.isMarkedNullable(),           // Same nullability
                                                            substitutedArguments,
