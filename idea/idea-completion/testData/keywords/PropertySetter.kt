@@ -10,12 +10,6 @@ class Some {
 // EXIST:  enum class
 // EXIST:  final
 // EXIST:  fun
-
-/*TODO*/
-// EXIST:  get
-// EXIST: "get() = "
-// EXIST: "get() {}"
-
 // EXIST:  inner
 // EXIST:  internal
 // EXIST:  object

@@ -1277,9 +1277,11 @@ public class JetParsing extends AbstractJetParsing {
                 consumeIf(SEMICOLON);
             }
 
-            if (parsePropertyGetterOrSetter()) {
-                parsePropertyGetterOrSetter();
+            AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
+            if (accessorKind != null) {
+                parsePropertyGetterOrSetter(accessorKind);
             }
+
             if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
                 if (getLastToken() != SEMICOLON) {
                     errorUntil("Property getter or setter expected", TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE));
@@ -1346,6 +1348,8 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.restoreNewlinesState();
     }
 
+    private enum AccessorKind { GET, SET}
+
     /*
      * getterOrSetter
      *   : modifiers ("get" | "set")
@@ -1356,17 +1360,29 @@ public class JetParsing extends AbstractJetParsing {
      *        ) functionBody
      *   ;
      */
-    private boolean parsePropertyGetterOrSetter() {
+    @Nullable
+    private AccessorKind parsePropertyGetterOrSetter(@Nullable AccessorKind notAllowedKind) {
         PsiBuilder.Marker getterOrSetter = mark();
 
         parseModifierList(DEFAULT, TokenSet.EMPTY);
 
-        if (!at(GET_KEYWORD) && !at(SET_KEYWORD)) {
+        AccessorKind accessorKind;
+        if (at(GET_KEYWORD)) {
+            accessorKind = AccessorKind.GET;
+        }
+        else if (at(SET_KEYWORD)) {
+            accessorKind = AccessorKind.SET;
+        }
+        else {
             getterOrSetter.rollbackTo();
-            return false;
+            return null;
         }
 
-        boolean setter = at(SET_KEYWORD);
+        if (accessorKind == notAllowedKind) {
+            getterOrSetter.rollbackTo();
+            return null;
+        }
+
         advance(); // GET_KEYWORD or SET_KEYWORD
 
         if (!at(LPAR)) {
@@ -1377,13 +1393,13 @@ public class JetParsing extends AbstractJetParsing {
             }
             else {
                 closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, false);
-                return true;
+                return accessorKind;
             }
         }
 
         myBuilder.disableNewlines();
         expect(LPAR, "Expecting '('", TokenSet.create(RPAR, IDENTIFIER, COLON, LBRACE, EQ));
-        if (setter) {
+        if (accessorKind == AccessorKind.SET) {
             PsiBuilder.Marker parameterList = mark();
             PsiBuilder.Marker setterParameter = mark();
             parseModifierList(DEFAULT, TokenSet.create(COMMA, COLON, RPAR));
@@ -1414,7 +1430,7 @@ public class JetParsing extends AbstractJetParsing {
 
         closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, false);
 
-        return true;
+        return accessorKind;
     }
 
     /*

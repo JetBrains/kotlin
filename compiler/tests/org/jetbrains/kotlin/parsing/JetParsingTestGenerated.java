@@ -169,6 +169,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("DuplicateAccessor.kt")
+        public void testDuplicateAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DuplicateAccessor.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("DynamicReceiver.kt")
         public void testDynamicReceiver() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/DynamicReceiver.kt");
