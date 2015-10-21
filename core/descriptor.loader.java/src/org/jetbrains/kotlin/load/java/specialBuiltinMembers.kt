@@ -223,7 +223,7 @@ private fun getBuiltinOverriddenThatAffectsJvmName(
 ): CallableMemberDescriptor? {
     val overriddenBuiltin = callableMemberDescriptor.getOverriddenBuiltinWithDifferentJvmName() ?: return null
 
-    if (callableMemberDescriptor.isFromJavaOrBuiltins()) return overriddenBuiltin
+    if (callableMemberDescriptor.isFromBuiltins()) return overriddenBuiltin
 
     return null
 }
