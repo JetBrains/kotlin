@@ -64,15 +64,10 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
 
     private val modificationCountOnCreate = PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
 
-    @Volatile private var anySuggestionFound: Boolean? = null
-
-    public val suggestions: Collection<DeclarationDescriptor> by CachedValueProperty(
-            {
-                val descriptors = computeSuggestions()
-                anySuggestionFound = !descriptors.isEmpty()
-                descriptors
-            },
-            { PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount() })
+    private val suggestionCount: Int by CachedValueProperty(
+            calculator = { computeSuggestions().size },
+            timestampCalculator = { PsiModificationTracker.SERVICE.getInstance(element.project).modificationCount }
+    )
 
     protected abstract fun getSupportedErrors(): Collection<DiagnosticFactory<*>>
     protected abstract fun getCallTypeAndReceiver(): CallTypeAndReceiver<*, *>
@@ -83,11 +78,12 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
 
         if (ApplicationManager.getApplication().isUnitTestMode() && HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)) return false
 
-        if (suggestions.isEmpty()) return false
+        if (suggestionCount == 0) return false
 
-        val addImportAction = createAction(element.project, editor)
-        val hintText = ShowAutoImportPass.getMessage(suggestions.size > 1, addImportAction.highestPriorityFqName.asString())
-        HintManager.getInstance().showQuestionHint(editor, hintText, element.getTextOffset(), element.getTextRange()!!.getEndOffset(), addImportAction)
+        val suggestions = computeSuggestions()
+        val action = KotlinAddImportAction(element.project, editor, element, suggestions)
+        val hintText = ShowAutoImportPass.getMessage(suggestions.size > 1, action.highestPriorityFqName.asString())
+        HintManager.getInstance().showQuestionHint(editor, hintText, element.textOffset, element.textRange.endOffset, action)
 
         return true
     }
@@ -97,11 +93,12 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
     override fun getFamilyName() = JetBundle.message("import.fix")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
-            = (super.isAvailable(project, editor, file)) && (anySuggestionFound ?: !suggestions.isEmpty())
+            = super.isAvailable(project, editor, file) && suggestionCount > 0
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
-            createAction(project, editor!!).execute()
+            val suggestions = computeSuggestions()
+            KotlinAddImportAction(project, editor!!, element, suggestions).execute()
         }
     }
 
@@ -109,9 +106,7 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
 
     private fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
 
-    protected open fun createAction(project: Project, editor: Editor) = KotlinAddImportAction(project, editor, element, suggestions)
-
-    protected fun computeSuggestions(): Collection<DeclarationDescriptor> {
+    fun computeSuggestions(): Collection<DeclarationDescriptor> {
         if (!element.isValid()) return listOf()
         if (element.getContainingFile() !is KtFile) return emptyList()
 
@@ -127,7 +122,7 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
         }
     }
 
-    public fun computeSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>):
+    fun computeSuggestionsForName(name: Name, callTypeAndReceiver: CallTypeAndReceiver<*, *>):
             Collection<DeclarationDescriptor> {
         val nameStr = name.asString()
         if (nameStr.isEmpty()) return emptyList()
@@ -284,10 +279,6 @@ class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpression, diagno
 
 class MissingDelegateAccessorsAutoImportFix(element: KtExpression, diagnostics: Collection<Diagnostic>) :
         AutoImportFixBase<KtExpression>(element, diagnostics) {
-    override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
-        return KotlinAddImportAction(project, editor, element, suggestions)
-    }
-
     override fun getImportNames(): Collection<Name> {
         return diagnostics.map {
             val missingMethodSignature = Errors.DELEGATE_SPECIAL_FUNCTION_MISSING.cast(it).a
@@ -314,8 +305,6 @@ class MissingDelegateAccessorsAutoImportFix(element: KtExpression, diagnostics: 
 
 class MissingComponentsAutoImportFix(element: KtExpression, diagnostics: Collection<Diagnostic>) :
         AutoImportFixBase<KtExpression>(element, diagnostics) {
-    override fun createAction(project: Project, editor: Editor) = KotlinAddImportAction(project, editor, element, suggestions)
-
     override fun getImportNames() = diagnostics.map { Name.identifier(Errors.COMPONENT_FUNCTION_MISSING.cast(it).a.identifier) }
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
