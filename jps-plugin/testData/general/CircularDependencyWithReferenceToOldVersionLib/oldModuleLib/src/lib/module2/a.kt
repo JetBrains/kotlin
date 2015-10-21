@@ -1,8 +1,8 @@
-package module1
+package lib.module2
 
-import module2.*
+import lib.module1.*
 
-fun foo() {
+fun bar() {
     JavaClass.oldJavaMethod()
 
     KotlinObject.oldKotlinMethod()
