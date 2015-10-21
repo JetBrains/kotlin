@@ -61,3 +61,5 @@ public operator fun BigDecimal.mod(other: BigDecimal) : BigDecimal = this.remain
  * Enables the use of the unary `-` operator for [BigDecimal] instances.
  */
 public operator fun BigDecimal.unaryMinus() : BigDecimal = this.negate()
+
+public fun Number.toBigInteger() = BigInteger.valueOf(this.toLong())
