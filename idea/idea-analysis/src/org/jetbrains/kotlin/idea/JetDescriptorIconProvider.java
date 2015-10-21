@@ -84,7 +84,7 @@ public final class JetDescriptorIconProvider {
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             if (functionDescriptor.getExtensionReceiverParameter() != null) {
-                return KtIcons.EXTENSION_FUNCTION;
+                return KotlinIcons.EXTENSION_FUNCTION;
             }
 
             if (descriptor.getContainingDeclaration() instanceof ClassDescriptor) {
@@ -96,38 +96,38 @@ public final class JetDescriptorIconProvider {
                 }
             }
             else {
-                return KtIcons.FUNCTION;
+                return KotlinIcons.FUNCTION;
             }
         }
         if (descriptor instanceof ClassDescriptor) {
             switch (((ClassDescriptor) descriptor).getKind()) {
                 case INTERFACE:
-                    return KtIcons.TRAIT;
+                    return KotlinIcons.TRAIT;
                 case ENUM_CLASS:
-                    return KtIcons.ENUM;
+                    return KotlinIcons.ENUM;
                 case ENUM_ENTRY:
-                    return KtIcons.ENUM;
+                    return KotlinIcons.ENUM;
                 case ANNOTATION_CLASS:
                     return PlatformIcons.ANNOTATION_TYPE_ICON;
                 case OBJECT:
-                    return KtIcons.OBJECT;
+                    return KotlinIcons.OBJECT;
                 case CLASS:
-                    return KtIcons.CLASS;
+                    return KotlinIcons.CLASS;
                 default:
                     LOG.warn("No icon for descriptor: " + descriptor);
                     return null;
             }
         }
         if (descriptor instanceof ValueParameterDescriptor) {
-            return KtIcons.PARAMETER;
+            return KotlinIcons.PARAMETER;
         }
 
         if (descriptor instanceof LocalVariableDescriptor) {
-            return ((VariableDescriptor) descriptor).isVar() ? KtIcons.VAR : KtIcons.VAL;
+            return ((VariableDescriptor) descriptor).isVar() ? KotlinIcons.VAR : KotlinIcons.VAL;
         }
 
         if (descriptor instanceof PropertyDescriptor) {
-            return ((VariableDescriptor) descriptor).isVar() ? KtIcons.FIELD_VAR : KtIcons.FIELD_VAL;
+            return ((VariableDescriptor) descriptor).isVar() ? KotlinIcons.FIELD_VAR : KotlinIcons.FIELD_VAL;
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -45,7 +45,7 @@ class LazyJavaTypeParameterDescriptor(
         SourceElement.NO_SOURCE
 ) {
 
-    override fun resolveUpperBounds(): Set<KtType> {
+    override fun resolveUpperBounds(): Set<KotlinType> {
         val bounds = javaTypeParameter.getUpperBounds()
         if (bounds.isEmpty()) {
             return setOf(LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(

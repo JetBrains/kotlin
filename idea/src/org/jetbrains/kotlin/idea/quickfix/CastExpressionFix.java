@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
-    private final KtType type;
+    private final KotlinType type;
 
-    public CastExpressionFix(@NotNull KtExpression element, @NotNull KtType type) {
+    public CastExpressionFix(@NotNull KtExpression element, @NotNull KotlinType type) {
         super(element);
         this.type = type;
     }
@@ -63,7 +63,7 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         if (!super.isAvailable(project, editor, file)) return false;
-        KtType expressionType = ResolutionUtils.analyze(getElement()).getType(getElement());
+        KotlinType expressionType = ResolutionUtils.analyze(getElement()).getType(getElement());
         return expressionType != null
                && (
                        KotlinTypeChecker.DEFAULT.isSubtypeOf(type, expressionType) // downcast
@@ -104,7 +104,7 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters2<KtExpression, KtType, String> diagnosticWithParameters =
+                DiagnosticWithParameters2<KtExpression, KotlinType, String> diagnosticWithParameters =
                         Errors.SMARTCAST_IMPOSSIBLE.cast(diagnostic);
                 return new CastExpressionFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
             }
@@ -117,7 +117,7 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters2<KtExpression, KtType, KtType> diagnosticWithParameters =
+                DiagnosticWithParameters2<KtExpression, KotlinType, KotlinType> diagnosticWithParameters =
                         ErrorsJvm.JAVA_TYPE_MISMATCH.cast(diagnostic);
                 return new CastExpressionFix(
                         diagnosticWithParameters.getPsiElement(), FlexibleTypesKt.flexibility(diagnosticWithParameters.getB()).getUpperBound()

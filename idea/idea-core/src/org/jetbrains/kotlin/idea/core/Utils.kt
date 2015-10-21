@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
@@ -130,7 +130,7 @@ public fun KtImportDirective.targetDescriptors(): Collection<DeclarationDescript
 public fun Call.resolveCandidates(
         bindingContext: BindingContext,
         resolutionFacade: ResolutionFacade,
-        expectedType: KtType = expectedType(this, bindingContext),
+        expectedType: KotlinType = expectedType(this, bindingContext),
         filterOutWrongReceiver: Boolean = true,
         filterOutByVisibility: Boolean = true
 ): Collection<ResolvedCall<FunctionDescriptor>> {
@@ -169,7 +169,7 @@ public fun Call.resolveCandidates(
     return candidates
 }
 
-private fun expectedType(call: Call, bindingContext: BindingContext): KtType {
+private fun expectedType(call: Call, bindingContext: BindingContext): KotlinType {
     return (call.callElement as? KtExpression)?.let {
         bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it.getQualifiedExpressionForSelectorOrThis()]
     } ?: TypeUtils.NO_EXPECTED_TYPE

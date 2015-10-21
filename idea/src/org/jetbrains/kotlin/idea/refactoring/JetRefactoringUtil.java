@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -402,7 +402,7 @@ public class JetRefactoringUtil {
                 if (addExpression) {
                     KtExpression expression = (KtExpression)element;
                     BindingContext bindingContext = ResolutionUtils.analyze(expression, BodyResolveMode.FULL);
-                    KtType expressionType = bindingContext.getType(expression);
+                    KotlinType expressionType = bindingContext.getType(expression);
                     if (expressionType == null || !KotlinBuiltIns.isUnit(expressionType)) {
                         expressions.add(expression);
                     }

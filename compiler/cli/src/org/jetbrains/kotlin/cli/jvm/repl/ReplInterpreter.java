@@ -69,7 +69,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -356,7 +356,7 @@ public class ReplInterpreter {
 
             earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassType));
 
-            KtType returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType();
+            KotlinType returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType();
             return LineResult.successful(rv, returnType != null && KotlinBuiltIns.isUnit(returnType));
         }
         catch (Throwable e) {

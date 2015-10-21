@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
@@ -78,12 +78,12 @@ public class ObservableBindingTrace implements BindingTrace {
 
     @Nullable
     @Override
-    public KtType getType(@NotNull KtExpression expression) {
+    public KotlinType getType(@NotNull KtExpression expression) {
         return originalTrace.getType(expression);
     }
 
     @Override
-    public void recordType(@NotNull KtExpression expression, @Nullable KtType type) {
+    public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
         originalTrace.recordType(expression, type);
     }
 

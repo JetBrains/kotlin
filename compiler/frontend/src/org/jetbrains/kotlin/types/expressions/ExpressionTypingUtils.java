@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public class ExpressionTypingUtils {
     }
 
     @Nullable
-    public static ExpressionReceiver getExpressionReceiver(@NotNull KtExpression expression, @Nullable KtType type) {
+    public static ExpressionReceiver getExpressionReceiver(@NotNull KtExpression expression, @Nullable KotlinType type) {
         if (type == null) return null;
         return new ExpressionReceiver(expression, type);
     }
@@ -88,13 +88,13 @@ public class ExpressionTypingUtils {
             @NotNull KtExpression expression,
             ExpressionTypingContext context
     ) {
-        KtType type = safeGetType(facade.safeGetTypeInfo(expression, context));
+        KotlinType type = safeGetType(facade.safeGetTypeInfo(expression, context));
         return new ExpressionReceiver(expression, type);
     }
 
     @NotNull
-    public static KtType safeGetType(@NotNull JetTypeInfo typeInfo) {
-        KtType type = typeInfo.getType();
+    public static KotlinType safeGetType(@NotNull JetTypeInfo typeInfo) {
+        KotlinType type = typeInfo.getType();
         assert type != null : "safeGetType should be invoked on safe JetTypeInfo; safeGetTypeInfo should return @NotNull type";
         return type;
     }
@@ -111,7 +111,7 @@ public class ExpressionTypingUtils {
             @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull String argumentName,
-            @NotNull KtType argumentType
+            @NotNull KotlinType argumentType
     ) {
         KtExpression fakeExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(argumentName);
         trace.recordType(fakeExpression, argumentType);
@@ -183,8 +183,8 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static List<KtType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
-        List<KtType> parameterTypes = new ArrayList<KtType>(valueParameters.size());
+    public static List<KotlinType> getValueParametersTypes(@NotNull List<ValueParameterDescriptor> valueParameters) {
+        List<KotlinType> parameterTypes = new ArrayList<KotlinType>(valueParameters.size());
         for (ValueParameterDescriptor parameter : valueParameters) {
             parameterTypes.add(parameter.getType());
         }

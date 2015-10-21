@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 import javax.swing.SwingUtilities
@@ -147,7 +147,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
     }
 
     private fun DeclarationDescriptor.presentation() = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
-    private fun KtType.presentation() = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(this)
+    private fun KotlinType.presentation() = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(this)
 
     override fun update(e: AnActionEvent) {
         if (!KotlinInternalMode.enabled) {

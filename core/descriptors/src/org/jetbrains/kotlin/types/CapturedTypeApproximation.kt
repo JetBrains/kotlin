@@ -33,8 +33,8 @@ public data class ApproximationBounds<T>(
 
 private class TypeArgument(
         val typeParameter: TypeParameterDescriptor,
-        val inProjection: KtType,
-        val outProjection: KtType
+        val inProjection: KotlinType,
+        val outProjection: KotlinType
 ) {
     val isConsistent: Boolean
         get() = KotlinTypeChecker.DEFAULT.isSubtypeOf(inProjection, outProjection)
@@ -85,12 +85,12 @@ private fun substituteCapturedTypes(typeProjection: TypeProjection): TypeProject
     return typeSubstitutor.substituteWithoutApproximation(typeProjection)
 }
 
-public fun approximateCapturedTypes(type: KtType): ApproximationBounds<KtType> {
+public fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> {
     val typeConstructor = type.getConstructor()
     if (type.isCaptured()) {
         val typeProjection = (typeConstructor as CapturedTypeConstructor).typeProjection
         // todo: preserve flexibility as well
-        fun KtType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable())
+        fun KotlinType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable())
         val bound = typeProjection.getType().makeNullableIfNeeded()
 
         return when (typeProjection.getProjectionKind()) {
@@ -115,9 +115,9 @@ public fun approximateCapturedTypes(type: KtType): ApproximationBounds<KtType> {
             type.replaceTypeArguments(upperBoundArguments))
 }
 
-private fun KtType.replaceTypeArguments(newTypeArguments: List<TypeArgument>): KtType {
+private fun KotlinType.replaceTypeArguments(newTypeArguments: List<TypeArgument>): KotlinType {
     assert(getArguments().size() == newTypeArguments.size()) { "Incorrect type arguments $newTypeArguments" }
-    return KtTypeImpl.create(
+    return KotlinTypeImpl.create(
             getAnnotations(), getConstructor(), isMarkedNullable(), newTypeArguments.map { it.toTypeProjection() }, getMemberScope()
     )
 }

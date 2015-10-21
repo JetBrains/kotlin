@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 
 import java.io.File;
@@ -64,7 +64,7 @@ public class JvmCodegenUtil {
         return false;
     }
 
-    public static boolean isJvmInterface(KtType type) {
+    public static boolean isJvmInterface(KotlinType type) {
         return isJvmInterface(type.getConstructor().getDeclarationDescriptor());
     }
 

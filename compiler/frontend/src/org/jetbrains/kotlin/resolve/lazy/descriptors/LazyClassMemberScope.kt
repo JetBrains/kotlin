@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.types.DeferredType
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 public open class LazyClassMemberScope(
@@ -85,7 +85,7 @@ public open class LazyClassMemberScope(
     }
 
     private interface MemberExtractor<T : CallableMemberDescriptor> {
-        public fun extract(extractFrom: KtType, name: Name): Collection<T>
+        public fun extract(extractFrom: KotlinType, name: Name): Collection<T>
     }
 
     private val primaryConstructor: NullableLazyValue<ConstructorDescriptor>
@@ -315,13 +315,13 @@ public open class LazyClassMemberScope(
 
     companion object {
         private val EXTRACT_FUNCTIONS: MemberExtractor<FunctionDescriptor> = object : MemberExtractor<FunctionDescriptor> {
-            override fun extract(extractFrom: KtType, name: Name): Collection<FunctionDescriptor> {
+            override fun extract(extractFrom: KotlinType, name: Name): Collection<FunctionDescriptor> {
                 return extractFrom.memberScope.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             }
         }
 
         private val EXTRACT_PROPERTIES: MemberExtractor<PropertyDescriptor> = object : MemberExtractor<PropertyDescriptor> {
-            override fun extract(extractFrom: KtType, name: Name): Collection<PropertyDescriptor> {
+            override fun extract(extractFrom: KotlinType, name: Name): Collection<PropertyDescriptor> {
                 @Suppress("UNCHECKED_CAST")
                 return extractFrom.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>
             }

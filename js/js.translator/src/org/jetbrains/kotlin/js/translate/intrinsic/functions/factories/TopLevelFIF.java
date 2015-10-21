@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
@@ -219,7 +219,7 @@ public final class TopLevelFIF extends CompositeFIF {
                 @NotNull List<JsExpression> arguments,
                 @NotNull TranslationContext context
         ) {
-            KtType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
+            KotlinType keyType = callInfo.getResolvedCall().getTypeArguments().values().iterator().next();
             Name keyTypeName = DescriptorUtilsKt.getNameIfStandardType(keyType);
             String collectionClassName = null;
             if (keyTypeName != null) {

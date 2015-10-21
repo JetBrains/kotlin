@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.HashSet;
@@ -41,7 +41,7 @@ public final class WhenChecker {
     }
 
     public static boolean mustHaveElse(@NotNull KtWhenExpression expression, @NotNull BindingTrace trace) {
-        KtType expectedType = trace.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression);
+        KotlinType expectedType = trace.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression);
         boolean isUnit = expectedType != null && KotlinBuiltIns.isUnit(expectedType);
         // Some "statements" are actually expressions returned from lambdas, their expected types are non-null
         boolean isStatement = BindingContextUtilsKt.isUsedAsStatement(expression, trace.getBindingContext()) && expectedType == null;
@@ -54,7 +54,7 @@ public final class WhenChecker {
     }
 
     @Nullable
-    public static ClassDescriptor getClassDescriptorOfTypeIfEnum(@Nullable KtType type) {
+    public static ClassDescriptor getClassDescriptorOfTypeIfEnum(@Nullable KotlinType type) {
         if (type == null) return null;
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
         if (classDescriptor == null) return null;
@@ -64,7 +64,7 @@ public final class WhenChecker {
     }
 
     @Nullable
-    private static KtType whenSubjectType(@NotNull KtWhenExpression expression, @NotNull BindingContext context) {
+    private static KotlinType whenSubjectType(@NotNull KtWhenExpression expression, @NotNull BindingContext context) {
         KtExpression subjectExpression = expression.getSubjectExpression();
         return subjectExpression == null ? null : context.getType(subjectExpression);
     }
@@ -136,7 +136,7 @@ public final class WhenChecker {
      */
     private static boolean isNullableTypeWithoutPossibleSmartCast(
             @Nullable KtExpression expression,
-            @NotNull KtType type,
+            @NotNull KotlinType type,
             @NotNull BindingContext context
     ) {
         if (expression == null) return false; // Normally should not happen
@@ -152,7 +152,7 @@ public final class WhenChecker {
     }
 
     public static boolean isWhenExhaustive(@NotNull KtWhenExpression expression, @NotNull BindingTrace trace) {
-        KtType type = whenSubjectType(expression, trace.getBindingContext());
+        KotlinType type = whenSubjectType(expression, trace.getBindingContext());
         if (type == null) return false;
         ClassDescriptor enumClassDescriptor = getClassDescriptorOfTypeIfEnum(type);
 
@@ -196,7 +196,7 @@ public final class WhenChecker {
                 ClassDescriptor checkedDescriptor = null;
                 if (condition instanceof KtWhenConditionIsPattern) {
                     KtWhenConditionIsPattern conditionIsPattern = (KtWhenConditionIsPattern) condition;
-                    KtType checkedType = trace.get(BindingContext.TYPE, conditionIsPattern.getTypeReference());
+                    KotlinType checkedType = trace.get(BindingContext.TYPE, conditionIsPattern.getTypeReference());
                     if (checkedType != null) {
                         checkedDescriptor = TypeUtils.getClassDescriptor(checkedType);
                     }
@@ -243,7 +243,7 @@ public final class WhenChecker {
                 if (condition instanceof KtWhenConditionWithExpression) {
                     KtWhenConditionWithExpression conditionWithExpression = (KtWhenConditionWithExpression) condition;
                     if (conditionWithExpression.getExpression() != null) {
-                        KtType type = trace.getBindingContext().getType(conditionWithExpression.getExpression());
+                        KotlinType type = trace.getBindingContext().getType(conditionWithExpression.getExpression());
                         if (type != null && KotlinBuiltIns.isNothingOrNullableNothing(type)) {
                             return true;
                         }

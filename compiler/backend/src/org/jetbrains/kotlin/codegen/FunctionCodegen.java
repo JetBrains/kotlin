@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -887,7 +887,7 @@ public class FunctionCodegen {
 
         iv.load(1, OBJECT_TYPE);
 
-        KtType jetType = descriptor.getValueParameters().get(0).getType();
+        KotlinType jetType = descriptor.getValueParameters().get(0).getType();
 
         // TODO: reuse logic from ExpressionCodegen
         if (jetType.isMarkedNullable()) {

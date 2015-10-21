@@ -52,7 +52,7 @@ class LazyJavaTypeResolver(
         private val typeParameterResolver: TypeParameterResolver
 ) {
 
-    public fun transformJavaType(javaType: JavaType, attr: JavaTypeAttributes): KtType {
+    public fun transformJavaType(javaType: JavaType, attr: JavaTypeAttributes): KotlinType {
         return when (javaType) {
             is JavaPrimitiveType -> {
                 val primitiveType = javaType.getType()
@@ -71,7 +71,7 @@ class LazyJavaTypeResolver(
         }
     }
 
-    public fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): KtType {
+    public fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): KotlinType {
         return run {
             val javaComponentType = arrayType.getComponentType()
             val primitiveType = (javaComponentType as? JavaPrimitiveType)?.getType()
@@ -169,10 +169,10 @@ class LazyJavaTypeResolver(
 
         // We do not memoize the results of this method, because it would consume much memory, and the real gain is little:
         // the case this method accounts for is very rare, not point in optimizing it
-        private fun getConstructorTypeParameterSubstitute(): KtType {
+        private fun getConstructorTypeParameterSubstitute(): KotlinType {
             // If a Java-constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
             // so we replace them by intersections of their upper bounds
-            val supertypesJet = HashSet<KtType>()
+            val supertypesJet = HashSet<KotlinType>()
             for (supertype in (classifier() as JavaTypeParameter).getUpperBounds()) {
                 supertypesJet.add(transformJavaType(supertype, UPPER_BOUND.toAttributes()))
             }
@@ -290,11 +290,11 @@ class LazyJavaTypeResolver(
 
     public object FlexibleJavaClassifierTypeCapabilities : FlexibleTypeCapabilities {
         @JvmStatic
-        fun create(lowerBound: KtType, upperBound: KtType) = DelegatingFlexibleType.create(lowerBound, upperBound, this)
+        fun create(lowerBound: KotlinType, upperBound: KotlinType) = DelegatingFlexibleType.create(lowerBound, upperBound, this)
 
         override val id: String get() = "kotlin.jvm.PlatformType"
 
-        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KtType, flexibility: Flexibility): T? {
+        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T? {
             @Suppress("UNCHECKED_CAST")
             return when (capabilityClass) {
                 javaClass<CustomTypeVariable>(), javaClass<Specificity>() -> Impl(flexibility) as T
@@ -305,8 +305,8 @@ class LazyJavaTypeResolver(
 
         private class Impl(val flexibility: Flexibility) : CustomTypeVariable, Specificity {
 
-            private val lowerBound: KtType get() = flexibility.lowerBound
-            private val upperBound: KtType get() = flexibility.upperBound
+            private val lowerBound: KotlinType get() = flexibility.lowerBound
+            private val upperBound: KotlinType get() = flexibility.upperBound
 
             override val isTypeVariable: Boolean = lowerBound.getConstructor() == upperBound.getConstructor()
                                                    && lowerBound.getConstructor().getDeclarationDescriptor() is TypeParameterDescriptor
@@ -314,12 +314,12 @@ class LazyJavaTypeResolver(
             override val typeParameterDescriptor: TypeParameterDescriptor? =
                     if (isTypeVariable) lowerBound.getConstructor().getDeclarationDescriptor() as TypeParameterDescriptor else null
 
-            override fun substitutionResult(replacement: KtType): KtType {
+            override fun substitutionResult(replacement: KotlinType): KotlinType {
                 return if (replacement.isFlexible()) replacement
                        else create(replacement, TypeUtils.makeNullable(replacement))
             }
 
-            override fun getSpecificityRelationTo(otherType: KtType): Specificity.Relation {
+            override fun getSpecificityRelationTo(otherType: KotlinType): Specificity.Relation {
                 // For primitive types we have to take care of the case when there are two overloaded methods like
                 //    foo(int) and foo(Integer)
                 // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
@@ -425,8 +425,8 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
         // E.g. `class A<T extends A, F extends A>`
         // To prevent recursive calls return defaultValue() instead
         potentiallyRecursiveTypeParameter: TypeParameterDescriptor? = null,
-        defaultValue: (() -> KtType) = { ErrorUtils.createErrorType("Can't compute erased upper bound of type parameter `$this`") }
-): KtType {
+        defaultValue: (() -> KotlinType) = { ErrorUtils.createErrorType("Can't compute erased upper bound of type parameter `$this`") }
+): KotlinType {
     if (this === potentiallyRecursiveTypeParameter) return defaultValue()
 
     val firstUpperBound = upperBounds.first()
@@ -450,7 +450,7 @@ internal fun TypeParameterDescriptor.getErasedUpperBound(
     return defaultValue()
 }
 
-private fun KtType.replaceArgumentsWithStarProjections(): KtType {
+private fun KotlinType.replaceArgumentsWithStarProjections(): KotlinType {
     if (constructor.parameters.isEmpty() || constructor.declarationDescriptor == null) return this
 
     // We could just create JetTypeImpl with current type constructor and star projections,
@@ -459,7 +459,7 @@ private fun KtType.replaceArgumentsWithStarProjections(): KtType {
 }
 
 private object ConstantStarSubstitution : TypeSubstitution() {
-    override fun get(key: KtType): TypeProjection? {
+    override fun get(key: KotlinType): TypeProjection? {
         // Let substitutor deal with flexibility
         if (key.isFlexible()) return null
 

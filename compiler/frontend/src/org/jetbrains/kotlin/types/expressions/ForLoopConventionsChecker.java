@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collections;
@@ -60,7 +60,7 @@ public class ForLoopConventionsChecker {
     }
 
     @Nullable
-    public KtType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
+    public KotlinType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
         KtExpression loopRangeExpression = loopRange.getExpression();
 
         // Make a fake call loopRange.iterator(), and try to resolve it
@@ -79,10 +79,10 @@ public class ForLoopConventionsChecker {
 
             symbolUsageValidator.validateCall(iteratorResolvedCall, iteratorFunction, context.trace, loopRangeExpression);
 
-            KtType iteratorType = iteratorFunction.getReturnType();
-            KtType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
-                                                            HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
-                                                            LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
+            KotlinType iteratorType = iteratorFunction.getReturnType();
+            KotlinType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
+                                                                HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
+                                                                LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
             if (hasNextType != null && !builtIns.isBooleanOrSubtype(hasNextType)) {
                 context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
             }
@@ -112,14 +112,14 @@ public class ForLoopConventionsChecker {
     }
 
     @Nullable
-    private KtType checkConventionForIterator(
+    private KotlinType checkConventionForIterator(
             @NotNull ExpressionTypingContext context,
             @NotNull KtExpression loopRangeExpression,
-            @NotNull KtType iteratorType,
+            @NotNull KotlinType iteratorType,
             @NotNull String name,
-            @NotNull DiagnosticFactory1<KtExpression, KtType> ambiguity,
-            @NotNull DiagnosticFactory1<KtExpression, KtType> missing,
-            @NotNull DiagnosticFactory1<KtExpression, KtType> noneApplicable,
+            @NotNull DiagnosticFactory1<KtExpression, KotlinType> ambiguity,
+            @NotNull DiagnosticFactory1<KtExpression, KotlinType> missing,
+            @NotNull DiagnosticFactory1<KtExpression, KotlinType> noneApplicable,
             @NotNull WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
     ) {
         OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = fakeCallResolver.resolveFakeCall(

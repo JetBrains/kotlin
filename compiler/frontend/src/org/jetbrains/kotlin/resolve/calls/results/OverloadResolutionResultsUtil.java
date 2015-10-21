@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 
@@ -37,7 +37,7 @@ public class OverloadResolutionResultsUtil {
     }
 
     @Nullable
-    public static <D extends CallableDescriptor> KtType getResultingType(
+    public static <D extends CallableDescriptor> KotlinType getResultingType(
             @NotNull OverloadResolutionResults<D> results,
             @NotNull ContextDependency contextDependency
     ) {

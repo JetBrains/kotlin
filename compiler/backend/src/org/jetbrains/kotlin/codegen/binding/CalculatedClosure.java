@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public interface CalculatedClosure {
     ClassDescriptor getCaptureThis();
 
     @Nullable
-    KtType getCaptureReceiverType();
+    KotlinType getCaptureReceiverType();
 
     @NotNull
     Map<DeclarationDescriptor, EnclosedValueDescriptor> getCaptureVariables();

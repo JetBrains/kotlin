@@ -31,9 +31,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
-fun KtCallableDeclaration.setType(type: KtType, shortenReferences: Boolean = true) {
+fun KtCallableDeclaration.setType(type: KotlinType, shortenReferences: Boolean = true) {
     if (type.isError()) return
     setType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type), shortenReferences)
 }
@@ -46,7 +46,7 @@ fun KtCallableDeclaration.setType(typeString: String, shortenReferences: Boolean
     }
 }
 
-fun KtCallableDeclaration.setReceiverType(type: KtType) {
+fun KtCallableDeclaration.setReceiverType(type: KotlinType) {
     if (type.isError()) return
     val typeReference = KtPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
     setReceiverTypeReference(typeReference)

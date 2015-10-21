@@ -65,7 +65,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.List;
@@ -391,15 +391,15 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         ResolvedCall<?> call = CallUtilKt.getResolvedCall(initializer, context);
         if (call == null) return null;
 
-        List<KtType> typeArguments = Lists.newArrayList();
-        Map<TypeParameterDescriptor, KtType> typeArgumentMap = call.getTypeArguments();
+        List<KotlinType> typeArguments = Lists.newArrayList();
+        Map<TypeParameterDescriptor, KotlinType> typeArgumentMap = call.getTypeArguments();
         for (TypeParameterDescriptor typeParameter : call.getCandidateDescriptor().getTypeParameters()) {
             typeArguments.add(typeArgumentMap.get(typeParameter));
         }
 
-        return StringUtil.join(typeArguments, new Function<KtType, String>() {
+        return StringUtil.join(typeArguments, new Function<KotlinType, String>() {
             @Override
-            public String fun(KtType type) {
+            public String fun(KotlinType type) {
                 return IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(type);
             }
         }, ", ");

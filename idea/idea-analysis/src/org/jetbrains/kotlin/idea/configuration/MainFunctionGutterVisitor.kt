@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.KtIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtVisitorVoid
@@ -37,7 +37,7 @@ class MainFunctionGutterVisitor(val holder: AnnotationHolder, val bindingContext
 }
 
 class MainGutterIconRenderer(val nameIdentifier: PsiElement) : GutterIconRenderer() {
-    override fun getIcon(): Icon = KtIcons.LAUNCH
+    override fun getIcon(): Icon = KotlinIcons.LAUNCH
     override fun hashCode(): Int = nameIdentifier.hashCode()
     override fun equals(other: Any?): Boolean = other is MainGutterIconRenderer && other.nameIdentifier == nameIdentifier
 }

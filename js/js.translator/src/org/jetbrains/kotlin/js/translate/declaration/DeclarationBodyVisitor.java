@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
@@ -75,7 +75,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     public Void visitEnumEntry(@NotNull KtEnumEntry enumEntry, TranslationContext data) {
         JsExpression jsEnumEntryCreation;
         ClassDescriptor descriptor = getClassDescriptor(data.bindingContext(), enumEntry);
-        List<KtType> supertypes = getSupertypesWithoutFakes(descriptor);
+        List<KotlinType> supertypes = getSupertypesWithoutFakes(descriptor);
         if (enumEntry.getBody() != null || supertypes.size() > 1) {
             jsEnumEntryCreation = ClassTranslator.generateClassCreation(enumEntry, data);
         } else {

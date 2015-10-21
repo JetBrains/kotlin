@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeUtils;
 
@@ -68,9 +68,9 @@ import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
-    private static final Predicate<KtType> VALID_SUPERTYPE = new Predicate<KtType>() {
+    private static final Predicate<KotlinType> VALID_SUPERTYPE = new Predicate<KotlinType>() {
         @Override
-        public boolean apply(KtType type) {
+        public boolean apply(KotlinType type) {
             assert !type.isError() : "Error types must be filtered out in DescriptorResolver";
             return TypeUtils.getClassDescriptor(type) != null;
         }
@@ -488,21 +488,21 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     private static class Supertypes {
         @Mutable
-        public final Collection<KtType> trueSupertypes;
+        public final Collection<KotlinType> trueSupertypes;
         @Mutable
-        public final Collection<KtType> cyclicSupertypes;
+        public final Collection<KotlinType> cyclicSupertypes;
 
-        private Supertypes(@Mutable @NotNull Collection<KtType> trueSupertypes) {
-            this(trueSupertypes, new ArrayList<KtType>(0));
+        private Supertypes(@Mutable @NotNull Collection<KotlinType> trueSupertypes) {
+            this(trueSupertypes, new ArrayList<KotlinType>(0));
         }
 
-        private Supertypes(@Mutable @NotNull Collection<KtType> trueSupertypes, @Mutable @NotNull Collection<KtType> cyclicSupertypes) {
+        private Supertypes(@Mutable @NotNull Collection<KotlinType> trueSupertypes, @Mutable @NotNull Collection<KotlinType> cyclicSupertypes) {
             this.trueSupertypes = trueSupertypes;
             this.cyclicSupertypes = cyclicSupertypes;
         }
 
         @NotNull
-        public Collection<KtType> getAllSupertypes() {
+        public Collection<KotlinType> getAllSupertypes() {
             return CollectionsKt.plus(trueSupertypes, cyclicSupertypes);
         }
     }
@@ -513,7 +513,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     @Override
                     public Supertypes invoke() {
                         if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(LazyClassDescriptor.this)) {
-                            return new Supertypes(Collections.<KtType>emptyList());
+                            return new Supertypes(Collections.<KotlinType>emptyList());
                         }
 
                         KtClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
@@ -521,7 +521,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                             return new Supertypes(Collections.singleton(c.getModuleDescriptor().getBuiltIns().getAnyType()));
                         }
 
-                        List<KtType> allSupertypes = c.getDescriptorResolver()
+                        List<KotlinType> allSupertypes = c.getDescriptorResolver()
                                 .resolveSupertypes(getScopeForClassHeaderResolution(), LazyClassDescriptor.this, classOrObject,
                                                    c.getTrace());
 
@@ -531,7 +531,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 new Function1<Boolean, Supertypes>() {
                     @Override
                     public Supertypes invoke(Boolean firstTime) {
-                        return new Supertypes(Collections.<KtType>emptyList());
+                        return new Supertypes(Collections.<KotlinType>emptyList());
                     }
                 },
                 new Function1<Supertypes, Unit>() {
@@ -581,13 +581,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         @NotNull
         @Override
-        public Collection<KtType> getSupertypes() {
+        public Collection<KotlinType> getSupertypes() {
             return supertypes.invoke().trueSupertypes;
         }
 
         private void findAndDisconnectLoopsInTypeHierarchy(Supertypes supertypes) {
-            for (Iterator<KtType> iterator = supertypes.trueSupertypes.iterator(); iterator.hasNext(); ) {
-                KtType supertype = iterator.next();
+            for (Iterator<KotlinType> iterator = supertypes.trueSupertypes.iterator(); iterator.hasNext(); ) {
+                KotlinType supertype = iterator.next();
                 if (isReachable(supertype.getConstructor(), this, new HashSet<TypeConstructor>())) {
                     iterator.remove();
                     supertypes.cyclicSupertypes.add(supertype);
@@ -614,7 +614,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 for (KtDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
                     KtTypeReference typeReference = delegationSpecifier.getTypeReference();
                     if (typeReference == null) continue;
-                    KtType supertype = trace.get(TYPE, typeReference);
+                    KotlinType supertype = trace.get(TYPE, typeReference);
                     if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
                         elementToMark = typeReference;
                     }
@@ -634,7 +634,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         private boolean isReachable(TypeConstructor from, TypeConstructor to, Set<TypeConstructor> visited) {
             if (!visited.add(from)) return false;
-            for (KtType supertype : getNeighbors(from)) {
+            for (KotlinType supertype : getNeighbors(from)) {
                 TypeConstructor supertypeConstructor = supertype.getConstructor();
                 if (supertypeConstructor == to) {
                     return true;
@@ -646,9 +646,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             return false;
         }
 
-        private Collection<KtType> getNeighbors(TypeConstructor from) {
+        private Collection<KotlinType> getNeighbors(TypeConstructor from) {
             // Supertypes + type for container
-            Collection<KtType> neighbours = new ArrayList<KtType>(
+            Collection<KotlinType> neighbours = new ArrayList<KotlinType>(
                     from instanceof LazyClassTypeConstructor
                              ? ((LazyClassTypeConstructor) from).supertypes.invoke().getAllSupertypes()
                              : from.getSupertypes()

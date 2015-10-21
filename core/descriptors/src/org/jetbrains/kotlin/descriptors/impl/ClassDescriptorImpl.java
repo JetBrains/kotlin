@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 
@@ -45,7 +45,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull Modality modality,
-            @NotNull Collection<KtType> supertypes,
+            @NotNull Collection<KotlinType> supertypes,
             @NotNull SourceElement source
     ) {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);

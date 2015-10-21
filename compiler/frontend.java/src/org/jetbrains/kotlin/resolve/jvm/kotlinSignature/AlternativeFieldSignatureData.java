@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.structure.JavaField;
 import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.HashMap;
 
 public class AlternativeFieldSignatureData extends ElementAlternativeSignatureData {
-    private KtType altReturnType;
+    private KotlinType altReturnType;
 
     public AlternativeFieldSignatureData(
             @NotNull JavaField field,
-            @NotNull KtType originalReturnType,
+            @NotNull KotlinType originalReturnType,
             @NotNull Project project,
             boolean isVar
     ) {
@@ -59,7 +59,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
     }
 
     @NotNull
-    public KtType getReturnType() {
+    public KotlinType getReturnType() {
         checkForErrors();
         return altReturnType;
     }

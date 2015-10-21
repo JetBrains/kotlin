@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -134,8 +134,8 @@ public class DeserializedClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()
 
-    private fun computeSupertypes(): Collection<KtType> {
-        val result = ArrayList<KtType>(classProto.supertypeCount)
+    private fun computeSupertypes(): Collection<KotlinType> {
+        val result = ArrayList<KotlinType>(classProto.supertypeCount)
         val unresolved = ArrayList<DeserializedType>(0)
 
         for (supertypeProto in classProto.supertypes(c.typeTable)) {

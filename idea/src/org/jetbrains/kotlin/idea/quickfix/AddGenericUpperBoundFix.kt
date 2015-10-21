@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintsUtil
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 public class AddGenericUpperBoundFix(
         typeParameter: KtTypeParameter,
-        upperBound: KtType
+        upperBound: KotlinType
 ) : KotlinQuickFixAction<KtTypeParameter>(typeParameter) {
     private val renderedUpperBound: String = IdeDescriptorRenderers.SOURCE_CODE.renderType(upperBound)
 
@@ -100,7 +100,7 @@ public class AddGenericUpperBoundFix(
             }.filterNotNull()
         }
 
-        private fun createAction(argument: KtType, upperBound: KtType): IntentionAction? {
+        private fun createAction(argument: KotlinType, upperBound: KotlinType): IntentionAction? {
             if (!upperBound.constructor.isDenotable) return null
 
             val typeParameterDescriptor = (argument.constructor.declarationDescriptor as? TypeParameterDescriptor) ?: return null

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 
@@ -52,11 +52,11 @@ class KotlinLightClassForAnonymousDeclaration extends KotlinLightClassForExplici
         ClassDescriptor descriptor = getDescriptor();
         if (descriptor == null) return CommonClassNames.JAVA_LANG_OBJECT;
 
-        Collection<KtType> superTypes = descriptor.getTypeConstructor().getSupertypes();
+        Collection<KotlinType> superTypes = descriptor.getTypeConstructor().getSupertypes();
 
         if (superTypes.isEmpty()) return CommonClassNames.JAVA_LANG_OBJECT;
 
-        KtType superType = superTypes.iterator().next();
+        KotlinType superType = superTypes.iterator().next();
         DeclarationDescriptor superClassDescriptor = superType.getConstructor().getDeclarationDescriptor();
 
         if (superClassDescriptor == null) {

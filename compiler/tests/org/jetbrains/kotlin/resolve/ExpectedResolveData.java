@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 
 import java.util.List;
@@ -244,7 +244,7 @@ public abstract class ExpectedResolveData {
                     continue;
                 }
 
-                KtType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
+                KotlinType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
                 ClassifierDescriptor expectedClass = builtIns.getBuiltInClassByName(Name.identifier(name.substring(STANDARD_PREFIX.length())));
                 assertNotNull("Expected class not found: " + name);
@@ -299,7 +299,7 @@ public abstract class ExpectedResolveData {
             PsiElement element = position.getElement();
             KtExpression expression = getAncestorOfType(KtExpression.class, element);
 
-            KtType expressionType = bindingContext.getType(expression);
+            KotlinType expressionType = bindingContext.getType(expression);
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith(STANDARD_PREFIX)) {
                 String name = typeName.substring(STANDARD_PREFIX.length());

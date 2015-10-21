@@ -235,13 +235,13 @@ public class OverrideResolver {
 
     private static List<CallableMemberDescriptor> getCallableMembersFromSupertypes(ClassDescriptor classDescriptor) {
         Set<CallableMemberDescriptor> r = Sets.newLinkedHashSet();
-        for (KtType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+        for (KotlinType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
             r.addAll(getCallableMembersFromType(supertype));
         }
         return new ArrayList<CallableMemberDescriptor>(r);
     }
 
-    private static List<CallableMemberDescriptor> getCallableMembersFromType(KtType type) {
+    private static List<CallableMemberDescriptor> getCallableMembersFromType(KotlinType type) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
         for (DeclarationDescriptor decl : type.getMemberScope().getAllDescriptors()) {
             if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
@@ -687,13 +687,13 @@ public class OverrideResolver {
         TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
         if (typeSubstitutor == null) return false;
 
-        KtType superReturnType = superDescriptor.getReturnType();
+        KotlinType superReturnType = superDescriptor.getReturnType();
         assert superReturnType != null;
 
-        KtType subReturnType = subDescriptor.getReturnType();
+        KotlinType subReturnType = subDescriptor.getReturnType();
         assert subReturnType != null;
 
-        KtType substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE);
+        KotlinType substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
 
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(subReturnType, substitutedSuperReturnType);
@@ -725,7 +725,7 @@ public class OverrideResolver {
 
         if (!superDescriptor.isVar()) return true;
 
-        KtType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getType(), Variance.OUT_VARIANCE);
+        KotlinType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
         return KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
     }
@@ -792,7 +792,7 @@ public class OverrideResolver {
             @NotNull CallableMemberDescriptor declared,
             @NotNull ClassDescriptor declaringClass
     ) {
-        for (KtType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
+        for (KotlinType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
             Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
             all.addAll(supertype.getMemberScope().getFunctions(declared.getName(), NoLookupLocation.UNSORTED));
             //noinspection unchecked

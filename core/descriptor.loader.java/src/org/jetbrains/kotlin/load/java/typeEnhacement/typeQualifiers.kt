@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NOT_NU
 import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NULLABLE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
@@ -65,7 +65,7 @@ class JavaTypeQualifiers(
     }
 }
 
-private fun KtType.extractQualifiers(): JavaTypeQualifiers {
+private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
     val (lower, upper) =
             if (this.isFlexible())
                 flexibility().let { Pair(it.lowerBound, it.upperBound) }
@@ -88,11 +88,11 @@ private fun Annotations.extractQualifiers(): JavaTypeQualifiers {
     )
 }
 
-fun KtType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<KtType>, isCovariant: Boolean): (Int) -> JavaTypeQualifiers {
-    fun KtType.toIndexed(): List<KtType> {
-        val list = ArrayList<KtType>(1)
+fun KotlinType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<KotlinType>, isCovariant: Boolean): (Int) -> JavaTypeQualifiers {
+    fun KotlinType.toIndexed(): List<KotlinType> {
+        val list = ArrayList<KotlinType>(1)
 
-        fun add(type: KtType) {
+        fun add(type: KotlinType) {
             list.add(type)
             for (arg in type.getArguments()) {
                 if (arg.isStarProjection()) {
@@ -134,7 +134,7 @@ fun KtType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<KtType
     return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
 }
 
-private fun KtType.computeQualifiersForOverride(fromSupertypes: Collection<KtType>, isCovariant: Boolean): JavaTypeQualifiers {
+private fun KotlinType.computeQualifiersForOverride(fromSupertypes: Collection<KotlinType>, isCovariant: Boolean): JavaTypeQualifiers {
     val nullabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().nullability }.filterNotNull().toSet()
     val mutabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().mutability }.filterNotNull().toSet()
     val own = getAnnotations().extractQualifiers()

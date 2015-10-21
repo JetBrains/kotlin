@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.typeBinding
 
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtTypeElement
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 
 interface TypeBinding<out P : PsiElement> {
     val psiElement: P
-    val jetType: KtType
+    val jetType: KotlinType
     fun getArgumentBindings(): List<TypeArgumentBinding<P>?>
 }
 
@@ -70,7 +70,7 @@ private class TypeArgumentBindingImpl<out P: PsiElement>(
 private class ExplicitTypeBinding(
         private val trace: BindingContext,
         override val psiElement: KtTypeElement,
-        override val jetType: KtType
+        override val jetType: KotlinType
 ) : TypeBinding<KtTypeElement> {
 
     override fun getArgumentBindings(): List<TypeArgumentBinding<KtTypeElement>?> {
@@ -111,7 +111,7 @@ private class ExplicitTypeBinding(
 private class NoTypeElementBinding<out P : PsiElement>(
         private val trace: BindingContext,
         override val psiElement: P,
-        override val jetType: KtType
+        override val jetType: KotlinType
 ): TypeBinding<P> {
 
     override fun getArgumentBindings(): List<TypeArgumentBinding<P>?> {

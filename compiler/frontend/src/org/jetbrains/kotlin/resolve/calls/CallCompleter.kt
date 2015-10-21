@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.*
@@ -136,7 +136,7 @@ public class CallCompleter(
     }
 
     private fun <D : CallableDescriptor> MutableResolvedCall<D>.completeConstraintSystem(
-            expectedType: KtType,
+            expectedType: KotlinType,
             trace: BindingTrace
     ) {
         fun updateSystemIfSuccessful(update: (ConstraintSystemImpl) -> Boolean) {
@@ -240,7 +240,7 @@ public class CallCompleter(
         val deparenthesized = KtPsiUtil.getLastElementDeparenthesized(expression, context.statementFilter) ?: return
 
         val recordedType = expression.let { context.trace.getType(it) }
-        var updatedType: KtType? = recordedType
+        var updatedType: KotlinType? = recordedType
 
         val results = completeCallForArgument(deparenthesized, context)
         if (results != null && results.isSingleResult()) {
@@ -288,11 +288,11 @@ public class CallCompleter(
     }
 
     private fun updateRecordedTypeForArgument(
-            updatedType: KtType?,
-            recordedType: KtType?,
+            updatedType: KotlinType?,
+            recordedType: KotlinType?,
             argumentExpression: KtExpression,
             trace: BindingTrace
-    ): KtType? {
+    ): KotlinType? {
         //workaround for KT-8218
         if ((!ErrorUtils.containsErrorType(recordedType) && recordedType == updatedType) || updatedType == null) return updatedType
 

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
 import org.jetbrains.kotlin.storage.NotNullLazyValue
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -106,7 +106,7 @@ public abstract class LazyJavaScope(
     protected abstract fun resolveMethodSignature(
             method: JavaMethod,
             methodTypeParameters: List<TypeParameterDescriptor>,
-            returnType: KtType,
+            returnType: KotlinType,
             valueParameters: ResolvedValueParameters): MethodSignatureData
 
     open fun resolveMethodToFunctionDescriptor(method: JavaMethod): JavaMethodDescriptor {
@@ -147,7 +147,7 @@ public abstract class LazyJavaScope(
         return functionDescriptorImpl
     }
 
-    protected fun computeMethodReturnType(method: JavaMethod, annotations: Annotations, c: LazyJavaResolverContext): KtType {
+    protected fun computeMethodReturnType(method: JavaMethod, annotations: Annotations, c: LazyJavaResolverContext): KotlinType {
         val annotationMethod = method.getContainingClass().isAnnotationType()
         val returnTypeAttrs = LazyJavaTypeAttributes(
                 TypeUsage.MEMBER_SIGNATURE_COVARIANT, annotations,
@@ -255,7 +255,7 @@ public abstract class LazyJavaScope(
             c.components.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
         }
 
-        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getDispatchReceiverParameter(), null as KtType?)
+        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getDispatchReceiverParameter(), null as KotlinType?)
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
             propertyDescriptor.setCompileTimeInitializer(
@@ -282,7 +282,7 @@ public abstract class LazyJavaScope(
     private val JavaField.isFinalStatic: Boolean
         get() = isFinal && isStatic
 
-    private fun getPropertyType(field: JavaField, annotations: Annotations): KtType {
+    private fun getPropertyType(field: JavaField, annotations: Annotations): KotlinType {
         // Fields do not have their own generic parameters
         val finalStatic = field.isFinalStatic
         // simple static constants should not have flexible types:

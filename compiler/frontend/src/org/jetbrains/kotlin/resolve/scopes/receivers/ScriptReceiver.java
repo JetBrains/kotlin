@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.scopes.receivers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 // SCRIPT: script receiver
 public class ScriptReceiver implements ThisReceiver {
@@ -40,7 +40,7 @@ public class ScriptReceiver implements ThisReceiver {
 
     @NotNull
     @Override
-    public KtType getType() {
+    public KotlinType getType() {
         // not sure
         return DescriptorUtilsKt.getBuiltIns(scriptDescriptor).getAnyType();
     }

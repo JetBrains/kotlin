@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.upperIfFlexible
@@ -36,20 +36,20 @@ public class RuntimeAssertionInfo(public val needNotNullAssertion: Boolean, publ
     public interface DataFlowExtras {
         class OnlyMessage(message: String) : DataFlowExtras {
             override val canBeNull: Boolean get() = true
-            override val possibleTypes: Set<KtType> get() = setOf()
+            override val possibleTypes: Set<KotlinType> get() = setOf()
             override val presentableText: String = message
         }
 
         val canBeNull: Boolean
-        val possibleTypes: Set<KtType>
+        val possibleTypes: Set<KotlinType>
         val presentableText: String
     }
 
     companion object {
         @JvmStatic
         public fun create(
-                expectedType: KtType,
-                expressionType: KtType,
+                expectedType: KotlinType,
+                expressionType: KotlinType,
                 dataFlowExtras: DataFlowExtras
         ): RuntimeAssertionInfo? {
             fun assertNotNull(): Boolean {
@@ -78,13 +78,13 @@ public class RuntimeAssertionInfo(public val needNotNullAssertion: Boolean, publ
                 null
         }
 
-        private fun KtType.hasEnhancedNullability()
+        private fun KotlinType.hasEnhancedNullability()
                 = getAnnotations().findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
     }
 }
 
 public object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
-    override fun checkType(expression: KtExpression, expressionType: KtType, expressionTypeWithSmartCast: KtType, c: ResolutionContext<*>) {
+    override fun checkType(expression: KtExpression, expressionType: KotlinType, expressionTypeWithSmartCast: KotlinType, c: ResolutionContext<*>) {
         if (TypeUtils.noExpectedType(c.expectedType)) return
 
         val assertionInfo = RuntimeAssertionInfo.create(
@@ -93,7 +93,7 @@ public object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
                 object : RuntimeAssertionInfo.DataFlowExtras {
                     override val canBeNull: Boolean
                         get() = c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
-                    override val possibleTypes: Set<KtType>
+                    override val possibleTypes: Set<KotlinType>
                         get() = c.dataFlowInfo.getPossibleTypes(dataFlowValue)
                     override val presentableText: String
                         get() = StringUtil.trimMiddle(expression.getText(), 50)

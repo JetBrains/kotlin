@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.FunctionPlaceholders
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.utils.ThrowingList
@@ -55,7 +55,7 @@ public fun resolveCallableReferenceReceiverType(
         callableReferenceExpression: KtCallableReferenceExpression,
         context: ResolutionContext<*>,
         typeResolver: TypeResolver
-): KtType? =
+): KotlinType? =
         callableReferenceExpression.typeReference?.let {
             typeResolver.resolveType(context.scope, it, context.trace, false)
         }
@@ -93,7 +93,7 @@ private fun OverloadResolutionResults<*>.isSomething(): Boolean = !isNothing()
 
 public fun resolvePossiblyAmbiguousCallableReference(
         callableReferenceExpression: KtCallableReferenceExpression,
-        lhsType: KtType?,
+        lhsType: KotlinType?,
         context: ResolutionContext<*>,
         resolutionMode: ResolveArgumentsMode,
         callResolver: CallResolver
@@ -142,7 +142,7 @@ public fun resolvePossiblyAmbiguousCallableReference(
 
 public fun resolveCallableReferenceTarget(
         callableReferenceExpression: KtCallableReferenceExpression,
-        lhsType: KtType?,
+        lhsType: KotlinType?,
         context: ResolutionContext<*>,
         resolvedToSomething: BooleanArray,
         callResolver: CallResolver
@@ -164,9 +164,9 @@ public fun resolveCallableReferenceTarget(
 
 private fun createReflectionTypeForFunction(
         descriptor: FunctionDescriptor,
-        receiverType: KtType?,
+        receiverType: KotlinType?,
         reflectionTypes: ReflectionTypes
-): KtType? {
+): KotlinType? {
     val returnType = descriptor.getReturnType() ?: return null
     val valueParametersTypes = ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters())
     return reflectionTypes.getKFunctionType(Annotations.EMPTY, receiverType, valueParametersTypes, returnType)
@@ -174,13 +174,13 @@ private fun createReflectionTypeForFunction(
 
 private fun createReflectionTypeForProperty(
         descriptor: PropertyDescriptor,
-        receiverType: KtType?,
+        receiverType: KotlinType?,
         reflectionTypes: ReflectionTypes
-): KtType {
+): KotlinType {
     return reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.getType(), descriptor.isVar())
 }
 
-private fun bindFunctionReference(expression: KtCallableReferenceExpression, referenceType: KtType, context: ResolutionContext<*>) {
+private fun bindFunctionReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
     val functionDescriptor = AnonymousFunctionDescriptor(
             context.scope.ownerDescriptor,
             Annotations.EMPTY,
@@ -192,7 +192,7 @@ private fun bindFunctionReference(expression: KtCallableReferenceExpression, ref
     context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
 }
 
-private fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KtType, context: ResolutionContext<*>) {
+private fun bindPropertyReference(expression: KtCallableReferenceExpression, referenceType: KotlinType, context: ResolutionContext<*>) {
     val localVariable = LocalVariableDescriptor(context.scope.ownerDescriptor, Annotations.EMPTY, Name.special("<anonymous>"),
                                                 referenceType, /* mutable = */ false, expression.toSourceElement())
 
@@ -201,11 +201,11 @@ private fun bindPropertyReference(expression: KtCallableReferenceExpression, ref
 
 private fun createReflectionTypeForCallableDescriptor(
         descriptor: CallableDescriptor,
-        lhsType: KtType?,
+        lhsType: KotlinType?,
         reflectionTypes: ReflectionTypes,
         trace: BindingTrace?,
         reportOn: KtExpression?
-): KtType? {
+): KotlinType? {
     val extensionReceiver = descriptor.extensionReceiverParameter
     val dispatchReceiver = descriptor.dispatchReceiverParameter?.let { dispatchReceiver ->
         // See CallableDescriptor#getOwnerForEffectiveDispatchReceiverParameter
@@ -245,16 +245,16 @@ private fun createReflectionTypeForCallableDescriptor(
 public fun getReflectionTypeForCandidateDescriptor(
         descriptor: CallableDescriptor,
         reflectionTypes: ReflectionTypes
-): KtType? =
+): KotlinType? =
         createReflectionTypeForCallableDescriptor(descriptor, null, reflectionTypes, null, null)
 
 public fun createReflectionTypeForResolvedCallableReference(
         reference: KtCallableReferenceExpression,
-        lhsType: KtType?,
+        lhsType: KotlinType?,
         descriptor: CallableDescriptor,
         context: ResolutionContext<*>,
         reflectionTypes: ReflectionTypes
-): KtType? {
+): KotlinType? {
     val type = createReflectionTypeForCallableDescriptor(
             descriptor, lhsType, reflectionTypes, context.trace, reference.getCallableReference()
     ) ?: return null
@@ -271,14 +271,14 @@ public fun createReflectionTypeForResolvedCallableReference(
 
 public fun getResolvedCallableReferenceShapeType(
         reference: KtCallableReferenceExpression,
-        lhsType: KtType?,
+        lhsType: KotlinType?,
         overloadResolutionResults: OverloadResolutionResults<CallableDescriptor>?,
         context: ResolutionContext<*>,
         expectedTypeUnknown: Boolean,
         reflectionTypes: ReflectionTypes,
         builtIns: KotlinBuiltIns,
         functionPlaceholders: FunctionPlaceholders
-): KtType? =
+): KotlinType? =
         when {
             overloadResolutionResults == null ->
                 null

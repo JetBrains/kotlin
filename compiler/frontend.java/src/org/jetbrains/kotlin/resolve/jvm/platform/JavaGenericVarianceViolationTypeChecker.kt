@@ -39,8 +39,8 @@ public object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // JavaClass.fillWithDefaultObjects(x) // using `x` after this call may lead to CCE
     override fun checkType(
             expression: KtExpression,
-            expressionType: KtType,
-            expressionTypeWithSmartCast: KtType,
+            expressionType: KotlinType,
+            expressionTypeWithSmartCast: KotlinType,
             c: ResolutionContext<*>
     ) {
         val expectedType = c.expectedType

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo
@@ -37,7 +37,7 @@ public fun KtExpression.computeTypeInfoInContext(
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
-        expectedType: KtType = TypeUtils.NO_EXPECTED_TYPE,
+        expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false
 ): JetTypeInfo {
     PreliminaryDeclarationVisitor.createForExpression(this, trace)
@@ -51,7 +51,7 @@ public fun KtExpression.analyzeInContext(
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
-        expectedType: KtType = TypeUtils.NO_EXPECTED_TYPE,
+        expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false
 ): BindingContext {
     computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement)
@@ -64,7 +64,7 @@ public fun KtExpression.computeTypeInContext(
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
-        expectedType: KtType = TypeUtils.NO_EXPECTED_TYPE
-): KtType? {
+        expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE
+): KotlinType? {
     return computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType).type
 }

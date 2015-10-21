@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -32,7 +32,7 @@ object SenselessComparisonChecker {
             left: KtExpression,
             right: KtExpression,
             context: ResolutionContext<*>,
-            getType: (KtExpression) -> KtType?,
+            getType: (KtExpression) -> KotlinType?,
             getNullability: (DataFlowValue) -> Nullability
     ) {
         val expr =

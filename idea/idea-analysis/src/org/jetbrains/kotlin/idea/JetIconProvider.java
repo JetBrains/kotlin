@@ -62,7 +62,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
         if (psiElement instanceof KtFile) {
             KtFile file = (KtFile) psiElement;
             KtClassOrObject mainClass = getMainClass(file);
-            return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : KtIcons.FILE;
+            return mainClass != null && file.getDeclarations().size() == 1 ? getIcon(mainClass, flags) : KotlinIcons.FILE;
         }
 
         Icon result = getBaseIcon(psiElement);
@@ -102,7 +102,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
         }
 
         if (psiElement instanceof KotlinLightClassForFacade) {
-            return KtIcons.FILE;
+            return KotlinIcons.FILE;
         }
 
         if (psiElement instanceof KotlinLightClassForDecompiledDeclaration) {
@@ -112,7 +112,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
             }
             else {
                 //TODO (light classes for decompiled files): correct presentation
-                return KtIcons.CLASS;
+                return KotlinIcons.CLASS;
             }
         }
 
@@ -122,7 +122,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
 
         if (psiElement instanceof KtNamedFunction) {
             if (((KtFunction) psiElement).getReceiverTypeReference() != null) {
-                return KtIcons.EXTENSION_FUNCTION;
+                return KotlinIcons.EXTENSION_FUNCTION;
             }
 
             if (PsiTreeUtil.getParentOfType(psiElement, KtNamedDeclaration.class) instanceof KtClass) {
@@ -134,41 +134,41 @@ public class JetIconProvider extends IconProvider implements DumbAware {
                 }
             }
             else {
-                return KtIcons.FUNCTION;
+                return KotlinIcons.FUNCTION;
             }
         }
 
-        if (psiElement instanceof KtFunctionLiteral) return KtIcons.LAMBDA;
+        if (psiElement instanceof KtFunctionLiteral) return KotlinIcons.LAMBDA;
 
         if (psiElement instanceof KtClass) {
             KtClass ktClass = (KtClass) psiElement;
             if (ktClass.isInterface()) {
-                return KtIcons.TRAIT;
+                return KotlinIcons.TRAIT;
             }
 
-            Icon icon = ktClass.isEnum() ? KtIcons.ENUM : KtIcons.CLASS;
+            Icon icon = ktClass.isEnum() ? KotlinIcons.ENUM : KotlinIcons.CLASS;
             if (ktClass instanceof KtEnumEntry) {
                 KtEnumEntry enumEntry = (KtEnumEntry) ktClass;
                 if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                    icon = KtIcons.ENUM;
+                    icon = KotlinIcons.ENUM;
                 }
             }
             return icon;
         }
         if (psiElement instanceof KtObjectDeclaration) {
-            return KtIcons.OBJECT;
+            return KotlinIcons.OBJECT;
         }
         if (psiElement instanceof KtParameter) {
             KtParameter parameter = (KtParameter) psiElement;
             if (KtPsiUtil.getClassIfParameterIsProperty(parameter) != null) {
-                return parameter.isMutable() ? KtIcons.FIELD_VAR : KtIcons.FIELD_VAL;
+                return parameter.isMutable() ? KotlinIcons.FIELD_VAR : KotlinIcons.FIELD_VAL;
             }
 
-            return KtIcons.PARAMETER;
+            return KotlinIcons.PARAMETER;
         }
         if (psiElement instanceof KtProperty) {
             KtProperty property = (KtProperty) psiElement;
-            return property.isVar() ? KtIcons.FIELD_VAR : KtIcons.FIELD_VAL;
+            return property.isVar() ? KotlinIcons.FIELD_VAR : KotlinIcons.FIELD_VAL;
         }
 
         return null;

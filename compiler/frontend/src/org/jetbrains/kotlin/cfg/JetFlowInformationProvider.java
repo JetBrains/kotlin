@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.ResolvedCallUtilKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
@@ -129,7 +129,7 @@ public class JetFlowInformationProvider {
         markWhenWithoutElse();
     }
 
-    public void checkFunction(@Nullable KtType expectedReturnType) {
+    public void checkFunction(@Nullable KotlinType expectedReturnType) {
         UnreachableCode unreachableCode = collectUnreachableCode();
         reportUnreachableCode(unreachableCode);
 
@@ -208,7 +208,7 @@ public class JetFlowInformationProvider {
 
                 CallableDescriptor functionDescriptor =
                         (CallableDescriptor) trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, localDeclaration);
-                KtType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
+                KotlinType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
 
                 JetFlowInformationProvider providerForLocalDeclaration =
                         new JetFlowInformationProvider(localDeclaration, trace, localDeclarationInstruction.getBody());
@@ -218,7 +218,7 @@ public class JetFlowInformationProvider {
         }
     }
 
-    public void checkDefiniteReturn(final @NotNull KtType expectedReturnType, @NotNull final UnreachableCode unreachableCode) {
+    public void checkDefiniteReturn(final @NotNull KotlinType expectedReturnType, @NotNull final UnreachableCode unreachableCode) {
         assert subroutine instanceof KtDeclarationWithBody;
         KtDeclarationWithBody function = (KtDeclarationWithBody) subroutine;
 

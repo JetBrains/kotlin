@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Collections;
@@ -64,21 +64,21 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
 
         KtExpression expression = (KtExpression) diagnosticElement;
 
-        KtType expectedType;
-        KtType expressionType;
+        KotlinType expectedType;
+        KotlinType expressionType;
         if (diagnostic.getFactory() == Errors.TYPE_MISMATCH) {
-            DiagnosticWithParameters2<KtExpression, KtType, KtType> diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic);
+            DiagnosticWithParameters2<KtExpression, KotlinType, KotlinType> diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic);
             expectedType = diagnosticWithParameters.getA();
             expressionType = diagnosticWithParameters.getB();
         }
         else if (diagnostic.getFactory() == Errors.NULL_FOR_NONNULL_TYPE) {
-            DiagnosticWithParameters1<KtConstantExpression, KtType> diagnosticWithParameters =
+            DiagnosticWithParameters1<KtConstantExpression, KotlinType> diagnosticWithParameters =
                     Errors.NULL_FOR_NONNULL_TYPE.cast(diagnostic);
             expectedType = diagnosticWithParameters.getA();
             expressionType = TypeUtilsKt.makeNullable(expectedType);
         }
         else if (diagnostic.getFactory() == Errors.CONSTANT_EXPECTED_TYPE_MISMATCH) {
-            DiagnosticWithParameters2<KtConstantExpression, String, KtType> diagnosticWithParameters =
+            DiagnosticWithParameters2<KtConstantExpression, String, KotlinType> diagnosticWithParameters =
                     Errors.CONSTANT_EXPECTED_TYPE_MISMATCH.cast(diagnostic);
             expectedType = diagnosticWithParameters.getB();
             expressionType = context.getType(expression);
@@ -105,7 +105,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             if (QuickFixUtil.canEvaluateTo(initializer, expression) ||
                 (getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(property.getGetter(), expression))) {
                 LexicalScope scope = UtilsKt.getResolutionScope(property, context, ResolutionUtils.getResolutionFacade(property));
-                KtType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
+                KotlinType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
                 actions.add(new ChangeVariableTypeFix(property, typeToInsert));
             }
         }
@@ -119,7 +119,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                : PsiTreeUtil.getParentOfType(expression, KtFunction.class, true);
         if (function instanceof KtFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, expression)) {
             LexicalScope scope = UtilsKt.getResolutionScope(function, context, ResolutionUtils.getResolutionFacade(function));
-            KtType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
+            KotlinType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
             actions.add(new ChangeFunctionReturnTypeFix((KtFunction) function, typeToInsert));
         }
 
@@ -154,14 +154,14 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             ValueArgument valueArgument = CallUtilKt.getValueArgumentForExpression(resolvedCall.getCall(), argumentExpression);
             if (valueArgument != null) {
                 KtParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
-                KtType valueArgumentType = diagnostic.getFactory() == Errors.NULL_FOR_NONNULL_TYPE
+                KotlinType valueArgumentType = diagnostic.getFactory() == Errors.NULL_FOR_NONNULL_TYPE
                                             ? expressionType
                                             : context.getType(valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
                     KtCallableDeclaration callable = PsiTreeUtil.getParentOfType(correspondingParameter, KtCallableDeclaration.class, true);
                     LexicalScope scope = callable != null ? UtilsKt.getResolutionScope(callable, context, ResolutionUtils
                             .getResolutionFacade(callable)) : null;
-                    KtType typeToInsert = TypeUtils.approximateWithResolvableType(valueArgumentType, scope, true);
+                    KotlinType typeToInsert = TypeUtils.approximateWithResolvableType(valueArgumentType, scope, true);
                     actions.add(new ChangeParameterTypeFix(correspondingParameter, typeToInsert));
                 }
             }

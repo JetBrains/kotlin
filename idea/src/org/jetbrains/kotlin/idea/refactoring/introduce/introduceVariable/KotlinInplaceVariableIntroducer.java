@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -120,7 +120,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
     protected D myDeclaration;
     private final boolean isVar;
     private final boolean myDoNotChangeVar;
-    @Nullable private final KtType myExprType;
+    @Nullable private final KotlinType myExprType;
     private final boolean noTypeInference;
     private final List<ControlWrapper> panelControls = new ArrayList<ControlWrapper>();
     private JPanel contentPanel;
@@ -130,7 +130,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
             String title, KtExpression[] occurrences,
             @Nullable KtExpression expr, boolean replaceOccurrence,
             D declaration, boolean isVar, boolean doNotChangeVar,
-            @Nullable KtType exprType, boolean noTypeInference
+            @Nullable KotlinType exprType, boolean noTypeInference
     ) {
         super(elementToRename, editor, project, title, occurrences, expr);
         this.myReplaceOccurrence = replaceOccurrence;

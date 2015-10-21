@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.*
@@ -263,7 +263,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun createPropertyDescriptorWithDefaultGetter(
-            method: JavaMethod, givenType: KtType? = null, modality: Modality
+            method: JavaMethod, givenType: KotlinType? = null, modality: Modality
     ): JavaPropertyDescriptor {
         val annotations = c.resolveAnnotations(method)
 
@@ -277,7 +277,7 @@ public class LazyJavaClassMemberScope(
         propertyDescriptor.initialize(getter, null)
 
         val returnType = givenType ?: computeMethodReturnType(method, annotations, c.child(propertyDescriptor, method))
-        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null as KtType?)
+        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
         getter.initialize(returnType)
 
         return propertyDescriptor
@@ -302,7 +302,7 @@ public class LazyJavaClassMemberScope(
                 /* isStaticFinal = */ false
         )
 
-        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null as KtType?)
+        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
 
         val getter = DescriptorFactory.createGetter(
                 propertyDescriptor, getterMethod.annotations, /* isDefault = */false,
@@ -326,7 +326,7 @@ public class LazyJavaClassMemberScope(
     }
 
     override fun resolveMethodSignature(
-            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KtType,
+            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
             valueParameters: LazyJavaScope.ResolvedValueParameters
     ): LazyJavaScope.MethodSignatureData {
         val propagated = c.components.externalSignatureResolver.resolvePropagatedSignature(
@@ -410,7 +410,7 @@ public class LazyJavaClassMemberScope(
         } && returnType.isSubtypeOf(builtinWithErasedParameters.returnType)
     }
 
-    private fun KtType?.isSubtypeOf(other: KtType?): Boolean {
+    private fun KotlinType?.isSubtypeOf(other: KotlinType?): Boolean {
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(this ?: return false, other ?: return false)
     }
 
@@ -510,8 +510,8 @@ public class LazyJavaClassMemberScope(
             constructor: ConstructorDescriptor,
             index: Int,
             method: JavaMethod,
-            returnType: KtType,
-            varargElementType: KtType?
+            returnType: KotlinType,
+            varargElementType: KotlinType?
     ) {
         add(ValueParameterDescriptorImpl(
                 constructor,

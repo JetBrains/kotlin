@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,7 +114,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression generateEnumEntryInstanceCreation(@NotNull KtType enumClassType) {
+    public JsExpression generateEnumEntryInstanceCreation(@NotNull KotlinType enumClassType) {
         ResolvedCall<FunctionDescriptor> superCall = getSuperCall();
 
         if (superCall == null) {

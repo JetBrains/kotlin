@@ -26,7 +26,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import java.util.ArrayList
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.apache.log4j.Logger
@@ -96,12 +96,12 @@ class KotlinEvaluateExpressionCache(val project: Project) {
     class ParametersDescriptor : Iterable<Parameter> {
         private val list = ArrayList<Parameter>()
 
-        fun add(name: String, jetType: KtType, value: Value? = null) {
+        fun add(name: String, jetType: KotlinType, value: Value? = null) {
             list.add(Parameter(name, jetType, value))
         }
 
         override fun iterator() = list.iterator()
     }
 
-    data class Parameter(val callText: String, val type: KtType, val value: Value? = null)
+    data class Parameter(val callText: String, val type: KotlinType, val value: Value? = null)
 }

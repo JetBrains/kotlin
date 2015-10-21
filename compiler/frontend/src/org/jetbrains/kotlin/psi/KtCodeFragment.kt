@@ -25,7 +25,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
@@ -131,7 +131,7 @@ public abstract class KtCodeFragment(
 
     companion object {
         public val IMPORT_SEPARATOR: String = ","
-        public val RUNTIME_TYPE_EVALUATOR: Key<Function1<KtExpression, KtType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
+        public val RUNTIME_TYPE_EVALUATOR: Key<Function1<KtExpression, KotlinType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
         public val ADDITIONAL_CONTEXT_FOR_LAMBDA: Key<Function0<KtElement?>> = Key.create("ADDITIONAL_CONTEXT_FOR_LAMBDA")
     }
 }

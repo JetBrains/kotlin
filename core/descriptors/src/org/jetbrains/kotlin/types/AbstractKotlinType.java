@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class AbstractKtType implements KtType {
+public abstract class AbstractKotlinType implements KotlinType {
     @Nullable
     @Override
     public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
@@ -49,9 +49,9 @@ public abstract class AbstractKtType implements KtType {
     @Override
     public final boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof KtType)) return false;
+        if (!(obj instanceof KotlinType)) return false;
 
-        KtType type = (KtType) obj;
+        KotlinType type = (KotlinType) obj;
 
         return isMarkedNullable() == type.isMarkedNullable() && KotlinTypeChecker.FLEXIBLE_UNEQUAL_TO_INFLEXIBLE.equalTypes(this, type);
     }

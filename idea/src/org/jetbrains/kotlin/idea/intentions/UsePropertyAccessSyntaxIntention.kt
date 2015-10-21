@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpression>(UsePropertyAccessSyntaxIntention()), CleanupLocalInspectionTool
@@ -121,7 +121,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             bindingContext: BindingContext,
             resolutionScope: LexicalScope,
             dataFlowInfo: DataFlowInfo,
-            expectedType: KtType,
+            expectedType: KotlinType,
             facade: ResolutionFacade
     ): Boolean {
         val project = resolvedCall.call.callElement.project

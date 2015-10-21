@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public abstract class JavaMethodDeferredKotlinUsage<T : PsiElement>(element: T) : UsageInfo(element) {
     abstract fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<T>
@@ -33,7 +33,7 @@ public abstract class JavaMethodDeferredKotlinUsage<T : PsiElement>(element: T) 
 public class DeferredSAMUsage(
         val functionLiteral: KtFunctionLiteral,
         val functionDescriptor: FunctionDescriptor,
-        val samCallType: KtType
+        val samCallType: KotlinType
 ): JavaMethodDeferredKotlinUsage<KtFunctionLiteral>(functionLiteral) {
         override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtFunctionLiteral> {
                 return object : JavaMethodKotlinUsageWithDelegate<KtFunctionLiteral>(functionLiteral, javaMethodChangeInfo) {

@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 data class ExtractionOptions(
@@ -71,8 +71,8 @@ data class ResolvedReferenceInfo(
         val refExpr: KtSimpleNameExpression,
         val offsetInBody: Int,
         val resolveResult: ResolveResult,
-        val smartCast: KtType?,
-        val possibleTypes: Set<KtType>
+        val smartCast: KotlinType?,
+        val possibleTypes: Set<KotlinType>
 )
 
 data class ExtractionData(
@@ -175,7 +175,7 @@ data class ExtractionData(
         else Collections.emptyMap<Int, ResolveResult>()
     }
 
-    fun getPossibleTypes(expression: KtExpression, resolvedCall: ResolvedCall<*>?, context: BindingContext): Set<KtType> {
+    fun getPossibleTypes(expression: KtExpression, resolvedCall: ResolvedCall<*>?, context: BindingContext): Set<KotlinType> {
         val typeInfo = context[BindingContext.EXPRESSION_TYPE_INFO, expression] ?: return emptySet()
 
         (resolvedCall?.getImplicitReceiverValue() as? ThisReceiver)?.let {
@@ -201,8 +201,8 @@ data class ExtractionData(
             val offset = ref.getTextRange()!!.getStartOffset() - startOffset
             val originalResolveResult = refOffsetToDeclaration[offset] ?: continue
 
-            val smartCast: KtType?
-            val possibleTypes: Set<KtType>
+            val smartCast: KotlinType?
+            val possibleTypes: Set<KotlinType>
 
             // Qualified property reference: a.b
             val qualifiedExpression = ref.getQualifiedExpressionForSelector()

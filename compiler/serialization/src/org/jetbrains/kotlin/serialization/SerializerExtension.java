@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.serialization;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 
@@ -48,7 +48,7 @@ public abstract class SerializerExtension {
     public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
     }
 
-    public void serializeType(@NotNull KtType type, @NotNull ProtoBuf.Type.Builder proto) {
+    public void serializeType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder proto) {
     }
 
     public void serializeTypeParameter(@NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto) {

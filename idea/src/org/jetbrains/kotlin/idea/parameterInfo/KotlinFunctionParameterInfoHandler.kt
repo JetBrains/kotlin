@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.containsError
 import java.awt.Color
 import java.util.*
@@ -276,7 +276,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         return "..."
     }
 
-    private fun parameterTypeToRender(descriptor: ValueParameterDescriptor): KtType {
+    private fun parameterTypeToRender(descriptor: ValueParameterDescriptor): KotlinType {
         var type = descriptor.varargElementType ?: descriptor.type
         if (type.containsError()) {
             val original = descriptor.original

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -222,8 +222,8 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.processAll(
-            implicitReceiverTypes: Collection<KtType>,
-            receiverTypes: Collection<KtType>,
+            implicitReceiverTypes: Collection<KotlinType>,
+            receiverTypes: Collection<KotlinType>,
             resolutionScope: KtScope,
             callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
@@ -235,8 +235,8 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addMemberExtensions(
-            dispatchReceiverTypes: Collection<KtType>,
-            extensionReceiverTypes: Collection<KtType>,
+            dispatchReceiverTypes: Collection<KotlinType>,
+            extensionReceiverTypes: Collection<KotlinType>,
             callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
@@ -250,7 +250,7 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addNonExtensionMembers(
-            receiverTypes: Collection<KtType>,
+            receiverTypes: Collection<KotlinType>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             constructorFilter: (ClassDescriptor) -> Boolean
@@ -287,7 +287,7 @@ public class ReferenceVariantsHelper(
 
     private fun MutableSet<DeclarationDescriptor>.addScopeAndSyntheticExtensions(
             resolutionScope: KtScope,
-            receiverTypes: Collection<KtType>,
+            receiverTypes: Collection<KotlinType>,
             callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
@@ -320,7 +320,7 @@ public class ReferenceVariantsHelper(
         }
     }
 
-    private fun getQualifierRuntimeType(receiver: KtExpression): KtType? {
+    private fun getQualifierRuntimeType(receiver: KtExpression): KotlinType? {
         val type = context.getType(receiver)
         if (type != null && TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)) {
             val evaluator = receiver.getContainingFile().getCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR)

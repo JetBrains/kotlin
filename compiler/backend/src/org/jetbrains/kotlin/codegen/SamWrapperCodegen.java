@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -64,7 +64,7 @@ public class SamWrapperCodegen {
         Type asmType = asmTypeByFqNameWithoutInnerClasses(fqName);
 
         // e.g. (T, T) -> Int
-        KtType functionType = samType.getKotlinFunctionType();
+        KotlinType functionType = samType.getKotlinFunctionType();
 
         ClassDescriptor classDescriptor = new ClassDescriptorImpl(
                 samType.getJavaClassDescriptor().getContainingDeclaration(),
@@ -140,7 +140,7 @@ public class SamWrapperCodegen {
             Type functionType,
             ClassBuilder cv,
             SimpleFunctionDescriptor erasedInterfaceFunction,
-            KtType functionJetType
+            KotlinType functionJetType
     ) {
         // using root context to avoid creating ClassDescriptor and everything else
         FunctionCodegen codegen = new FunctionCodegen(state.getRootContext().intoClass(

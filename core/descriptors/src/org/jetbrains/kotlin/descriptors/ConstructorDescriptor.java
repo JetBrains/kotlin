@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public interface ConstructorDescriptor extends FunctionDescriptor {
 
     @NotNull
     @Override
-    KtType getReturnType();
+    KotlinType getReturnType();
 
     @NotNull
     @Override

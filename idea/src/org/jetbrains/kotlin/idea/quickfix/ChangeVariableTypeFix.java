@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.ArrayList;
@@ -50,9 +50,9 @@ import java.util.List;
 public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclaration> {
     private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
 
-    private final KtType type;
+    private final KotlinType type;
 
-    public ChangeVariableTypeFix(@NotNull KtVariableDeclaration element, @NotNull KtType type) {
+    public ChangeVariableTypeFix(@NotNull KtVariableDeclaration element, @NotNull KotlinType type) {
         super(element);
         this.type = type;
     }
@@ -121,7 +121,7 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclar
                 KtFunction componentFunction = (KtFunction) DescriptorToSourceUtils
                         .descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
                 if (componentFunction == null) return null;
-                KtType expectedType = resolvedCall.getCandidateDescriptor().getReturnType();
+                KotlinType expectedType = resolvedCall.getCandidateDescriptor().getReturnType();
                 return expectedType == null ? null : new ChangeVariableTypeFix(entry, expectedType);
             }
         };
@@ -141,16 +141,16 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclar
                     if (!(descriptor instanceof PropertyDescriptor)) return actions;
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-                    KtType
+                    KotlinType
                             lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(propertyDescriptor);
 
-                    KtType propertyType = propertyDescriptor.getReturnType();
+                    KotlinType propertyType = propertyDescriptor.getReturnType();
                     assert propertyType != null : "Property type cannot be null if it mismatch something";
 
                     List<PropertyDescriptor> overriddenMismatchingProperties = new LinkedList<PropertyDescriptor>();
                     boolean canChangeOverriddenPropertyType = true;
                     for (PropertyDescriptor overriddenProperty: propertyDescriptor.getOverriddenDescriptors()) {
-                        KtType overriddenPropertyType = overriddenProperty.getReturnType();
+                        KotlinType overriddenPropertyType = overriddenProperty.getReturnType();
                         if (overriddenPropertyType != null) {
                             if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
                                 overriddenMismatchingProperties.add(overriddenProperty);

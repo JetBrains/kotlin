@@ -77,7 +77,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.*;
 
@@ -467,7 +467,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionLiteral);
             assert functionDescriptor != null : "No descriptor for " + functionLiteral.getText();
 
-            KtType samCallType = context.getType(callExpression);
+            KotlinType samCallType = context.getType(callExpression);
             if (samCallType == null) continue;
 
             result.add(new DeferredSAMUsage(functionLiteral, functionDescriptor, samCallType));
@@ -854,10 +854,10 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
     }
 
-    private static List<KtType> getCallableParameterTypes(CallableDescriptor descriptor) {
-        return ContainerUtil.map(descriptor.getValueParameters(), new Function<ValueParameterDescriptor, KtType>() {
+    private static List<KotlinType> getCallableParameterTypes(CallableDescriptor descriptor) {
+        return ContainerUtil.map(descriptor.getValueParameters(), new Function<ValueParameterDescriptor, KotlinType>() {
             @Override
-            public KtType fun(ValueParameterDescriptor descriptor) {
+            public KotlinType fun(ValueParameterDescriptor descriptor) {
                 return descriptor.getType();
             }
         });

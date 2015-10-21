@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 
 public class TracingStrategyForImplicitConstructorDelegationCall(
@@ -109,11 +109,11 @@ public class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("nestedClassAccessViaInstanceReference")
     }
 
-    override fun unsafeCall(trace: BindingTrace, type: KtType, isCallForImplicitInvoke: Boolean) {
+    override fun unsafeCall(trace: BindingTrace, type: KotlinType, isCallForImplicitInvoke: Boolean) {
         unexpectedError("unsafeCall")
     }
 
-    override fun unnecessarySafeCall(trace: BindingTrace, type: KtType) {
+    override fun unnecessarySafeCall(trace: BindingTrace, type: KotlinType) {
         unexpectedError("unnecessarySafeCall")
     }
 

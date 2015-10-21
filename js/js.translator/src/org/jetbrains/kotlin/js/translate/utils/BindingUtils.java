@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 
 import java.util.List;
@@ -90,7 +90,7 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static KtType getTypeByReference(@NotNull BindingContext context,
+    public static KotlinType getTypeByReference(@NotNull BindingContext context,
             @NotNull KtTypeReference typeReference) {
         return BindingContextUtils.getNotNull(context, BindingContext.TYPE, typeReference);
     }
@@ -159,7 +159,7 @@ public final class BindingUtils {
 
     @Nullable
     public static Object getCompileTimeValue(@NotNull BindingContext context, @NotNull KtExpression expression, @NotNull CompileTimeConstant<?> constant) {
-        KtType expectedType = context.getType(expression);
+        KotlinType expectedType = context.getType(expression);
         return constant.getValue(expectedType == null ? TypeUtils.NO_EXPECTED_TYPE : expectedType);
     }
 
@@ -204,7 +204,7 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static KtType getTypeForExpression(@NotNull BindingContext context,
+    public static KotlinType getTypeForExpression(@NotNull BindingContext context,
             @NotNull KtExpression expression) {
         return BindingContextUtils.getTypeNotNull(context, expression);
     }

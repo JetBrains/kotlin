@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import java.util.*;
 
 public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeConstructor {
-    private final Set<KtType> intersectedTypes;
+    private final Set<KotlinType> intersectedTypes;
     private final int hashCode;
 
-    public IntersectionTypeConstructor(Annotations annotations, Collection<KtType> typesToIntersect) {
+    public IntersectionTypeConstructor(Annotations annotations, Collection<KotlinType> typesToIntersect) {
         super(annotations);
         assert !typesToIntersect.isEmpty() : "Attempt to create an empty intersection";
 
-        this.intersectedTypes = new LinkedHashSet<KtType>(typesToIntersect);
+        this.intersectedTypes = new LinkedHashSet<KotlinType>(typesToIntersect);
         this.hashCode = intersectedTypes.hashCode();
     }
 
@@ -45,7 +45,7 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
 
     @NotNull
     @Override
-    public Collection<KtType> getSupertypes() {
+    public Collection<KotlinType> getSupertypes() {
         return intersectedTypes;
     }
 
@@ -75,10 +75,10 @@ public class IntersectionTypeConstructor extends AnnotatedImpl implements TypeCo
         return makeDebugNameForIntersectionType(intersectedTypes);
     }
 
-    private static String makeDebugNameForIntersectionType(Iterable<KtType> resultingTypes) {
+    private static String makeDebugNameForIntersectionType(Iterable<KotlinType> resultingTypes) {
         StringBuilder debugName = new StringBuilder("{");
-        for (Iterator<KtType> iterator = resultingTypes.iterator(); iterator.hasNext(); ) {
-            KtType type = iterator.next();
+        for (Iterator<KotlinType> iterator = resultingTypes.iterator(); iterator.hasNext(); ) {
+            KotlinType type = iterator.next();
 
             debugName.append(type.toString());
             if (iterator.hasNext()) {

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 
-public open class KtTypeImpl
+public open class KotlinTypeImpl
 private constructor(
         private val annotations: Annotations,
         private val constructor: TypeConstructor,
@@ -28,7 +28,7 @@ private constructor(
         private val arguments: List<TypeProjection>,
         private val substitution: TypeSubstitution?,
         private val memberScope: KtScope
-) : AbstractKtType() {
+) : AbstractKotlinType() {
 
     companion object {
         @JvmStatic
@@ -36,9 +36,9 @@ private constructor(
                           constructor: TypeConstructor,
                           nullable: Boolean,
                           arguments: List<TypeProjection>,
-                          memberScope: KtScope): KtTypeImpl
+                          memberScope: KtScope): KotlinTypeImpl
 
-                = KtTypeImpl(annotations, constructor, nullable, arguments, null, memberScope)
+                = KotlinTypeImpl(annotations, constructor, nullable, arguments, null, memberScope)
 
         @JvmStatic
         public fun create(annotations: Annotations,
@@ -48,20 +48,20 @@ private constructor(
                           substitution: TypeSubstitution,
                           memberScope: KtScope,
                           capabilities: TypeCapabilities
-        ): KtTypeImpl {
+        ): KotlinTypeImpl {
             if (capabilities !== TypeCapabilities.NONE) {
                 return WithCapabilities(annotations, constructor, nullable, arguments, substitution, memberScope, capabilities)
             }
-            return KtTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope)
+            return KotlinTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope)
         }
 
         @JvmStatic
         public fun create(annotations: Annotations,
                           descriptor: ClassDescriptor,
                           nullable: Boolean,
-                          arguments: List<TypeProjection>): KtTypeImpl
+                          arguments: List<TypeProjection>): KotlinTypeImpl
 
-                = KtTypeImpl(
+                = KotlinTypeImpl(
                     annotations, descriptor.typeConstructor, nullable, arguments, null, descriptor.getMemberScope(arguments)
                 )
     }
@@ -74,7 +74,7 @@ private constructor(
             substitution: TypeSubstitution?,
             memberScope: KtScope,
             private val typeCapabilities: TypeCapabilities
-    ) : KtTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope) {
+    ) : KotlinTypeImpl(annotations, constructor, nullable, arguments, substitution, memberScope) {
         override fun getCapabilities(): TypeCapabilities = typeCapabilities
     }
 

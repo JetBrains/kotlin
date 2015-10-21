@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -214,7 +214,7 @@ private fun ConstructedExpressionWrapper.processValueParameterUsages(
 private data class IntroduceValueForParameter(
         val parameter: ValueParameterDescriptor,
         val value: KtExpression,
-        val valueType: KtType?)
+        val valueType: KotlinType?)
 
 private fun ConstructedExpressionWrapper.processTypeParameterUsages(resolvedCall: ResolvedCall<out CallableDescriptor>) {
     val typeParameters = resolvedCall.resultingDescriptor.original.typeParameters
@@ -267,7 +267,7 @@ private fun ConstructedExpressionWrapper.processTypeParameterUsages(resolvedCall
     }
 }
 
-private fun ConstructedExpressionWrapperWithIntroduceFeature.wrapExpressionForSafeCall(receiver: KtExpression, receiverType: KtType?) {
+private fun ConstructedExpressionWrapperWithIntroduceFeature.wrapExpressionForSafeCall(receiver: KtExpression, receiverType: KotlinType?) {
     val qualified = expression as? KtQualifiedExpression
     if (qualified != null) {
         if (qualified.receiverExpression[RECEIVER_VALUE_KEY]) {
@@ -322,7 +322,7 @@ private fun KtExpression?.shouldKeepValue(usageCount: Int): Boolean {
 
 private class Argument(
         val expression: KtExpression,
-        val expressionType: KtType?,
+        val expressionType: KotlinType?,
         val isNamed: Boolean = false,
         val isDefaultValue: Boolean = false)
 
@@ -501,7 +501,7 @@ private fun dropArgumentsForDefaultValues(result: KtElement) {
     }
 }
 
-private fun arrayOfFunctionName(elementType: KtType): String {
+private fun arrayOfFunctionName(elementType: KotlinType): String {
     return when {
         KotlinBuiltIns.isInt(elementType) -> "kotlin.intArrayOf"
         KotlinBuiltIns.isLong(elementType) -> "kotlin.longArrayOf"
@@ -629,7 +629,7 @@ private class ConstructedExpressionWrapperWithIntroduceFeature(
 
     public fun introduceValue(
             value: KtExpression,
-            valueType: KtType?,
+            valueType: KotlinType?,
             usages: Collection<KtExpression>,
             nameSuggestion: String? = null,
             safeCall: Boolean = false
@@ -660,7 +660,7 @@ private class ConstructedExpressionWrapperWithIntroduceFeature(
                 val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expressionToBeReplaced]
 
                 if (usages.isNotEmpty()) {
-                    var explicitType: KtType? = null
+                    var explicitType: KotlinType? = null
                     if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
                         val valueTypeWithoutExpectedType = value.computeTypeInContext(
                                 resolutionScope!!,

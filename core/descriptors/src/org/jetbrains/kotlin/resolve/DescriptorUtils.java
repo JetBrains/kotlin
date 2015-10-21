@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.LazyType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -244,7 +244,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isDirectSubclass(@NotNull ClassDescriptor subClass, @NotNull ClassDescriptor superClass) {
-        for (KtType superType : subClass.getTypeConstructor().getSupertypes()) {
+        for (KotlinType superType : subClass.getTypeConstructor().getSupertypes()) {
             if (isSameClass(superType, superClass.getOriginal())) {
                 return true;
             }
@@ -256,7 +256,7 @@ public class DescriptorUtils {
         return isSubtypeOfClass(subClass.getDefaultType(), superClass.getOriginal());
     }
 
-    private static boolean isSameClass(@NotNull KtType type, @NotNull DeclarationDescriptor other) {
+    private static boolean isSameClass(@NotNull KotlinType type, @NotNull DeclarationDescriptor other) {
         DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         if (descriptor != null) {
             DeclarationDescriptor originalDescriptor = descriptor.getOriginal();
@@ -270,9 +270,9 @@ public class DescriptorUtils {
         return false;
     }
 
-    private static boolean isSubtypeOfClass(@NotNull KtType type, @NotNull DeclarationDescriptor superClass) {
+    private static boolean isSubtypeOfClass(@NotNull KotlinType type, @NotNull DeclarationDescriptor superClass) {
         if (isSameClass(type, superClass)) return true;
-        for (KtType superType : type.getConstructor().getSupertypes()) {
+        for (KotlinType superType : type.getConstructor().getSupertypes()) {
             if (isSubtypeOfClass(superType, superClass)) {
                 return true;
             }
@@ -349,9 +349,9 @@ public class DescriptorUtils {
 
     @NotNull
     public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
-        Collection<KtType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        Collection<KotlinType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
         List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
-        for (KtType type : superclassTypes) {
+        for (KotlinType type : superclassTypes) {
             ClassDescriptor result = getClassDescriptorForType(type);
             if (!isAny(result)) {
                 superClassDescriptors.add(result);
@@ -361,9 +361,9 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static KtType getSuperClassType(@NotNull ClassDescriptor classDescriptor) {
-        Collection<KtType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
-        for (KtType type : superclassTypes) {
+    public static KotlinType getSuperClassType(@NotNull ClassDescriptor classDescriptor) {
+        Collection<KotlinType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        for (KotlinType type : superclassTypes) {
             ClassDescriptor superClassDescriptor = getClassDescriptorForType(type);
             if (superClassDescriptor.getKind() != ClassKind.INTERFACE) {
                 return type;
@@ -374,8 +374,8 @@ public class DescriptorUtils {
 
     @Nullable
     public static ClassDescriptor getSuperClassDescriptor(@NotNull ClassDescriptor classDescriptor) {
-        Collection<KtType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
-        for (KtType type : superclassTypes) {
+        Collection<KotlinType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
+        for (KotlinType type : superclassTypes) {
             ClassDescriptor superClassDescriptor = getClassDescriptorForType(type);
             if (superClassDescriptor.getKind() != ClassKind.INTERFACE) {
                 return superClassDescriptor;
@@ -385,7 +385,7 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static ClassDescriptor getClassDescriptorForType(@NotNull KtType type) {
+    public static ClassDescriptor getClassDescriptorForType(@NotNull KotlinType type) {
         return getClassDescriptorForTypeConstructor(type.getConstructor());
     }
 
@@ -422,7 +422,7 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static KtType getReceiverParameterType(@Nullable ReceiverParameterDescriptor receiverParameterDescriptor) {
+    public static KotlinType getReceiverParameterType(@Nullable ReceiverParameterDescriptor receiverParameterDescriptor) {
         return receiverParameterDescriptor == null ? null : receiverParameterDescriptor.getType();
     }
 
@@ -474,7 +474,7 @@ public class DescriptorUtils {
         return descriptor;
     }
 
-    public static boolean shouldRecordInitializerForProperty(@NotNull VariableDescriptor variable, @NotNull KtType type) {
+    public static boolean shouldRecordInitializerForProperty(@NotNull VariableDescriptor variable, @NotNull KotlinType type) {
         if (variable.isVar() || type.isError()) return false;
 
         if (type instanceof LazyType || type.isMarkedNullable()) return true;

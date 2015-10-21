@@ -89,8 +89,8 @@ import org.jetbrains.kotlin.utils.DFS.Neighbors
 import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
 import java.util.*
 
-internal val KotlinBuiltIns.defaultReturnType: KtType get() = unitType
-internal val KotlinBuiltIns.defaultParameterType: KtType get() = nullableAnyType
+internal val KotlinBuiltIns.defaultReturnType: KotlinType get() = unitType
+internal val KotlinBuiltIns.defaultParameterType: KotlinType get() = nullableAnyType
 
 private fun DeclarationDescriptor.renderForMessage(): String =
         IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
@@ -99,12 +99,12 @@ private val TYPE_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES.withOptions {
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
 }
 
-private fun KtType.renderForMessage(): String = TYPE_RENDERER.renderType(this)
+private fun KotlinType.renderForMessage(): String = TYPE_RENDERER.renderType(this)
 
 private fun KtDeclaration.renderForMessage(bindingContext: BindingContext): String? =
     bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]?.renderForMessage()
 
-internal fun KtType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
+internal fun KotlinType.isDefault(): Boolean = KotlinBuiltIns.isUnit(this)
 
 private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingContext): Map<VariableDescriptor, List<KtExpression>> {
     val result = HashMap<VariableDescriptor, MutableList<KtExpression>>()
@@ -149,7 +149,7 @@ private fun List<Instruction>.getResultTypeAndExpressions(
         targetScope: LexicalScope?,
         options: ExtractionOptions,
         module: ModuleDescriptor
-): Pair<KtType, List<KtExpression>> {
+): Pair<KotlinType, List<KtExpression>> {
     fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): KtExpression? {
         return when (instruction) {
             is ReturnValueInstruction ->
@@ -160,7 +160,7 @@ private fun List<Instruction>.getResultTypeAndExpressions(
         }
     }
 
-    fun instructionToType(instruction: Instruction): KtType? {
+    fun instructionToType(instruction: Instruction): KotlinType? {
         val expression = instructionToExpression(instruction, true)
 
         if (expression == null) return null
@@ -214,7 +214,7 @@ private fun getCommonNonTrivialSuccessorIfAny(instructions: List<Instruction>): 
     return singleSuccessorCheckingVisitor.target ?: instructions.firstOrNull()?.owner?.getSinkInstruction()
 }
 
-private fun KtType.isMeaningful(): Boolean {
+private fun KotlinType.isMeaningful(): Boolean {
     return !KotlinBuiltIns.isUnit(this) && !KotlinBuiltIns.isNothing(this)
 }
 
@@ -415,16 +415,16 @@ fun ExtractionData.createTemporaryDeclaration(functionText: String): KtNamedDecl
 private fun ExtractionData.createTemporaryCodeBlock(): KtBlockExpression =
         (createTemporaryDeclaration("fun() {\n$codeFragmentText\n}\n") as KtNamedFunction).getBodyExpression() as KtBlockExpression
 
-private fun KtType.collectReferencedTypes(processTypeArguments: Boolean): List<KtType> {
+private fun KotlinType.collectReferencedTypes(processTypeArguments: Boolean): List<KotlinType> {
     if (!processTypeArguments) return Collections.singletonList(this)
     return DFS.dfsFromNode(
             this,
-            object: Neighbors<KtType> {
-                override fun getNeighbors(current: KtType): Iterable<KtType> = current.getArguments().map { it.getType() }
+            object: Neighbors<KotlinType> {
+                override fun getNeighbors(current: KotlinType): Iterable<KotlinType> = current.getArguments().map { it.getType() }
             },
             VisitedWithSet(),
-            object: CollectingNodeHandler<KtType, KtType, ArrayList<KtType>>(ArrayList()) {
-                override fun afterChildren(current: KtType) {
+            object: CollectingNodeHandler<KotlinType, KotlinType, ArrayList<KotlinType>>(ArrayList()) {
+                override fun afterChildren(current: KotlinType) {
                     result.add(current)
                 }
             }
@@ -437,7 +437,7 @@ fun KtTypeParameter.collectRelevantConstraints(): List<KtTypeConstraint> {
     return typeConstraints.filter { it.getSubjectTypeParameterName()?.mainReference?.resolve() == this}
 }
 
-fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<KtType> {
+fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<KotlinType> {
     val typeRefs = ArrayList<KtTypeReference>()
     originalDeclaration.getExtendsBound()?.let { typeRefs.add(it) }
     originalConstraints
@@ -449,7 +449,7 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<K
             .filterNotNull()
 }
 
-private fun KtType.isExtractable(targetScope: LexicalScope?): Boolean {
+private fun KotlinType.isExtractable(targetScope: LexicalScope?): Boolean {
     return collectReferencedTypes(true).fold(true) { extractable, typeToCheck ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
@@ -460,9 +460,9 @@ private fun KtType.isExtractable(targetScope: LexicalScope?): Boolean {
     }
 }
 
-private fun KtType.processTypeIfExtractable(
+private fun KotlinType.processTypeIfExtractable(
         typeParameters: MutableSet<TypeParameter>,
-        nonDenotableTypes: MutableSet<KtType>,
+        nonDenotableTypes: MutableSet<KotlinType>,
         options: ExtractionOptions,
         targetScope: LexicalScope?,
         processTypeArguments: Boolean = true
@@ -501,17 +501,17 @@ private class MutableParameter(
         override val originalDescriptor: DeclarationDescriptor,
         override val receiverCandidate: Boolean,
         private val targetScope: LexicalScope?,
-        private val originalType: KtType,
-        private val possibleTypes: Set<KtType>
+        private val originalType: KotlinType,
+        private val possibleTypes: Set<KotlinType>
 ): Parameter {
     // All modifications happen in the same thread
     private var writable: Boolean = true
-    private val defaultTypes = LinkedHashSet<KtType>()
+    private val defaultTypes = LinkedHashSet<KotlinType>()
     private val typePredicates = HashSet<TypePredicate>()
 
     var refCount: Int = 0
 
-    fun addDefaultType(jetType: KtType) {
+    fun addDefaultType(jetType: KotlinType) {
         assert(writable) { "Can't add type to non-writable parameter $currentName" }
 
         if (jetType in possibleTypes) {
@@ -529,7 +529,7 @@ private class MutableParameter(
 
     override var mirrorVarName: String? = null
 
-    private val defaultType: KtType by lazy {
+    private val defaultType: KotlinType by lazy {
         writable = false
         if (defaultTypes.isNotEmpty()) {
             TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, defaultTypes)!!
@@ -537,14 +537,14 @@ private class MutableParameter(
         else originalType
     }
 
-    private val parameterTypeCandidates: List<KtType> by lazy {
+    private val parameterTypeCandidates: List<KotlinType> by lazy {
         writable = false
 
         val typePredicate = and(typePredicates)
 
         val typeSet = if (defaultType.isFlexible()) {
             val bounds = defaultType.getCapability(javaClass<Flexibility>())!!
-            LinkedHashSet<KtType>().apply {
+            LinkedHashSet<KotlinType>().apply {
                 if (typePredicate(bounds.upperBound)) add(bounds.upperBound)
                 if (typePredicate(bounds.lowerBound)) add(bounds.lowerBound)
             }
@@ -564,7 +564,7 @@ private class MutableParameter(
         typeSet.toList()
     }
 
-    override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<KtType> {
+    override fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<KotlinType> {
             return if (!allowSpecialClassNames) {
                 parameterTypeCandidates.filter { it.isExtractable(targetScope) }
             } else {
@@ -572,19 +572,19 @@ private class MutableParameter(
             }
     }
 
-    override fun getParameterType(allowSpecialClassNames: Boolean): KtType {
+    override fun getParameterType(allowSpecialClassNames: Boolean): KotlinType {
         return getParameterTypeCandidates(allowSpecialClassNames).firstOrNull() ?: defaultType
     }
 
-    override fun copy(name: String, parameterType: KtType): Parameter = DelegatingParameter(this, name, parameterType)
+    override fun copy(name: String, parameterType: KotlinType): Parameter = DelegatingParameter(this, name, parameterType)
 }
 
 private class DelegatingParameter(
         val original: Parameter,
         override val name: String,
-        val parameterType: KtType
+        val parameterType: KotlinType
 ): Parameter by original {
-    override fun copy(name: String, parameterType: KtType): Parameter = DelegatingParameter(original, name, parameterType)
+    override fun copy(name: String, parameterType: KotlinType): Parameter = DelegatingParameter(original, name, parameterType)
     override fun getParameterType(allowSpecialClassNames: Boolean) = parameterType
 }
 
@@ -594,7 +594,7 @@ private class ParametersInfo {
     val originalRefToParameter: MutableMap<KtSimpleNameExpression, MutableParameter> = HashMap()
     val parameters: MutableSet<MutableParameter> = HashSet()
     val typeParameters: MutableSet<TypeParameter> = HashSet()
-    val nonDenotableTypes: MutableSet<KtType> = HashSet()
+    val nonDenotableTypes: MutableSet<KotlinType> = HashSet()
 }
 
 private fun ExtractionData.inferParametersInfo(
@@ -615,7 +615,7 @@ private fun ExtractionData.inferParametersInfo(
             receiverToExtract: ReceiverValue,
             resolvedCall: ResolvedCall<*>?,
             useSmartCastsIfPossible: Boolean
-    ): KtType {
+    ): KotlinType {
         val builtIns = originalDescriptor.builtIns
         return when {
                    extractFunctionRef -> {
@@ -809,7 +809,7 @@ private fun ExtractionData.inferParametersInfo(
         }
     }
 
-    for (typeToCheck in info.typeParameters.flatMapTo(HashSet<KtType>()) { it.collectReferencedTypes(bindingContext) }) {
+    for (typeToCheck in info.typeParameters.flatMapTo(HashSet<KotlinType>()) { it.collectReferencedTypes(bindingContext) }) {
         typeToCheck.processTypeIfExtractable(info.typeParameters, info.nonDenotableTypes, options, targetScope)
     }
 
@@ -951,7 +951,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     )
 }
 
-private fun ExtractionData.suggestFunctionNames(returnType: KtType): List<String> {
+private fun ExtractionData.suggestFunctionNames(returnType: KotlinType): List<String> {
     val functionNames = LinkedHashSet<String>()
 
     val validator =

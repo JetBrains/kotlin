@@ -59,7 +59,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                                             .replaceContextDependency(INDEPENDENT);
         KtExpression leftHandSide = expression.getLeftHandSide();
         JetTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
-        KtType knownType = typeInfo.getType();
+        KotlinType knownType = typeInfo.getType();
         if (expression.getTypeReference() != null) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context);
             DataFlowInfo conditionInfo = checkTypeForIs(context, knownType, expression.getTypeReference(), dataFlowValue).thenInfo;
@@ -81,7 +81,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         // TODO :change scope according to the bound value in the when header
         KtExpression subjectExpression = expression.getSubjectExpression();
 
-        KtType subjectType;
+        KotlinType subjectType;
         boolean loopBreakContinuePossible = false;
         if (subjectExpression == null) {
             subjectType = ErrorUtils.createErrorType("Unknown type");
@@ -103,7 +103,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
         // TODO : exhaustive patterns
 
-        Set<KtType> expressionTypes = Sets.newHashSet();
+        Set<KotlinType> expressionTypes = Sets.newHashSet();
         DataFlowInfo commonDataFlowInfo = null;
         DataFlowInfo elseDataFlowInfo = context.dataFlowInfo;
         for (KtWhenEntry whenEntry : expression.getEntries()) {
@@ -120,7 +120,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                         scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext);
                 loopBreakContinuePossible |= typeInfo.getJumpOutPossible();
-                KtType type = typeInfo.getType();
+                KotlinType type = typeInfo.getType();
                 if (type != null) {
                     expressionTypes.add(type);
                 }
@@ -157,7 +157,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             @NotNull KtWhenEntry whenEntry,
             @NotNull ExpressionTypingContext context,
             @Nullable KtExpression subjectExpression,
-            @NotNull KtType subjectType,
+            @NotNull KotlinType subjectType,
             @NotNull DataFlowValue subjectDataFlowValue
     ) {
         if (whenEntry.isElse()) {
@@ -182,7 +182,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     private DataFlowInfos checkWhenCondition(
             @Nullable final KtExpression subjectExpression,
-            final KtType subjectType,
+            final KotlinType subjectType,
             KtWhenCondition condition,
             final ExpressionTypingContext context,
             final DataFlowValue subjectDataFlowValue
@@ -204,7 +204,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                                                                 argumentForSubject, rangeExpression, context);
                 DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
                 newDataFlowInfo.set(new DataFlowInfos(dataFlowInfo, dataFlowInfo));
-                KtType type = typeInfo.getType();
+                KotlinType type = typeInfo.getType();
                 if (type == null || !isBoolean(type)) {
                     context.trace.report(TYPE_MISMATCH_IN_RANGE.on(condition));
                 }
@@ -260,7 +260,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     private DataFlowInfos checkTypeForExpressionCondition(
             ExpressionTypingContext context,
             KtExpression expression,
-            KtType subjectType,
+            KotlinType subjectType,
             boolean conditionExpected,
             DataFlowValue subjectDataFlowValue
     ) {
@@ -268,13 +268,13 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             return noChange(context);
         }
         JetTypeInfo typeInfo = facade.getTypeInfo(expression, context);
-        KtType type = typeInfo.getType();
+        KotlinType type = typeInfo.getType();
         if (type == null) {
             return noChange(context);
         }
         context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         if (conditionExpected) {
-            KtType booleanType = components.builtIns.getBooleanType();
+            KotlinType booleanType = components.builtIns.getBooleanType();
             if (!KotlinTypeChecker.DEFAULT.equalTypes(booleanType, type)) {
                 context.trace.report(TYPE_MISMATCH_IN_CONDITION.on(expression, type));
             }
@@ -298,7 +298,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
     private DataFlowInfos checkTypeForIs(
             ExpressionTypingContext context,
-            KtType subjectType,
+            KotlinType subjectType,
             KtTypeReference typeReferenceAfterIs,
             DataFlowValue subjectDataFlowValue
     ) {
@@ -307,7 +307,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         }
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true);
         PossiblyBareType possiblyBareTarget = components.typeResolver.resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
-        KtType targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace, components.builtIns);
+        KotlinType targetType = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace, components.builtIns);
 
         if (DynamicTypesKt.isDynamic(targetType)) {
             context.trace.report(DYNAMIC_NOT_ALLOWED.on(typeReferenceAfterIs));
@@ -339,8 +339,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
      */
     private void checkTypeCompatibility(
             @NotNull ExpressionTypingContext context,
-            @Nullable KtType type,
-            @NotNull KtType subjectType,
+            @Nullable KotlinType type,
+            @NotNull KotlinType subjectType,
             @NotNull KtElement reportErrorOn
     ) {
         // TODO : Take smart casts into account?

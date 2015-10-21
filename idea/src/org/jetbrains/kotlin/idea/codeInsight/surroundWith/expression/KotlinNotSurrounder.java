@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtParenthesizedExpression;
 import org.jetbrains.kotlin.psi.KtPrefixExpression;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
     @Override
@@ -40,7 +40,7 @@ public class KotlinNotSurrounder extends KotlinExpressionSurrounder {
 
     @Override
     public boolean isApplicable(@NotNull KtExpression expression) {
-        KtType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
+        KotlinType type = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).getType(expression);
         return type != null && KotlinBuiltIns.isBoolean(type);
     }
 

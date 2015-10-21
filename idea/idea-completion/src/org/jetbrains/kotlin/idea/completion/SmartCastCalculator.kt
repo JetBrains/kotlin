@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.HashMap
@@ -49,18 +49,18 @@ class SmartCastCalculator(
     private val entityToSmartCastInfo: Map<Any, SmartCastInfo>
             = processDataFlowInfo(bindingContext.getDataFlowInfo(expression), bindingContext[BindingContext.RESOLUTION_SCOPE, expression], receiver)
 
-    fun types(descriptor: VariableDescriptor): Collection<KtType> {
+    fun types(descriptor: VariableDescriptor): Collection<KotlinType> {
         val type = descriptor.returnType ?: return emptyList()
         return entityType(descriptor, type)
     }
 
-    fun types(thisReceiverParameter: ReceiverParameterDescriptor): Collection<KtType> {
+    fun types(thisReceiverParameter: ReceiverParameterDescriptor): Collection<KotlinType> {
         val type = thisReceiverParameter.type
         val thisReceiver = thisReceiverParameter.value as? ThisReceiver ?: return listOf(type)
         return entityType(thisReceiver, type)
     }
 
-    private fun entityType(entity: Any, ownType: KtType): Collection<KtType> {
+    private fun entityType(entity: Any, ownType: KotlinType): Collection<KotlinType> {
         val smartCastInfo = entityToSmartCastInfo[entity] ?: return listOf(ownType)
 
         var types = smartCastInfo.types + ownType
@@ -72,7 +72,7 @@ class SmartCastCalculator(
         return types
     }
 
-    private data class SmartCastInfo(var types: Collection<KtType>, var notNull: Boolean) {
+    private data class SmartCastInfo(var types: Collection<KotlinType>, var notNull: Boolean) {
         constructor() : this(emptyList(), false)
     }
 

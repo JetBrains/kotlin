@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.junit.Assert
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -138,7 +138,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
 
     private data class ResolveData(
             val target: DeclarationDescriptor?,
-            val type: KtType?,
+            val type: KotlinType?,
             val processedStatements: Collection<KtExpression>
     )
 
@@ -162,7 +162,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         return ResolveData(target, type, processedStatements)
     }
 
-    private fun DeclarationDescriptor?.presentation(type: KtType?): String {
+    private fun DeclarationDescriptor?.presentation(type: KotlinType?): String {
         if (this == null) return "null"
 
         val s = DescriptorRenderer.COMPACT.render(this)
@@ -172,7 +172,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         return "$s smart-cast to ${type.presentation()}"
     }
 
-    private fun KtType?.presentation()
+    private fun KotlinType?.presentation()
             = if (this != null) DescriptorRenderer.COMPACT.renderType(this) else "unknown type"
 
     private fun KtExpression.compactPresentation(): String {

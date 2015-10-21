@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
@@ -52,7 +52,7 @@ public class MultiDeclarationResolver(
             val expectedType = getExpectedTypeForComponent(context, entry)
             val results = fakeCallResolver.resolveFakeCall(context.replaceExpectedType(expectedType), receiver, componentName, entry)
 
-            var componentType: KtType? = null
+            var componentType: KotlinType? = null
             if (results.isSuccess()) {
                 context.trace.record(BindingContext.COMPONENT_RESOLVED_CALL, entry, results.getResultingCall())
 
@@ -82,7 +82,7 @@ public class MultiDeclarationResolver(
         }
     }
 
-    private fun getExpectedTypeForComponent(context: ExpressionTypingContext, entry: KtMultiDeclarationEntry): KtType {
+    private fun getExpectedTypeForComponent(context: ExpressionTypingContext, entry: KtMultiDeclarationEntry): KotlinType {
         val entryTypeRef = entry.getTypeReference() ?: return TypeUtils.NO_EXPECTED_TYPE
         return typeResolver.resolveType(context.scope, entryTypeRef, context.trace, true)
     }

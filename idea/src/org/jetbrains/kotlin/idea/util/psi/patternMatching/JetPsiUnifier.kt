@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.Collections
@@ -125,7 +125,7 @@ public interface UnificationResult {
 
 public class UnifierParameter(
         val descriptor: DeclarationDescriptor,
-        val expectedType: KtType
+        val expectedType: KotlinType
 )
 
 public class JetPsiUnifier(
@@ -353,12 +353,12 @@ public class JetPsiUnifier(
             }
         }
 
-        private fun KtTypeReference.getType(): KtType? {
+        private fun KtTypeReference.getType(): KotlinType? {
             val t = bindingContext[BindingContext.TYPE, this]
             return if (t == null || t.isError()) null else t
         }
 
-        private fun matchTypes(type1: KtType?, type2: KtType?): Status? {
+        private fun matchTypes(type1: KotlinType?, type2: KotlinType?): Status? {
             if (type1 != null && type2 != null) {
                 if (type1.isError() || type2.isError()) return null
                 if (TypeUtils.equalTypes(type1, type2)) return MATCHED
@@ -381,8 +381,8 @@ public class JetPsiUnifier(
             return if (type1 == null && type2 == null) null else UNMATCHED
         }
 
-        private fun matchTypes(types1: Collection<KtType>, types2: Collection<KtType>): Boolean {
-            fun sortTypes(types: Collection<KtType>) = types.sortedBy { DescriptorRenderer.DEBUG_TEXT.renderType(it) }
+        private fun matchTypes(types1: Collection<KotlinType>, types2: Collection<KotlinType>): Boolean {
+            fun sortTypes(types: Collection<KotlinType>) = types.sortedBy { DescriptorRenderer.DEBUG_TEXT.renderType(it) }
 
             if (types1.size() != types2.size()) return false
             return (sortTypes(types1) zip sortTypes(types2)).all { matchTypes(it.first, it.second) == MATCHED }

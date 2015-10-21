@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
@@ -70,8 +70,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     private final FunctionDescriptor funDescriptor;
     private final ClassDescriptor classDescriptor;
     private final SamType samType;
-    private final KtType superClassType;
-    private final List<KtType> superInterfaceTypes;
+    private final KotlinType superClassType;
+    private final List<KotlinType> superInterfaceTypes;
     private final FunctionDescriptor functionReferenceTarget;
     private final FunctionGenerationStrategy strategy;
     private final CalculatedClosure closure;
@@ -100,10 +100,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         this.strategy = strategy;
 
         if (samType == null) {
-            this.superInterfaceTypes = new ArrayList<KtType>();
+            this.superInterfaceTypes = new ArrayList<KotlinType>();
 
-            KtType superClassType = null;
-            for (KtType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+            KotlinType superClassType = null;
+            for (KotlinType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
                 ClassifierDescriptor classifier = supertype.getConstructor().getDeclarationDescriptor();
                 if (DescriptorUtils.isInterface(classifier)) {
                     superInterfaceTypes.add(supertype);
@@ -141,7 +141,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         sw.writeSuperclassEnd();
         String[] superInterfaceAsmTypes = new String[superInterfaceTypes.size()];
         for (int i = 0; i < superInterfaceTypes.size(); i++) {
-            KtType superInterfaceType = superInterfaceTypes.get(i);
+            KotlinType superInterfaceType = superInterfaceTypes.get(i);
             sw.writeInterface();
             superInterfaceAsmTypes[i] = typeMapper.mapSupertype(superInterfaceType, sw).getInternalName();
             sw.writeInterfaceEnd();
@@ -428,7 +428,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             Type type = typeMapper.mapType(captureThis);
             args.add(FieldInfo.createForHiddenField(ownerType, type, CAPTURED_THIS_FIELD));
         }
-        KtType captureReceiverType = closure.getCaptureReceiverType();
+        KotlinType captureReceiverType = closure.getCaptureReceiverType();
         if (captureReceiverType != null) {
             args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), CAPTURED_RECEIVER_FIELD));
         }

@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 public class BoundsSubstitutor {
-    private static final Function<TypeProjection,KtType> PROJECTIONS_TO_TYPES = new Function<TypeProjection, KtType>() {
+    private static final Function<TypeProjection,KotlinType> PROJECTIONS_TO_TYPES = new Function<TypeProjection, KotlinType>() {
         @Override
-        public KtType apply(TypeProjection projection) {
+        public KotlinType apply(TypeProjection projection) {
             return projection.getType();
         }
     };
@@ -60,8 +60,8 @@ public class BoundsSubstitutor {
 
         // todo assert: no loops
         for (TypeParameterDescriptor descriptor : topologicallySortTypeParameters(typeParameters)) {
-            KtType upperBoundsAsType = descriptor.getUpperBoundsAsType();
-            KtType substitutedUpperBoundsAsType = substitutor.substitute(upperBoundsAsType, Variance.INVARIANT);
+            KotlinType upperBoundsAsType = descriptor.getUpperBoundsAsType();
+            KotlinType substitutedUpperBoundsAsType = substitutor.substitute(upperBoundsAsType, Variance.INVARIANT);
             mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substitutedUpperBoundsAsType));
         }
 
@@ -96,16 +96,16 @@ public class BoundsSubstitutor {
     ) {
         return DFS.dfs(
                 current.getUpperBounds(),
-                new DFS.Neighbors<KtType>() {
+                new DFS.Neighbors<KotlinType>() {
                     @NotNull
                     @Override
-                    public Iterable<KtType> getNeighbors(KtType current) {
+                    public Iterable<KotlinType> getNeighbors(KotlinType current) {
                         return Collections2.transform(current.getArguments(), PROJECTIONS_TO_TYPES);
                     }
                 },
-                new DFS.NodeHandlerWithListResult<KtType, TypeParameterDescriptor>() {
+                new DFS.NodeHandlerWithListResult<KotlinType, TypeParameterDescriptor>() {
                     @Override
-                    public boolean beforeChildren(KtType current) {
+                    public boolean beforeChildren(KotlinType current) {
                         ClassifierDescriptor declarationDescriptor = current.getConstructor().getDeclarationDescriptor();
                         // typeParameters in a list, but it contains very few elements, so it's fine to call contains() on it
                         //noinspection SuspiciousMethodCalls

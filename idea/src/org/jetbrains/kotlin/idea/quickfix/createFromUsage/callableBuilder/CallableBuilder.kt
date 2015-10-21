@@ -66,7 +66,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -83,7 +83,7 @@ private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).
  */
-class TypeCandidate(val theType: KtType, scope: KtScope? = null) {
+class TypeCandidate(val theType: KotlinType, scope: KtScope? = null) {
     public val typeParameters: Array<TypeParameterDescriptor>
     var renderedType: String? = null
         private set
@@ -117,7 +117,7 @@ data class RenderedTypeParameter(
         val text: String
 )
 
-fun List<TypeCandidate>.getTypeByRenderedType(renderedType: String): KtType? =
+fun List<TypeCandidate>.getTypeByRenderedType(renderedType: String): KotlinType? =
         firstOrNull { it.renderedType == renderedType }?.theType
 
 class CallableBuilderConfiguration(
@@ -166,7 +166,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val types = typeInfo.getPossibleTypes(this).asReversed()
 
             // We have to use semantic equality here
-            data class EqWrapper(val _type: KtType) {
+            data class EqWrapper(val _type: KotlinType) {
                 override fun equals(other: Any?) = this === other
                                                    || other is EqWrapper && KotlinTypeChecker.DEFAULT.equalTypes(_type, other._type)
                 override fun hashCode() = 0 // no good way to compute hashCode() that would agree with our equals()
@@ -291,7 +291,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             val fakeFunction: FunctionDescriptor?
             // figure out type substitutions for type parameters
-            val substitutionMap = LinkedHashMap<KtType, KtType>()
+            val substitutionMap = LinkedHashMap<KotlinType, KotlinType>()
             if (config.enableSubstitutions) {
                 collectSubstitutionsForReceiverTypeParameters(receiverType, substitutionMap)
                 val typeArgumentsForFakeFunction = callableInfo.typeParameterInfos
@@ -372,8 +372,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         }
 
         private fun collectSubstitutionsForReceiverTypeParameters(
-                receiverType: KtType?,
-                result: MutableMap<KtType, KtType>
+                receiverType: KotlinType?,
+                result: MutableMap<KotlinType, KotlinType>
         ) {
             if (placement is CallablePlacement.NoReceiver) return
 
@@ -386,8 +386,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
         private fun collectSubstitutionsForCallableTypeParameters(
                 fakeFunction: FunctionDescriptor,
-                typeArguments: Set<KtType>,
-                result: MutableMap<KtType, KtType>) {
+                typeArguments: Set<KotlinType>,
+                result: MutableMap<KotlinType, KotlinType>) {
             for ((typeArgument, typeParameter) in typeArguments zip fakeFunction.getTypeParameters()) {
                 result[typeArgument] = typeParameter.getDefaultType()
             }
@@ -842,7 +842,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             return typeParameters
         }
 
-        private fun replaceWithLongerName(typeRef: KtTypeReference, theType: KtType) {
+        private fun replaceWithLongerName(typeRef: KtTypeReference, theType: KotlinType) {
             val fullyQualifiedReceiverTypeRef = KtPsiFactory(typeRef).createType(theType.renderLong(typeParameterNameMap))
             typeRef.replace(fullyQualifiedReceiverTypeRef)
         }

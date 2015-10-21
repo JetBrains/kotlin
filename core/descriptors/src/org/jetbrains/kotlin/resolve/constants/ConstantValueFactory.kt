@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.constants
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 public class ConstantValueFactory(
@@ -51,12 +51,12 @@ public class ConstantValueFactory(
 
     fun createArrayValue(
             value: List<ConstantValue<*>>,
-            type: KtType
+            type: KotlinType
     ) = ArrayValue(value, type, builtins)
 
     fun createAnnotationValue(value: AnnotationDescriptor) = AnnotationValue(value)
 
-    fun createKClassValue(type: KtType) = KClassValue(type)
+    fun createKClassValue(type: KotlinType) = KClassValue(type)
 
     fun createConstantValue(
             value: Any?
@@ -79,7 +79,7 @@ public class ConstantValueFactory(
 
     public fun createIntegerConstantValue(
             value: Long,
-            expectedType: KtType
+            expectedType: KotlinType
     ): ConstantValue<*>? {
         val notNullExpected = TypeUtils.makeNotNullable(expectedType)
         return when {

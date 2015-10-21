@@ -47,8 +47,8 @@ public class ForceResolveUtil {
         }
     }
 
-    public static void forceResolveAllContents(@NotNull Collection<KtType> types) {
-        for (KtType type : types) {
+    public static void forceResolveAllContents(@NotNull Collection<KotlinType> types) {
+        for (KotlinType type : types) {
             forceResolveAllContents(type);
         }
     }
@@ -87,7 +87,7 @@ public class ForceResolveUtil {
     }
 
     @Nullable
-    public static KtType forceResolveAllContents(@Nullable KtType type) {
+    public static KotlinType forceResolveAllContents(@Nullable KotlinType type) {
         if (type == null) return null;
 
         forceResolveAllContents(type.getAnnotations());

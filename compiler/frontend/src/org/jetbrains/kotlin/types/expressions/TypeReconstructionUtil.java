@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.PossiblyBareType;
 import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeReconstructionResult;
 
@@ -33,10 +33,10 @@ import static org.jetbrains.kotlin.diagnostics.Errors.NO_TYPE_ARGUMENTS_ON_RHS;
 
 public class TypeReconstructionUtil {
     @NotNull
-    public static KtType reconstructBareType(
+    public static KotlinType reconstructBareType(
             @NotNull KtTypeReference right,
             @NotNull PossiblyBareType possiblyBareTarget,
-            @Nullable KtType subjectType,
+            @Nullable KotlinType subjectType,
             @NotNull BindingTrace trace,
             @NotNull KotlinBuiltIns builtIns
     ) {
@@ -52,7 +52,7 @@ public class TypeReconstructionUtil {
                                                      allStarProjectionsString(typeConstructor)));
         }
 
-        KtType targetType = reconstructionResult.getResultingType();
+        KotlinType targetType = reconstructionResult.getResultingType();
         if (targetType != null) {
             if (possiblyBareTarget.isBare()) {
                 trace.record(BindingContext.TYPE, right, targetType);

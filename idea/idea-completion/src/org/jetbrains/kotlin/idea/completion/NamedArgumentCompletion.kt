@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.kotlin.idea.KtIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 object NamedArgumentCompletion {
@@ -45,7 +45,7 @@ object NamedArgumentCompletion {
     }
 
     public fun complete(collector: LookupElementsCollector, expectedInfos: Collection<ExpectedInfo>) {
-        val nameToParameterType = HashMap<Name, MutableSet<KtType>>()
+        val nameToParameterType = HashMap<Name, MutableSet<KotlinType>>()
         for (expectedInfo in expectedInfos) {
             val argumentData = expectedInfo.additionalData as? ArgumentPositionData.Positional ?: continue
             for (parameter in argumentData.namedArgumentCandidates) {
@@ -59,7 +59,7 @@ object NamedArgumentCompletion {
             val lookupElement = LookupElementBuilder.create(nameString)
                     .withPresentableText("$nameString =")
                     .withTailText(" $typeText")
-                    .withIcon(KtIcons.PARAMETER)
+                    .withIcon(KotlinIcons.PARAMETER)
                     .withInsertHandler(NamedArgumentInsertHandler(name))
                     .assignPriority(ItemPriority.NAMED_PARAMETER)
             collector.addElement(lookupElement)

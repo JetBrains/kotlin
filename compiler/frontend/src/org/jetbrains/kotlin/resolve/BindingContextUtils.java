@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -81,11 +81,11 @@ public class BindingContextUtils {
     }
 
     @NotNull
-    public static KtType getTypeNotNull(
+    public static KotlinType getTypeNotNull(
             @NotNull BindingContext bindingContext,
             @NotNull KtExpression expression
     ) {
-        KtType result = bindingContext.getType(expression);
+        KotlinType result = bindingContext.getType(expression);
         if (result == null) {
             throw new IllegalStateException("Type must be not null for " + expression);
         }
@@ -140,8 +140,8 @@ public class BindingContextUtils {
     }
 
     @Nullable
-    public static KtType updateRecordedType(
-            @Nullable KtType type,
+    public static KotlinType updateRecordedType(
+            @Nullable KotlinType type,
             @NotNull KtExpression expression,
             @NotNull BindingTrace trace,
             boolean shouldBeMadeNullable

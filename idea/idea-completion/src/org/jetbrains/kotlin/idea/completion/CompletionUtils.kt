@@ -26,7 +26,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.idea.KtIcons
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.getResolutionScope
@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
 import java.util.*
@@ -247,7 +247,7 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
     return result
 }
 
-private fun KtDeclarationWithBody.returnType(bindingContext: BindingContext): KtType? {
+private fun KtDeclarationWithBody.returnType(bindingContext: BindingContext): KotlinType? {
     val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor ?: return null
     return callable.getReturnType()
 }
@@ -310,12 +310,12 @@ fun breakOrContinueExpressionItems(position: KtElement, breakOrContinue: String)
     return result
 }
 
-fun LookupElementFactory.createLookupElementForType(type: KtType): LookupElement? {
+fun LookupElementFactory.createLookupElementForType(type: KotlinType): LookupElement? {
     if (type.isError()) return null
 
     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
         val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-        val baseLookupElement = LookupElementBuilder.create(text).withIcon(KtIcons.LAMBDA)
+        val baseLookupElement = LookupElementBuilder.create(text).withIcon(KotlinIcons.LAMBDA)
         return BaseTypeLookupElement(type, baseLookupElement)
     }
     else {
@@ -339,7 +339,7 @@ fun LookupElementFactory.createLookupElementForType(type: KtType): LookupElement
     }
 }
 
-private open class BaseTypeLookupElement(type: KtType, baseLookupElement: LookupElement) : LookupElementDecorator<LookupElement>(baseLookupElement) {
+private open class BaseTypeLookupElement(type: KotlinType, baseLookupElement: LookupElement) : LookupElementDecorator<LookupElement>(baseLookupElement) {
     val fullText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
     override fun equals(other: Any?) = other is BaseTypeLookupElement && fullText == other.fullText

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.DeferredType;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -83,10 +83,10 @@ public class DelegatedPropertyResolver {
     }
 
     @Nullable
-    public KtType getDelegatedPropertyGetMethodReturnType(
+    public KotlinType getDelegatedPropertyGetMethodReturnType(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull KtExpression delegateExpression,
-            @NotNull KtType delegateType,
+            @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
@@ -99,13 +99,13 @@ public class DelegatedPropertyResolver {
     public void resolveDelegatedPropertyGetMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull KtExpression delegateExpression,
-            @NotNull KtType delegateType,
+            @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
-        KtType returnType = getDelegatedPropertyGetMethodReturnType(
+        KotlinType returnType = getDelegatedPropertyGetMethodReturnType(
                 propertyDescriptor, delegateExpression, delegateType, trace, scope);
-        KtType propertyType = propertyDescriptor.getType();
+        KotlinType propertyType = propertyDescriptor.getType();
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
         if (!(propertyType instanceof DeferredType) && returnType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(returnType, propertyType)) {
@@ -119,7 +119,7 @@ public class DelegatedPropertyResolver {
     public void resolveDelegatedPropertySetMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull KtExpression delegateExpression,
-            @NotNull KtType delegateType,
+            @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
@@ -134,7 +134,7 @@ public class DelegatedPropertyResolver {
     public void resolveDelegatedPropertyPDMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull KtExpression delegateExpression,
-            @NotNull KtType delegateType,
+            @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope
     ) {
@@ -172,7 +172,7 @@ public class DelegatedPropertyResolver {
     private void resolveDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull KtExpression delegateExpression,
-            @NotNull KtType delegateType,
+            @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             boolean isGet
@@ -231,7 +231,7 @@ public class DelegatedPropertyResolver {
     public OverloadResolutionResults<FunctionDescriptor> getDelegatedPropertyConventionMethod(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull KtExpression delegateExpression,
-            @NotNull KtType delegateType,
+            @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             boolean isGet,
@@ -240,7 +240,7 @@ public class DelegatedPropertyResolver {
         PropertyAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
         assert accessor != null : "Delegated property should have getter/setter " + propertyDescriptor + " " + delegateExpression.getText();
 
-        KtType expectedType = isComplete && isGet && !(propertyDescriptor.getType() instanceof DeferredType)
+        KotlinType expectedType = isComplete && isGet && !(propertyDescriptor.getType() instanceof DeferredType)
                                ? propertyDescriptor.getType() : TypeUtils.NO_EXPECTED_TYPE;
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
@@ -305,7 +305,7 @@ public class DelegatedPropertyResolver {
         assert calleeExpression != null : "CalleeExpression should exists for fake call of convention method";
         StringBuilder builder = new StringBuilder(calleeExpression.getText());
         builder.append("(");
-        List<KtType> argumentTypes = Lists.newArrayList();
+        List<KotlinType> argumentTypes = Lists.newArrayList();
         for (ValueArgument argument : call.getValueArguments()) {
             argumentTypes.add(context.getType(argument.getArgumentExpression()));
 
@@ -316,7 +316,7 @@ public class DelegatedPropertyResolver {
     }
 
     @Nullable
-    public KtType resolveDelegateExpression(
+    public KotlinType resolveDelegateExpression(
             @NotNull KtExpression delegateExpression,
             @NotNull KtProperty jetProperty,
             @NotNull PropertyDescriptor propertyDescriptor,
@@ -332,8 +332,8 @@ public class DelegatedPropertyResolver {
         if (calleeExpression != null) {
             traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer);
         }
-        KtType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
-                                                                   dataFlowInfo, traceToResolveDelegatedProperty);
+        KotlinType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
+                                                                       dataFlowInfo, traceToResolveDelegatedProperty);
         traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
             @Override
             public boolean accept(@Nullable WritableSlice<?, ?> slice, Object key) {
@@ -351,13 +351,13 @@ public class DelegatedPropertyResolver {
             @NotNull final LexicalScope accessorScope,
             @NotNull final BindingTrace trace
     ) {
-        final KtType expectedType = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
+        final KotlinType expectedType = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         return new ConstraintSystemCompleter() {
             @Override
             public void completeConstraintSystem(
                     @NotNull ConstraintSystem constraintSystem, @NotNull ResolvedCall<?> resolvedCall
             ) {
-                KtType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
+                KotlinType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
                 if (returnType == null) return;
 
                 TemporaryBindingTrace traceToResolveConventionMethods =
@@ -370,7 +370,7 @@ public class DelegatedPropertyResolver {
 
                 if (conventionMethodFound(getMethodResults)) {
                     FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
-                    KtType returnTypeOfGetMethod = descriptor.getReturnType();
+                    KotlinType returnTypeOfGetMethod = descriptor.getReturnType();
                     if (returnTypeOfGetMethod != null) {
                         constraintSystem.addSupertypeConstraint(expectedType, returnTypeOfGetMethod, FROM_COMPLETER.position());
                     }
@@ -413,7 +413,7 @@ public class DelegatedPropertyResolver {
             private void addConstraintForThisValue(ConstraintSystem constraintSystem, FunctionDescriptor resultingDescriptor) {
                 ReceiverParameterDescriptor extensionReceiver = propertyDescriptor.getExtensionReceiverParameter();
                 ReceiverParameterDescriptor dispatchReceiver = propertyDescriptor.getDispatchReceiverParameter();
-                KtType typeOfThis =
+                KotlinType typeOfThis =
                         extensionReceiver != null ? extensionReceiver.getType() :
                         dispatchReceiver != null ? dispatchReceiver.getType() :
                         builtIns.getNullableNothingType();

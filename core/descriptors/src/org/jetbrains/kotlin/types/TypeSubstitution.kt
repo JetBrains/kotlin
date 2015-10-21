@@ -23,13 +23,13 @@ public abstract class TypeSubstitution {
     companion object {
         @JvmStatic
         public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
-            override fun get(key: KtType) = null
+            override fun get(key: KotlinType) = null
             override fun isEmpty() = true
             override fun toString() = "Empty TypeSubstitution"
         }
     }
 
-    public abstract fun get(key: KtType): TypeProjection?
+    public abstract fun get(key: KotlinType): TypeProjection?
 
     public open fun isEmpty(): Boolean = false
 
@@ -41,7 +41,7 @@ public abstract class TypeSubstitution {
 }
 
 public abstract class TypeConstructorSubstitution : TypeSubstitution() {
-    override fun get(key: KtType) = get(key.constructor)
+    override fun get(key: KotlinType) = get(key.constructor)
 
     public abstract fun get(key: TypeConstructor): TypeProjection?
 
@@ -82,7 +82,7 @@ public class IndexedParametersSubstitution(
 
     override fun isEmpty(): Boolean = arguments.isEmpty()
 
-    override fun get(key: KtType): TypeProjection? {
+    override fun get(key: KotlinType): TypeProjection? {
         val parameter = key.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return null
         val index = parameter.index
 
@@ -94,7 +94,7 @@ public class IndexedParametersSubstitution(
     }
 }
 
-public fun KtType.computeNewSubstitution(
+public fun KotlinType.computeNewSubstitution(
     newParameters: List<TypeParameterDescriptor>,
     newArguments: List<TypeProjection>
 ): TypeSubstitution {
@@ -118,7 +118,7 @@ private class CompositeTypeSubstitution(
     private val second: TypeSubstitution
 ) : TypeSubstitution() {
 
-    override fun get(key: KtType): TypeProjection? {
+    override fun get(key: KotlinType): TypeProjection? {
         val firstResult = first[key] ?: return second[key]
         return second.buildSubstitutor().substitute(firstResult)
     }
@@ -131,7 +131,7 @@ private class CompositeTypeSubstitution(
 }
 
 public open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSubstitution() {
-    override fun get(key: KtType) = substitution.get(key)
+    override fun get(key: KotlinType) = substitution.get(key)
 
     override fun isEmpty() = substitution.isEmpty()
 

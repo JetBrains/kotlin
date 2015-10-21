@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
-import org.jetbrains.kotlin.types.KtType
-import org.jetbrains.kotlin.types.KtTypeImpl
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeImpl
 import org.jetbrains.kotlin.utils.Printer
 import java.lang.reflect.Constructor
 import java.lang.reflect.GenericDeclaration
@@ -159,7 +159,7 @@ class LazyOperationsLog(
                 val text = when {
                     typeProto.hasClassName() -> context.nameResolver.getClassId(typeProto.className).asSingleFqName().asString()
                     typeProto.hasTypeParameter() -> {
-                        val classifier = (o as KtType).constructor.declarationDescriptor!!
+                        val classifier = (o as KotlinType).constructor.declarationDescriptor!!
                         "" + classifier.name + " in " + DescriptorUtils.getFqName(classifier.containingDeclaration)
                     }
                     else -> "???"
@@ -183,7 +183,7 @@ class LazyOperationsLog(
                     sb.append(" }")
                 }
             }
-            o is KtTypeImpl -> {
+            o is KotlinTypeImpl -> {
                 StringBuilder {
                     append(o.getConstructor())
                     if (!o.getArguments().isEmpty()) {

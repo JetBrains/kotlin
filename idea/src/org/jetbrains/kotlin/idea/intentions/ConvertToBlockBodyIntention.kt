@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<KtDeclarationWithBody>(
         javaClass(), "Convert to block body"
@@ -84,7 +84,7 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<KtDeclarati
             return declaration
         }
 
-        private fun KtNamedFunction.returnType(): KtType? {
+        private fun KtNamedFunction.returnType(): KotlinType? {
             val descriptor = analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] ?: return null
             return (descriptor as FunctionDescriptor).getReturnType()
         }

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 
 public class ShowExpressionTypeAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -64,7 +64,7 @@ public class ShowExpressionTypeAction : AnAction() {
         }
     }
 
-    private fun typeByExpression(expression: KtExpression): KtType? {
+    private fun typeByExpression(expression: KtExpression): KotlinType? {
         val bindingContext = expression.analyze()
 
         if (expression is KtCallableDeclaration) {

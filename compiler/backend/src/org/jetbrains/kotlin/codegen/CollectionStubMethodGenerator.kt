@@ -187,7 +187,7 @@ class CollectionStubMethodGenerator(
         return ourSuperCollectionClasses.filter { klass -> klass.readOnlyClass !in redundantClasses }
     }
 
-    private fun Collection<KtType>.classes(): Collection<ClassDescriptor> =
+    private fun Collection<KotlinType>.classes(): Collection<ClassDescriptor> =
             this.map { it.getConstructor().getDeclarationDescriptor() as ClassDescriptor }
 
     private fun findFakeOverridesForMethodsFromMutableCollection(
@@ -213,7 +213,7 @@ class CollectionStubMethodGenerator(
         return result
     }
 
-    private fun Collection<KtType>.findMostSpecificTypeForClass(klass: ClassDescriptor): KtType {
+    private fun Collection<KotlinType>.findMostSpecificTypeForClass(klass: ClassDescriptor): KotlinType {
         val types = this.filter { it.getConstructor().getDeclarationDescriptor() == klass }
         if (types.isEmpty()) error("No supertype of $klass in $this")
         if (types.size() == 1) return types.first()
@@ -239,8 +239,8 @@ class CollectionStubMethodGenerator(
         return this.getOverriddenDescriptors().firstOrNull { it.getContainingDeclaration() == classDescriptor }
     }
 
-    private fun newType(classDescriptor: ClassDescriptor, typeArguments: List<TypeProjection>): KtType {
-        return KtTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArguments)
+    private fun newType(classDescriptor: ClassDescriptor, typeArguments: List<TypeProjection>): KotlinType {
+        return KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArguments)
     }
 
     private fun FunctionDescriptor.signature(): JvmMethodSignature = typeMapper.mapSignature(this)

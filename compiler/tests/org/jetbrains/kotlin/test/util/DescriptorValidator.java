@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.junit.Assert;
 
 import java.io.PrintStream;
@@ -93,7 +93,7 @@ public class DescriptorValidator {
 
         private void validateType(
                 @NotNull DeclarationDescriptor descriptor,
-                @Nullable KtType type,
+                @Nullable KotlinType type,
                 @NotNull DiagnosticCollector collector
         ) {
             if (type == null) {
@@ -134,9 +134,9 @@ public class DescriptorValidator {
         private void validateTypes(
                 DeclarationDescriptor descriptor,
                 DiagnosticCollector collector,
-                Collection<KtType> types
+                Collection<KotlinType> types
         ) {
-            for (KtType type : types) {
+            for (KotlinType type : types) {
                 validateType(descriptor, type, collector);
             }
         }
@@ -163,8 +163,8 @@ public class DescriptorValidator {
                 DeclarationDescriptor descriptor,
                 DiagnosticCollector collector,
                 String name,
-                KtType expected,
-                KtType actual
+                KotlinType expected,
+                KotlinType actual
         ) {
             if (expected.isError() && actual.isError()) {
                 assertEquals(descriptor, collector, name, expected.toString(), actual.toString());
@@ -235,7 +235,7 @@ public class DescriptorValidator {
         ) {
             validateTypeParameters(collector, descriptor.getTypeConstructor().getParameters());
 
-            Collection<KtType> supertypes = descriptor.getTypeConstructor().getSupertypes();
+            Collection<KotlinType> supertypes = descriptor.getTypeConstructor().getSupertypes();
             if (supertypes.isEmpty() && descriptor.getKind() != ClassKind.INTERFACE
                 && !KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor)) {
                 report(collector, descriptor, "No supertypes for non-trait");

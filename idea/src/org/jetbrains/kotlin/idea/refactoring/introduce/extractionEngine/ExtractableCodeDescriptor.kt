@@ -58,11 +58,11 @@ interface Parameter {
     val mirrorVarName: String?
     val receiverCandidate: Boolean
 
-    fun getParameterType(allowSpecialClassNames: Boolean): KtType
+    fun getParameterType(allowSpecialClassNames: Boolean): KotlinType
 
-    fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<KtType>
+    fun getParameterTypeCandidates(allowSpecialClassNames: Boolean): List<KotlinType>
 
-    fun copy(name: String, parameterType: KtType): Parameter
+    fun copy(name: String, parameterType: KotlinType): Parameter
 }
 
 val Parameter.nameForRef: String get() = mirrorVarName ?: name
@@ -124,12 +124,12 @@ class FqNameReplacement(val fqName: FqName): Replacement {
 
 interface OutputValue {
     val originalExpressions: List<KtExpression>
-    val valueType: KtType
+    val valueType: KotlinType
 
     class ExpressionValue(
             val callSiteReturn: Boolean,
             override val originalExpressions: List<KtExpression>,
-            override val valueType: KtType
+            override val valueType: KotlinType
     ): OutputValue
 
     class Jump(
@@ -139,28 +139,28 @@ interface OutputValue {
             private val builtIns: KotlinBuiltIns
     ): OutputValue {
         override val originalExpressions: List<KtExpression> get() = elementsToReplace
-        override val valueType: KtType = with(builtIns) { if (conditional) booleanType else unitType }
+        override val valueType: KotlinType = with(builtIns) { if (conditional) booleanType else unitType }
     }
 
     class ParameterUpdate(
             val parameter: Parameter,
             override val originalExpressions: List<KtExpression>
     ): OutputValue {
-        override val valueType: KtType get() = parameter.getParameterType(false)
+        override val valueType: KotlinType get() = parameter.getParameterType(false)
     }
 
     class Initializer(
             val initializedDeclaration: KtProperty,
-            override val valueType: KtType
+            override val valueType: KotlinType
     ): OutputValue {
         override val originalExpressions: List<KtExpression> get() = Collections.singletonList(initializedDeclaration)
     }
 }
 
 abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
-    val outputValueTypes: List<KtType> get() = outputValues.map { it.valueType }
+    val outputValueTypes: List<KotlinType> get() = outputValues.map { it.valueType }
 
-    abstract val returnType: KtType
+    abstract val returnType: KotlinType
 
     protected abstract fun getBoxingExpressionText(arguments: List<String>): String?
 
@@ -206,8 +206,8 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
             private val selectors = arrayOf("first", "second", "third")
         }
 
-        override val returnType: KtType by lazy {
-            fun getType(): KtType {
+        override val returnType: KotlinType by lazy {
+            fun getType(): KotlinType {
                 val boxingClass = when (outputValues.size()) {
                     1 -> return outputValues.first().valueType
                     2 -> module.resolveTopLevelClass(FqName("kotlin.Pair"), NoLookupLocation.FROM_IDE)!!
@@ -251,7 +251,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
     }
 
     class AsList(outputValues: List<OutputValue>): OutputValueBoxer(outputValues) {
-        override val returnType: KtType by lazy {
+        override val returnType: KotlinType by lazy {
             assert(outputValues.isNotEmpty())
             val builtIns = outputValues.first().valueType.builtIns
             TypeUtils.substituteParameters(
@@ -302,7 +302,7 @@ data class ControlFlow(
     }
 }
 
-val ControlFlow.possibleReturnTypes: List<KtType>
+val ControlFlow.possibleReturnTypes: List<KotlinType>
     get() {
         val returnType = outputValueBoxer.returnType
         return when {
@@ -328,7 +328,7 @@ data class ExtractableCodeDescriptor(
         val typeParameters: List<TypeParameter>,
         val replacementMap: Map<Int, Replacement>,
         val controlFlow: ControlFlow,
-        val returnType: KtType
+        val returnType: KotlinType
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
     val duplicates: List<DuplicateInfo> by lazy { findDuplicates() }

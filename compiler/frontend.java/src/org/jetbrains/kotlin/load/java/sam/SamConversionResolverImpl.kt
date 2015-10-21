@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
@@ -51,7 +51,7 @@ public object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveFunctionTypeIfSamInterface(
             classDescriptor: JavaClassDescriptor,
             resolveMethod: (JavaMethod) -> FunctionDescriptor
-    ): KtType? {
+    ): KotlinType? {
         val jClass = (classDescriptor.getSource() as? JavaSourceElement)?.javaElement as? JavaClass ?: return null
         val samInterfaceMethod = SingleAbstractMethodUtils.getSamInterfaceMethod(jClass) ?: return null
         val abstractMethod = if (jClass.getFqName() == samInterfaceMethod.getContainingClass().getFqName()) {
@@ -63,7 +63,7 @@ public object SamConversionResolverImpl : SamConversionResolver {
         return SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(abstractMethod)
     }
 
-    private fun findFunctionWithMostSpecificReturnType(supertypes: Set<KtType>): SimpleFunctionDescriptor {
+    private fun findFunctionWithMostSpecificReturnType(supertypes: Set<KotlinType>): SimpleFunctionDescriptor {
         val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size())
         for (supertype in supertypes) {
             val abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype)

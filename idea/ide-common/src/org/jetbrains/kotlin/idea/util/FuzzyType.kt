@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariables
-import org.jetbrains.kotlin.types.KtType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.*
@@ -51,7 +51,7 @@ fun FuzzyType.isAlmostEverything(): Boolean {
 }
 
 class FuzzyType(
-        val type: KtType,
+        val type: KotlinType,
         freeParameters: Collection<TypeParameterDescriptor>
 ) {
     public val freeParameters: Set<TypeParameterDescriptor>
@@ -71,7 +71,7 @@ class FuzzyType(
 
     override fun hashCode() = type.hashCode()
 
-    private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(type: KtType) {
+    private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(type: KotlinType) {
         val typeParameter = type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         if (typeParameter != null && add(typeParameter)) {
             typeParameter.getLowerBounds().forEach { addUsedTypeParameters(it) }
@@ -91,10 +91,10 @@ class FuzzyType(
     public fun checkIsSuperTypeOf(otherType: FuzzyType): TypeSubstitutor?
             = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
 
-    public fun checkIsSubtypeOf(otherType: KtType): TypeSubstitutor?
+    public fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor?
             = checkIsSubtypeOf(FuzzyType(otherType, emptyList()))
 
-    public fun checkIsSuperTypeOf(otherType: KtType): TypeSubstitutor?
+    public fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor?
             = checkIsSuperTypeOf(FuzzyType(otherType, emptyList()))
 
     private enum class MatchKind {
@@ -106,7 +106,7 @@ class FuzzyType(
         if (type.isError()) return null
         if (otherType.type.isError()) return null
 
-        fun KtType.checkInheritance(otherType: KtType): Boolean {
+        fun KotlinType.checkInheritance(otherType: KotlinType): Boolean {
             return when (matchKind) {
                 MatchKind.IS_SUBTYPE -> this.isSubtypeOf(otherType)
                 MatchKind.IS_SUPERTYPE -> otherType.isSubtypeOf(this)

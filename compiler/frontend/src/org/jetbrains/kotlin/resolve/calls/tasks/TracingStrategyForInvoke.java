@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.types.KtType;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 
@@ -37,12 +37,12 @@ import static org.jetbrains.kotlin.resolve.BindingContext.CALL;
 import static org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL;
 
 public class TracingStrategyForInvoke extends AbstractTracingStrategy {
-    private final KtType calleeType;
+    private final KotlinType calleeType;
 
     public TracingStrategyForInvoke(
             @NotNull KtExpression reference,
             @NotNull Call call,
-            @NotNull KtType calleeType
+            @NotNull KotlinType calleeType
     ) {
         super(reference, call);
         this.calleeType = calleeType;

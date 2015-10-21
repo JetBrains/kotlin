@@ -52,7 +52,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
         return MyFunctionDescriptor.create(enhancedFunction)
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         var result: SmartList<FunctionDescriptor>? = null
         for (type in receiverTypes) {
             for (function in type.memberScope.getFunctions(name, location)) {
@@ -72,7 +72,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
         }
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KtType>): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
         return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
             type.memberScope.getDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filterIsInstance<FunctionDescriptor>()
@@ -156,8 +156,8 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
                 copyOverrides: Boolean,
                 kind: CallableMemberDescriptor.Kind,
                 newValueParameterDescriptors: MutableList<ValueParameterDescriptor>,
-                newExtensionReceiverParameterType: KtType?,
-                newReturnType: KtType
+                newExtensionReceiverParameterType: KotlinType?,
+                newReturnType: KotlinType
         ): FunctionDescriptor? {
             val descriptor = super<SimpleFunctionDescriptorImpl>.doSubstitute(
                     originalSubstitutor, newOwner, newModality, newVisibility,
