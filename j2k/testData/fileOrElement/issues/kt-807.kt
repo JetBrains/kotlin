@@ -16,7 +16,7 @@ internal object FileRead {
             }
             `in`.close()
         } catch (e: Exception) {
-            System.err.println("Error: " + e.getMessage())
+            System.err.println("Error: " + e.message)
         }
 
     }

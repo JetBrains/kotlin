@@ -109,6 +109,26 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = convertWithChangedName("removeAt", qualifier, arguments, typeArgumentsConverted, codeConverter)
     },
 
+    THROWABLE_GET_MESSAGE(Throwable::class.java.name, "getMessage", 0) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallToPropertyUse(codeConverter, qualifier, "message")
+    },
+
+    THROWABLE_GET_CAUSE(Throwable::class.java.name, "getCause", 0) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallToPropertyUse(codeConverter, qualifier, "cause")
+    },
+
+    MAP_ENTRY_GET_KEY(Map::class.java.name + ".Entry", "getKey", 0) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallToPropertyUse(codeConverter, qualifier, "key")
+    },
+
+    MAP_ENTRY_GET_VALUE(Map::class.java.name + ".Entry", "getValue", 0) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallToPropertyUse(codeConverter, qualifier, "value")
+    },
+
     OBJECT_EQUALS(null, "equals", 1) {
         override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean
                 = super.matches(method, superMethodsSearcher) && method.getParameterList().getParameters().single().getType().getCanonicalText() == JAVA_LANG_OBJECT
