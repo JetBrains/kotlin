@@ -83,7 +83,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
 
         AnalysisResult exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(environment.getProject(), Collections.<KtFile>emptySet(), environment);
         PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
-        assertFalse(packageView.isEmpty());
+        assertFalse("Nothing found in package " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView.isEmpty());
 
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile);
     }

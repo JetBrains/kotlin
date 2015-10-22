@@ -760,26 +760,31 @@ public class JetTestUtils {
                     javaFileObjectsFromFiles);
 
             Boolean success = task.call(); // do NOT inline this variable, call() should complete before errorsToString()
-            String diagnosticString = errorsToString(diagnosticCollector);
             if (javaErrorFile == null || !javaErrorFile.exists()) {
-                Assert.assertTrue(diagnosticString, success);
+                Assert.assertTrue(errorsToString(diagnosticCollector, true), success);
             }
             else {
-                assertEqualsToFile(javaErrorFile, diagnosticString);
+                assertEqualsToFile(javaErrorFile, errorsToString(diagnosticCollector, false));
             }
         } finally {
             fileManager.close();
         }
     }
 
-    private static String errorsToString(DiagnosticCollector<JavaFileObject> diagnosticCollector) {
+    @NotNull
+    private static String errorsToString(@NotNull  DiagnosticCollector<JavaFileObject> diagnosticCollector, boolean humanReadable) {
         StringBuilder builder = new StringBuilder();
         for (javax.tools.Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
-            if (diagnostic.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
+            if (diagnostic.getKind() != javax.tools.Diagnostic.Kind.ERROR) continue;
+
+            if (humanReadable) {
+                builder.append(diagnostic).append("\n");
+            }
+            else {
                 builder.append(diagnostic.getSource().getName()).append(":")
-                       .append(diagnostic.getLineNumber()).append(":")
-                       .append(diagnostic.getColumnNumber()).append(":")
-                       .append(diagnostic.getCode()).append("\n");
+                        .append(diagnostic.getLineNumber()).append(":")
+                        .append(diagnostic.getColumnNumber()).append(":")
+                        .append(diagnostic.getCode()).append("\n");
             }
         }
         return builder.toString();
