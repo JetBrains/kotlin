@@ -20,6 +20,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -69,6 +70,12 @@ class ReplOutputHandler(
             "COMPILE_ERROR"   -> outputProcessor.highlightCompilerErrors(createCompilerMessages(content))
             "RUNTIME_ERROR"   -> outputProcessor.printRuntimeError("${content.trim()}\n")
             "INTERNAL_ERROR"  -> outputProcessor.printInternalErrorMessage(content)
+            "SUCCESS"         -> Unit
+            else -> logError(ReplOutputHandler::class.java, "Unexpected output type:\n$outputType")
+        }
+
+        if (outputType in setOf("SUCCESS", "COMPILE_ERROR", "INTERNAL_ERROR", "RUNTIME_ERROR")) {
+            runner.commandHistory.entryProcessed()
         }
     }
 

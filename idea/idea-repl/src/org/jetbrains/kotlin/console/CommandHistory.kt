@@ -25,6 +25,8 @@ class CommandHistory {
     )
 
     private val entries = arrayListOf<Entry>()
+    private var processedEntriesCount: Int = 0
+
     val listeners = arrayListOf<HistoryUpdateListener>()
 
     operator fun get(i: Int) = entries[i]
@@ -32,6 +34,19 @@ class CommandHistory {
     fun addEntry(entry: Entry) {
         entries.add(entry)
         listeners.forEach { it.onNewEntry(entry) }
+    }
+
+    fun lastUnprocessedEntry(): CommandHistory.Entry? {
+        if (processedEntriesCount < size) {
+            return get(processedEntriesCount)
+        }
+        else {
+            return null
+        }
+    }
+
+    fun entryProcessed() {
+        processedEntriesCount++
     }
 
     val size: Int

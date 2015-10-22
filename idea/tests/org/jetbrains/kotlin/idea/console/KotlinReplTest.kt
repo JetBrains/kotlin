@@ -88,7 +88,7 @@ public class KotlinReplTest : PlatformTestCase() {
     }
 
     @Test fun testOnePlusOne() = testSimpleCommand("1 + 1", "2")
-    @Test fun testPrintlnText() = "Hello, console world!" let { testSimpleCommand("println(\"$it\")", it) }
+    @Test fun testPrintlnText() = "Hello, console world!".let { testSimpleCommand("println(\"$it\")", it) }
     @Test fun testDivisionByZeroException() = testSimpleCommand("1 / 0", "java.lang.ArithmeticException: / by zero")
 
     @Test fun testMultilineSupport() {
@@ -124,5 +124,12 @@ public class KotlinReplTest : PlatformTestCase() {
         waitForExpectedOutput(readLineTextA)
         sendCommand("b")
         waitForExpectedOutput(readLineTextB)
+    }
+
+    @Test fun testCorrectAfterError() {
+        val message = "MyMessage"
+        sendCommand("fun f() { println(x)\n println(y) ")
+        sendCommand("println(\"$message\")")
+        waitForExpectedOutput(message)
     }
 }
