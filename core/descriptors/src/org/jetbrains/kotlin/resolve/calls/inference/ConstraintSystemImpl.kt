@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
+import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
@@ -419,12 +417,12 @@ public class ConstraintSystemImpl : ConstraintSystem {
             constraintContext: ConstraintContext
     ) {
         val typeVariable = getMyTypeVariable(parameterType)!!
-        if (!typeVariable.getUpperBoundsAsType().isDefaultBound()
-            && constrainingTypeProjection.getProjectionKind() == Variance.IN_VARIANCE) {
+        if (!typeVariable.upperBounds.let { it.size == 1 && it.single().isDefaultBound() } &&
+                constrainingTypeProjection.projectionKind == Variance.IN_VARIANCE) {
             errors.add(CannotCapture(constraintContext.position, typeVariable))
         }
-        val typeProjection = if (parameterType.isMarkedNullable()) {
-            TypeProjectionImpl(constrainingTypeProjection.getProjectionKind(), TypeUtils.makeNotNullable(constrainingTypeProjection.getType()))
+        val typeProjection = if (parameterType.isMarkedNullable) {
+            TypeProjectionImpl(constrainingTypeProjection.projectionKind, TypeUtils.makeNotNullable(constrainingTypeProjection.type))
         }
         else {
             constrainingTypeProjection

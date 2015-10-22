@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Comparator;
 import java.util.List;
@@ -126,11 +127,19 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
             List<TypeParameterDescriptor> c1TypeParameters = c1.getTypeParameters();
             List<TypeParameterDescriptor> c2TypeParameters = c2.getTypeParameters();
             for (int i = 0; i < Math.min(c1TypeParameters.size(), c2TypeParameters.size()); i++) {
-                String p1 = RENDERER.renderType(c1TypeParameters.get(i).getUpperBoundsAsType());
-                String p2 = RENDERER.renderType(c2TypeParameters.get(i).getUpperBoundsAsType());
-                int parametersCompareTo = p1.compareTo(p2);
-                if (parametersCompareTo != 0) {
-                    return parametersCompareTo;
+                List<KotlinType> c1Bounds = c1TypeParameters.get(i).getUpperBounds();
+                List<KotlinType> c2Bounds = c2TypeParameters.get(i).getUpperBounds();
+                int boundsCountCompareTo = c1Bounds.size() - c2Bounds.size();
+                if (boundsCountCompareTo != 0) {
+                    return boundsCountCompareTo;
+                }
+                for (int j = 0; j < c1Bounds.size(); j++) {
+                    String b1 = RENDERER.renderType(c1Bounds.get(j));
+                    String b2 = RENDERER.renderType(c2Bounds.get(j));
+                    int boundCompareTo = b1.compareTo(b2);
+                    if (boundCompareTo != 0) {
+                        return boundCompareTo;
+                    }
                 }
             }
 

@@ -229,13 +229,13 @@ public class CommonSupertypes {
             nullable |= type.isMarkedNullable();
         }
 
-        ClassifierDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
+        ClassifierDescriptor classifier = constructor.getDeclarationDescriptor();
         KtScope newScope;
-        if (declarationDescriptor instanceof ClassDescriptor) {
-            newScope = ((ClassDescriptor) declarationDescriptor).getMemberScope(newProjections);
+        if (classifier instanceof ClassDescriptor) {
+            newScope = ((ClassDescriptor) classifier).getMemberScope(newProjections);
         }
-        else if (declarationDescriptor instanceof TypeParameterDescriptor) {
-            newScope = ((TypeParameterDescriptor) declarationDescriptor).getUpperBoundsAsType().getMemberScope();
+        else if (classifier instanceof TypeParameterDescriptor) {
+            newScope = classifier.getDefaultType().getMemberScope();
         }
         else {
             newScope = ErrorUtils.createErrorScope("A scope for common supertype which is not a normal classifier", true);

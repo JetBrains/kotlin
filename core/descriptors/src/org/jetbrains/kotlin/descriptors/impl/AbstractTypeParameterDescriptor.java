@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +56,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
             @NotNull final StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
-            @NotNull Name name,
+            @NotNull final Name name,
             @NotNull Variance variance,
             boolean isReified,
             int index,
@@ -81,7 +83,15 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                                 new Function0<KtScope>() {
                                     @Override
                                     public KtScope invoke() {
-                                        return getUpperBoundsAsType().getMemberScope();
+                                        List<KtScope> scopes = new ArrayList<KtScope>();
+                                        for (KotlinType bound : getUpperBounds()) {
+                                            scopes.add(bound.getMemberScope());
+                                        }
+                                        return new ChainedScope(
+                                                AbstractTypeParameterDescriptor.this,
+                                                "Scope for type parameter " + name.asString(),
+                                                scopes.toArray(new KtScope[scopes.size()])
+                                        );
                                     }
                                 }
                         ))
