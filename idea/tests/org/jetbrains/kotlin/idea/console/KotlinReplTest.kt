@@ -34,7 +34,7 @@ public class KotlinReplTest : PlatformTestCase() {
 
     override fun setUp() {
         super.setUp()
-        consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module, testMode = true)!!
+        consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
     }
 
     override fun tearDown() {

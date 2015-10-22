@@ -24,7 +24,7 @@ import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 
-public class KotlinConsoleCompilerHelper(
+public class ConsoleCompilerHelper(
     private val project: Project,
     private val module: Module,
     private val executor: Executor,

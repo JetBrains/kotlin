@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.console.highlight
+package org.jetbrains.kotlin.console
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -28,21 +29,15 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.console.KotlinConsoleHistoryManager
-import org.jetbrains.kotlin.console.KotlinConsoleRunner
-import org.jetbrains.kotlin.console.SeverityDetails
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
-import org.jetbrains.kotlin.console.gutter.KotlinConsoleErrorRenderer
-import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
+import org.jetbrains.kotlin.console.gutter.ConsoleErrorRenderer
+import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.diagnostics.Severity
 
-public class KotlinReplOutputHighlighter(
-        private val runner: KotlinConsoleRunner,
-        private val historyManager: KotlinConsoleHistoryManager,
-        private val testMode: Boolean,
-        private val previousCompilationFailed: Boolean
+public class ReplOutputProcessor(
+        private val runner: KotlinConsoleRunner
 ) {
     private val project = runner.project
     private val consoleView = runner.consoleView as LanguageConsoleImpl
@@ -53,7 +48,7 @@ public class KotlinReplOutputHighlighter(
     private fun textOffsets(text: String): Pair<Int, Int> {
         consoleView.flushDeferredText() // flush before getting offsets to calculate them properly
         val oldLen = historyDocument.textLength
-        val newLen = oldLen + text.length()
+        val newLen = oldLen + text.length
 
         return Pair(oldLen, newLen)
     }
@@ -68,7 +63,7 @@ public class KotlinReplOutputHighlighter(
 
         historyMarkup.addRangeHighlighter(
                 startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
-        ) apply { gutterIconRenderer = KotlinConsoleIndicatorRenderer(iconWithTooltip) }
+        ).apply { gutterIconRenderer = ConsoleIndicatorRenderer(iconWithTooltip) }
     }
 
     private fun printWarningMessage(message: String, isAddHyperlink: Boolean) = WriteCommandAction.runWriteCommandAction(project) {
@@ -86,8 +81,8 @@ public class KotlinReplOutputHighlighter(
     }
 
     fun printBuildInfoWarningIfNeeded() {
-        if (testMode) return
-        if (previousCompilationFailed) return printWarningMessage("There were compilation errors in module ${runner.module.name}", false)
+        if (ApplicationManager.getApplication().isUnitTestMode) return
+        if (runner.previousCompilationFailed) return printWarningMessage("There were compilation errors in module ${runner.module.name}", false)
         if (runner.compilerHelper.moduleIsUpToDate()) return
 
         val compilerWarningMessage = "You’re running the REPL with outdated classes: "
@@ -109,7 +104,8 @@ public class KotlinReplOutputHighlighter(
     }
 
     fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
-        val lastCommandStartOffset = historyDocument.textLength - historyManager.lastCommandLength - 1
+        val commandHistory = runner.commandHistory
+        val lastCommandStartOffset = historyDocument.textLength - commandHistory[commandHistory.size - 1].entryText.length - 1
         val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
         val historyCommandRunIndicator = historyMarkup.allHighlighters.filter {
             historyDocument.getLineNumber(it.startOffset) == lastCommandStartLine && it.gutterIconRenderer != null
@@ -120,7 +116,7 @@ public class KotlinReplOutputHighlighter(
         }.groupBy { message ->
             val cmdStart = lastCommandStartOffset + message.range.startOffset
             historyEditor.document.getLineNumber(cmdStart)
-        }.values().map { messages ->
+        }.values.map { messages ->
             val highlighters = messages.map { message ->
                 val cmdStart = lastCommandStartOffset + message.range.startOffset
                 val cmdEnd = lastCommandStartOffset + Math.max(message.range.endOffset, message.range.startOffset + 1)
@@ -135,9 +131,9 @@ public class KotlinReplOutputHighlighter(
 
         for ((highlighter, messages) in highlighterAndMessagesByLine) {
             if (historyDocument.getLineNumber(highlighter.startOffset) == lastCommandStartLine)
-                historyCommandRunIndicator.gutterIconRenderer = KotlinConsoleErrorRenderer(messages)
+                historyCommandRunIndicator.gutterIconRenderer = ConsoleErrorRenderer(messages)
             else
-                highlighter.gutterIconRenderer = KotlinConsoleErrorRenderer(messages)
+                highlighter.gutterIconRenderer = ConsoleErrorRenderer(messages)
         }
     }
 

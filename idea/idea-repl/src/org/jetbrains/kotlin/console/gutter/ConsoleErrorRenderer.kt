@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import org.jetbrains.kotlin.console.SeverityDetails
 import org.jetbrains.kotlin.diagnostics.Severity
 
-public class KotlinConsoleErrorRenderer(private val messages: List<SeverityDetails>) : GutterIconRenderer() {
+public class ConsoleErrorRenderer(private val messages: List<SeverityDetails>) : GutterIconRenderer() {
     private fun msgType(severity: Severity) = when (severity) {
         Severity.ERROR -> "Error:"
         Severity.WARNING -> "Warning:"

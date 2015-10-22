@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.console.gutter
 
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 
-public class KotlinConsoleIndicatorRenderer(iconWithTooltip: IconWithTooltip) : GutterIconRenderer() {
+public class ConsoleIndicatorRenderer(iconWithTooltip: IconWithTooltip) : GutterIconRenderer() {
     private val icon = iconWithTooltip.icon
     private val tooltip = iconWithTooltip.tooltip
 
@@ -26,5 +26,5 @@ public class KotlinConsoleIndicatorRenderer(iconWithTooltip: IconWithTooltip) : 
     override fun getTooltipText() = tooltip
 
     override fun hashCode() = icon.hashCode()
-    override fun equals(other: Any?) = icon == (other as? KotlinConsoleIndicatorRenderer)?.icon ?: null
+    override fun equals(other: Any?) = icon == (other as? ConsoleIndicatorRenderer)?.icon ?: null
 }

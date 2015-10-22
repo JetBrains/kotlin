@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.console.gutter
 import com.intellij.execution.console.BasicGutterContentProvider
 import com.intellij.openapi.editor.Editor
 
-public class KotlinConsoleGutterContentProvider : BasicGutterContentProvider() {
+public class ConsoleGutterContentProvider : BasicGutterContentProvider() {
     /**
      *  This method overriding is needed to prevent [BasicGutterContentProvider] from adding some strange unicode
      *  symbols of zero width and to ease range highlighting.

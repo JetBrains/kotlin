@@ -40,15 +40,15 @@ private val REPL_TITLE = "Kotlin REPL"
 public class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
 
-    fun getConsoleByVirtualFile(virtualFile: VirtualFile) = consoleMap.get(virtualFile)
+    fun getConsoleByVirtualFile(virtualFile: VirtualFile) = consoleMap[virtualFile]
     fun putVirtualFileToConsole(virtualFile: VirtualFile, console: KotlinConsoleRunner) = consoleMap.put(virtualFile, console)
     fun removeConsole(virtualFile: VirtualFile) = consoleMap.remove(virtualFile)
 
-    fun run(module: Module, testMode: Boolean = false, previousCompilationFailed: Boolean = false): KotlinConsoleRunner? {
+    fun run(module: Module, previousCompilationFailed: Boolean = false): KotlinConsoleRunner? {
         val path = module.moduleFilePath
         val cmdLine = createCommandLine(module) ?: return run { errorNotification(project, "Module SDK not found"); null }
 
-        val consoleRunner = KotlinConsoleRunner(module, cmdLine, testMode, previousCompilationFailed, project, REPL_TITLE, path)
+        val consoleRunner = KotlinConsoleRunner(module, cmdLine, previousCompilationFailed, project, REPL_TITLE, path)
         consoleRunner.initAndRun()
         consoleRunner.setupGutters()
 
@@ -103,7 +103,7 @@ public class KotlinConsoleKeeper(val project: Project) {
     }
 
     private fun addPathToCompiledOutput(paramList: ParametersList, module: Module) {
-        val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).join(File.pathSeparator)
+        val compiledModulePath = CompilerPathsEx.getOutputPaths(arrayOf(module)).joinToString(File.pathSeparator)
         val moduleDependencies = OrderEnumerator.orderEntries(module).recursively().pathsList.pathsString
         val compiledOutputClasspath = "$compiledModulePath${File.pathSeparator}$moduleDependencies"
 

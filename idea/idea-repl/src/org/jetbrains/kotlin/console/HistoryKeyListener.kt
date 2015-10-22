@@ -20,27 +20,20 @@ import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.ex.util.EditorUtil
+import com.intellij.openapi.project.Project
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 
-public class KotlinConsoleHistoryManager(private val runner: KotlinConsoleRunner) : KeyAdapter() {
-    private val project = runner.project
-    private val consoleEditor: EditorEx by lazy { runner.consoleView.consoleEditor } // [consoleEditor] is null at the moment if instantiation
-
-    private val history = arrayListOf<String>()
-
+class HistoryKeyListener(
+        private val project: Project, private val consoleEditor: EditorEx, private val history: CommandHistory
+) : KeyAdapter(), HistoryUpdateListener {
     private var historyPos = 0
     private var prevCaretOffset = -1
     private var unfinishedCommand = ""
 
-    val lastCommandLength: Int
-        get() = history.last().length()
-
-    public fun updateHistory(command: String) {
-        history.add(command)
-
+    override fun onNewEntry(entry: CommandHistory.Entry) {
         // reset history positions
-        historyPos = history.size()
+        historyPos = history.size
         prevCaretOffset = -1
         unfinishedCommand = ""
     }
@@ -50,13 +43,13 @@ public class KotlinConsoleHistoryManager(private val runner: KotlinConsoleRunner
     }
 
     override fun keyReleased(e: KeyEvent): Unit = when (e.keyCode) {
-        KeyEvent.VK_UP   -> moveHistoryCursor(HistoryMove.UP)
+        KeyEvent.VK_UP -> moveHistoryCursor(HistoryMove.UP)
         KeyEvent.VK_DOWN -> moveHistoryCursor(HistoryMove.DOWN)
         KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT -> prevCaretOffset = consoleEditor.caretModel.offset
     }
 
     private fun moveHistoryCursor(move: HistoryMove) {
-        if (history.isEmpty()) return
+        if (history.size == 0) return
         if (LookupManager.getInstance(project).activeLookup != null) return
 
         val caret = consoleEditor.caretModel
@@ -74,29 +67,29 @@ public class KotlinConsoleHistoryManager(private val runner: KotlinConsoleRunner
                     return
                 }
 
-                if (historyPos == history.size()) {
+                if (historyPos == history.size) {
                     unfinishedCommand = document.text
                 }
 
                 historyPos = Math.max(historyPos - 1, 0)
                 WriteCommandAction.runWriteCommandAction(project) {
-                    document.setText(history[historyPos])
+                    document.setText(history[historyPos].entryText)
                     EditorUtil.scrollToTheEnd(consoleEditor)
                     prevCaretOffset = 0
                     caret.moveToOffset(0)
                 }
             }
             HistoryMove.DOWN -> {
-                if (historyPos == history.size()) return
+                if (historyPos == history.size) return
 
                 if (curLine != totalLines - 1 || (isMultiline && prevCaretOffset != document.textLength)) {
                     prevCaretOffset = curOffset
                     return
                 }
 
-                historyPos = Math.min(historyPos + 1, history.size())
+                historyPos = Math.min(historyPos + 1, history.size)
                 WriteCommandAction.runWriteCommandAction(project) {
-                    document.setText(if (historyPos == history.size()) unfinishedCommand else history[historyPos])
+                    document.setText(if (historyPos == history.size) unfinishedCommand else history[historyPos].entryText)
                     prevCaretOffset = document.textLength
                     EditorUtil.scrollToTheEnd(consoleEditor)
                 }

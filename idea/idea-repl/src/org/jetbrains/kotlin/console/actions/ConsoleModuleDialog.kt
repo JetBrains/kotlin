@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 
-public class KotlinConsoleModuleDialog(private val project: Project) {
+public class ConsoleModuleDialog(private val project: Project) {
     private val TITLE = "Choose context module..."
 
     public fun showIfNeeded(dataContext: DataContext) {
@@ -34,9 +34,9 @@ public class KotlinConsoleModuleDialog(private val project: Project) {
         val modules = ModuleManager.getInstance(project).modules
 
         if (modules.isEmpty()) return errorNotification(project, "No modules were found")
-        if (modules.size() == 1) return runConsole(modules.first())
+        if (modules.size == 1) return runConsole(modules.first())
 
-        val moduleActions = modules sortedBy { it.name } map { createRunAction(it) }
+        val moduleActions = modules.sortedBy { it.name }.map { createRunAction(it) }
         val moduleGroup = DefaultActionGroup(moduleActions)
 
         val modulePopup = JBPopupFactory.getInstance().createActionGroupPopup(

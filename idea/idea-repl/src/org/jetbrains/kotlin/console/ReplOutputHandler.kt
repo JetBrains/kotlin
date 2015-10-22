@@ -20,8 +20,6 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
-import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -36,15 +34,15 @@ public val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
 
 data class SeverityDetails(val severity: Severity, val description: String, val range: TextRange)
 
-public class KotlinReplOutputHandler(
-        private val historyHighlighter: KotlinHistoryHighlighter,
-        private val outputHighlighter: KotlinReplOutputHighlighter,
+class ReplOutputHandler(
+        private val runner: KotlinConsoleRunner,
         process: Process,
         commandLine: String
 ) : OSProcessHandler(process, commandLine) {
 
     private var isBuildInfoChecked = false
     private val dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    private val outputProcessor = ReplOutputProcessor(runner)
 
     override fun isSilentlyDestroyOnClose() = true
 
@@ -62,24 +60,24 @@ public class KotlinReplOutputHandler(
 
         when (outputType) {
             "INITIAL_PROMPT"  -> buildWarningIfNeededBeforeInit(content)
-            "HELP_PROMPT"     -> outputHighlighter.printHelp(content)
-            "USER_OUTPUT"     -> outputHighlighter.printUserOutput(content)
-            "REPL_RESULT"     -> outputHighlighter.printResultWithGutterIcon(content)
-            "READLINE_START"  -> historyHighlighter.isReadLineMode = true
-            "READLINE_END"    -> historyHighlighter.isReadLineMode = false
+            "HELP_PROMPT"     -> outputProcessor.printHelp(content)
+            "USER_OUTPUT"     -> outputProcessor.printUserOutput(content)
+            "REPL_RESULT"     -> outputProcessor.printResultWithGutterIcon(content)
+            "READLINE_START"  -> runner.isReadLineMode = true
+            "READLINE_END"    -> runner.isReadLineMode = false
             "REPL_INCOMPLETE",
-            "COMPILE_ERROR"   -> outputHighlighter.highlightCompilerErrors(createCompilerMessages(content))
-            "RUNTIME_ERROR"   -> outputHighlighter.printRuntimeError("${content.trim()}\n")
-            "INTERNAL_ERROR"  -> outputHighlighter.printInternalErrorMessage(content)
+            "COMPILE_ERROR"   -> outputProcessor.highlightCompilerErrors(createCompilerMessages(content))
+            "RUNTIME_ERROR"   -> outputProcessor.printRuntimeError("${content.trim()}\n")
+            "INTERNAL_ERROR"  -> outputProcessor.printInternalErrorMessage(content)
         }
     }
 
     private fun buildWarningIfNeededBeforeInit(content: String) {
         if (!isBuildInfoChecked) {
-            outputHighlighter.printBuildInfoWarningIfNeeded()
+            outputProcessor.printBuildInfoWarningIfNeeded()
             isBuildInfoChecked = true
         }
-        outputHighlighter.printInitialPrompt(content)
+        outputProcessor.printInitialPrompt(content)
     }
 
     private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))

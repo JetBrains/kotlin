@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.console.highlight
+package org.jetbrains.kotlin.console
 
 import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.openapi.editor.ex.EditorEx
@@ -22,28 +22,17 @@ import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.console.KotlinConsoleRunner
-import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
+import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 
-public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) {
+public class HistoryUpdater(private val runner: KotlinConsoleRunner) {
     private val consoleView: LanguageConsoleImpl by lazy { runner.consoleView as LanguageConsoleImpl }
 
-    var isReadLineMode: Boolean = false
-        set(value) {
-            if (value)
-                runner.changeConsoleEditorIndicator(ReplIcons.EDITOR_READLINE_INDICATOR)
-            else
-                runner.changeConsoleEditorIndicator(ReplIcons.EDITOR_INDICATOR)
-
-            field = value
-        }
-
-    fun printNewCommandInHistory(trimmedCommandText: String) {
+    fun printNewCommandInHistory(trimmedCommandText: String): TextRange {
         val historyEditor = consoleView.historyViewer
         addLineBreakIfNeeded(historyEditor)
         val startOffset = historyEditor.document.textLength
-        val endOffset = startOffset + trimmedCommandText.length()
+        val endOffset = startOffset + trimmedCommandText.length
 
         addCommandTextToHistoryEditor(trimmedCommandText)
         EditorUtil.scrollToTheEnd(historyEditor)
@@ -52,9 +41,10 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
         historyEditor.markupModel.addRangeHighlighter(
                 startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
         ).apply {
-            val historyMarker = if (isReadLineMode) ReplIcons.READLINE_MARKER else ReplIcons.COMMAND_MARKER
-            gutterIconRenderer = KotlinConsoleIndicatorRenderer(historyMarker)
+            val historyMarker = if (runner.isReadLineMode) ReplIcons.READLINE_MARKER else ReplIcons.COMMAND_MARKER
+            gutterIconRenderer = ConsoleIndicatorRenderer(historyMarker)
         }
+        return TextRange(startOffset, endOffset)
     }
 
     private fun addCommandTextToHistoryEditor(trimmedCommandText: String) {
@@ -67,11 +57,11 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
     }
 
     private fun addLineBreakIfNeeded(historyEditor: EditorEx) {
-        if (isReadLineMode) return
+        if (runner.isReadLineMode) return
 
         val historyDocument = historyEditor.document
         val historyText = historyDocument.text
-        val textLength = historyText.length()
+        val textLength = historyText.length
 
         if (!historyText.endsWith('\n')) {
             historyDocument.insertString(textLength, "\n")
@@ -88,7 +78,7 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
 
     private fun addFoldingRegion(historyEditor: EditorEx, startOffset: Int, endOffset: Int, command: String) {
         val cmdLines = command.lines()
-        val linesCount = cmdLines.size()
+        val linesCount = cmdLines.size
         if (linesCount < 2) return
 
         val foldingModel =  historyEditor.foldingModel

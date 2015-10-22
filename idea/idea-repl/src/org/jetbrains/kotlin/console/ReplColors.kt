@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.console.highlight
+package org.jetbrains.kotlin.console
 
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.openapi.editor.markup.TextAttributes
@@ -31,16 +31,16 @@ public object ReplColors {
     public val WARNING_INFO_CONTENT_TYPE: ConsoleViewContentType =
             ConsoleViewContentType(
                     "KOTLIN_CONSOLE_WARNING_INFO",
-                    TextAttributes() apply { fontType = Font.ITALIC; foregroundColor = JBColor.RED }
+                    TextAttributes().apply { fontType = Font.ITALIC; foregroundColor = JBColor.RED }
             )
     public val INITIAL_PROMPT_CONTENT_TYPE: ConsoleViewContentType =
             ConsoleViewContentType(
                     "KOTLIN_CONSOLE_INITIAL_PROMPT",
-                    TextAttributes() apply { fontType = Font.BOLD }
+                    TextAttributes().apply { fontType = Font.BOLD }
             )
     public val USER_OUTPUT_CONTENT_TYPE: ConsoleViewContentType =
             ConsoleViewContentType(
                     "KOTLIN_CONSOLE_USER_OUTPUT",
-                    TextAttributes() apply { fontType = Font.ITALIC; foregroundColor = Colors.DARK_GREEN }
+                    TextAttributes().apply { fontType = Font.ITALIC; foregroundColor = Colors.DARK_GREEN }
             )
 }

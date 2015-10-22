@@ -40,7 +40,7 @@ public class RunKotlinConsoleAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return errorNotification(null, "Project not found")
 
-        KotlinConsoleModuleDialog(project).showIfNeeded(e.dataContext)
+        ConsoleModuleDialog(project).showIfNeeded(e.dataContext)
     }
 }
 

@@ -20,29 +20,33 @@ import com.intellij.execution.process.BaseOSProcessHandler
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.console.actions.logError
-import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
 
 private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
-public class KotlinConsoleExecutor(
-        private val runner: KotlinConsoleRunner,
-        private val historyManager: KotlinConsoleHistoryManager,
-        private val historyHighlighter: KotlinHistoryHighlighter
-) {
+public class CommandExecutor(private val runner: KotlinConsoleRunner) {
+    private val commandHistory = runner.commandHistory
+    private val historyUpdater = HistoryUpdater(runner)
+
     fun executeCommand() = WriteCommandAction.runWriteCommandAction(runner.project) {
+        val commandText = getTrimmedCommandText()
+
+        if (commandText.isEmpty()) {
+            return@runWriteCommandAction
+        }
+
+        val historyDocumentRange = historyUpdater.printNewCommandInHistory(commandText)
+        commandHistory.addEntry(CommandHistory.Entry(commandText, historyDocumentRange))
+        sendCommandToProcess(commandText)
+    }
+
+    private fun getTrimmedCommandText(): String {
         val consoleView = runner.consoleView
         val document = consoleView.editorDocument
         val inputText = document.text.trim()
-
-        if (inputText.isNotEmpty()) {
-            historyHighlighter.printNewCommandInHistory(inputText)
-            submitCommand(inputText)
-        }
+        return inputText
     }
 
-    private fun submitCommand(command: String) {
-        historyManager.updateHistory(command)
-
+    private fun sendCommandToProcess(command: String) {
         val processHandler = runner.processHandler
         val processInputOS = processHandler.processInput ?: return logError(javaClass, "<p>Broken process stream</p>")
         val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8

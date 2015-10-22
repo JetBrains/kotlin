@@ -47,12 +47,9 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
 import org.jetbrains.kotlin.console.gutter.IconWithTooltip
-import org.jetbrains.kotlin.console.gutter.KotlinConsoleGutterContentProvider
-import org.jetbrains.kotlin.console.gutter.KotlinConsoleIndicatorRenderer
+import org.jetbrains.kotlin.console.gutter.ConsoleGutterContentProvider
+import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
 import org.jetbrains.kotlin.console.gutter.ReplIcons
-import org.jetbrains.kotlin.console.highlight.KotlinHistoryHighlighter
-import org.jetbrains.kotlin.console.highlight.KotlinReplOutputHighlighter
-import org.jetbrains.kotlin.console.highlight.ReplColors
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.completion.doNotComplete
 import org.jetbrains.kotlin.psi.KtFile
@@ -65,26 +62,38 @@ private val KOTLIN_SHELL_EXECUTE_ACTION_ID = "KotlinShellExecute"
 public class KotlinConsoleRunner(
         val module: Module,
         private val cmdLine: GeneralCommandLine,
-        private val testMode: Boolean,
-        private val previousCompilationFailed: Boolean,
+        internal val previousCompilationFailed: Boolean,
         myProject: Project,
         title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
-    private val historyManager = KotlinConsoleHistoryManager(this)
-    private val historyHighlighter = KotlinHistoryHighlighter(this)
+    internal val commandHistory = CommandHistory()
+
+    var isReadLineMode: Boolean = false
+        set(value) {
+            if (value)
+                changeConsoleEditorIndicator(ReplIcons.EDITOR_READLINE_INDICATOR)
+            else
+                changeConsoleEditorIndicator(ReplIcons.EDITOR_INDICATOR)
+
+            field = value
+        }
+
+    fun changeConsoleEditorIndicator(newIconWithTooltip: IconWithTooltip) = WriteCommandAction.runWriteCommandAction(project) {
+        consoleEditorHighlighter.gutterIconRenderer = ConsoleIndicatorRenderer(newIconWithTooltip)
+    }
 
     private var consoleEditorHighlighter by Delegates.notNull<RangeHighlighter>()
     private var disposableDescriptor by Delegates.notNull<RunContentDescriptor>()
 
-    val executor = KotlinConsoleExecutor(this, historyManager, historyHighlighter)
-    var compilerHelper: KotlinConsoleCompilerHelper by Delegates.notNull()
+    val executor = CommandExecutor(this)
+    var compilerHelper: ConsoleCompilerHelper by Delegates.notNull()
 
     override fun createProcess() = cmdLine.createProcess()
 
     override fun createConsoleView(): LanguageConsoleView? {
         val consoleView = LanguageConsoleBuilder()
-                .gutterContentProvider(KotlinConsoleGutterContentProvider())
+                .gutterContentProvider(ConsoleGutterContentProvider())
                 .build(project, KotlinLanguage.INSTANCE)
 
         consoleView.prompt = null
@@ -94,7 +103,9 @@ public class KotlinConsoleRunner(
         val consoleEditor = consoleView.consoleEditor
 
         setupPlaceholder(consoleEditor)
-        consoleEditor.contentComponent.addKeyListener(historyManager)
+        val historyKeyListener = HistoryKeyListener(module.project, consoleEditor, commandHistory)
+        consoleEditor.contentComponent.addKeyListener(historyKeyListener)
+        commandHistory.listeners.add(historyKeyListener)
 
         val executeAction = KtExecuteCommandAction(consoleView.virtualFile)
         executeAction.registerCustomShortcutSet(CommonShortcuts.CTRL_ENTER, consoleView.consoleEditor.component)
@@ -103,9 +114,8 @@ public class KotlinConsoleRunner(
     }
 
     override fun createProcessHandler(process: Process): OSProcessHandler {
-        val processHandler = KotlinReplOutputHandler(
-                historyHighlighter,
-                KotlinReplOutputHighlighter(this, historyManager, testMode, previousCompilationFailed),
+        val processHandler = ReplOutputHandler(
+                this,
                 process,
                 cmdLine.commandLineString
         )
@@ -131,7 +141,7 @@ public class KotlinConsoleRunner(
                                     contentDescriptor: RunContentDescriptor
     ): List<AnAction> {
         disposableDescriptor = contentDescriptor
-        compilerHelper = KotlinConsoleCompilerHelper(project, module, defaultExecutor, contentDescriptor)
+        compilerHelper = ConsoleCompilerHelper(project, module, defaultExecutor, contentDescriptor)
 
         val actionList = arrayListOf<AnAction>(
                 BuildAndRestartConsoleAction(this),
@@ -192,17 +202,13 @@ public class KotlinConsoleRunner(
     }
 
     fun addGutterIndicator(editor: EditorEx, iconWithTooltip: IconWithTooltip): RangeHighlighter {
-        val indicator = KotlinConsoleIndicatorRenderer(iconWithTooltip)
+        val indicator = ConsoleIndicatorRenderer(iconWithTooltip)
         val editorMarkup = editor.markupModel
         val indicatorHighlighter = editorMarkup.addRangeHighlighter(
                 0, editor.document.textLength, HighlighterLayer.LAST, null, HighlighterTargetArea.LINES_IN_RANGE
         )
 
-        return indicatorHighlighter apply { gutterIconRenderer = indicator }
-    }
-
-    fun changeConsoleEditorIndicator(newIconWithTooltip: IconWithTooltip) = WriteCommandAction.runWriteCommandAction(project) {
-        consoleEditorHighlighter.gutterIconRenderer = KotlinConsoleIndicatorRenderer(newIconWithTooltip)
+        return indicatorHighlighter.apply { gutterIconRenderer = indicator }
     }
 
     @TestOnly fun dispose() {
