@@ -433,7 +433,7 @@ class CollectionTest {
 
         // lists throw an exception if out of range
         assertFails {
-            assertEquals(null, list[2])
+            val outOfBounds = list[2]
         }
 
         // lets try update the list

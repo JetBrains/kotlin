@@ -356,16 +356,16 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         // lets use a mutable variable
         var result: Iterable<String> = data
         result -= "foo"
-        assertEquals(listOf("bar"), result)
+        assertEquals(listOf("bar"), result as? List)
         result = data
         result -= listOf("beer", "bar")
-        assertEquals(listOf("foo"), result)
+        assertEquals(listOf("foo"), result as? List)
         result = data
         result -= arrayOf("bar", "foo")
-        assertEquals(emptyList<String>(), result)
+        assertEquals(emptyList<String>(), result as? List)
         result = data
         result -= sequenceOf("foo", "g")
-        assertEquals(listOf("bar"), result)
+        assertEquals(listOf("bar"), result as? List)
     }
 
 }
