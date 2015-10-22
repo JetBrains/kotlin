@@ -3727,6 +3727,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("genericValForPrimitiveType.kt")
+        public void testGenericValForPrimitiveType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/genericValForPrimitiveType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("genericValMultipleUpperBounds.kt")
+        public void testGenericValMultipleUpperBounds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/genericValMultipleUpperBounds.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("genericVarForPrimitiveType.kt")
+        public void testGenericVarForPrimitiveType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/genericVarForPrimitiveType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inClass.kt")
         public void testInClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/inClass.kt");

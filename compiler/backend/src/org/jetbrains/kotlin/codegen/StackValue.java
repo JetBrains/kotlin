@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -511,7 +512,7 @@ public abstract class StackValue {
                     descriptor
             );
             StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, callExtensionReceiver, true);
-            Type type = CallReceiver.calcType(resolvedCall, dispatchReceiverParameter, extensionReceiverParameter, codegen.typeMapper, callableMethod);
+            Type type = CallReceiver.calcType(resolvedCall, dispatchReceiverParameter, extensionReceiverParameter, codegen.typeMapper, callableMethod, codegen.getState());
             assert type != null : "Could not map receiver type for " + resolvedCall;
             return new CallReceiver(dispatchReceiver, extensionReceiver, type);
         }
@@ -1328,9 +1329,21 @@ public abstract class StackValue {
                 @Nullable ReceiverParameterDescriptor dispatchReceiver,
                 @Nullable ReceiverParameterDescriptor extensionReceiver,
                 @NotNull JetTypeMapper typeMapper,
-                @Nullable Callable callableMethod
+                @Nullable Callable callableMethod,
+                @NotNull GenerationState state
         ) {
             if (extensionReceiver != null) {
+                CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+
+                if (descriptor instanceof PropertyDescriptor &&
+                    // hackaround: boxing changes behaviour of T.javaClass intrinsic
+                    !(state.getIntrinsics().getIntrinsic((PropertyDescriptor) descriptor) instanceof JavaClassProperty)
+                ) {
+                    ReceiverParameterDescriptor receiverCandidate = descriptor.getExtensionReceiverParameter();
+                    assert receiverCandidate != null;
+                    return typeMapper.mapType(receiverCandidate.getType());
+                }
+
                 return callableMethod != null ? callableMethod.getExtensionReceiverType() : typeMapper.mapType(extensionReceiver.getType());
             }
             else if (dispatchReceiver != null) {
