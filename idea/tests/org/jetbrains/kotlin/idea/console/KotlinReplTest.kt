@@ -55,7 +55,7 @@ public class KotlinReplTest : PlatformTestCase() {
         assertTrue(endsWithPredicate(historyText), "'$expectedOutput' should be printed but document text is:\n$historyText")
     }
 
-    private fun checkHistoryUpdate(maxIterations: Int = 20, sleepTime: Long = 500, stopPredicate: (String) -> Boolean): String {
+    private fun checkHistoryUpdate(maxIterations: Int = 50, sleepTime: Long = 500, stopPredicate: (String) -> Boolean): String {
         val consoleView = consoleRunner.consoleView as LanguageConsoleImpl
 
         for (i in 1..maxIterations) {
