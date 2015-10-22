@@ -2460,6 +2460,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt9644try.kt")
+            public void testKt9644try() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/kt9644try.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("multipleCatchBlocks.kt")
             public void testMultipleCatchBlocks() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/multipleCatchBlocks.kt");
