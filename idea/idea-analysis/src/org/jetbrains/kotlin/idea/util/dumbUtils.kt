@@ -31,3 +31,7 @@ public fun <T> Project.runWithAlternativeResolveEnabled(action: () -> T): T {
     @Suppress("USELESS_CAST")
     return result as T
 }
+
+public fun Project.runWhenSmart(action: () -> Unit) {
+    DumbService.getInstance(this).runWhenSmart(action)
+}
