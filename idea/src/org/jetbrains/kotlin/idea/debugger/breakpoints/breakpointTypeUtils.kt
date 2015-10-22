@@ -70,12 +70,7 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
         }
 
         if (element is KtProperty || element is KtParameter) {
-            val bindingContext = (element as KtElement).analyze()
-            var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-            if (descriptor is ValueParameterDescriptor) {
-                descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
-            }
-            if (descriptor is PropertyDescriptor) {
+            if ((element is KtParameter && element.hasValOrVar()) || (element is KtProperty && !element.isLocal)) {
                 result = KotlinFieldBreakpointType::class.java
             }
             else {
