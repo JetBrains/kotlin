@@ -1,0 +1,4 @@
+package
+
+public inline fun reg(/*0*/ converter: (kotlin.Any) -> kotlin.Any): kotlin.Unit
+public inline fun register(/*0*/ converter: (kotlin.Any) -> kotlin.Any): kotlin.Unit

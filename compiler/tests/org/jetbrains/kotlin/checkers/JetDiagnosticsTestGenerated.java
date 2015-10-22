@@ -8310,6 +8310,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("isCheck.kt")
+            public void testIsCheck() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/isCheck.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt4869.kt")
             public void testKt4869() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/kt4869.kt");
@@ -8319,6 +8325,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("labeled.kt")
             public void testLabeled() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/labeled.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaCast.kt")
+            public void testLambdaCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/lambdaCast.kt");
                 doTest(fileName);
             }
 
@@ -8382,6 +8394,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("stringTemplate.kt")
+            public void testStringTemplate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/stringTemplate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unsupportedConstruction.kt")
             public void testUnsupportedConstruction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/unsupportedConstruction.kt");
@@ -8391,6 +8409,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/vararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("when.kt")
+            public void testWhen() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/when.kt");
                 doTest(fileName);
             }
 
