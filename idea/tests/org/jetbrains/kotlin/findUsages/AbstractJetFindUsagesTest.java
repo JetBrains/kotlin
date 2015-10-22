@@ -376,7 +376,9 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
             @NotNull T caretElement,
             @Nullable FindUsagesOptions options
     ) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        Collection<UsageInfo> usageInfos = findUsages(caretElement, options);
+        boolean highlightingMode = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// HIGHLIGHTING");
+
+        Collection<UsageInfo> usageInfos = findUsages(caretElement, options, highlightingMode);
 
         Collection<UsageFilteringRule> filteringRules = instantiateClasses(mainFileText, "// FILTERING_RULES: ");
         final Collection<UsageGroupingRule> groupingRules = instantiateClasses(mainFileText, "// GROUPING_RULES: ");
@@ -431,7 +433,11 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         JetTestUtils.assertEqualsToFile(new File(rootPath, prefix + "results.txt"), StringUtil.join(finalUsages, "\n"));
     }
 
-    protected Collection<UsageInfo> findUsages(@NotNull PsiElement targetElement, @Nullable FindUsagesOptions options) {
+    protected Collection<UsageInfo> findUsages(
+            @NotNull PsiElement targetElement,
+            @Nullable FindUsagesOptions options,
+            boolean highlightingMode
+    ) {
         Project project = getProject();
 
         FindUsagesHandler handler;
@@ -456,7 +462,14 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         PsiElement[] psiElements = ArrayUtil.mergeArrays(handler.getPrimaryElements(), handler.getSecondaryElements());
 
         for (PsiElement psiElement : psiElements) {
-            handler.processElementUsages(psiElement, processor, options);
+            if (highlightingMode) {
+                for (PsiReference reference : handler.findReferencesToHighlight(psiElement, options.searchScope)) {
+                    processor.process(new UsageInfo(reference));
+                }
+            }
+            else {
+                handler.processElementUsages(psiElement, processor, options);
+            }
         }
 
         return processor.getResults();

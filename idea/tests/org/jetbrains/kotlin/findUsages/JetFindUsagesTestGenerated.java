@@ -540,6 +540,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("highlightingOfSuperUsages.0.kt")
+            public void testHighlightingOfSuperUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/highlightingOfSuperUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaAndKotlinOverrides.0.kt")
             public void testJavaAndKotlinOverrides() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/javaAndKotlinOverrides.0.kt");
