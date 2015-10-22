@@ -27,6 +27,18 @@ class StringJVMTest {
         assertEquals("", ns.orEmpty())
     }
 
+    @test fun toBoolean() {
+        assertEquals(true, "true".toBoolean())
+        assertEquals(true, "True".toBoolean())
+        assertEquals(false, "false".toBoolean())
+        assertEquals(false, "not so true".toBoolean())
+    }
+
+    @test fun toByte() {
+        assertEquals(77.toByte(), "77".toByte())
+        assertFails { "255".toByte() }
+    }
+
     @test fun toShort() {
         assertEquals(77.toShort(), "77".toShort())
     }

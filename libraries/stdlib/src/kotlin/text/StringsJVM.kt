@@ -334,6 +334,12 @@ public fun String.toUpperCase(locale: java.util.Locale): String = (this as java.
 public fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
 
 /**
+ * Parses the string as a signed [Byte] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+public fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
+
+/**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
