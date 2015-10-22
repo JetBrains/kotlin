@@ -41,28 +41,29 @@ public class KotlinHistoryHighlighter(private val runner: KotlinConsoleRunner ) 
 
     fun printNewCommandInHistory(trimmedCommandText: String) {
         val historyEditor = consoleView.historyViewer
-
         addLineBreakIfNeeded(historyEditor)
-
-        val consoleEditor = consoleView.consoleEditor
-        val consoleDocument = consoleEditor.document
-        consoleDocument.setText(trimmedCommandText)
-
         val startOffset = historyEditor.document.textLength
         val endOffset = startOffset + trimmedCommandText.length()
 
-        LanguageConsoleImpl.printWithHighlighting(consoleView, consoleEditor, TextRange(0, consoleDocument.textLength))
-        consoleView.flushDeferredText()
+        addCommandTextToHistoryEditor(trimmedCommandText)
         EditorUtil.scrollToTheEnd(historyEditor)
-        consoleDocument.setText("")
         addFoldingRegion(historyEditor, startOffset, endOffset, trimmedCommandText)
 
         historyEditor.markupModel.addRangeHighlighter(
                 startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
-        ) apply {
+        ).apply {
             val historyMarker = if (isReadLineMode) ReplIcons.READLINE_MARKER else ReplIcons.COMMAND_MARKER
             gutterIconRenderer = KotlinConsoleIndicatorRenderer(historyMarker)
         }
+    }
+
+    private fun addCommandTextToHistoryEditor(trimmedCommandText: String) {
+        val consoleEditor = consoleView.consoleEditor
+        val consoleDocument = consoleEditor.document
+        consoleDocument.setText(trimmedCommandText)
+        LanguageConsoleImpl.printWithHighlighting(consoleView, consoleEditor, TextRange(0, consoleDocument.textLength))
+        consoleView.flushDeferredText()
+        consoleDocument.setText("")
     }
 
     private fun addLineBreakIfNeeded(historyEditor: EditorEx) {
