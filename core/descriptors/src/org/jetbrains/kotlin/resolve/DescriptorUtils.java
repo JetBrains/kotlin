@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

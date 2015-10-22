@@ -509,15 +509,26 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {
-            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
-            Type type = mapType(typeParameterDescriptor.getUpperBounds().iterator().next(), kind);
+            Type type = mapType(getRepresentativeUpperBound((TypeParameterDescriptor) descriptor), kind);
             if (signatureVisitor != null) {
-                signatureVisitor.writeTypeVariable(typeParameterDescriptor.getName(), type);
+                signatureVisitor.writeTypeVariable(descriptor.getName(), type);
             }
             return type;
         }
 
         throw new UnsupportedOperationException("Unknown type " + jetType);
+    }
+
+    @NotNull
+    private static KotlinType getRepresentativeUpperBound(@NotNull TypeParameterDescriptor descriptor) {
+        List<KotlinType> upperBounds = descriptor.getUpperBounds();
+        assert !upperBounds.isEmpty() : "Upper bounds should not be empty: " + descriptor;
+        for (KotlinType upperBound : upperBounds) {
+            if (!isJvmInterface(upperBound)) {
+                return upperBound;
+            }
+        }
+        return CollectionsKt.first(upperBounds);
     }
 
     @Nullable

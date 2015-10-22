@@ -4740,6 +4740,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/typeMapping/genericTypeWithNothing.kt");
             doTestWithStdlib(fileName);
         }
+
+        @TestMetadata("typeParameterMultipleBounds.kt")
+        public void testTypeParameterMultipleBounds() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/typeMapping/typeParameterMultipleBounds.kt");
+            doTestWithStdlib(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/vararg")
