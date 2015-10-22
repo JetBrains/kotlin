@@ -22,15 +22,19 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.Deserialization
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
+import org.jetbrains.kotlin.serialization.deserialization.upperBounds
 import org.jetbrains.kotlin.types.KotlinType
-import java.util.*
 
 class DeserializedTypeParameterDescriptor(
-        c: DeserializationContext, private val proto: ProtoBuf.TypeParameter, index: Int) : AbstractLazyTypeParameterDescriptor(c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name), Deserialization.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE) {
-    private val typeDeserializer: TypeDeserializer = c.typeDeserializer
-    private val typeTable: TypeTable = c.typeTable
-
+        private val c: DeserializationContext,
+        private val proto: ProtoBuf.TypeParameter,
+        index: Int
+) : AbstractLazyTypeParameterDescriptor(
+        c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name),
+        Deserialization.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE
+) {
     private val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
         c.components.annotationAndConstantLoader
                 .loadTypeParameterAnnotations(proto, c.nameResolver)
@@ -39,15 +43,13 @@ class DeserializedTypeParameterDescriptor(
 
     override fun getAnnotations(): Annotations = annotations
 
-    override fun resolveUpperBounds(): Set<KotlinType> {
-        val upperBounds = proto.upperBounds(typeTable)
+    override fun resolveUpperBounds(): List<KotlinType> {
+        val upperBounds = proto.upperBounds(c.typeTable)
         if (upperBounds.isEmpty()) {
-            return setOf(this.builtIns.getDefaultBound())
+            return listOf(this.builtIns.defaultBound)
         }
-        val result = LinkedHashSet<KotlinType>(upperBounds.size())
-        for (upperBound in upperBounds) {
-            result.add(typeDeserializer.type(upperBound, Annotations.EMPTY))
+        return upperBounds.map {
+            c.typeDeserializer.type(it, Annotations.EMPTY)
         }
-        return result
     }
 }

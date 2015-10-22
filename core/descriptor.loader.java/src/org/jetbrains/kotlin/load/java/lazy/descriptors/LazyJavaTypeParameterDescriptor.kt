@@ -16,19 +16,16 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
-import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
-import org.jetbrains.kotlin.load.java.lazy.types.toFlexible
+import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
 
 class LazyJavaTypeParameterDescriptor(
         private val c: LazyJavaResolverContext,
@@ -38,26 +35,23 @@ class LazyJavaTypeParameterDescriptor(
 ) : AbstractLazyTypeParameterDescriptor(
         c.storageManager,
         containingDeclaration,
-        javaTypeParameter.getName(),
+        javaTypeParameter.name,
         Variance.INVARIANT,
         /* isReified = */ false,
         index,
         SourceElement.NO_SOURCE
 ) {
 
-    override fun resolveUpperBounds(): Set<KotlinType> {
-        val bounds = javaTypeParameter.getUpperBounds()
+    override fun resolveUpperBounds(): List<KotlinType> {
+        val bounds = javaTypeParameter.upperBounds
         if (bounds.isEmpty()) {
-            return setOf(LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(
-                    c.module.builtIns.getAnyType(),
-                    c.module.builtIns.getNullableAnyType()
+            return listOf(LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(
+                    c.module.builtIns.anyType,
+                    c.module.builtIns.nullableAnyType
             ))
         }
-        else {
-            return bounds.map {
-                javaType -> c.typeResolver.transformJavaType(javaType, TypeUsage.UPPER_BOUND.toAttributes(upperBoundForTypeParameter = this))
-            }.toSet()
+        return bounds.map {
+            c.typeResolver.transformJavaType(it, TypeUsage.UPPER_BOUND.toAttributes(upperBoundForTypeParameter = this))
         }
     }
-
 }

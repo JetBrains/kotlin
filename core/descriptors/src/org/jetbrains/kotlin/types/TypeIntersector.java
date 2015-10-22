@@ -42,11 +42,8 @@ public class TypeIntersector {
     }
 
     @Nullable
-    public static KotlinType intersectTypes(
-            @NotNull KotlinTypeChecker typeChecker,
-            @NotNull Set<KotlinType> types
-    ) {
-        assert (!types.isEmpty()) : "Attempting to intersect empty set of types, this case should be dealt with on the call site.";
+    public static KotlinType intersectTypes(@NotNull KotlinTypeChecker typeChecker, @NotNull Collection<KotlinType> types) {
+        assert !types.isEmpty() : "Attempting to intersect empty collection of types, this case should be dealt with on the call site.";
 
         if (types.size() == 1) {
             return types.iterator().next();
@@ -73,7 +70,7 @@ public class TypeIntersector {
 
         if (nullabilityStripped.isEmpty()) {
             // All types were errors
-            return ErrorUtils.createErrorType("Intersection of errors types: " + types);
+            return ErrorUtils.createErrorType("Intersection of error types: " + types);
         }
 
         // Now we remove types that have subtypes in the list
@@ -95,7 +92,6 @@ public class TypeIntersector {
                     if (!type.equals(other) && typeChecker.isSubtypeOf(other, type)) {
                         continue outer;
                     }
-
                 }
             }
 

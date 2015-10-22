@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 
-import java.util.Set;
+import java.util.List;
 
 public interface TypeParameterDescriptor extends ClassifierDescriptor {
     boolean isReified();
@@ -31,13 +31,13 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     Variance getVariance();
 
     @NotNull
-    Set<KotlinType> getUpperBounds();
+    List<KotlinType> getUpperBounds();
 
     @NotNull
     KotlinType getUpperBoundsAsType();
 
     @NotNull
-    Set<KotlinType> getLowerBounds();
+    List<KotlinType> getLowerBounds();
 
     @NotNull
     @Override

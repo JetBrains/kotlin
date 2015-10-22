@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.UPPER_BOUND;
@@ -253,7 +250,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             TypeParameterDescriptorImpl altParamDescriptor = originalToAltTypeParameters.get(originalTypeParamDescriptor);
             KtTypeParameter altTypeParameter = altFunDeclaration.getTypeParameters().get(i);
 
-            Set<KotlinType> originalUpperBounds = originalTypeParamDescriptor.getUpperBounds();
+            List<KotlinType> originalUpperBounds = originalTypeParamDescriptor.getUpperBounds();
             List<KtTypeReference> altUpperBounds = getUpperBounds(altFunDeclaration, altTypeParameter);
             if (altUpperBounds.size() != originalUpperBounds.size()) {
                 if (altUpperBounds.isEmpty()

@@ -34,7 +34,10 @@ import org.jetbrains.kotlin.utils.Interner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
@@ -414,7 +417,7 @@ public class DescriptorSerializer {
         }
         extension.serializeTypeParameter(typeParameter, builder);
 
-        Set<KotlinType> upperBounds = typeParameter.getUpperBounds();
+        List<KotlinType> upperBounds = typeParameter.getUpperBounds();
         if (upperBounds.size() == 1 && KotlinBuiltIns.isDefaultBound(CollectionsKt.single(upperBounds))) return builder;
 
         for (KotlinType upperBound : upperBounds) {
