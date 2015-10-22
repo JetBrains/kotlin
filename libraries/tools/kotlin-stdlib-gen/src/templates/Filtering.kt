@@ -5,6 +5,18 @@ import templates.Family.*
 fun filtering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
+    fun subsequence(f: Family, start: String, end: String? = null): String {
+        return when (f) {
+            Strings -> "substring(${listOfNotNull(start, end).joinToString()})"
+            CharSequences -> "subSequence($start, ${end ?: "length"})"
+            else -> throw UnsupportedOperationException(f.toString())
+        }
+    }
+
+    fun toResult(f: Family): String = if (f == CharSequences) "" else ".toString()"
+
+    fun takeAll(f: Family): String = if (f == Strings) "this" else subsequence(f, "0")
+
     templates add f("drop(n: Int)") {
         val n = "\$n"
         doc { "Returns a list containing all elements except first [n] elements." }
@@ -47,10 +59,15 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) { "Returns a string with the first [n] characters removed."}
-        body(CharSequences, Strings) { "return substring(Math.min(n, length()))" }
-        returns(CharSequences, Strings) { "String" }
+        doc(Strings) { "Returns a string with the first [n] characters removed."}
+        doc(CharSequences) { "Returns a subsequence of this char sequence with the first [n] characters removed."}
+        returns(Strings, CharSequences) { "SELF" }
+        body(Strings, CharSequences) { f ->
+            """
+            require(n >= 0, { "Requested character count $n is less than zero." })
+            return ${subsequence(f, "n.coerceAtMost(length)")}
+            """
+        }
 
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
@@ -89,15 +106,15 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter."}
-        body(CharSequences, Strings) {
+        doc(Strings) { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter."}
+        doc(CharSequences) { "Returns a subsequence of this char sequence containing the first [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter."}
+        returns(Strings, CharSequences) { "SELF" }
+        body(Strings, CharSequences) { f ->
             """
             require(n >= 0, { "Requested character count $n is less than zero." })
-            return substring(0, Math.min(n, length()))
+            return ${subsequence(f, "0", "n.coerceAtMost(length)")}
             """
         }
-        returns(CharSequences, Strings) { "String" }
 
         doc(Sequences) { "Returns a sequence containing first [n] elements." }
         returns(Sequences) { "Sequence<T>" }
@@ -127,8 +144,7 @@ fun filtering(): List<GenericFunction> {
 
     templates add f("dropLast(n: Int)") {
         val n = "\$n"
-        deprecate(Strings) { forBinaryCompatibility }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives, Strings, CharSequences)
 
         doc { "Returns a list containing all elements except last [n] elements." }
         returns("List<T>")
@@ -139,32 +155,35 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(CharSequences) { "Returns a string with the last [n] characters removed." }
-        returns("String", CharSequences, Strings)
-        body(CharSequences, Strings) {
+        doc(Strings) { "Returns a string with the last [n] characters removed." }
+        doc(CharSequences) { "Returns a subsequence of this char sequence with the last [n] characters removed." }
+        returns(Strings, CharSequences) { "SELF" }
+
+        body(Strings, CharSequences) {
             """
             require(n >= 0, { "Requested character count $n is less than zero." })
-            return take((length() - n).coerceAtLeast(0))
+            return take((length - n).coerceAtLeast(0))
             """
         }
+
     }
 
     templates add f("takeLast(n: Int)") {
         val n = "\$n"
         doc { "Returns a list containing last [n] elements." }
-        deprecate(Strings) { forBinaryCompatibility }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives, Strings, CharSequences)
         returns("List<T>")
 
-        doc(CharSequences) { "Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter."}
-        body(CharSequences, Strings) {
+        doc(Strings) { "Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter."}
+        doc(CharSequences) { "Returns a subsequence of this char sequence containing the last [n] characters from this char sequence, or the entire char sequence if this char sequence is shorter."}
+        returns(Strings, CharSequences) { "SELF" }
+        body(Strings, CharSequences) { f ->
             """
             require(n >= 0, { "Requested character count $n is less than zero." })
-            val length = length()
-            return substring(length - Math.min(n, length), length)
+            val length = length
+            return ${subsequence(f, "length - n.coerceAtMost(length)")}
             """
         }
-        returns(CharSequences, Strings) { "String" }
 
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
@@ -200,12 +219,16 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) { "Returns a string containing all characters except first characters that satisfy the given [predicate]." }
-        returns(CharSequences, Strings) { "String" }
-        body(CharSequences, Strings) {
+        doc(Strings) { "Returns a string containing all characters except first characters that satisfy the given [predicate]." }
+        doc(CharSequences) { "Returns a subsequence of this char sequence containing all characters except first characters that satisfy the given [predicate]." }
+        returns(Strings, CharSequences) { "SELF" }
+        body(Strings, CharSequences) { f ->
             """
-            return trimStart(predicate)
+            for (index in this.indices)
+                if (!predicate(this[index]))
+                    return ${subsequence(f, "index")}
+
+            return ""
             """
         }
 
@@ -237,16 +260,16 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) { "Returns a string containing the first characters that satisfy the given [predicate]."}
-        returns(CharSequences, Strings) { "String" }
-        body(CharSequences, Strings) {
+        doc(Strings) { "Returns a string containing the first characters that satisfy the given [predicate]."}
+        doc(CharSequences) { "Returns a subsequence of this char sequence containing the first characters that satisfy the given [predicate]."}
+        returns(Strings, CharSequences) { "SELF" }
+        body(Strings, CharSequences) { f ->
             """
-            for (index in 0..length() - 1)
+            for (index in 0..length - 1)
                 if (!predicate(get(index))) {
-                    return substring(0, index)
+                    return ${subsequence(f, "0", "index")}
                 }
-            return this.toString()
+            return ${takeAll(f)}
             """
         }
 
@@ -262,7 +285,6 @@ fun filtering(): List<GenericFunction> {
 
     templates add f("dropLastWhile(predicate: (T) -> Boolean)") {
         inline(true)
-        deprecate(Strings) { forBinaryCompatibility }
         only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
         doc { "Returns a list containing all elements except last elements that satisfy the given [predicate]." }
         returns("List<T>")
@@ -278,19 +300,23 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(CharSequences) { "Returns a string containing all characters except last characters that satisfy the given [predicate]." }
-        returns("String", CharSequences, Strings)
-        body(CharSequences, Strings) {
+        doc(Strings) { "Returns a string containing all characters except last characters that satisfy the given [predicate]." }
+        doc(CharSequences) { "Returns a subsequence of this char sequence containing all characters except last characters that satisfy the given [predicate]." }
+        returns(CharSequences, Strings) { "SELF" }
+        body(CharSequences, Strings) { f ->
             """
-            return trimEnd(predicate)
+            for (index in this.indices.reversed())
+                if (!predicate(this[index]))
+                    return ${subsequence(f, "0", "index + 1")}
+
+            return ""
             """
         }
     }
 
     templates add f("takeLastWhile(predicate: (T) -> Boolean)") {
         inline(true)
-        deprecate(Strings) { forBinaryCompatibility }
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives, Strings, CharSequences)
         doc { "Returns a list containing last elements satisfying the given [predicate]."}
         returns("List<T>")
 
@@ -305,16 +331,17 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(CharSequences) { "Returns a string containing last characters that satisfy the given [predicate]." }
-        returns("String", CharSequences, Strings)
-        body(CharSequences, Strings) {
+        doc(Strings) { "Returns a string containing last characters that satisfy the given [predicate]." }
+        doc(CharSequences) { "Returns a subsequence of this char sequence containing last characters that satisfy the given [predicate]." }
+        returns(Strings, CharSequences) { "SELF" }
+        body(Strings, CharSequences) { f ->
             """
             for (index in lastIndex downTo 0) {
                 if (!predicate(this[index])) {
-                    return substring(index + 1)
+                    return ${subsequence(f, "index + 1")}
                 }
             }
-            return this.toString()
+            return ${takeAll(f)}
             """
         }
     }
