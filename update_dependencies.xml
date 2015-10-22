@@ -4,10 +4,10 @@
     <property name="ideaVersion" value="143.249.6"/>
 
 
-    <property name="kotlin.bootstrap.branch" value=""/>
-    <property name="kotlin.bootstrap.branch.locator" value=""/>
-    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
-    <property name="kotlin.bootstrap.locator.force" value="false"/>
+    <property name="kotlin.bootstrap.branch" value="M15"/>
+    <property name="kotlin.bootstrap.branch.locator" value=",branch:M15"/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:pre_release,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
+    <property name="kotlin.bootstrap.locator.force" value="true"/>
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
 
@@ -17,9 +17,7 @@
     <!-- To enable counter padding, set parameter "need.counter.padding" to true on buildserver -->
 
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
-    <!--
-    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,status:SUCCESS,count:1${kotlin.bootstrap.branch.locator}"/>
-    -->
+    <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,count:1${kotlin.bootstrap.branch.locator}"/>
     <!--<property name="override.version.disabled" value="true"/>-->
 
     <condition property="isWindows">
