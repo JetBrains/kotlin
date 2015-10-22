@@ -184,6 +184,7 @@ public class ReplFromTerminal {
     private ReplInterpreter.LineResultType eval(@NotNull String line) {
         ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
         if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
+            replWriter.notifyCommandSuccess();
             if (!lineResult.isUnit()) {
                 replWriter.outputCommandResult(lineResult.getValue());
             }

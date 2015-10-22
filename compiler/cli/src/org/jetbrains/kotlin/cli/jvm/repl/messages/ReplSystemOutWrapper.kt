@@ -34,7 +34,8 @@ public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: Pri
         REPL_INCOMPLETE,
         COMPILE_ERROR,
         RUNTIME_ERROR,
-        INTERNAL_ERROR
+        INTERNAL_ERROR,
+        SUCCESS
     }
 
     override fun print(x: Boolean) = printWithEscaping(x.toString())
@@ -65,6 +66,7 @@ public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: Pri
     fun outputCommandResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
     fun notifyReadLineStart() = printlnWithEscaping("", EscapeType.READLINE_START)
     fun notifyReadLineEnd() = printlnWithEscaping("", EscapeType.READLINE_END)
+    fun notifyCommandSuccess() = printlnWithEscaping("", EscapeType.SUCCESS)
     fun notifyIncomplete() = printlnWithEscaping("", EscapeType.REPL_INCOMPLETE)
     fun outputCompileError(x: String) = printlnWithEscaping(x, EscapeType.COMPILE_ERROR)
     fun outputRuntimeError(x: String) = printlnWithEscaping(x, EscapeType.RUNTIME_ERROR)
