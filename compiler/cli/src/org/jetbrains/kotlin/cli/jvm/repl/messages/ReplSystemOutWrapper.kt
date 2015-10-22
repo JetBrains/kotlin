@@ -60,13 +60,13 @@ public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: Pri
         return "$XML_PREAMBLE<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
     }
 
-    fun printlnInit(x: String) = printlnWithEscaping(x, EscapeType.INITIAL_PROMPT)
-    fun printlnHelp(x: String) = printlnWithEscaping(x, EscapeType.HELP_PROMPT)
-    fun printlnResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
-    fun printlnReadLineStart() = printlnWithEscaping("", EscapeType.READLINE_START)
-    fun printlnReadLineEnd() = printlnWithEscaping("", EscapeType.READLINE_END)
-    fun printlnIncomplete() = printlnWithEscaping("", EscapeType.REPL_INCOMPLETE)
-    fun printlnCompileError(x: String) = printlnWithEscaping(x, EscapeType.COMPILE_ERROR)
-    fun printlnRuntimeError(x: String) = printlnWithEscaping(x, EscapeType.RUNTIME_ERROR)
+    fun printlnWelcomeMessage(x: String) = printlnWithEscaping(x, EscapeType.INITIAL_PROMPT)
+    fun printlnHelpMessage(x: String) = printlnWithEscaping(x, EscapeType.HELP_PROMPT)
+    fun outputCommandResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
+    fun notifyReadLineStart() = printlnWithEscaping("", EscapeType.READLINE_START)
+    fun notifyReadLineEnd() = printlnWithEscaping("", EscapeType.READLINE_END)
+    fun notifyIncomplete() = printlnWithEscaping("", EscapeType.REPL_INCOMPLETE)
+    fun outputCompileError(x: String) = printlnWithEscaping(x, EscapeType.COMPILE_ERROR)
+    fun outputRuntimeError(x: String) = printlnWithEscaping(x, EscapeType.RUNTIME_ERROR)
     fun sendInternalErrorReport(x: String) = printlnWithEscaping(x, EscapeType.INTERNAL_ERROR)
 }

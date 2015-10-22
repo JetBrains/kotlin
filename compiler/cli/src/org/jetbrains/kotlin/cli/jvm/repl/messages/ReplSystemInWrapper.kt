@@ -39,7 +39,7 @@ public class ReplSystemInWrapper(
         if (isLastByteProcessed) {
             if (isReplScriptExecuting) {
                 isReadLineStartSent = false
-                replWriter.printlnReadLineEnd()
+                replWriter.notifyReadLineEnd()
             }
 
             isLastByteProcessed = false
@@ -48,7 +48,7 @@ public class ReplSystemInWrapper(
 
         while (isXmlIncomplete) {
             if (!isReadLineStartSent && isReplScriptExecuting) {
-                replWriter.printlnReadLineStart()
+                replWriter.notifyReadLineStart()
                 isReadLineStartSent = true
             }
 

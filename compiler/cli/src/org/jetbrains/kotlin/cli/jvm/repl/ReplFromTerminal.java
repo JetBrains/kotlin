@@ -121,9 +121,9 @@ public class ReplFromTerminal {
 
     private void doRun() {
         try {
-            replWriter.printlnInit("Welcome to Kotlin version " + KotlinVersion.VERSION +
-                               " (JRE " + System.getProperty("java.runtime.version") + ")");
-            replWriter.printlnInit("Type :help for help, :quit for quit");
+            replWriter.printlnWelcomeMessage("Welcome to Kotlin version " + KotlinVersion.VERSION +
+                                             " (JRE " + System.getProperty("java.runtime.version") + ")");
+            replWriter.printlnWelcomeMessage("Type :help for help, :quit for quit");
             WhatNextAfterOneLine next = WhatNextAfterOneLine.READ_LINE;
             while (true) {
                 next = one(next);
@@ -185,17 +185,17 @@ public class ReplFromTerminal {
         ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
         if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
             if (!lineResult.isUnit()) {
-                replWriter.printlnResult(lineResult.getValue());
+                replWriter.outputCommandResult(lineResult.getValue());
             }
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
-            replWriter.printlnIncomplete();
+            replWriter.notifyIncomplete();
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.COMPILE_ERROR) {
-            replWriter.printlnCompileError(lineResult.getErrorText());
+            replWriter.outputCompileError(lineResult.getErrorText());
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.RUNTIME_ERROR) {
-            replWriter.printlnRuntimeError(lineResult.getErrorText());
+            replWriter.outputRuntimeError(lineResult.getErrorText());
         }
         else {
             throw new IllegalStateException("unknown line result type: " + lineResult);
@@ -206,11 +206,11 @@ public class ReplFromTerminal {
     private boolean oneCommand(@NotNull String command) throws Exception {
         List<String> split = splitCommand(command);
         if (split.size() >= 1 && command.equals("help")) {
-            replWriter.printlnHelp("Available commands:\n" +
-                                   ":help                   show this help\n" +
-                                   ":quit                   exit the interpreter\n" +
-                                   ":dump bytecode          dump classes to terminal\n" +
-                                   ":load <file>            load script from specified file"
+            replWriter.printlnHelpMessage("Available commands:\n" +
+                                          ":help                   show this help\n" +
+                                          ":quit                   exit the interpreter\n" +
+                                          ":dump bytecode          dump classes to terminal\n" +
+                                          ":load <file>            load script from specified file"
             );
             return true;
         }
@@ -228,8 +228,8 @@ public class ReplFromTerminal {
             return true;
         }
         else {
-            replWriter.printlnHelp("Unknown command\n" +
-                                   "Type :help for help"
+            replWriter.printlnHelpMessage("Unknown command\n" +
+                                          "Type :help for help"
             );
             return true;
         }
