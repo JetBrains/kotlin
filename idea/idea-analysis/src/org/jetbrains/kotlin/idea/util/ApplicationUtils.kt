@@ -25,11 +25,6 @@ public fun runReadAction<T>(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
 }
 
-public fun <T> Project.runReadActionInSmartMode(action: () -> T): T {
-    if (ApplicationManager.getApplication().isReadAccessAllowed) return action()
-    return DumbService.getInstance(this).runReadActionInSmartMode<T>(action)
-}
-
 public fun runWriteAction<T>(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
 }
@@ -45,13 +40,6 @@ public fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, c
 public fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -> T): T {
     var result: T = null as T
     CommandProcessor.getInstance().executeCommand(this, { result = command() }, name, groupId)
-    @Suppress("USELESS_CAST")
-    return result as T
-}
-
-public fun <T> Project.runWithAlternativeResolveEnabled(action: () -> T): T {
-    var result: T = null as T
-    DumbService.getInstance(this).withAlternativeResolveEnabled { result = action() }
     @Suppress("USELESS_CAST")
     return result as T
 }

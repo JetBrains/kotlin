@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.core.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.idea.util.application.runWithAlternativeResolveEnabled
+import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -132,6 +132,8 @@ class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<KtClassOrObject
                         generator.generateTest(project, dialog)
                     }
                 } as? PsiClass ?: return
+
+
 
                 val generatedFile = generatedClass.containingFile as? PsiJavaFile ?: return
 
