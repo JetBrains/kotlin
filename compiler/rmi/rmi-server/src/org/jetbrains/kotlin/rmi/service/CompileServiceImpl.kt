@@ -76,9 +76,11 @@ class CompileServiceImpl(
                                args: Array<out String>,
                                servicesFacade: CompilerCallbackServicesFacade,
                                compilerOutputStream: RemoteOutputStream,
-                               outputFormat: CompileService.OutputFormat, serviceOutputStream: RemoteOutputStream
+                               outputFormat: CompileService.OutputFormat,
+                               serviceOutputStream: RemoteOutputStream,
+                               operationsTracer: RemoteOperationsTracer?
     ): Int =
-            doCompile(args, compilerOutputStream, serviceOutputStream) { printStream, profiler ->
+            doCompile(args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, profiler ->
                 when (outputFormat) {
                     CompileService.OutputFormat.PLAIN -> compiler[targetPlatform].exec(printStream, *args)
                     CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, profiler), *args)
@@ -90,9 +92,10 @@ class CompileServiceImpl(
                                           servicesFacade: CompilerCallbackServicesFacade,
                                           compilerOutputStream: RemoteOutputStream,
                                           compilerOutputFormat: CompileService.OutputFormat,
-                                          serviceOutputStream: RemoteOutputStream
+                                          serviceOutputStream: RemoteOutputStream,
+                                          operationsTracer: RemoteOperationsTracer?
     ): Int =
-            doCompile(args, compilerOutputStream, serviceOutputStream) { printStream, profiler ->
+            doCompile(args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, profiler ->
                 when (compilerOutputFormat) {
                     CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
                     CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, profiler), *args)
@@ -137,8 +140,13 @@ class CompileServiceImpl(
         alive = true
     }
 
-    private fun doCompile(args: Array<out String>, compilerMessagesStreamProxy: RemoteOutputStream, serviceOutputStreamProxy: RemoteOutputStream, body: (PrintStream, Profiler) -> ExitCode): Int =
+    private fun doCompile(args: Array<out String>,
+                          compilerMessagesStreamProxy: RemoteOutputStream,
+                          serviceOutputStreamProxy: RemoteOutputStream,
+                          operationsTracer: RemoteOperationsTracer?,
+                          body: (PrintStream, Profiler) -> ExitCode): Int =
             ifAlive {
+                operationsTracer?.before("compile")
                 val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                 val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))
                 val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096))
@@ -152,6 +160,7 @@ class CompileServiceImpl(
                 finally {
                     serviceOutputStream.flush()
                     compilerMessagesStream.flush()
+                    operationsTracer?.after("compile")
                 }
             }
 

@@ -46,7 +46,9 @@ public interface CompileService : Remote {
             args: Array<out String>,
             servicesFacade: CompilerCallbackServicesFacade,
             compilerOutputStream: RemoteOutputStream,
-            outputFormat: OutputFormat, serviceOutputStream: RemoteOutputStream
+            outputFormat: OutputFormat,
+            serviceOutputStream: RemoteOutputStream,
+            operationsTracer: RemoteOperationsTracer?
     ): Int
 
     @Throws(RemoteException::class)
@@ -56,6 +58,7 @@ public interface CompileService : Remote {
             servicesFacade: CompilerCallbackServicesFacade,
             compilerOutputStream: RemoteOutputStream,
             compilerOutputFormat: OutputFormat,
-            serviceOutputStream: RemoteOutputStream
+            serviceOutputStream: RemoteOutputStream,
+            operationsTracer: RemoteOperationsTracer?
     ): Int
 }

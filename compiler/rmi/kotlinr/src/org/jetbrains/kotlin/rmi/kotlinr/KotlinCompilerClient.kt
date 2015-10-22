@@ -111,10 +111,15 @@ public object KotlinCompilerClient {
     }
 
 
-    public fun compile(compilerService: CompileService, targetPlatform: CompileService.TargetPlatform, args: Array<out String>, out: OutputStream): Int {
-
-        val outStrm = RemoteOutputStreamServer(out)
-        return compilerService.remoteCompile(targetPlatform, args, CompilerCallbackServicesFacadeServer(), outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+    public fun compile(compilerService: CompileService,
+                       targetPlatform: CompileService.TargetPlatform,
+                       args: Array<out String>,
+                       out: OutputStream,
+                       port: Int = SOCKET_ANY_FREE_PORT,
+                       operationsTracer: RemoteOperationsTracer? = null
+    ): Int {
+        val outStrm = RemoteOutputStreamServer(out, port = port)
+        return compilerService.remoteCompile(targetPlatform, args, CompilerCallbackServicesFacadeServer(port = port), outStrm, CompileService.OutputFormat.PLAIN, outStrm, operationsTracer)
     }
 
 
@@ -124,16 +129,20 @@ public object KotlinCompilerClient {
                                   callbackServices: CompilationServices,
                                   compilerOut: OutputStream,
                                   daemonOut: OutputStream,
-                                  profiler: Profiler = DummyProfiler()
+                                  port: Int = SOCKET_ANY_FREE_PORT,
+                                  profiler: Profiler = DummyProfiler(),
+                                  operationsTracer: RemoteOperationsTracer? = null
     ): Int = profiler.withMeasure(this) {
             compileService.remoteIncrementalCompile(
                     targetPlatform,
                     args,
                     CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
-                                                         compilationCancelledStatus = callbackServices.compilationCanceledStatus),
-                    RemoteOutputStreamServer(compilerOut),
+                                                         compilationCancelledStatus = callbackServices.compilationCanceledStatus,
+                                                         port = port),
+                    RemoteOutputStreamServer(compilerOut, port),
                     CompileService.OutputFormat.XML,
-                    RemoteOutputStreamServer(daemonOut))
+                    RemoteOutputStreamServer(daemonOut, port),
+                    operationsTracer)
     }
 
     public val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
@@ -207,7 +216,7 @@ public object KotlinCompilerClient {
                     val memBefore = daemon.getUsedMemory() / 1024
                     val startTime = System.nanoTime()
 
-                    val res = daemon.remoteCompile(CompileService.TargetPlatform.JVM, filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+                    val res = daemon.remoteCompile(CompileService.TargetPlatform.JVM, filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm, null)
 
                     val endTime = System.nanoTime()
                     println("Compilation result code: $res")

@@ -19,14 +19,11 @@ package org.jetbrains.kotlin.rmi
 import java.rmi.Remote
 import java.rmi.RemoteException
 
-public interface RemoteOutputStream : Remote {
+public interface RemoteOperationsTracer : Remote {
 
     @Throws(RemoteException::class)
-    public fun close()
+    public fun before(id: String)
 
     @Throws(RemoteException::class)
-    public fun write(data: ByteArray, offset: Int, length: Int)
-
-    @Throws(RemoteException::class)
-    public fun write(dataByte: Int)
+    public fun after(id: String)
 }
