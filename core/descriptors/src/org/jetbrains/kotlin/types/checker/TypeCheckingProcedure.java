@@ -20,9 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.types.Variance.*;
@@ -43,12 +46,14 @@ public class TypeCheckingProcedure {
         return UtilsKt.findCorrespondingSupertype(subtype, supertype, typeCheckingProcedureCallbacks);
     }
 
-    public static KotlinType getOutType(TypeParameterDescriptor parameter, TypeProjection argument) {
-        boolean isOutProjected = argument.getProjectionKind() == IN_VARIANCE || parameter.getVariance() == IN_VARIANCE;
-        return isOutProjected ? parameter.getUpperBoundsAsType() : argument.getType();
+    @NotNull
+    private static KotlinType getOutType(@NotNull TypeParameterDescriptor parameter, @NotNull TypeProjection argument) {
+        boolean isInProjected = argument.getProjectionKind() == IN_VARIANCE || parameter.getVariance() == IN_VARIANCE;
+        return isInProjected ? DescriptorUtilsKt.getBuiltIns(parameter).getNullableAnyType() : argument.getType();
     }
 
-    public static KotlinType getInType(@NotNull TypeParameterDescriptor parameter, @NotNull TypeProjection argument) {
+    @NotNull
+    private static KotlinType getInType(@NotNull TypeParameterDescriptor parameter, @NotNull TypeProjection argument) {
         boolean isOutProjected = argument.getProjectionKind() == OUT_VARIANCE || parameter.getVariance() == OUT_VARIANCE;
         return isOutProjected ? DescriptorUtilsKt.getBuiltIns(parameter).getNothingType() : argument.getType();
     }
@@ -229,30 +234,31 @@ public class TypeCheckingProcedure {
             TypeParameterDescriptor parameter = parameters.get(i);
 
             TypeProjection superArgument = superArguments.get(i);
-            if (superArgument.isStarProjection()) continue;
-
-            KotlinType superIn = getInType(parameter, superArgument);
-            KotlinType superOut = getOutType(parameter, superArgument);
-
             TypeProjection subArgument = subArguments.get(i);
-            KotlinType subIn = getInType(parameter, subArgument);
-            KotlinType subOut = getOutType(parameter, subArgument);
+
+            if (superArgument.isStarProjection()) continue;
 
             if (capture(subArgument, superArgument, parameter)) continue;
 
             boolean argumentIsErrorType = subArgument.getType().isError() || superArgument.getType().isError();
-            if (!argumentIsErrorType && parameter.getVariance() == INVARIANT
-                    && subArgument.getProjectionKind() == INVARIANT && superArgument.getProjectionKind() == INVARIANT) {
+            if (!argumentIsErrorType && parameter.getVariance() == INVARIANT &&
+                subArgument.getProjectionKind() == INVARIANT && superArgument.getProjectionKind() == INVARIANT) {
                 if (!constraints.assertEqualTypes(subArgument.getType(), superArgument.getType(), this)) return false;
+                continue;
+            }
+
+            KotlinType superOut = getOutType(parameter, superArgument);
+            KotlinType subOut = getOutType(parameter, subArgument);
+            if (!constraints.assertSubtype(subOut, superOut, this)) return false;
+
+            KotlinType superIn = getInType(parameter, superArgument);
+            KotlinType subIn = getInType(parameter, subArgument);
+
+            if (superArgument.getProjectionKind() != Variance.OUT_VARIANCE) {
+                if (!constraints.assertSubtype(superIn, subIn, this)) return false;
             }
             else {
-                if (!constraints.assertSubtype(subOut, superOut, this)) return false;
-                if (superArgument.getProjectionKind() != Variance.OUT_VARIANCE) {
-                    if (!constraints.assertSubtype(superIn, subIn, this)) return false;
-                }
-                else {
-                    assert KotlinBuiltIns.isNothing(superIn) : "In component must be Nothing for out-projection";
-                }
+                assert KotlinBuiltIns.isNothing(superIn) : "In component must be Nothing for out-projection";
             }
         }
         return true;

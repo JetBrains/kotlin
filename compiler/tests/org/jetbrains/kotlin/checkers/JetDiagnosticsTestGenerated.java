@@ -15657,6 +15657,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("invariantArgumentForTypeParameterWithMultipleBounds.kt")
+            public void testInvariantArgumentForTypeParameterWithMultipleBounds() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/invariantArgumentForTypeParameterWithMultipleBounds.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt2069.kt")
             public void testKt2069() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/kt2069.kt");
