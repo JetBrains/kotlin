@@ -55,7 +55,7 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
     var result: Class<*>? = null
     XDebuggerUtil.getInstance().iterateLine(project, document, line, fun (el: PsiElement): Boolean {
         // avoid comments
-        if (el is PsiWhiteSpace || PsiTreeUtil.getParentOfType(el, javaClass<PsiComment>(), false) != null) {
+        if (el is PsiWhiteSpace || PsiTreeUtil.getParentOfType(el, PsiComment::class.java, false) != null) {
             return true
         }
 
