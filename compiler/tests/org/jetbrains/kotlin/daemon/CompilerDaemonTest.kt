@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
 
@@ -231,6 +234,65 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         finally {
             if (clientAliveFile.exists())
                 clientAliveFile.delete()
+        }
+    }
+
+    private class SynchronizationTracer(public val startSignal: CountDownLatch, public val doneSignal: CountDownLatch, port: Int) : RemoteOperationsTracer,
+            java.rmi.server.UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
+    {
+        override fun before(id: String) {
+            startSignal.await()
+        }
+        override fun after(id: String) {
+            doneSignal.countDown()
+        }
+    }
+
+    private val PARALLEL_THREADS_TO_COMPILE = 10
+    private val PARALLEL_WAIT_TIMEOUT_S = 60L
+
+    public fun testParallelCompilationOnDaemon() {
+
+        TestCase.assertTrue(PARALLEL_THREADS_TO_COMPILE <= LoopbackNetworkInterface.SERVER_SOCKET_BACKLOG_SIZE)
+
+        val flagFile = createTempFile(getTestName(true), ".alive")
+        flagFile.deleteOnExit()
+        val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath, clientAliveFlagPath = flagFile.absolutePath)
+        val daemonJVMOptions = configureDaemonJVMOptions(false)
+        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
+        TestCase.assertNotNull("failed to connect daemon", daemon)
+
+        val (registry, port) = findPortAndCreateRegistry(10, 16384, 65535)
+        val tracer = SynchronizationTracer(CountDownLatch(1), CountDownLatch(PARALLEL_THREADS_TO_COMPILE), port)
+
+        val resultCodes = arrayOfNulls<Int>(PARALLEL_THREADS_TO_COMPILE)
+        val localEndSignal = CountDownLatch(PARALLEL_THREADS_TO_COMPILE)
+        val outStreams = Array(PARALLEL_THREADS_TO_COMPILE, { ByteArrayOutputStream() })
+
+        fun runCompile(threadNo: Int) =
+            thread {
+                val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
+                val res = KotlinCompilerClient.compile(daemon!!,
+                        CompileService.TargetPlatform.JVM,
+                        arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                        outStreams[threadNo],
+                        port = port,
+                        operationsTracer = tracer as RemoteOperationsTracer)
+                synchronized(resultCodes) {
+                    resultCodes[threadNo] = res
+                }
+                localEndSignal.countDown()
+            }
+
+        (1..PARALLEL_THREADS_TO_COMPILE).forEach { runCompile(it-1) }
+
+        tracer.startSignal.countDown()
+        val succeeded = tracer.doneSignal.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
+        TestCase.assertTrue("parallel compilation failed to complete in $PARALLEL_WAIT_TIMEOUT_S ms, ${tracer.doneSignal.count} unfinished threads", succeeded)
+
+        localEndSignal.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
+        (1..PARALLEL_THREADS_TO_COMPILE).forEach {
+            TestCase.assertEquals("Compilation on thread $it failed:\n${outStreams[it-1]}", 0, resultCodes[it-1])
         }
     }
 }
