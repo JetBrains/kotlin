@@ -237,18 +237,6 @@ public class OverridingUtil {
         return parameters;
     }
 
-    static KotlinType getUpperBound(KotlinType type) {
-        if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
-            return type;
-        }
-        else if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
-            return ((TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor()).getUpperBoundsAsType();
-        }
-        else {
-            throw new IllegalStateException("unknown type constructor: " + type.getConstructor().getClass().getName());
-        }
-    }
-
     public static void generateOverridesInFunctionGroup(
             @SuppressWarnings("UnusedParameters")
             @NotNull Name name, //DO NOT DELETE THIS PARAMETER: needed to make sure all descriptors have the same name
