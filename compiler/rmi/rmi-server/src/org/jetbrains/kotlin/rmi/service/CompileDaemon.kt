@@ -26,9 +26,6 @@ import java.io.OutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
-import java.rmi.RemoteException
-import java.rmi.registry.LocateRegistry
-import java.rmi.registry.Registry
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
@@ -121,7 +118,7 @@ public object CompileDaemon {
             //
             //            setDaemonPpermissions(daemonOptions.port)
 
-            val (registry, port) = createRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS)
+            val (registry, port) = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
             val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
             runFileDir.mkdirs()
             val runFile = File(runFileDir,
@@ -198,24 +195,5 @@ public object CompileDaemon {
             // TODO consider exiting without throwing
             throw e
         }
-    }
-
-    val random = Random()
-
-    private fun createRegistry(attempts: Int) : Pair<Registry, Int> {
-        var i = 0
-        var lastException: RemoteException? = null
-
-        while (i++ < attempts) {
-            val port = random.nextInt(COMPILE_DAEMON_PORTS_RANGE_END - COMPILE_DAEMON_PORTS_RANGE_START) + COMPILE_DAEMON_PORTS_RANGE_START
-            try {
-                return Pair(LocateRegistry.createRegistry(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory), port)
-            }
-            catch (e: RemoteException) {
-                // assuming that the port is already taken
-                lastException = e
-            }
-        }
-        throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
     }
 }

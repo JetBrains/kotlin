@@ -21,8 +21,12 @@ import java.io.Serializable
 import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
+import java.rmi.RemoteException
+import java.rmi.registry.LocateRegistry
+import java.rmi.registry.Registry
 import java.rmi.server.RMIClientSocketFactory
 import java.rmi.server.RMIServerSocketFactory
+import java.util.*
 
 
 public val SOCKET_ANY_FREE_PORT  = 0
@@ -70,4 +74,22 @@ public object LoopbackNetworkInterface {
 }
 
 
+private val portSelectionRng = Random()
+
+public fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: Int) : Pair<Registry, Int> {
+    var i = 0
+    var lastException: RemoteException? = null
+
+    while (i++ < attempts) {
+        val port = portSelectionRng.nextInt(portRangeEnd - portRangeStart) + portRangeStart
+        try {
+            return Pair(LocateRegistry.createRegistry(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory), port)
+        }
+        catch (e: RemoteException) {
+            // assuming that the port is already taken
+            lastException = e
+        }
+    }
+    throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
+}
 
