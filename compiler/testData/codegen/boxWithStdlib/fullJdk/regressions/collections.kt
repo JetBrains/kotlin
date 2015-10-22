@@ -12,7 +12,7 @@ fun <T> testCollectionContains(c: Collection<T>) = assertTrue(c.contains(1))
 fun <T> testCollectionIterator(c: Collection<T>) {
     val it = c.iterator()
     while (it.hasNext()) {
-        assertEquals(1, it.next())
+        assertEquals(1, it.next() as Any?)
     }
 }
 fun <T> testCollectionContainsAll(c: Collection<T>) = assertTrue(c.containsAll(c))
