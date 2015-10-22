@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.isValidOperator
 
 public class ReplaceGetOrSetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
         ReplaceGetOrSetIntention(), ReplaceGetOrSetInspection.additionalChecker
@@ -68,7 +69,7 @@ class ReplaceGetOrSetIntention : JetSelfTargetingRangeIntention<KtDotQualifiedEx
         if (!resolvedCall.isReallySuccess()) return null
 
         val target = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
-        if (!target.isOperator || target.name !in operatorNames) return null
+        if (!target.isValidOperator() || target.name !in operatorNames) return null
 
         if (callExpression.getTypeArgumentList() != null) return null
 
@@ -92,9 +93,7 @@ class ReplaceGetOrSetIntention : JetSelfTargetingRangeIntention<KtDotQualifiedEx
     fun applyTo(element: KtDotQualifiedExpression) {
         val isSet = element.toResolvedCall(BodyResolveMode.PARTIAL)!!.resultingDescriptor.name == OperatorNameConventions.SET
         val allArguments = element.callExpression!!.valueArguments
-        if (isSet) {
-            assert(allArguments.size > 0)
-        }
+        assert(allArguments.isNotEmpty())
 
         val expression = KtPsiFactory(element).buildExpression {
             appendExpression(element.getReceiverExpression())
