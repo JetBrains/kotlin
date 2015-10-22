@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -73,6 +74,10 @@ public class FixStackAnalyzer(
                     executeBeforeInlineCallMarker(insn)
                 InlineCodegenUtil.isAfterInlineMarker(insn) ->
                     executeAfterInlineCallMarker(insn)
+                InlineCodegenUtil.isMarkedReturn(insn) -> {
+                    // KT-9644: might throw "Incompatible return type" on non-local return, in fact we don't care.
+                    if (insn.opcode == Opcodes.RETURN) return
+                }
             }
 
             super.execute(insn, interpreter)
