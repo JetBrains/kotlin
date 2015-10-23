@@ -1,5 +1,5 @@
 public interface PrivateInTrait {
-    static final class DefaultImpls {
+    final class DefaultImpls {
         @org.jetbrains.annotations.NotNull
         static java.lang.String getNn(PrivateInTrait $this) { /* compiled code */ }
 
