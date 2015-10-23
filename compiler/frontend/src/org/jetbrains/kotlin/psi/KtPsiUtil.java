@@ -483,6 +483,8 @@ public class KtPsiUtil {
         }
 
         if (innerExpression instanceof KtIfExpression) {
+            if (parentExpression instanceof KtQualifiedExpression) return true;
+
             PsiElement current = parentExpression;
 
             while (!(current instanceof KtBlockExpression || current instanceof KtDeclaration || current instanceof KtStatementExpression)) {

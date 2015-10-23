@@ -47,6 +47,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
         doTest(fileName);
     }
 
+    @TestMetadata("ifInQualifiedExpression.kt")
+    public void testIfInQualifiedExpression() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/ifInQualifiedExpression.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InFunctionLiteral.kt")
     public void testInFunctionLiteral() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/InFunctionLiteral.kt");
