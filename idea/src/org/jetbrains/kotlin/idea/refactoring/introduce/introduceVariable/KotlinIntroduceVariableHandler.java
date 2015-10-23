@@ -36,6 +36,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.idea.analysis.AnalyzerUtilKt;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;

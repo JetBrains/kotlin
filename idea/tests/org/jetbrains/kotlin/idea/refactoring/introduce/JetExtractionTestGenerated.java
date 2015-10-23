@@ -115,6 +115,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("dynamicType.kt")
+        public void testDynamicType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/dynamicType.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("FewOccurrences.kt")
         public void testFewOccurrences() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/FewOccurrences.kt");
