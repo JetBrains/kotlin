@@ -34,6 +34,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImplKt.registerTypeVariables;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL;
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class TypeIntersector {
 
@@ -139,7 +140,20 @@ public class TypeIntersector {
         );
     }
 
-    // TODO : check intersectibility, don't use a chanied scope
+    /**
+     * Note: this method was used in overload and override bindings to approximate type parameters with several bounds,
+     * but as it turned out at some point, that logic was inconsistent with Java rules, so it was simplified.
+     * Most of the other usages of this method are left untouched but probably should be investigated closely if they're still valid.
+     */
+    @NotNull
+    public static KotlinType getUpperBoundsAsType(@NotNull TypeParameterDescriptor descriptor) {
+        List<KotlinType> upperBounds = descriptor.getUpperBounds();
+        assert !upperBounds.isEmpty() : "Upper bound list is empty: " + descriptor;
+        KotlinType upperBoundsAsType = intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
+        return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(descriptor).getNothingType();
+    }
+
+    // TODO: check intersectability, don't use a chained scope
     private static class IntersectionScope extends ChainedScope {
         public IntersectionScope(@NotNull TypeConstructor constructor, @NotNull KtScope[] scopes) {
             super(null, "member scope for intersection type " + constructor, scopes);

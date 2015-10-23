@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +49,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     private final NotNullLazyValue<TypeConstructor> typeConstructor;
     private final NotNullLazyValue<KotlinType> defaultType;
     private final NotNullLazyValue<List<KotlinType>> upperBounds;
-    private final NotNullLazyValue<KotlinType> upperBoundsAsType;
 
     protected AbstractTypeParameterDescriptor(
             @NotNull final StorageManager storageManager,
@@ -104,12 +102,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                 return resolveUpperBounds();
             }
         }, FALLBACK_UPPER_BOUNDS_ON_RECURSION);
-        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<KotlinType>() {
-            @Override
-            public KotlinType invoke() {
-                return computeUpperBoundsAsType();
-            }
-        });
     }
 
     @NotNull
@@ -138,20 +130,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     @Override
     public List<KotlinType> getUpperBounds() {
         return upperBounds.invoke();
-    }
-
-    @NotNull
-    @Override
-    public KotlinType getUpperBoundsAsType() {
-        return upperBoundsAsType.invoke();
-    }
-
-    @NotNull
-    private KotlinType computeUpperBoundsAsType() {
-        List<KotlinType> upperBounds = getUpperBounds();
-        assert !upperBounds.isEmpty() : "Upper bound list is empty in " + getName();
-        KotlinType upperBoundsAsType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
-        return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(this).getNothingType();
     }
 
     @NotNull

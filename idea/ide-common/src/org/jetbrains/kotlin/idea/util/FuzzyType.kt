@@ -47,7 +47,7 @@ fun FuzzyType.isAlmostEverything(): Boolean {
     if (freeParameters.isEmpty()) return false
     val typeParameter = type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
     if (typeParameter !in freeParameters) return false
-    return typeParameter.upperBoundsAsType.isAnyOrNullableAny()
+    return typeParameter.upperBounds.singleOrNull()?.isAnyOrNullableAny() ?: false
 }
 
 class FuzzyType(

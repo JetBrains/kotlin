@@ -34,9 +34,6 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     List<KotlinType> getUpperBounds();
 
     @NotNull
-    KotlinType getUpperBoundsAsType();
-
-    @NotNull
     List<KotlinType> getLowerBounds();
 
     @NotNull

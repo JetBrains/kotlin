@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.oneMoreSpecificThanAnother
 
@@ -74,7 +75,7 @@ object OverloadUtil {
             val classifier = constructor.declarationDescriptor
             return when (classifier) {
                 is ClassDescriptor -> this
-                is TypeParameterDescriptor -> classifier.upperBoundsAsType
+                is TypeParameterDescriptor -> TypeIntersector.getUpperBoundsAsType(classifier)
                 else -> error("Unknown type constructor: $this")
             }
         }

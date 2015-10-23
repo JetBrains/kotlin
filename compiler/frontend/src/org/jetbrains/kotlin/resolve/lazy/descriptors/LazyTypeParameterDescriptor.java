@@ -119,7 +119,6 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         getOriginal();
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
         ForceResolveUtil.forceResolveAllContents(getUpperBounds());
-        getUpperBoundsAsType();
         getVariance();
     }
 }

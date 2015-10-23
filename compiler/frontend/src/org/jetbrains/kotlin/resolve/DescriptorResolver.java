@@ -62,7 +62,8 @@ import java.util.*;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.CONSTRUCTOR;
+import static org.jetbrains.kotlin.resolve.BindingContext.PACKAGE_TO_FILES;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
@@ -539,7 +540,7 @@ public class DescriptorResolver {
             @NotNull TypeParameterDescriptor parameter,
             @NotNull KtTypeParameter typeParameter
     ) {
-        if (KotlinBuiltIns.isNothing(parameter.getUpperBoundsAsType())) {
+        if (KotlinBuiltIns.isNothing(TypeIntersector.getUpperBoundsAsType(parameter))) {
             trace.report(CONFLICTING_UPPER_BOUNDS.on(typeParameter, parameter));
         }
     }

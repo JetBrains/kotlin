@@ -32,14 +32,13 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
-import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.Variance;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.kotlin.load.java.components.TypeUsage.UPPER_BOUND;
@@ -140,13 +139,16 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         for (TypeParameterDescriptor parameter : methodTypeParameters) {
             int index = parameter.getIndex();
 
-            KotlinType substituted = substitutor.substitute(parameter.getUpperBoundsAsType(), Variance.INVARIANT);
+            KotlinType upperBoundsAsType = TypeIntersector.getUpperBoundsAsType(parameter);
+            KotlinType substituted = substitutor.substitute(upperBoundsAsType, Variance.INVARIANT);
             assert substituted != null;
 
-            if (!TypeUtils.equalTypes(substituted, altTypeParameters.get(index).getUpperBoundsAsType())) {
+            KotlinType altUpperBoundsAsType = TypeIntersector.getUpperBoundsAsType(altTypeParameters.get(index));
+            if (!TypeUtils.equalTypes(substituted, altUpperBoundsAsType)) {
                 throw new AlternativeSignatureMismatchException(
                         "Type parameter's upper bound changed for method which overrides another: "
-                        + altTypeParameters.get(index).getUpperBoundsAsType() + ", was: " + parameter.getUpperBoundsAsType());
+                        + altUpperBoundsAsType + ", was: " + upperBoundsAsType
+                );
             }
         }
 
