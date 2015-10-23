@@ -447,32 +447,6 @@ public class TypeUtils {
         return new StarProjectionImpl(parameterDescriptor);
     }
 
-    @Nullable
-    public static KotlinType commonSupertypeForNumberTypes(@NotNull Collection<KotlinType> numberLowerBounds) {
-        if (numberLowerBounds.isEmpty()) return null;
-        Set<KotlinType> intersectionOfSupertypes = getIntersectionOfSupertypes(numberLowerBounds);
-        KotlinType primitiveNumberType = getDefaultPrimitiveNumberType(intersectionOfSupertypes);
-        if (primitiveNumberType != null) {
-            return primitiveNumberType;
-        }
-        return CommonSupertypes.commonSupertype(numberLowerBounds);
-    }
-
-    @NotNull
-    private static Set<KotlinType> getIntersectionOfSupertypes(@NotNull Collection<KotlinType> types) {
-        Set<KotlinType> upperBounds = new HashSet<KotlinType>();
-        for (KotlinType type : types) {
-            Collection<KotlinType> supertypes = type.getConstructor().getSupertypes();
-            if (upperBounds.isEmpty()) {
-                upperBounds.addAll(supertypes);
-            }
-            else {
-                upperBounds.retainAll(supertypes);
-            }
-        }
-        return upperBounds;
-    }
-
     @NotNull
     public static KotlinType getDefaultPrimitiveNumberType(@NotNull IntegerValueTypeConstructor numberValueTypeConstructor) {
         KotlinType type = getDefaultPrimitiveNumberType(numberValueTypeConstructor.getSupertypes());
@@ -482,7 +456,7 @@ public class TypeUtils {
     }
 
     @Nullable
-    private static KotlinType getDefaultPrimitiveNumberType(@NotNull Collection<KotlinType> supertypes) {
+    public static KotlinType getDefaultPrimitiveNumberType(@NotNull Collection<KotlinType> supertypes) {
         if (supertypes.isEmpty()) {
             return null;
         }

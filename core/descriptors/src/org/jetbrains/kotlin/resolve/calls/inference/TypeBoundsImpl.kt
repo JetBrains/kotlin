@@ -114,7 +114,7 @@ public class TypeBoundsImpl(
         //fun <T> foo(t: T, consumer: Consumer<T>): T
         //foo(1, c: Consumer<Any>) - infer Int, not Any here
 
-        val superTypeOfNumberLowerBounds = TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds)
+        val superTypeOfNumberLowerBounds = commonSupertypeForNumberTypes(numberLowerBounds)
         if (tryPossibleAnswer(bounds, superTypeOfNumberLowerBounds)) {
             return setOf(superTypeOfNumberLowerBounds!!)
         }
@@ -152,7 +152,7 @@ public class TypeBoundsImpl(
 
         // For non-denotable number types only, no valid types are mentioned, so common supertype is valid
         val numberLowerBounds = filterBounds(bounds, LOWER_BOUND).filter { it.constructor is IntegerValueTypeConstructor }
-        val superTypeOfNumberLowerBounds = TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds)
+        val superTypeOfNumberLowerBounds = commonSupertypeForNumberTypes(numberLowerBounds)
         if (possibleAnswer == superTypeOfNumberLowerBounds) return true
 
         return false
@@ -181,5 +181,26 @@ public class TypeBoundsImpl(
             }
         }
         return true
+    }
+
+    private fun commonSupertypeForNumberTypes(numberLowerBounds: Collection<KotlinType>): KotlinType? {
+        if (numberLowerBounds.isEmpty()) return null
+        val intersectionOfSupertypes = getIntersectionOfSupertypes(numberLowerBounds)
+        return TypeUtils.getDefaultPrimitiveNumberType(intersectionOfSupertypes) ?:
+                CommonSupertypes.commonSupertype(numberLowerBounds)
+    }
+
+    private fun getIntersectionOfSupertypes(types: Collection<KotlinType>): Set<KotlinType> {
+        val upperBounds = HashSet<KotlinType>()
+        for (type in types) {
+            val supertypes = type.constructor.supertypes
+            if (upperBounds.isEmpty()) {
+                upperBounds.addAll(supertypes)
+            }
+            else {
+                upperBounds.retainAll(supertypes)
+            }
+        }
+        return upperBounds
     }
 }
