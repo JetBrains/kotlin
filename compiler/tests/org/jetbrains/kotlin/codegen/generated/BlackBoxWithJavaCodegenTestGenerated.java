@@ -47,6 +47,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("classCompanion")
+    public void testClassCompanion() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/classCompanion/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("classObjectAccessor")
     public void testClassObjectAccessor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/classObjectAccessor/");
@@ -62,6 +68,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     @TestMetadata("inline")
     public void testInline() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/inline/");
+        doTestWithJava(fileName);
+    }
+
+    @TestMetadata("interfaceCompanion")
+    public void testInterfaceCompanion() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/interfaceCompanion/");
         doTestWithJava(fileName);
     }
 
