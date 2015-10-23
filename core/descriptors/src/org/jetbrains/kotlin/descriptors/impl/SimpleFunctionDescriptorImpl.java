@@ -115,4 +115,14 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 null, /* copyOverrides = */ true, getKind(), getValueParameters(), getExtensionReceiverParameterType(), getReturnType(), name
         );
     }
+
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptor createCopyWithNewValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
+        return (SimpleFunctionDescriptorImpl) doSubstitute(
+                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
+                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                null, /* copyOverrides = */ true, getKind(), valueParameters, getExtensionReceiverParameterType(), getReturnType(), null
+        );
+    }
 }
