@@ -125,7 +125,7 @@ import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationParameterTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
-import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractEvaluateExpressionTest
+import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
 import org.jetbrains.kotlin.safeDelete.AbstractJetSafeDeleteTest
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
@@ -324,7 +324,7 @@ fun main(args: Array<String>) {
             model("resolveAnnotations/parameters")
         }
 
-        testClass<AbstractEvaluateExpressionTest>() {
+        testClass<AbstractCompileTimeConstantEvaluatorTest>() {
             model("evaluate/constant", testMethod = "doConstantTest")
             model("evaluate/isPure", testMethod = "doIsPureTest")
             model("evaluate/usesVariableAsConstant", testMethod = "doUsesVariableAsConstantTest")

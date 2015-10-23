@@ -30,9 +30,8 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 import java.util.regex.Pattern
-import kotlin.test.assertNotNull
 
-public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {
+public abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotationDescriptorResolveTest() {
 
     // Test directives should look like [// val testedPropertyName: expectedValue]
     fun doConstantTest(path: String) {
