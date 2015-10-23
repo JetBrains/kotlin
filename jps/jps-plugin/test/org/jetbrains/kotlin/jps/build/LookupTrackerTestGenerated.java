@@ -65,4 +65,10 @@ public class LookupTrackerTestGenerated extends AbstractLookupTrackerTest {
         doTest(fileName);
     }
 
+    @TestMetadata("syntheticProperties")
+    public void testSyntheticProperties() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/syntheticProperties/");
+        doTest(fileName);
+    }
+
 }
