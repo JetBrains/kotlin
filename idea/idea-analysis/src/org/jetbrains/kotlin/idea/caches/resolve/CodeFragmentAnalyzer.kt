@@ -126,7 +126,7 @@ public class CodeFragmentAnalyzer(
                 dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
             }
             is KtFile -> {
-                scopeForContextElement = resolveSession.getFileScopeProvider().getFileScope(context)
+                scopeForContextElement = resolveSession.getFileScopeProvider().getFileScopeChain(context)
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             else -> return null

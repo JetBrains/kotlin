@@ -95,7 +95,7 @@ public class LazyScriptDescriptor(
     override fun getScriptCodeDescriptor() = scriptCodeDescriptor()
 
     override fun getScopeForBodyResolution(): LexicalScope {
-        return LexicalScopeImpl(resolveSession.fileScopeProvider.getFileScope(jetScript.getContainingJetFile()),
+        return LexicalScopeImpl(resolveSession.fileScopeProvider.getFileScopeChain(jetScript.getContainingJetFile()),
                                 this, false, implicitReceiver, "Scope for body resolution for " + this) {
             for (valueParameterDescriptor in getScriptCodeDescriptor().valueParameters) {
                 addVariableDescriptor(valueParameterDescriptor)

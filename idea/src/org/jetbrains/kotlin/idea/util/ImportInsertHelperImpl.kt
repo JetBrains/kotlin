@@ -21,7 +21,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.caches.resolve.getFileKtScope
+import org.jetbrains.kotlin.idea.caches.resolve.getFileScopeChain
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -126,7 +127,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val target = descriptor.getImportableDescriptor()
 
             val name = target.name
-            val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
+            val topLevelScope = resolutionFacade.getFileKtScope(file)
 
             // check if import is not needed
             val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
@@ -231,7 +232,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                     .filter(::isVisible)
                     .map { it.getName() }
 
-            val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
+            val topLevelScope = resolutionFacade.getFileScopeChain(file)
             val conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
                     .flatMap {
                         importedScopes.map { scope -> scope.getClassifier(it, NoLookupLocation.FROM_IDE) }.filterNotNull()
@@ -247,7 +248,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             val addedImport = addImport(parentFqName, true)
 
-            val newTopLevelScope = resolutionFacade.getFileTopLevelScope(file)
+            val newTopLevelScope = resolutionFacade.getFileKtScope(file)
             if (!isAlreadyImported(target, newTopLevelScope, targetFqName)) {
                 addedImport.delete()
                 return ImportDescriptorResult.FAIL
@@ -276,7 +277,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
         private fun addExplicitImport(target: DeclarationDescriptor): ImportDescriptorResult {
             if (target is ClassDescriptor || target is PackageViewDescriptor) {
-                val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
+                val topLevelScope = resolutionFacade.getFileScopeChain(file)
                 val name = target.getName()
 
                 // check if there is a conflicting class imported with * import
@@ -307,7 +308,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             }
 
             if (importsToCheck.isNotEmpty()) {
-                val topLevelScope = resolutionFacade.getFileTopLevelScope(file)
+                val topLevelScope = resolutionFacade.getFileScopeChain(file)
                 for (classFqName in importsToCheck) {
                     val classifier = topLevelScope.getClassifier(classFqName.shortName(), NoLookupLocation.FROM_IDE)
                     if (classifier?.importableFqName != classFqName) {

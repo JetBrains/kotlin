@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.caches.resolve.getFileKtScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
@@ -199,7 +199,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun findReferencesToRestore(file: PsiFile, blockStart: Int, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {
         if (file !is KtFile) return listOf()
 
-        val fileResolutionScope = file.getResolutionFacade().getFileTopLevelScope(file)
+        val fileResolutionScope = file.getResolutionFacade().getFileKtScope(file)
         return referenceData.map {
             val reference = findReference(it, file, blockStart)
             if (reference != null)

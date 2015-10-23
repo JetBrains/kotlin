@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.caches.resolve.getFileScopeChain
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.getResolutionScope
@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.withNoFileScope
 import java.util.*
@@ -138,7 +139,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             val resolutionScope = place.getResolutionScope(bindingContext, place.getResolutionFacade())
             val noImportsScope = resolutionScope.withNoFileScope()
 
-            return isInScope(noImportsScope.asJetScope())
+            return isInScope(noImportsScope.asKtScope())
                     || resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope) }
         }
     }
@@ -218,7 +219,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.pathStr }.joinTo(this, "\n")
             }.toString()
             val fileWithImports = KtPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
-            val scope = fileWithImports.getResolutionFacade().getFileTopLevelScope(fileWithImports)
+            val scope = fileWithImports.getResolutionFacade().getFileScopeChain(fileWithImports)
 
             for (fqName in classNamesToCheck) {
                 if (scope.getClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqName != fqName) {

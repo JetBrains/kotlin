@@ -171,7 +171,7 @@ public class JetOverloadTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         KtNamedFunction function = KtPsiFactoryKt.KtPsiFactory(getProject()).createFunction(funDecl);
-        ImportingScope scope = ScopeUtilsKt.memberScopeAsFileScope(JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsPackageScope());
+        ImportingScope scope = ScopeUtilsKt.memberScopeAsImportingScope(JvmPlatform.INSTANCE$.getBuiltIns().getBuiltInsPackageScope());
         return functionDescriptorResolver.resolveFunctionDescriptor(root, scope, function, JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }
 }

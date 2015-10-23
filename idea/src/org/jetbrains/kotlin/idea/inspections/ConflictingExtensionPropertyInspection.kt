@@ -31,7 +31,7 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.caches.resolve.getFileScopeChain
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         val file = session.file as? KtFile ?: return PsiElementVisitor.EMPTY_VISITOR
-        val fileScope = file.getResolutionFacade().getFileTopLevelScope(file)
+        val fileScope = file.getResolutionFacade().getFileScopeChain(file)
 
         return object : KtVisitorVoid() {
             override fun visitProperty(property: KtProperty) {

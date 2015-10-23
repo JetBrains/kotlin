@@ -270,8 +270,8 @@ public class ResolveElementCache(
             is KtInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as KtEnumEntry, file)
 
             is KtImportList -> {
-                val scope = resolveSession.getFileScopeProvider().getFileScope(resolveElement.getContainingJetFile())
-                scope.forceResolveAllImports()
+                val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingJetFile())
+                resolver.forceResolveAllImports()
                 resolveSession.trace
             }
 

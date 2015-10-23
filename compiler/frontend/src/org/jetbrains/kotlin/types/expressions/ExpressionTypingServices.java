@@ -185,7 +185,7 @@ public class ExpressionTypingServices {
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         if (containingDescriptor instanceof ScriptDescriptor) {
-            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, ScopeUtilsKt.asJetScope(scope));
+            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, ScopeUtilsKt.asKtScope(scope));
         }
 
         return r;

@@ -78,7 +78,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -711,7 +711,7 @@ private fun ExtractionData.inferParametersInfo(
                     options.captureLocalFunctions
                     && originalRef.getReferencedName() == originalDescriptor.getName().asString() // to forbid calls by convention
                     && originalDeclaration is KtNamedFunction && originalDeclaration.isLocal()
-                    && (targetScope == null || originalDescriptor !in targetScope.asJetScope().getFunctions(originalDescriptor.name, NoLookupLocation.FROM_IDE))
+                    && (targetScope == null || originalDescriptor !in targetScope.asKtScope().getFunctions(originalDescriptor.name, NoLookupLocation.FROM_IDE))
 
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
 

@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.caches.resolve.getFileScopeChain
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -116,7 +116,7 @@ public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolut
         }
 
         if (parent is KtFile) {
-            return resolutionFacade.getFileTopLevelScope(parent)
+            return resolutionFacade.getFileScopeChain(parent)
         }
     }
     error("Not in JetFile")
@@ -178,7 +178,7 @@ private fun expectedType(call: Call, bindingContext: BindingContext): KotlinType
 fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExpression, canChangeTypeToSubtype: Boolean): Boolean {
     val declaredType = (resolveToDescriptor() as? CallableDescriptor)?.returnType ?: return false
     val bindingContext = initializerOrBodyExpression.analyze()
-    val scope = initializerOrBodyExpression.getResolutionScope(bindingContext, initializerOrBodyExpression.getResolutionFacade()).asJetScope()
+    val scope = initializerOrBodyExpression.getResolutionScope(bindingContext, initializerOrBodyExpression.getResolutionFacade()).asKtScope()
     val expressionType = initializerOrBodyExpression.computeTypeInContext(scope) ?: return false
     if (KotlinTypeChecker.DEFAULT.equalTypes(expressionType, declaredType)) return true
     return canChangeTypeToSubtype && expressionType.isSubtypeOf(declaredType)

@@ -556,7 +556,7 @@ public class DescriptorResolver {
 
             Name name = nameExpression.getReferencedNameAsName();
 
-            ClassifierDescriptor classifier = ScopeUtilsKt.asJetScope(scope).getClassifier(name, NoLookupLocation.UNSORTED);
+            ClassifierDescriptor classifier = ScopeUtilsKt.asKtScope(scope).getClassifier(name, NoLookupLocation.UNSORTED);
             if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == descriptor) continue;
 
             if (classifier != null) {

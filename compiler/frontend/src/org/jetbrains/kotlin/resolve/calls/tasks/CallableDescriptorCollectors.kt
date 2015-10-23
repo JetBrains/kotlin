@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.LibrarySourceHacks
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -93,7 +94,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
     override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return lexicalScope.collectAllFromMeAndParent {
-            if (it.ownerDescriptor is FunctionDescriptor) {
+            if (it !is ImportingScope && it.ownerDescriptor is FunctionDescriptor) {
                 it.getDeclaredFunctions(name, location).filter { it.extensionReceiverParameter == null } +
                     getConstructors(it.getDeclaredClassifier(name, location))
             }

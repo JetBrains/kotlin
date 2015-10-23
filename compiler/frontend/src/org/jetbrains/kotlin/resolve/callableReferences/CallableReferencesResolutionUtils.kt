@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.FunctionPlaceholders
 import org.jetbrains.kotlin.types.KotlinType
@@ -102,7 +102,7 @@ public fun resolvePossiblyAmbiguousCallableReference(
 
     fun resolveInScope(traceTitle: String, staticScope: KtScope): OverloadResolutionResults<CallableDescriptor> {
         val temporaryTraceAndCache = TemporaryTraceAndCache.create(context, traceTitle, reference)
-        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(staticScope.memberScopeAsFileScope())
+        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(staticScope.memberScopeAsImportingScope())
         val results = resolvePossiblyAmbiguousCallableReference(reference, ReceiverValue.NO_RECEIVER, newContext, resolutionMode, callResolver)
         resolutionMode.acceptResolution(results, temporaryTraceAndCache)
         return results

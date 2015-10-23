@@ -17,19 +17,21 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 
 public interface FileScopeProvider {
-    fun getFileScope(file: KtFile): LazyImportingScope
+    fun getFileScopeChain(file: KtFile): ImportingScope
+    fun getImportResolver(file: KtFile): ImportResolver
 
     public object ThrowException : FileScopeProvider {
-        override fun getFileScope(file: KtFile): LazyImportingScope {
-            throw UnsupportedOperationException("Should not be called")
-        }
+        override fun getFileScopeChain(file: KtFile) = throw UnsupportedOperationException("Should not be called")
+        override fun getImportResolver(file: KtFile) = throw UnsupportedOperationException("Should not be called")
     }
 
     public interface AdditionalScopes {
         public val scopes: List<KtScope>
     }
 }
+
 

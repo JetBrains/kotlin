@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.keysToMap
-import java.util.HashSet
+import java.util.*
 
 public class DeclarationResolver(
         private val annotationResolver: AnnotationResolver,
@@ -43,7 +43,7 @@ public class DeclarationResolver(
 ) {
 
     public fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
-        val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileScope(it) }
+        val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileScopeChain(it) }
         for ((file, fileScope) in filesToScope) {
             annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace)
             annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), trace)

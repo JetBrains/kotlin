@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -87,7 +87,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
 
         val function = resolvedCall.getResultingDescriptor() as? FunctionDescriptor ?: return null
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
-        val property = findSyntheticProperty(function, resolutionScope.asJetScope()) ?: return null
+        val property = findSyntheticProperty(function, resolutionScope.asKtScope()) ?: return null
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(callee)
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
@@ -102,7 +102,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             val newExpression = applyTo(callExpressionCopy, property.name)
             val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
             val newBindingContext = newExpression.analyzeInContext(
-                    resolutionScope.asJetScope(),
+                    resolutionScope.asKtScope(),
                     contextExpression = callExpression,
                     trace = bindingTrace,
                     dataFlowInfo = dataFlowInfo,

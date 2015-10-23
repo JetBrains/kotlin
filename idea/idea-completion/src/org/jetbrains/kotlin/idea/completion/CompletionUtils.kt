@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
@@ -194,7 +194,7 @@ fun thisExpressionItems(bindingContext: BindingContext, position: KtExpression, 
     val psiFactory = KtPsiFactory(position)
 
     val result = ArrayList<ThisItemLookupObject>()
-    for ((receiver, expressionFactory) in scope.asJetScope().getImplicitReceiversWithInstanceToExpression()) {
+    for ((receiver, expressionFactory) in scope.asKtScope().getImplicitReceiversWithInstanceToExpression()) {
         if (expressionFactory == null) continue
         // if prefix does not start with "this@" do not include immediate this in the form with label
         val expression = expressionFactory.createExpression(psiFactory, shortThis = !prefix.startsWith("this@")) as? KtThisExpression ?: continue
