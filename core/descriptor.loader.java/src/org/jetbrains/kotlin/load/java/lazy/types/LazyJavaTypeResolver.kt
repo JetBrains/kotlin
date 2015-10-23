@@ -28,22 +28,16 @@ import org.jetbrains.kotlin.load.java.components.TypeUsage.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
-import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND
-import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND
-import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.INFLEXIBLE
+import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.*
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.Variance.INVARIANT
-import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
-import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.sure
-import java.util.*
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
@@ -168,19 +162,16 @@ class LazyJavaTypeResolver(
         }
 
         // We do not memoize the results of this method, because it would consume much memory, and the real gain is little:
-        // the case this method accounts for is very rare, not point in optimizing it
+        // the case this method accounts for is very rare, no point in optimizing it
         private fun getConstructorTypeParameterSubstitute(): KotlinType {
-            // If a Java-constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
-            // so we replace them by intersections of their upper bounds
-            val supertypesJet = HashSet<KotlinType>()
-            for (supertype in (classifier() as JavaTypeParameter).getUpperBounds()) {
-                supertypesJet.add(transformJavaType(supertype, UPPER_BOUND.toAttributes()))
-            }
-            if (supertypesJet.isEmpty()) {
+            // If a Java constructor declares its own type parameters, we have no way of directly expressing them in Kotlin,
+            // so we replace each type parameter with its representative upper bound (which in Java is also the first bound)
+            val upperBounds = (classifier() as JavaTypeParameter).upperBounds
+            if (upperBounds.isEmpty()) {
                 return c.module.builtIns.nullableAnyType
             }
-            return TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, supertypesJet)
-                        ?: ErrorUtils.createErrorType("Can't intersect upper bounds of " + javaType.getPresentableText())
+
+            return transformJavaType(upperBounds.first(), UPPER_BOUND.toAttributes())
         }
 
         private fun isRaw(): Boolean {
