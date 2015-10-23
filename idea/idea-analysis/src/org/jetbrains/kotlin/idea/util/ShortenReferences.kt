@@ -40,9 +40,10 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.findFirstFromMeAndParent
 import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
-import org.jetbrains.kotlin.resolve.scopes.utils.getImportingScopeChain
 import java.util.*
 
 public class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT }) {
@@ -280,7 +281,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             val targetByName = if (target is ClassifierDescriptor)
                 scope.getClassifier(name, NoLookupLocation.FROM_IDE)
             else
-                scope.getImportingScopeChain().getPackage(name)
+                scope.findFirstFromMeAndParent { (it as? ImportingScope)?.getPackage(name) }
             val canShortenNow = targetByName?.asString() == target.asString()
 
             processQualifiedElement(type, target, canShortenNow)

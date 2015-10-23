@@ -26,17 +26,11 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 
-@Deprecated("We probably don't need it at all")
-public fun LexicalScope.getImportingScopeChain(): ImportingScope {
-    var currentScope = this
-    while(currentScope.parent != null) {
-        currentScope = currentScope.parent!!
-    }
-    assert(currentScope is ImportingScope) {
-        "Not FileScope without parent: $currentScope" // todo improve debug message
-    }
-    return currentScope as ImportingScope
-}
+public val LexicalScope.parentsWithSelf: Sequence<LexicalScope>
+    get() = sequence(this) { it.parent }
+
+public val LexicalScope.parents: Sequence<LexicalScope>
+    get() = parentsWithSelf.drop(1)
 
 /**
  * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
@@ -84,25 +78,21 @@ public fun LexicalScope.getDescriptorsFiltered(
 
 @Deprecated("Use getOwnProperties instead")
 public fun LexicalScope.getLocalVariable(name: Name): VariableDescriptor? {
-    processForMeAndParent {
-        if (it is LexicalScopeWrapper) {
-            it.delegate.getLocalVariable(name)?.let { return it }
-        }
-        else if (it is MemberScopeToImportingScopeAdapter) { // todo remove hack
-            it.memberScope.getLocalVariable(name)?.let { return it }
-        }
-        else if (it !is ImportingScope && it !is LexicalChainedScope) { // todo check this
-            it.getDeclaredVariables(name, NoLookupLocation.UNSORTED).singleOrNull()?.let { return it }
+    return findFirstFromMeAndParent {
+        when {
+            it is LexicalScopeWrapper -> it.delegate.getLocalVariable(name)
+
+            it is MemberScopeToImportingScopeAdapter -> it.memberScope.getLocalVariable(name) /* todo remove hack*/
+
+            it !is ImportingScope && it !is LexicalChainedScope -> it.getDeclaredVariables(name, NoLookupLocation.UNSORTED).singleOrNull() /* todo check this*/
+
+            else -> null
         }
     }
-    return null
 }
 
 public fun LexicalScope.getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-    processForMeAndParent {
-        it.getDeclaredClassifier(name, location)?.let { return it }
-    }
-    return null
+    return findFirstFromMeAndParent { it.getDeclaredClassifier(name, location) }
 }
 
 public fun LexicalScope.takeSnapshot(): LexicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
@@ -131,10 +121,7 @@ private class LexicalToKtScopeAdapter(lexicalScope: LexicalScope): KtScope {
     override fun getClassifier(name: Name, location: LookupLocation) = lexicalScope.getClassifier(name, location)
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
-        lexicalScope.processForMeAndParent {
-            (it as? ImportingScope)?.getPackage(name)?.let { return it }
-        }
-        return null
+        return lexicalScope.findFirstFromMeAndParent { (it as? ImportingScope)?.getPackage(name) }
     }
 
     override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
@@ -245,7 +232,7 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
     }
 }
 
-private inline fun LexicalScope.processForMeAndParent(process: (LexicalScope) -> Unit) {
+inline fun LexicalScope.processForMeAndParent(process: (LexicalScope) -> Unit) {
     var currentScope = this
     process(currentScope)
 
@@ -271,7 +258,7 @@ private inline fun <T: Any> LexicalScope.collectFromMeAndParent(
     return result ?: emptyList()
 }
 
-internal inline fun <T: Any> LexicalScope.collectAllFromMeAndParent(
+inline fun <T: Any> LexicalScope.collectAllFromMeAndParent(
         collect: (LexicalScope) -> Collection<T>
 ): Collection<T> {
     var result: Collection<T>? = null
@@ -279,32 +266,40 @@ internal inline fun <T: Any> LexicalScope.collectAllFromMeAndParent(
     return result ?: emptySet()
 }
 
-public fun LexicalScope.addImportScope(importScope: KtScope): LexicalScope {
-    val fileScope = getImportingScopeChain()
-    val scopeWithAdditionImport =
-            LexicalChainedScope(fileScope, fileScope.ownerDescriptor, false, null, "Scope with addition import", importScope)
-    return replaceFileScope(scopeWithAdditionImport)
+inline fun <T: Any> LexicalScope.findFirstFromMeAndParent(fetch: (LexicalScope) -> T?): T? {
+    processForMeAndParent { fetch(it)?.let { return it } }
+    return null
 }
 
-//TODO!!!
-public fun LexicalScope.replaceFileScope(fileScopeReplace: LexicalScope): LexicalScope {
-    if (this is ImportingScope) return fileScopeReplace
-
-    return LexicalScopeWrapper(this, fileScopeReplace)
+fun LexicalScope.addImportScope(importScope: KtScope): LexicalScope {
+    if (this is ImportingScope) {
+        return importScope.memberScopeAsImportingScope(this)
+    }
+    else {
+        val lastNonImporting = parentsWithSelf.last { it !is ImportingScope }
+        val firstImporting = lastNonImporting.parent as ImportingScope?
+        val newImportingScope = importScope.memberScopeAsImportingScope(firstImporting)
+        return LexicalScopeWrapper(this, newImportingScope)
+    }
 }
 
-public fun LexicalScope.withNoFileScope(): LexicalScope = replaceFileScope(MemberScopeToImportingScopeAdapter(null, KtScope.Empty))
+fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): LexicalScope {
+    return if (this is ImportingScope)
+        importingScopeChain!!
+    else
+        LexicalScopeWrapper(this, importingScopeChain)
+}
 
-private class LexicalScopeWrapper(val delegate: LexicalScope, val fileScopeReplace: LexicalScope): LexicalScope by delegate {
+private class LexicalScopeWrapper(val delegate: LexicalScope, val newImportingScopeChain: ImportingScope?): LexicalScope by delegate {
     override val parent: LexicalScope? by lazy(LazyThreadSafetyMode.NONE) {
-        assert(delegate !is ImportingScope) { "We should replace FileScope($delegate) to $fileScopeReplace" }
-        val parent = delegate.parent!!
+        assert(delegate !is ImportingScope)
 
-        if (parent is ImportingScope) {
-            fileScopeReplace
+        val parent = delegate.parent
+        if (parent == null || parent is ImportingScope) {
+            newImportingScopeChain
         }
         else {
-            LexicalScopeWrapper(parent, fileScopeReplace)
+            LexicalScopeWrapper(parent, newImportingScopeChain)
         }
     }
 }

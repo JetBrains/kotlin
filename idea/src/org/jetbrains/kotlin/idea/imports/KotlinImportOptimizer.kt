@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
-import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
-import org.jetbrains.kotlin.resolve.scopes.utils.withNoFileScope
+import org.jetbrains.kotlin.resolve.scopes.utils.*
 import java.util.*
 
 public class KotlinImportOptimizer() : ImportOptimizer {
@@ -137,7 +134,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             }
 
             val resolutionScope = place.getResolutionScope(bindingContext, place.getResolutionFacade())
-            val noImportsScope = resolutionScope.withNoFileScope()
+            val noImportsScope = resolutionScope.replaceImportingScopes(null)
 
             return isInScope(noImportsScope.asKtScope())
                     || resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope) }
