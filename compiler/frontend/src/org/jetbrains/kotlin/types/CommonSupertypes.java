@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
+import org.jetbrains.kotlin.utils.DFS;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
 import static org.jetbrains.kotlin.types.Variance.IN_VARIANCE;
 import static org.jetbrains.kotlin.types.Variance.OUT_VARIANCE;
 
@@ -328,5 +328,58 @@ public class CommonSupertypes {
         for (KotlinType type : typeConstructor.getSupertypes()) {
             markAll(type.getConstructor(), markerSet);
         }
+    }
+
+    @NotNull
+    public static List<TypeConstructor> topologicallySortSuperclassesAndRecordAllInstances(
+            @NotNull KotlinType type,
+            @NotNull final Map<TypeConstructor, Set<KotlinType>> constructorToAllInstances,
+            @NotNull final Set<TypeConstructor> visited
+    ) {
+        return DFS.dfs(
+                Collections.singletonList(type),
+                new DFS.Neighbors<KotlinType>() {
+                    @NotNull
+                    @Override
+                    public Iterable<KotlinType> getNeighbors(KotlinType current) {
+                        TypeSubstitutor substitutor = TypeSubstitutor.create(current);
+                        Collection<KotlinType> supertypes = current.getConstructor().getSupertypes();
+                        List<KotlinType> result = new ArrayList<KotlinType>(supertypes.size());
+                        for (KotlinType supertype : supertypes) {
+                            if (visited.contains(supertype.getConstructor())) {
+                                continue;
+                            }
+                            result.add(substitutor.safeSubstitute(supertype, Variance.INVARIANT));
+                        }
+                        return result;
+                    }
+                },
+                new DFS.Visited<KotlinType>() {
+                    @Override
+                    public boolean checkAndMarkVisited(KotlinType current) {
+                        return visited.add(current.getConstructor());
+                    }
+                },
+                new DFS.NodeHandlerWithListResult<KotlinType, TypeConstructor>() {
+                    @Override
+                    public boolean beforeChildren(KotlinType current) {
+                        TypeConstructor constructor = current.getConstructor();
+
+                        Set<KotlinType> instances = constructorToAllInstances.get(constructor);
+                        if (instances == null) {
+                            instances = new HashSet<KotlinType>();
+                            constructorToAllInstances.put(constructor, instances);
+                        }
+                        instances.add(current);
+
+                        return true;
+                    }
+
+                    @Override
+                    public void afterChildren(KotlinType current) {
+                        result.addFirst(current.getConstructor());
+                    }
+                }
+        );
     }
 }
