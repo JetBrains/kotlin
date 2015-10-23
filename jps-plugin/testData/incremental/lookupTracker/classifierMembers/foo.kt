@@ -18,7 +18,7 @@ import bar.*
         /*c:foo.A*/foo()
         this./*c:foo.A*/a
         this./*c:foo.A*/foo()
-        /*c:foo.A c:foo.A.Companion p:foo p:bar*/baz()
+        /*c:foo.A c:foo.A.Companion p:foo p:bar c:foo.A(getBaz) c:foo.A(getBAZ)*/baz()
         /*c:foo.A c:foo.A.Companion p:foo p:bar*/Companion./*c:foo.A.Companion*/a
         /*c:foo.A c:foo.A.Companion p:foo p:bar*/O./*c:foo.A.O*/v = "OK"
     }
