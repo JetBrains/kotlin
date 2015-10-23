@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.j2kText
 import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
+import org.jetbrains.kotlin.idea.debugger.isInsideInlinedArgument
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.Name
@@ -163,25 +164,14 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
                     if (visibleVariables == null) return@lamdba null
 
-                    fun isLocalVariableForParameterPresent(p: ValueParameterDescriptor): Boolean {
-                        return visibleVariables?.firstOrNull {
-                            if (it.first.name() != p.name.asString()) return@firstOrNull false
-
-                            val parameterClassDescriptor = p.type.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstOrNull true
-                            val actualClassDescriptor = it.second.asValue().asmType.getClassDescriptor(debuggerContext.project) ?: return@firstOrNull true
-                            return@firstOrNull runReadAction { DescriptorUtils.isSubclass(actualClassDescriptor, parameterClassDescriptor) }
-                        } != null
-                    }
-
                     for (lambda in lambdas) {
-                        val function = lambda.analyze(BodyResolveMode.PARTIAL).get(BindingContext.FUNCTION, lambda)
-                        if (function != null && function.valueParameters.all { isLocalVariableForParameterPresent(it) }) {
+                        if (isInsideInlinedArgument(lambda, visibleVariables!!)) {
                             val fragmentForVisibleVariables = createCodeFragmentForVisibleVariables(lambda.project, visibleVariables!!)
-                                return@lamdba createWrappingContext(
-                                        fragmentForVisibleVariables.first,
-                                        fragmentForVisibleVariables.second,
-                                        lambda.bodyExpression,
-                                        lambda.project)
+                            return@lamdba createWrappingContext(
+                                    fragmentForVisibleVariables.first,
+                                    fragmentForVisibleVariables.second,
+                                    lambda.bodyExpression,
+                                    lambda.project)
                         }
                     }
                     return@lamdba null
