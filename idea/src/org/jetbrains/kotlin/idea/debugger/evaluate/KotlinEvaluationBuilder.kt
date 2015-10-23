@@ -40,7 +40,6 @@ import com.intellij.util.ExceptionUtil
 import com.sun.jdi.InvocationException
 import com.sun.jdi.ObjectReference
 import com.sun.jdi.VMDisconnectedException
-import com.sun.jdi.VirtualMachine
 import com.sun.jdi.request.EventRequest
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.jdi.JDIEval
@@ -66,8 +65,6 @@ import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.attachment.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.util.attachment.mergeAttachments
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
@@ -84,6 +81,7 @@ import java.util.*
 
 internal val RECEIVER_NAME = "\$receiver"
 internal val THIS_NAME = "this"
+val logger = Logger.getInstance(KotlinEvaluator::class.java)
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -120,14 +118,10 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
     }
 }
 
-val logger = Logger.getInstance(javaClass<KotlinEvaluator>())
-
-class KotlinEvaluator(val codeFragment: KtCodeFragment,
-                      val sourcePosition: SourcePosition
-) : Evaluator {
+class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: SourcePosition): Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
         if (codeFragment.text.isEmpty()) {
-            return context.debugProcess.virtualMachineProxy.mirrorOf()
+            return context.debugProcess.virtualMachineProxy.mirrorOfVoid()
         }
 
         var isCompiledDataFromCache = true
@@ -164,7 +158,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
                                 ExceptionUtil.getThrowableText(e),
                                 mergeAttachments(*attachments)))
 
-            val cause = if (e.getMessage() != null) ": ${e.getMessage()}" else ""
+            val cause = if (e.message != null) ": ${e.message}" else ""
             exception("An exception occurs during Evaluate Expression Action $cause")
         }
     }
@@ -178,24 +172,20 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
             codeFragment.checkForErrors(false)
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
-            if (extractionResult == null) {
-                throw IllegalStateException("Code fragment cannot be extracted to function")
-            }
+                                            ?: throw IllegalStateException("Code fragment cannot be extracted to function")
             val parametersDescriptor = extractionResult.getParametersForDebugger(codeFragment)
             val extractedFunction = extractionResult.declaration as KtNamedFunction
 
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
 
             val outputFiles = classFileFactory.asList().filterClassFiles()
-                    .sortedBy { it.relativePath.length() }
+                    .sortedBy { it.relativePath.length }
 
             val funName = runReadAction { extractedFunction.name }
-            if (funName == null) {
-                throw IllegalStateException("Extracted function should have a name: ${extractedFunction.text}")
-            }
+                                        ?: throw IllegalStateException("Extracted function should have a name: ${extractedFunction.text}")
 
-            val additionalFiles = if (outputFiles.size() < 2) emptyList()
-                                  else outputFiles.subList(1, outputFiles.size()).map { getClassName(it.relativePath) to it.asByteArray() }
+            val additionalFiles = if (outputFiles.size < 2) emptyList()
+                                  else outputFiles.subList(1, outputFiles.size).map { getClassName(it.relativePath) to it.asByteArray() }
 
             return CompiledDataDescriptor(
                     outputFiles.first().asByteArray(),
@@ -353,7 +343,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
                 val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true)
 
                 val generateClassFilter = object : GenerationState.GenerateClassFilter() {
-                    override fun shouldGeneratePackagePart(file: KtFile) = file == jetFile
+                    override fun shouldGeneratePackagePart(jetFile: KtFile) = jetFile == jetFile
                     override fun shouldAnnotateClass(classOrObject: KtClassOrObject) = true
                     override fun shouldGenerateClass(classOrObject: KtClassOrObject) = classOrObject.getContainingJetFile() == jetFile
                     override fun shouldGenerateScript(script: KtScript) = false
@@ -405,9 +395,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
                 val declarationDescriptor = paramAnonymousType.constructor.declarationDescriptor
                 if (declarationDescriptor is ClassDescriptor) {
                     val localVariable = visitor.findValue(localVariableName, asmType = null, checkType = false, failIfNotFound = false)
-                    if (localVariable == null) {
-                        exception("Couldn't find local variable this in current frame to get classType for anonymous type ${paramAnonymousType}}")
-                    }
+                                                ?: exception("Couldn't find local variable this in current frame to get classType for anonymous type $paramAnonymousType}")
                     record(CodegenBinding.ASM_TYPE, declarationDescriptor, localVariable.asmType)
                 }
             }
@@ -416,7 +404,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
         private fun exception(msg: String) = throw EvaluateExceptionUtil.createEvaluateException(msg)
 
         private fun exception(e: Throwable): Nothing {
-            val message = e.getMessage()
+            val message = e.message
             if (message != null) {
                 throw EvaluateExceptionUtil.createEvaluateException(message, e)
             }
@@ -429,7 +417,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment,
                     AnalyzingUtils.checkForSyntacticErrors(this)
                 }
                 catch (e: IllegalArgumentException) {
-                    throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
+                    throw EvaluateExceptionUtil.createEvaluateException(e.message)
                 }
 
                 val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this, createFlexibleTypesFile()))
@@ -489,7 +477,7 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
     jetFile.suppressDiagnosticsInDebugMode = true
 
     val list = jetFile.declarations
-    val function = list.get(0) as KtNamedFunction
+    val function = list[0] as KtNamedFunction
 
     function.receiverTypeReference?.debugTypeInfo = extractedFunction.receiverTypeReference?.debugTypeInfo
 
