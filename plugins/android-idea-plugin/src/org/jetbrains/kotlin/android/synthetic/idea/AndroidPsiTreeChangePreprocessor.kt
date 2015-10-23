@@ -76,10 +76,10 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
 
             if (module != null) {
                 val resourceManager = AndroidLayoutXmlFileManager.getInstance(module) ?: return false
-                val resDirectories = resourceManager.getModuleResDirectories()
+                val resDirectories = resourceManager.getAllModuleResDirectories()
                 val baseDirectory = xmlFile.parent?.parent?.virtualFile
 
-                if (baseDirectory in resDirectories && xmlFile.isLayoutXmlFile()) {
+                if (baseDirectory != null && baseDirectory in resDirectories && xmlFile.isLayoutXmlFile()) {
                     return true
                 }
             }
@@ -95,11 +95,16 @@ public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, Simpl
             }
         }
 
-        private fun AndroidLayoutXmlFileManager.getModuleResDirectories(): List<VirtualFile> {
-            val info = androidModuleInfo ?: return listOf()
-
+        private fun AndroidLayoutXmlFileManager.getAllModuleResDirectories(): List<VirtualFile> {
+            val module = androidModule ?: return listOf()
             val fileManager = VirtualFileManager.getInstance()
-            return info.resDirectories.map { fileManager.findFileByUrl("file://$it") }.filterNotNull()
+
+            return module.variants.fold(arrayListOf<VirtualFile>()) { list, variant ->
+                for (dir in variant.resDirectories) {
+                    fileManager.findFileByUrl("file://$dir")?.let { list += it }
+                }
+                list
+            }
         }
 
         private fun PsiFile.isLayoutXmlFile(): Boolean {

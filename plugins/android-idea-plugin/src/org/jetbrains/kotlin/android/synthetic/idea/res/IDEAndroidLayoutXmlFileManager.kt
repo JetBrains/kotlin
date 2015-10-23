@@ -16,47 +16,69 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
+import com.android.builder.model.SourceProvider
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.AndroidModuleInfo
+import org.jetbrains.kotlin.android.synthetic.res.AndroidModule
+import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
+import org.jetbrains.kotlin.android.synthetic.res.AndroidVariantData
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.android.synthetic.AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH
 
 public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
 
-    override val androidModuleInfo: AndroidModuleInfo? by lazy { module.androidFacet?.toAndroidModuleInfo() }
+    override val androidModule: AndroidModule? by lazy { module.androidFacet?.toAndroidModuleInfo() }
 
     override fun propertyToXmlAttributes(property: KtProperty): List<PsiElement> {
         val fqPath = property.fqName?.pathSegments() ?: return listOf()
-        if (fqPath.size() <= AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
+        if (fqPath.size <= SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
 
-        val layoutPackageName = fqPath[AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH].asString()
-        val layoutFiles = getLayoutXmlFiles()[layoutPackageName]
-        if (layoutFiles == null || layoutFiles.isEmpty()) return listOf()
+        fun handle(variantData: AndroidVariantData, defaultVariant: Boolean = false): List<PsiElement>? {
+            val layoutNamePosition = SYNTHETIC_PACKAGE_PATH_LENGTH + (if (defaultVariant) 0 else 1)
+            val layoutName = fqPath[layoutNamePosition].asString()
 
-        val propertyName = property.name
+            val layoutFiles = variantData[layoutName] ?: return null
+            if (layoutFiles.isEmpty()) return null
 
-        val attributes = arrayListOf<PsiElement>()
-        val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
-            if (retId == propertyName) attributes.add(valueElement)
+            val propertyName = property.name
+
+            val attributes = arrayListOf<PsiElement>()
+            val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
+                if (retId == propertyName) attributes.add(valueElement)
+            }
+
+            layoutFiles.forEach { it.accept(visitor) }
+            return attributes
         }
 
-        layoutFiles.forEach { it.accept(visitor) }
-        return attributes
+        for (variantData in getLayoutXmlFiles()) {
+            if (variantData.variant.isMainVariant && fqPath.size == SYNTHETIC_PACKAGE_PATH_LENGTH + 2) {
+                handle(variantData, true)?.let { return it }
+            }
+            else if (fqPath[SYNTHETIC_PACKAGE_PATH_LENGTH].asString() == variantData.variant.name) {
+                handle(variantData)?.let { return it }
+            }
+        }
+
+        return listOf()
     }
 
     private val Module.androidFacet: AndroidFacet?
         get() = AndroidFacet.getInstance(this)
 
-    private fun AndroidFacet.toAndroidModuleInfo(): AndroidModuleInfo? {
-        val applicationPackage = manifest?.getPackage()?.toString()
-        val mainResDirectories = allResourceDirectories.map { it.path }
+    private fun SourceProvider.toVariant() = AndroidVariant(name, resDirectories.map { it.absolutePath })
+
+    private fun AndroidFacet.toAndroidModuleInfo(): AndroidModule? {
+        val applicationPackage = manifest?.`package`?.toString()
 
         return if (applicationPackage != null) {
-            AndroidModuleInfo(applicationPackage, mainResDirectories)
+            val mainVariant = mainSourceProvider.toVariant()
+            val flavorVariants = flavorSourceProviders?.map { it.toVariant() } ?: listOf()
+            AndroidModule(applicationPackage, listOf(mainVariant) + flavorVariants)
         }
         else null
     }

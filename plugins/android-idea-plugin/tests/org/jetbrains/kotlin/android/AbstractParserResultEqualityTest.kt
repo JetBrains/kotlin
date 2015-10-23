@@ -19,20 +19,21 @@ package org.jetbrains.kotlin.android
 import com.intellij.openapi.module.ModuleManager
 import org.jetbrains.kotlin.android.synthetic.idea.TestConst
 import org.jetbrains.kotlin.android.synthetic.idea.res.IDESyntheticFileGenerator
+import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
 import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
-import kotlin.test.assertEquals
 
 public abstract class AbstractParserResultEqualityTest : KotlinAndroidTestCase() {
     public fun doTest(path: String) {
-        val project = myFixture.getProject()
+        val project = myFixture.project
         project.putUserData(TestConst.TESTDATA_PATH, path)
         val resDirs = getResourceDirs(path).map {
             myFixture.copyDirectoryToProject(it.name, it.name)
             "$path${it.name}/"
         }
 
-        val cliParser = CliSyntheticFileGenerator(project, "$path../AndroidManifest.xml", resDirs)
-        val ideParser = IDESyntheticFileGenerator(ModuleManager.getInstance(project).getModules()[0])
+        val variants = listOf(AndroidVariant.createMainVariant(resDirs))
+        val cliParser = CliSyntheticFileGenerator(project, "$path../AndroidManifest.xml", variants)
+        val ideParser = IDESyntheticFileGenerator(ModuleManager.getInstance(project).modules[0])
 
         val cliResult = cliParser.getSyntheticFiles().joinToString("\n\n")
         val ideResult = ideParser.getSyntheticFiles().joinToString("\n\n")
