@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.daemon.impl.ShowAutoImportPass
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.HighPriorityAction
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.HintAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
+import org.jetbrains.kotlin.idea.actions.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
@@ -80,12 +80,7 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
 
         if (suggestionCount == 0) return false
 
-        val suggestions = computeSuggestions()
-        val action = KotlinAddImportAction(element.project, editor, element, suggestions)
-        val hintText = ShowAutoImportPass.getMessage(suggestions.size > 1, action.highestPriorityFqName.asString())
-        HintManager.getInstance().showQuestionHint(editor, hintText, element.textOffset, element.textRange.endOffset, action)
-
-        return true
+        return createAction(element.project, editor).showHint()
     }
 
     override fun getText() = JetBundle.message("import.fix")
@@ -97,14 +92,17 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         CommandProcessor.getInstance().runUndoTransparentAction {
-            val suggestions = computeSuggestions()
-            KotlinAddImportAction(project, editor!!, element, suggestions).execute()
+            createAction(project, editor!!).execute()
         }
     }
 
     override fun startInWriteAction() = true
 
     private fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(element.getProject()).getModificationCount()
+
+    protected open fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
+        return createSingleImportAction(project, editor, element, computeSuggestions())
+    }
 
     fun computeSuggestions(): Collection<DeclarationDescriptor> {
         if (!element.isValid()) return listOf()
@@ -291,12 +289,25 @@ class MissingDelegateAccessorsAutoImportFix(element: KtExpression, diagnostics: 
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.DELEGATE(element)
 
+    override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
+        if (diagnostics.size > 1) {
+            return createGroupedImportsAction(project, editor, element, "Delegate accessors", computeSuggestions())
+        }
+
+        return super.createAction(project, editor)
+    }
+
     override fun getSupportedErrors() = ERRORS
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             assert(diagnostic.factory == Errors.DELEGATE_SPECIAL_FUNCTION_MISSING)
-            return MissingDelegateAccessorsAutoImportFix(diagnostic.psiElement as KtExpression, listOf(diagnostic))
+            return (diagnostic.psiElement as? KtExpression)?.let { MissingDelegateAccessorsAutoImportFix(it, listOf(diagnostic)) }
+        }
+
+        override fun doCreateActionsForAllProblems(sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> {
+            val element = sameTypeDiagnostics.first().psiElement
+            return (element as? KtExpression)?.let { MissingDelegateAccessorsAutoImportFix(it, sameTypeDiagnostics) }.singletonOrEmptyList()
         }
 
         private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
@@ -309,12 +320,25 @@ class MissingComponentsAutoImportFix(element: KtExpression, diagnostics: Collect
 
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.OPERATOR(element)
 
+    override fun createAction(project: Project, editor: Editor): KotlinAddImportAction {
+        if (diagnostics.size > 1) {
+            return createGroupedImportsAction(project, editor, element, "Component functions", computeSuggestions())
+        }
+
+        return super.createAction(project, editor)
+    }
+
     override fun getSupportedErrors() = ERRORS
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             assert(diagnostic.factory == Errors.COMPONENT_FUNCTION_MISSING)
-            return MissingComponentsAutoImportFix(diagnostic.psiElement as KtExpression, listOf(diagnostic))
+            return (diagnostic.psiElement as? KtExpression)?.let { MissingComponentsAutoImportFix(it, listOf(diagnostic)) }
+        }
+
+        override fun doCreateActionsForAllProblems(sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> {
+            val element = sameTypeDiagnostics.first().psiElement
+            return (element as? KtExpression)?.let { MissingComponentsAutoImportFix(it, sameTypeDiagnostics) }.singletonOrEmptyList()
         }
 
         private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }

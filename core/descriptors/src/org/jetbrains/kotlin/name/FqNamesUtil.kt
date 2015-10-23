@@ -47,6 +47,8 @@ public fun FqName.tail(prefix: FqName): FqName {
     }
 }
 
+public fun FqName.parentOrNull(): FqName? = if (this.isRoot) null else parent()
+
 private enum class State {
     BEGINNING,
     MIDDLE,
