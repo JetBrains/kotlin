@@ -10,6 +10,6 @@ public interface Generic <N, NN> {
     @org.jetbrains.annotations.Nullable
     NN b1(@org.jetbrains.annotations.Nullable NN nn);
 
-    static final class DefaultImpls {
+    final class DefaultImpls {
     }
 }

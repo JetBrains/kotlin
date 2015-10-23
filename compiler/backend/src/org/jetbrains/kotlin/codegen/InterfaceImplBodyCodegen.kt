@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_FINAL
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
 import org.jetbrains.org.objectweb.asm.Opcodes.V1_6
 import java.util.*
 
@@ -50,7 +49,7 @@ public class InterfaceImplBodyCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(
-                myClass, V1_6, ACC_PUBLIC or ACC_FINAL or ACC_STATIC,
+                myClass, V1_6, ACC_PUBLIC or ACC_FINAL,
                 typeMapper.mapDefaultImpls(descriptor).internalName,
                 null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )

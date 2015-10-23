@@ -35,6 +35,6 @@ public interface Trait {
 
     void setNotNullVar(@org.jetbrains.annotations.NotNull java.lang.String p);
 
-    static final class DefaultImpls {
+    final class DefaultImpls {
     }
 }
