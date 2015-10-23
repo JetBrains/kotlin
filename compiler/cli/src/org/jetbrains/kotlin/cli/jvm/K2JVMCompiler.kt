@@ -21,9 +21,7 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
-import org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR
-import org.jetbrains.kotlin.cli.common.ExitCode.OK
+import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -154,6 +152,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
             val environment: KotlinCoreEnvironment
 
+            val friendPaths = arguments.friendPaths?.toList() ?: emptyList<String>()
+
             if (arguments.module != null) {
                 val sanitizedCollector = FilteringMessageCollector(messageSeverityCollector, `in`(CompilerMessageSeverity.VERBOSE))
                 val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector)
@@ -169,7 +169,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
-                KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.getModules(), directory, jar, arguments.includeRuntime)
+                KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.getModules(), directory, jar, friendPaths, arguments.includeRuntime)
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size())
@@ -189,7 +189,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return COMPILATION_ERROR
                 }
 
-                KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime)
+                KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, friendPaths, arguments.includeRuntime)
             }
 
             if (arguments.reportPerf) {

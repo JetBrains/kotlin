@@ -52,7 +52,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public String moduleName;
 
     // Advanced options
-
     @Argument(value = "Xno-call-assertions", description = "Don't generate not-null assertion after each invocation of method returning not-null")
     public boolean noCallAssertions;
 
@@ -64,6 +63,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "Xreport-perf", description = "Report detailed performance statistics")
     public boolean reportPerf;
+
+    // Paths to output directories for friend modules.
+    public String[] friendPaths;
 
     @Override
     @NotNull

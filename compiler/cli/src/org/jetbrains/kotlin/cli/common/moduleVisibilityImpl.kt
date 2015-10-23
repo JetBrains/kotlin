@@ -47,7 +47,12 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
         val whatSource = getSourceElement(what)
         if (whatSource is KotlinSourceElement) return true
 
-        val modules = moduleVisibilityManager.chunk.toList()
+        moduleVisibilityManager.friendPaths.forEach {
+            if (isContainedByCompiledPartOfOurModule(what, File(it))) return true
+        }
+
+        val modules = moduleVisibilityManager.chunk
+
         val outputDirectories = modules.map { File(it.getOutputDirectory()) }
         if (outputDirectories.isEmpty()) return isContainedByCompiledPartOfOurModule(what, null)
 
@@ -56,7 +61,7 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
         }
 
         // Hack in order to allow access to internal elements in production code from tests
-        if (modules.size() == 1 && modules[0].getModuleType() == ModuleXmlParser.TYPE_TEST) return true
+        if (modules.singleOrNull()?.getModuleType() == ModuleXmlParser.TYPE_TEST) return true
 
         return false
     }
@@ -68,9 +73,14 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
  */
 class CliModuleVisibilityManagerImpl() : ModuleVisibilityManager, Disposable {
     override val chunk: MutableList<Module> = arrayListOf()
+    override val friendPaths: MutableList <String> = arrayListOf()
 
     override fun addModule(module: Module) {
         chunk.add(module)
+    }
+
+    override fun addFriendPath(path: String) {
+        friendPaths.add(path)
     }
 
     override fun dispose() {

@@ -24,7 +24,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 
 import java.util.List;
 
@@ -86,9 +85,8 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
         module = testModule;
         classpath = testClasspath;
+        arguments.friendPaths = new String[] { output };
         output = testOutput;
-        moduleName = testModuleName;
-
         super.configureSpecificCompilerArguments(arguments);
     }
 }

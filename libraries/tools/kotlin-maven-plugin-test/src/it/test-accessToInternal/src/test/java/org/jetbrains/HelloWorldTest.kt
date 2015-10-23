@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.util
+package org.jetbrains
 
-import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.modules.Module
+import org.junit.Test
 
-class IdeModuleVisibilityManagerImpl() : ModuleVisibilityManager {
-    override val chunk: Collection<Module> = emptyList()
-    override val friendPaths: Collection<String> = emptyList()
-    override fun addModule(module: Module) {}
-    override fun addFriendPath(path: String) {}
+import junit.framework.Assert.assertEquals
+
+class HelloWorldTest {
+
+    @Test
+    fun greeting() {
+        assertEquals("Hello, World!", getGreeting())
+    }
+
+    @Test
+    fun accessToInternal() {
+        assertEquals("CONST", CONST)
+
+        assertEquals("foo", PublicClass().foo())
+        assertEquals("bar", PublicClass().bar)
+
+        val data = InternalDataClass(10, 20)
+        assertEquals(10, data.x)
+        assertEquals(20, data.y)
+    }
 }

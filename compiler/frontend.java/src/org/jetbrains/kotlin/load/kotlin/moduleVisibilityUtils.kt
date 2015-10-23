@@ -29,7 +29,9 @@ import java.io.File
 
 interface ModuleVisibilityManager {
     val chunk: Collection<Module>
+    val friendPaths: Collection<String>
     fun addModule(module: Module)
+    fun addFriendPath(path: String)
 
     public object SERVICE {
         @JvmStatic
