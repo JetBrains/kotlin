@@ -83,6 +83,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("jvmName")
+    public void testJvmName() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmName/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("mangling")
     public void testMangling() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/mangling/");
@@ -92,12 +98,6 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     @TestMetadata("number")
     public void testNumber() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/number/");
-        doTestWithJava(fileName);
-    }
-
-    @TestMetadata("platformName")
-    public void testPlatformName() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformName/");
         doTestWithJava(fileName);
     }
 
@@ -347,6 +347,40 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
 
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithJava/jvmStatic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmStatic extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInJvmStatic() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/jvmStatic"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("annotations")
+        public void testAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmStatic/annotations/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("classObject")
+        public void testClassObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmStatic/classObject/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("enumCompanion")
+        public void testEnumCompanion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmStatic/enumCompanion/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("object")
+        public void testObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmStatic/object/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithJava/notNullAssertions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -358,40 +392,6 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("extensionReceiverParameter")
         public void testExtensionReceiverParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/notNullAssertions/extensionReceiverParameter/");
-            doTestWithJava(fileName);
-        }
-
-    }
-
-    @TestMetadata("compiler/testData/codegen/boxWithJava/platformStatic")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class PlatformStatic extends AbstractBlackBoxCodegenTest {
-        public void testAllFilesPresentInPlatformStatic() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/platformStatic"), Pattern.compile("^([^\\.]+)$"), true);
-        }
-
-        @TestMetadata("annotations")
-        public void testAnnotations() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/annotations/");
-            doTestWithJava(fileName);
-        }
-
-        @TestMetadata("classObject")
-        public void testClassObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/classObject/");
-            doTestWithJava(fileName);
-        }
-
-        @TestMetadata("enumCompanion")
-        public void testEnumCompanion() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/enumCompanion/");
-            doTestWithJava(fileName);
-        }
-
-        @TestMetadata("object")
-        public void testObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformStatic/object/");
             doTestWithJava(fileName);
         }
 
