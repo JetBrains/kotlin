@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
@@ -75,7 +76,8 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
     protected JavaConstructorDescriptor createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName
     ) {
         if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
             throw new IllegalStateException(
@@ -85,6 +87,9 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
                     "kind: " + kind
             );
         }
+
+        assert newName == null : "Attempt to rename constructor: " + this;
+
         JavaConstructorDescriptor result = new JavaConstructorDescriptor(
                 (ClassDescriptor) newOwner, this, getAnnotations(), isPrimary, kind, SourceElement.NO_SOURCE
         );
@@ -100,7 +105,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
             @NotNull List<KotlinType> enhancedValueParametersTypes,
             @NotNull KotlinType enhancedReturnType
     ) {
-        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind());
+        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind(), null);
         // We do not use doSubstitute here as in JavaMethodDescriptor.enhance because type parameters of constructor belongs to class
         enhanced.initialize(
                 enhancedReceiverType,

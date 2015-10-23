@@ -59,13 +59,14 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
     protected FunctionDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName
     ) {
         return new DeserializedSimpleFunctionDescriptor(
                 newOwner,
                 (DeserializedSimpleFunctionDescriptor) original,
                 getAnnotations(),
-                getName(),
+                newName != null ? newName : getName(),
                 kind,
                 proto,
                 nameResolver,

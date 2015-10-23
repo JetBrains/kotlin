@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
+import org.jetbrains.kotlin.name.Name;
 
 /* package */ class SamAdapterFunctionDescriptor extends JavaMethodDescriptor implements SamAdapterDescriptor<JavaMethodDescriptor> {
     private final JavaMethodDescriptor declaration;
@@ -53,7 +54,8 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
     protected JavaMethodDescriptor createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName
     ) {
         return new SamAdapterFunctionDescriptor(newOwner, (SimpleFunctionDescriptor) original, kind, declaration);
     }

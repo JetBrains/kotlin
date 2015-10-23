@@ -40,7 +40,8 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     protected FunctionDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName
     ) {
         return this;
     }
@@ -48,6 +49,12 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     @NotNull
     @Override
     public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
+        return this;
+    }
+
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptor createRenamedCopy(@NotNull Name name) {
         return this;
     }
 

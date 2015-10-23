@@ -270,8 +270,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     ) {
         return doSubstitute(originalSubstitutor,
                 newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec, original, copyOverrides, kind,
-                getValueParameters(), getExtensionReceiverParameterType(), getReturnType()
-        );
+                getValueParameters(), getExtensionReceiverParameterType(), getReturnType(),
+                            null);
     }
 
     @Nullable
@@ -282,7 +282,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
 
     @Nullable
-    protected FunctionDescriptor doSubstitute(@NotNull TypeSubstitutor originalSubstitutor,
+    protected FunctionDescriptor doSubstitute(
+            @NotNull TypeSubstitutor originalSubstitutor,
             @NotNull DeclarationDescriptor newOwner,
             @NotNull Modality newModality,
             @NotNull Visibility newVisibility,
@@ -296,9 +297,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull Kind kind,
             @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
             @Nullable KotlinType newExtensionReceiverParameterType,
-            @NotNull KotlinType newReturnType
+            @NotNull KotlinType newReturnType,
+            @Nullable Name name
     ) {
-        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind);
+        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind, name);
 
         List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
         List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
@@ -372,7 +374,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     protected abstract FunctionDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName
     );
 
     @Override

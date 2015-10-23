@@ -41,7 +41,8 @@ public class FunctionInvokeDescriptor private constructor(
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             original: FunctionDescriptor?,
-            kind: CallableMemberDescriptor.Kind
+            kind: CallableMemberDescriptor.Kind,
+            newName: Name?
     ): FunctionInvokeDescriptor {
         return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind)
     }

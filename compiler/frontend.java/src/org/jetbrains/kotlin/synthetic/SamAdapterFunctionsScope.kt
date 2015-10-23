@@ -141,8 +141,15 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
         override fun hasStableParameterNames() = sourceFunction.hasStableParameterNames()
         override fun hasSynthesizedParameterNames() = sourceFunction.hasSynthesizedParameterNames()
 
-        override fun createSubstitutedCopy(newOwner: DeclarationDescriptor, original: FunctionDescriptor?, kind: CallableMemberDescriptor.Kind): MyFunctionDescriptor {
-            return MyFunctionDescriptor(containingDeclaration, original as SimpleFunctionDescriptor?, annotations, name, kind, source).apply {
+        override fun createSubstitutedCopy(
+                newOwner: DeclarationDescriptor,
+                original: FunctionDescriptor?,
+                kind: CallableMemberDescriptor.Kind,
+                newName: Name?
+        ): MyFunctionDescriptor {
+            return MyFunctionDescriptor(
+                    containingDeclaration, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind, source
+            ).apply {
                 sourceFunction = this@MyFunctionDescriptor.sourceFunction
             }
         }
@@ -162,13 +169,14 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 kind: CallableMemberDescriptor.Kind,
                 newValueParameterDescriptors: MutableList<ValueParameterDescriptor>,
                 newExtensionReceiverParameterType: KotlinType?,
-                newReturnType: KotlinType
+                newReturnType: KotlinType,
+                name: Name?
         ): FunctionDescriptor? {
-            val descriptor = super<SimpleFunctionDescriptorImpl>.doSubstitute(
+            val descriptor = super.doSubstitute(
                     originalSubstitutor, newOwner, newModality, newVisibility,
                     newIsOperator, newIsInfix, newIsExternal, newIsInline, newIsTailrec, original,
-                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType)
-                as MyFunctionDescriptor? ?: return null
+                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name)
+                    as MyFunctionDescriptor? ?: return null
 
             if (original == null) {
                 throw UnsupportedOperationException("doSubstitute with no original should not be called for synthetic extension")
