@@ -59,6 +59,12 @@ public class CodeInsightActionTestGenerated extends AbstractCodeInsightActionTes
         doTest(fileName);
     }
 
+    @TestMetadata("primaryExists.kt")
+    public void testPrimaryExists() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/primaryExists.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("properties.kt")
     public void testProperties() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/properties.kt");
@@ -80,12 +86,6 @@ public class CodeInsightActionTestGenerated extends AbstractCodeInsightActionTes
     @TestMetadata("supersAllExist.kt")
     public void testSupersAllExist() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/supersAllExist.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("supersPrimaryExists.kt")
-    public void testSupersPrimaryExists() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/supersPrimaryExists.kt");
         doTest(fileName);
     }
 

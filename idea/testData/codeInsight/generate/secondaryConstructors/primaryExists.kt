@@ -1,10 +1,7 @@
 // ACTION_CLASS: org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction
-open class Base(n: Int) {
-    constructor(a: Int, b: Int): this(a + b)
-}
-
-class Foo(x: Int) : Base(x) {<caret>
-    val x = 1
+// NOT_APPLICABLE
+class Foo(x: Int) {<caret>
+    val x: Int
 
     fun foo() {
 
