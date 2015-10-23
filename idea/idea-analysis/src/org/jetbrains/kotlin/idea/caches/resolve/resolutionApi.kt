@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
-import org.jetbrains.kotlin.resolve.lazy.LazyFileScope
+import org.jetbrains.kotlin.resolve.lazy.LazyImportingScope
 
 public fun KtElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -102,6 +102,6 @@ public fun getResolveScope(file: KtFile): GlobalSearchScope {
     }
 }
 
-public fun ResolutionFacade.getFileTopLevelScope(file: KtFile): LazyFileScope {
+public fun ResolutionFacade.getFileTopLevelScope(file: KtFile): LazyImportingScope {
     return frontendService<FileScopeProvider>().getFileScope(file)
 }

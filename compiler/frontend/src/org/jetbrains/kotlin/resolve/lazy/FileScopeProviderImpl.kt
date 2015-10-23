@@ -51,7 +51,7 @@ public class FileScopeProviderImpl(
 
     override fun getFileScope(file: KtFile) = fileScopes(file)
 
-    private fun createFileScope(file: KtFile): LazyFileScope {
+    private fun createFileScope(file: KtFile): LazyImportingScope {
         val debugName = "LazyFileScope for file " + file.getName()
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve")
 
@@ -89,7 +89,7 @@ public class FileScopeProviderImpl(
         scopeChain.add(LazyImportScope(packageFragment, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES, "All under imports in $debugName (invisible classes only)"))
         scopeChain.add(LazyImportScope(packageFragment, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES, "Default all under imports in $debugName (invisible classes only)"))
 
-        val lazyFileScope = LazyFileScope(scopeChain, aliasImportResolver, allUnderImportResolver, packageFragment, debugName)
+        val lazyFileScope = LazyImportingScope(scopeChain, aliasImportResolver, allUnderImportResolver, packageFragment, debugName)
         bindingTrace.recordScope(lazyFileScope, file)
         return lazyFileScope
     }

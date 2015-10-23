@@ -18,35 +18,47 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
 // see ScopeUtils.kt in the frontend module
 
-public interface LexicalScope {
-    public val parent: LexicalScope?
+interface LexicalScope {
+    val parent: LexicalScope?
 
-    public val ownerDescriptor: DeclarationDescriptor
-    public val isOwnerDescriptorAccessibleByLabel: Boolean
+    val ownerDescriptor: DeclarationDescriptor
+    val isOwnerDescriptorAccessibleByLabel: Boolean
 
-    public val implicitReceiver: ReceiverParameterDescriptor?
+    val implicitReceiver: ReceiverParameterDescriptor?
 
-    public fun getDeclaredDescriptors(): Collection<DeclarationDescriptor>
+    /**
+     * All visible descriptors from current scope possibly filtered by the given name and kind filters
+     * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
+     */
+    open fun getDescriptors(
+            kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
+            nameFilter: (Name) -> Boolean = KtScope.ALL_NAME_FILTER
+    ): Collection<DeclarationDescriptor> = getDeclaredDescriptors()
 
-    public fun getDeclaredClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
+    //TODO: rename to getDescriptors or getAllDescriptors
+    fun getDeclaredDescriptors(): Collection<DeclarationDescriptor>
 
-    // need collection here because there may be extension property foo and usual property foo
-    public fun getDeclaredVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
-    public fun getDeclaredFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    //TODO: rename to getClassifier
+    fun getDeclaredClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
 
-    public fun printStructure(p: Printer)
+    //TODO: rename to getVariables
+    fun getDeclaredVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+
+    //TODO: rename to getFunctions
+    fun getDeclaredFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+
+    fun printStructure(p: Printer)
 }
 
-public interface FileScope: LexicalScope {
-    override val parent: LexicalScope?
-        get() = null
+// TODO: common base interface instead direct inheritance
+interface ImportingScope : LexicalScope {
+    override val parent: ImportingScope?
 
     override val isOwnerDescriptorAccessibleByLabel: Boolean
         get() = false
@@ -58,14 +70,16 @@ public interface FileScope: LexicalScope {
 
     fun getPackage(name: Name): PackageViewDescriptor?
 
-    public fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
+    fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
-    public fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
-    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
+    fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
+    fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
 
-    public fun getDescriptors(
-            kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-            nameFilter: (Name) -> Boolean = KtScope.ALL_NAME_FILTER
-    ): Collection<DeclarationDescriptor>
+    // please, do not override this method
+    override fun getDeclaredDescriptors(): Collection<DeclarationDescriptor> {
+        return getDescriptors()
+    }
+
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor>
 }

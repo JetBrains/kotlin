@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 
 public interface FileScopeProvider {
-    fun getFileScope(file: KtFile): LazyFileScope
+    fun getFileScope(file: KtFile): LazyImportingScope
 
     public object ThrowException : FileScopeProvider {
-        override fun getFileScope(file: KtFile): LazyFileScope {
+        override fun getFileScope(file: KtFile): LazyImportingScope {
             throw UnsupportedOperationException("Should not be called")
         }
     }

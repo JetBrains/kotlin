@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.kotlin.resolve.lazy.LazyFileScope;
+import org.jetbrains.kotlin.resolve.lazy.LazyImportingScope;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -89,7 +89,7 @@ public class LazyTopDownAnalyzerForTopLevel {
     }
 
     private static void resolveAndCheckImports(@NotNull KtFile file, @NotNull KotlinCodeAnalyzer resolveSession) {
-        LazyFileScope fileScope = resolveSession.getFileScopeProvider().getFileScope(file);
+        LazyImportingScope fileScope = resolveSession.getFileScopeProvider().getFileScope(file);
         fileScope.forceResolveAllImports();
     }
 }

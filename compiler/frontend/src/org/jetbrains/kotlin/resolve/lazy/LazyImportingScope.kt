@@ -22,17 +22,20 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.scopes.FileScope
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.utils.Printer
 
-class LazyFileScope(
+class LazyImportingScope(
         scopeChain: List<KtScope>,
         private val aliasImportResolver: LazyImportResolver,
         private val allUnderImportResolver: LazyImportResolver,
         containingDeclaration: PackageFragmentDescriptor,
         debugName: String
-) : ChainedScope(containingDeclaration, debugName, *scopeChain.toTypedArray()), FileScope {
+) : ChainedScope(containingDeclaration, debugName, *scopeChain.toTypedArray()), ImportingScope {
+    override val parent: ImportingScope?
+        get() = null
+
     override fun getDeclaredDescriptors() = emptyList<DeclarationDescriptor>()
 
     override fun printStructure(p: Printer) = printScopeStructure(p)

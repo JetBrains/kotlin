@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
-import org.jetbrains.kotlin.resolve.scopes.FileScope
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -86,9 +86,9 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
         }
     }
 
-    private fun conflictingSyntheticExtension(descriptor: PropertyDescriptor, fileScope: FileScope): SyntheticJavaPropertyDescriptor? {
+    private fun conflictingSyntheticExtension(descriptor: PropertyDescriptor, importingScope: ImportingScope): SyntheticJavaPropertyDescriptor? {
         val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
-        return fileScope
+        return importingScope
                 .getSyntheticExtensionProperties(listOf(extensionReceiverType), descriptor.name, NoLookupLocation.FROM_IDE)
                 .firstIsInstanceOrNull()
     }
