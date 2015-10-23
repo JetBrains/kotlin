@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.view.View
 
 import kotlinx.android.synthetic.main.*
-import kotlinx.android.synthetic.fragment.*
-import kotlinx.android.synthetic.fragment.view.*
+import kotlinx.android.synthetic.main.fragment.*
+import kotlinx.android.synthetic.main.fragment.view.*
 
 public class MyActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
