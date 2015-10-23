@@ -19,55 +19,58 @@ package org.jetbrains.kotlin.idea.debugger.stepping
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.BreakpointStepMethodFilter
 import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.LambdaMethodFilter
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElementFactory
 import com.intellij.util.Range
 import com.sun.jdi.Location
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.debugger.isInsideInlineArgument
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public class KotlinLambdaMethodFilter(
-        lambda: KtFunctionLiteralExpression,
-        private val myCallingExpressionLines: Range<Int>
+        private val lambda: KtFunction,
+        private val myCallingExpressionLines: Range<Int>,
+        private val isInline: Boolean
 ): BreakpointStepMethodFilter {
     private val myFirstStatementPosition: SourcePosition?
     private val myLastStatementLine: Int
 
     init {
-        var firstStatementPosition: SourcePosition? = null
-        var lastStatementPosition: SourcePosition? = null
-        val body = lambda.getBodyExpression()!!
-        val statements = body.getStatements()
-        if (statements.isNotEmpty()) {
-            firstStatementPosition = SourcePosition.createFromElement(statements.first())
-            if (firstStatementPosition != null) {
-                val lastStatement = statements.last()
-                lastStatementPosition = SourcePosition.createFromOffset(firstStatementPosition.getFile(), lastStatement.getTextRange().getEndOffset())
+        if (lambda.isMultiLine()) {
+            var firstStatementPosition: SourcePosition? = null
+            var lastStatementPosition: SourcePosition? = null
+            val body = lambda.bodyExpression as KtBlockExpression
+            val statements = body.statements
+            if (statements.isNotEmpty()) {
+                firstStatementPosition = SourcePosition.createFromElement(statements.first())
+                if (firstStatementPosition != null) {
+                    val lastStatement = statements.last()
+                    lastStatementPosition = SourcePosition.createFromOffset(firstStatementPosition.file, lastStatement.textRange.endOffset)
+                }
             }
+            myFirstStatementPosition = firstStatementPosition
+            myLastStatementLine = if (lastStatementPosition != null) lastStatementPosition.line else -1
         }
-        myFirstStatementPosition = firstStatementPosition
-        myLastStatementLine = if (lastStatementPosition != null) lastStatementPosition.getLine() else -1
+        else {
+            myFirstStatementPosition = SourcePosition.createFromElement(lambda)
+            myLastStatementLine = myFirstStatementPosition!!.line
+        }
     }
 
-    override fun getBreakpointPosition(): SourcePosition? {
-        return myFirstStatementPosition
-    }
-
-    override fun getLastStatementLine(): Int {
-        return myLastStatementLine
-    }
+    override fun getBreakpointPosition() = myFirstStatementPosition
+    override fun getLastStatementLine() = myLastStatementLine
 
     override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
         val method = location.method()
+
+        if (isInline) {
+            return isInsideInlineArgument(lambda, location, process)
+        }
+
         return isLambdaName(method.name())
     }
 
-    override fun getCallingExpressionLines(): Range<Int>? {
-        return myCallingExpressionLines
-    }
+    override fun getCallingExpressionLines() = if (isInline) Range(0, 999) else myCallingExpressionLines
 
     companion object {
         public fun isLambdaName(name: String?): Boolean {

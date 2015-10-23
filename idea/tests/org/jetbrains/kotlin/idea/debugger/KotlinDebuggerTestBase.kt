@@ -27,7 +27,6 @@ import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.debugger.ui.breakpoints.BreakpointManager
-import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.roots.JdkOrderEntry
@@ -43,6 +42,8 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XBreakpointType
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
+import com.sun.jdi.request.StepRequest
+import org.jetbrains.kotlin.idea.core.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
 import org.jetbrains.kotlin.idea.debugger.stepping.*
@@ -162,6 +163,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         }
 
         when {
+            !line.startsWith("//") -> return
             line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(this) }
             line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { doStepOut() }
             line.startsWith("// STEP_OVER: ") -> repeat("// STEP_OVER: ") { doStepOver() }
@@ -188,14 +190,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     private fun createSmartStepIntoFilters(): List<MethodFilter> {
-        val breakpointManager = DebuggerManagerEx.getInstanceEx(getProject())?.getBreakpointManager()
-        val breakpoint = breakpointManager?.getBreakpoints()?.first { it is LineBreakpoint }
-
-        val line = (breakpoint as LineBreakpoint).getLineIndex()
+        val contextElement = ContextUtil.getContextElement(evaluationContext)!!
+        val line = runReadAction { contextElement.getLineNumber() }
 
         return runReadAction {
-            val containingFile = breakpoint.getPsiFile()
-            if (containingFile == null) throw AssertionError("Couldn't find file for breakpoint at the line $line")
+            val containingFile = contextElement.containingFile
 
             val position = MockSourcePosition(_file = containingFile, _line = line)
 
@@ -204,7 +203,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             stepTargets.filterIsInstance<SmartStepTarget>().map {
                 stepTarget ->
                 when (stepTarget) {
-                    is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!)
+                    is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline)
                     is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
                     is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
                     else -> null

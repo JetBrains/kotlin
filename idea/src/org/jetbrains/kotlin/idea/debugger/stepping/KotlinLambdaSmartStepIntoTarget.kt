@@ -16,27 +16,23 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping
 
-import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.actions.SmartStepTarget
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.util.Range
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import javax.swing.Icon
 
 public class KotlinLambdaSmartStepTarget(
         label: String,
-        highlightElement: KtFunctionLiteralExpression,
-        lines: Range<Int>
+        highlightElement: KtFunction,
+        lines: Range<Int>,
+        val isInline: Boolean
 ): SmartStepTarget(label, highlightElement, true, lines) {
     override fun getIcon() = KotlinIcons.LAMBDA
 
-    fun getLambda() = getHighlightElement() as KtFunctionLiteralExpression
+    fun getLambda() = getHighlightElement() as KtFunction
 
     companion object {
         fun calcLabel(descriptor: DeclarationDescriptor, paramName: Name): String {

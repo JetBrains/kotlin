@@ -1,5 +1,5 @@
 fun foo() {
-    <caret>f1() { }
+    <caret>f1(fun () { })
 }
 
 inline fun f1(f: () -> Unit) {}

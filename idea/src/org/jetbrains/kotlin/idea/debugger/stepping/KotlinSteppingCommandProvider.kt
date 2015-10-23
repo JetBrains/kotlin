@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -68,7 +69,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val file = sourcePosition.file as? KtFile ?: return null
         if (sourcePosition.line < 0) return null
 
-        val containingFunction = sourcePosition.elementAt.getParentOfType<KtNamedFunction>(false) ?: return null
+        val containingFunction = sourcePosition.elementAt.parents.firstOrNull { it is KtNamedFunction && !it.isLocal } ?: return null
 
         val startLineNumber = containingFunction.getLineNumber(true)
         val endLineNumber = containingFunction.getLineNumber(false)
@@ -221,11 +222,12 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     private fun getInlineArgumentsIfAny(inlineFunctionCalls: List<KtCallExpression>): List<KtFunction> {
         return inlineFunctionCalls.flatMap {
             it.valueArguments
-                    .map { it.getArgumentExpression()  }
-                    .filterIsInstance<KtFunctionLiteralExpression>()
-                    .map { it.functionLiteral }
+                    .map { getArgumentExpression(it)  }
+                    .filterIsInstance<KtFunction>()
         }
     }
+
+    private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtFunctionLiteralExpression)?.functionLiteral ?: it.getArgumentExpression()
 
     private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<KtCallExpression> {
         val file = sourcePosition.file as? KtFile ?: return emptyList()

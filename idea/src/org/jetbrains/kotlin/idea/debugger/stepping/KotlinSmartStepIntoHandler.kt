@@ -66,19 +66,32 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         element.accept(object: KtTreeVisitorVoid() {
 
             override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
-                val context = expression.analyze()
-                val resolvedCall = expression.getParentCall(context).getResolvedCall(context)
-                if (resolvedCall != null && !InlineUtil.isInline(resolvedCall.getResultingDescriptor())) {
-                    val arguments = resolvedCall.getValueArguments()
+                recordFunctionLiteral(expression.functionLiteral)
+            }
+
+            override fun visitNamedFunction(function: KtNamedFunction) {
+                if (!recordFunctionLiteral(function)) {
+                    super.visitNamedFunction(function)
+                }
+            }
+
+            private fun recordFunctionLiteral(function: KtFunction): Boolean {
+                val context = function.analyze()
+                val resolvedCall = function.getParentCall(context).getResolvedCall(context)
+                if (resolvedCall != null) {
+                    val arguments = resolvedCall.valueArguments
                     for ((param, argument) in arguments) {
-                        if (argument.getArguments().any { it.getArgumentExpression() == expression}) {
-                            val label = KotlinLambdaSmartStepTarget.calcLabel(resolvedCall.getResultingDescriptor(), param.getName())
-                            result.add(KotlinLambdaSmartStepTarget(label, expression, lines))
-                            break
+                        if (argument.arguments.any { getArgumentExpression(it) == function }) {
+                            val label = KotlinLambdaSmartStepTarget.calcLabel(resolvedCall.resultingDescriptor, param.name)
+                            result.add(KotlinLambdaSmartStepTarget(label, function, lines, InlineUtil.isInline(resolvedCall.resultingDescriptor)))
+                            return true
                         }
                     }
                 }
+                return false
             }
+
+            private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtFunctionLiteralExpression)?.functionLiteral ?: it.getArgumentExpression()
 
             override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
                 // skip calls in object declarations
@@ -181,7 +194,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
     override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
         return when (stepTarget) {
             is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
-            is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!! )
+            is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline)
             else -> super.createMethodFilter(stepTarget)
         }
     }
