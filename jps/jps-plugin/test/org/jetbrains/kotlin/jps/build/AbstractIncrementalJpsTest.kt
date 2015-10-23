@@ -56,7 +56,6 @@ import java.util.*
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.fail
 
 public abstract class AbstractIncrementalJpsTest(
         private val allowNoFilesWithSuffixInTestData: Boolean = false,
@@ -109,10 +108,10 @@ public abstract class AbstractIncrementalJpsTest(
 
     protected open fun createLookupTracker(): LookupTracker = LookupTracker.DO_NOTHING
 
-    protected open fun checkLookups(@Suppress("UNUSED_PARAMETER") lookupTracker: LookupTracker) {
+    protected open fun checkLookups(modifications: List<Modification>, @Suppress("UNUSED_PARAMETER") lookupTracker: LookupTracker) {
     }
 
-    fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): MakeResult {
+    private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all(), modifications: List<Modification>, checkLookups: Boolean = true): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
         val logger = MyLogger(workDirPath)
         projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
@@ -127,7 +126,9 @@ public abstract class AbstractIncrementalJpsTest(
             builder.addMessageHandler(buildResult)
             builder.build(scope.build(), false)
 
-            checkLookups(lookupTracker)
+            if (checkLookups) {
+                checkLookups(modifications, lookupTracker)
+            }
 
             if (!buildResult.isSuccessful) {
                 val errorMessages =
@@ -149,17 +150,17 @@ public abstract class AbstractIncrementalJpsTest(
     }
 
     private fun initialMake(): MakeResult {
-        val makeResult = build()
+        val makeResult = build(modifications = emptyList())
         assertFalse(makeResult.makeFailed, "Initial make failed:\n$makeResult")
         return makeResult
     }
 
-    private fun make(): MakeResult {
-        return build()
+    private fun make(modifications: List<Modification>): MakeResult {
+        return build(modifications = modifications)
     }
 
     private fun rebuild(): MakeResult {
-        return build(CompileScopeTestBuilder.rebuild().allModules())
+        return build(CompileScopeTestBuilder.rebuild().allModules(), emptyList(), checkLookups = false)
     }
 
     private fun getModificationsToPerform(moduleNames: Collection<String>?): List<List<Modification>> {
@@ -346,7 +347,14 @@ public abstract class AbstractIncrementalJpsTest(
         for (step in modifications) {
             step.forEach { it.perform(workDir) }
             performAdditionalModifications(step)
-            results.add(make())
+            if (moduleNames == null) {
+                preProcessSources(File(workDir, "src"))
+            }
+            else {
+                moduleNames.forEach { preProcessSources(File(workDir, "$it/src")) }
+            }
+
+            results.add(make(step))
         }
         return results
     }
