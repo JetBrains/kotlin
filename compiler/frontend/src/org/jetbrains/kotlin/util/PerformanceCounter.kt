@@ -73,7 +73,7 @@ public abstract class PerformanceCounter protected constructor(val name: String)
         }
     }
 
-    protected val excludedFrom: MutableList<CounterWithExclude> = ArrayList()
+    internal val excludedFrom: MutableList<CounterWithExclude> = ArrayList()
 
     private var count: Int = 0
     private var totalTimeNanos: Long = 0
@@ -167,7 +167,7 @@ private class ReenterableCounter(name: String): PerformanceCounter(name) {
  *
  *  Main and excluded methods may be reenterable.
  */
-private class CounterWithExclude(name: String, vararg excludedCounters: PerformanceCounter): PerformanceCounter(name) {
+internal class CounterWithExclude(name: String, vararg excludedCounters: PerformanceCounter): PerformanceCounter(name) {
     companion object {
         private val counterToCallStackMapThreadLocal = ThreadLocal<MutableMap<CounterWithExclude, CallStackWithTime>>()
 

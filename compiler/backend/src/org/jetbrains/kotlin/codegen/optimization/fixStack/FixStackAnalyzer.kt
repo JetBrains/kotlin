@@ -32,7 +32,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import java.util.*
 
-public class FixStackAnalyzer(
+internal class FixStackAnalyzer(
         owner: String,
         methodNode: MethodNode,
         val context: FixStackContext

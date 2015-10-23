@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.js.test.AbstractSingleFileTranslationWithDirectivesT
 import org.jetbrains.kotlin.js.test.MultipleModulesTranslationTest
 import org.jetbrains.kotlin.js.test.SingleFileTranslationTest
 
-private abstract class AbstractBlackBoxTest(d: String) : SingleFileTranslationTest(d) {
+public abstract class AbstractBlackBoxTest(d: String) : SingleFileTranslationTest(d) {
     override fun doTest(filename: String) = checkBlackBoxIsOkByPath(filename)
 }
 

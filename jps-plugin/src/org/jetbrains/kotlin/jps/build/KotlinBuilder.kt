@@ -694,7 +694,7 @@ private fun hasKotlinDirtyOrRemovedFiles(
     return chunk.getTargets().any { !KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isEmpty() }
 }
 
-private open class GeneratedFile(
+public open class GeneratedFile internal constructor(
         val target: ModuleBuildTarget,
         val sourceFiles: Collection<File>,
         val outputFile: File

@@ -97,7 +97,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         return !JavaProjectRootsUtil.isOutsideJavaSourceRoot(element)
     }
 
-    fun findInternalUsages(file: KtFile, newParent: PsiDirectory): InternalUsagesWrapper {
+    internal fun findInternalUsages(file: KtFile, newParent: PsiDirectory): InternalUsagesWrapper {
         val packageNameInfo = file.getPackageNameInfo(newParent, false)
         val usages = packageNameInfo?.let { file.getInternalReferencesToUpdateOnPackageNameChange(it) } ?: emptyList()
         return InternalUsagesWrapper(file, usages)

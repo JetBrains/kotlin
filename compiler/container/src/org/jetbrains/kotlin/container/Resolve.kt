@@ -30,7 +30,7 @@ public interface ValueResolveContext {
     fun resolve(registration: Type): ValueDescriptor?
 }
 
-internal class ComponentResolveContext(val container: StorageComponentContainer, val requestingDescriptor: ValueDescriptor) : ValueResolveContext {
+public class ComponentResolveContext(val container: StorageComponentContainer, val requestingDescriptor: ValueDescriptor) : ValueResolveContext {
     override fun resolve(registration: Type): ValueDescriptor? = container.resolve(registration, this)
 
     override fun toString(): String = "for $requestingDescriptor in $container"

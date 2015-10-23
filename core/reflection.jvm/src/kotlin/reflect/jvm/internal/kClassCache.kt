@@ -28,7 +28,7 @@ import kotlin.reflect.jvm.internal.pcollections.HashPMap
 private var K_CLASS_CACHE = HashPMap.empty<String, Any>()
 
 // This function is invoked on each reflection access to Java classes, properties, etc. Performance is critical here.
-fun <T : Any> getOrCreateKotlinClass(jClass: Class<T>): KClassImpl<T> {
+internal fun <T : Any> getOrCreateKotlinClass(jClass: Class<T>): KClassImpl<T> {
     val name = jClass.getName()
     val cached = K_CLASS_CACHE[name]
     if (cached is WeakReference<*>) {

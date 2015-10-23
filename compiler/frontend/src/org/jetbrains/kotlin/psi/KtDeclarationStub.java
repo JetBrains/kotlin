@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
 import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub;
 
-abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModifierListOwnerStub<T> implements KtDeclaration {
+public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModifierListOwnerStub<T> implements KtDeclaration {
     private long modificationStamp = 0;
 
     public KtDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {

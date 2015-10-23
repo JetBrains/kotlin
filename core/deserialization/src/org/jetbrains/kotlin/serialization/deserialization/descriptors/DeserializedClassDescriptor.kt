@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -81,7 +82,7 @@ public class DeserializedClassDescriptor(
 
     override fun getContainingDeclaration(): DeclarationDescriptor = containingDeclaration
 
-    override fun getTypeConstructor() = typeConstructor
+    override fun getTypeConstructor(): TypeConstructor = typeConstructor
 
     override fun getKind() = kind
 
@@ -95,7 +96,7 @@ public class DeserializedClassDescriptor(
 
     override fun getAnnotations() = annotations
 
-    override fun getUnsubstitutedMemberScope() = memberScope
+    override fun getUnsubstitutedMemberScope(): KtScope = memberScope
 
     override fun getStaticScope() = staticScope
 

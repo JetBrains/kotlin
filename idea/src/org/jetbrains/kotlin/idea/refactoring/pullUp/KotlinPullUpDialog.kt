@@ -23,6 +23,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
+import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
 import com.intellij.refactoring.util.DocCommentPolicy
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -88,7 +89,8 @@ public class KotlinPullUpDialog(
 
     override fun getSuperClass() = super.getSuperClass()
 
-    override fun createMemberInfoModel() = MemberInfoModelImpl()
+    override fun createMemberInfoModel(): MemberInfoModel<KtNamedDeclaration, KotlinMemberInfo> =
+            MemberInfoModelImpl()
 
     override fun getPreselection() = mySuperClasses.firstOrNull { !it.isInterfaceClass() } ?: mySuperClasses.firstOrNull()
 
