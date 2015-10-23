@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -246,8 +245,10 @@ public class ReifiedTypeParametersUsages {
         // 1. at least one of it's method contains operations to reify
         // 2. reified type parameter of these operations is not from current method signature
         // i.e. from outer scope
-        child.usedTypeParameters.filterNot {
-            DescriptorUtils.containsReifiedTypeParameterWithName(context.getContextDescriptor(), it)
+        child.usedTypeParameters.filterNot { name ->
+            context.contextDescriptor.typeParameters.any { typeParameter ->
+                typeParameter.isReified && typeParameter.name.asString() == name
+            }
         }.forEach { usedTypeParameters.add(it) }
     }
 

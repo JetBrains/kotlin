@@ -19,18 +19,22 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
+import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.isRepeatableAnnotation
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
@@ -183,7 +187,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 }
                 is KtConstructor<*> -> TargetLists.T_CONSTRUCTOR
                 is KtFunction -> {
-                    if (DescriptorUtils.isFunctionExpression(descriptor))
+                    if (ExpressionTypingUtils.isFunctionExpression(descriptor))
                         TargetLists.T_FUNCTION_EXPRESSION
                     else if (annotated.isLocal)
                         TargetLists.T_LOCAL_FUNCTION

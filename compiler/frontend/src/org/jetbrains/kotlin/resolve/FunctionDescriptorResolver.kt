@@ -22,19 +22,14 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl.create
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
-import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultVisibility
-import org.jetbrains.kotlin.resolve.DescriptorResolver.transformAnonymousTypeIfNeeded
+import org.jetbrains.kotlin.resolve.DescriptorResolver.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionExpression
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers
 import org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
@@ -52,6 +47,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import java.util.*
 

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,9 +25,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -36,7 +32,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -214,6 +209,7 @@ public class DescriptorUtils {
             if (descriptor instanceof PackageViewDescriptor) {
                 return ((PackageViewDescriptor) descriptor).getModule();
             }
+            //noinspection ConstantConditions
             descriptor = descriptor.getContainingDeclaration();
         }
         return null;
@@ -282,21 +278,6 @@ public class DescriptorUtils {
         return false;
     }
 
-    public static boolean isFunctionLiteral(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof AnonymousFunctionDescriptor;
-    }
-
-    public static boolean isLocalFunction(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor != null && descriptor.getClass() == SimpleFunctionDescriptorImpl.class) {
-            return ((SimpleFunctionDescriptorImpl) descriptor).getVisibility() == Visibilities.LOCAL;
-        }
-        return false;
-    }
-
-    public static boolean isFunctionExpression(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof FunctionExpressionDescriptor;
-    }
-
     public static boolean isCompanionObject(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT) && ((ClassDescriptor) descriptor).isCompanionObject();
     }
@@ -309,24 +290,12 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.OBJECT) && !((ClassDescriptor) descriptor).isCompanionObject();
     }
 
-    public static boolean isInterfaceCompanionObject(@NotNull DeclarationDescriptor descriptor) {
-        return isCompanionObject(descriptor) && isInterface(descriptor.getContainingDeclaration());
-    }
-
     public static boolean isObject(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.OBJECT);
     }
 
     public static boolean isEnumEntry(@NotNull DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.ENUM_ENTRY);
-    }
-
-    public static boolean isSingleton(@Nullable DeclarationDescriptor classifier) {
-        if (classifier instanceof ClassDescriptor) {
-            ClassDescriptor clazz = (ClassDescriptor) classifier;
-            return clazz.getKind().isSingleton();
-        }
-        return false;
     }
 
     public static boolean isEnumClass(@Nullable DeclarationDescriptor descriptor) {
@@ -537,48 +506,12 @@ public class DescriptorUtils {
         return result;
     }
 
-    public static boolean containsReifiedTypeParameterWithName(@NotNull CallableDescriptor descriptor, @NotNull String name) {
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            if (typeParameterDescriptor.isReified() && typeParameterDescriptor.getName().asString().equals(name)) return true;
-        }
-
-        return false;
-    }
-
-    public static boolean containsReifiedTypeParameters(@NotNull CallableDescriptor descriptor) {
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            if (typeParameterDescriptor.isReified()) return true;
-        }
-
-        return false;
-    }
-
     public static boolean isSingletonOrAnonymousObject(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getKind().isSingleton() || isAnonymousObject(classDescriptor);
     }
 
     public static boolean canHaveDeclaredConstructors(@NotNull ClassDescriptor classDescriptor) {
         return !isSingletonOrAnonymousObject(classDescriptor) && !isInterface(classDescriptor);
-    }
-
-    public static boolean hasDefaultConstructor(@NotNull ClassDescriptor classDescriptor) {
-        for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
-            if (constructor.getValueParameters().isEmpty()) return true;
-        }
-        return false;
-    }
-
-    public static Set<FqName> getPackagesFqNames(ModuleDescriptor module) {
-        Set<FqName> result = getSubPackagesFqNames(module.getPackage(FqName.ROOT));
-        result.add(FqName.ROOT);
-        return result;
-    }
-
-    public static Set<FqName> getSubPackagesFqNames(PackageViewDescriptor packageView) {
-        Set<FqName> result = new HashSet<FqName>();
-        getSubPackagesFqNames(packageView, result);
-
-        return result;
     }
 
     @Nullable
@@ -630,18 +563,5 @@ public class DescriptorUtils {
         }
 
         return SourceFile.NO_SOURCE_FILE;
-    }
-
-    private static void getSubPackagesFqNames(PackageViewDescriptor packageView, Set<FqName> result) {
-        FqName fqName = packageView.getFqName();
-        if (!fqName.isRoot()) {
-            result.add(fqName);
-        }
-
-        for (DeclarationDescriptor descriptor : packageView.getMemberScope().getDescriptors(DescriptorKindFilter.PACKAGES, KtScope.Companion.getALL_NAME_FILTER())) {
-            if (descriptor instanceof PackageViewDescriptor) {
-                getSubPackagesFqNames((PackageViewDescriptor) descriptor, result);
-            }
-        }
     }
 }

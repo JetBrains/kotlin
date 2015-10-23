@@ -99,9 +99,12 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> implements LocalLookup {
@@ -2508,7 +2511,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
-        boolean isInline = (state.isInlineEnabled() || DescriptorUtils.containsReifiedTypeParameters(descriptor)) &&
+        boolean isInline = (state.isInlineEnabled() || InlineUtil.containsReifiedTypeParameters(descriptor)) &&
                            InlineUtil.isInline(descriptor);
 
         if (!isInline) return defaultCallGenerator;

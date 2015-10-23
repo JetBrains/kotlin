@@ -136,4 +136,12 @@ public class InlineUtil {
         }
         return true;
     }
+
+    public static boolean containsReifiedTypeParameters(@NotNull CallableDescriptor descriptor) {
+        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
+            if (typeParameterDescriptor.isReified()) return true;
+        }
+
+        return false;
+    }
 }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
@@ -124,7 +123,7 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
             hasInlinable |= checkInlinableParameter(receiverParameter, receiver, functionDescriptor, trace);
         }
 
-        hasInlinable |= DescriptorUtils.containsReifiedTypeParameters(functionDescriptor);
+        hasInlinable |= InlineUtil.containsReifiedTypeParameters(functionDescriptor);
 
         if (!hasInlinable) {
             KtModifierList modifierList = function.getModifierList();

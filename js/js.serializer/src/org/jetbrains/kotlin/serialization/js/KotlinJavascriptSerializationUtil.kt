@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.util.*
 import java.util.zip.GZIPInputStream
 import java.util.zip.GZIPOutputStream
 
@@ -169,13 +171,33 @@ public object KotlinJavascriptSerializationUtil {
     private fun ModuleDescriptor.toContentMap(): Map<String, ByteArray> {
         val contentMap = hashMapOf<String, ByteArray>()
 
-        DescriptorUtils.getPackagesFqNames(this).forEach {
+        getPackagesFqNames(this).forEach {
             serializePackage(this, it) {
                 fileName, bytes -> contentMap[fileName] = bytes
             }
         }
 
         return contentMap
+    }
+
+    private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
+        return HashSet<FqName>().apply {
+            getSubPackagesFqNames(module.getPackage(FqName.ROOT), this)
+            add(FqName.ROOT)
+        }
+    }
+
+    private fun getSubPackagesFqNames(packageView: PackageViewDescriptor, result: MutableSet<FqName>) {
+        val fqName = packageView.fqName
+        if (!fqName.isRoot) {
+            result.add(fqName)
+        }
+
+        for (descriptor in packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, KtScope.ALL_NAME_FILTER)) {
+            if (descriptor is PackageViewDescriptor) {
+                getSubPackagesFqNames(descriptor, result)
+            }
+        }
     }
 
     private fun getPackages(contentMap: Map<String, ByteArray>): Set<String> {
