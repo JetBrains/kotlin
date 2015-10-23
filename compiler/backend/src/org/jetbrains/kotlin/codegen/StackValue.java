@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -575,7 +576,16 @@ public abstract class StackValue {
         return receiverWithParameter;
     }
 
-    public static Field singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
+    @NotNull
+    public static Field enumEntry(@NotNull ClassDescriptor descriptor, @NotNull JetTypeMapper typeMapper) {
+        DeclarationDescriptor enumClass = descriptor.getContainingDeclaration();
+        assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
+        Type type = typeMapper.mapType((ClassDescriptor) enumClass);
+        return field(type, type, descriptor.getName().asString(), true, none(), descriptor);
+    }
+
+    @NotNull
+    public static Field singleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
         return field(FieldInfo.createForSingleton(classDescriptor, typeMapper));
     }
 

@@ -2025,10 +2025,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
             if (isEnumEntry(classDescriptor)) {
-                DeclarationDescriptor enumClass = classDescriptor.getContainingDeclaration();
-                assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
-                Type type = typeMapper.mapType((ClassDescriptor) enumClass);
-                return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none(), classDescriptor);
+                return StackValue.enumEntry(classDescriptor, typeMapper);
             }
             ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
             if (companionObjectDescriptor != null) {
@@ -2568,7 +2565,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
             }
             else {
-                return StackValue.thisOrOuter(this, receiverDescriptor, false, false);
+                return StackValue.thisOrOuter(this, receiverDescriptor, false, isEnumEntry(receiverDescriptor));
             }
         }
         else if (receiverValue instanceof ScriptReceiver) {
@@ -2637,6 +2634,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (calleeContainingClass.equals(context.getThisDescriptor()) &&
                 !AnnotationUtilKt.isPlatformStaticInObjectOrClass(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
+            }
+            else if (isEnumEntry(calleeContainingClass)) {
+                return StackValue.enumEntry(calleeContainingClass, typeMapper);
             }
             else {
                 return StackValue.singleton(calleeContainingClass, typeMapper);
