@@ -116,6 +116,10 @@ public class LazyJavaClassMemberScope(
         return true
     }
 
+    private fun searchMethodsByNameWithoutBuiltinMagic(name: Name): Collection<SimpleFunctionDescriptor> =
+            memberIndex().findMethodsByName(name).map { resolveMethodToFunctionDescriptor(it) }
+
+    private fun searchMethodsByNameWithoutBuiltinMagic(name: String) = searchMethodsByNameWithoutBuiltinMagic(Name.identifier(name))
     // E.g. it have explicit removeAt declaration in Java
     private fun doesClassOverrideBuiltinWithoutMagic(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
         return memberIndex().findMethodsByName(callableMemberDescriptor.name).any {
@@ -150,7 +154,7 @@ public class LazyJavaClassMemberScope(
         ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
     }
 
-    private fun PropertyDescriptor.findGetterOverride(): JavaMethodDescriptor? {
+    private fun PropertyDescriptor.findGetterOverride(): SimpleFunctionDescriptor? {
         val overriddenBuiltinProperty = getter?.getOverriddenBuiltinWithDifferentJvmName()
         val specialGetterName = overriddenBuiltinProperty?.getBuiltinSpecialPropertyGetterName()
         if (specialGetterName != null
@@ -163,20 +167,18 @@ public class LazyJavaClassMemberScope(
         return findGetterByName(JvmAbi.getterName(name.asString()))
     }
 
-    private fun PropertyDescriptor.findGetterByName(getterName: String): JavaMethodDescriptor? {
-        return memberIndex().findMethodsByName(Name.identifier(getterName)).firstNotNullResult factory@{
-            javaMethod ->
-            val descriptor = resolveMethodToFunctionDescriptor(javaMethod)
+    private fun PropertyDescriptor.findGetterByName(getterName: String): SimpleFunctionDescriptor? {
+        return searchMethodsByNameWithoutBuiltinMagic(getterName).firstNotNullResult factory@{
+            descriptor ->
             if (descriptor.valueParameters.size != 0) return@factory null
 
             descriptor.check { KotlinTypeChecker.DEFAULT.isSubtypeOf(descriptor.returnType ?: return@check false, type) }
         }
     }
 
-    private fun PropertyDescriptor.findSetterOverride(): JavaMethodDescriptor? {
-        return memberIndex().findMethodsByName(Name.identifier(JvmAbi.setterName(name.asString()))).firstNotNullResult factory@{
-            javaMethod ->
-            val descriptor = resolveMethodToFunctionDescriptor(javaMethod)
+    private fun PropertyDescriptor.findSetterOverride(): SimpleFunctionDescriptor? {
+        return searchMethodsByNameWithoutBuiltinMagic(JvmAbi.setterName(name.asString())).firstNotNullResult factory@{
+            descriptor ->
             if (descriptor.valueParameters.size != 1) return@factory null
 
             if (!KotlinBuiltIns.isUnit(descriptor.returnType ?: return@factory null)) return@factory null
@@ -220,8 +222,8 @@ public class LazyJavaClassMemberScope(
             if (result.any { it.doesOverride(overriddenBuiltin) }) continue
 
             val nameInJava = getJvmMethodNameIfSpecial(overriddenBuiltin)!!
-            for (method in memberIndex().findMethodsByName(Name.identifier(nameInJava))) {
-                val renamedCopy = resolveMethodToFunctionDescriptor(method).createRenamedCopy(name)
+            for (method in searchMethodsByNameWithoutBuiltinMagic(nameInJava)) {
+                val renamedCopy = method.createRenamedCopy(name)
 
                 if (isOverridableRenamedDescriptor(overriddenBuiltin, renamedCopy)) {
                     result.add(renamedCopy)
