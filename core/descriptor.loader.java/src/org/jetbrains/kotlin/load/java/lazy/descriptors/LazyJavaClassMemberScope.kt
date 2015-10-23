@@ -88,7 +88,9 @@ public class LazyJavaClassMemberScope(
         ).toReadOnlyList()
     }
 
-    override fun JavaMethodDescriptor.isVisibleAsFunction(): Boolean {
+    override fun JavaMethodDescriptor.isVisibleAsFunction() = (this as SimpleFunctionDescriptor).isVisibleAsFunction()
+
+    private fun SimpleFunctionDescriptor.isVisibleAsFunction(): Boolean {
         // Do not load Java annotation methods as Kotlin functions (load them as properties instead)
         if (jClass.isAnnotationType) return false
 
@@ -100,14 +102,12 @@ public class LazyJavaClassMemberScope(
             }
         }) return false
 
-        val javaMethod = (source as? JavaSourceElement)?.javaElement as? JavaMethod
-        if (javaMethod?.doesOverrideRenamedBuiltins() ?: false) {
+        if (this.doesOverrideRenamedBuiltins()) {
             return false
         }
 
-        if (name.sameAsBuiltinMethodWithErasedValueParameters && javaMethod != null) {
-            val originalMethodDescriptor = super.resolveMethodToFunctionDescriptor(javaMethod)
-            val overridden = firstOverriddenBuiltinFunctionWithErasedValueParameters(originalMethodDescriptor)
+        if (name.sameAsBuiltinMethodWithErasedValueParameters) {
+            val overridden = firstOverriddenBuiltinFunctionWithErasedValueParameters(this)
             if (overridden != null) {
                 if (doesClassOverrideBuiltinWithoutMagic(overridden)) return false
             }
@@ -124,14 +124,14 @@ public class LazyJavaClassMemberScope(
         }
     }
 
-    private fun JavaMethod.doesOverrideRenamedBuiltins(): Boolean {
+    private fun SimpleFunctionDescriptor.doesOverrideRenamedBuiltins(): Boolean {
         return BuiltinMethodsWithDifferentJvmName.getBuiltinFunctionNamesByJvmName(name).any {
             builtinName ->
             val builtinSpecialFromSuperTypes =
                     getFunctionsFromSupertypes(builtinName).filter { it.doesOverrideBuiltinWithDifferentJvmName() }
             if (builtinSpecialFromSuperTypes.isEmpty()) return@any false
 
-            val methodDescriptor = resolveMethodToFunctionDescriptorWithName(this, builtinName)
+            val methodDescriptor = this.createRenamedCopy(builtinName)
 
             builtinSpecialFromSuperTypes.any { isOverridableRenamedDescriptor(it, methodDescriptor) }
         }
@@ -221,7 +221,7 @@ public class LazyJavaClassMemberScope(
 
             val nameInJava = getJvmMethodNameIfSpecial(overriddenBuiltin)!!
             for (method in memberIndex().findMethodsByName(Name.identifier(nameInJava))) {
-                val renamedCopy = resolveMethodToFunctionDescriptorWithName(method, name)
+                val renamedCopy = resolveMethodToFunctionDescriptor(method).createRenamedCopy(name)
 
                 if (isOverridableRenamedDescriptor(overriddenBuiltin, renamedCopy)) {
                     result.add(renamedCopy)
@@ -389,21 +389,21 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun firstOverriddenBuiltinFunctionWithErasedValueParameters(
-            javaMethodDescriptor: JavaMethodDescriptor
+            simpleFunctionDescriptor: SimpleFunctionDescriptor
     ): FunctionDescriptor? {
         val candidatesToOverride =
-                getFunctionsFromSupertypes(javaMethodDescriptor.name).map {
+                getFunctionsFromSupertypes(simpleFunctionDescriptor.name).map {
                     BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(it)
                 }.filterNotNull()
 
         if (candidatesToOverride.isEmpty()) return null
         return candidatesToOverride.firstNotNullResult overrides@{
             candidate ->
-            candidate.check { javaMethodDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(candidate) }
+            candidate.check { simpleFunctionDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(candidate) }
         }
     }
 
-    private fun JavaMethodDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(
+    private fun SimpleFunctionDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(
             builtinWithErasedParameters: FunctionDescriptor
     ): Boolean {
         if (this.valueParameters.size() != builtinWithErasedParameters.valueParameters.size()) return false
