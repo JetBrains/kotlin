@@ -21,6 +21,9 @@ import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.PositionManagerEx
+import com.intellij.debugger.engine.evaluation.EvaluationContext
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.libraries.LibraryUtil
@@ -30,6 +33,8 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.*
+import com.intellij.util.ThreeState
+import com.intellij.xdebugger.frame.XStackFrame
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
@@ -54,8 +59,6 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -66,9 +69,17 @@ import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class PositionedElement(val className: String?, val element: PsiElement?)
 
-public class JetPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
+public class JetPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
 
     private val myTypeMappers = WeakHashMap<String, CachedValue<JetTypeMapper>>()
+
+    override fun evaluateCondition(context: EvaluationContext, frame: StackFrameProxyImpl, location: Location, expression: String): ThreeState? {
+        return null
+    }
+
+    override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
+         return KotlinStackFrame(frame)
+    }
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) {
