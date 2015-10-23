@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor;
@@ -595,11 +596,11 @@ public class DescriptorUtils {
 
     @Nullable
     public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotations annotations) {
-        AnnotationDescriptor jvmNameAnnotation = annotations.findAnnotation(JVM_NAME);
-        if (jvmNameAnnotation == null) {
-            jvmNameAnnotation = annotations.findAnnotation(PLATFORM_NAME);
+        AnnotationWithTarget jvmName = Annotations.Companion.findAnyAnnotation(annotations, JVM_NAME);
+        if (jvmName == null) {
+            jvmName = Annotations.Companion.findAnyAnnotation(annotations, PLATFORM_NAME);
         }
-        return jvmNameAnnotation;
+        return jvmName == null ? null : jvmName.getAnnotation();
     }
 
     @Nullable
