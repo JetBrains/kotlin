@@ -835,9 +835,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateFieldForSingleton() {
         if (isEnumEntry(descriptor)) return;
 
-        if (isObject(descriptor)) {
-            StackValue.Field field = StackValue.singleton(descriptor, typeMapper);
-            v.newField(JvmDeclarationOriginKt.OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+        boolean isCompanionObject = isCompanionObject(descriptor);
+        if (isNonCompanionObject(descriptor) || isCompanionObject) {
+            StackValue.Field field = StackValue.singletonViaInstance(descriptor, typeMapper);
+            v.newField(JvmDeclarationOriginKt.OtherOrigin(myClass),
+                       ACC_PUBLIC | ACC_STATIC | ACC_FINAL | (isCompanionObject ? ACC_DEPRECATED : 0),
+                       field.name, field.type.getDescriptor(), null, null);
 
             if (isNonCompanionObject(descriptor)) {
                 StackValue.Field oldField = StackValue.oldSingleton(descriptor, typeMapper);
@@ -845,18 +848,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
-
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
             markLineNumberForSyntheticFunction(element, v);
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
-            if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
-                //We should load containing class to initialize companion fields
-                StackValue companion = StackValue.singletonForCompanion(descriptor, typeMapper);
-                companion.put(companion.type, v);
-                AsmUtil.pop(v, companion.type);
-            }
+
             return;
         }
 
@@ -868,7 +865,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         KtObjectDeclaration companionObject = CollectionsKt.firstOrNull(((KtClass) myClass).getCompanionObjects());
         assert companionObject != null : "Companion object not found: " + myClass.getText();
 
-        StackValue.Field field = StackValue.singletonForCompanion(companionObjectDescriptor, typeMapper);
+        StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
         v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
@@ -927,8 +924,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        StackValue.singletonForCompanion(companionObject, typeMapper)
-                .store(StackValue.singleton(companionObject, typeMapper), codegen.v, true);
+        //TODO: uncomment when DEPRECATED INSTANCE is removed
+        //FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
+        //        CollectionsKt.single(companionObject.getConstructors()), /* superCallExpression = */ null
+        //);
+        //generateMethodCallTo(constructor, null, codegen.v);
+        //StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
+        StackValue.singleton(companionObject, typeMapper).store(StackValue.singletonViaInstance(companionObject, typeMapper), codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -998,7 +1000,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                            getDelegationConstructorCall(bindingContext, constructorDescriptor));
 
         if (isObject(descriptor)) {
-            StackValue.singleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
+            StackValue.singletonViaInstance(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
             if (isNonCompanionObject(descriptor)) {
                 StackValue.oldSingleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
             }
