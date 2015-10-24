@@ -273,15 +273,26 @@ inline fun <T: Any> LexicalScope.findFirstFromImportingScopes(fetch: (ImportingS
     return findFirstFromMeAndParent { if (it is ImportingScope) fetch(it) else null }
 }
 
-fun LexicalScope.addImportScope(importScope: KtScope): LexicalScope {
+fun LexicalScope.addImportScopes(importScopes: Collection<ImportingScope>): LexicalScope {
+    return importScopes.fold(this) { scope, importingScope -> scope.addImportScope(importingScope) }
+}
+
+fun LexicalScope.addImportScope(importScope: ImportingScope): LexicalScope {
+    assert(importScope.parent == null)
     if (this is ImportingScope) {
-        return importScope.memberScopeAsImportingScope(this)
+        return importScope.withParent(this)
     }
     else {
         val lastNonImporting = parentsWithSelf.last { it !is ImportingScope }
         val firstImporting = lastNonImporting.parent as ImportingScope?
-        val newImportingScope = importScope.memberScopeAsImportingScope(firstImporting)
-        return LexicalScopeWrapper(this, newImportingScope)
+        return LexicalScopeWrapper(this, importScope.withParent(firstImporting))
+    }
+}
+
+fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
+    return object: ImportingScope by this {
+        override val parent: ImportingScope?
+            get() = newParent
     }
 }
 

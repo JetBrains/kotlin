@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -87,7 +86,7 @@ class LazyImportResolver(
 
             if (!directive.isAllUnder) {
                 PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(
-                        moduleDescriptor, traceForImportResolve, directive, directiveImportScope.getAllDescriptors())
+                        moduleDescriptor, traceForImportResolve, directive, directiveImportScope.getDescriptors())
             }
 
             directiveImportScope
@@ -101,7 +100,7 @@ class LazyImportResolver(
 
             val alias = KtPsiUtil.getAliasName(importDirective)?.identifier
             if (scope != null && alias != null) {
-                if (scope.getClassifier(Name.identifier(alias), KotlinLookupLocation(importDirective)) != null) {
+                if (scope.getDeclaredClassifier(Name.identifier(alias), KotlinLookupLocation(importDirective)) != null) {
                     explicitClassImports.put(alias, importDirective)
                 }
             }
@@ -127,7 +126,7 @@ class LazyImportResolver(
 
     public fun <D : DeclarationDescriptor> selectSingleFromImports(
             name: Name,
-            descriptorSelector: (KtScope, Name) -> D?
+            descriptorSelector: (ImportingScope, Name) -> D?
     ): D? {
         fun compute(): D? {
             val imports = indexedImports.importsForName(name)
@@ -145,7 +144,7 @@ class LazyImportResolver(
 
     public fun <D : DeclarationDescriptor> collectFromImports(
             name: Name,
-            descriptorsSelector: (KtScope, Name) -> Collection<D>
+            descriptorsSelector: (ImportingScope, Name) -> Collection<D>
     ): Collection<D> {
         return storageManager.compute {
             var descriptors: Collection<D>? = null
@@ -158,8 +157,8 @@ class LazyImportResolver(
         }
     }
 
-    public fun getImportScope(directive: KtImportDirective): KtScope {
-        return importedScopesProvider(directive) ?: KtScope.Empty
+    public fun getImportScope(directive: KtImportDirective): ImportingScope {
+        return importedScopesProvider(directive) ?: ImportingScope.Empty
     }
 }
 
@@ -187,7 +186,7 @@ class LazyImportScope(
 
     override fun getDeclaredClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         return importResolver.selectSingleFromImports(name) { scope, name ->
-            val descriptor = scope.getClassifier(name, location)
+            val descriptor = scope.getDeclaredClassifier(name, location)
             if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
         }
     }
@@ -199,12 +198,12 @@ class LazyImportScope(
 
     override fun getDeclaredVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, name -> scope.getProperties(name, location) }
+        return importResolver.collectFromImports(name) { scope, name -> scope.getDeclaredVariables(name, location) }
     }
 
     override fun getDeclaredFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, name -> scope.getFunctions(name, location) }
+        return importResolver.collectFromImports(name) { scope, name -> scope.getDeclaredFunctions(name, location) }
     }
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {

@@ -95,7 +95,7 @@ object ReplaceWithAnnotationAnalyzer {
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
         val additionalScopes = resolutionFacade.getFrontendService(FileScopeProvider.AdditionalScopes::class.java)
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
-                                       listOf(explicitImportsScope) + additionalScopes.scopes) ?: return null
+                                       listOf(explicitImportsScope.asKtScope()) + additionalScopes.scopes) ?: return null
 
         var bindingContext = analyzeInContext(expression, module, scope, resolutionFacade)
 
@@ -179,7 +179,7 @@ object ReplaceWithAnnotationAnalyzer {
         val module = symbolDescriptor.module
 
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope)) ?: return null
+        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope.asKtScope())) ?: return null
 
         val typeResolver = resolutionFacade.getFrontendService(TypeResolver::class.java)
         val bindingTrace = BindingTraceContext()

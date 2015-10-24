@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -118,7 +118,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
             packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
-    ): KtScope? { // null if some error happened
+    ): ImportingScope? { // null if some error happened
         val importedReference = importDirective.importedReference ?: return null
         val path = importedReference.asQualifierPartList(trace)
         val lastPart = path.lastOrNull() ?: return null

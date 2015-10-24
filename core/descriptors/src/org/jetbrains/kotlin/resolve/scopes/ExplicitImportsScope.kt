@@ -22,20 +22,23 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-public class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : KtScopeImpl() {
-    override fun getClassifier(name: Name, location: LookupLocation) = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
+public class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : ImportingScope by ImportingScope.Empty {
+    override fun getDeclaredClassifier(name: Name, location: LookupLocation)
+            = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
 
-    override fun getPackage(name: Name)= descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
+    override fun getPackage(name: Name)
+            = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
 
-    override fun getProperties(name: Name, location: LookupLocation) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
+    override fun getDeclaredVariables(name: Name, location: LookupLocation)
+            = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
 
-    override fun getFunctions(name: Name, location: LookupLocation) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
+    override fun getDeclaredFunctions(name: Name, location: LookupLocation)
+            = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
 
-    override fun getContainingDeclaration() = throw UnsupportedOperationException()
+    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+            = descriptors
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = descriptors
-
-    override fun printScopeStructure(p: Printer) {
+    override fun printStructure(p: Printer) {
         p.println(javaClass.getName())
     }
 }
