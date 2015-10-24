@@ -24,8 +24,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>${basedir}/target/tests</sourceDirectory>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -50,7 +48,6 @@
 
                                         <exclude name="concurrent/**"/>
                                         <exclude name="io/**"/>
-                                        <exclude name="template/**"/>
 
                                         <exclude name="ExceptionTest.kt"/>
 
@@ -61,12 +58,8 @@
 
                                         <!-- Something missed in JS:-->
 
-                                        <!-- ImmutableArrayList -->
-                                        <exclude name="collections/ImmutableArrayListTest.kt"/>
                                         <!-- BigInteger, BigDecimal -->
                                         <exclude name="MathTest.kt"/>
-                                        <!-- fun String.toRegex -->
-                                        <exclude name="text/StringUtilTest.kt"/>
                                         <!-- ByteArray.inputStream -->
                                         <exclude name="OldStdlibTest.kt"/>
                                         <!-- failsWith, javaClass -->
@@ -80,11 +73,7 @@
                                         <!-- Can't run: spaces in function name -->
                                         <exclude name="NaturalLanguageTest.kt"/>
 
-
-                                        <!-- TODO review: unused files? -->
-                                        <exclude name="Test.kt"/>
-                                        <exclude name="TestDslExample.kt"/>
-                                    </fileset>
+                                   </fileset>
                                     <fileset dir="${basedir}/../../../js/js.libraries/test">
                                         <include name="**/*.kt" />
                                     </fileset>
@@ -109,6 +98,11 @@
                         <goals>
                             <goal>js</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${basedir}/target/tests</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
