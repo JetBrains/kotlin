@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFromAllFiltered
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -74,7 +74,7 @@ class ParameterNameAndTypeCompletion(
     public fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         for ((classNameMatcher, userPrefix) in classNamePrefixMatchers.zip(userPrefixes)) {
             val resolutionScope = position.getResolutionScope(bindingContext, resolutionFacade)
-            val classifiers = resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classNameMatcher.asNameFilter())
+            val classifiers = resolutionScope.getDescriptorsFromAllFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classNameMatcher.asNameFilter())
 
             for (classifier in classifiers) {
                 if (visibilityFilter(classifier)) {

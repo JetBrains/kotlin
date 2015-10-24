@@ -66,7 +66,7 @@ public fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<Decl
 }
 
 // Result is guaranteed to be filtered by kind and name.
-public fun LexicalScope.getDescriptorsFiltered(
+public fun LexicalScope.getDescriptorsFromAllFiltered(
         kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
         nameFilter: (Name) -> Boolean = { true }
 ): Collection<DeclarationDescriptor> {

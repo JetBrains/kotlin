@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromImportingScopes
-import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFromAllFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -163,7 +162,7 @@ public class ReferenceVariantsHelper(
             descriptors.processAll(implicitReceiverTypes, implicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
 
             // add non-instance members
-            descriptors.addAll(resolutionScope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
+            descriptors.addAll(resolutionScope.getDescriptorsFromAllFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
         }
 
         return descriptors
@@ -183,7 +182,7 @@ public class ReferenceVariantsHelper(
             val lexicalScope = expression.getParentOfType<KtTypeReference>(strict = true)?.let {
                 context[BindingContext.LEXICAL_SCOPE, it]
             } ?: return emptyList()
-            return lexicalScope.getDescriptorsFiltered(kindFilter, nameFilter)
+            return lexicalScope.getDescriptorsFromAllFiltered(kindFilter, nameFilter)
         }
     }
 
@@ -275,7 +274,7 @@ public class ReferenceVariantsHelper(
             filterToUse = filterToUse.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
         }
 
-        for (descriptor in scope.getDescriptorsFiltered(filterToUse, nameFilter)) {
+        for (descriptor in scope.getDescriptorsFromAllFiltered(filterToUse, nameFilter)) {
             if (descriptor is ClassDescriptor) {
                 if (descriptor.modality == Modality.ABSTRACT || descriptor.modality == Modality.SEALED) continue
                 if (!constructorFilter(descriptor)) continue
@@ -302,11 +301,9 @@ public class ReferenceVariantsHelper(
             }
         }
 
-        for (descriptor in resolutionScope.getDescriptors(kindFilter exclude DescriptorKindExclude.NonExtensions, nameFilter)) {
+        for (descriptor in resolutionScope.getDescriptorsFromAllFiltered(kindFilter exclude DescriptorKindExclude.NonExtensions, nameFilter)) {
             // todo: sometimes resolution scope here is LazyJavaClassMemberScope. see ea.jetbrains.com/browser/ea_problems/72572
-            if (descriptor.isExtension) {
-                process(descriptor as CallableDescriptor)
-            }
+            process(descriptor as CallableDescriptor)
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
@@ -338,8 +335,6 @@ public class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         val resolutionScope = context[BindingContext.LEXICAL_SCOPE, expression] ?: return listOf()
-        return resolutionScope.collectAllFromImportingScopes {
-            it.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
-        }
+        return resolutionScope.getDescriptorsFromAllFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
     }
 }
