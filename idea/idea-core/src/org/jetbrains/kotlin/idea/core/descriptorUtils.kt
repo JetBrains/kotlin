@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.getOriginalTopmostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
@@ -48,13 +50,11 @@ fun DeclarationDescriptorWithVisibility.isVisible(
         return Visibilities.isVisible(normalizeReceiver, this, from)
     }
 
-    val jetScope = bindingContext[BindingContext.RESOLUTION_SCOPE, element]
-    val implicitReceivers = jetScope?.getImplicitReceiversHierarchy()
-    if (implicitReceivers != null) {
-        for (implicitReceiver in implicitReceivers) {
-            val normalizeReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(implicitReceiver.getValue(), bindingContext)
-            if (Visibilities.isVisible(normalizeReceiver, this, from)) return true
-        }
+    val resolutionScope = element.getResolutionScope(bindingContext, element.getResolutionFacade())
+    val implicitReceivers = resolutionScope.getImplicitReceiversHierarchy()
+    for (implicitReceiver in implicitReceivers) {
+        val normalizeReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(implicitReceiver.getValue(), bindingContext)
+        if (Visibilities.isVisible(normalizeReceiver, this, from)) return true
     }
     return false
 }

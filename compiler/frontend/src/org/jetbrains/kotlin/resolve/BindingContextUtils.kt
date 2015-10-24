@@ -22,16 +22,13 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
-import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
-import org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET
+import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
@@ -73,14 +70,8 @@ public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(ex
 }
 
 public fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
-    if (element == null) return
-
-    val scopeToRecord = scope.takeSnapshot()
-    record(BindingContext.LEXICAL_SCOPE, element, scopeToRecord)
-
-    // todo: remove it later
-    if (element is KtExpression) {
-        record(BindingContext.RESOLUTION_SCOPE, element, scopeToRecord.asKtScope())
+    if (element != null) {
+        record(BindingContext.LEXICAL_SCOPE, element, scope.takeSnapshot())
     }
 }
 

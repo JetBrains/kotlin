@@ -135,7 +135,6 @@ public interface BindingContext {
 
     WritableSlice<KtWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
 
-    @Deprecated WritableSlice<KtExpression, KtScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
     WritableSlice<KtElement, LexicalScope> LEXICAL_SCOPE = Slices.createSimpleSlice();
 
     WritableSlice<ScriptDescriptor, KtScope> SCRIPT_SCOPE = Slices.createSimpleSlice();

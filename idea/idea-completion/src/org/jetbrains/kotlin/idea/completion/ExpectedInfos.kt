@@ -573,7 +573,7 @@ class ExpectedInfos(
         if (operationToken != KtTokens.IN_KEYWORD && operationToken != KtTokens.NOT_IN || expressionWithType != binaryExpression.right) return null
 
         val leftOperandType = binaryExpression.left?.let { bindingContext.getType(it) } ?: return null
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
+        val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
         val detector = TypesWithContainsDetector(scope, leftOperandType, resolutionFacade)
 
         val byTypeFilter = object : ByTypeFilter {

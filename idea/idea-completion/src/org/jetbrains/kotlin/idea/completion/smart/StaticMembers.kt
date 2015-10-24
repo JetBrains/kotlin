@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.completion.shortenReferences
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -40,8 +42,9 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 // adds java static members, enum members and members from companion object
 class StaticMembers(
-        val bindingContext: BindingContext,
-        val lookupElementFactory: LookupElementFactory
+        private val bindingContext: BindingContext,
+        private val lookupElementFactory: LookupElementFactory,
+        private val resolutionFacade: ResolutionFacade
 ) {
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
@@ -65,10 +68,10 @@ class StaticMembers(
             context: KtSimpleNameExpression,
             enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
-        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return
+        val containingDescriptor = context.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
 
         fun processMember(descriptor: DeclarationDescriptor) {
-            if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(scope.getContainingDeclaration(), bindingContext, context)) return
+            if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(containingDescriptor, bindingContext, context)) return
 
             val matcher: (ExpectedInfo) -> ExpectedInfoMatch
             if (descriptor is CallableDescriptor) {
