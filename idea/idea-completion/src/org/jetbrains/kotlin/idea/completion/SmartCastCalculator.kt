@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -31,23 +33,26 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import java.util.HashMap
+import java.util.*
 
 class SmartCastCalculator(
         val bindingContext: BindingContext,
         val containingDeclarationOrModule: DeclarationDescriptor,
-        expression: KtExpression
+        expression: KtExpression,
+        resolutionFacade: ResolutionFacade
 ) {
     private val receiver = if (expression is KtSimpleNameExpression) expression.getReceiverExpression() else null
 
     // keys are VariableDescriptor's and ThisReceiver's
-    private val entityToSmartCastInfo: Map<Any, SmartCastInfo>
-            = processDataFlowInfo(bindingContext.getDataFlowInfo(expression), bindingContext[BindingContext.RESOLUTION_SCOPE, expression], receiver)
+    private val entityToSmartCastInfo: Map<Any, SmartCastInfo> = processDataFlowInfo(
+            bindingContext.getDataFlowInfo(expression),
+            expression.getResolutionScope(bindingContext, resolutionFacade),
+            receiver)
 
     fun types(descriptor: VariableDescriptor): Collection<KotlinType> {
         val type = descriptor.returnType ?: return emptyList()
@@ -76,7 +81,7 @@ class SmartCastCalculator(
         constructor() : this(emptyList(), false)
     }
 
-    private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo, resolutionScope: KtScope?, receiver: KtExpression?): Map<Any, SmartCastInfo> {
+    private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo, resolutionScope: LexicalScope?, receiver: KtExpression?): Map<Any, SmartCastInfo> {
         if (dataFlowInfo == DataFlowInfo.EMPTY) return emptyMap()
 
         val dataFlowValueToEntity: (DataFlowValue) -> Any?
@@ -126,7 +131,7 @@ class SmartCastCalculator(
         return entityToInfo
     }
 
-    private fun KtScope.findNearestReceiverForVariable(variableDescriptor: VariableDescriptor): ReceiverParameterDescriptor? {
+    private fun LexicalScope.findNearestReceiverForVariable(variableDescriptor: VariableDescriptor): ReceiverParameterDescriptor? {
         val classifier = variableDescriptor.containingDeclaration as? ClassifierDescriptor ?: return null
         val type = classifier.defaultType
         return getImplicitReceiversWithInstance().firstOrNull { it.type.isSubtypeOf(type) }

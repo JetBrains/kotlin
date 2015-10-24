@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -142,7 +141,7 @@ object ReplaceWithAnnotationAnalyzer {
                     else
                         resolvedCall.dispatchReceiver
                     if (receiver is ThisReceiver) {
-                        val receiverExpression = receiver.asExpression(scope.asKtScope(), psiFactory)
+                        val receiverExpression = receiver.asExpression(scope, psiFactory)
                         if (receiverExpression != null) {
                             receiversToAdd.add(expression to receiverExpression)
                         }

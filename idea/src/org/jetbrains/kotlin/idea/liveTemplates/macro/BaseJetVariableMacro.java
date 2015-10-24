@@ -33,11 +33,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection;
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector;
 import org.jetbrains.kotlin.idea.util.ExtensionUtils;
+import org.jetbrains.kotlin.idea.util.ScopeUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -46,6 +48,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 
 import java.util.*;
 
@@ -66,10 +70,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(contextExpression);
 
         BindingContext bindingContext = resolutionFacade.analyze(contextExpression, BodyResolveMode.FULL);
-        KtScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
-        if (scope == null) {
-            return null;
-        }
+        LexicalScope scope = UtilsKt.getResolutionScope(contextExpression, bindingContext, resolutionFacade);
 
         IterableTypesDetector detector = resolutionFacade.getIdeService(IterableTypesDetection.class).createDetector(scope);
 
@@ -106,10 +107,10 @@ public abstract class BaseJetVariableMacro extends Macro {
         return declarations.toArray(new KtNamedDeclaration[declarations.size()]);
     }
 
-    private static Collection<DeclarationDescriptor> getAllVariables(KtScope scope) {
+    private static Collection<DeclarationDescriptor> getAllVariables(LexicalScope scope) {
         Collection<DeclarationDescriptor> result = ContainerUtil.newArrayList();
         result.addAll(scope.getDescriptors(DescriptorKindFilter.VARIABLES, KtScope.Companion.getALL_NAME_FILTER()));
-        for (ReceiverParameterDescriptor implicitReceiver : scope.getImplicitReceiversHierarchy()) {
+        for (ReceiverParameterDescriptor implicitReceiver : ScopeUtilsKt.getImplicitReceiversHierarchy(scope)) {
             result.addAll(implicitReceiver.getType().getMemberScope().getDescriptors(DescriptorKindFilter.VARIABLES, KtScope.Companion.getALL_NAME_FILTER()));
         }
         return result;

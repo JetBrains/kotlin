@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -555,7 +556,7 @@ class ExpectedInfos(
         else
             null
 
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expressionWithType)!!
+        val scope = expressionWithType.getResolutionScope(bindingContext, resolutionFacade)
         val iterableDetector = resolutionFacade.ideService<IterableTypesDetection>().createDetector(scope)
 
         val byTypeFilter = object : ByTypeFilter {

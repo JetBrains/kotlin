@@ -22,21 +22,24 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
 
 
-public fun KtScope.getAllAccessibleVariables(name: Name): Collection<VariableDescriptor>
-        = getVariablesFromImplicitReceivers(name) + getProperties(name, NoLookupLocation.FROM_IDE) + listOfNotNull(getLocalVariable(name))
+public fun LexicalScope.getAllAccessibleVariables(name: Name): Collection<VariableDescriptor> {
+    return getVariablesFromImplicitReceivers(name) + collectAllFromMeAndParent { it.getDeclaredVariables(name, NoLookupLocation.FROM_IDE) }
+}
 
-public fun KtScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor>
-        = getImplicitReceiversWithInstance().flatMap { it.type.memberScope.getFunctions(name, NoLookupLocation.FROM_IDE) } +
-          getFunctions(name, NoLookupLocation.FROM_IDE)
+public fun LexicalScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor> {
+    return getImplicitReceiversWithInstance().flatMap { it.type.memberScope.getFunctions(name, NoLookupLocation.FROM_IDE) } +
+            collectAllFromMeAndParent { it.getDeclaredFunctions(name, NoLookupLocation.FROM_IDE) }
+}
 
-public fun KtScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {
+public fun LexicalScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {
     it.type.memberScope.getProperties(name, NoLookupLocation.FROM_IDE)
 }
 
-public fun KtScope.getVariableFromImplicitReceivers(name: Name): VariableDescriptor? {
+public fun LexicalScope.getVariableFromImplicitReceivers(name: Name): VariableDescriptor? {
     getImplicitReceiversWithInstance().forEach {
         it.type.memberScope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull()?.let { return it }
     }

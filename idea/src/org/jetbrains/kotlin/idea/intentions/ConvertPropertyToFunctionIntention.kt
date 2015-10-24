@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
 import java.util.*
 
 public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<KtProperty>(javaClass(), "Convert property to function"), LowPriorityAction {
@@ -102,7 +103,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<KtPr
 
                 if (callable is KtProperty) {
                     callableDescriptor.getContainingScope()
-                            ?.getFunctions(callableDescriptor.name, NoLookupLocation.FROM_IDE)
+                            ?.collectAllFromMeAndParent { it.getDeclaredFunctions(callableDescriptor.name, NoLookupLocation.FROM_IDE) }
                             ?.firstOrNull { it.getValueParameters().isEmpty() }
                             ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }

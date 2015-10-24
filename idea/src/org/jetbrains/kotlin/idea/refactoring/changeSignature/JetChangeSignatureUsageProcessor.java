@@ -78,7 +78,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
@@ -634,13 +634,13 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         CallableDescriptor oldDescriptor = JetChangeInfoKt.getOriginalBaseFunctionDescriptor(changeInfo);
         DeclarationDescriptor containingDeclaration = oldDescriptor.getContainingDeclaration();
 
-        KtScope parametersScope = null;
+        LexicalScope parametersScope = null;
         if (oldDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptorWithResolutionScopes)
-            parametersScope = ScopeUtilsKt.asKtScope(((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution());
+            parametersScope = ((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution();
         else if (function instanceof KtFunction)
             parametersScope = CallableRefactoringKt.getBodyScope((KtFunction) function, bindingContext);
 
-        KtScope callableScope = CallableRefactoringKt.getContainingScope(oldDescriptor);
+        LexicalScope callableScope = CallableRefactoringKt.getContainingScope(oldDescriptor);
 
         JetMethodDescriptor.Kind kind = JetChangeInfoKt.getKind(changeInfo);
         if (!kind.isConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
@@ -680,7 +680,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     }
                 }
                 else if (function instanceof KtFunction) {
-                    VariableDescriptor variable = parametersScope.getLocalVariable(Name.identifier(parameterName));
+                    VariableDescriptor variable = ScopeUtilsKt.getLocalVariable(parametersScope, Name.identifier(parameterName));
 
                     if (variable != null && !(variable instanceof ValueParameterDescriptor)) {
                         PsiElement conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(variable);
@@ -755,9 +755,9 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             if (usageInfo.getElement() instanceof KDocName) continue; // TODO support converting parameter to receiver in KDoc
 
             KtExpression originalExpr = (KtExpression) usageInfo.getElement();
-            KtScope scope = ResolutionUtils.analyze(originalExpr, BodyResolveMode.FULL)
-                    .get(BindingContext.RESOLUTION_SCOPE, originalExpr);
-            if (scope == null) continue;
+            BindingContext bindingContext = ResolutionUtils.analyze(originalExpr, BodyResolveMode.FULL);
+            LexicalScope scope = org.jetbrains.kotlin.idea.core.UtilsKt.getResolutionScope(
+                    originalExpr, bindingContext, ResolutionUtils.getResolutionFacade(originalExpr));
 
             KtThisExpression newExpr = (KtThisExpression) psiFactory.createExpression(newExprText);
 

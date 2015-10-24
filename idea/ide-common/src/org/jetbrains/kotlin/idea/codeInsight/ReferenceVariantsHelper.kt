@@ -35,10 +35,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromImportingScopes
 import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -115,7 +117,7 @@ public class ReferenceVariantsHelper(
             }
 
             is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
-                val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression.parent as KtExpression] ?: return emptyList()
+                val resolutionScope = context[BindingContext.LEXICAL_SCOPE, expression.parent as KtExpression] ?: return emptyList()
                 return getVariantsForCallableReference(callTypeAndReceiver.receiver, resolutionScope, kindFilter, nameFilter)
             }
 
@@ -128,9 +130,9 @@ public class ReferenceVariantsHelper(
             else -> throw RuntimeException() //TODO: see KT-9394
         }
 
-        val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return emptyList()
+        val resolutionScope = context[BindingContext.LEXICAL_SCOPE, expression] ?: return emptyList()
         val dataFlowInfo = context.getDataFlowInfo(expression)
-        val containingDeclaration = resolutionScope.getContainingDeclaration()
+        val containingDeclaration = resolutionScope.ownerDescriptor
 
         val smartCastManager = resolutionFacade.frontendService<SmartCastManager>()
         val implicitReceiverTypes = resolutionScope.getImplicitReceiversWithInstance().flatMap {
@@ -187,7 +189,7 @@ public class ReferenceVariantsHelper(
 
     private fun getVariantsForCallableReference(
             qualifierTypeRef: KtTypeReference?,
-            resolutionScope: KtScope,
+            resolutionScope: LexicalScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
@@ -224,7 +226,7 @@ public class ReferenceVariantsHelper(
     private fun MutableSet<DeclarationDescriptor>.processAll(
             implicitReceiverTypes: Collection<KotlinType>,
             receiverTypes: Collection<KotlinType>,
-            resolutionScope: KtScope,
+            resolutionScope: LexicalScope,
             callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
@@ -256,12 +258,12 @@ public class ReferenceVariantsHelper(
             constructorFilter: (ClassDescriptor) -> Boolean
     ) {
         for (receiverType in receiverTypes) {
-            addNonExtensionCallablesAndConstructors(receiverType.memberScope, kindFilter, nameFilter, constructorFilter)
+            addNonExtensionCallablesAndConstructors(receiverType.memberScope.memberScopeAsImportingScope(), kindFilter, nameFilter, constructorFilter)
         }
     }
 
     private fun MutableSet<DeclarationDescriptor>.addNonExtensionCallablesAndConstructors(
-            scope: KtScope,
+            scope: LexicalScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             constructorFilter: (ClassDescriptor) -> Boolean
@@ -286,7 +288,7 @@ public class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addScopeAndSyntheticExtensions(
-            resolutionScope: KtScope,
+            resolutionScope: LexicalScope,
             receiverTypes: Collection<KotlinType>,
             callType: CallType<*>,
             kindFilter: DescriptorKindFilter,
@@ -308,13 +310,13 @@ public class ReferenceVariantsHelper(
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            for (extension in resolutionScope.getSyntheticExtensionProperties(receiverTypes)) {
+            for (extension in resolutionScope.collectAllFromImportingScopes { it.getSyntheticExtensionProperties(receiverTypes) }) {
                 process(extension)
             }
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            for (extension in resolutionScope.getSyntheticExtensionFunctions(receiverTypes)) {
+            for (extension in resolutionScope.collectAllFromImportingScopes { it.getSyntheticExtensionFunctions(receiverTypes) }) {
                 process(extension)
             }
         }

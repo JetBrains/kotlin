@@ -36,19 +36,21 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.idea.analysis.AnalyzerUtilKt;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
+import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase;
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange;
@@ -63,7 +65,7 @@ import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
@@ -135,34 +137,27 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             return;
         }
 
-        AnalysisResult analysisResult = ResolutionUtils.analyzeAndGetResult(expression);
-        final BindingContext bindingContext = analysisResult.getBindingContext();
+        ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(expression);
+        final BindingContext bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.FULL);
         final KotlinType expressionType = bindingContext.getType(expression); //can be null or error type
-        KtScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
-        if (scope != null) {
-            DataFlowInfo dataFlowInfo = BindingContextUtilsKt.getDataFlowInfo(bindingContext, expression);
+        LexicalScope scope = UtilsKt.getResolutionScope(expression, bindingContext, resolutionFacade);
+        DataFlowInfo dataFlowInfo = BindingContextUtilsKt.getDataFlowInfo(bindingContext, expression);
 
-            ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
-            KotlinType typeNoExpectedType = AnalyzerUtilKt.computeTypeInfoInContext(
-                    expression, scope, expression, bindingTrace, dataFlowInfo
-            ).getType();
-            if (expressionType != null && typeNoExpectedType != null && !KotlinTypeChecker.DEFAULT.equalTypes(expressionType,
-                                                                                                              typeNoExpectedType)) {
-                noTypeInference = true;
-            }
+        ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
+        KotlinType typeNoExpectedType = AnalyzerUtilKt.computeTypeInfoInContext(
+                expression, scope, expression, bindingTrace, dataFlowInfo
+        ).getType();
+        if (expressionType != null && typeNoExpectedType != null && !KotlinTypeChecker.DEFAULT.equalTypes(expressionType,
+                                                                                                          typeNoExpectedType)) {
+            noTypeInference = true;
         }
 
         if (expressionType == null && bindingContext.get(BindingContext.QUALIFIER, expression) != null) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.package.expression"));
             return;
         }
-        if (expressionType != null &&
-            KotlinTypeChecker.DEFAULT.equalTypes(analysisResult.getModuleDescriptor().getBuiltIns().getUnitType(), expressionType)) {
+        if (expressionType != null && KotlinBuiltIns.isUnit(expressionType)) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
-            return;
-        }
-        if (expressionType == null && noTypeInference) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.should.have.inferred.type"));
             return;
         }
         final PsiElement container = getContainer(expression);

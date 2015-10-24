@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.idea.completion.ArgumentPositionData
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.completion.Tail
+import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getVariableFromImplicitReceivers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.Call
@@ -34,17 +36,22 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
-class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
-                                    val smartCastCalculator: SmartCastCalculator) {
+class MultipleArgumentsItemProvider(
+        private val bindingContext: BindingContext,
+        private val smartCastCalculator: SmartCastCalculator,
+        private val resolutionFacade: ResolutionFacade
+) {
 
     public fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
                                context: KtExpression) {
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, context] ?: return
+        val resolutionScope = context.getResolutionScope(bindingContext, resolutionFacade)
 
         val added = HashSet<String>()
         for (expectedInfo in expectedInfos) {
@@ -96,11 +103,12 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
                 .assignSmartCompletionPriority(SmartCompletionItemPriority.MULTIPLE_ARGUMENTS_ITEM)
     }
 
-    private fun variableInScope(parameter: ValueParameterDescriptor, scope: KtScope): VariableDescriptor? {
+    private fun variableInScope(parameter: ValueParameterDescriptor, scope: LexicalScope): VariableDescriptor? {
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
-        val variable = scope.getLocalVariable(name) ?: scope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull() ?:
-                       scope.getVariableFromImplicitReceivers(name) ?: return null
+        val variable = scope.getLocalVariable(name)
+                ?: scope.collectAllFromMeAndParent { it.getDeclaredVariables(name, NoLookupLocation.FROM_IDE) }.singleOrNull()
+                ?: scope.getVariableFromImplicitReceivers(name) ?: return null
         return if (smartCastCalculator.types(variable).any { KotlinTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable
         else

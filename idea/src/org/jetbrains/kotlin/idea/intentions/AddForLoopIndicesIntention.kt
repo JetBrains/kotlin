@@ -23,11 +23,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -44,7 +45,7 @@ public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<KtForEx
         val resolvedCall = loopRange.getResolvedCall(bindingContext)
         if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() == WITH_INDEX_FQ_NAME) return null // already withIndex() call
 
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, element] ?: return null
+        val resolutionScope = element.getResolutionScope(bindingContext, element.getResolutionFacade())
         val potentialExpression = createWithIndexExpression(loopRange)
 
         val newBindingContext = potentialExpression.analyzeInContext(resolutionScope, loopRange)

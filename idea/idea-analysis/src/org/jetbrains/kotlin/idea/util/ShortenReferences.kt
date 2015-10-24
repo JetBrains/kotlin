@@ -344,7 +344,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return false
             val target = callee.targets(bindingContext).singleOrNull() ?: return false
 
-            val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, qualifiedExpression] ?: return false
+            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, qualifiedExpression] ?: return false
             val selectorCopy = selector.copy() as KtReferenceExpression
             val newContext = selectorCopy.analyzeInContext(scope, selector)
             val targetsWhenShort = (selectorCopy.getCalleeExpressionIfAny() as KtReferenceExpression).targets(newContext)
@@ -392,7 +392,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             val bindingContext = analyze(thisExpression)
 
             val targetBefore = thisExpression.getInstanceReference().targets(bindingContext).singleOrNull() ?: return
-            val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, thisExpression] ?: return
+            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, thisExpression] ?: return
             val newContext = simpleThis.analyzeInContext(scope, thisExpression)
             val targetAfter = simpleThis.getInstanceReference().targets(newContext).singleOrNull()
             if (targetBefore == targetAfter) {

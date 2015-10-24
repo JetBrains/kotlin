@@ -27,23 +27,23 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import java.util.LinkedHashMap
-import java.util.LinkedHashSet
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
+import java.util.*
 
-public fun KtScope.getImplicitReceiversWithInstance(): Collection<ReceiverParameterDescriptor>
-        = getImplicitReceiversWithInstanceToExpression().keySet()
+public fun LexicalScope.getImplicitReceiversWithInstance(): Collection<ReceiverParameterDescriptor>
+        = getImplicitReceiversWithInstanceToExpression().keys
 
 public interface ReceiverExpressionFactory {
     public fun createExpression(psiFactory: KtPsiFactory, shortThis: Boolean = true): KtExpression
 }
 
-public fun KtScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverParameterDescriptor, ReceiverExpressionFactory?> {
+public fun LexicalScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverParameterDescriptor, ReceiverExpressionFactory?> {
     // we use a set to workaround a bug with receiver for companion object present twice in the result of getImplicitReceiversHierarchy()
     val receivers = LinkedHashSet(getImplicitReceiversHierarchy())
 
     val outerDeclarationsWithInstance = LinkedHashSet<DeclarationDescriptor>()
-    var current: DeclarationDescriptor? = getContainingDeclaration()
+    var current: DeclarationDescriptor? = ownerDescriptor
     while (current != null) {
         if (current is PropertyAccessorDescriptor) {
             current =  current.getCorrespondingProperty()

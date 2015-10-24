@@ -22,6 +22,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
@@ -51,7 +53,7 @@ public class RemoveExplicitSuperQualifierIntention : JetSelfTargetingRangeIntent
 
         val bindingContext = selector.analyze(BodyResolveMode.PARTIAL)
         if (selector.getResolvedCall(bindingContext) == null) return null
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, qualifiedExpression] ?: return null
+        val resolutionScope = qualifiedExpression.getResolutionScope(bindingContext, selector.getResolutionFacade())
         val dataFlowInfo = bindingContext.getDataFlowInfo(element)
         val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, qualifiedExpression] ?: TypeUtils.NO_EXPECTED_TYPE
 

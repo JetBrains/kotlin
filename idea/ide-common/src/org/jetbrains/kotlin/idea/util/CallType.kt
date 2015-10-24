@@ -218,7 +218,7 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         expressionType?.let { listOf(ExpressionReceiver(receiverExpression, expressionType)) } ?: return emptyList()
     }
     else {
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, position] ?: return emptyList()
+        val resolutionScope = bindingContext[BindingContext.LEXICAL_SCOPE, position] ?: return emptyList()
         resolutionScope.getImplicitReceiversWithInstance().map { it.value }
     }
 
