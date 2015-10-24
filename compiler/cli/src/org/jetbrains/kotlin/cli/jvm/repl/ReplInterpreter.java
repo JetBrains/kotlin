@@ -68,7 +68,9 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -130,8 +132,10 @@ public class ReplInterpreter {
         FileScopeProvider.AdditionalScopes scopeProvider = new FileScopeProvider.AdditionalScopes() {
             @NotNull
             @Override
-            public List<KtScope> getScopes() {
-                return lastLineScope != null ? new SmartList<KtScope>(lastLineScope) : Collections.<KtScope>emptyList();
+            public List<ImportingScope> getScopes() {
+                return lastLineScope != null
+                       ? new SmartList<ImportingScope>(ScopeUtilsKt.memberScopeAsImportingScope(lastLineScope))
+                       : Collections.<ImportingScope>emptyList();
             }
         };
 

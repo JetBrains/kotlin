@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.resolve.scopes.utils.withParent
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
@@ -86,7 +87,8 @@ public class FileScopeProviderImpl(
                 "All under imports in $debugName (invisible classes only)")
 
         for (additionalScope in additionalScopes.flatMap { it.scopes }) {
-            scope = additionalScope.memberScopeAsImportingScope(scope)
+            assert(additionalScope.parent == null)
+            scope = additionalScope.withParent(scope)
         }
 
         scope = LazyImportScope(scope, packageFragment, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,

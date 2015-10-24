@@ -28,8 +28,9 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromImportingScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -46,7 +47,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val setMethod: FunctionDescriptor?
 
     companion object {
-        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: KtScope): SyntheticJavaPropertyDescriptor? {
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: LexicalScope): SyntheticJavaPropertyDescriptor? {
             val name = getterOrSetter.getName()
             if (name.isSpecial()) return null
             val identifier = name.getIdentifier()
@@ -55,7 +56,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             val owner = getterOrSetter.getContainingDeclaration() as? ClassDescriptor ?: return null
 
             val originalGetterOrSetter = getterOrSetter.original
-            return resolutionScope.getSyntheticExtensionProperties(listOf(owner.getDefaultType()))
+            return resolutionScope.collectAllFromImportingScopes { it.getSyntheticExtensionProperties(listOf(owner.defaultType)) }
                     .filterIsInstance<SyntheticJavaPropertyDescriptor>()
                     .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
@@ -68,7 +69,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     }
 }
 
-class JavaSyntheticPropertiesScope(storageManager: StorageManager) : KtScopeImpl() {
+class JavaSyntheticPropertiesScope(storageManager: StorageManager) : ImportingScope by ImportingScope.Empty {
     private val syntheticPropertyInClass = storageManager.createMemoizedFunctionWithNullableValues<Pair<ClassDescriptor, Name>, PropertyDescriptor> { pair ->
         syntheticPropertyInClassNotCached(pair.first, pair.second)
     }
@@ -223,11 +224,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : KtScopeImpl
         return Name.identifier("set" + identifier.removePrefix(prefix))
     }
 
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        throw UnsupportedOperationException()
-    }
-
-    override fun printScopeStructure(p: Printer) {
+    override fun printStructure(p: Printer) {
         p.println(javaClass.simpleName)
     }
 

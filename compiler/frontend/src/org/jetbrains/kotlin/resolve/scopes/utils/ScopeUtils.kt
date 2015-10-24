@@ -290,6 +290,11 @@ fun LexicalScope.addImportScope(importScope: ImportingScope): LexicalScope {
 }
 
 fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
+    // TODO: it's a hack for Repl
+    if (this is MemberScopeToImportingScopeAdapter) {
+        return MemberScopeToImportingScopeAdapter(newParent, memberScope)
+    }
+
     return object: ImportingScope by this {
         override val parent: ImportingScope?
             get() = newParent
@@ -317,3 +322,10 @@ private class LexicalScopeWrapper(val delegate: LexicalScope, val newImportingSc
     }
 }
 
+fun chainImportingScopes(scopes: List<ImportingScope>): ImportingScope? {
+    return scopes.asReversed()
+            .fold<ImportingScope, ImportingScope?>(null) { current, scope ->
+                assert(scope.parent == null)
+                scope.withParent(current)
+            }
+}

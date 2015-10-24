@@ -46,7 +46,8 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSuppor
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -95,7 +96,7 @@ object ReplaceWithAnnotationAnalyzer {
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
         val additionalScopes = resolutionFacade.getFrontendService(FileScopeProvider.AdditionalScopes::class.java)
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
-                                       listOf(explicitImportsScope.asKtScope()) + additionalScopes.scopes) ?: return null
+                                       listOf(explicitImportsScope) + additionalScopes.scopes) ?: return null
 
         var bindingContext = analyzeInContext(expression, module, scope, resolutionFacade)
 
@@ -179,7 +180,7 @@ object ReplaceWithAnnotationAnalyzer {
         val module = symbolDescriptor.module
 
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope.asKtScope())) ?: return null
+        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope)) ?: return null
 
         val typeResolver = resolutionFacade.getFrontendService(TypeResolver::class.java)
         val bindingTrace = BindingTraceContext()
@@ -237,7 +238,7 @@ object ReplaceWithAnnotationAnalyzer {
         return traceContext.bindingContext
     }
 
-    private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<KtScope>): LexicalScope? {
+    private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<ImportingScope>): LexicalScope? {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
                 val moduleDescriptor = descriptor.containingDeclaration
@@ -245,7 +246,7 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             is PackageViewDescriptor ->
-                ChainedScope(ownerDescriptor, "ReplaceWith resolution scope", descriptor.memberScope, *additionalScopes.toTypedArray()).asLexicalScope()
+                chainImportingScopes(listOf(descriptor.memberScope.memberScopeAsImportingScope()) + additionalScopes)
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null

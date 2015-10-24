@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -87,7 +86,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
 
         val function = resolvedCall.getResultingDescriptor() as? FunctionDescriptor ?: return null
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
-        val property = findSyntheticProperty(function, resolutionScope.asKtScope()) ?: return null
+        val property = findSyntheticProperty(function, resolutionScope) ?: return null
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(callee)
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
@@ -143,7 +142,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         return result.isSuccess && result.resultingDescriptor.original == property
     }
 
-    private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: KtScope): SyntheticJavaPropertyDescriptor? {
+    private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: LexicalScope): SyntheticJavaPropertyDescriptor? {
         SyntheticJavaPropertyDescriptor.findByGetterOrSetter(function, resolutionScope)?.let { return it }
 
         for (overridden in function.getOverriddenDescriptors()) {

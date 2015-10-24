@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.KtScope
 
 public interface FileScopeProvider {
     fun getFileScopeChain(file: KtFile): ImportingScope
@@ -30,7 +29,7 @@ public interface FileScopeProvider {
     }
 
     public interface AdditionalScopes {
-        public val scopes: List<KtScope>
+        public val scopes: List<ImportingScope>
     }
 }
 

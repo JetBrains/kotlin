@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -37,7 +38,7 @@ interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor {
     val sourceFunction: FunctionDescriptor
 }
 
-class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtScope.Empty {
+class SamAdapterFunctionsScope(storageManager: StorageManager) : ImportingScope by ImportingScope.Empty {
     private val extensionForFunction = storageManager.createMemoizedFunctionWithNullableValues<FunctionDescriptor, FunctionDescriptor> { function ->
         extensionForFunctionNotCached(function)
     }
@@ -79,6 +80,10 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
                     .map { extensionForFunction(it.original) }
                     .filterNotNull()
         }
+    }
+
+    override fun printStructure(p: Printer) {
+        p.println(javaClass.simpleName)
     }
 
     private class MyFunctionDescriptor(
