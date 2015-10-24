@@ -66,7 +66,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
@@ -84,7 +85,7 @@ private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).
  */
-class TypeCandidate(val theType: KotlinType, scope: KtScope? = null) {
+class TypeCandidate(val theType: KotlinType, scope: LexicalScope? = null) {
     public val typeParameters: Array<TypeParameterDescriptor>
     var renderedType: String? = null
         private set
@@ -161,7 +162,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     fun computeTypeCandidates(
             typeInfo: TypeInfo,
             substitutions: List<JetTypeSubstitution>,
-            scope: KtScope): List<TypeCandidate> {
+            scope: LexicalScope): List<TypeCandidate> {
         if (!typeInfo.substitutionsAllowed) return computeTypeCandidates(typeInfo)
         return typeCandidates.getOrPut(typeInfo) {
             val types = typeInfo.getPossibleTypes(this).asReversed()
@@ -336,13 +337,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             mandatoryTypeParametersAsCandidates.forEach { it.render(typeParameterNameMap, fakeFunction) }
         }
 
-        private fun getDeclarationScope(): KtScope {
+        private fun getDeclarationScope(): LexicalScope {
             if (config.isExtension || receiverClassDescriptor == null) {
-                return currentFileModule.getPackage(config.currentFile.getPackageFqName()).memberScope
+                return currentFileModule.getPackage(config.currentFile.packageFqName).memberScope.memberScopeAsImportingScope()
             }
 
             if (receiverClassDescriptor is ClassDescriptorWithResolutionScopes) {
-                return receiverClassDescriptor.getScopeForMemberDeclarationResolution().asKtScope()
+                return receiverClassDescriptor.scopeForMemberDeclarationResolution
             }
 
             assert (receiverClassDescriptor is JavaClassDescriptor) { "Unexpected receiver class: $receiverClassDescriptor" }
@@ -364,12 +365,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     .map { TypeProjectionImpl(it.getDefaultType()) }
             val memberScope = receiverClassDescriptor.getMemberScope(projections)
 
-            return ChainedScope(
-                    receiverClassDescriptor,
-                    "Classifier resolution scope: ${receiverClassDescriptor.getName()}",
-                    typeParamScope,
-                    memberScope
-            )
+            return typeParamScope.memberScopeAsImportingScope(memberScope.memberScopeAsImportingScope())
         }
 
         private fun collectSubstitutionsForReceiverTypeParameters(
@@ -394,7 +390,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
         }
 
-        private fun createFakeFunctionDescriptor(scope: KtScope, typeParameterCount: Int): FunctionDescriptor {
+        private fun createFakeFunctionDescriptor(scope: LexicalScope, typeParameterCount: Int): FunctionDescriptor {
             val fakeFunction = SimpleFunctionDescriptorImpl.create(
                     MutablePackageFragmentDescriptor(currentFileModule, FqName("fake")),
                     Annotations.EMPTY,
@@ -616,7 +612,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             else classBody.addAfter(declaration, classBody.lBrace!!) as KtNamedDeclaration
         }
 
-        private fun getTypeParameterRenames(scope: KtScope): Map<TypeParameterDescriptor, String> {
+        private fun getTypeParameterRenames(scope: LexicalScope): Map<TypeParameterDescriptor, String> {
             val allTypeParametersNotInScope = LinkedHashSet<TypeParameterDescriptor>()
 
             mandatoryTypeParametersAsCandidates.asSequence()
