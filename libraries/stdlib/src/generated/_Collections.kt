@@ -147,7 +147,7 @@ public fun <T> List<T>.elementAtOrNull(index: Int): T? {
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found.
+ * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
     return firstOrNull(predicate)
@@ -980,7 +980,7 @@ public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given collection.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
@@ -993,7 +993,8 @@ public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T)
 }
 
 /**
- * Returns Map containing the values from the given collection indexed by [selector].
+ * Returns Map containing the elements from the given collection indexed by the key
+ * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K> Iterable<T>.toMapBy(selector: (T) -> K): Map<K, T> {
@@ -1064,14 +1065,14 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index of the original collection.
+ * Returns a list containing the results of applying the given [transform] function to each element and its index in the original collection.
  */
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
 /**
- * Appends transformed elements and their indices of the original collection using the given [transform] function
+ * Appends transformed elements and their indices in the original collection using the given [transform] function
  * to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
@@ -1310,7 +1311,7 @@ public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(f: (T) -> R): T
 }
 
 /**
- * Returns `true` if collection has no elements.
+ * Returns `true` if the collection has no elements.
  */
 public fun <T> Iterable<T>.none(): Boolean {
     for (element in this) return false
@@ -1352,7 +1353,7 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection.
+ * Returns the sum of all values produced by [transform] function applied to each element in the collection.
  */
 public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -1363,7 +1364,7 @@ public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection.
+ * Returns the sum of all values produced by [transform] function applied to each element in the collection.
  */
 public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -1436,9 +1437,9 @@ public operator fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
 }
 
 /**
- * Splits the original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded `true`,
- * while *second* collection contains elements for which [predicate] yielded `false`.
+ * Splits the original collection into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
  */
 public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()

@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.DocExtensions.collection
 
 fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -395,11 +396,11 @@ fun generators(): List<GenericFunction> {
     templates add f("partition(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc {
+        doc { f ->
             """
-            Splits the original collection into pair of collections,
-            where *first* collection contains elements for which [predicate] yielded `true`,
-            while *second* collection contains elements for which [predicate] yielded `false`.
+            Splits the original ${f.collection} into pair of lists,
+            where *first* list contains elements for which [predicate] yielded `true`,
+            while *second* list contains elements for which [predicate] yielded `false`.
             """
         }
         // TODO: Sequence variant
@@ -422,7 +423,7 @@ fun generators(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) {
             """
-            Splits the original string into pair of strings,
+            Splits the original char sequence into pair of strings,
             where *first* string contains characters for which [predicate] yielded `true`,
             while *second* string contains characters for which [predicate] yielded `false`.
             """
@@ -560,7 +561,7 @@ fun generators(): List<GenericFunction> {
         only(CharSequences, Strings)
         doc {
             """
-            Returns a list of values built from characters of both strings with same indexes using provided [transform]. List has length of shortest string.
+            Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
             """
         }
         typeParam("V")
@@ -601,7 +602,7 @@ fun generators(): List<GenericFunction> {
         only(CharSequences, Strings)
         doc {
             """
-            Returns a list of pairs built from characters of both strings with same indexes. List has length of shortest collection.
+            Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
             """
         }
         returns("List<Pair<Char, Char>>")
@@ -648,7 +649,7 @@ fun generators(): List<GenericFunction> {
         doc {
             """
             Returns a sequence of pairs built from elements of both collections with same indexes.
-            Resulting sequence has length of shortest input sequences.
+            Resulting sequence has length of shortest input sequence.
             """
         }
         typeParam("R")

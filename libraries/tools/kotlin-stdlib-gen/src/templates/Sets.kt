@@ -1,13 +1,16 @@
 package templates
 
 import templates.Family.*
+import templates.DocExtensions.element
+import templates.DocExtensions.collection
+import templates.DocExtensions.mapResult
 
 fun sets(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("toMutableSet()") {
         exclude(Strings)
-        doc { "Returns a mutable set containing all distinct elements from the given collection." }
+        doc { f -> "Returns a mutable set containing all distinct ${f.element}s from the given ${f.collection}." }
         returns("MutableSet<T>")
         body {
             """
@@ -36,28 +39,29 @@ fun sets(): List<GenericFunction> {
 
     templates add f("distinct()") {
         exclude(Strings)
-        val collectionDoc = """
-            Returns a list containing only distinct elements from the given collection.
-
-            The elements in the resulting list are in the same order as they were in the source collection.
+        doc { f ->
             """
-        doc { collectionDoc }
+                Returns a ${f.mapResult} containing only distinct ${f.element}s from the given ${f.collection}.
+
+                The ${f.element}s in the resulting ${f.mapResult} are in the same order as they were in the source ${f.collection}.
+                """
+        }
 
         returns("List<T>")
         body { "return this.toMutableSet().toList()" }
-        doc(Sequences) { collectionDoc.replace("list", "sequence").replace("collection", "sequence") }
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) { "return this.distinctBy { it }" }
     }
 
     templates add f("distinctBy(keySelector: (T) -> K)") {
         exclude(Strings)
-        val collectionDoc = """
-            Returns a list containing only distinct elements from the given collection according to the [keySelector].
-
-            The elements in the resulting list are in the same order as they were in the source collection.
+        doc { f ->
             """
-        doc { collectionDoc }
+                Returns a ${f.mapResult} containing only distinct ${f.element}s from the given ${f.collection} according to the [keySelector].
+
+                The ${f.element}s in the resulting ${f.mapResult} are in the same order as they were in the source ${f.collection}.
+                """
+        }
 
         inline(true)
         typeParam("K")
@@ -76,7 +80,6 @@ fun sets(): List<GenericFunction> {
         }
 
         inline(false, Sequences)
-        doc(Sequences) { collectionDoc.replace("list", "sequence").replace("collection", "sequence") }
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """

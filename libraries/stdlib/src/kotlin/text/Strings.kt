@@ -132,17 +132,17 @@ public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): String {
 }
 
 /**
- * Returns `true` if this nullable string is either `null` or empty.
+ * Returns `true` if this nullable char sequence is either `null` or empty.
  */
 public fun CharSequence?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
 
 /**
- * Returns `true` if this string is empty (contains no characters).
+ * Returns `true` if this char sequence is empty (contains no characters).
  */
 public fun CharSequence.isEmpty(): Boolean = length() == 0
 
 /**
- * Returns `true` if this string is not empty.
+ * Returns `true` if this char sequence is not empty.
  */
 public fun CharSequence.isNotEmpty(): Boolean = length() > 0
 
@@ -151,12 +151,12 @@ public fun CharSequence.isNotEmpty(): Boolean = length() > 0
 
 
 /**
- * Returns `true` if this string is not empty and contains some characters except of whitespace characters.
+ * Returns `true` if this char sequence is not empty and contains some characters except of whitespace characters.
  */
 public fun CharSequence.isNotBlank(): Boolean = !isBlank()
 
 /**
- * Returns `true` if this nullable string is either `null` or empty or consists solely of whitespace characters.
+ * Returns `true` if this nullable char sequence is either `null` or empty or consists solely of whitespace characters.
  */
 public fun CharSequence?.isNullOrBlank(): Boolean = this == null || this.isBlank()
 
@@ -175,13 +175,13 @@ public operator fun CharSequence.iterator(): CharIterator = object : CharIterato
 public fun String?.orEmpty(): String = this ?: ""
 
 /**
- * Returns the range of valid character indices for this string.
+ * Returns the range of valid character indices for this char sequence.
  */
 public val CharSequence.indices: IntRange
     get() = 0..length() - 1
 
 /**
- * Returns the index of the last character in the String or -1 if the String is empty.
+ * Returns the index of the last character in the char sequence or -1 if it is empty.
  */
 public val CharSequence.lastIndex: Int
     get() = this.length() - 1
@@ -529,7 +529,7 @@ public fun CharSequence.replaceFirst(regex: Regex, replacement: String): String 
 
 
 /**
- * Returns `true` if this string matches the given regular expression.
+ * Returns `true` if this char sequence matches the given regular expression.
  */
 public fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
 
@@ -551,13 +551,13 @@ internal fun CharSequence.regionMatchesImpl(thisOffset: Int, other: CharSequence
 }
 
 /**
- * Returns `true` if this string starts with the specified character.
+ * Returns `true` if this char sequence starts with the specified character.
  */
 public fun CharSequence.startsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[0].equals(char, ignoreCase)
 
 /**
- * Returns `true` if this string ends with the specified character.
+ * Returns `true` if this char sequence ends with the specified character.
  */
 public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boolean =
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)

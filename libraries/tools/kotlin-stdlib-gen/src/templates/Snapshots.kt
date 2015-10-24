@@ -1,7 +1,8 @@
 package templates
 
 import templates.Family.*
-import java.util.ArrayList
+import templates.DocExtensions.element
+import templates.DocExtensions.collection
 
 fun snapshots(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -9,7 +10,7 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toCollection(collection: C)") {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { "Appends all elements to the given [collection]." }
+        doc { f -> "Appends all ${f.element}s to the given [collection]." }
         returns("C")
         typeParam("C : MutableCollection<in T>")
         body {
@@ -23,7 +24,7 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toSet()") {
-        doc { "Returns a [Set] of all elements." }
+        doc { f -> "Returns a [Set] of all ${f.element}s." }
         returns("Set<T>")
         body { "return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(LinkedHashSet<T>())" }
@@ -33,7 +34,7 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toHashSet()") {
-        doc { "Returns a [HashSet] of all elements." }
+        doc { f -> "Returns a [HashSet] of all ${f.element}s." }
         returns("HashSet<T>")
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
@@ -45,13 +46,13 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toSortedSet()") {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { "Returns a [SortedSet] of all elements." }
+        doc { f -> "Returns a [SortedSet] of all ${f.element}s." }
         returns("SortedSet<T>")
         body { "return toCollection(TreeSet<T>())" }
     }
 
     templates add f("toArrayList()") {
-        doc { "Returns an [ArrayList] of all elements." }
+        doc { f -> "Returns an [ArrayList] of all ${f.element}s." }
         returns("ArrayList<T>")
         body { "return toCollection(ArrayList<T>())" }
         body(Iterables) {
@@ -91,7 +92,7 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toList()") {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { "Returns a [List] containing all elements." }
+        doc { f -> "Returns a [List] containing all ${f.element}s." }
         returns("List<T>")
         body { "return this.toArrayList()" }
     }
@@ -116,10 +117,11 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toMapBy(selector: (T) -> K)") {
         inline(true)
         typeParam("K")
-        doc {
+        doc { f ->
             """
-            Returns Map containing the values from the given collection indexed by [selector].
-            If any two elements would have the same key returned by [selector] the last one gets added to the map.
+            Returns Map containing the ${f.element}s from the given ${f.collection} indexed by the key
+            returned from [selector] function applied to each ${f.element}.
+            If any two ${f.element}s would have the same key returned by [selector] the last one gets added to the map.
             """
         }
         returns("Map<K, T>")
@@ -175,10 +177,10 @@ fun snapshots(): List<GenericFunction> {
         inline(true)
         typeParam("K")
         typeParam("V")
-        doc {
+        doc { f ->
             """
-            Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
-            If any two elements would have the same key returned by [selector] the last one gets added to the map.
+            Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element}s of the given ${f.collection}.
+            If any two ${f.element}s would have the same key returned by [selector] the last one gets added to the map.
             """
         }
         returns("Map<K, V>")

@@ -23,14 +23,14 @@ public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
 }
 
 /**
- * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection.
+ * Returns a single list of all elements yielded from results of [transform] function being invoked on each entry of original map.
  */
 public inline fun <K, V, R> Map<K, V>.flatMap(transform: (Map.Entry<K, V>) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
 }
 
 /**
- * Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination].
+ * Appends all elements yielded from results of [transform] function being invoked on each entry of original map, to the given [destination].
  */
 public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C {
     for (element in this) {
@@ -41,14 +41,14 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.flatMapTo(des
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original collection.
+ * Returns a list containing the results of applying the given [transform] function to each entry of the original map.
  */
 public inline fun <K, V, R> Map<K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Appends transformed elements and their indices of the original collection using the given [transform] function
+ * Appends transformed entrys and their indices in the original map using the given [transform] function
  * to the given [destination].
  */
 public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapIndexedTo(destination: C, transform: (Int, Map.Entry<K, V>) -> R): C {
@@ -59,7 +59,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapIndexedTo(
 }
 
 /**
- * Appends transformed elements of the original collection using the given [transform] function
+ * Appends transformed entrys of the original map using the given [transform] function
  * to the given [destination].
  */
 public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
@@ -69,7 +69,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destina
 }
 
 /**
- * Returns `true` if all elements match the given [predicate].
+ * Returns `true` if all entrys match the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -77,7 +77,7 @@ public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean):
 }
 
 /**
- * Returns `true` if collection has at least one element.
+ * Returns `true` if map has at least one entry.
  */
 public fun <K, V> Map<K, V>.any(): Boolean {
     for (element in this) return true
@@ -85,7 +85,7 @@ public fun <K, V> Map<K, V>.any(): Boolean {
 }
 
 /**
- * Returns `true` if at least one element matches the given [predicate].
+ * Returns `true` if at least one entry matches the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -93,14 +93,14 @@ public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean):
 }
 
 /**
- * Returns the number of elements in this collection.
+ * Returns the number of entrys in this map.
  */
 public fun <K, V> Map<K, V>.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements matching the given [predicate].
+ * Returns the number of entrys matching the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
     var count = 0
@@ -109,14 +109,14 @@ public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [operation] on each entry.
  */
 public inline fun <K, V> Map<K, V>.forEach(operation: (Map.Entry<K, V>) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
+ * Returns the first map entry yielding the largest value of the given function or `null` if there are no entries.
  */
 public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(f: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     val iterator = iterator()
@@ -135,7 +135,7 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(f: (Map.Entry<K, V>)
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
+ * Returns the first map entry yielding the smallest value of the given function or `null` if there are no entries.
  */
 public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(f: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     val iterator = iterator()
@@ -154,7 +154,7 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(f: (Map.Entry<K, V>)
 }
 
 /**
- * Returns `true` if collection has no elements.
+ * Returns `true` if the map has no entrys.
  */
 public fun <K, V> Map<K, V>.none(): Boolean {
     for (element in this) return false
@@ -162,7 +162,7 @@ public fun <K, V> Map<K, V>.none(): Boolean {
 }
 
 /**
- * Returns `true` if no elements match the given [predicate].
+ * Returns `true` if no entrys match the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false

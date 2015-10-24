@@ -13,7 +13,7 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
- * Returns `true` if [element] is found in the collection.
+ * Returns `true` if [element] is found in the sequence.
  */
 public operator fun <T> Sequence<T>.contains(element: @kotlin.internal.NoInfer T): Boolean {
     return indexOf(element) >= 0
@@ -30,7 +30,7 @@ public operator fun <T> Sequence<T>.contains(element: T): Boolean {
 }
 
 /**
- * Returns `true` if [element] is found in the collection.
+ * Returns `true` if [element] is found in the sequence.
  * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -39,14 +39,14 @@ public inline fun Sequence<*>.containsRaw(element: Any?): Boolean {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this sequence.
  */
 public fun <T> Sequence<T>.elementAt(index: Int): T {
     return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
 }
 
 /**
- * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this sequence.
  */
 public fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     if (index < 0)
@@ -62,7 +62,7 @@ public fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
 }
 
 /**
- * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this sequence.
  */
 public fun <T> Sequence<T>.elementAtOrNull(index: Int): T? {
     if (index < 0)
@@ -78,7 +78,7 @@ public fun <T> Sequence<T>.elementAtOrNull(index: Int): T? {
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found.
+ * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun <T> Sequence<T>.find(predicate: (T) -> Boolean): T? {
     return firstOrNull(predicate)
@@ -93,7 +93,7 @@ public inline fun <T> Sequence<T>.findLast(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns first element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * @throws [NoSuchElementException] if the sequence is empty.
  */
 public fun <T> Sequence<T>.first(): T {
     val iterator = iterator()
@@ -112,7 +112,7 @@ public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
 }
 
 /**
- * Returns the first element, or `null` if the collection is empty.
+ * Returns the first element, or `null` if the sequence is empty.
  */
 public fun <T> Sequence<T>.firstOrNull(): T? {
     val iterator = iterator()
@@ -130,7 +130,7 @@ public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element.
+ * Returns first index of [element], or -1 if the sequence does not contain element.
  */
 public fun <T> Sequence<T>.indexOf(element: @kotlin.internal.NoInfer T): Int {
     var index = 0
@@ -154,7 +154,7 @@ public fun <T> Sequence<T>.indexOf(element: T): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
+ * Returns index of the first element matching the given [predicate], or -1 if the sequence does not contain such element.
  */
 public inline fun <T> Sequence<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     var index = 0
@@ -167,7 +167,7 @@ public inline fun <T> Sequence<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
+ * Returns index of the last element matching the given [predicate], or -1 if the sequence does not contain such element.
  */
 public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     var lastIndex = -1
@@ -181,7 +181,7 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element.
+ * Returns first index of [element], or -1 if the sequence does not contain element.
  * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -191,7 +191,7 @@ public inline fun Sequence<*>.indexOfRaw(element: Any?): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * @throws [NoSuchElementException] if the sequence is empty.
  */
 public fun <T> Sequence<T>.last(): T {
     val iterator = iterator()
@@ -221,7 +221,7 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
 }
 
 /**
- * Returns last index of [element], or -1 if the collection does not contain element.
+ * Returns last index of [element], or -1 if the sequence does not contain element.
  */
 public fun <T> Sequence<T>.lastIndexOf(element: @kotlin.internal.NoInfer T): Int {
     var lastIndex = -1
@@ -246,7 +246,7 @@ public fun <T> Sequence<T>.lastIndexOf(element: T): Int {
 }
 
 /**
- * Returns last index of [element], or -1 if the collection does not contain element.
+ * Returns last index of [element], or -1 if the sequence does not contain element.
  * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -255,7 +255,7 @@ public inline fun Sequence<*>.lastIndexOfRaw(element: Any?): Int {
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty.
+ * Returns the last element, or `null` if the sequence is empty.
  */
 public fun <T> Sequence<T>.lastOrNull(): T? {
     val iterator = iterator()
@@ -281,7 +281,7 @@ public inline fun <T> Sequence<T>.lastOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns the single element, or throws an exception if the collection is empty or has more than one element.
+ * Returns the single element, or throws an exception if the sequence is empty or has more than one element.
  */
 public fun <T> Sequence<T>.single(): T {
     val iterator = iterator()
@@ -311,7 +311,7 @@ public inline fun <T> Sequence<T>.single(predicate: (T) -> Boolean): T {
 }
 
 /**
- * Returns single element, or `null` if the collection is empty or has more than one element.
+ * Returns single element, or `null` if the sequence is empty or has more than one element.
  */
 public fun <T> Sequence<T>.singleOrNull(): T? {
     val iterator = iterator()
@@ -507,7 +507,7 @@ public inline fun <T, K> Sequence<T>.toMap(selector: (T) -> K): Map<K, T> {
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given sequence.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
@@ -519,7 +519,8 @@ public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T)
 }
 
 /**
- * Returns Map containing the values from the given collection indexed by [selector].
+ * Returns Map containing the elements from the given sequence indexed by the key
+ * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K> Sequence<T>.toMapBy(selector: (T) -> K): Map<K, T> {
@@ -563,14 +564,14 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(dest
 }
 
 /**
- * Returns a map of the elements in original collection grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original sequence grouped by the result of given [toKey] function.
  */
 public inline fun <T, K> Sequence<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
     return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
 }
 
 /**
- * Appends elements from original collection grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original sequence grouped by the result of given [toKey] function to the given [map].
  */
 public inline fun <T, K> Sequence<T>.groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K): Map<K, MutableList<T>> {
     for (element in this) {
@@ -589,14 +590,14 @@ public fun <T, R> Sequence<T>.map(transform: (T) -> R): Sequence<R> {
 }
 
 /**
- * Returns a sequence containing the results of applying the given [transform] function to each element and its index of the original sequence.
+ * Returns a sequence containing the results of applying the given [transform] function to each element and its index in the original sequence.
  */
 public fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Sequence<R> {
     return TransformingIndexedSequence(this, transform)
 }
 
 /**
- * Appends transformed elements and their indices of the original collection using the given [transform] function
+ * Appends transformed elements and their indices in the original sequence using the given [transform] function
  * to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
@@ -607,7 +608,7 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(d
 }
 
 /**
- * Appends transformed elements of the original collection using the given [transform] function
+ * Appends transformed elements of the original sequence using the given [transform] function
  * to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapTo(destination: C, transform: (T) -> R): C {
@@ -657,7 +658,7 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns `true` if collection has at least one element.
+ * Returns `true` if sequence has at least one element.
  */
 public fun <T> Sequence<T>.any(): Boolean {
     for (element in this) return true
@@ -673,7 +674,7 @@ public inline fun <T> Sequence<T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns the number of elements in this collection.
+ * Returns the number of elements in this sequence.
  */
 public fun <T> Sequence<T>.count(): Int {
     var count = 0
@@ -781,7 +782,7 @@ public inline fun <R : Comparable<R>, T : Any> Sequence<T>.minBy(f: (T) -> R): T
 }
 
 /**
- * Returns `true` if collection has no elements.
+ * Returns `true` if the sequence has no elements.
  */
 public fun <T> Sequence<T>.none(): Boolean {
     for (element in this) return false
@@ -810,7 +811,7 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection.
+ * Returns the sum of all values produced by [transform] function applied to each element in the sequence.
  */
 public inline fun <T> Sequence<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -821,7 +822,7 @@ public inline fun <T> Sequence<T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection.
+ * Returns the sum of all values produced by [transform] function applied to each element in the sequence.
  */
 public inline fun <T> Sequence<T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -900,9 +901,9 @@ public operator fun <T> Sequence<T>.minus(sequence: Sequence<T>): Sequence<T> {
 }
 
 /**
- * Splits the original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded `true`,
- * while *second* collection contains elements for which [predicate] yielded `false`.
+ * Splits the original sequence into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
  */
 public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
@@ -953,7 +954,7 @@ public operator fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
 
 /**
  * Returns a sequence of pairs built from elements of both collections with same indexes.
- * Resulting sequence has length of shortest input sequences.
+ * Resulting sequence has length of shortest input sequence.
  */
 public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
     return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
@@ -1037,7 +1038,7 @@ public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(desti
 }
 
 /**
- * Returns an average value of elements in the collection.
+ * Returns an average value of elements in the sequence.
  */
 @kotlin.jvm.JvmName("averageOfByte")
 public fun Sequence<Byte>.average(): Double {
@@ -1052,7 +1053,7 @@ public fun Sequence<Byte>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection.
+ * Returns an average value of elements in the sequence.
  */
 @kotlin.jvm.JvmName("averageOfDouble")
 public fun Sequence<Double>.average(): Double {
@@ -1067,7 +1068,7 @@ public fun Sequence<Double>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection.
+ * Returns an average value of elements in the sequence.
  */
 @kotlin.jvm.JvmName("averageOfFloat")
 public fun Sequence<Float>.average(): Double {
@@ -1082,7 +1083,7 @@ public fun Sequence<Float>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection.
+ * Returns an average value of elements in the sequence.
  */
 @kotlin.jvm.JvmName("averageOfInt")
 public fun Sequence<Int>.average(): Double {
@@ -1097,7 +1098,7 @@ public fun Sequence<Int>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection.
+ * Returns an average value of elements in the sequence.
  */
 @kotlin.jvm.JvmName("averageOfLong")
 public fun Sequence<Long>.average(): Double {
@@ -1112,7 +1113,7 @@ public fun Sequence<Long>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection.
+ * Returns an average value of elements in the sequence.
  */
 @kotlin.jvm.JvmName("averageOfShort")
 public fun Sequence<Short>.average(): Double {
@@ -1127,7 +1128,7 @@ public fun Sequence<Short>.average(): Double {
 }
 
 /**
- * Returns the sum of all elements in the collection.
+ * Returns the sum of all elements in the sequence.
  */
 @kotlin.jvm.JvmName("sumOfByte")
 public fun Sequence<Byte>.sum(): Int {
@@ -1140,7 +1141,7 @@ public fun Sequence<Byte>.sum(): Int {
 }
 
 /**
- * Returns the sum of all elements in the collection.
+ * Returns the sum of all elements in the sequence.
  */
 @kotlin.jvm.JvmName("sumOfDouble")
 public fun Sequence<Double>.sum(): Double {
@@ -1153,7 +1154,7 @@ public fun Sequence<Double>.sum(): Double {
 }
 
 /**
- * Returns the sum of all elements in the collection.
+ * Returns the sum of all elements in the sequence.
  */
 @kotlin.jvm.JvmName("sumOfFloat")
 public fun Sequence<Float>.sum(): Float {
@@ -1166,7 +1167,7 @@ public fun Sequence<Float>.sum(): Float {
 }
 
 /**
- * Returns the sum of all elements in the collection.
+ * Returns the sum of all elements in the sequence.
  */
 @kotlin.jvm.JvmName("sumOfInt")
 public fun Sequence<Int>.sum(): Int {
@@ -1179,7 +1180,7 @@ public fun Sequence<Int>.sum(): Int {
 }
 
 /**
- * Returns the sum of all elements in the collection.
+ * Returns the sum of all elements in the sequence.
  */
 @kotlin.jvm.JvmName("sumOfLong")
 public fun Sequence<Long>.sum(): Long {
@@ -1192,7 +1193,7 @@ public fun Sequence<Long>.sum(): Long {
 }
 
 /**
- * Returns the sum of all elements in the collection.
+ * Returns the sum of all elements in the sequence.
  */
 @kotlin.jvm.JvmName("sumOfShort")
 public fun Sequence<Short>.sum(): Int {
