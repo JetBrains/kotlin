@@ -95,6 +95,10 @@ public fun LexicalScope.getClassifier(name: Name, location: LookupLocation): Cla
     return findFirstFromMeAndParent { it.getDeclaredClassifier(name, location) }
 }
 
+public fun LexicalScope.getPackage(name: Name): PackageViewDescriptor? {
+    return findFirstFromImportingScopes { it.getContributedPackage(name) }
+}
+
 public fun LexicalScope.takeSnapshot(): LexicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
 public fun LexicalScope.asKtScope(): KtScope {
@@ -120,9 +124,7 @@ private class LexicalToKtScopeAdapter(lexicalScope: LexicalScope): KtScope {
 
     override fun getClassifier(name: Name, location: LookupLocation) = lexicalScope.getClassifier(name, location)
 
-    override fun getPackage(name: Name): PackageViewDescriptor? {
-        return lexicalScope.findFirstFromImportingScopes { it.getPackage(name) }
-    }
+    override fun getPackage(name: Name) = lexicalScope.getPackage(name)
 
     override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return lexicalScope.collectAllFromImportingScopes { it.getDeclaredVariables(name, location) }
@@ -179,7 +181,7 @@ private class LexicalToKtScopeAdapter(lexicalScope: LexicalScope): KtScope {
 }
 
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: KtScope) : ImportingScope {
-    override fun getPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)
+    override fun getContributedPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
             = memberScope.getSyntheticExtensionProperties(receiverTypes, name, location)

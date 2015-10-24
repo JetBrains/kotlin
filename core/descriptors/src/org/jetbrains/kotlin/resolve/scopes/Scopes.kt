@@ -92,7 +92,7 @@ interface ImportingScope : LexicalScope {
 
     // methods getDeclaredSmth for this scope will be delegated to importScope
 
-    fun getPackage(name: Name): PackageViewDescriptor?
+    fun getContributedPackage(name: Name): PackageViewDescriptor?
 
     fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
     fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
@@ -108,7 +108,7 @@ interface ImportingScope : LexicalScope {
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor>
 
     object Empty : ImportingScope, LexicalScope by LexicalScope.Empty {
-        override fun getPackage(name: Name) = null
+        override fun getContributedPackage(name: Name) = null
 
         override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 

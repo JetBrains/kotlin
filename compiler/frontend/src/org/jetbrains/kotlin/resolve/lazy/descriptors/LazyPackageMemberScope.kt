@@ -37,7 +37,7 @@ public class LazyPackageMemberScope(
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
     override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration)
-            = resolveSession.getFileScopeProvider().getFileScopeChain(declaration.getContainingJetFile())
+            = resolveSession.getFileScopeProvider().getFileResolutionScope(declaration.getContainingJetFile())
 
     override fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>) {
         // No extra functions

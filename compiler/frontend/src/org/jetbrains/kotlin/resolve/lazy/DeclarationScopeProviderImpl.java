@@ -55,7 +55,7 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
         }
 
         if (parentDeclaration == null) {
-            return fileScopeProvider.getFileScopeChain((KtFile) elementOfDeclaration.getContainingFile());
+            return fileScopeProvider.getFileResolutionScope((KtFile) elementOfDeclaration.getContainingFile());
         }
 
         if (parentDeclaration instanceof KtClassOrObject) {

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileKtScope
+import org.jetbrains.kotlin.idea.caches.resolve.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
@@ -52,7 +52,8 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -199,7 +200,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun findReferencesToRestore(file: PsiFile, blockStart: Int, referenceData: Array<out KotlinReferenceData>): List<ReferenceToRestoreData> {
         if (file !is KtFile) return listOf()
 
-        val fileResolutionScope = file.getResolutionFacade().getFileKtScope(file)
+        val fileResolutionScope = file.getResolutionFacade().getFileResolutionScope(file)
         return referenceData.map {
             val reference = findReference(it, file, blockStart)
             if (reference != null)
@@ -224,16 +225,19 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         return null
     }
 
-    private fun createReferenceToRestoreData(reference: KtReference, refData: KotlinReferenceData, file: KtFile, fileResolutionScope: KtScope): ReferenceToRestoreData? {
+    private fun createReferenceToRestoreData(reference: KtReference, refData: KotlinReferenceData, file: KtFile, fileResolutionScope: LexicalScope): ReferenceToRestoreData? {
         val originalFqName = FqName(refData.fqName)
+        val name = originalFqName.shortName()
 
         if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
-            val functions = fileResolutionScope.getFunctions(originalFqName.shortName(), NoLookupLocation.FROM_IDE)
-            if (functions.any { it.importableFqName == originalFqName }) return null // already imported
+            if (fileResolutionScope.parentsWithSelf.any { scope ->
+                scope.getDeclaredFunctions(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == originalFqName }
+            }) return null // already imported
         }
         else if (refData.kind == KotlinReferenceData.Kind.EXTENSION_PROPERTY) {
-            val properties = fileResolutionScope.getProperties(originalFqName.shortName(), NoLookupLocation.FROM_IDE)
-            if (properties.any { it.importableFqName == originalFqName }) return null // already imported
+            if (fileResolutionScope.parentsWithSelf.any { scope ->
+                scope.getDeclaredVariables(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == originalFqName }
+            }) return null // already imported
         }
 
         val referencedDescriptors = try {

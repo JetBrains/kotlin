@@ -21,8 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.getFileKtScope
-import org.jetbrains.kotlin.idea.caches.resolve.getFileScopeChain
+import org.jetbrains.kotlin.idea.caches.resolve.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -40,9 +39,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.getPackage
+import org.jetbrains.kotlin.resolve.scopes.utils.processForMeAndParent
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -104,20 +106,28 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
     ) {
         private val resolutionFacade = file.getResolutionFacade()
 
-        private fun isAlreadyImported(target: DeclarationDescriptor, topLevelScope: KtScope, targetFqName: FqName): Boolean {
+        private fun isAlreadyImported(target: DeclarationDescriptor, topLevelScope: LexicalScope, targetFqName: FqName): Boolean {
             val name = target.name
             when (target) {
                 is ClassDescriptor -> {
                     val classifier = topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE)
                     if (classifier?.importableFqName == targetFqName) return true
                 }
+
                 is FunctionDescriptor -> {
-                    val functions = topLevelScope.getFunctions(name, NoLookupLocation.FROM_IDE)
-                    if (functions.map { it.importableFqName }.contains(targetFqName)) return true
+                    topLevelScope.processForMeAndParent {
+                        if (it.getDeclaredFunctions(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == targetFqName }) {
+                            return true
+                        }
+                    }
                 }
+
                 is PropertyDescriptor -> {
-                    val properties = topLevelScope.getProperties(name, NoLookupLocation.FROM_IDE)
-                    if (properties.map { it.importableFqName }.contains(targetFqName)) return true
+                    topLevelScope.processForMeAndParent {
+                        if (it.getDeclaredVariables(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == targetFqName }) {
+                            return true
+                        }
+                    }
                 }
             }
             return false
@@ -127,7 +137,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val target = descriptor.getImportableDescriptor()
 
             val name = target.name
-            val topLevelScope = resolutionFacade.getFileKtScope(file)
+            val topLevelScope = resolutionFacade.getFileResolutionScope(file)
 
             // check if import is not needed
             val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
@@ -232,7 +242,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                     .filter(::isVisible)
                     .map { it.getName() }
 
-            val topLevelScope = resolutionFacade.getFileScopeChain(file)
+            val topLevelScope = resolutionFacade.getFileResolutionScope(file)
             val conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
                     .flatMap {
                         importedScopes.map { scope -> scope.getClassifier(it, NoLookupLocation.FROM_IDE) }.filterNotNull()
@@ -248,7 +258,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             val addedImport = addImport(parentFqName, true)
 
-            val newTopLevelScope = resolutionFacade.getFileKtScope(file)
+            val newTopLevelScope = resolutionFacade.getFileResolutionScope(file)
             if (!isAlreadyImported(target, newTopLevelScope, targetFqName)) {
                 addedImport.delete()
                 return ImportDescriptorResult.FAIL
@@ -277,7 +287,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
         private fun addExplicitImport(target: DeclarationDescriptor): ImportDescriptorResult {
             if (target is ClassDescriptor || target is PackageViewDescriptor) {
-                val topLevelScope = resolutionFacade.getFileScopeChain(file)
+                val topLevelScope = resolutionFacade.getFileResolutionScope(file)
                 val name = target.getName()
 
                 // check if there is a conflicting class imported with * import
@@ -308,7 +318,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             }
 
             if (importsToCheck.isNotEmpty()) {
-                val topLevelScope = resolutionFacade.getFileScopeChain(file)
+                val topLevelScope = resolutionFacade.getFileResolutionScope(file)
                 for (classFqName in importsToCheck) {
                     val classifier = topLevelScope.getClassifier(classFqName.shortName(), NoLookupLocation.FROM_IDE)
                     if (classifier?.importableFqName != classFqName) {

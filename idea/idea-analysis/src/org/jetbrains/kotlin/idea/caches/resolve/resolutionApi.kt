@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 
 public fun KtElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -104,10 +102,6 @@ public fun getResolveScope(file: KtFile): GlobalSearchScope {
     }
 }
 
-public fun ResolutionFacade.getFileScopeChain(file: KtFile): ImportingScope {
-    return frontendService<FileScopeProvider>().getFileScopeChain(file)
-}
-
-public fun ResolutionFacade.getFileKtScope(file: KtFile): KtScope {
-    return getFileScopeChain(file).asKtScope()
+public fun ResolutionFacade.getFileResolutionScope(file: KtFile): ImportingScope {
+    return frontendService<FileScopeProvider>().getFileResolutionScope(file)
 }

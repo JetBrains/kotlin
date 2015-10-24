@@ -53,7 +53,7 @@ public class FileScopeProviderImpl(
 
     private val cache = storageManager.createMemoizedFunction { file: KtFile -> createScopeChainAndImportResolver(file) }
 
-    override fun getFileScopeChain(file: KtFile) = cache(file).scopeChain
+    override fun getFileResolutionScope(file: KtFile) = cache(file).scopeChain
 
     override fun getImportResolver(file: KtFile) = cache(file).importResolver
 

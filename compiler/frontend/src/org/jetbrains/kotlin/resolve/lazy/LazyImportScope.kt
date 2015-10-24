@@ -191,10 +191,7 @@ class LazyImportScope(
         }
     }
 
-    override fun getPackage(name: Name): PackageViewDescriptor? {
-        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return null
-        return importResolver.selectSingleFromImports(name) { scope, name -> scope.getPackage(name) }
-    }
+    override fun getContributedPackage(name: Name) = null
 
     override fun getDeclaredVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()

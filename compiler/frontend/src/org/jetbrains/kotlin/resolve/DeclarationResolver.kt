@@ -43,7 +43,7 @@ public class DeclarationResolver(
 ) {
 
     public fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
-        val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileScopeChain(it) }
+        val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileResolutionScope(it) }
         for ((file, fileScope) in filesToScope) {
             annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace)
             annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), trace)

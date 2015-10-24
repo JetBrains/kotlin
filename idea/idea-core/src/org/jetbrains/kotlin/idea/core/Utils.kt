@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileScopeChain
+import org.jetbrains.kotlin.idea.caches.resolve.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -114,7 +114,7 @@ public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolut
         }
 
         if (parent is KtFile) {
-            return resolutionFacade.getFileScopeChain(parent)
+            return resolutionFacade.getFileResolutionScope(parent)
         }
     }
     error("Not in JetFile")

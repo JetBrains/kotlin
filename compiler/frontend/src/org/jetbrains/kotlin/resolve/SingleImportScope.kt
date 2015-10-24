@@ -27,7 +27,7 @@ class SingleImportScope(private val aliasName: Name, private val descriptors: Co
     override fun getDeclaredClassifier(name: Name, location: LookupLocation)
             = if (name == aliasName) descriptors.filterIsInstance<ClassifierDescriptor>().singleOrNull() else null
 
-    override fun getPackage(name: Name)
+    override fun getContributedPackage(name: Name)
             = if (name == aliasName) descriptors.filterIsInstance<PackageViewDescriptor>().singleOrNull() else null
 
     override fun getDeclaredVariables(name: Name, location: LookupLocation)

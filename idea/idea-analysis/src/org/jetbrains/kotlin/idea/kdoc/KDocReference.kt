@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.getFileScopeChain
+import org.jetbrains.kotlin.idea.caches.resolve.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.references.KtMultiReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -178,7 +178,7 @@ private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutio
     if (parent is PackageFragmentDescriptor) {
         val containingFile = (descriptor.getSource() as? PsiSourceElement)?.psi?.getContainingFile() as? KtFile
         if (containingFile != null) {
-            return resolutionFacade.getFileScopeChain(containingFile)
+            return resolutionFacade.getFileResolutionScope(containingFile)
         }
     }
     return getResolutionScope(resolutionFacade, parent!!)

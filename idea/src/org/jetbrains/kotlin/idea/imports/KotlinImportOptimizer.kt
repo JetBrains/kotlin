@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileScopeChain
+import org.jetbrains.kotlin.idea.caches.resolve.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.getResolutionScope
@@ -218,7 +218,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.pathStr }.joinTo(this, "\n")
             }.toString()
             val fileWithImports = KtPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
-            val scope = fileWithImports.getResolutionFacade().getFileScopeChain(fileWithImports)
+            val scope = fileWithImports.getResolutionFacade().getFileResolutionScope(fileWithImports)
 
             for (fqName in classNamesToCheck) {
                 if (scope.getClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqName != fqName) {

@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 
 public interface FileScopeProvider {
-    fun getFileScopeChain(file: KtFile): ImportingScope
+    fun getFileResolutionScope(file: KtFile): ImportingScope
     fun getImportResolver(file: KtFile): ImportResolver
 
     public object ThrowException : FileScopeProvider {
-        override fun getFileScopeChain(file: KtFile) = throw UnsupportedOperationException("Should not be called")
+        override fun getFileResolutionScope(file: KtFile) = throw UnsupportedOperationException("Should not be called")
         override fun getImportResolver(file: KtFile) = throw UnsupportedOperationException("Should not be called")
     }
 

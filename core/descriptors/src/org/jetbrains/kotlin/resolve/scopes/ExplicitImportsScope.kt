@@ -26,7 +26,7 @@ public class ExplicitImportsScope(private val descriptors: Collection<Declaratio
     override fun getDeclaredClassifier(name: Name, location: LookupLocation)
             = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
 
-    override fun getPackage(name: Name)
+    override fun getContributedPackage(name: Name)
             = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
 
     override fun getDeclaredVariables(name: Name, location: LookupLocation)
