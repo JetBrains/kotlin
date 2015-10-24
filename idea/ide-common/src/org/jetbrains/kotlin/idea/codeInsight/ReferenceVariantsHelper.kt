@@ -337,7 +337,9 @@ public class ReferenceVariantsHelper(
             expression: KtSimpleNameExpression,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
-        return resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
+        val resolutionScope = context[BindingContext.LEXICAL_SCOPE, expression] ?: return listOf()
+        return resolutionScope.collectAllFromImportingScopes {
+            it.getDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
+        }
     }
 }

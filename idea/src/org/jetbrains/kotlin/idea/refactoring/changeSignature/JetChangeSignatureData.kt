@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -38,10 +40,9 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.Collections
-import java.util.HashSet
+import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import java.util.*
 
 public class JetChangeSignatureData(
         override val baseDescriptor: CallableDescriptor,
@@ -76,12 +77,12 @@ public class JetChangeSignatureData(
 
     private fun createReceiverInfoIfNeeded(): JetParameterInfo? {
         val callable = baseDeclaration as? KtCallableDeclaration ?: return null
-        val bodyScope = (callable as? KtFunction)?.getBodyExpression()?.let { it.analyze()[BindingContext.RESOLUTION_SCOPE, it] }
-        val paramNames = baseDescriptor.getValueParameters().map { it.getName().asString() }
+        val bodyScope = (callable as? KtFunction)?.bodyExpression?.let { it.getResolutionScope(it.analyze(), it.getResolutionFacade()) }
+        val paramNames = baseDescriptor.valueParameters.map { it.name.asString() }
         val validator = bodyScope?.let { bodyScope ->
-            CollectingNameValidator(paramNames) {
-                val name = Name.identifier(it)
-                bodyScope.getLocalVariable(name) == null && bodyScope.getProperties(name, NoLookupLocation.FROM_IDE).isEmpty()
+            CollectingNameValidator(paramNames) { name ->
+                val identifier = Name.identifier(name)
+                bodyScope.collectAllFromMeAndParent { it.getDeclaredVariables(identifier, NoLookupLocation.FROM_IDE) }.isEmpty()
             }
         } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null

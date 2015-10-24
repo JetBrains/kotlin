@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getTypeParameters
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
+import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -137,12 +140,12 @@ fun KotlinType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, co
     val scope =
             when (functionDescriptor) {
                 is ConstructorDescriptor -> {
-                    (functionDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes)?.scopeForClassHeaderResolution?.asKtScope()
+                    (functionDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes)?.scopeForClassHeaderResolution
                 }
 
                 is FunctionDescriptor -> {
                     val function = functionDescriptor.source.getPsi() as? KtFunction
-                    function?.let { context[BindingContext.RESOLUTION_SCOPE, it.bodyExpression] }
+                    function?.bodyExpression?.getResolutionScope(context, function!!.getResolutionFacade())
                 }
 
                 else -> null

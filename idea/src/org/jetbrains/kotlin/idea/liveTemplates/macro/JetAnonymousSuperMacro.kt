@@ -27,25 +27,20 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
+import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
 
 class JetAnonymousSuperMacro : Macro() {
-    override fun getName(): String {
-        return "anonymousSuper"
-    }
-
-    override fun getPresentableName(): String {
-        return JetBundle.message("macro.fun.anonymousSuper")
-    }
+    override fun getName() = "anonymousSuper"
+    override fun getPresentableName() = "anonymousSuper()"
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val editor = context.editor
@@ -54,22 +49,18 @@ class JetAnonymousSuperMacro : Macro() {
         }
 
         val vars = getSupertypes(params, context)
-        if (vars == null || vars.size() == 0) return null
-        return JetPsiElementResult(vars[0])
+        if (vars == null || vars.size == 0) return null
+        return JetPsiElementResult(vars.first())
     }
 
     override fun calculateLookupItems(params: Array<Expression>, context: ExpressionContext): Array<LookupElement>? {
-        val vars = getSupertypes(params, context)
-        if (vars == null || vars.size < 2) return null
-        val set = LinkedHashSet<LookupElement>()
-        for (`var` in vars) {
-            set.add(LookupElementBuilder.create(`var`))
-        }
-        return set.toArray<LookupElement>(arrayOfNulls<LookupElement>(set.size))
+        val superTypes = getSupertypes(params, context)
+        if (superTypes == null || superTypes.size < 2) return null
+        return superTypes.map { LookupElementBuilder.create(it) }.toTypedArray()
     }
 
     private fun getSupertypes(params: Array<Expression>, context: ExpressionContext): Array<PsiNamedElement>? {
-        if (params.size() != 0) return null
+        if (params.size != 0) return null
 
         val project = context.project
         PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -80,19 +71,13 @@ class JetAnonymousSuperMacro : Macro() {
         val expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.startOffset), KtExpression::class.java) ?: return null
 
         val bindingContext = expression.analyze(BodyResolveMode.FULL)
-        val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression) ?: return null
+        val resolutionScope = expression.getResolutionScope(bindingContext, expression.getResolutionFacade())
 
-        val result = ArrayList<PsiNamedElement>()
-
-        for (descriptor in scope.getDescriptors(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)) {
-            if (descriptor !is ClassDescriptor) continue
-            if (!descriptor.modality.isOverridable) continue
-            val kind = descriptor.kind
-            if (kind == ClassKind.INTERFACE || kind == ClassKind.CLASS) {
-                result.addIfNotNull(DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as PsiNamedElement?)
-            }
-        }
-
-        return result.toArray<PsiNamedElement>(arrayOfNulls<PsiNamedElement>(result.size))
+        return resolutionScope
+                .collectAllFromMeAndParent { it.getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS) }
+                .filter { it is ClassDescriptor && it.modality.isOverridable && (it.kind == ClassKind.CLASS || it.kind == ClassKind.INTERFACE) }
+                .map { DescriptorToSourceUtils.descriptorToDeclaration(it) as PsiNamedElement? }
+                .filterNotNull()
+                .toTypedArray()
     }
 }
