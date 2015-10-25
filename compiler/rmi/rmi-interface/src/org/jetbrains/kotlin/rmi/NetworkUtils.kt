@@ -32,8 +32,8 @@ public object LoopbackNetworkInterface {
     val IPV4_LOOPBACK_INET_ADDRESS = "127.0.0.1"
     val IPV6_LOOPBACK_INET_ADDRESS = "::1"
 
-    val SERVER_SOCKET_BACKLOG_SIZE = 5 // size of the requests queue for daemon services, so far seems that we don't need any big numbers here
-                                       // but if we'll start getting "connection refused" errors, that could be the first place to try to fix it
+    val SERVER_SOCKET_BACKLOG_SIZE = 10 // size of the requests queue for daemon services, so far seems that we don't need any big numbers here
+                                        // but if we'll start getting "connection refused" errors, that could be the first place to try to fix it
 
     public val serverLoopbackSocketFactory by lazy { ServerLoopbackSocketFactory() }
     public val clientLoopbackSocketFactory by lazy { ClientLoopbackSocketFactory() }
