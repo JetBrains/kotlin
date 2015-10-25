@@ -36,12 +36,10 @@ interface LexicalScope {
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
-    open fun getContributedDescriptors(
+    fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
             nameFilter: (Name) -> Boolean = KtScope.ALL_NAME_FILTER
-    ): Collection<DeclarationDescriptor> = getContributedDescriptors()
-
-    fun getContributedDescriptors(): Collection<DeclarationDescriptor>
+    ): Collection<DeclarationDescriptor>
 
     fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
 
@@ -64,7 +62,7 @@ interface LexicalScope {
         override val implicitReceiver: ReceiverParameterDescriptor?
             get() = null
 
-        override fun getContributedDescriptors(): Collection<DeclarationDescriptor> = emptyList()
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = emptyList()
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
@@ -95,13 +93,6 @@ interface ImportingScope : LexicalScope {
 
     fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
     fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
-
-    // please, do not override this method
-    override fun getContributedDescriptors(): Collection<DeclarationDescriptor> {
-        return getContributedDescriptors(DescriptorKindFilter.ALL, { true })
-    }
-
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor>
 
     object Empty : ImportingScope, LexicalScope by LexicalScope.Empty {
         override fun getContributedPackage(name: Name) = null

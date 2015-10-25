@@ -226,8 +226,6 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
     override val ownerDescriptor: DeclarationDescriptor
         get() = memberScope.getContainingDeclaration()
 
-    override fun getContributedDescriptors() = memberScope.getOwnDeclaredDescriptors()
-
     override fun getContributedClassifier(name: Name, location: LookupLocation) = memberScope.getClassifier(name, location)
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = memberScope.getProperties(name, location)

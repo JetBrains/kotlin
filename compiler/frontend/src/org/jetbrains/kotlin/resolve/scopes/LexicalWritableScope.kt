@@ -70,7 +70,8 @@ class LexicalWritableScope(
         addVariableOrClassDescriptor(classifierDescriptor)
     }
 
-    override fun getContributedDescriptors() = checkMayRead().addedDescriptors
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+            = checkMayRead().addedDescriptors
 
     override fun getContributedClassifier(name: Name, location: LookupLocation) = checkMayRead().getDeclaredClassifier(name)
 
@@ -101,7 +102,8 @@ class LexicalWritableScope(
         override val implicitReceiver: ReceiverParameterDescriptor?
             get() = this@LexicalWritableScope.implicitReceiver
 
-        override fun getContributedDescriptors() = this@LexicalWritableScope.addedDescriptors.subList(0, descriptorLimit)
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+                = this@LexicalWritableScope.addedDescriptors.subList(0, descriptorLimit)
 
         override fun getContributedClassifier(name: Name, location: LookupLocation)
                 = this@LexicalWritableScope.getDeclaredClassifier(name, descriptorLimit)

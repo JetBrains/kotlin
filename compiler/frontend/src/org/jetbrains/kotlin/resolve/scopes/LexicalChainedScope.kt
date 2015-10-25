@@ -38,7 +38,8 @@ public class LexicalChainedScope(
     override val parent = parent.takeSnapshot()
     private val scopeChain = memberScopes.clone()
 
-    override fun getContributedDescriptors() = getFromAllScopes(scopeChain) { it.getAllDescriptors() }
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+            = getFromAllScopes(scopeChain) { it.getAllDescriptors() }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation) = getFirstMatch(scopeChain) { it.getClassifier(name, location) }
 
