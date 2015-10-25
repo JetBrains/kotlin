@@ -228,11 +228,9 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
 
 inline fun LexicalScope.processForMeAndParent(process: (LexicalScope) -> Unit) {
     var currentScope = this
-    process(currentScope)
-
-    while(currentScope.parent != null) {
-        currentScope = currentScope.parent!!
+    while (true) {
         process(currentScope)
+        currentScope = currentScope.parent ?: break
     }
 }
 
