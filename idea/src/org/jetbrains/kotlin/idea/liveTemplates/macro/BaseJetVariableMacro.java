@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection;
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector;
-import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.util.ExtensionUtils;
+import org.jetbrains.kotlin.idea.util.ScopeUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -69,7 +69,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(contextExpression);
 
         BindingContext bindingContext = resolutionFacade.analyze(contextExpression, BodyResolveMode.FULL);
-        LexicalScope scope = UtilsKt.getResolutionScope(contextExpression, bindingContext, resolutionFacade);
+        LexicalScope scope = ScopeUtils.getResolutionScope(contextExpression, bindingContext, resolutionFacade);
 
         IterableTypesDetector detector = resolutionFacade.getIdeService(IterableTypesDetection.class).createDetector(scope);
 

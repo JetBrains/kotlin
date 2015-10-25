@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
@@ -52,6 +51,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.ScopeUtils;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRangeKt;
@@ -140,7 +140,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(expression);
         final BindingContext bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.FULL);
         final KotlinType expressionType = bindingContext.getType(expression); //can be null or error type
-        LexicalScope scope = UtilsKt.getResolutionScope(expression, bindingContext, resolutionFacade);
+        LexicalScope scope = ScopeUtils.getResolutionScope(expression, bindingContext, resolutionFacade);
         DataFlowInfo dataFlowInfo = BindingContextUtilsKt.getDataFlowInfo(bindingContext, expression);
 
         ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());

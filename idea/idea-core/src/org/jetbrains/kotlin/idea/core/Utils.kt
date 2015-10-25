@@ -16,21 +16,19 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
@@ -97,27 +95,6 @@ public fun ThisReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: 
                                     .firstOrNull { it.key.getContainingDeclaration() == this.getDeclarationDescriptor() }
                                     ?.value ?: return null
     return expressionFactory.createExpression(psiFactory)
-}
-
-public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade): LexicalScope {
-    for (parent in parentsWithSelf) {
-        if (parent is KtElement) {
-            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent]
-            if (scope != null) return scope
-        }
-
-        if (parent is KtClassBody) {
-            val classDescriptor = bindingContext[BindingContext.CLASS, parent.getParent()] as? ClassDescriptorWithResolutionScopes
-            if (classDescriptor != null) {
-                return classDescriptor.getScopeForMemberDeclarationResolution()
-            }
-        }
-
-        if (parent is KtFile) {
-            return resolutionFacade.getFileResolutionScope(parent)
-        }
-    }
-    error("Not in JetFile")
 }
 
 public fun KtImportDirective.targetDescriptors(): Collection<DeclarationDescriptor> {

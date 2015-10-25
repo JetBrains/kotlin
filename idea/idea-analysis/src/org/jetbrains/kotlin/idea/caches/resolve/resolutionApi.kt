@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -34,8 +33,6 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 
 public fun KtElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -100,8 +97,4 @@ public fun getResolveScope(file: KtFile): GlobalSearchScope {
         is ModuleSourceInfo -> file.getResolveScope()
         else -> GlobalSearchScope.EMPTY_SCOPE
     }
-}
-
-public fun ResolutionFacade.getFileResolutionScope(file: KtFile): ImportingScope {
-    return frontendService<FileScopeProvider>().getFileResolutionScope(file)
 }

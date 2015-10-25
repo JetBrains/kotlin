@@ -756,7 +756,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
             KtExpression originalExpr = (KtExpression) usageInfo.getElement();
             BindingContext bindingContext = ResolutionUtils.analyze(originalExpr, BodyResolveMode.FULL);
-            LexicalScope scope = org.jetbrains.kotlin.idea.core.UtilsKt.getResolutionScope(
+            LexicalScope scope = ScopeUtils.getResolutionScope(
                     originalExpr, bindingContext, ResolutionUtils.getResolutionFacade(originalExpr));
 
             KtThisExpression newExpr = (KtThisExpression) psiFactory.createExpression(newExprText);
