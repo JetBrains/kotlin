@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -203,7 +202,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
         private val elementsToShorten = ArrayList<T>()
         private val descriptorsToImport = LinkedHashSet<DeclarationDescriptor>()
 
-        private val resolutionFacade = file.getResolutionFacade()
+        protected val resolutionFacade = file.getResolutionFacade()
 
         protected fun analyze(element: KtElement)
                 = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
@@ -274,8 +273,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             val bindingContext = analyze(referenceExpression)
             val target = referenceExpression.targets(bindingContext).singleOrNull() ?: return
 
-            val typeReference = type.getStrictParentOfType<KtTypeReference>()!!
-            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, typeReference] ?: return
+            val scope = type.getResolutionScope(bindingContext, resolutionFacade)
             val name = target.getName()
             val targetByName = if (target is ClassifierDescriptor)
                 scope.findClassifier(name, NoLookupLocation.FROM_IDE)
@@ -344,7 +342,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return false
             val target = callee.targets(bindingContext).singleOrNull() ?: return false
 
-            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, qualifiedExpression] ?: return false
+            val scope = qualifiedExpression.getResolutionScope(bindingContext, resolutionFacade)
             val selectorCopy = selector.copy() as KtReferenceExpression
             val newContext = selectorCopy.analyzeInContext(scope, selector)
             val targetsWhenShort = (selectorCopy.getCalleeExpressionIfAny() as KtReferenceExpression).targets(newContext)
@@ -392,7 +390,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
             val bindingContext = analyze(thisExpression)
 
             val targetBefore = thisExpression.getInstanceReference().targets(bindingContext).singleOrNull() ?: return
-            val scope = bindingContext[BindingContext.LEXICAL_SCOPE, thisExpression] ?: return
+            val scope = thisExpression.getResolutionScope(bindingContext, resolutionFacade)
             val newContext = simpleThis.analyzeInContext(scope, thisExpression)
             val targetAfter = simpleThis.getInstanceReference().targets(newContext).singleOrNull()
             if (targetBefore == targetAfter) {

@@ -95,7 +95,7 @@ public class KotlinIndicesHelper(
             position: KtExpression,
             bindingContext: BindingContext
     ): Collection<CallableDescriptor> {
-        val receiverTypes = callTypeAndReceiver.receiverTypes(bindingContext, position, moduleDescriptor, predictableSmartCastsOnly = false)
+        val receiverTypes = callTypeAndReceiver.receiverTypes(bindingContext, position, moduleDescriptor, resolutionFacade, predictableSmartCastsOnly = false)
         if (receiverTypes == null || receiverTypes.isEmpty()) return emptyList()
 
         val receiverTypeNames = HashSet<String>()

@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -47,7 +48,7 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
             val resolutionFacade = callExpression.getResolutionFacade()
             val context = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
             val calleeExpression = callExpression.getCalleeExpression() ?: return false
-            val scope = context[BindingContext.LEXICAL_SCOPE, calleeExpression/*TODO: discuss it*/] ?: return false
+            val scope = calleeExpression.getResolutionScope(context, resolutionFacade)
             val originalCall = callExpression.getResolvedCall(context) ?: return false
             val untypedCall = CallWithoutTypeArgs(originalCall.getCall())
 

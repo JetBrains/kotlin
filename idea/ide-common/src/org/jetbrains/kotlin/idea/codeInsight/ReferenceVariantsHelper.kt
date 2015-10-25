@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -117,7 +116,7 @@ public class ReferenceVariantsHelper(
             }
 
             is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
-                val resolutionScope = context[BindingContext.LEXICAL_SCOPE, expression.parent as KtExpression] ?: return emptyList()
+                val resolutionScope = expression.getResolutionScope(context, resolutionFacade)
                 return getVariantsForCallableReference(callTypeAndReceiver.receiver, resolutionScope, kindFilter, nameFilter)
             }
 
@@ -130,7 +129,7 @@ public class ReferenceVariantsHelper(
             else -> throw RuntimeException() //TODO: see KT-9394
         }
 
-        val resolutionScope = context[BindingContext.LEXICAL_SCOPE, expression] ?: return emptyList()
+        val resolutionScope = expression.getResolutionScope(context, resolutionFacade)
         val dataFlowInfo = context.getDataFlowInfo(expression)
         val containingDeclaration = resolutionScope.ownerDescriptor
 
@@ -180,10 +179,8 @@ public class ReferenceVariantsHelper(
             return qualifier.scope.getDescriptorsFiltered(kindFilter, nameFilter)
         }
         else {
-            val lexicalScope = expression.getParentOfType<KtTypeReference>(strict = true)?.let {
-                context[BindingContext.LEXICAL_SCOPE, it]
-            } ?: return emptyList()
-            return lexicalScope.collectDescriptorsFiltered(kindFilter, nameFilter)
+            val scope = expression.getResolutionScope(context, resolutionFacade)
+            return scope.collectDescriptorsFiltered(kindFilter, nameFilter)
         }
     }
 
@@ -335,7 +332,7 @@ public class ReferenceVariantsHelper(
             expression: KtSimpleNameExpression,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        val resolutionScope = context[BindingContext.LEXICAL_SCOPE, expression] ?: return listOf()
+        val resolutionScope = expression.getResolutionScope(context, resolutionFacade)
         return resolutionScope.collectDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
     }
 }

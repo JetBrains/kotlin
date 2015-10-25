@@ -188,14 +188,14 @@ public class ShadowedDeclarationsFilter private constructor(
             override fun getCallType() = Call.CallType.DEFAULT
         }
 
-        var lexicalScope = bindingContext[BindingContext.LEXICAL_SCOPE, context] ?: return descriptors
+        var scope = context.getResolutionScope(bindingContext, resolutionFacade)
 
         if (descriptorsToImport.isNotEmpty()) {
-            lexicalScope = lexicalScope.addImportScope(ExplicitImportsScope(descriptorsToImport))
+            scope = scope.addImportScope(ExplicitImportsScope(descriptorsToImport))
         }
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(context)
-        val context = BasicCallResolutionContext.create(bindingTrace, lexicalScope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
+        val context = BasicCallResolutionContext.create(bindingTrace, scope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
         val callResolver = resolutionFacade.frontendService<CallResolver>()

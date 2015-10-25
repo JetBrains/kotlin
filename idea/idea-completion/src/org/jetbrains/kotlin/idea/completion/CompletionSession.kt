@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
+import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.core.compareDescriptors
+import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -332,7 +335,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression)
 
         var receiverTypes = callTypeAndReceiver.receiverTypes(
-                bindingContext, nameExpression, moduleDescriptor,
+                bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
                 predictableSmartCastsOnly = true /* we don't include smart cast receiver types for "unpredictable" receiver value to mark members grayed */)
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE) {

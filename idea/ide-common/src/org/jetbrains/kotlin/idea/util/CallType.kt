@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -187,6 +188,7 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         bindingContext: BindingContext,
         position: KtExpression,
         moduleDescriptor: ModuleDescriptor,
+        resolutionFacade: ResolutionFacade,
         predictableSmartCastsOnly: Boolean
 ): Collection<KotlinType>? {
     val receiverExpression: KtExpression?
@@ -218,7 +220,7 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         expressionType?.let { listOf(ExpressionReceiver(receiverExpression, expressionType)) } ?: return emptyList()
     }
     else {
-        val resolutionScope = bindingContext[BindingContext.LEXICAL_SCOPE, position] ?: return emptyList()
+        val resolutionScope = position.getResolutionScope(bindingContext, resolutionFacade)
         resolutionScope.getImplicitReceiversWithInstance().map { it.value }
     }
 

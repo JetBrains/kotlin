@@ -58,7 +58,7 @@ public fun LexicalScope.getVariableFromImplicitReceivers(name: Name): VariableDe
     return null
 }
 
-public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade): LexicalScope {
+public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade/*TODO: get rid of this parameter*/): LexicalScope {
     for (parent in parentsWithSelf) {
         if (parent is KtElement) {
             val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent]
