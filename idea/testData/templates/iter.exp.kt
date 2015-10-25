@@ -11,7 +11,7 @@ class MyClass {
         var str = ""
         val myList = ArrayList<String>()
         val stream = FileInputStream(".")
-        for (i in args) {
+        for (collection in args) {
             <caret>
         }
     }
