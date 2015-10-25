@@ -239,12 +239,14 @@ internal class MissingInvokeAutoImportFix(expression: KtExpression) : AutoImport
     }
 }
 
-internal class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpression, override val importNames: Collection<Name>) :
+internal open class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpression, override val importNames: Collection<Name>, private val showHint: Boolean) :
         AutoImportFixBase<KtArrayAccessExpression>(element) {
     override fun getCallTypeAndReceiver() =
             CallTypeAndReceiver.OPERATOR(element.arrayExpression!!)
 
     override fun getSupportedErrors() = ERRORS
+
+    override fun showHint(editor: Editor) = showHint && super.showHint(editor)
 
     companion object : KotlinSingleIntentionActionFactory() {
         private fun importName(diagnostic: Diagnostic): Name {
@@ -256,11 +258,12 @@ internal class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpressio
         }
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtArrayAccessExpression>? {
-            assert(diagnostic.factory == Errors.NO_GET_METHOD || diagnostic.factory == Errors.NO_SET_METHOD)
+            val factory = diagnostic.factory
+            assert(factory == Errors.NO_GET_METHOD || factory == Errors.NO_SET_METHOD)
 
             val element = diagnostic.psiElement
             if (element is KtArrayAccessExpression && element.arrayExpression != null) {
-                return MissingArrayAccessorAutoImportFix(element, importName(diagnostic).singletonList())
+                return MissingArrayAccessorAutoImportFix(element, importName(diagnostic).singletonList(), true)
             }
 
             return null
@@ -344,5 +347,24 @@ internal class MissingComponentsAutoImportFix(element: KtExpression, override va
         }
 
         private val ERRORS by lazy(LazyThreadSafetyMode.PUBLICATION) { QuickFixes.getInstance().getDiagnostics(this) }
+    }
+}
+
+object AutoImportForMissingOperatorFactory : KotlinSingleIntentionActionFactory() {
+    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+        val element = diagnostic.psiElement as? KtExpression ?: return null
+        val operatorDescriptor = Errors.OPERATOR_MODIFIER_REQUIRED.cast(diagnostic).a
+        val name = operatorDescriptor.name
+        when (name) {
+            OperatorNameConventions.GET, OperatorNameConventions.SET -> {
+                if (element is KtArrayAccessExpression) {
+                    return object: MissingArrayAccessorAutoImportFix(element, name.singletonList(), false) {
+                        override fun getSupportedErrors() = Errors.OPERATOR_MODIFIER_REQUIRED.singletonList()
+                    }
+                }
+            }
+        }
+
+        return null
     }
 }

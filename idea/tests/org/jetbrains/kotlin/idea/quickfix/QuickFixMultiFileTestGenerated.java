@@ -173,6 +173,18 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("indexCallExtensionImportGetOnNoOperatorWarning.test")
+        public void testIndexCallExtensionImportGetOnNoOperatorWarning() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/indexCallExtensionImportGetOnNoOperatorWarning.test");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("indexCallExtensionImportSetOnNoOperatorWarning.test")
+        public void testIndexCallExtensionImportSetOnNoOperatorWarning() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/indexCallExtensionImportSetOnNoOperatorWarning.test");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("indexCallExtensionSet.test")
         public void testIndexCallExtensionSet() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/indexCallExtensionSet.test");

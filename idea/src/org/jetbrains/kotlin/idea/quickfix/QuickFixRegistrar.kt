@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
-import org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -328,6 +327,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
 
         OPERATOR_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.OPERATOR_KEYWORD))
+        OPERATOR_MODIFIER_REQUIRED.registerFactory(AutoImportForMissingOperatorFactory)
+
         INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.INFIX_KEYWORD))
 
         UNDERSCORE_IS_RESERVED.registerFactory(RenameUnderscoreFix)
