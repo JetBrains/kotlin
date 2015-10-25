@@ -66,8 +66,7 @@ import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYN
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -509,18 +508,41 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         iv.newarray(PROPERTY_METADATA_TYPE);
 
         for (int i = 0, size = delegatedProperties.size(); i < size; i++) {
-            VariableDescriptor property = BindingContextUtils.getNotNull(bindingContext, VARIABLE, delegatedProperties.get(i));
+            PropertyDescriptor property =
+                    (PropertyDescriptor) BindingContextUtils.getNotNull(bindingContext, VARIABLE, delegatedProperties.get(i));
 
             iv.dup();
             iv.iconst(i);
 
-            ReceiverParameterDescriptor dispatchReceiver = property.getDispatchReceiverParameter();
+            StackValue value;
+            // TODO: remove this option and always generate PropertyReferenceNImpl creation
+            if ("true".equalsIgnoreCase(System.getProperty("kotlin.jvm.optimize.delegated.properties"))) {
+                int receiverCount = (property.getDispatchReceiverParameter() != null ? 1 : 0) +
+                                    (property.getExtensionReceiverParameter() != null ? 1 : 0);
+                Type implType = property.isVar() ? MUTABLE_PROPERTY_REFERENCE_IMPL[receiverCount] : PROPERTY_REFERENCE_IMPL[receiverCount];
+                iv.anew(implType);
+                iv.dup();
+                // TODO: generate the container once and save to a local field instead
+                ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
+                iv.aconst(property.getName().asString());
+                iv.aconst(PropertyReferenceCodegen.getPropertyReferenceSignature(property, state));
+                iv.invokespecial(
+                        implType.getInternalName(), "<init>",
+                        Type.getMethodDescriptor(Type.VOID_TYPE, K_DECLARATION_CONTAINER_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE), false
+                );
+                value = StackValue.onStack(implType);
+                Method wrapper = PropertyReferenceCodegen.getWrapperMethodForPropertyReference(property, receiverCount);
+                iv.invokestatic(REFLECTION, wrapper.getName(), wrapper.getDescriptor(), false);
+            }
+            else {
+                ReceiverParameterDescriptor dispatchReceiver = property.getDispatchReceiverParameter();
 
-            //noinspection ConstantConditions
-            StackValue value = createOrGetClInitCodegen().generatePropertyReference(
-                    delegatedProperties.get(i).getDelegate(), property, property,
-                    dispatchReceiver != null ? new TransientReceiver(dispatchReceiver.getType()) : ReceiverValue.NO_RECEIVER
-            );
+                //noinspection ConstantConditions
+                value = createOrGetClInitCodegen().generatePropertyReference(
+                        delegatedProperties.get(i).getDelegate(), property, property,
+                        dispatchReceiver != null ? new TransientReceiver(dispatchReceiver.getType()) : ReceiverValue.NO_RECEIVER
+                );
+            }
 
             value.put(PROPERTY_METADATA_TYPE, iv);
 
