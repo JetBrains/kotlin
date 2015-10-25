@@ -24,19 +24,19 @@ import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.utils.Printer
 
 class SingleImportScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : ImportingScope by ImportingScope.Empty {
-    override fun getDeclaredClassifier(name: Name, location: LookupLocation)
+    override fun getContributedClassifier(name: Name, location: LookupLocation)
             = if (name == aliasName) descriptors.filterIsInstance<ClassifierDescriptor>().singleOrNull() else null
 
     override fun getContributedPackage(name: Name)
             = if (name == aliasName) descriptors.filterIsInstance<PackageViewDescriptor>().singleOrNull() else null
 
-    override fun getDeclaredVariables(name: Name, location: LookupLocation)
+    override fun getContributedVariables(name: Name, location: LookupLocation)
             = if (name == aliasName) descriptors.filterIsInstance<VariableDescriptor>() else emptyList()
 
-    override fun getDeclaredFunctions(name: Name, location: LookupLocation)
+    override fun getContributedFunctions(name: Name, location: LookupLocation)
             = if (name == aliasName) descriptors.filterIsInstance<FunctionDescriptor>() else emptyList()
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = descriptors
 
     override fun printStructure(p: Printer) {

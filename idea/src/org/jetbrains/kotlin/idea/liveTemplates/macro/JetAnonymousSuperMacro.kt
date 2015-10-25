@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFromAllFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 
 class JetAnonymousSuperMacro : Macro() {
     override fun getName() = "anonymousSuper"
@@ -73,7 +73,7 @@ class JetAnonymousSuperMacro : Macro() {
         val resolutionScope = expression.getResolutionScope(bindingContext, expression.getResolutionFacade())
 
         return resolutionScope
-                .getDescriptorsFromAllFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
+                .collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
                 .filter { it is ClassDescriptor && it.modality.isOverridable && (it.kind == ClassKind.CLASS || it.kind == ClassKind.INTERFACE) }
                 .map { DescriptorToSourceUtils.descriptorToDeclaration(it) as PsiNamedElement? }
                 .filterNotNull()

@@ -43,7 +43,7 @@ class TypesWithContainsDetector(
     private val heuristicSignatures = resolutionFacade.ideService<HeuristicSignatures>()
 
     private val typesWithExtensionContains: Collection<KotlinType> = scope
-            .collectAllFromMeAndParent { it.getDeclaredFunctions(containsName, NoLookupLocation.FROM_IDE) }
+            .collectAllFromMeAndParent { it.getContributedFunctions(containsName, NoLookupLocation.FROM_IDE) }
             .filter { it.getExtensionReceiverParameter() != null && isGoodContainsFunction(it, listOf()) }
             .map { it.getExtensionReceiverParameter()!!.getType() }
 

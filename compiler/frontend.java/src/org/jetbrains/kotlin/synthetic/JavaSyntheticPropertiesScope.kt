@@ -56,7 +56,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             val owner = getterOrSetter.getContainingDeclaration() as? ClassDescriptor ?: return null
 
             val originalGetterOrSetter = getterOrSetter.original
-            return resolutionScope.collectAllFromImportingScopes { it.getSyntheticExtensionProperties(listOf(owner.defaultType)) }
+            return resolutionScope.collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(listOf(owner.defaultType)) }
                     .filterIsInstance<SyntheticJavaPropertyDescriptor>()
                     .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
@@ -130,7 +130,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : ImportingSc
         return null
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         //TODO: use location parameter!
 
         var result: SmartList<PropertyDescriptor>? = null
@@ -162,7 +162,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager) : ImportingSc
         return result
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
+    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
         val processedTypes = HashSet<TypeConstructor>()
         receiverTypes.forEach { result.collectSyntheticProperties(it.constructor, processedTypes) }

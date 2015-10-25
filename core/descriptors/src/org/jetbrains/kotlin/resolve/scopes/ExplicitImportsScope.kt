@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : ImportingScope by ImportingScope.Empty {
-    override fun getDeclaredClassifier(name: Name, location: LookupLocation)
+    override fun getContributedClassifier(name: Name, location: LookupLocation)
             = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
 
     override fun getContributedPackage(name: Name)
             = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
 
-    override fun getDeclaredVariables(name: Name, location: LookupLocation)
+    override fun getContributedVariables(name: Name, location: LookupLocation)
             = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
 
-    override fun getDeclaredFunctions(name: Name, location: LookupLocation)
+    override fun getContributedFunctions(name: Name, location: LookupLocation)
             = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = descriptors
 
     override fun printStructure(p: Printer) {

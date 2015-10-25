@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 
@@ -84,7 +84,7 @@ fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Bo
     if (descriptor == null || descriptor.getName().isSpecial()) return false
     if (!checkTypeParameters && descriptor is TypeParameterDescriptor) return true
 
-    return scope != null && scope.getClassifier(descriptor.name, NoLookupLocation.FROM_IDE) == descriptor
+    return scope != null && scope.findClassifier(descriptor.name, NoLookupLocation.FROM_IDE) == descriptor
 }
 
 public fun KotlinType.approximateWithResolvableType(scope: LexicalScope?, checkTypeParameters: Boolean): KotlinType {

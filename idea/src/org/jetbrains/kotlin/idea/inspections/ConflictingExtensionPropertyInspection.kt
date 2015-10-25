@@ -90,7 +90,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
     private fun conflictingSyntheticExtension(descriptor: PropertyDescriptor, importingScope: ImportingScope): SyntheticJavaPropertyDescriptor? {
         val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
         return importingScope.collectAllFromImportingScopes {
-                    it.getSyntheticExtensionProperties(listOf(extensionReceiverType), descriptor.name, NoLookupLocation.FROM_IDE)
+                    it.getContributedSyntheticExtensionProperties(listOf(extensionReceiverType), descriptor.name, NoLookupLocation.FROM_IDE)
                 }.firstIsInstanceOrNull<SyntheticJavaPropertyDescriptor>()
     }
 

@@ -36,22 +36,18 @@ interface LexicalScope {
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
-    open fun getDescriptors(
+    open fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
             nameFilter: (Name) -> Boolean = KtScope.ALL_NAME_FILTER
-    ): Collection<DeclarationDescriptor> = getDeclaredDescriptors()
+    ): Collection<DeclarationDescriptor> = getContributedDescriptors()
 
-    //TODO: rename
-    fun getDeclaredDescriptors(): Collection<DeclarationDescriptor>
+    fun getContributedDescriptors(): Collection<DeclarationDescriptor>
 
-    //TODO: rename
-    fun getDeclaredClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
+    fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
 
-    //TODO: rename
-    fun getDeclaredVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+    fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
 
-    //TODO: rename
-    fun getDeclaredFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
     fun printStructure(p: Printer)
 
@@ -68,13 +64,13 @@ interface LexicalScope {
         override val implicitReceiver: ReceiverParameterDescriptor?
             get() = null
 
-        override fun getDeclaredDescriptors(): Collection<DeclarationDescriptor> = emptyList()
+        override fun getContributedDescriptors(): Collection<DeclarationDescriptor> = emptyList()
 
-        override fun getDeclaredClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-        override fun getDeclaredVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
+        override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
 
-        override fun getDeclaredFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
+        override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
 
         override fun printStructure(p: Printer) = throw UnsupportedOperationException()
     }
@@ -94,28 +90,28 @@ interface ImportingScope : LexicalScope {
 
     fun getContributedPackage(name: Name): PackageViewDescriptor?
 
-    fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-    fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
+    fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
-    fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
-    fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
+    fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
+    fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
 
     // please, do not override this method
-    override fun getDeclaredDescriptors(): Collection<DeclarationDescriptor> {
-        return getDescriptors()
+    override fun getContributedDescriptors(): Collection<DeclarationDescriptor> {
+        return getContributedDescriptors(DescriptorKindFilter.ALL, { true })
     }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor>
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor>
 
     object Empty : ImportingScope, LexicalScope by LexicalScope.Empty {
         override fun getContributedPackage(name: Name) = null
 
-        override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
+        override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
-        override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
+        override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
 
-        override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> = emptyList()
+        override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> = emptyList()
 
-        override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> = emptyList()
+        override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> = emptyList()
     }
 }

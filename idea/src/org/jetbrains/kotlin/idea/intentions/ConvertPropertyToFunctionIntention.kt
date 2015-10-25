@@ -103,7 +103,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<KtPr
 
                 if (callable is KtProperty) {
                     callableDescriptor.getContainingScope()
-                            ?.collectAllFromMeAndParent { it.getDeclaredFunctions(callableDescriptor.name, NoLookupLocation.FROM_IDE) }
+                            ?.collectAllFromMeAndParent { it.getContributedFunctions(callableDescriptor.name, NoLookupLocation.FROM_IDE) }
                             ?.firstOrNull { it.getValueParameters().isEmpty() }
                             ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }

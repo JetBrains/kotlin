@@ -82,7 +82,7 @@ public class JetChangeSignatureData(
         val validator = bodyScope?.let { bodyScope ->
             CollectingNameValidator(paramNames) { name ->
                 val identifier = Name.identifier(name)
-                bodyScope.collectAllFromMeAndParent { it.getDeclaredVariables(identifier, NoLookupLocation.FROM_IDE) }.isEmpty()
+                bodyScope.collectAllFromMeAndParent { it.getContributedVariables(identifier, NoLookupLocation.FROM_IDE) }.isEmpty()
             }
         } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null

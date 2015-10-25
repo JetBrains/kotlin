@@ -231,12 +231,12 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
         if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
             if (fileResolutionScope.parentsWithSelf.any { scope ->
-                scope.getDeclaredFunctions(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == originalFqName }
+                scope.getContributedFunctions(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == originalFqName }
             }) return null // already imported
         }
         else if (refData.kind == KotlinReferenceData.Kind.EXTENSION_PROPERTY) {
             if (fileResolutionScope.parentsWithSelf.any { scope ->
-                scope.getDeclaredVariables(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == originalFqName }
+                scope.getContributedVariables(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == originalFqName }
             }) return null // already imported
         }
 

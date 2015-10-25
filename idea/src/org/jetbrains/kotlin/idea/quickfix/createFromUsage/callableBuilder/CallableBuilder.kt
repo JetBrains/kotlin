@@ -66,7 +66,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -399,7 +399,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     SourceElement.NO_SOURCE
             )
 
-            val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
+            val validator = CollectingNameValidator { scope.findClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
             val parameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(typeParameterCount, validator)
             val typeParameters = (0..typeParameterCount - 1).map {
                 TypeParameterDescriptorImpl.createWithDefaultBound(
@@ -626,7 +626,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
             }
 
-            val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
+            val validator = CollectingNameValidator { scope.findClassifier(Name.identifier(it), NoLookupLocation.FROM_IDE) == null }
             val typeParameterNames = allTypeParametersNotInScope.map { KotlinNameSuggester.suggestNameByName(it.getName().asString(), validator) }
 
             return allTypeParametersNotInScope.zip(typeParameterNames).toMap()

@@ -122,13 +122,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 return scope.parentsWithSelf.any {
                     when (target) {
                         is FunctionDescriptor ->
-                            it.getDeclaredFunctions(target.name, NoLookupLocation.FROM_IDE).contains(target)
+                            it.getContributedFunctions(target.name, NoLookupLocation.FROM_IDE).contains(target)
 
                         is PropertyDescriptor ->
-                            it.getDeclaredVariables(target.name, NoLookupLocation.FROM_IDE).contains(target)
+                            it.getContributedVariables(target.name, NoLookupLocation.FROM_IDE).contains(target)
 
                         is ClassDescriptor ->
-                            it.getDeclaredClassifier(target.name, NoLookupLocation.FROM_IDE) == target
+                            it.getContributedClassifier(target.name, NoLookupLocation.FROM_IDE) == target
 
                         else -> false
                     }
@@ -221,7 +221,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             val scope = fileWithImports.getResolutionFacade().getFileResolutionScope(fileWithImports)
 
             for (fqName in classNamesToCheck) {
-                if (scope.getClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqName != fqName) {
+                if (scope.findClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqName != fqName) {
                     // add explicit import if failed to import with * (or from current package)
                     importsToGenerate.add(ImportPath(fqName, false))
 

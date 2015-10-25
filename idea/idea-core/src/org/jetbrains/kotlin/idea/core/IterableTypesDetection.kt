@@ -47,7 +47,7 @@ public class IterableTypesDetection(
         private val cache = HashMap<FuzzyType, FuzzyType?>()
 
         private val typesWithExtensionIterator: Collection<KotlinType> = scope
-                .collectAllFromMeAndParent { it.getDeclaredFunctions(iteratorName, NoLookupLocation.FROM_IDE) }
+                .collectAllFromMeAndParent { it.getContributedFunctions(iteratorName, NoLookupLocation.FROM_IDE) }
                 .map { it.extensionReceiverParameter }
                 .filterNotNull()
                 .map { it.type }

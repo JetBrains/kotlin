@@ -37,28 +37,28 @@ class AllUnderImportsScope(descriptor: DeclarationDescriptor) : ImportingScope b
         listOf(NoSubpackagesInPackageScope(descriptor as PackageViewDescriptor))
     }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = scopes.flatMap { it.getDescriptors(kindFilter, nameFilter) }
 
-    override fun getDeclaredClassifier(name: Name, location: LookupLocation)
+    override fun getContributedClassifier(name: Name, location: LookupLocation)
             = scopes.asSequence().map { it.getClassifier(name, location) }.filterNotNull().singleOrNull()
 
-    override fun getDeclaredVariables(name: Name, location: LookupLocation)
+    override fun getContributedVariables(name: Name, location: LookupLocation)
             = scopes.flatMap { it.getProperties(name, location) }
 
-    override fun getDeclaredFunctions(name: Name, location: LookupLocation)
+    override fun getContributedFunctions(name: Name, location: LookupLocation)
             = scopes.flatMap { it.getFunctions(name, location) }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
             = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
             = scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes, name, location) }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
+    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
             = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes) }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
+    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
             = scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes) }
 
     override fun printStructure(p: Printer) {

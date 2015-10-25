@@ -86,7 +86,7 @@ class LazyImportResolver(
 
             if (!directive.isAllUnder) {
                 PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(
-                        moduleDescriptor, traceForImportResolve, directive, directiveImportScope.getDescriptors())
+                        moduleDescriptor, traceForImportResolve, directive, directiveImportScope.getContributedDescriptors())
             }
 
             directiveImportScope
@@ -100,7 +100,7 @@ class LazyImportResolver(
 
             val alias = KtPsiUtil.getAliasName(importDirective)?.identifier
             if (scope != null && alias != null) {
-                if (scope.getDeclaredClassifier(Name.identifier(alias), KotlinLookupLocation(importDirective)) != null) {
+                if (scope.getContributedClassifier(Name.identifier(alias), KotlinLookupLocation(importDirective)) != null) {
                     explicitClassImports.put(alias, importDirective)
                 }
             }
@@ -184,58 +184,58 @@ class LazyImportScope(
         return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.moduleDescriptor) == includeVisible
     }
 
-    override fun getDeclaredClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         return importResolver.selectSingleFromImports(name) { scope, name ->
-            val descriptor = scope.getDeclaredClassifier(name, location)
+            val descriptor = scope.getContributedClassifier(name, location)
             if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
         }
     }
 
     override fun getContributedPackage(name: Name) = null
 
-    override fun getDeclaredVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, name -> scope.getDeclaredVariables(name, location) }
+        return importResolver.collectFromImports(name) { scope, name -> scope.getContributedVariables(name, location) }
     }
 
-    override fun getDeclaredFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, name -> scope.getDeclaredFunctions(name, location) }
+        return importResolver.collectFromImports(name) { scope, name -> scope.getContributedFunctions(name, location) }
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, name -> scope.getSyntheticExtensionProperties(receiverTypes, name, location) }
+        return importResolver.collectFromImports(name) { scope, name -> scope.getContributedSyntheticExtensionProperties(receiverTypes, name, location) }
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, name -> scope.getSyntheticExtensionFunctions(receiverTypes, name, location) }
+        return importResolver.collectFromImports(name) { scope, name -> scope.getContributedSyntheticExtensionFunctions(receiverTypes, name, location) }
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
+    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
         // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
 
         return importResolver.storageManager.compute {
             importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<PropertyDescriptor>()) { import ->
-                importResolver.getImportScope(import).getSyntheticExtensionProperties(receiverTypes)
+                importResolver.getImportScope(import).getContributedSyntheticExtensionProperties(receiverTypes)
             }
         }
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
+    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
         // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
 
         return importResolver.storageManager.compute {
             importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { import ->
-                importResolver.getImportScope(import).getSyntheticExtensionFunctions(receiverTypes)
+                importResolver.getImportScope(import).getContributedSyntheticExtensionFunctions(receiverTypes)
             }
         }
     }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
 
@@ -245,7 +245,7 @@ class LazyImportScope(
                 val importPath = directive.getImportPath() ?: continue
                 val importedName = importPath.getImportedName()
                 if (importedName == null || nameFilter(importedName)) {
-                    descriptors.addAll(importResolver.getImportScope(directive).getDescriptors(kindFilter, nameFilter))
+                    descriptors.addAll(importResolver.getImportScope(directive).getContributedDescriptors(kindFilter, nameFilter))
                 }
             }
             descriptors

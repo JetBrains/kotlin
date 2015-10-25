@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -82,7 +82,7 @@ internal fun KotlinType.renderLong(typeParameterNameMap: Map<TypeParameterDescri
 
 internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: LexicalScope): List<TypeParameterDescriptor> {
     return typeParameters.filter { typeParameter ->
-        val classifier = scope.getClassifier(typeParameter.name, NoLookupLocation.FROM_IDE)
+        val classifier = scope.findClassifier(typeParameter.name, NoLookupLocation.FROM_IDE)
         classifier == null || classifier != typeParameter
     }
 }

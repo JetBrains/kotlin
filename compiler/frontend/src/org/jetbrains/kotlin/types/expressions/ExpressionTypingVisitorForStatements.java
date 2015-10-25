@@ -154,7 +154,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
 
         {
-            VariableDescriptor olderVariable = ScopeUtilsKt.getLocalVariable(scope, propertyDescriptor.getName());
+            VariableDescriptor olderVariable = ScopeUtilsKt.findLocalVariable(scope, propertyDescriptor.getName());
             ExpressionTypingUtils.checkVariableShadowing(context, propertyDescriptor, olderVariable);
         }
 

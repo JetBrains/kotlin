@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
-import org.jetbrains.kotlin.resolve.scopes.utils.getPackage
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.scopes.utils.processForMeAndParent
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -110,13 +110,13 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val name = target.name
             when (target) {
                 is ClassDescriptor -> {
-                    val classifier = topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE)
+                    val classifier = topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE)
                     if (classifier?.importableFqName == targetFqName) return true
                 }
 
                 is FunctionDescriptor -> {
                     topLevelScope.processForMeAndParent {
-                        if (it.getDeclaredFunctions(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == targetFqName }) {
+                        if (it.getContributedFunctions(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == targetFqName }) {
                             return true
                         }
                     }
@@ -124,7 +124,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
                 is PropertyDescriptor -> {
                     topLevelScope.processForMeAndParent {
-                        if (it.getDeclaredVariables(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == targetFqName }) {
+                        if (it.getContributedVariables(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == targetFqName }) {
                             return true
                         }
                     }
@@ -154,8 +154,8 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             // check there is an explicit import of a class/package with the same name already
             val conflict = when (target) {
-                is ClassDescriptor -> topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE)
-                is PackageViewDescriptor -> topLevelScope.getPackage(name)
+                is ClassDescriptor -> topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE)
+                is PackageViewDescriptor -> topLevelScope.findPackage(name)
                 else -> null
             }
             if (conflict != null && imports.any {
@@ -173,7 +173,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                                     && when (target) {
                                         // this check does not give a guarantee that import with * will import the class - for example,
                                         // there can be classes with conflicting name in more than one import with *
-                                        is ClassDescriptor -> topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE) == null
+                                        is ClassDescriptor -> topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE) == null
                                         is FunctionDescriptor, is PropertyDescriptor -> true
                                         else -> error("Unknown kind of descriptor to import:$target")
                                     }
@@ -250,7 +250,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                     .filter { importedClass ->
                         isVisible(importedClass)
                             // check that class is really imported
-                            && topLevelScope.getClassifier(importedClass.name, NoLookupLocation.FROM_IDE) == importedClass
+                            && topLevelScope.findClassifier(importedClass.name, NoLookupLocation.FROM_IDE) == importedClass
                             // and not yet imported explicitly
                             && imports.all { it.importPath != ImportPath(importedClass.importableFqName!!, false)  }
                     }
@@ -292,7 +292,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
                 // check if there is a conflicting class imported with * import
                 // (not with explicit import - explicit imports are checked before this method invocation)
-                val classifier = topLevelScope.getClassifier(name, NoLookupLocation.FROM_IDE)
+                val classifier = topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE)
                 if (classifier != null && detectNeededImports(listOf(classifier)).isNotEmpty()) {
                     return ImportDescriptorResult.FAIL
                 }
@@ -320,7 +320,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             if (importsToCheck.isNotEmpty()) {
                 val topLevelScope = resolutionFacade.getFileResolutionScope(file)
                 for (classFqName in importsToCheck) {
-                    val classifier = topLevelScope.getClassifier(classFqName.shortName(), NoLookupLocation.FROM_IDE)
+                    val classifier = topLevelScope.findClassifier(classFqName.shortName(), NoLookupLocation.FROM_IDE)
                     if (classifier?.importableFqName != classFqName) {
                         addImport(classFqName, false) // restore explicit import
                     }

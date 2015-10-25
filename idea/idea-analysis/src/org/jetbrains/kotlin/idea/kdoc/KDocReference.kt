@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFromAllFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
@@ -86,7 +86,7 @@ public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
     var result: Collection<DeclarationDescriptor> = listOf(fromDescriptor)
     qualifiedName.forEach { nameComponent ->
         val scope = getResolutionScope(resolutionFacade, result.singleOrNull() ?: return emptyList())
-        result = scope.getDescriptorsFromAllFiltered(nameFilter = { it.asString() == nameComponent})
+        result = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == nameComponent})
     }
 
     return result
@@ -96,7 +96,7 @@ private fun resolveInLocalScope(fromDescriptor: DeclarationDescriptor,
                                 name: String,
                                 resolutionFacade: ResolutionFacade): List<DeclarationDescriptor> {
     val scope = getResolutionScope(resolutionFacade, fromDescriptor)
-    return scope.getDescriptorsFromAllFiltered(nameFilter = { it.asString() == name }).filter {
+    return scope.collectDescriptorsFiltered(nameFilter = { it.asString() == name }).filter {
         it.containingDeclaration == fromDescriptor
     }
 }

@@ -680,7 +680,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     }
                 }
                 else if (function instanceof KtFunction) {
-                    VariableDescriptor variable = ScopeUtilsKt.getLocalVariable(parametersScope, Name.identifier(parameterName));
+                    VariableDescriptor variable = ScopeUtilsKt.findLocalVariable(parametersScope, Name.identifier(parameterName));
 
                     if (variable != null && !(variable instanceof ValueParameterDescriptor)) {
                         PsiElement conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(variable);

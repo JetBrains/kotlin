@@ -180,7 +180,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             // SAM adapters for member functions
             val resolutionScope = functionCall.getResolutionScope(bindingContext, functionCall.getResolutionFacade())
             val syntheticExtensions = resolutionScope.collectAllFromImportingScopes {
-                it.getSyntheticExtensionFunctions(
+                it.getContributedSyntheticExtensionFunctions(
                         containingClass.defaultType.singletonList(),
                         functionResolvedCall.resultingDescriptor.name,
                         NoLookupLocation.FROM_IDE)

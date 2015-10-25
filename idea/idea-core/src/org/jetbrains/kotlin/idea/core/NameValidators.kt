@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -100,7 +100,7 @@ public class NewDeclarationNameValidator(
                 getAllAccessibleVariables(name).any { !it.isExtension && it.isVisible() }
             Target.FUNCTIONS_AND_CLASSES ->
                 getAllAccessibleFunctions(name).any { !it.isExtension && it.isVisible() } ||
-                getClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() } ?: false
+                findClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() } ?: false
         }
     }
 

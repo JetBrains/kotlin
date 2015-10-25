@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
+import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -674,7 +674,7 @@ private class ConstructedExpressionWrapperWithIntroduceFeature(
                     }
 
                     val name = suggestName { name ->
-                        resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
+                        resolutionScope.findLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
                     }
 
                     var declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)

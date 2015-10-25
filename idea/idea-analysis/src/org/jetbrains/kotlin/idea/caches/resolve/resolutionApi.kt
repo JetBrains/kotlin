@@ -89,7 +89,7 @@ public fun ResolutionFacade.resolveImportReference(
     val importDirective = KtPsiFactory(project).createImportDirective(ImportPath(fqName, false))
     val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
     return qualifiedExpressionResolver.processImportReference(
-            importDirective, moduleDescriptor, BindingTraceContext(), packageFragmentForVisibilityCheck = null)?.getDescriptors() ?: emptyList()
+            importDirective, moduleDescriptor, BindingTraceContext(), packageFragmentForVisibilityCheck = null)?.getContributedDescriptors() ?: emptyList()
 }
 
 //NOTE: idea default API returns module search scope for file under module but not in source or production source (for example, test data )

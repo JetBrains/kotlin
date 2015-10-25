@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.utils.getClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -55,7 +55,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
     ): ClassifierDescriptor? {
         if (userType.qualifier == null && !userType.startWithPackage) { // optimization for non-qualified types
             return userType.referenceExpression?.let {
-                val classifier = scope.getClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
+                val classifier = scope.findClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
                 storeResult(trace, it, classifier, scope.ownerDescriptor, inImport = false, isQualifier = false)
                 classifier
             }
@@ -278,7 +278,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
         val firstDescriptor = scopeForFirstPart?.let {
                 val firstPart = path.first()
-                it.getClassifier(firstPart.name, firstPart.location)?.apply {
+                it.findClassifier(firstPart.name, firstPart.location)?.apply {
                     storeResult(trace, firstPart.expression, this, shouldBeVisibleFrom, inImport)
                 }
             }

@@ -124,7 +124,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<KtNa
                     }
 
                     callableDescriptor.getContainingScope()
-                            ?.collectAllFromMeAndParent { it.getDeclaredVariables(callableDescriptor.name, NoLookupLocation.FROM_IDE) }
+                            ?.collectAllFromMeAndParent { it.getContributedVariables(callableDescriptor.name, NoLookupLocation.FROM_IDE) }
                             ?.firstOrNull()
                             ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
