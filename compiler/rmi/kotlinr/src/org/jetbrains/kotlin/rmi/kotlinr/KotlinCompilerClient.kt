@@ -402,12 +402,9 @@ public object KotlinCompilerClient {
             val maxAttempts = COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_MS / COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS + 1
             var attempt = 0L
             while (true) {
-                try {
-                    if (lockFile.createNewFile()) break
-                    // attempt to delete if file is orphaned
-                    if (lockFile.delete() && lockFile.createNewFile()) break
-                }
-                catch (e: IOException) {} // Ignoring it - assuming it is another client process owning it
+                if (lockFile.createNewFile()) break
+                // attempt to delete if file is orphaned
+                if (lockFile.delete() && lockFile.createNewFile()) break
                 if (lockFile.exists() && ++attempt >= maxAttempts)
                     throw IOException("Timeout waiting the release of the lock file '${lockFile.absolutePath}")
                 Thread.sleep(COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS)
