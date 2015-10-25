@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import java.util.*
 
 public class JetChangeSignatureData(
@@ -80,9 +80,8 @@ public class JetChangeSignatureData(
         val bodyScope = (callable as? KtFunction)?.bodyExpression?.let { it.getResolutionScope(it.analyze(), it.getResolutionFacade()) }
         val paramNames = baseDescriptor.valueParameters.map { it.name.asString() }
         val validator = bodyScope?.let { bodyScope ->
-            CollectingNameValidator(paramNames) { name ->
-                val identifier = Name.identifier(name)
-                bodyScope.collectAllFromMeAndParent { it.getContributedVariables(identifier, NoLookupLocation.FROM_IDE) }.isEmpty()
+            CollectingNameValidator(paramNames) {
+                bodyScope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
             }
         } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null

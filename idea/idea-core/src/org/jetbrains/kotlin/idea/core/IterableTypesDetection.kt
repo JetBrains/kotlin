@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
@@ -47,7 +47,7 @@ public class IterableTypesDetection(
         private val cache = HashMap<FuzzyType, FuzzyType?>()
 
         private val typesWithExtensionIterator: Collection<KotlinType> = scope
-                .collectAllFromMeAndParent { it.getContributedFunctions(iteratorName, NoLookupLocation.FROM_IDE) }
+                .collectFunctions(iteratorName, NoLookupLocation.FROM_IDE)
                 .map { it.extensionReceiverParameter }
                 .filterNotNull()
                 .map { it.type }

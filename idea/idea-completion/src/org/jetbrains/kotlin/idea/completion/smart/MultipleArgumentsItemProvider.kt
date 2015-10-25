@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
-import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
@@ -106,8 +106,7 @@ class MultipleArgumentsItemProvider(
     private fun variableInScope(parameter: ValueParameterDescriptor, scope: LexicalScope): VariableDescriptor? {
         val name = parameter.getName()
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
-        val variable = scope.findLocalVariable(name)
-                ?: scope.collectAllFromMeAndParent { it.getContributedVariables(name, NoLookupLocation.FROM_IDE) }.singleOrNull()
+        val variable = scope.findVariable(name, NoLookupLocation.FROM_IDE) { !it.isExtension }
                 ?: scope.getVariableFromImplicitReceivers(name) ?: return null
         return if (smartCastCalculator.types(variable).any { KotlinTypeChecker.DEFAULT.isSubtypeOf(it, parameter.getType()) })
             variable

@@ -43,8 +43,9 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
-import org.jetbrains.kotlin.resolve.scopes.utils.processForMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -108,29 +109,20 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
         private fun isAlreadyImported(target: DeclarationDescriptor, topLevelScope: LexicalScope, targetFqName: FqName): Boolean {
             val name = target.name
-            when (target) {
+            return when (target) {
                 is ClassDescriptor -> {
                     val classifier = topLevelScope.findClassifier(name, NoLookupLocation.FROM_IDE)
-                    if (classifier?.importableFqName == targetFqName) return true
+                    classifier?.importableFqName == targetFqName
                 }
 
-                is FunctionDescriptor -> {
-                    topLevelScope.processForMeAndParent {
-                        if (it.getContributedFunctions(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == targetFqName }) {
-                            return true
-                        }
-                    }
-                }
+                is FunctionDescriptor ->
+                    topLevelScope.findFunction(name, NoLookupLocation.FROM_IDE) { it.importableFqName == targetFqName } != null
 
-                is PropertyDescriptor -> {
-                    topLevelScope.processForMeAndParent {
-                        if (it.getContributedVariables(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == targetFqName }) {
-                            return true
-                        }
-                    }
-                }
+                is PropertyDescriptor ->
+                    topLevelScope.findVariable(name, NoLookupLocation.FROM_IDE) { it.importableFqName == targetFqName } != null
+
+                else -> false
             }
-            return false
         }
 
         fun importDescriptor(descriptor: DeclarationDescriptor): ImportDescriptorResult {

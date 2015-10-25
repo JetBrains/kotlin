@@ -119,19 +119,17 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             if (target.containingDeclaration !is ClassDescriptor) return false
 
             fun isInScope(scope: LexicalScope): Boolean {
-                return scope.parentsWithSelf.any {
-                    when (target) {
-                        is FunctionDescriptor ->
-                            it.getContributedFunctions(target.name, NoLookupLocation.FROM_IDE).contains(target)
+                return when (target) {
+                    is FunctionDescriptor ->
+                        scope.findFunction(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
 
-                        is PropertyDescriptor ->
-                            it.getContributedVariables(target.name, NoLookupLocation.FROM_IDE).contains(target)
+                    is PropertyDescriptor ->
+                        scope.findVariable(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
 
-                        is ClassDescriptor ->
-                            it.getContributedClassifier(target.name, NoLookupLocation.FROM_IDE) == target
+                    is ClassDescriptor ->
+                        scope.findClassifier(target.name, NoLookupLocation.FROM_IDE) == target
 
-                        else -> false
-                    }
+                    else -> false
                 }
             }
 

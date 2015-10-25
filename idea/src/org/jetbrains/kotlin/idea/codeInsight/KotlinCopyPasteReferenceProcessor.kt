@@ -53,7 +53,8 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
+import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -230,14 +231,14 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         val name = originalFqName.shortName()
 
         if (refData.kind == KotlinReferenceData.Kind.EXTENSION_FUNCTION) {
-            if (fileResolutionScope.parentsWithSelf.any { scope ->
-                scope.getContributedFunctions(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == originalFqName }
-            }) return null // already imported
+            if (fileResolutionScope.findFunction(name, NoLookupLocation.FROM_IDE) { it.importableFqName == originalFqName } != null) {
+                return null // already imported
+            }
         }
         else if (refData.kind == KotlinReferenceData.Kind.EXTENSION_PROPERTY) {
-            if (fileResolutionScope.parentsWithSelf.any { scope ->
-                scope.getContributedVariables(name, NoLookupLocation.FROM_IDE).any { it.importableFqName == originalFqName }
-            }) return null // already imported
+            if (fileResolutionScope.findVariable(name, NoLookupLocation.FROM_IDE) { it.importableFqName == originalFqName } != null) {
+                return null // already imported
+            }
         }
 
         val referencedDescriptors = try {

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.util.nullability
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
@@ -43,7 +43,7 @@ class TypesWithContainsDetector(
     private val heuristicSignatures = resolutionFacade.ideService<HeuristicSignatures>()
 
     private val typesWithExtensionContains: Collection<KotlinType> = scope
-            .collectAllFromMeAndParent { it.getContributedFunctions(containsName, NoLookupLocation.FROM_IDE) }
+            .collectFunctions(containsName, NoLookupLocation.FROM_IDE)
             .filter { it.getExtensionReceiverParameter() != null && isGoodContainsFunction(it, listOf()) }
             .map { it.getExtensionReceiverParameter()!!.getType() }
 

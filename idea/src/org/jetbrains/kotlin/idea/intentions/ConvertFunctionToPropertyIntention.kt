@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -124,8 +124,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<KtNa
                     }
 
                     callableDescriptor.getContainingScope()
-                            ?.collectAllFromMeAndParent { it.getContributedVariables(callableDescriptor.name, NoLookupLocation.FROM_IDE) }
-                            ?.firstOrNull()
+                            ?.findVariable(callableDescriptor.name, NoLookupLocation.FROM_IDE)
                             ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
                 }

@@ -23,16 +23,17 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
+import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
+import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 
 
 public fun LexicalScope.getAllAccessibleVariables(name: Name): Collection<VariableDescriptor> {
-    return getVariablesFromImplicitReceivers(name) + collectAllFromMeAndParent { it.getContributedVariables(name, NoLookupLocation.FROM_IDE) }
+    return getVariablesFromImplicitReceivers(name) + collectVariables(name, NoLookupLocation.FROM_IDE)
 }
 
 public fun LexicalScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor> {
     return getImplicitReceiversWithInstance().flatMap { it.type.memberScope.getFunctions(name, NoLookupLocation.FROM_IDE) } +
-            collectAllFromMeAndParent { it.getContributedFunctions(name, NoLookupLocation.FROM_IDE) }
+            collectFunctions(name, NoLookupLocation.FROM_IDE)
 }
 
 public fun LexicalScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {

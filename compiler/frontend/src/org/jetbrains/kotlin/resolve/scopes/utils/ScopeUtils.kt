@@ -97,6 +97,26 @@ public fun LexicalScope.findClassifier(name: Name, location: LookupLocation): Cl
 public fun LexicalScope.findPackage(name: Name): PackageViewDescriptor?
         = findFirstFromImportingScopes { it.getContributedPackage(name) }
 
+public fun LexicalScope.collectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+        = collectAllFromMeAndParent { it.getContributedVariables(name, location) }
+
+public fun LexicalScope.collectFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+        = collectAllFromMeAndParent { it.getContributedFunctions(name, location) }
+
+public fun LexicalScope.findVariable(name: Name, location: LookupLocation, predicate: (VariableDescriptor) -> Boolean = { true }): VariableDescriptor? {
+    processForMeAndParent {
+        it.getContributedVariables(name, location).firstOrNull(predicate)?.let { return it }
+    }
+    return null
+}
+
+public fun LexicalScope.findFunction(name: Name, location: LookupLocation, predicate: (FunctionDescriptor) -> Boolean = { true }): FunctionDescriptor? {
+    processForMeAndParent {
+        it.getContributedFunctions(name, location).firstOrNull(predicate)?.let { return it }
+    }
+    return null
+}
+
 public fun LexicalScope.takeSnapshot(): LexicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
 public fun LexicalScope.asKtScope(): KtScope {
@@ -128,9 +148,8 @@ private class LexicalToKtScopeAdapter(lexicalScope: LexicalScope): KtScope {
         return lexicalScope.collectAllFromImportingScopes { it.getContributedVariables(name, location) }
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        return lexicalScope.collectAllFromMeAndParent { it.getContributedFunctions(name, location) }
-    }
+    override fun getFunctions(name: Name, location: LookupLocation)
+            = lexicalScope.collectFunctions(name, location)
 
     override fun getLocalVariable(name: Name) = lexicalScope.findLocalVariable(name)
 
