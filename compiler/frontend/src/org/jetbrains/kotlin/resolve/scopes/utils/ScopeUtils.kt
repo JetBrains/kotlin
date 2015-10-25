@@ -117,6 +117,18 @@ public fun LexicalScope.findFunction(name: Name, location: LookupLocation, predi
     return null
 }
 
+public fun LexicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes, name, location) }
+
+public fun LexicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes, name, location) }
+
+public fun LexicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
+        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes) }
+
+public fun LexicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
+        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes) }
+
 public fun LexicalScope.takeSnapshot(): LexicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
 public fun LexicalScope.asKtScope(): KtScope {
@@ -153,21 +165,17 @@ private class LexicalToKtScopeAdapter(lexicalScope: LexicalScope): KtScope {
 
     override fun getLocalVariable(name: Name) = lexicalScope.findLocalVariable(name)
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        return lexicalScope.collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes, name, location) }
-    }
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+            = lexicalScope.collectSyntheticExtensionProperties(receiverTypes, name, location)
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        return lexicalScope.collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes, name, location) }
-    }
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+            = lexicalScope.collectSyntheticExtensionFunctions(receiverTypes, name, location)
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
-        return lexicalScope.collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes) }
-    }
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
+            = lexicalScope.collectSyntheticExtensionProperties(receiverTypes)
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
-        return lexicalScope.collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes) }
-    }
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
+            = lexicalScope.collectSyntheticExtensionFunctions(receiverTypes)
 
     override fun getContainingDeclaration() = lexicalScope.ownerDescriptor
 

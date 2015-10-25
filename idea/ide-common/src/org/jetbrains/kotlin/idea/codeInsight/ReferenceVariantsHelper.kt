@@ -37,8 +37,9 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromImportingScopes
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionFunctions
+import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -307,13 +308,13 @@ public class ReferenceVariantsHelper(
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            for (extension in resolutionScope.collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes) }) {
+            for (extension in resolutionScope.collectSyntheticExtensionProperties(receiverTypes)) {
                 process(extension)
             }
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            for (extension in resolutionScope.collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes) }) {
+            for (extension in resolutionScope.collectSyntheticExtensionFunctions(receiverTypes)) {
                 process(extension)
             }
         }

@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromImportingScopes
+import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -89,9 +89,8 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
 
     private fun conflictingSyntheticExtension(descriptor: PropertyDescriptor, importingScope: ImportingScope): SyntheticJavaPropertyDescriptor? {
         val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
-        return importingScope.collectAllFromImportingScopes {
-                    it.getContributedSyntheticExtensionProperties(listOf(extensionReceiverType), descriptor.name, NoLookupLocation.FROM_IDE)
-                }.firstIsInstanceOrNull<SyntheticJavaPropertyDescriptor>()
+        return importingScope.collectSyntheticExtensionProperties(listOf(extensionReceiverType), descriptor.name, NoLookupLocation.FROM_IDE)
+                .firstIsInstanceOrNull<SyntheticJavaPropertyDescriptor>()
     }
 
     private fun isSameAsSynthetic(declaration: KtProperty, syntheticProperty: SyntheticJavaPropertyDescriptor): Boolean {

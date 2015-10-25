@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromImportingScopes
+import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -56,7 +56,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             val owner = getterOrSetter.getContainingDeclaration() as? ClassDescriptor ?: return null
 
             val originalGetterOrSetter = getterOrSetter.original
-            return resolutionScope.collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(listOf(owner.defaultType)) }
+            return resolutionScope.collectSyntheticExtensionProperties(listOf(owner.defaultType))
                     .filterIsInstance<SyntheticJavaPropertyDescriptor>()
                     .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
