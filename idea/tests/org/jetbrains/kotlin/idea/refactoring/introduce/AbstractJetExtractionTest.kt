@@ -35,7 +35,6 @@ import com.intellij.refactoring.introduceParameter.Util
 import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase.assertEquals
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
@@ -339,9 +338,13 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                 }
             }
         }
-        catch(e: Exception) {
-            val message = if (e is ConflictsInTestsException) e.getMessages().sorted().joinToString(" ") else e.getMessage()
-            JetTestUtils.assertEqualsToFile(conflictFile, message?.replace("\n", " ") ?: e.javaClass.getName())
+        catch(e: ConflictsInTestsException) {
+            val message = e.messages.sorted().joinToString(" ").replace("\n", " ")
+            JetTestUtils.assertEqualsToFile(conflictFile, message)
+        }
+        catch(e: RuntimeException) { // RuntimeException is thrown by IDEA code in CodeInsightUtils.java
+            if (e.javaClass != RuntimeException::class.java) throw e
+            JetTestUtils.assertEqualsToFile(conflictFile, e.message!!)
         }
         finally {
             if (addKotlinRuntime) {
