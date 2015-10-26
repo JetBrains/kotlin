@@ -230,51 +230,55 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
         putNewElementIntoMap(newPsiElement, treeElement)
     }
 
-    public fun restore(resultElement: PsiElement) {
-        restore(PsiChildRange.singleElement(resultElement))
+    public fun restore(resultElement: PsiElement, forceAdjustIndent: Boolean = false) {
+        restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent)
     }
 
-    public fun restore(resultElements: PsiChildRange) {
+    public fun restore(resultElements: PsiChildRange, forceAdjustIndent: Boolean = false) {
         assert(!resultElements.isEmpty)
 
-        if (commentsToRestore.isEmpty() && lineBreaksToRestore.isEmpty()) return
+        if (commentsToRestore.isNotEmpty() || lineBreaksToRestore.isNotEmpty()) {
+            // remove comments that present inside resultElements from commentsToRestore
+            resultElements.forEach { deleteCommentsInside(it) }
 
-        // remove comments that present inside resultElements from commentsToRestore
-        resultElements.forEach { deleteCommentsInside(it) }
-        if (commentsToRestore.isEmpty() && lineBreaksToRestore.isEmpty()) return
-
-        toNewPsiElementMap = HashMap<TreeElement, MutableCollection<PsiElement>>()
-        for (element in resultElements) {
-            element.accept(object : PsiRecursiveElementVisitor() {
-                override fun visitElement(element: PsiElement) {
-                    val treeElement = element.savedTreeElement
-                    if (treeElement != null) {
-                        putNewElementIntoMap(element, treeElement)
-                    }
-                    super.visitElement(element)
+            if (commentsToRestore.isNotEmpty() || lineBreaksToRestore.isNotEmpty()) {
+                toNewPsiElementMap = HashMap<TreeElement, MutableCollection<PsiElement>>()
+                for (element in resultElements) {
+                    element.accept(object : PsiRecursiveElementVisitor() {
+                        override fun visitElement(element: PsiElement) {
+                            val treeElement = element.savedTreeElement
+                            if (treeElement != null) {
+                                putNewElementIntoMap(element, treeElement)
+                            }
+                            super.visitElement(element)
+                        }
+                    })
                 }
-            })
+
+                restoreComments(resultElements)
+
+                restoreLineBreaks()
+
+                // clear user data
+                resultElements.forEach {
+                    it.accept(object : PsiRecursiveElementVisitor() {
+                        override fun visitElement(element: PsiElement) {
+                            element.savedTreeElement = null
+                            super.visitElement(element)
+                        }
+                    })
+                }
+            }
         }
 
-        restoreComments(resultElements)
-
-        restoreLineBreaks()
-
-        // clear user data
-        resultElements.forEach {
-            it.accept(object : PsiRecursiveElementVisitor() {
-                override fun visitElement(element: PsiElement) {
-                    element.savedTreeElement = null
-                    super.visitElement(element)
-                }
-            })
-        }
-
-        if (needAdjustIndentAfterRestore) {
-            val file = resultElements.first().getContainingFile()
-            val project = file.getProject()
+        if (needAdjustIndentAfterRestore || forceAdjustIndent) {
+            val file = resultElements.first().containingFile
+            val project = file.project
             val psiDocumentManager = PsiDocumentManager.getInstance(project)
-            psiDocumentManager.doPostponedOperationsAndUnblockDocument(psiDocumentManager.getDocument(file)!!)
+            val document = psiDocumentManager.getDocument(file)
+            if (document != null) {
+                psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
+            }
             CodeStyleManager.getInstance(project).adjustLineIndent(file, resultElements.textRange)
         }
     }

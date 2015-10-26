@@ -75,7 +75,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
     public fun process(file: KtFile, startOffset: Int, endOffset: Int) {
         val documentManager = PsiDocumentManager.getInstance(file.getProject())
-        val document = documentManager.getDocument(file)!!
+        val document = file.viewProvider.document!!
         if (!documentManager.isCommitted(document)) {
             throw IllegalStateException("Document should be committed to shorten references in range")
         }

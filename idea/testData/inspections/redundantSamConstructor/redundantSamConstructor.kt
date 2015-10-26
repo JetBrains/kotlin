@@ -37,4 +37,7 @@ fun test() {
 
     klass.memberFunWithOtherParam(1, Runnable { })
     klass.memberFunWithOtherParam(1, runnable)
+
+    MyJavaClass.staticFunWithOtherParam(1, java.lang.Runnable { })
+    klass.memberFun1(java.lang.Runnable { })
 }

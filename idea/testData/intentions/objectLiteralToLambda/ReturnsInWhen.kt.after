@@ -1,0 +1,21 @@
+// WITH_RUNTIME
+import java.io.File
+import java.io.FileFilter
+
+fun foo(filter: FileFilter) {}
+
+fun bar() {
+    foo(FileFilter { file ->
+        val name = file.name
+        when (name) {
+            "foo" -> true
+
+            "bar" -> false
+
+            else -> {
+                if (name.startsWith("a")) return@FileFilter true
+                false
+            }
+        }
+    })
+}
