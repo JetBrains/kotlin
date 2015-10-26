@@ -35,15 +35,20 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     private final PropertyDescriptor calleeDescriptor;
     private final KtSuperExpression superCallExpression;
     @NotNull private final String nameSuffix;
+    private final boolean withSyntheticGetterAccessor;
+    private final boolean withSyntheticSetterAccessor;
 
     public AccessorForPropertyDescriptor(
             @NotNull PropertyDescriptor property,
             @NotNull DeclarationDescriptor containingDeclaration,
             @Nullable KtSuperExpression superCallExpression,
-            @NotNull String nameSuffix
+            @NotNull String nameSuffix,
+            boolean getterAccessorRequired,
+            boolean setterAccessorRequired
     ) {
         this(property, property.getType(), DescriptorUtils.getReceiverParameterType(property.getExtensionReceiverParameter()),
-             property.getDispatchReceiverParameter(), containingDeclaration, superCallExpression, nameSuffix);
+             property.getDispatchReceiverParameter(), containingDeclaration, superCallExpression, nameSuffix,
+             getterAccessorRequired, setterAccessorRequired);
     }
 
     protected AccessorForPropertyDescriptor(
@@ -55,6 +60,20 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
             @Nullable KtSuperExpression superCallExpression,
             @NotNull String nameSuffix
     ) {
+        this(original, propertyType, receiverType, dispatchReceiverParameter, containingDeclaration, superCallExpression, nameSuffix, true, true);
+    }
+
+    protected AccessorForPropertyDescriptor(
+            @NotNull PropertyDescriptor original,
+            @NotNull KotlinType propertyType,
+            @Nullable KotlinType receiverType,
+            @Nullable ReceiverParameterDescriptor dispatchReceiverParameter,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @Nullable KtSuperExpression superCallExpression,
+            @NotNull String nameSuffix,
+            boolean getterAccessorRequired,
+            boolean setterAccessorRequired
+    ) {
         super(containingDeclaration, null, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.LOCAL,
               original.isVar(), Name.identifier("access$" + nameSuffix),
               Kind.DECLARATION, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false);
@@ -63,7 +82,15 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
         this.superCallExpression = superCallExpression;
         this.nameSuffix = nameSuffix;
         setType(propertyType, Collections.<TypeParameterDescriptorImpl>emptyList(), dispatchReceiverParameter, receiverType);
-        initialize(new Getter(this), new Setter(this));
+
+        this.withSyntheticGetterAccessor = getterAccessorRequired;
+        this.withSyntheticSetterAccessor = setterAccessorRequired;
+
+        PropertyGetterDescriptorImpl getterDescriptor =
+                getterAccessorRequired ? new Getter(this) : (PropertyGetterDescriptorImpl) original.getGetter();
+        PropertySetterDescriptor setterDescriptor =
+                setterAccessorRequired ? new Setter(this) : original.getSetter();
+        initialize(getterDescriptor, setterDescriptor);
     }
 
     public static class Getter extends PropertyGetterDescriptorImpl implements AccessorForCallableDescriptor<PropertyGetterDescriptor> {
@@ -127,5 +154,13 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     @NotNull
     public String getAccessorSuffix() {
         return nameSuffix;
+    }
+
+    public boolean isWithSyntheticGetterAccessor() {
+        return withSyntheticGetterAccessor;
+    }
+
+    public boolean isWithSyntheticSetterAccessor() {
+        return withSyntheticSetterAccessor;
     }
 }

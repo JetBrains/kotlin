@@ -6667,6 +6667,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt9603.kt")
+        public void testKt9603() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/kt9603.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("primitiveOverrideDefaultAccessor.kt")
         public void testPrimitiveOverrideDefaultAccessor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/primitiveOverrideDefaultAccessor.kt");

@@ -1462,6 +1462,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("protectedVarWithPrivateSet.kt")
+        public void testProtectedVarWithPrivateSet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/protectedVarWithPrivateSet.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("stackOverflowOnCallFromGetValue.kt")
         public void testStackOverflowOnCallFromGetValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/stackOverflowOnCallFromGetValue.kt");

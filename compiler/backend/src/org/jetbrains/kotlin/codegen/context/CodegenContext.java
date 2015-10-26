@@ -51,12 +51,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     private Map<DeclarationDescriptor, CodegenContext> childContexts;
     private Map<AccessorKey, AccessorForCallableDescriptor<?>> accessors;
+    private Map<AccessorKey, AccessorForPropertyDescriptorFactory> propertyAccessorFactories;
 
     private static class AccessorKey {
         public final DeclarationDescriptor descriptor;
         public final ClassDescriptor superCallLabelTarget;
 
-        public AccessorKey(@NotNull DeclarationDescriptor descriptor, @Nullable ClassDescriptor superCallLabelTarget) {
+        public AccessorKey(
+                @NotNull DeclarationDescriptor descriptor,
+                @Nullable ClassDescriptor superCallLabelTarget
+        ) {
             this.descriptor = descriptor;
             this.superCallLabelTarget = superCallLabelTarget;
         }
@@ -66,9 +70,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (!(obj instanceof AccessorKey)) return false;
             AccessorKey other = (AccessorKey) obj;
             return descriptor.equals(other.descriptor) &&
-                   (superCallLabelTarget == null
-                    ? other.superCallLabelTarget == null
-                    : superCallLabelTarget.equals(other.superCallLabelTarget));
+                   (superCallLabelTarget == null ? other.superCallLabelTarget == null
+                                                 : superCallLabelTarget.equals(other.superCallLabelTarget));
         }
 
         @Override
@@ -79,6 +82,65 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         @Override
         public String toString() {
             return descriptor.toString();
+        }
+    }
+
+    private static class AccessorForPropertyDescriptorFactory {
+        private final @NotNull PropertyDescriptor property;
+        private final @NotNull DeclarationDescriptor containingDeclaration;
+        private final @Nullable KtSuperExpression superCallExpression;
+        private final @NotNull String nameSuffix;
+
+        private AccessorForPropertyDescriptor withSyntheticGetterAndSetter = null;
+        private AccessorForPropertyDescriptor withSyntheticGetter = null;
+        private AccessorForPropertyDescriptor withSyntheticSetter = null;
+
+        public AccessorForPropertyDescriptorFactory(
+                @NotNull PropertyDescriptor property,
+                @NotNull DeclarationDescriptor containingDeclaration,
+                @Nullable KtSuperExpression superCallExpression,
+                @NotNull String nameSuffix
+        ) {
+            this.property = property;
+            this.containingDeclaration = containingDeclaration;
+            this.superCallExpression = superCallExpression;
+            this.nameSuffix = nameSuffix;
+        }
+
+        @SuppressWarnings("ConstantConditions")
+        public PropertyDescriptor getOrCreateAccessorIfNeeded(boolean getterAccessorRequired, boolean setterAccessorRequired) {
+            if (getterAccessorRequired && setterAccessorRequired) {
+                return getOrCreateAccessorWithSyntheticGetterAndSetter();
+            }
+            else if (getterAccessorRequired && !setterAccessorRequired) {
+                if (withSyntheticGetter == null) {
+                    withSyntheticGetter = new AccessorForPropertyDescriptor(
+                            property, containingDeclaration, superCallExpression, nameSuffix,
+                            true, false);
+                }
+                return withSyntheticGetter;
+            }
+            else if (!getterAccessorRequired && setterAccessorRequired) {
+                if (withSyntheticSetter == null) {
+                    withSyntheticSetter = new AccessorForPropertyDescriptor(
+                            property, containingDeclaration, superCallExpression, nameSuffix,
+                            false, true);
+                }
+                return withSyntheticSetter;
+            }
+            else {
+                return property;
+            }
+        }
+
+        @NotNull
+        public AccessorForPropertyDescriptor getOrCreateAccessorWithSyntheticGetterAndSetter() {
+            if (withSyntheticGetterAndSetter == null) {
+                withSyntheticGetterAndSetter = new AccessorForPropertyDescriptor(
+                        property, containingDeclaration, superCallExpression, nameSuffix,
+                        true, true);
+            }
+            return withSyntheticGetterAndSetter;
         }
     }
 
@@ -292,6 +354,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
+    private PropertyDescriptor getPropertyAccessor(
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @Nullable KtSuperExpression superCallExpression,
+            boolean getterAccessorRequired,
+            boolean setterAccessorRequired
+    ) {
+        return getAccessor(propertyDescriptor, FieldAccessorKind.NORMAL, null, superCallExpression, getterAccessorRequired, setterAccessorRequired);
+    }
+
+    @NotNull
     public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable KtSuperExpression superCallExpression) {
         return getAccessor(descriptor, FieldAccessorKind.NORMAL, null, superCallExpression);
     }
@@ -304,15 +376,41 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @Nullable KotlinType delegateType,
             @Nullable KtSuperExpression superCallExpression
     ) {
+        // TODO this corresponds to default behavior for properties before fixing KT-9717. Is it Ok in general case?
+        // Does not matter for other descriptor kinds.
+        return getAccessor(possiblySubstitutedDescriptor, accessorKind, delegateType, superCallExpression,
+                           /* getterAccessorRequired */ true,
+                           /* setterAccessorRequired */ true);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    private <D extends CallableMemberDescriptor> D getAccessor(
+            @NotNull D possiblySubstitutedDescriptor,
+            @NotNull FieldAccessorKind accessorKind,
+            @Nullable KotlinType delegateType,
+            @Nullable KtSuperExpression superCallExpression,
+            boolean getterAccessorRequired,
+            boolean setterAccessorRequired
+    ) {
         if (accessors == null) {
             accessors = new LinkedHashMap<AccessorKey, AccessorForCallableDescriptor<?>>();
+        }
+        if (propertyAccessorFactories == null) {
+            propertyAccessorFactories = new LinkedHashMap<AccessorKey, AccessorForPropertyDescriptorFactory>();
         }
 
         D descriptor = (D) possiblySubstitutedDescriptor.getOriginal();
         AccessorKey key = new AccessorKey(
-                descriptor, superCallExpression == null ? null : ExpressionCodegen.getSuperCallLabelTarget(this, superCallExpression)
+                descriptor,
+                superCallExpression == null ? null : ExpressionCodegen.getSuperCallLabelTarget(this, superCallExpression)
         );
 
+        // NB should check for property accessor factory first (or change property accessor tracking under propertyAccessorFactory creation)
+        AccessorForPropertyDescriptorFactory propertyAccessorFactory = propertyAccessorFactories.get(key);
+        if (propertyAccessorFactory != null) {
+            return (D) propertyAccessorFactory.getOrCreateAccessorIfNeeded(getterAccessorRequired, setterAccessorRequired);
+        }
         AccessorForCallableDescriptor<?> accessor = accessors.get(key);
         if (accessor != null) {
             assert accessorKind == FieldAccessorKind.NORMAL ||
@@ -332,8 +430,18 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             switch (accessorKind) {
                 case NORMAL:
-                    accessor = new AccessorForPropertyDescriptor(propertyDescriptor, contextDescriptor, superCallExpression, nameSuffix);
-                    break;
+                    propertyAccessorFactory = new AccessorForPropertyDescriptorFactory((PropertyDescriptor) descriptor, contextDescriptor,
+                                                                                       superCallExpression, nameSuffix);
+                    propertyAccessorFactories.put(key, propertyAccessorFactory);
+
+                    // Record worst case accessor for accessor methods generation.
+                    AccessorForPropertyDescriptor accessorWithGetterAndSetter =
+                            propertyAccessorFactory.getOrCreateAccessorWithSyntheticGetterAndSetter();
+                    accessors.put(key, accessorWithGetterAndSetter);
+
+                    PropertyDescriptor accessorDescriptor =
+                            propertyAccessorFactory.getOrCreateAccessorIfNeeded(getterAccessorRequired, setterAccessorRequired);
+                    return (D) accessorDescriptor;
                 case IN_CLASS_COMPANION:
                     accessor = new AccessorForPropertyBackingFieldInClassCompanion(propertyDescriptor, contextDescriptor,
                                                                                    delegateType, nameSuffix);
@@ -423,20 +531,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
     }
 
-    private static int getAccessFlags(@NotNull CallableMemberDescriptor descriptor) {
-        int flag = getVisibilityAccessFlag(descriptor);
-        if (descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-
-            PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-            PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-
-            flag |= (getter == null ? 0 : getVisibilityAccessFlag(getter)) |
-                (setter == null ? 0 : getVisibilityAccessFlag(setter));
-        }
-        return flag;
-    }
-
     @SuppressWarnings("unchecked")
     @NotNull
     private <D extends CallableMemberDescriptor> D accessibleDescriptorIfNeeded(
@@ -444,10 +538,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @Nullable KtSuperExpression superCallExpression
     ) {
         CallableMemberDescriptor unwrappedDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor);
-        int flag = getAccessFlags(unwrappedDescriptor);
-        if ((flag & ACC_PRIVATE) == 0 && (flag & ACC_PROTECTED) == 0) {
-            return descriptor;
-        }
 
         DeclarationDescriptor enclosed = descriptor.getContainingDeclaration();
         CodegenContext descriptorContext = findParentContextWithDescriptor(enclosed);
@@ -462,20 +552,51 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             return descriptor;
         }
 
-        if ((flag & ACC_PROTECTED) != 0) {
-            PackageFragmentDescriptor unwrappedDescriptorPackage =
-                    DescriptorUtils.getParentOfType(unwrappedDescriptor, PackageFragmentDescriptor.class, false);
-            PackageFragmentDescriptor contextDescriptorPackage =
-                    DescriptorUtils.getParentOfType(descriptorContext.getContextDescriptor(), PackageFragmentDescriptor.class, false);
+        if (descriptor instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+            int propertyAccessFlag = getVisibilityAccessFlag(descriptor);
 
-            boolean inSamePackage = contextDescriptorPackage != null && unwrappedDescriptorPackage != null &&
-                                    unwrappedDescriptorPackage.getFqName().equals(contextDescriptorPackage.getFqName());
-            if (inSamePackage) {
+            PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+            int getterAccessFlag = getter == null ? propertyAccessFlag
+                                                  : propertyAccessFlag | getVisibilityAccessFlag(getter);
+            boolean getterAccessorRequired = isAccessorRequired(getterAccessFlag, unwrappedDescriptor, descriptorContext);
+
+            PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+            int setterAccessFlag = setter == null ? propertyAccessFlag
+                                                  : propertyAccessFlag | getVisibilityAccessFlag(setter);
+            boolean setterAccessorRequired = isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext);
+
+            if (!getterAccessorRequired && !setterAccessorRequired) {
                 return descriptor;
             }
+            return (D) descriptorContext.getPropertyAccessor(propertyDescriptor, superCallExpression, getterAccessorRequired, setterAccessorRequired);
         }
+        else {
+            int flag = getVisibilityAccessFlag(unwrappedDescriptor);
+            if (!isAccessorRequired(flag, unwrappedDescriptor, descriptorContext)) {
+                return descriptor;
+            }
+            return (D) descriptorContext.getAccessor(descriptor, superCallExpression);
+        }
+    }
 
-        return (D) descriptorContext.getAccessor(descriptor, superCallExpression);
+    private static boolean isAccessorRequired(
+            int accessFlag,
+            @NotNull CallableMemberDescriptor unwrappedDescriptor,
+            @NotNull CodegenContext descriptorContext
+    ) {
+        return (accessFlag & ACC_PRIVATE) != 0 ||
+               ((accessFlag & ACC_PROTECTED) != 0 && !isInSamePackage(unwrappedDescriptor, descriptorContext.getContextDescriptor()));
+    }
+
+    private static boolean isInSamePackage(DeclarationDescriptor descriptor1, DeclarationDescriptor descriptor2) {
+        PackageFragmentDescriptor package1 =
+                DescriptorUtils.getParentOfType(descriptor1, PackageFragmentDescriptor.class, false);
+        PackageFragmentDescriptor package2 =
+                DescriptorUtils.getParentOfType(descriptor2, PackageFragmentDescriptor.class, false);
+
+        return package2 != null && package1 != null &&
+               package1.getFqName().equals(package2.getFqName());
     }
 
     private void addChild(@NotNull CodegenContext child) {

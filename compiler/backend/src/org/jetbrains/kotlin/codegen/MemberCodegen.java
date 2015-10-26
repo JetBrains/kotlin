@@ -665,13 +665,14 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 }
             }
 
-            PropertyGetterDescriptor getter = accessor.getGetter();
-            assert getter != null;
-            functionCodegen.generateMethod(Synthetic(null, original.getGetter() != null ? original.getGetter() : original),
-                                           getter, new PropertyAccessorStrategy(getter));
+            if (accessor.isWithSyntheticGetterAccessor()) {
+                PropertyGetterDescriptor getter = accessor.getGetter();
+                assert getter != null;
+                functionCodegen.generateMethod(Synthetic(null, original.getGetter() != null ? original.getGetter() : original),
+                                               getter, new PropertyAccessorStrategy(getter));
+            }
 
-
-            if (accessor.isVar()) {
+            if (accessor.isVar() && accessor.isWithSyntheticSetterAccessor()) {
                 PropertySetterDescriptor setter = accessor.getSetter();
                 assert setter != null;
 
