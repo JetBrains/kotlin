@@ -9344,6 +9344,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("irrelevantImplCharSequence.kt")
+                public void testIrrelevantImplCharSequence() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/irrelevantImplCharSequence.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("irrelevantImplCharSequenceKotlin.kt")
+                public void testIrrelevantImplCharSequenceKotlin() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/irrelevantImplCharSequenceKotlin.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("irrelevantImplMutableList.kt")
+                public void testIrrelevantImplMutableList() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/irrelevantImplMutableList.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("irrelevantImplMutableListKotlin.kt")
+                public void testIrrelevantImplMutableListKotlin() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/irrelevantImplMutableListKotlin.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("mapGetOverride.kt")
                 public void testMapGetOverride() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/mapGetOverride.kt");

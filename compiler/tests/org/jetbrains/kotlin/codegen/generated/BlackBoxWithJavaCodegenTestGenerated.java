@@ -209,6 +209,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("irrelevantImplCharSequence")
+        public void testIrrelevantImplCharSequence() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplCharSequence/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("irrelevantRemoveAtOverrideInJava")
         public void testIrrelevantRemoveAtOverrideInJava() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantRemoveAtOverrideInJava/");
