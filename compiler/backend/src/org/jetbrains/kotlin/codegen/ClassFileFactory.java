@@ -334,7 +334,7 @@ public class ClassFileFactory implements OutputFileCollection {
         public abstract String asText(ClassBuilderFactory factory);
     }
 
-    public void removeInlinedClasses(Set<String> classNamesToRemove) {
+    public void removeClasses(Set<String> classNamesToRemove) {
         for (String classInternalName : classNamesToRemove) {
             generators.remove(classInternalName + ".class");
         }

@@ -47,6 +47,7 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         private val declarationsInsideClass = arrayListOf<Declaration>()
         private val classAnnotations = arrayListOf<String>()
         private var className = ""
+        private var classAccess = 0
 
         private fun addAnnotation(desc: String, list: MutableList<String> = declarationsInsideClass.last().annotations) {
             val name = Type.getType(desc).className
@@ -66,11 +67,14 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             if ((access and Opcodes.ACC_DEPRECATED) != 0) addModifier("deprecated", list)
             if ((access and Opcodes.ACC_FINAL) != 0) addModifier("final", list)
             if ((access and Opcodes.ACC_ABSTRACT) != 0) addModifier("abstract", list)
+            if ((access and Opcodes.ACC_STATIC) != 0) addModifier("static", list)
         }
 
         public val text: String
-            get() = StringBuilder {
-                append(classAnnotations.joinToString(""))
+            get() = StringBuilder().apply {
+                append(classAnnotations.joinToString("\n", postfix = "\n"))
+                arrayListOf<String>().apply { handleModifiers(classAccess, this) }.forEach { append(it) }
+                append("class ")
                 append(className)
                 if (declarationsInsideClass.isNotEmpty()) {
                     append(" {\n")
@@ -147,6 +151,7 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
                 interfaces: Array<out String>?
         ) {
             className = name
+            classAccess = access
         }
 
         override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
