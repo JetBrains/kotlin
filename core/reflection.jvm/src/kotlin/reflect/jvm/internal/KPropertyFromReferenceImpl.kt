@@ -18,56 +18,65 @@ package kotlin.reflect.jvm.internal
 
 import kotlin.jvm.internal.*
 
-internal class KProperty0FromReferenceImpl(
+internal open class KProperty0Augmented(
         val reference: PropertyReference0
 ) : KProperty0Impl<Any?>(reference.owner as KDeclarationContainerImpl, reference.name, reference.signature) {
     override val name: String get() = reference.name
+}
 
+internal class KProperty0FromReferenceImpl(reference: PropertyReference0) : KProperty0Augmented(reference) {
     override fun get(): Any? = reference.get()
 }
 
-internal class KMutableProperty0FromReferenceImpl(
+internal open class KMutableProperty0Augmented(
         val reference: MutablePropertyReference0
 ) : KMutableProperty0Impl<Any?>(reference.owner as KDeclarationContainerImpl, reference.name, reference.signature) {
     override val name: String get() = reference.name
+}
 
+internal class KMutableProperty0FromReferenceImpl(reference: MutablePropertyReference0) : KMutableProperty0Augmented(reference) {
     override fun get(): Any? = reference.get()
-
     override fun set(value: Any?) = reference.set(value)
 }
 
-internal class KProperty1FromReferenceImpl(
+internal open class KProperty1Augmented(
         val reference: PropertyReference1
 ) : KProperty1Impl<Any?, Any?>(reference.owner as KDeclarationContainerImpl, reference.name, reference.signature) {
     override val name: String get() = reference.name
+}
 
+internal class KProperty1FromReferenceImpl(reference: PropertyReference1) : KProperty1Augmented(reference) {
     override fun get(receiver: Any?): Any? = reference.get(receiver)
 }
 
-internal class KMutableProperty1FromReferenceImpl(
+internal open class KMutableProperty1Augmented(
         val reference: MutablePropertyReference1
 ) : KMutableProperty1Impl<Any?, Any?>(reference.owner as KDeclarationContainerImpl, reference.name, reference.signature) {
     override val name: String get() = reference.name
+}
 
+internal class KMutableProperty1FromReferenceImpl(reference: MutablePropertyReference1) : KMutableProperty1Augmented(reference) {
     override fun get(receiver: Any?): Any? = reference.get(receiver)
-
     override fun set(receiver: Any?, value: Any?) = reference.set(receiver, value)
 }
 
-internal class KProperty2FromReferenceImpl(
+internal open class KProperty2Augmented(
         val reference: PropertyReference2
 ) : KProperty2Impl<Any?, Any?, Any?>(reference.owner as KDeclarationContainerImpl, reference.name, reference.signature) {
     override val name: String get() = reference.name
+}
 
+internal class KProperty2FromReferenceImpl(reference: PropertyReference2) : KProperty2Augmented(reference) {
     override fun get(receiver1: Any?, receiver2: Any?): Any? = reference.get(receiver1, receiver2)
 }
 
-internal class KMutableProperty2FromReferenceImpl(
+internal open class KMutableProperty2Augmented(
         val reference: MutablePropertyReference2
 ) : KMutableProperty2Impl<Any?, Any?, Any?>(reference.owner as KDeclarationContainerImpl, reference.name, reference.signature) {
     override val name: String get() = reference.name
+}
 
+internal class KMutableProperty2FromReferenceImpl(reference: MutablePropertyReference2) : KMutableProperty2Augmented(reference) {
     override fun get(receiver1: Any?, receiver2: Any?): Any? = reference.get(receiver1, receiver2)
-
     override fun set(receiver1: Any?, receiver2: Any?, value: Any?) = reference.set(receiver1, receiver2, value)
 }
