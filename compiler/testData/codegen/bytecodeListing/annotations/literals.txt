@@ -1,10 +1,24 @@
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass ClsAnn
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class ClsAnn
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass ExprAnn
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class ExprAnn
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass FunAnn
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class FunAnn
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$1 {
+@kotlin.jvm.internal.KotlinSyntheticClass
+@kotlin.jvm.internal.KotlinFunction
+final class LiteralsKt$foo$1 {
     synthetic final field $arg: int
     inner class LiteralsKt$foo$1
     method <init>(p0: int): void
@@ -12,7 +26,9 @@
     public method invoke(): java.lang.Object
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$2 {
+@kotlin.jvm.internal.KotlinSyntheticClass
+@kotlin.jvm.internal.KotlinFunction
+final class LiteralsKt$foo$2 {
     synthetic final field $arg: int
     inner class LiteralsKt$foo$2
     method <init>(p0: int): void
@@ -20,12 +36,16 @@
     public method invoke(): java.lang.Object
 }
 
-@kotlin.jvm.internal.KotlinLocalClass @kotlin.jvm.internal.KotlinClass LiteralsKt$foo$3 {
+@kotlin.jvm.internal.KotlinLocalClass
+@kotlin.jvm.internal.KotlinClass
+public final class LiteralsKt$foo$3 {
     inner class LiteralsKt$foo$3
     method <init>(): void
 }
 
-@kotlin.jvm.internal.KotlinSyntheticClass @kotlin.jvm.internal.KotlinFunction LiteralsKt$foo$x$1 {
+@kotlin.jvm.internal.KotlinSyntheticClass
+@kotlin.jvm.internal.KotlinFunction
+final class LiteralsKt$foo$x$1 {
     synthetic final field $arg: int
     inner class LiteralsKt$foo$x$1
     method <init>(p0: int): void
@@ -33,15 +53,17 @@
     public method invoke(): java.lang.Object
 }
 
-@kotlin.jvm.internal.KotlinFileFacade LiteralsKt {
+@kotlin.jvm.internal.KotlinFileFacade
+public final class LiteralsKt {
     inner class LiteralsKt$foo$1
     inner class LiteralsKt$foo$2
     inner class LiteralsKt$foo$3
     inner class LiteralsKt$foo$x$1
-    public final method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
-    public final @org.jetbrains.annotations.NotNull method foo(p0: int): My
+    public final static method bar(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): int
+    public final static @org.jetbrains.annotations.NotNull method foo(p0: int): My
 }
 
-@kotlin.jvm.internal.KotlinClass My {
+@kotlin.jvm.internal.KotlinClass
+public class My {
     public method <init>(): void
 }

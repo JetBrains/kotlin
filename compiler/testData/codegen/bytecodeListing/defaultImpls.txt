@@ -1,0 +1,36 @@
+@kotlin.jvm.internal.KotlinClass
+public abstract class A
+
+@kotlin.jvm.internal.KotlinClass
+public abstract class B {
+    public abstract method foo(): void
+}
+
+@kotlin.jvm.internal.KotlinClass
+public abstract class C {
+    public abstract method getBar(): int
+}
+
+@kotlin.jvm.internal.KotlinInterfaceDefaultImpls
+@kotlin.jvm.internal.KotlinSyntheticClass
+public final class D$DefaultImpls {
+    inner class D$DefaultImpls
+    public static method baz(p0: D): int
+}
+
+@kotlin.jvm.internal.KotlinClass
+public abstract class D {
+    inner class D$DefaultImpls
+    public abstract method baz(): int
+}
+
+@kotlin.jvm.internal.KotlinClass
+public final class E$InsideE {
+    inner class E$InsideE
+    public method <init>(): void
+}
+
+@kotlin.jvm.internal.KotlinClass
+public abstract class E {
+    inner class E$InsideE
+}

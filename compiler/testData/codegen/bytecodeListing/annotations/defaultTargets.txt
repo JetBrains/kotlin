@@ -1,30 +1,60 @@
-@kotlin.jvm.internal.KotlinClass A {
+@kotlin.jvm.internal.KotlinClass
+public final class A {
     private final @AnnField @AnnParameterField @AnnTypeField field a: int
     private final @AnnField @AnnTypeField field x: int
     public method <init>(@AnnParameterProperty @AnnParameterField p0: int): void
-    private synthetic deprecated final @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
+    private synthetic deprecated final static @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
     public final method getA(): int
     public final method getX(): int
-    private synthetic deprecated final @AnnProperty @AnnFieldProperty method x$annotations(): void
+    private synthetic deprecated final static @AnnProperty @AnnFieldProperty method x$annotations(): void
 }
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnField
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class AnnField
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnFieldProperty
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class AnnFieldProperty
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnParameterField
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class AnnParameterField
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnParameterProperty
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class AnnParameterProperty
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnProperty
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class AnnProperty
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass AnnTypeField
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class AnnTypeField
 
-@kotlin.annotation.Target @java.lang.annotation.Retention @java.lang.annotation.Target @kotlin.jvm.internal.KotlinClass Anno
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.jvm.internal.KotlinClass
+public abstract class Anno
 
-@kotlin.jvm.internal.KotlinFileFacade DefaultTargetsKt {
-    private final @Anno field p2: int
-    method <clinit>(): void
-    public final method getP(): int
-    public final method getP2(): int
+@kotlin.jvm.internal.KotlinFileFacade
+public final class DefaultTargetsKt {
+    private final static @Anno field p2: int
+    static method <clinit>(): void
+    public final static method getP(): int
+    public final static method getP2(): int
 }
