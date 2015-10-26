@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 public class ResolveElementCache(
@@ -308,12 +307,6 @@ public class ResolveElementCache(
 
         if (ktElement is KtSimpleNameExpression) {
             val header = ktElement.getParentOfType<KtPackageDirective>(true)!!
-
-            //TODO: temporary code until we don't have top-level scope in file
-            if (trace.getBindingContext()[BindingContext.LEXICAL_SCOPE, ktElement] == null) {
-                val scope = resolveSession.getModuleDescriptor().getPackage(header.getFqName(ktElement).parent()).memberScope.memberScopeAsImportingScope()
-                trace.record(BindingContext.LEXICAL_SCOPE, ktElement, scope)
-            }
 
             if (Name.isValidIdentifier(ktElement.getReferencedName())) {
                 if (trace.getBindingContext()[BindingContext.REFERENCE_TARGET, ktElement] == null) {

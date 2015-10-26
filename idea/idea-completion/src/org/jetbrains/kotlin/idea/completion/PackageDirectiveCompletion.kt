@@ -22,11 +22,11 @@ import com.intellij.codeInsight.completion.PlainPrefixMatcher
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.patterns.PlatformPatterns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 /**
  * Performs completion in package directive. Should suggest only packages and avoid showing fake package produced by
@@ -51,9 +51,10 @@ object PackageDirectiveCompletion {
             val result = result.withPrefixMatcher(prefixMatcher)
 
             val resolutionFacade = expression.getResolutionFacade()
-            val bindingContext = resolutionFacade.analyze(expression)
 
-            val variants = ReferenceVariantsHelper(bindingContext, resolutionFacade, { true }).getPackageReferenceVariants(expression, prefixMatcher.asNameFilter())
+            val packageMemberScope = resolutionFacade.moduleDescriptor.getPackage(file.packageFqName.parent()).memberScope
+
+            val variants = packageMemberScope.getDescriptors(DescriptorKindFilter.PACKAGES, prefixMatcher.asNameFilter())
             val lookupElementFactory = BasicLookupElementFactory(resolutionFacade.project, InsertHandlerProvider(callType = CallType.PACKAGE_DIRECTIVE, expectedInfosCalculator = { emptyList() }))
             for (variant in variants) {
                 val lookupElement = lookupElementFactory.createLookupElement(variant)

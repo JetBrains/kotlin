@@ -327,12 +327,4 @@ public class ReferenceVariantsHelper(
         }
         return type
     }
-
-    public fun getPackageReferenceVariants(
-            expression: KtSimpleNameExpression,
-            nameFilter: (Name) -> Boolean
-    ): Collection<DeclarationDescriptor> {
-        val resolutionScope = expression.getResolutionScope(context, resolutionFacade)
-        return resolutionScope.collectDescriptorsFiltered(DescriptorKindFilter.PACKAGES, nameFilter).filter(visibilityFilter)
-    }
 }
