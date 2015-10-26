@@ -70,9 +70,6 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             for (origin in data.signatureOrigins) {
                 var element = origin.element
 
-                // TODO Remove this code after dropping package facades
-                if (element is KtNamedFunction && mainFunctionDetector.isMain(element) && !element.isInsideJvmMultifileClassFile()) return
-
                 if (element == null || origin.originKind in EXTERNAL_SOURCES_KINDS) {
                     element = data.classOrigin.element
                 }
