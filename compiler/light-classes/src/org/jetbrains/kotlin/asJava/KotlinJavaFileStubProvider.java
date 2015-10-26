@@ -71,88 +71,6 @@ import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToD
 public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostics> implements CachedValueProvider<T> {
 
     @NotNull
-    public static KotlinJavaFileStubProvider<KotlinFacadeLightClassData> createForPackageClass(
-            @NotNull final Project project,
-            @NotNull final FqName packageFqName,
-            @NotNull final GlobalSearchScope searchScope
-    ) {
-        return new KotlinJavaFileStubProvider<KotlinFacadeLightClassData>(
-                project,
-                false,
-                new StubGenerationStrategy<KotlinFacadeLightClassData>() {
-                    @NotNull
-                    @Override
-                    public LightClassConstructionContext getContext(@NotNull Collection<KtFile> files) {
-                        return LightClassGenerationSupport.getInstance(project).getContextForPackage(files);
-                    }
-
-                    @NotNull
-                    @Override
-                    public Collection<KtFile> getFiles() {
-                        // Don't memoize this, it can be called again after an out-of-code-block modification occurs,
-                        // and the set of files changes
-                        return LightClassGenerationSupport.getInstance(project).findFilesForPackage(packageFqName, searchScope);
-                    }
-
-                    @NotNull
-                    @Override
-                    public KotlinFacadeLightClassData createLightClassData(
-                            PsiJavaFileStub javaFileStub,
-                            BindingContext bindingContext,
-                            Diagnostics extraDiagnostics
-                    ) {
-                        return new KotlinFacadeLightClassData(javaFileStub, extraDiagnostics);
-                    }
-
-                    @NotNull
-                    @Override
-                    public FqName getPackageFqName() {
-                        return packageFqName;
-                    }
-
-                    @Override
-                    public GenerationState.GenerateClassFilter getGenerateClassFilter() {
-                        return new GenerationState.GenerateClassFilter() {
-
-                            @Override
-                            public boolean shouldGeneratePackagePart(KtFile jetFile) {
-                                return true;
-                            }
-
-                            @Override
-                            public boolean shouldAnnotateClass(KtClassOrObject classOrObject) {
-                                return shouldGenerateClass(classOrObject);
-                            }
-
-                            @Override
-                            public boolean shouldGenerateClass(KtClassOrObject classOrObject) {
-                                // Top-level classes and such should not be generated for performance reasons.
-                                // Local classes in top-level functions must still be generated
-                                return KtPsiUtil.isLocal(classOrObject);
-                            }
-
-                            @Override
-                            public boolean shouldGenerateScript(KtScript script) {
-                                // Scripts yield top-level classes, and should not be generated
-                                return false;
-                            }
-                        };
-                    }
-
-                    @Override
-                    public void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files) {
-                        KotlinCodegenFacade.doGenerateFiles(files, state, CompilationErrorHandler.THROW_EXCEPTION);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return StubGenerationStrategy.class.getName() + " for package class";
-                    }
-                }
-        );
-    }
-
-    @NotNull
     public static CachedValueProvider<KotlinFacadeLightClassData> createForFacadeClass(
             @NotNull final Project project,
             @NotNull final FqName facadeFqName,
@@ -219,7 +137,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     public void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files) {
                         if (!files.isEmpty()) {
                             KtFile representativeFile = files.iterator().next();
-                            JvmFileClassInfo fileClassInfo = NoResolveFileClassesProvider.INSTANCE$.getFileClassInfo(representativeFile);
+                            JvmFileClassInfo fileClassInfo = NoResolveFileClassesProvider.INSTANCE.getFileClassInfo(representativeFile);
                             if (!fileClassInfo.getWithJvmMultifileClass()) {
                                 PackageCodegen codegen = state.getFactory().forPackage(representativeFile.getPackageFqName(), files);
                                 codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);

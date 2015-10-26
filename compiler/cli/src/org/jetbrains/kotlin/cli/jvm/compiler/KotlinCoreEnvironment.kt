@@ -370,7 +370,6 @@ public class KotlinCoreEnvironment private constructor(
             with (projectEnvironment.getProject()) {
                 registerService(javaClass<JetScriptDefinitionProvider>(), JetScriptDefinitionProvider())
                 registerService(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(this))
-                registerService(javaClass<KotlinLightClassForFacade.PackageFacadeStubCache>(), KotlinLightClassForFacade.PackageFacadeStubCache(this))
                 registerService(javaClass<KotlinLightClassForFacade.FacadeStubCache>(), KotlinLightClassForFacade.FacadeStubCache(this))
             }
         }
