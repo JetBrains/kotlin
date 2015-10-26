@@ -39,7 +39,6 @@ public val COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY: String = "kotlin.daemon.cl
 public val COMPILE_DAEMON_LOG_PATH_PROPERTY: String = "kotlin.daemon.log.path"
 public val COMPILE_DAEMON_REPORT_PERF_PROPERTY: String = "kotlin.daemon.perf"
 public val COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY: String = "kotlin.daemon.verbose"
-public val COMPILE_DAEMON_FORCE_SHUTDOWN_PROPERTY: String = "kotlin.daemon.force.shutdown"
 public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
 public val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String = "kotlin.daemon.startup.timeout"
 public val COMPILE_DAEMON_DEFAULT_FILES_PREFIX: String = "kotlin-daemon"
@@ -47,6 +46,8 @@ public val COMPILE_DAEMON_DATA_DIRECTORY_NAME: String = "." + COMPILE_DAEMON_DEF
 public val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
 public val COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S: Int = 7200 // 2 hours
 public val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
+public val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10 secs
+public val COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE: Long = 0L
 
 public val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
     // TODO consider special case for windows - local appdata
@@ -206,6 +207,7 @@ public data class DaemonOptions(
         public var runFilesPath: String = COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH,
         public var autoshutdownMemoryThreshold: Long = COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE,
         public var autoshutdownIdleSeconds: Int = COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S,
+        public var forceShutdownTimeoutMilliseconds: Long = COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS,
         public var clientAliveFlagPath: String? = null,
         public var verbose: Boolean = false,
         public var reportPerf: Boolean = false
@@ -215,6 +217,7 @@ public data class DaemonOptions(
         get() = listOf(PropMapper(this, DaemonOptions::runFilesPath, fromString = { it.trimQuotes() }),
                        PropMapper(this, DaemonOptions::autoshutdownMemoryThreshold, fromString = { it.toLong() }, skipIf = { it == 0L }, mergeDelimiter = "="),
                        PropMapper(this, DaemonOptions::autoshutdownIdleSeconds, fromString = { it.toInt() }, skipIf = { it == 0 }, mergeDelimiter = "="),
+                       PropMapper(this, DaemonOptions::forceShutdownTimeoutMilliseconds, fromString = { it.toLong() }, skipIf = { it == COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS }, mergeDelimiter = "="),
                        NullablePropMapper(this, DaemonOptions::clientAliveFlagPath, fromString = { it }, toString = { "${it?.trimQuotes()}" }, mergeDelimiter = "="),
                        BoolPropMapper(this, DaemonOptions::verbose),
                        BoolPropMapper(this, DaemonOptions::reportPerf))
@@ -305,7 +308,6 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
 
     System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"" ) }
     opts.jvmParams.addAll(additionalParams)
-    System.getProperty(COMPILE_DAEMON_FORCE_SHUTDOWN_PROPERTY)?.let { opts.jvmParams.add(COMPILE_DAEMON_FORCE_SHUTDOWN_PROPERTY) }
     System.getProperty("kotlin.environment.keepalive")?.let { opts.jvmParams.add("Dkotlin.environment.keepalive=true") }
     return opts
 }
