@@ -11937,6 +11937,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("RedeclarationMainInFile.kt")
+            public void testRedeclarationMainInFile() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInFile.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("RedeclarationMainInMultiFile.kt")
             public void testRedeclarationMainInMultiFile() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInMultiFile.kt");
