@@ -207,7 +207,7 @@ object ReplaceWithAnnotationAnalyzer {
     private fun buildExplicitImportsScope(annotation: ReplaceWith, resolutionFacade: ResolutionFacade, module: ModuleDescriptor): ExplicitImportsScope {
         val importedSymbols = importFqNames(annotation)
                 .flatMap { resolutionFacade.resolveImportReference(module, it) }
-        return ExplicitImportsScope(importedSymbols)
+        return ExplicitImportsScope(importedSymbols, module)
     }
 
     private fun importFqNames(annotation: ReplaceWith): List<FqName> {
