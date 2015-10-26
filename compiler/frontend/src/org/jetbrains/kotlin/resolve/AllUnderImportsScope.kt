@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
 class AllUnderImportsScope(descriptor: DeclarationDescriptor) : ImportingScope by ImportingScope.Empty {
@@ -48,18 +47,6 @@ class AllUnderImportsScope(descriptor: DeclarationDescriptor) : ImportingScope b
 
     override fun getContributedFunctions(name: Name, location: LookupLocation)
             = scopes.flatMap { it.getFunctions(name, location) }
-
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes, name, location) }
-
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes, name, location) }
-
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-            = scopes.flatMap { it.getSyntheticExtensionProperties(receiverTypes) }
-
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-            = scopes.flatMap { it.getSyntheticExtensionFunctions(receiverTypes) }
 
     override fun printStructure(p: Printer) {
         p.println(javaClass.simpleName)
