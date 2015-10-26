@@ -287,22 +287,20 @@ inline fun <T: Any> LexicalScope.findFirstFromImportingScopes(fetch: (ImportingS
     return findFirstFromMeAndParent { if (it is ImportingScope) fetch(it) else null }
 }
 
-//TODO: more efficient
-fun LexicalScope.addImportScopes(importScopes: Collection<ImportingScope>): LexicalScope {
-    return importScopes.fold(this) { scope, importingScope -> scope.addImportScope(importingScope) }
-}
-
-fun LexicalScope.addImportScope(importScope: ImportingScope): LexicalScope {
-    assert(importScope.parent == null)
+fun LexicalScope.addImportScopes(importScopes: List<ImportingScope>): LexicalScope {
     if (this is ImportingScope) {
-        return importScope.withParent(this)
+        return chainImportingScopes(importScopes, this)!!
     }
     else {
         val lastNonImporting = parentsWithSelf.last { it !is ImportingScope }
         val firstImporting = lastNonImporting.parent as ImportingScope?
-        return LexicalScopeWrapper(this, importScope.withParent(firstImporting))
+        val newFirstImporting = chainImportingScopes(importScopes, firstImporting)
+        return LexicalScopeWrapper(this, newFirstImporting)
     }
 }
+
+fun LexicalScope.addImportScope(importScope: ImportingScope): LexicalScope
+        = addImportScopes(listOf(importScope))
 
 fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
     // TODO: it's a hack for Repl
@@ -337,9 +335,9 @@ private class LexicalScopeWrapper(val delegate: LexicalScope, val newImportingSc
     }
 }
 
-fun chainImportingScopes(scopes: List<ImportingScope>): ImportingScope? {
+fun chainImportingScopes(scopes: List<ImportingScope>, tail: ImportingScope? = null): ImportingScope? {
     return scopes.asReversed()
-            .fold<ImportingScope, ImportingScope?>(null) { current, scope ->
+            .fold(tail) { current, scope ->
                 assert(scope.parent == null)
                 scope.withParent(current)
             }
