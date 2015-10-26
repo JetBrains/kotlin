@@ -42,7 +42,6 @@ public val COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY: String = "kotlin.daemon.verbo
 public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
 public val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String = "kotlin.daemon.startup.timeout"
 public val COMPILE_DAEMON_DEFAULT_FILES_PREFIX: String = "kotlin-daemon"
-public val COMPILE_DAEMON_DATA_DIRECTORY_NAME: String = "." + COMPILE_DAEMON_DEFAULT_FILES_PREFIX
 public val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
 public val COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S: Int = 7200 // 2 hours
 public val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
@@ -50,8 +49,7 @@ public val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10
 public val COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE: Long = 0L
 
 public val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
-    // TODO consider special case for windows - local appdata
-    File(System.getProperty("user.home"), COMPILE_DAEMON_DATA_DIRECTORY_NAME).absolutePath
+    FileSystem.getRuntimeStateFilesPath("kotlin", "daemon")
 
 val COMPILER_ID_DIGEST = "MD5"
 
