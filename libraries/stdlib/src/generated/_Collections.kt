@@ -1589,14 +1589,16 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
+public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
-            buffer.append(text)
+            if (transform != null)
+                buffer.append(transform(element))
+            else
+                buffer.append(if (element == null) "null" else element.toString())
         } else break
     }
     if (limit >= 0 && count > limit) buffer.append(truncated)
@@ -1604,11 +1606,21 @@ public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String =
     return buffer
 }
 
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
+    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
+}
+
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
+public fun <T> Iterable<T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }

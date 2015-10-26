@@ -432,11 +432,11 @@ public fun String.decapitalize(): String {
 }
 
 /**
- * Repeats a given string [n] times.
+ * Returns a string containing this char sequence repeated [n] times.
  * @throws [IllegalArgumentException] when n < 0.
  * @sample test.text.StringJVMTest.repeat
  */
-public fun String.repeat(n: Int): String {
+public fun CharSequence.repeat(n: Int): String {
     if (n < 0)
         throw IllegalArgumentException("Value should be non-negative, but was $n")
 

@@ -5,7 +5,7 @@ import templates.Family.*
 fun strings(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("joinTo(buffer: A, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\", transform: ((T) -> String)? = null)") {
+    templates add f("joinTo(buffer: A, separator: CharSequence = \", \", prefix: CharSequence = \"\", postfix: CharSequence = \"\", limit: Int = -1, truncated: CharSequence = \"...\", transform: ((T) -> CharSequence)? = null)") {
         doc {
             """
             Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
@@ -23,8 +23,10 @@ fun strings(): List<GenericFunction> {
             for (element in this) {
                 if (++count > 1) buffer.append(separator)
                 if (limit < 0 || count <= limit) {
-                    val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
-                    buffer.append(text)
+                    if (transform != null)
+                        buffer.append(transform(element))
+                    else
+                        buffer.append(if (element == null) "null" else element.toString())
                 } else break
             }
             if (limit >= 0 && count > limit) buffer.append(truncated)
@@ -40,8 +42,10 @@ fun strings(): List<GenericFunction> {
             for (element in this) {
                 if (++count > 1) buffer.append(separator)
                 if (limit < 0 || count <= limit) {
-                    val text = if (transform != null) transform(element) else element.toString()
-                    buffer.append(text)
+                    if (transform != null)
+                        buffer.append(transform(element))
+                    else
+                        buffer.append(element.toString())
                 } else break
             }
             if (limit >= 0 && count > limit) buffer.append(truncated)
@@ -51,7 +55,18 @@ fun strings(): List<GenericFunction> {
         }
     }
 
-    templates add f("joinToString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\", transform: ((T) -> String)? = null)") {
+    templates add f("joinTo(buffer: A, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\", transform: ((T) -> String)? = null)") {
+        deprecate { forBinaryCompatibility }
+        typeParam("A : Appendable")
+        returns { "A" }
+        body {
+            """
+            return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
+            """
+        }
+    }
+
+    templates add f("joinToString(separator: CharSequence = \", \", prefix: CharSequence = \"\", postfix: CharSequence = \"\", limit: Int = -1, truncated: CharSequence = \"...\", transform: ((T) -> CharSequence)? = null)") {
         doc {
             """
             Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
@@ -62,6 +77,16 @@ fun strings(): List<GenericFunction> {
         }
 
         exclude(Strings)
+        returns("String")
+        body {
+            """
+            return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+            """
+        }
+    }
+
+    templates add f("joinToString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\", transform: ((T) -> String)? = null)") {
+        deprecate { forBinaryCompatibility }
         returns("String")
         body {
             """

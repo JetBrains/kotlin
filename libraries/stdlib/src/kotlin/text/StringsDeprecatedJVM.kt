@@ -133,12 +133,14 @@ public fun String.capitalize(): String {
 public fun String.decapitalize(): String {
     return if (isNotEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
+*/
 
 /**
  * Repeats a given string [n] times.
  * @throws [IllegalArgumentException] when n < 0.
  * @sample test.text.StringJVMTest.repeat
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.repeat(n: Int): String {
     if (n < 0)
         throw IllegalArgumentException("Value should be non-negative, but was $n")
@@ -149,7 +151,7 @@ public fun String.repeat(n: Int): String {
     }
     return sb.toString()
 }
-*/
+
 
 /**
  * Appends the contents of this string, excluding the first characters that satisfy the given [predicate],
