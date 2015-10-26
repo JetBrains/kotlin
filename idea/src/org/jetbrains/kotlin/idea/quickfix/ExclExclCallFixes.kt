@@ -23,13 +23,24 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.util.OperatorChecks
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public abstract class ExclExclCallFix : IntentionAction {
     override fun getFamilyName(): String = getText()
@@ -97,5 +108,39 @@ public class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
                 = AddExclExclCallFix(diagnostic.getPsiElement())
+    }
+}
+
+object MissingIteratorExclExclFixFactory : JetSingleIntentionActionFactory() {
+    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+        val element = diagnostic.psiElement
+        if (element !is KtExpression) return null
+        
+        val analyze = element.analyze(BodyResolveMode.PARTIAL)
+        val type = analyze.getType(element)
+        if (type == null || !TypeUtils.isNullableType(type)) return null
+        
+        val descriptor = type.constructor.declarationDescriptor
+
+        fun hasIteratorFunction(descriptor: ClassifierDescriptor?) : Boolean {
+            if (descriptor !is ClassDescriptor) return false
+
+            val memberScope = descriptor.unsubstitutedMemberScope
+            val functions = memberScope.getFunctions(OperatorNameConventions.ITERATOR, NoLookupLocation.FROM_IDE)
+
+            return functions.any { it.isOperator() && OperatorChecks.canBeOperator(it) }
+        }
+
+        when (descriptor) {
+            is TypeParameterDescriptor -> {
+                if (descriptor.upperBounds.none { hasIteratorFunction(it.constructor.declarationDescriptor) }) return null
+            }
+            is ClassifierDescriptor -> {
+                if (!hasIteratorFunction(descriptor)) return null
+            }
+            else -> return null
+        }
+
+        return AddExclExclCallFix(element)
     }
 }

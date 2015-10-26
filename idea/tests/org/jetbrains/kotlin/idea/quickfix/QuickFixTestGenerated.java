@@ -4070,6 +4070,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("fixNullableIterableGenericWithExclExcl.kt")
+        public void testFixNullableIterableGenericWithExclExcl() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableIterableGenericWithExclExcl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableIterableWithExclExcl.kt")
+        public void testFixNullableIterableWithExclExcl() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableIterableWithExclExcl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableWithExclExclAbsentWithBadIterator.kt")
+        public void testFixNullableWithExclExclAbsentWithBadIterator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableWithExclExclAbsentWithBadIterator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fixNullableWithIteratorWithExclExcl.kt")
+        public void testFixNullableWithIteratorWithExclExcl() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/fixNullableWithIteratorWithExclExcl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeUselessCast.kt")
         public void testRemoveUselessCast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/expressions/removeUselessCast.kt");

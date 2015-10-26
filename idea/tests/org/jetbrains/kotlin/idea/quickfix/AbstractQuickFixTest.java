@@ -109,10 +109,14 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                 catch (FileComparisonFailure e) {
                     throw e;
                 }
+                catch (AssertionError e) {
+                    throw e;
+                }
                 catch (Throwable e) {
                     e.printStackTrace();
                     fail(testName);
-                } finally {
+                }
+                finally {
                     ConfigLibraryUtil.unconfigureLibrariesByDirective(getModule(), fileText);
                 }
             }
