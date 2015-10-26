@@ -274,7 +274,7 @@
             <option name="TAB_SIZE" value="8" />
           </indentOptions>
         </codeStyleSettings>
-        <codeStyleSettings language="jet">
+        <codeStyleSettings language="kotlin">
           <option name="ELSE_ON_NEW_LINE" value="true" />
           <option name="WHILE_ON_NEW_LINE" value="true" />
           <option name="CATCH_ON_NEW_LINE" value="true" />
@@ -282,9 +282,6 @@
           <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
           <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
           <option name="PARENT_SETTINGS_INSTALLED" value="true" />
-        </codeStyleSettings>
-        <codeStyleSettings language="kotlin">
-          <option name="ELSE_ON_NEW_LINE" value="true" />
         </codeStyleSettings>
       </value>
     </option>

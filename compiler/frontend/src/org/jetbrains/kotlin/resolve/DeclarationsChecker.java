@@ -829,10 +829,7 @@ public class DeclarationsChecker {
             Map<KtModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList, Sets
                     .newHashSet(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD,
                                 KtTokens.INTERNAL_KEYWORD));
-            if (propertyDescriptor.getModality() == Modality.ABSTRACT && accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
-                reportVisibilityModifierDiagnostics(tokens.values(), Errors.ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY);
-            }
-            else if (accessor.isGetter()) {
+            if (accessor.isGetter()) {
                 if (accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
                     reportVisibilityModifierDiagnostics(tokens.values(), Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY);
                 }
@@ -841,9 +838,13 @@ public class DeclarationsChecker {
                 }
             }
             else if (accessorDescriptor.getVisibility() == Visibilities.PRIVATE
-                     && propertyDescriptor.getVisibility() != Visibilities.PRIVATE
-                     && propertyDescriptor.isLateInit()) {
-                reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR);
+                     && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
+                if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
+                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY);
+                }
+                else if (propertyDescriptor.isLateInit()) {
+                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR);
+                }
             }
         }
     }

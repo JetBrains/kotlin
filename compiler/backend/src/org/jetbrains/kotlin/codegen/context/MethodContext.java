@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -68,6 +69,10 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
 
     @Override
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
+        if (d instanceof SyntheticFieldDescriptor) {
+            SyntheticFieldDescriptor fieldDescriptor = (SyntheticFieldDescriptor) d;
+            d = fieldDescriptor.getPropertyDescriptor();
+        }
         if (getContextDescriptor() == d) {
             return result != null ? result : StackValue.LOCAL_0;
         }
