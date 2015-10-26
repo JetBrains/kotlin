@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.utils.Printer
 
-class AllUnderImportsScope(descriptor: DeclarationDescriptor) : ImportingScope by ImportingScope.Empty {
+class AllUnderImportsScope(descriptor: DeclarationDescriptor) : BaseImportingScope(null) {
     private val scopes = if (descriptor is ClassDescriptor) {
         listOf(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope)
     }

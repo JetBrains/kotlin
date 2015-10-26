@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.Printer
@@ -38,7 +38,7 @@ interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor {
     val sourceFunction: FunctionDescriptor
 }
 
-class SamAdapterFunctionsScope(storageManager: StorageManager) : ImportingScope by ImportingScope.Empty {
+class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingScope(null) {
     private val extensionForFunction = storageManager.createMemoizedFunctionWithNullableValues<FunctionDescriptor, FunctionDescriptor> { function ->
         extensionForFunctionNotCached(function)
     }

@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.storage.StorageManager
@@ -69,7 +69,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     }
 }
 
-class JavaSyntheticPropertiesScope(storageManager: StorageManager) : ImportingScope by ImportingScope.Empty {
+class JavaSyntheticPropertiesScope(storageManager: StorageManager) : BaseImportingScope(null) {
     private val syntheticPropertyInClass = storageManager.createMemoizedFunctionWithNullableValues<Pair<ClassDescriptor, Name>, PropertyDescriptor> { pair ->
         syntheticPropertyInClassNotCached(pair.first, pair.second)
     }

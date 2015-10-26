@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.utils.Printer
 
-class SingleImportScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : ImportingScope by ImportingScope.Empty {
+class SingleImportScope(private val aliasName: Name, private val descriptors: Collection<DeclarationDescriptor>) : BaseImportingScope(null) {
     override fun getContributedClassifier(name: Name, location: LookupLocation)
             = if (name == aliasName) descriptors.filterIsInstance<ClassifierDescriptor>().singleOrNull() else null
 

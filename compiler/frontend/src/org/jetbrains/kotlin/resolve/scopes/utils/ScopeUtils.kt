@@ -327,7 +327,7 @@ fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
 
 fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): LexicalScope {
     return if (this is ImportingScope)
-        importingScopeChain ?: LexicalScope.Empty
+        importingScopeChain ?: ImportingScope.Empty
     else
         LexicalScopeWrapper(this, importingScopeChain)
 }
