@@ -1326,6 +1326,12 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testRenameExtensionParameterWithNamedArgs() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.getNewParameters()[2].setName("bb");
+        doTest(changeInfo);
+    }
+
     private List<Editor> editors = null;
 
     private static final String[] EXTENSIONS = {".kt", ".java"};
