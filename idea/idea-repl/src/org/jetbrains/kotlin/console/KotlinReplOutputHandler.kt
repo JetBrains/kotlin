@@ -45,6 +45,7 @@ public class KotlinReplOutputHandler(
 
     private var isBuildInfoChecked = false
     private val dBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    private val inputBuffer = StringBuilder()
 
     override fun isSilentlyDestroyOnClose() = true
 
@@ -53,8 +54,17 @@ public class KotlinReplOutputHandler(
         if (text.startsWith("warning: classpath entry points to a non-existent location")) return
 
         // skip "/usr/lib/jvm/java-8-oracle/bin/java -cp ..." intro
-        if (!text.startsWith(XML_PREFIX)) return super.notifyTextAvailable(text, key)
+        if (!text.startsWith(XML_PREFIX) && inputBuffer.length == 0) return super.notifyTextAvailable(text, key)
 
+        inputBuffer.append(text)
+        val resultingText = inputBuffer.toString()
+        if (resultingText.endsWith("\n")) {
+            handleReplMessage(resultingText)
+            inputBuffer.setLength(0)
+        }
+    }
+
+    private fun handleReplMessage(text: String) {
         val output = dBuilder.parse(strToSource(text))
         val root = output.firstChild as Element
         val outputType = root.getAttribute("type")
