@@ -6161,6 +6161,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addExclExclToRemoveNullability.kt")
+        public void testAddExclExclToRemoveNullability() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullability.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addExclExclToRemoveNullabilityDisabledWhenItCannotHelp.kt")
+        public void testAddExclExclToRemoveNullabilityDisabledWhenItCannotHelp() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullabilityDisabledWhenItCannotHelp.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addExclExclToRemoveNullabilityForGeneric.kt")
+        public void testAddExclExclToRemoveNullabilityForGeneric() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullabilityForGeneric.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addExclExclToRemoveNullabilityForSubclass.kt")
+        public void testAddExclExclToRemoveNullabilityForSubclass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/addExclExclToRemoveNullabilityForSubclass.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInTypeMismatch() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }

@@ -97,6 +97,13 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             actions.add(new CastExpressionFix(expression, expectedType));
         }
 
+        if (!expectedType.isMarkedNullable() && org.jetbrains.kotlin.types.TypeUtils.isNullableType(expressionType)) {
+            KotlinType nullableExpected = TypeUtilsKt.makeNullable(expectedType);
+            if (TypeUtilsKt.isSubtypeOf(expressionType, nullableExpected)) {
+                actions.add(new AddExclExclCallFix(expression));
+            }
+        }
+
         // Property initializer type mismatch property type:
         KtProperty property = PsiTreeUtil.getParentOfType(expression, KtProperty.class);
         if (property != null) {

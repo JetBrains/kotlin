@@ -43,8 +43,7 @@ public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix
     override fun getText(): String = JetBundle.message("remove.unnecessary.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
-        = super<ExclExclCallFix>.isAvailable(project, editor, file) &&
-                  getExclExclPostfixExpression() != null
+        = super.isAvailable(project, editor, file) && getExclExclPostfixExpression() != null
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
@@ -87,6 +86,9 @@ public class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() 
             if (sibling is KtExpression) {
                 return sibling
             }
+        }
+        else if (psiElement is KtExpression) {
+            return psiElement
         }
 
         return null
