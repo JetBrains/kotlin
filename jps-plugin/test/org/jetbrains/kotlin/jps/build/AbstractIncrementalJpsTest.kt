@@ -151,7 +151,15 @@ public abstract class AbstractIncrementalJpsTest(
 
     private fun initialMake(): MakeResult {
         val makeResult = build(modifications = emptyList())
-        assertFalse(makeResult.makeFailed, "Initial make failed:\n$makeResult")
+
+        val initBuildLogFile = File(testDataDir, "init-build.log")
+        if (initBuildLogFile.exists()) {
+            UsefulTestCase.assertSameLinesWithFile(initBuildLogFile.absolutePath, makeResult.log)
+        }
+        else {
+            assertFalse(makeResult.makeFailed, "Initial make failed:\n$makeResult")
+        }
+
         return makeResult
     }
 
@@ -225,13 +233,21 @@ public abstract class AbstractIncrementalJpsTest(
     private fun rebuildAndCheckOutput(makeOverallResult: MakeResult) {
         val outDir = File(getAbsolutePath("out"))
         val outAfterMake = File(getAbsolutePath("out-after-make"))
-        FileUtil.copyDir(outDir, outAfterMake)
+
+        if (outDir.exists()) {
+            FileUtil.copyDir(outDir, outAfterMake)
+        }
 
         val rebuildResult = rebuild()
         assertEquals(rebuildResult.makeFailed, makeOverallResult.makeFailed,
                      "Rebuild failed: ${rebuildResult.makeFailed}, last make failed: ${makeOverallResult.makeFailed}. Rebuild result: $rebuildResult")
 
-        assertEqualDirectories(outDir, outAfterMake, makeOverallResult.makeFailed)
+        if (!outAfterMake.exists()) {
+            assertFalse(outDir.exists())
+        }
+        else {
+            assertEqualDirectories(outDir, outAfterMake, makeOverallResult.makeFailed)
+        }
 
         if (!makeOverallResult.makeFailed) {
             if (checkDumpsCaseInsensitively && rebuildResult.mappingsDump?.toLowerCase() == makeOverallResult.mappingsDump?.toLowerCase()) {
