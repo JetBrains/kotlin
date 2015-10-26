@@ -1,5 +1,3 @@
-@file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("DomEventsKt")
 package kotlin.dom
 
 import java.io.Closeable
@@ -31,7 +29,7 @@ public fun mouseEventHandler(handler: (MouseEvent) -> Unit): EventListener {
 /**
  * Registers a handler on the named event
  */
-public fun Node?.on(name: String, capture: Boolean, handler: (Event) -> Unit): Closeable? {
+public fun Node.on(name: String, capture: Boolean, handler: (Event) -> Unit): Closeable? {
     return on(name, capture, eventHandler(handler))
 }
 

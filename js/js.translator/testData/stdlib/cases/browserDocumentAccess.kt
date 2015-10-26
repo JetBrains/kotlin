@@ -1,6 +1,6 @@
 package test.browser
 
-import kotlin.js.dom.html.document
+import kotlin.browser.document
 import org.w3c.dom.Node
 
 fun box(): String {
