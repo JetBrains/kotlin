@@ -287,7 +287,7 @@ inline fun <T: Any> LexicalScope.findFirstFromImportingScopes(fetch: (ImportingS
     return findFirstFromMeAndParent { if (it is ImportingScope) fetch(it) else null }
 }
 
-fun LexicalScope.addImportScopes(importScopes: List<ImportingScope>): LexicalScope {
+fun LexicalScope.addImportingScopes(importScopes: List<ImportingScope>): LexicalScope {
     if (this is ImportingScope) {
         return chainImportingScopes(importScopes, this)!!
     }
@@ -299,8 +299,8 @@ fun LexicalScope.addImportScopes(importScopes: List<ImportingScope>): LexicalSco
     }
 }
 
-fun LexicalScope.addImportScope(importScope: ImportingScope): LexicalScope
-        = addImportScopes(listOf(importScope))
+fun LexicalScope.addImportingScope(importScope: ImportingScope): LexicalScope
+        = addImportingScopes(listOf(importScope))
 
 fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
     // TODO: it's a hack for Repl

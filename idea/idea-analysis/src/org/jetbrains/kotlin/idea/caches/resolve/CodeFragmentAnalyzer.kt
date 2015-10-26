@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.addImportScopes
+import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScopes
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
@@ -142,6 +142,6 @@ public class CodeFragmentAnalyzer(
             qualifierResolver.processImportReference(it, resolveSession.moduleDescriptor, resolveSession.trace, null)
         }.filterNotNull()
 
-        return scopeForContextElement.addImportScopes(importScopes) to dataFlowInfo
+        return scopeForContextElement.addImportingScopes(importScopes) to dataFlowInfo
     }
 }
