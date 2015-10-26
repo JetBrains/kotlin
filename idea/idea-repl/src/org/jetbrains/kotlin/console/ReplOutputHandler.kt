@@ -84,7 +84,7 @@ class ReplOutputHandler(
             else -> logError(ReplOutputHandler::class.java, "Unexpected output type:\n$outputType")
         }
 
-        if (outputType in setOf("SUCCESS", "COMPILE_ERROR", "INTERNAL_ERROR", "RUNTIME_ERROR")) {
+        if (outputType in setOf("SUCCESS", "COMPILE_ERROR", "INTERNAL_ERROR", "RUNTIME_ERROR", "READLINE_END")) {
             runner.commandHistory.entryProcessed()
         }
     }
