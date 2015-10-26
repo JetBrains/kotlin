@@ -88,25 +88,25 @@ public class LazyJavaClassMemberScope(
         ).toReadOnlyList()
     }
 
-    override fun JavaMethodDescriptor.isVisibleAsFunction() = (this as SimpleFunctionDescriptor).isVisibleAsFunction()
+    override fun JavaMethodDescriptor.isVisibleAsFunction() = isVisibleAsFunction(this)
 
-    private fun SimpleFunctionDescriptor.isVisibleAsFunction(): Boolean {
+    private fun isVisibleAsFunction(function: SimpleFunctionDescriptor): Boolean {
         // Do not load Java annotation methods as Kotlin functions (load them as properties instead)
         if (jClass.isAnnotationType) return false
 
-        if (getPropertyNamesCandidatesByAccessorName(name).any {
+        if (getPropertyNamesCandidatesByAccessorName(function.name).any {
             propertyName ->
             getPropertiesFromSupertypes(propertyName).any {
                 property ->
-                doesClassOverridesProperty(property) && (property.isVar || !JvmAbi.isSetterName(name.asString()))
+                doesClassOverridesProperty(property) && (property.isVar || !JvmAbi.isSetterName(function.name.asString()))
             }
         }) return false
 
-        if (this.doesOverrideRenamedBuiltins()) {
+        if (function.doesOverrideRenamedBuiltins()) {
             return false
         }
 
-        if (name.sameAsBuiltinMethodWithErasedValueParameters && hasOverriddenBuiltinFunctionWithErasedValueParameters(this)) {
+        if (function.name.sameAsBuiltinMethodWithErasedValueParameters && hasOverriddenBuiltinFunctionWithErasedValueParameters(function)) {
             return false
         }
 
@@ -230,7 +230,7 @@ public class LazyJavaClassMemberScope(
 
             result.addIfNotNull(
                     createOverrideForBuiltinFunctionWithErasedParameterIfNeeded(overridden)
-                    ?.check { override -> override.isVisibleAsFunction() })
+                    ?.check { override -> isVisibleAsFunction(override) })
         }
     }
 
