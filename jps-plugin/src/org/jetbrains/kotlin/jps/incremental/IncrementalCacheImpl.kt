@@ -731,7 +731,7 @@ private object StringListExternalizer : DataExternalizer<List<String>> {
     }
 }
 
-private object PathCollectionExternalizer : DataExternalizer<Collection<String>> {
+object PathCollectionExternalizer : DataExternalizer<Collection<String>> {
     override fun save(out: DataOutput, value: Collection<String>) {
         for (str in value) {
             IOUtil.writeUTF(out, str)

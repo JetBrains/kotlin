@@ -22,19 +22,22 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.MultiMap
 import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
-import org.jetbrains.jps.builders.BuildTarget
-import org.jetbrains.jps.builders.DirtyFilesHolder
+import org.jetbrains.jps.builders.*
 import org.jetbrains.jps.builders.impl.BuildTargetRegistryImpl
 import org.jetbrains.jps.builders.impl.TargetOutputIndexImpl
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
+import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.jps.indices.IgnoredFileIndex
+import org.jetbrains.jps.indices.ModuleExcludeIndex
+import org.jetbrains.jps.model.JpsModel
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
@@ -152,12 +155,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val project = projectDescriptor.project
 
-        val lookupTracker =
-                project.container.getChild(LOOKUP_TRACKER)?.let {
-                    assert("true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true)) { "LOOKUP_TRACKER allowed only for jps tests" }
-                    it.data
-                } ?: LookupTracker.DO_NOTHING
-
+        val lookupTracker = dataManager.getStorage(LOOKUP_TRACKER_TARGET, LOOKUP_TRACKER_STORAGE_PROVIDER)
         val incrementalCaches = getIncrementalCaches(chunk, context)
         val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context)
         if (!environment.success()) {
