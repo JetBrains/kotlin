@@ -21,7 +21,7 @@ import java.io.InputStream
 
 public class ReplSystemInWrapper(
         private val stdin: InputStream,
-        private val replWriter: ReplSystemOutWrapper
+        private val replWriter: ReplWriter
 ) : InputStream() {
     private var isXmlIncomplete = true
     private var isLastByteProcessed = false

@@ -20,10 +20,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplErrorLogger;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.UnescapeUtilsKt;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.*;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader;
@@ -43,7 +40,7 @@ public class ReplFromTerminal {
 
     private final boolean ideMode;
     private ReplSystemInWrapper replReader;
-    private final ReplSystemOutWrapper replWriter;
+    private final ReplWriter replWriter;
     private final ReplErrorLogger replErrorLogger;
 
     private ReplCommandReader commandReader;
@@ -58,8 +55,14 @@ public class ReplFromTerminal {
         // wrapper for `out` is required to escape every input in [ideMode];
         // if [ideMode == false] then just redirects all input to [System.out]
         // if user calls [System.setOut(...)] then undefined behaviour
-        replWriter = new ReplSystemOutWrapper(ideMode, System.out);
-        System.setOut(replWriter);
+        if (ideMode) {
+            ReplSystemOutWrapperForIde soutWrapper = new ReplSystemOutWrapperForIde(System.out);
+            replWriter = soutWrapper;
+            System.setOut(soutWrapper);
+        }
+        else {
+            replWriter = new ReplConsoleWriter();
+        }
 
         // wrapper for `in` is required to give user possibility of calling
         // [readLine] from ide-console repl
@@ -216,7 +219,7 @@ public class ReplFromTerminal {
             return true;
         }
         else if (split.size() >= 2 && split.get(0).equals("dump") && split.get(1).equals("bytecode")) {
-            getReplInterpreter().dumpClasses(new PrintWriter(replWriter));
+            getReplInterpreter().dumpClasses(new PrintWriter(System.out));
             return true;
         }
         else if (split.size() >= 1 && split.get(0).equals("quit")) {

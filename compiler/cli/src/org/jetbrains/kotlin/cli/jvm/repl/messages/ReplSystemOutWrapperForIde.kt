@@ -23,7 +23,7 @@ import java.io.PrintStream
 val END_LINE: String = LineSeparator.getSystemLineSeparator().separatorString
 val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
-public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: PrintStream) : PrintStream(standardOut, true) {
+public class ReplSystemOutWrapperForIde(standardOut: PrintStream) : PrintStream(standardOut, true), ReplWriter {
     private enum class EscapeType {
         INITIAL_PROMPT,
         HELP_PROMPT,
@@ -50,10 +50,7 @@ public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: Pri
     private fun printlnWithEscaping(text: String, escapeType: EscapeType = EscapeType.USER_OUTPUT) = printWithEscaping("$text\n", escapeType)
 
     private fun printWithEscaping(text: String, escapeType: EscapeType = EscapeType.USER_OUTPUT) {
-        if (ideMode)
-            super.print("${xmlEscape(text, escapeType)}$END_LINE")
-        else
-            super.print(text)
+        super.print("${xmlEscape(text, escapeType)}$END_LINE")
     }
 
     private fun xmlEscape(s: String, escapeType: EscapeType): String {
@@ -61,14 +58,14 @@ public class ReplSystemOutWrapper(private val ideMode: Boolean, standardOut: Pri
         return "$XML_PREAMBLE<output type=\"$escapeType\">${StringUtil.escapeXml(singleLine)}</output>"
     }
 
-    fun printlnWelcomeMessage(x: String) = printlnWithEscaping(x, EscapeType.INITIAL_PROMPT)
-    fun printlnHelpMessage(x: String) = printlnWithEscaping(x, EscapeType.HELP_PROMPT)
-    fun outputCommandResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
-    fun notifyReadLineStart() = printlnWithEscaping("", EscapeType.READLINE_START)
-    fun notifyReadLineEnd() = printlnWithEscaping("", EscapeType.READLINE_END)
-    fun notifyCommandSuccess() = printlnWithEscaping("", EscapeType.SUCCESS)
-    fun notifyIncomplete() = printlnWithEscaping("", EscapeType.REPL_INCOMPLETE)
-    fun outputCompileError(x: String) = printlnWithEscaping(x, EscapeType.COMPILE_ERROR)
-    fun outputRuntimeError(x: String) = printlnWithEscaping(x, EscapeType.RUNTIME_ERROR)
-    fun sendInternalErrorReport(x: String) = printlnWithEscaping(x, EscapeType.INTERNAL_ERROR)
+    override fun printlnWelcomeMessage(x: String) = printlnWithEscaping(x, EscapeType.INITIAL_PROMPT)
+    override fun printlnHelpMessage(x: String) = printlnWithEscaping(x, EscapeType.HELP_PROMPT)
+    override fun outputCommandResult(x: Any?) = printlnWithEscaping(x.toString(), EscapeType.REPL_RESULT)
+    override fun notifyReadLineStart() = printlnWithEscaping("", EscapeType.READLINE_START)
+    override fun notifyReadLineEnd() = printlnWithEscaping("", EscapeType.READLINE_END)
+    override fun notifyCommandSuccess() = printlnWithEscaping("", EscapeType.SUCCESS)
+    override fun notifyIncomplete() = printlnWithEscaping("", EscapeType.REPL_INCOMPLETE)
+    override fun outputCompileError(x: String) = printlnWithEscaping(x, EscapeType.COMPILE_ERROR)
+    override fun outputRuntimeError(x: String) = printlnWithEscaping(x, EscapeType.RUNTIME_ERROR)
+    override fun sendInternalErrorReport(x: String) = printlnWithEscaping(x, EscapeType.INTERNAL_ERROR)
 }

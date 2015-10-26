@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.rethrow
 import java.io.PrintWriter
 import java.io.StringWriter
 
-public class ReplErrorLogger(private val ideMode: Boolean, private val replWriter: ReplSystemOutWrapper) {
+public class ReplErrorLogger(private val ideMode: Boolean, private val replWriter: ReplWriter) {
     fun logException(e: Throwable?) {
         if (ideMode) {
             val errorStringWriter = StringWriter()
