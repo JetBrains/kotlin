@@ -59,7 +59,7 @@ public class JavaVisibilities {
         @NotNull
         @Override
         public EffectiveVisibility effectiveVisibility(@Nullable ClassDescriptor classDescriptor) {
-            return EffectiveVisibility.Companion.effectiveVisibility(Visibilities.PRIVATE, classDescriptor);
+            return EffectiveVisibility.PackagePrivate.INSTANCE;
         }
     };
 
