@@ -1,6 +1,6 @@
 // IS_APPLICABLE: false
 // WITH_RUNTIME
-// ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>kotlin.Unit</td></tr><tr><td>Found:</td><td>kotlin.String</td></tr></table></html>
+// ERROR: Type mismatch: inferred type is kotlin.String but kotlin.Unit was expected
 
 class A {
     public fun <caret>foo() {

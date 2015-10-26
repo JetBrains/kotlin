@@ -1,6 +1,6 @@
 // IS_APPLICABLE: false
 // WITH_RUNTIME
-// ERROR: <html>None of the following functions can be called with the arguments supplied. <ul><li>assert(<font color=red><b>Boolean</b></font>) <i>defined in</i> kotlin</li><li>assert(<font color=red><b>Boolean</b></font>, <font color=red><b>() &rarr; Any</b></font>) <i>defined in</i> kotlin</li><li>assert(<font color=red><b>Boolean</b></font>, Any = ...) <i>defined in</i> kotlin</li></ul></html>
+// ERROR: None of the following functions can be called with the arguments supplied: <br>public fun assert(value: kotlin.Boolean): kotlin.Unit defined in kotlin<br>public inline fun assert(value: kotlin.Boolean, lazyMessage: () -> kotlin.Any): kotlin.Unit defined in kotlin<br>@kotlin.Deprecated public fun assert(value: kotlin.Boolean, message: kotlin.Any = ...): kotlin.Unit defined in kotlin
 
 fun foo() {
     <caret>assert()

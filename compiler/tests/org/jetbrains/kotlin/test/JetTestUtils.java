@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.ShutDownTracker;
@@ -479,6 +480,13 @@ public class JetTestUtils {
             }
         }
         LazyResolveTestUtil.resolve(environment.getProject(), jetFiles, environment);
+    }
+
+    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {
+        String actualText = editor.getDocument().getText();
+        String afterText = new StringBuilder(actualText).insert(editor.getCaretModel().getOffset(), "<caret>").toString();
+
+        assertEqualsToFile(expectedFile, afterText);
     }
 
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual) {

@@ -1,6 +1,6 @@
 // "Cast expression 'Foo<Number>()' to 'Foo<Int>'" "false"
 // ACTION: Create test
-// ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>Foo&lt;kotlin.Int&gt;</td></tr><tr><td>Found:</td><td>Foo&lt;kotlin.Number&gt;</td></tr></table></html>
+// ERROR: Type mismatch: inferred type is Foo<kotlin.Number> but Foo<kotlin.Int> was expected
 class Foo<T>
 
 fun foo(): Foo<Int> {

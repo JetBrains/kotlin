@@ -1,5 +1,5 @@
 // "Create member property 'foo'" "true"
-// ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>kotlin.Int</td></tr><tr><td>Found:</td><td>A&lt;kotlin.Int&gt;</td></tr></table></html>
+// ERROR: Type mismatch: inferred type is A<kotlin.Int> but kotlin.Int was expected
 // ERROR: Property must be initialized or be abstract
 
 class A<T>(val n: T)

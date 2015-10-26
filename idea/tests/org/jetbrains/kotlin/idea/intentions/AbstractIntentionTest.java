@@ -37,7 +37,9 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.junit.Assert;
+import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -172,7 +174,12 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                         myFile = entry.getValue();
                         String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(entry.getKey() + ".after");
 
-                        checkResultByFile(canonicalPathToExpectedFile);
+                        try {
+                            checkResultByFile(canonicalPathToExpectedFile);
+                        }
+                        catch (ComparisonFailure e) {
+                            JetTestUtils.assertEqualsToFile(new File(canonicalPathToExpectedFile), getEditor());
+                        }
                     }
                 }
             }

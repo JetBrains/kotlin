@@ -32,6 +32,7 @@ import com.intellij.refactoring.util.CanonicalTypes;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.VisibilityUtil;
+import junit.framework.ComparisonFailure;
 import kotlin.ArraysKt;
 import kotlin.CollectionsKt;
 import kotlin.SetsKt;
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.util.*;
@@ -1479,7 +1481,13 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         for (Editor editor : editors) {
             setActiveEditor(editor);
             PsiFile currentFile = getFile();
-            checkResultByFile(currentFile.getName().replace("Before.", "After."));
+            String afterFilePath = currentFile.getName().replace("Before.", "After.");
+            try {
+                checkResultByFile(afterFilePath);
+            }
+            catch (ComparisonFailure e) {
+                JetTestUtils.assertEqualsToFile(new File(afterFilePath), getEditor());
+            }
             if (checkErrorsAfter && currentFile instanceof KtFile) {
                 DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) currentFile);
             }

@@ -276,7 +276,13 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                         doAction(text, actionShouldBeAvailable, beforeFileName);
 
                         if (actionShouldBeAvailable) {
-                            checkResultByFile(beforeFileName.replace(".before.Main.", ".after."));
+                            String afterFilePath = beforeFileName.replace(".before.Main.", ".after.");
+                            try {
+                                checkResultByFile(afterFilePath);
+                            }
+                            catch (ComparisonFailure e) {
+                                JetTestUtils.assertEqualsToFile(new File(afterFilePath), getEditor());
+                            }
 
                             PsiFile mainFile = myFile;
                             String mainFileName = mainFile.getName();
@@ -293,12 +299,17 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                                     if (e.getMessage().startsWith("Cannot find file")) {
                                         checkResultByFile(extraFileFullPath);
                                     }
-                                    else throw e;
+                                    else {
+                                        throw e;
+                                    }
                                 }
                             }
                         }
                     }
                     catch (ComparisonFailure e) {
+                        throw e;
+                    }
+                    catch (AssertionError e) {
                         throw e;
                     }
                     catch (Throwable e) {

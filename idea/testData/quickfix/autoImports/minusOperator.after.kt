@@ -1,5 +1,5 @@
 // "Import" "true"
-// ERROR: <html>Unresolved reference. <br/> None of the following candidates is applicable because of receiver type mismatch: <ul><li><b>public</b> <b>fun</b> kotlin.String.minus(i: java.lang.Integer): kotlin.String <i>defined in</i> h</li><li><b>public</b> <b>fun</b> kotlin.String.minus(str: kotlin.String): kotlin.String <i>defined in</i> h</li></ul></html>
+// ERROR: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: <br>public fun kotlin.String.minus(i: java.lang.Integer): kotlin.String defined in h<br>public fun kotlin.String.minus(str: kotlin.String): kotlin.String defined in h
 
 package h
 
@@ -8,7 +8,7 @@ import util.minus
 interface H
 
 fun f(h: H?) {
-    h - "other"
+    h <caret>- "other"
 }
 
 

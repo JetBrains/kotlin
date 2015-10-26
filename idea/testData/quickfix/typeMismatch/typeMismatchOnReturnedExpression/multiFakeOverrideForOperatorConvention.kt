@@ -2,7 +2,7 @@
 // ACTION: Change 'AAA.g' function return type to 'Boolean'
 // ACTION: Convert to expression body
 // ACTION: Replace overloaded operator with function call
-// ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>kotlin.Int</td></tr><tr><td>Found:</td><td>kotlin.Boolean</td></tr></table></html>
+// ERROR: Type mismatch: inferred type is kotlin.Boolean but kotlin.Int was expected
 interface A {
     fun contains(i: Int): Boolean
 }

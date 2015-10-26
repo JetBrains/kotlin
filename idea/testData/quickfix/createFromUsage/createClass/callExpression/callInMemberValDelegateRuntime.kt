@@ -1,5 +1,5 @@
 // "Create class 'Foo'" "true"
-// ERROR: <html>Class 'Foo' must be declared abstract or implement abstract member<br/><b>public</b> <b>abstract</b> operator <b>fun</b> getValue(thisRef: A&lt;T&gt;, property: kotlin.reflect.KProperty&lt;*&gt;): B <i>defined in</i> kotlin.properties.ReadOnlyProperty</html>
+// ERROR: Class 'Foo' must be declared abstract or implement abstract member public abstract operator fun getValue(thisRef: A<T>, property: kotlin.reflect.KProperty<*>): B defined in kotlin.properties.ReadOnlyProperty
 
 open class B
 

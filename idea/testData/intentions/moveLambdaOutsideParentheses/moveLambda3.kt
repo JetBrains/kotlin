@@ -1,5 +1,5 @@
 // IS_APPLICABLE: true
-// ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>kotlin.Int</td></tr><tr><td>Found:</td><td>() &rarr; ???</td></tr></table></html>
+// ERROR: Type mismatch: inferred type is () -> ??? but kotlin.Int was expected
 // ERROR: No value passed for parameter b
 // ERROR: Unresolved reference: it
 fun foo() {

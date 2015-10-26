@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: <html>None of the following functions can be called with the arguments supplied. <ul><li>foo(<font color=red><b>Int</b></font>) <i>defined in</i> B</li><li>foo(<font color=red><b>String</b></font>) <i>defined in</i> B</li></ul></html>
+// ERROR: None of the following functions can be called with the arguments supplied: <br>public final fun foo(p: kotlin.Int): kotlin.Unit defined in B<br>public open fun foo(p: kotlin.String): kotlin.Unit defined in B
 
 open class B {
     open fun foo(p: String){}
