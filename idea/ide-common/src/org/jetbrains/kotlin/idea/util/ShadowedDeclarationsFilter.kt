@@ -191,7 +191,7 @@ public class ShadowedDeclarationsFilter private constructor(
         var scope = context.getResolutionScope(bindingContext, resolutionFacade)
 
         if (descriptorsToImport.isNotEmpty()) {
-            scope = scope.addImportScope(ExplicitImportsScope(descriptorsToImport, scope.ownerDescriptor))
+            scope = scope.addImportScope(ExplicitImportsScope(descriptorsToImport))
         }
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(context)

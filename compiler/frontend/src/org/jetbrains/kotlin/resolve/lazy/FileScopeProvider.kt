@@ -18,9 +18,10 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 
 public interface FileScopeProvider {
-    fun getFileResolutionScope(file: KtFile): ImportingScope
+    fun getFileResolutionScope(file: KtFile): LexicalScope
     fun getImportResolver(file: KtFile): ImportResolver
 
     public object ThrowException : FileScopeProvider {

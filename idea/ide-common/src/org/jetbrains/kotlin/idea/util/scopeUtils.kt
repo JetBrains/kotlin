@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
@@ -79,6 +78,6 @@ public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolut
     error("Not in KtFile")
 }
 
-public fun ResolutionFacade.getFileResolutionScope(file: KtFile): ImportingScope {
+public fun ResolutionFacade.getFileResolutionScope(file: KtFile): LexicalScope {
     return frontendService<FileScopeProvider>().getFileResolutionScope(file)
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
 import org.jetbrains.kotlin.name.FqName
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.withParent
 import org.jetbrains.kotlin.storage.StorageManager
@@ -49,11 +51,11 @@ public class FileScopeProviderImpl(
         ktImportsFactory.createImportDirectives(moduleDescriptor.defaultImports)
     }
 
-    private data class FileData(val scopeChain: ImportingScope, val importResolver: ImportResolver)
+    private class FileData(val scope: LexicalScope, val importResolver: ImportResolver)
 
     private val cache = storageManager.createMemoizedFunction { file: KtFile -> createScopeChainAndImportResolver(file) }
 
-    override fun getFileResolutionScope(file: KtFile) = cache(file).scopeChain
+    override fun getFileResolutionScope(file: KtFile) = cache(file).scope
 
     override fun getImportResolver(file: KtFile) = cache(file).importResolver
 
@@ -106,7 +108,15 @@ public class FileScopeProviderImpl(
 
         scope = LazyImportScope(scope, packageFragment, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName")
 
-        bindingTrace.recordScope(scope, file)
+        val lexicalScope = object : LexicalScope by LexicalScope.Empty {
+            override val parent: LexicalScope?
+                get() = scope
+
+            override val ownerDescriptor: DeclarationDescriptor
+                get() = packageFragment
+        }
+
+        bindingTrace.recordScope(lexicalScope, file)
 
         val importResolver = object : ImportResolver {
             override fun forceResolveAllImports() {
@@ -124,6 +134,6 @@ public class FileScopeProviderImpl(
             }
         }
 
-        return FileData(scope, importResolver)
+        return FileData(lexicalScope, importResolver)
     }
 }
