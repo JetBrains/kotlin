@@ -591,18 +591,19 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         return with(descriptor.extractionData) {
             val targetContainer = anchor.getParent()!!
+            // TODO: Get rid of explicit new-lines in favor of formatter rules
             val emptyLines = psiFactory.createWhiteSpace("\n\n")
             if (insertBefore) {
-                val declarationInFile = targetContainer.addBefore(declaration, anchor) as KtNamedDeclaration
-                targetContainer.addBefore(emptyLines, anchor)
-
-                declarationInFile
+                (targetContainer.addBefore(declaration, anchor) as KtNamedDeclaration).apply {
+                    targetContainer.addBefore(emptyLines, anchor)
+                }
             }
             else {
-                val declarationInFile = targetContainer.addAfter(declaration, anchor) as KtNamedDeclaration
-                targetContainer.addAfter(emptyLines, anchor)
-
-                declarationInFile
+                (targetContainer.addAfter(declaration, anchor) as KtNamedDeclaration).apply {
+                    if (!(targetContainer is KtClassBody && (targetContainer.parent as? KtClass)?.isEnum() ?: false)) {
+                        targetContainer.addAfter(emptyLines, anchor)
+                    }
+                }
             }
         }
     }
@@ -610,8 +611,13 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     val duplicates = if (generatorOptions.inTempFile) Collections.emptyList() else descriptor.duplicates
 
     val anchor = with(descriptor.extractionData) {
+        val targetParent = targetSibling.parent
+
         val anchorCandidates = duplicates.mapTo(ArrayList<PsiElement>()) { it.range.elements.first() }
         anchorCandidates.add(targetSibling)
+        if (targetSibling is KtEnumEntry) {
+            anchorCandidates.add(targetSibling.siblings().last { it is KtEnumEntry })
+        }
 
         val marginalCandidate = if (insertBefore) {
             anchorCandidates.minBy { it.startOffset }!!
@@ -621,8 +627,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         // Ascend to the level of targetSibling
-        val targetParent = targetSibling.getParent()
-        marginalCandidate.parentsWithSelf.first { it.getParent() == targetParent }
+        marginalCandidate.parentsWithSelf.first { it.parent == targetParent }
     }
 
     val shouldInsert = !(generatorOptions.inTempFile || generatorOptions.target == ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION)

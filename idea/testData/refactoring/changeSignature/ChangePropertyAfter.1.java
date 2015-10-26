@@ -2,7 +2,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.Override;
 
-class J extends A {
+public class J extends A {
     private int p;
 
     @NotNull
@@ -20,12 +20,15 @@ class J extends A {
 class Test {
     static void test() {
         new A().getS();
-        new A().setS(1);
+        new A().setS(3);
 
-        new B().getS();
-        new B().setS(2);
+        new AA().getS();
+        new AA().setS(3);
 
         new J().getS();
         new J().setS(3);
+
+        new B().getS();
+        new B().setS(3);
     }
 }

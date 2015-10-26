@@ -8,3 +8,4 @@ object A {
 
 // 0 GETSTATIC
 // 2 PUTSTATIC A.INSTANCE
+// 2 PUTSTATIC

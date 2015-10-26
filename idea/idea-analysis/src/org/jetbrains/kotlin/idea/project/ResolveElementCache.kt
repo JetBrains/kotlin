@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIn
 import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
@@ -144,7 +145,6 @@ public class ResolveElementCache(
                 partialResolveMap[statementToResolve ?: resolveElement]
                         ?.check { it.isUpToDate(file) }
                         ?.let { return it.bindingContext } // partial resolve is already cached for this statement
-
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.PARTIAL)
 
                 if (statementFilter == StatementFilter.NONE) { // partial resolve is not supported for the given declaration - full resolve performed instead
@@ -412,32 +412,34 @@ public class ResolveElementCache(
         return trace
     }
 
-    private fun propertyAdditionalResolve(resolveSession: ResolveSession, jetProperty: KtProperty, file: KtFile, statementFilter: StatementFilter): BindingTrace {
-        val trace = createDelegatingTrace(jetProperty)
-        val propertyResolutionScope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(jetProperty)
+    private fun propertyAdditionalResolve(resolveSession: ResolveSession, property: KtProperty, file: KtFile, statementFilter: StatementFilter): BindingTrace {
+        val trace = createDelegatingTrace(property)
+        val propertyResolutionScope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(property)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
-        val descriptor = resolveSession.resolveToDescriptor(jetProperty) as PropertyDescriptor
+        val descriptor = resolveSession.resolveToDescriptor(property) as PropertyDescriptor
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        val propertyInitializer = jetProperty.getInitializer()
+        val propertyInitializer = property.getInitializer()
         if (propertyInitializer != null) {
-            bodyResolver.resolvePropertyInitializer(DataFlowInfo.EMPTY, jetProperty, descriptor, propertyInitializer, propertyResolutionScope)
+            bodyResolver.resolvePropertyInitializer(DataFlowInfo.EMPTY, property, descriptor, propertyInitializer, propertyResolutionScope)
         }
 
-        val propertyDelegate = jetProperty.getDelegateExpression()
+        val propertyDelegate = property.getDelegateExpression()
         if (propertyDelegate != null) {
-            bodyResolver.resolvePropertyDelegate(DataFlowInfo.EMPTY, jetProperty, descriptor, propertyDelegate, propertyResolutionScope, propertyResolutionScope)
+            bodyResolver.resolvePropertyDelegate(DataFlowInfo.EMPTY, property, descriptor, propertyDelegate, propertyResolutionScope, propertyResolutionScope)
         }
 
         val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, { declaration ->
-            assert(declaration.getParent() == jetProperty) { "Must be called only for property accessors, but called for $declaration" }
+            assert(declaration.getParent() == property) { "Must be called only for property accessors, but called for $declaration" }
             resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(declaration)
         })
 
-        bodyResolver.resolvePropertyAccessors(bodyResolveContext, jetProperty, descriptor)
+        bodyResolver.resolvePropertyAccessors(bodyResolveContext, property, descriptor)
 
-        for (accessor in jetProperty.getAccessors()) {
+        forceResolveAnnotationsInside(property)
+
+        for (accessor in property.getAccessors()) {
             JetFlowInformationProvider(accessor, trace).checkDeclaration()
         }
 
@@ -454,6 +456,8 @@ public class ResolveElementCache(
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveFunctionBody(DataFlowInfo.EMPTY, trace, namedFunction, functionDescriptor, scope)
 
+        forceResolveAnnotationsInside(namedFunction)
+
         return trace
     }
 
@@ -466,6 +470,8 @@ public class ResolveElementCache(
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveSecondaryConstructorBody(DataFlowInfo.EMPTY, trace, constructor, constructorDescriptor, scope)
+
+        forceResolveAnnotationsInside(constructor)
 
         return trace
     }
@@ -493,7 +499,17 @@ public class ResolveElementCache(
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, classInitializer, classOrObjectDescriptor)
 
+        forceResolveAnnotationsInside(classInitializer)
+
         return trace
+    }
+
+    private fun forceResolveAnnotationsInside(element: KtElement) {
+        element.forEachDescendantOfType<KtAnnotationEntry>(canGoInside = { it !is KtBlockExpression }) { entry ->
+            resolveSession.bindingContext[BindingContext.ANNOTATION, entry]?.let {
+                ForceResolveUtil.forceResolveAllContents(it)
+            }
+        }
     }
 
     private fun createBodyResolver(

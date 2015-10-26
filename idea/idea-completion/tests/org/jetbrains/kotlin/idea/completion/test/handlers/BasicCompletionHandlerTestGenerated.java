@@ -35,6 +35,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("AnnotationInBrackets.kt")
+    public void testAnnotationInBrackets() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AnnotationInBrackets.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AnnotationInClassAddImport.kt")
     public void testAnnotationInClassAddImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/AnnotationInClassAddImport.kt");

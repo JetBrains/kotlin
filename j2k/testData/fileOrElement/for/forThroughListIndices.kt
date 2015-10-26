@@ -3,13 +3,13 @@ import java.util.ArrayList
 internal class C {
     fun foo1(list: MutableList<String>) {
         for (i in list.indices) {
-            list.set(i, "a")
+            list[i] = "a"
         }
     }
 
     fun foo2(list: ArrayList<String>) {
         for (i in list.indices) {
-            list.set(i, "a")
+            list[i] = "a"
         }
     }
 }

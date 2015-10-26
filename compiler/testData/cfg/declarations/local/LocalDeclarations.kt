@@ -5,7 +5,7 @@ class C() {
         val x : Int
 
         init {
-            $x = 1
+            x = 1
         }
 
 
@@ -22,7 +22,7 @@ fun test1() {
     val a = object {
         val x : Int
         init {
-            $x = 1
+            x = 1
         }
     }
 }
@@ -30,7 +30,7 @@ fun test1() {
 object O {
     val x : Int
     init {
-        $x = 1
+        x = 1
     }
 }
 
@@ -53,7 +53,7 @@ fun test4() {
         val x : Int
         val y : Int
         init {
-            $x = 1
+            x = 1
         }
         fun ggg() {
             y = 10
@@ -65,7 +65,7 @@ fun test5() {
     val a = object {
         var x = 1
         init {
-            $x = 2
+            x = 2
         }
         fun foo() {
             x = 3

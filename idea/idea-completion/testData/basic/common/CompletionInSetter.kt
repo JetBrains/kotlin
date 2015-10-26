@@ -1,9 +1,9 @@
 val a: Int = 1
     get() {
-      return $a
+      return field
     }
     set(v) {
-      $a = <caret>
+      field = <caret>
     }
 
 

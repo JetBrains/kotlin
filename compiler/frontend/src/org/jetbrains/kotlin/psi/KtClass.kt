@@ -39,7 +39,7 @@ public open class KtClass : KtClassOrObject {
 
     public fun getColon(): PsiElement? = findChildByType(KtTokens.COLON)
 
-    public fun getProperties(): List<KtProperty> = getBody()?.getProperties().orEmpty()
+    public fun getProperties(): List<KtProperty> = getBody()?.properties.orEmpty()
 
     public fun isInterface(): Boolean =
         _stub?.isInterface() ?: (findChildByType<PsiElement>(KtTokens.INTERFACE_KEYWORD) != null)
@@ -83,7 +83,7 @@ public open class KtClass : KtClassOrObject {
         return StringUtil.join(parts, ".")
     }
 
-    public fun getCompanionObjects(): List<KtObjectDeclaration> = getBody()?.getAllCompanionObjects().orEmpty()
+    public fun getCompanionObjects(): List<KtObjectDeclaration> = getBody()?.allCompanionObjects.orEmpty()
 
     public fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD))
 }

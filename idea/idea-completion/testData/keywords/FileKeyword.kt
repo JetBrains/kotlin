@@ -1,9 +1,11 @@
 @<caret>[]
 
-// EXIST: class
-// EXIST: fun
-// EXIST: interface
-// EXIST: object
-// EXIST: val
-// EXIST: var
+// EXIST: { itemText: "file:" }
+// EXIST: { itemText: "field:" }
+// EXIST: { itemText: "get:" }
+// EXIST: { itemText: "set:" }
+// EXIST: { itemText: "param:" }
+// EXIST: { itemText: "setparam:" }
+// EXIST: { itemText: "property:" }
+// EXIST: { itemText: "receiver:" }
 // NOTHING_ELSE

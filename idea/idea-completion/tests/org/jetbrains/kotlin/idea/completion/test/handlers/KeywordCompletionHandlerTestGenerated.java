@@ -59,6 +59,18 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         doTest(fileName);
     }
 
+    @TestMetadata("Getter1.kt")
+    public void testGetter1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Getter1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Getter2.kt")
+    public void testGetter2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Getter2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoSpaceAfterNull.kt")
     public void testNoSpaceAfterNull() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/NoSpaceAfterNull.kt");
@@ -119,9 +131,39 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         doTest(fileName);
     }
 
+    @TestMetadata("Setter1.kt")
+    public void testSetter1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Setter1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Setter2.kt")
+    public void testSetter2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Setter2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SpaceAfterImport.kt")
     public void testSpaceAfterImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/SpaceAfterImport.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("UseSiteAnnotationTarget1.kt")
+    public void testUseSiteAnnotationTarget1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("UseSiteAnnotationTarget2.kt")
+    public void testUseSiteAnnotationTarget2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("UseSiteAnnotationTarget3.kt")
+    public void testUseSiteAnnotationTarget3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget3.kt");
         doTest(fileName);
     }
 }

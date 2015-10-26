@@ -1456,6 +1456,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("kt6722.kt")
+        public void testKt6722() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/kt6722.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("stackOverflowOnCallFromGetValue.kt")
         public void testStackOverflowOnCallFromGetValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/stackOverflowOnCallFromGetValue.kt");
@@ -2075,6 +2081,75 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/jvmName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmName extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInJvmName() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/jvmName"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/callableReference.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("clashingErasure.kt")
+        public void testClashingErasure() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/clashingErasure.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("classMembers.kt")
+        public void testClassMembers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/classMembers.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("functionName.kt")
+        public void testFunctionName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/functionName.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("multifileClass.kt")
+        public void testMultifileClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/multifileClass.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("multifileClassWithLocalClass.kt")
+        public void testMultifileClassWithLocalClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/multifileClassWithLocalClass.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("multifileClassWithLocalGeneric.kt")
+        public void testMultifileClassWithLocalGeneric() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/multifileClassWithLocalGeneric.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("propertyAccessorsUseSite.kt")
+        public void testPropertyAccessorsUseSite() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/propertyAccessorsUseSite.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("propertyName.kt")
+        public void testPropertyName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/propertyName.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("renamedFileClass.kt")
+        public void testRenamedFileClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmName/renamedFileClass.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -2134,6 +2209,99 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmOverloads/simple.kt");
+            doTestWithStdlib(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmStatic extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInJvmStatic() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/jvmStatic"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("closure.kt")
+        public void testClosure() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/closure.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("convention.kt")
+        public void testConvention() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/convention.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("default.kt")
+        public void testDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/default.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("explicitObject.kt")
+        public void testExplicitObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/explicitObject.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("funAccess.kt")
+        public void testFunAccess() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/funAccess.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("importStaticMemberFromObject.kt")
+        public void testImportStaticMemberFromObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/importStaticMemberFromObject.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/inline.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("postfixInc.kt")
+        public void testPostfixInc() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/postfixInc.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("prefixInc.kt")
+        public void testPrefixInc() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/prefixInc.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("privateMethod.kt")
+        public void testPrivateMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/privateMethod.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("propertyAccess.kt")
+        public void testPropertyAccess() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/propertyAccess.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("propertyAsDefault.kt")
+        public void testPropertyAsDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/propertyAsDefault.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/simple.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("syntheticAccessor.kt")
+        public void testSyntheticAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/syntheticAccessor.kt");
             doTestWithStdlib(fileName);
         }
     }
@@ -2440,162 +2608,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("useWithException.kt")
         public void testUseWithException() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/nonLocalReturns/useWithException.kt");
-            doTestWithStdlib(fileName);
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/boxWithStdlib/platformNames")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class PlatformNames extends AbstractBlackBoxCodegenTest {
-        public void testAllFilesPresentInPlatformNames() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/platformNames"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("callableReference.kt")
-        public void testCallableReference() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/callableReference.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("clashingErasure.kt")
-        public void testClashingErasure() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/clashingErasure.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("classMembers.kt")
-        public void testClassMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/classMembers.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("functionName.kt")
-        public void testFunctionName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/functionName.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("multifileClass.kt")
-        public void testMultifileClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/multifileClass.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("multifileClassWithLocalClass.kt")
-        public void testMultifileClassWithLocalClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/multifileClassWithLocalClass.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("multifileClassWithLocalGeneric.kt")
-        public void testMultifileClassWithLocalGeneric() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/multifileClassWithLocalGeneric.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("propertyName.kt")
-        public void testPropertyName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/propertyName.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("renamedFileClass.kt")
-        public void testRenamedFileClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformNames/renamedFileClass.kt");
-            doTestWithStdlib(fileName);
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class PlatformStatic extends AbstractBlackBoxCodegenTest {
-        public void testAllFilesPresentInPlatformStatic() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("closure.kt")
-        public void testClosure() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/closure.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("convention.kt")
-        public void testConvention() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/convention.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("default.kt")
-        public void testDefault() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/default.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("explicitObject.kt")
-        public void testExplicitObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/explicitObject.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("funAccess.kt")
-        public void testFunAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/funAccess.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("importStaticMemberFromObject.kt")
-        public void testImportStaticMemberFromObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/importStaticMemberFromObject.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("inline.kt")
-        public void testInline() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/inline.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("postfixInc.kt")
-        public void testPostfixInc() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/postfixInc.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("prefixInc.kt")
-        public void testPrefixInc() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/prefixInc.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("privateMethod.kt")
-        public void testPrivateMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/privateMethod.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("propertyAccess.kt")
-        public void testPropertyAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/propertyAccess.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("propertyAsDefault.kt")
-        public void testPropertyAsDefault() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/propertyAsDefault.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/simple.kt");
-            doTestWithStdlib(fileName);
-        }
-
-        @TestMetadata("syntheticAccessor.kt")
-        public void testSyntheticAccessor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/platformStatic/syntheticAccessor.kt");
             doTestWithStdlib(fileName);
         }
     }

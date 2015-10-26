@@ -6,11 +6,11 @@ interface A {
 }
 
 class B: A {
-    override fun <caret>foo() {} // Find usages gives no results
+    override fun foo() {} // Find usages gives no results
 }
 
 fun main(a: A) {
-    a.foo()
+    a.<caret>foo()
 }
 
 // for KT-3769 Find usages gives no result for overrides

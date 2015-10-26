@@ -16,23 +16,24 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.backend.common.bridges.*
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.common.bridges.DescriptorBasedFunctionHandle
+import org.jetbrains.kotlin.backend.common.bridges.findAllReachableDeclarations
+import org.jetbrains.kotlin.backend.common.bridges.findConcreteSuperDeclaration
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinWithDifferentJvmDescriptor
-import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.load.java.hasRealKotlinSuperClassWithOverrideOf
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
@@ -60,7 +61,8 @@ object BuiltinSpecialBridgesUtil {
         // e.g. `size()I`
         val overriddenBuiltinSignature = signatureByDescriptor(overriddenBuiltin)
 
-        val needGenerateSpecialBridge = needGenerateSpecialBridge(function, reachableDeclarations, overriddenBuiltin)
+        val needGenerateSpecialBridge = needGenerateSpecialBridge(
+                function, reachableDeclarations, overriddenBuiltin, signatureByDescriptor, overriddenBuiltinSignature)
                                             && methodItself != overriddenBuiltinSignature
 
         val specialBridge = if (needGenerateSpecialBridge)
@@ -106,42 +108,21 @@ private fun findSuperImplementationForStubDelegation(function: FunctionDescripto
 private fun findAllReachableDeclarations(functionDescriptor: FunctionDescriptor): MutableSet<FunctionDescriptor> =
         findAllReachableDeclarations(DescriptorBasedFunctionHandle(functionDescriptor)).map { it.descriptor }.toMutableSet()
 
-private fun needGenerateSpecialBridge(
+private fun <Signature> needGenerateSpecialBridge(
         functionDescriptor: FunctionDescriptor,
         reachableDeclarations: Collection<FunctionDescriptor>,
-        specialCallableDescriptor: CallableDescriptor
+        specialCallableDescriptor: CallableMemberDescriptor,
+        signatureByDescriptor: (FunctionDescriptor) -> Signature,
+        overriddenBuiltinSignature: Signature
 ): Boolean {
     val classDescriptor = functionDescriptor.containingDeclaration as ClassDescriptor
-    val builtinContainerDefaultType = (specialCallableDescriptor.containingDeclaration as ClassDescriptor).defaultType
-
-    var superClassDescriptor = DescriptorUtils.getSuperClassDescriptor(classDescriptor)
-
-    while (superClassDescriptor != null) {
-        val implementsBuiltinDeclaration =
-                TypeCheckingProcedure.findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
-
-        if (superClassDescriptor !is JavaClassDescriptor) {
-            // Kotlin class
-            if (implementsBuiltinDeclaration) {
-                if (!functionDescriptor.modality.isOverridable) return false
-                // Generate bridges if it's built-in
-                val containingPackageFragment = DescriptorUtils.getParentOfType(superClassDescriptor, PackageFragmentDescriptor::class.java)
-                if (containingPackageFragment === superClassDescriptor.builtIns.builtInsPackageFragment) return true
-                return false
+    return !classDescriptor.hasRealKotlinSuperClassWithOverrideOf(specialCallableDescriptor)
+            && specialCallableDescriptor.modality != Modality.FINAL
+            && reachableDeclarations.none {
+                it.containingDeclaration is JavaClassDescriptor
+                        && it.modality == Modality.FINAL
+                        && signatureByDescriptor(it) == overriddenBuiltinSignature
             }
-        }
-        else {
-            // java super class inherits builtin class and it's declaration is final
-            if (implementsBuiltinDeclaration
-                && reachableDeclarations.any { it.containingDeclaration == superClassDescriptor && it.modality == Modality.FINAL }) {
-                return false
-            }
-        }
-
-        superClassDescriptor = DescriptorUtils.getSuperClassDescriptor(superClassDescriptor as ClassDescriptor)
-    }
-
-    return true
 }
 
 public fun isValueArgumentForCallToMethodWithTypeCheckBarrier(

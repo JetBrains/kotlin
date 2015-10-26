@@ -37,7 +37,7 @@ val KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT: Short = 0x20
 class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): BaseFilterLexer(KotlinLexer(), occurrenceConsumer) {
     private val codeTokens = TokenSet.orSet(
             TokenSet.create(*ALL_SEARCHABLE_OPERATIONS.toTypedArray()),
-            TokenSet.create(KtTokens.IDENTIFIER, KtTokens.FIELD_IDENTIFIER)
+            TokenSet.create(KtTokens.IDENTIFIER)
     )
 
     private val commentTokens = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))

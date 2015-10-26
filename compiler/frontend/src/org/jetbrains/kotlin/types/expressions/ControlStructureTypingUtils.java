@@ -47,10 +47,12 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
+import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsForResolveKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.Variance;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
@@ -60,6 +62,20 @@ import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Co
 
 public class ControlStructureTypingUtils {
     private static final Logger LOG = Logger.getInstance(ControlStructureTypingUtils.class);
+
+    public enum ResolveConstruct {
+        IF("if"), ELVIS("elvis"), EXCL_EXCL("ExclExcl");
+
+        private final String name;
+
+        ResolveConstruct(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 
     private final CallResolver callResolver;
     private final DataFlowAnalyzer dataFlowAnalyzer;
@@ -77,15 +93,15 @@ public class ControlStructureTypingUtils {
 
     /*package*/ ResolvedCall<FunctionDescriptor> resolveSpecialConstructionAsCall(
             @NotNull Call call,
-            @NotNull String constructionName,
+            @NotNull ResolveConstruct construct,
             @NotNull List<String> argumentNames,
             @NotNull List<Boolean> isArgumentNullable,
             @NotNull ExpressionTypingContext context,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         SimpleFunctionDescriptorImpl function = createFunctionDescriptorForSpecialConstruction(
-                constructionName.toUpperCase(), argumentNames, isArgumentNullable);
-        TracingStrategy tracing = createTracingForSpecialConstruction(call, constructionName, context);
+                construct, argumentNames, isArgumentNullable);
+        TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName(), context);
         ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(call, function);
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
                 call, tracing, context, resolutionCandidate, dataFlowInfoForArguments);
@@ -94,12 +110,13 @@ public class ControlStructureTypingUtils {
     }
 
     private SimpleFunctionDescriptorImpl createFunctionDescriptorForSpecialConstruction(
-            @NotNull String constructionName,
+            @NotNull ResolveConstruct construct,
             @NotNull List<String> argumentNames,
             @NotNull List<Boolean> isArgumentNullable
     ) {
         assert argumentNames.size() == isArgumentNullable.size();
 
+        String constructionName = construct.getName().toUpperCase();
         Name specialFunctionName = Name.identifier("<SPECIAL-FUNCTION-FOR-" + constructionName + "-RESOLVE>");
 
         SimpleFunctionDescriptorImpl function = SimpleFunctionDescriptorImpl.create(
@@ -126,12 +143,13 @@ public class ControlStructureTypingUtils {
             );
             valueParameters.add(valueParameter);
         }
+        KotlinType returnType = construct != ResolveConstruct.ELVIS ? type : TypeUtilsKt.replaceAnnotations(type, AnnotationsForResolveKt.getExactInAnnotations());
         function.initialize(
                 null,
                 null,
                 Lists.newArrayList(typeParameter),
                 valueParameters,
-                type,
+                returnType,
                 Modality.FINAL,
                 Visibilities.PUBLIC
         );

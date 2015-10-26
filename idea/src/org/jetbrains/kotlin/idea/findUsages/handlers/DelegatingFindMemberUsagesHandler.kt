@@ -47,15 +47,9 @@ class DelegatingFindMemberUsagesHandler(
             is KtNamedDeclaration ->
                 HandlerAndOptions(KotlinFindMemberUsagesHandler.getInstance(element, elementsToSearch, factory), options)
 
-            is PsiMethod ->
-                /* Can't have KotlinPropertyFindUsagesOptions here since Kotlin properties do not override java methods, so
-                 * elementsToSearch contains property declarations only */
+            is PsiMethod, is PsiParameter ->
                 HandlerAndOptions(JavaFindUsagesHandler(element, elementsToSearch.toTypedArray(), factory.javaHandlerFactory),
-                                  (options as KotlinFunctionFindUsagesOptions?)?.toJavaMethodOptions(project))
-
-            is PsiParameter ->
-                HandlerAndOptions(JavaFindUsagesHandler(element, elementsToSearch.toTypedArray(), factory.javaHandlerFactory),
-                                  (options as KotlinPropertyFindUsagesOptions?)?.toJavaVariableOptions(project))
+                                  (options as KotlinCallableFindUsagesOptions?)?.toJavaOptions(project))
 
             else -> null
         }

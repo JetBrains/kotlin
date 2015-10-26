@@ -43,6 +43,8 @@ public class AnonymousObjectTransformer {
 
     protected final JetTypeMapper typeMapper;
 
+    private final InlineResult transformationResult;
+
     private MethodNode constructor;
 
     private String sourceInfo;
@@ -80,6 +82,7 @@ public class AnonymousObjectTransformer {
 
         reader = InlineCodegenUtil.buildClassReaderByInternalName(state, objectInternalName);
         typeRemapper = new TypeRemapper(inliningContext.typeMapping);
+        transformationResult = InlineResult.create();
     }
 
     @NotNull
@@ -87,14 +90,13 @@ public class AnonymousObjectTransformer {
         ClassBuilder classBuilder = createClassBuilder();
         final List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
 
-        final InlineResult result = InlineResult.create();
         reader.accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 if (signature != null) {
                     ReifiedTypeInliner.SignatureReificationResult signatureResult = inliningContext.reifedTypeInliner.reifySignature(signature);
                     signature = signatureResult.getNewSignature();
-                    result.getReifiedTypeParametersUsages().mergeAll(signatureResult.getTypeParametersUsages());
+                    transformationResult.getReifiedTypeParametersUsages().mergeAll(signatureResult.getTypeParametersUsages());
                 }
                 super.visit(version, access, name, signature, superName, interfaces);
             }
@@ -182,9 +184,8 @@ public class AnonymousObjectTransformer {
 
         for (MethodNode next : methodsToTransform) {
             MethodVisitor deferringVisitor = newMethod(classBuilder, next);
-            InlineResult funResult = inlineMethod(anonymousObjectGen, parentRemapper, deferringVisitor, next, allCapturedParamBuilder);
-            result.addAllClassesToRemove(funResult);
-            result.getReifiedTypeParametersUsages().mergeAll(funResult.getReifiedTypeParametersUsages());
+            InlineResult funResult =
+                    inlineMethodAndUpdateGlobalResult(anonymousObjectGen, parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false);
 
             Type returnType = Type.getReturnType(next.desc);
             if (!AsmUtil.isPrimitive(returnType)) {
@@ -201,17 +202,29 @@ public class AnonymousObjectTransformer {
             method.visitEnd();
         }
 
-        InlineResult constructorResult =
-                generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, anonymousObjectGen, parentRemapper, additionalFakeParams);
-
-        result.addAllClassesToRemove(constructorResult);
+        generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, anonymousObjectGen, parentRemapper, additionalFakeParams);
 
         SourceMapper.Companion.flushToClassBuilder(sourceMapper, classBuilder);
 
         classBuilder.done();
 
         anonymousObjectGen.setNewLambdaType(newLambdaType);
-        return result;
+        return transformationResult;
+    }
+
+    @NotNull
+    private InlineResult inlineMethodAndUpdateGlobalResult(
+            @NotNull AnonymousObjectGeneration anonymousObjectGen,
+            @NotNull FieldRemapper parentRemapper,
+            @NotNull MethodVisitor deferringVisitor,
+            @NotNull MethodNode next,
+            @NotNull ParametersBuilder allCapturedParamBuilder,
+            boolean isConstructor
+    ) {
+        InlineResult funResult = inlineMethod(anonymousObjectGen, parentRemapper, deferringVisitor, next, allCapturedParamBuilder, isConstructor);
+        transformationResult.addAllClassesToRemove(funResult);
+        transformationResult.getReifiedTypeParametersUsages().mergeAll(funResult.getReifiedTypeParametersUsages());
+        return funResult;
     }
 
     @NotNull
@@ -220,15 +233,16 @@ public class AnonymousObjectTransformer {
             @NotNull FieldRemapper parentRemapper,
             @NotNull MethodVisitor deferringVisitor,
             @NotNull MethodNode sourceNode,
-            @NotNull ParametersBuilder capturedBuilder
+            @NotNull ParametersBuilder capturedBuilder,
+            boolean isConstructor
     ) {
         ReifiedTypeParametersUsages typeParametersToReify = inliningContext.reifedTypeInliner.reifyInstructions(sourceNode.instructions);
-        Parameters parameters = getMethodParametersWithCaptured(capturedBuilder, sourceNode);
+        Parameters parameters = isConstructor ? capturedBuilder.buildParameters() : getMethodParametersWithCaptured(capturedBuilder, sourceNode);
 
         RegeneratedLambdaFieldRemapper remapper =
                 new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), newLambdaType.getInternalName(),
                                                    parameters, anonymousObjectGen.getCapturedLambdasToInline(),
-                                                   parentRemapper, false);
+                                                   parentRemapper, isConstructor);
 
         MethodInliner inliner = new MethodInliner(sourceNode, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for " + anonymousObjectGen.getOwnerInternalName(),
@@ -240,7 +254,7 @@ public class AnonymousObjectTransformer {
         return result;
     }
 
-    private InlineResult generateConstructorAndFields(
+    private void generateConstructorAndFields(
             @NotNull ClassBuilder classBuilder,
             @NotNull ParametersBuilder allCapturedBuilder,
             @NotNull ParametersBuilder constructorInlineBuilder,
@@ -311,25 +325,12 @@ public class AnonymousObjectTransformer {
             }
         }
 
-        Parameters constructorParameters = constructorInlineBuilder.buildParameters();
-
-        RegeneratedLambdaFieldRemapper remapper =
-                new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), newLambdaType.getInternalName(),
-                                                   constructorParameters, anonymousObjectGen.getCapturedLambdasToInline(),
-                                                   parentRemapper, true);
-
-        MethodInliner inliner = new MethodInliner(constructor, constructorParameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
-                                                  remapper, isSameModule, "Transformer for constructor of " + anonymousObjectGen.getOwnerInternalName(),
-                                                  sourceMapper);
-        InlineResult result = inliner.doInline(capturedFieldInitializer, new LocalVarRemapper(constructorParameters, 0), false,
-                                               LabelOwner.NOT_APPLICABLE);
-        constructorVisitor.visitMaxs(-1, -1);
+        inlineMethodAndUpdateGlobalResult(anonymousObjectGen, parentRemapper, capturedFieldInitializer, constructor, constructorInlineBuilder, true);
         constructorVisitor.visitEnd();
 
         AsmUtil.genClosureFields(capturedFieldsToGenerate, classBuilder);
         //TODO for inline method make public class
         anonymousObjectGen.setNewConstructorDescriptor(constructorDescriptor);
-        return result;
     }
 
     @NotNull

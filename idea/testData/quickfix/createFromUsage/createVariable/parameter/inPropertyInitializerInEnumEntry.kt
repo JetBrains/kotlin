@@ -1,4 +1,4 @@
-// "Create parameter 'foo'" "true"
+// "Create property 'foo' as constructor parameter" "true"
 // ERROR: No value passed for parameter foo
 // ERROR: No value passed for parameter foo
 // ERROR: No value passed for parameter foo

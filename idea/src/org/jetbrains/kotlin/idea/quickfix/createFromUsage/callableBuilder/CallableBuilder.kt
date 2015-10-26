@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -607,12 +608,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val classBody = classOrObject.getOrCreateBody()
             return if (declaration is KtNamedFunction) {
                 val anchor = PsiTreeUtil.skipSiblingsBackward(
-                        classBody.getRBrace() ?: classBody.getLastChild()!!,
+                        classBody.rBrace ?: classBody.getLastChild()!!,
                         javaClass<PsiWhiteSpace>()
                 )
                 classBody.addAfter(declaration, anchor) as KtNamedDeclaration
             }
-            else classBody.addAfter(declaration, classBody.getLBrace()!!) as KtNamedDeclaration
+            else classBody.addAfter(declaration, classBody.lBrace!!) as KtNamedDeclaration
         }
 
         private fun getTypeParameterRenames(scope: KtScope): Map<TypeParameterDescriptor, String> {
@@ -640,13 +641,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val typeRefsToShorten = ArrayList<KtElement>()
 
             if (config.isExtension) {
-                val receiverTypeRef = KtPsiFactory(declaration).createType(receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap))
-                replaceWithLongerName(receiverTypeRef, receiverTypeCandidate.theType)
-
-                val funcReceiverTypeRef = (declaration as? KtCallableDeclaration)?.getReceiverTypeReference()
-                if (funcReceiverTypeRef != null) {
-                    typeRefsToShorten.add(funcReceiverTypeRef)
-                }
+                val receiverTypeText = receiverTypeCandidate!!.theType.renderLong(typeParameterNameMap)
+                val replacingTypeRef = KtPsiFactory(declaration).createType(receiverTypeText)
+                val newTypeRef = (declaration as KtCallableDeclaration).setReceiverTypeReference(replacingTypeRef)!!
+                typeRefsToShorten.add(newTypeRef)
             }
 
             val returnTypeRef = declaration.getReturnTypeReference()

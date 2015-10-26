@@ -73,7 +73,7 @@ object NamedArgumentCompletion {
             editor.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
             editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length())
 
-            WithTailInsertHandler.eqTail().postHandleInsert(context, item)
+            WithTailInsertHandler.EQ.postHandleInsert(context, item)
         }
     }
 }

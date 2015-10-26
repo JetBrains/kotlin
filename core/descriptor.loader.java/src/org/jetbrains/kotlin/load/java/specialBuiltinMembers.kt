@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
 object BuiltinSpecialProperties {
     private val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
@@ -222,9 +223,36 @@ private fun getBuiltinOverriddenThatAffectsJvmName(
 ): CallableMemberDescriptor? {
     val overriddenBuiltin = callableMemberDescriptor.getOverriddenBuiltinWithDifferentJvmName() ?: return null
 
-    if (callableMemberDescriptor.isFromJavaOrBuiltins()) return overriddenBuiltin
+    if (callableMemberDescriptor.isFromBuiltins()) return overriddenBuiltin
 
     return null
+}
+
+public fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
+        specialCallableDescriptor: CallableDescriptor
+): Boolean {
+    val builtinContainerDefaultType = (specialCallableDescriptor.containingDeclaration as ClassDescriptor).defaultType
+
+    var superClassDescriptor = DescriptorUtils.getSuperClassDescriptor(this)
+
+    while (superClassDescriptor != null) {
+        if (superClassDescriptor !is JavaClassDescriptor) {
+            // Kotlin class
+
+            val doesOverrideBuiltinDeclaration =
+                    TypeCheckingProcedure.findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
+
+            if (doesOverrideBuiltinDeclaration) {
+                val containingPackageFragment = DescriptorUtils.getParentOfType(superClassDescriptor, PackageFragmentDescriptor::class.java)
+                if (containingPackageFragment === superClassDescriptor.builtIns.builtInsPackageFragment) return false
+                return true
+            }
+        }
+
+        superClassDescriptor = DescriptorUtils.getSuperClassDescriptor(superClassDescriptor)
+    }
+
+    return false
 }
 
 // Util methods

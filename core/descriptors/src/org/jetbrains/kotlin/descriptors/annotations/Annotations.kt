@@ -80,6 +80,11 @@ class FilteredAnnotations(
         private val delegate: Annotations,
         private val fqNameFilter: (FqName) -> Boolean
 ) : Annotations {
+
+    override fun hasAnnotation(fqName: FqName) =
+            if (fqNameFilter(fqName)) delegate.hasAnnotation(fqName)
+            else false
+
     override fun findAnnotation(fqName: FqName) =
             if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
             else null
@@ -114,6 +119,8 @@ class CompositeAnnotations(
     constructor(vararg delegates: Annotations): this(delegates.toList())
 
     override fun isEmpty() = delegates.all { it.isEmpty() }
+
+    override fun hasAnnotation(fqName: FqName) = delegates.asSequence().any { it.hasAnnotation(fqName) }
 
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().map { it.findAnnotation(fqName) }.filterNotNull().firstOrNull()
 

@@ -540,6 +540,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("highlightingOfSuperUsages.0.kt")
+            public void testHighlightingOfSuperUsages() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/highlightingOfSuperUsages.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("javaAndKotlinOverrides.0.kt")
             public void testJavaAndKotlinOverrides() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/javaAndKotlinOverrides.0.kt");
@@ -681,6 +687,33 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("usagesOfBaseForFunction.0.kt")
             public void testUsagesOfBaseForFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/usagesOfBaseForFunction.0.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/findUsages/kotlin/findJavaPropertyUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FindJavaPropertyUsages extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInFindJavaPropertyUsages() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/findJavaPropertyUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+            }
+
+            @TestMetadata("javaPropertyUsagesK.0.kt")
+            public void testJavaPropertyUsagesK() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findJavaPropertyUsages/javaPropertyUsagesK.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaPropertyUsagesKJK.0.kt")
+            public void testJavaPropertyUsagesKJK() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findJavaPropertyUsages/javaPropertyUsagesKJK.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaPropertyUsagesKK.0.kt")
+            public void testJavaPropertyUsagesKK() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findJavaPropertyUsages/javaPropertyUsagesKK.0.kt");
                 doTest(fileName);
             }
         }
@@ -1338,6 +1371,27 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("SyntheticProperties.0.java")
             public void testSyntheticProperties() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/SyntheticProperties.0.java");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/findUsages/java/findJavaPropertyUsages")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FindJavaPropertyUsages extends AbstractJetFindUsagesTest {
+            public void testAllFilesPresentInFindJavaPropertyUsages() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/java/findJavaPropertyUsages"), Pattern.compile("^(.+)\\.0\\.java$"), true);
+            }
+
+            @TestMetadata("javaPropertyGetterUsagesKJ.0.java")
+            public void testJavaPropertyGetterUsagesKJ() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaPropertyUsages/javaPropertyGetterUsagesKJ.0.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("javaPropertySetterUsagesKJ.0.java")
+            public void testJavaPropertySetterUsagesKJ() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaPropertyUsages/javaPropertySetterUsagesKJ.0.java");
                 doTest(fileName);
             }
         }

@@ -4,24 +4,24 @@ class AnonymousInitializers() {
 
     val i: Int
     init {
-        $i = 12
+        i = 12
     }
 
     val j: Int
        get() = 20
 
     init {
-        $i = 13
+        i = 13
     }
 }
 ---------------------
-              <v1>: AnonymousInitializers   NEW: magic[IMPLICIT_RECEIVER]($i) -> <v1>
-              <v4>: AnonymousInitializers   NEW: magic[IMPLICIT_RECEIVER]($i) -> <v4>
-34            <v0>: Int                     NEW: r(34) -> <v0>
-12            <v2>: Int                     NEW: r(12) -> <v2>
-$i = 12       !<v3>: *
-{ $i = 12 }   !<v3>: *                      COPY
-13            <v5>: Int                     NEW: r(13) -> <v5>
-$i = 13       !<v6>: *
-{ $i = 13 }   !<v6>: *                      COPY
+             <v1>: AnonymousInitializers   NEW: magic[IMPLICIT_RECEIVER](i) -> <v1>
+             <v4>: AnonymousInitializers   NEW: magic[IMPLICIT_RECEIVER](i) -> <v4>
+34           <v0>: Int                     NEW: r(34) -> <v0>
+12           <v2>: Int                     NEW: r(12) -> <v2>
+i = 12       !<v3>: *
+{ i = 12 }   !<v3>: *                      COPY
+13           <v5>: Int                     NEW: r(13) -> <v5>
+i = 13       !<v6>: *
+{ i = 13 }   !<v6>: *                      COPY
 =====================

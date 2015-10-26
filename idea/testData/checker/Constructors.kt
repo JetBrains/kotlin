@@ -28,7 +28,6 @@ class WithCPI_Dup(<warning>x</warning> : Int) {
 
 class WithCPI(x : Int) {
   val a = 1
-  val b : Int = <error>$a</error>
   val xy : Int = x
 }
 

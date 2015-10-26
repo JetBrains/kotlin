@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.toReadOnlyList
-import java.util.ArrayDeque
-import java.util.ArrayList
-import java.util.LinkedHashSet
+import java.util.*
 
 public enum class TypeNullability {
     NOT_NULL,
@@ -103,7 +101,7 @@ fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypePro
 }
 
 fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
-    if (newAnnotations.isEmpty()) return this
+    if (annotations.isEmpty() && newAnnotations.isEmpty()) return this
     return object : DelegatingType() {
         override fun getDelegate() = this@replaceAnnotations
 
@@ -142,3 +140,41 @@ public fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(
 
 public fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
         TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
+
+fun Collection<KotlinType>.closure(f: (KotlinType) -> Collection<KotlinType>): Collection<KotlinType> {
+    if (size == 0) return this
+
+    val result = HashSet(this)
+    var elementsToCheck = result
+    var oldSize = 0
+    while (result.size > oldSize) {
+        oldSize = result.size
+        val toAdd = hashSetOf<KotlinType>()
+        elementsToCheck.forEach { toAdd.addAll(f(it)) }
+        result.addAll(toAdd)
+        elementsToCheck = toAdd
+    }
+
+    return result
+}
+
+fun boundClosure(types: Collection<KotlinType>): Collection<KotlinType> =
+        types.closure { type -> TypeUtils.getTypeParameterDescriptorOrNull(type)?.upperBounds ?: emptySet() }
+
+fun constituentTypes(types: Collection<KotlinType>): Collection<KotlinType> {
+    val result = hashSetOf<KotlinType>()
+    constituentTypes(result, types)
+    return result
+}
+
+private fun constituentTypes(result: MutableSet<KotlinType>, types: Collection<KotlinType>) {
+    result.addAll(types)
+    for (type in types) {
+        if (type.isFlexible()) {
+            with (type.flexibility()) { constituentTypes(result, setOf(lowerBound, upperBound)) }
+        }
+        else {
+            constituentTypes(result, type.arguments.filterNot { it.isStarProjection }.map { it.type })
+        }
+    }
+}

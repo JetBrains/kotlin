@@ -2,8 +2,6 @@ package c;
 
 import b.Test;
 
-import static a.MainKt.*;
-
 class J {
     void bar() {
         Test t = new Test();

@@ -30,163 +30,239 @@ public class TypeIntrinsics {
 
     public static void throwCce(Object argument, String requestedClassName) {
         String argumentClassName = argument == null ? "null" : argument.getClass().getName();
-        throw sanitizeStackTrace(new ClassCastException(argumentClassName + " cannot be cast to " + requestedClassName));
+        throwCce(argumentClassName + " cannot be cast to " + requestedClassName);
     }
 
-    public static void throwCce(ClassCastException e) {
-        throw Intrinsics.sanitizeStackTrace(e, TypeIntrinsics.class.getName());
+    public static void throwCce(String message) {
+        throw throwCce(new ClassCastException(message));
+    }
+
+    public static ClassCastException throwCce(ClassCastException e) {
+        throw sanitizeStackTrace(e);
     }
 
     public static boolean isMutableIterator(Object obj) {
-        return (obj instanceof Iterator) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableIterator));
+        return obj instanceof Iterator &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableIterator);
     }
 
     public static Iterator asMutableIterator(Object obj) {
-        Iterator result = null;
-        try {
-            result = (Iterator) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterator)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableIterator)) {
             throwCce(obj, "kotlin.MutableIterator");
         }
-        return result;
+        return castToIterator(obj);
+    }
+
+    public static Iterator asMutableIterator(Object obj, String message) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableIterator)) {
+            throwCce(message);
+        }
+        return castToIterator(obj);
+    }
+
+    public static Iterator castToIterator(Object obj) {
+        try {
+            return (Iterator) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableListIterator(Object obj) {
-        return (obj instanceof ListIterator) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableListIterator));
+        return obj instanceof ListIterator &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableListIterator);
     }
 
     public static ListIterator asMutableListIterator(Object obj) {
-        ListIterator result = null;
-        try {
-            result = (ListIterator) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableListIterator)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableListIterator)) {
             throwCce(obj, "kotlin.MutableListIterator");
         }
-        return result;
+        return castToListIterator(obj);
+    }
+
+    public static ListIterator asMutableListIterator(Object obj, String message) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableListIterator)) {
+            throwCce(message);
+        }
+        return castToListIterator(obj);
+    }
+
+    public static ListIterator castToListIterator(Object obj) {
+        try {
+            return (ListIterator) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableIterable(Object obj) {
-        return (obj instanceof Iterable) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableIterable));
+        return obj instanceof Iterable &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableIterable);
     }
 
     public static Iterable asMutableIterable(Object obj) {
-        Iterable result = null;
-        try {
-            result = (Iterable) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableIterable)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableIterable)) {
             throwCce(obj, "kotlin.MutableIterable");
         }
-        return result;
+        return castToIterable(obj);
+    }
+
+    public static Iterable asMutableIterable(Object obj, String message) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableIterable)) {
+            throwCce(message);
+        }
+        return castToIterable(obj);
+    }
+
+    public static Iterable castToIterable(Object obj) {
+        try {
+            return (Iterable) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableCollection(Object obj) {
-        return (obj instanceof Collection) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableCollection));
+        return obj instanceof Collection &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableCollection);
     }
 
     public static Collection asMutableCollection(Object obj) {
-        Collection result = null;
-        try {
-            result = (Collection) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableCollection)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableCollection)) {
             throwCce(obj, "kotlin.MutableCollection");
         }
-        return result;
+        return castToCollection(obj);
+    }
+
+    public static Collection asMutableCollection(Object obj, String message) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableCollection)) {
+            throwCce(message);
+        }
+        return castToCollection(obj);
+    }
+
+    public static Collection castToCollection(Object obj) {
+        try {
+            return (Collection) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableList(Object obj) {
-        return (obj instanceof List) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableList));
+        return obj instanceof List &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableList);
     }
 
     public static List asMutableList(Object obj) {
-        List result = null;
-        try {
-            result = (List) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableList)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableList)) {
             throwCce(obj, "kotlin.MutableList");
         }
-        return result;
+        return castToList(obj);
+    }
+
+    public static List asMutableList(Object obj, String message) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableList)) {
+            throwCce(message);
+        }
+        return castToList(obj);
+    }
+
+    public static List castToList(Object obj) {
+        try {
+            return (List) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableSet(Object obj) {
-        return (obj instanceof Set) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableSet));
+        return obj instanceof Set &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableSet);
     }
 
     public static Set asMutableSet(Object obj) {
-        Set result = null;
-        try {
-            result = (Set) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableSet)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableSet)) {
             throwCce(obj, "kotlin.MutableSet");
         }
-        return result;
+        return castToSet(obj);
+    }
+
+    public static Set asMutableSet(Object obj, String message) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableSet)) {
+            throwCce(message);
+        }
+        return castToSet(obj);
+    }
+
+    public static Set castToSet(Object obj) {
+        try {
+            return (Set) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableMap(Object obj) {
-        return (obj instanceof Map) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableMap));
+        return obj instanceof Map &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableMap);
     }
 
     public static Map asMutableMap(Object obj) {
-        Map result = null;
-        try {
-            result = (Map) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableMap)) {
             throwCce(obj, "kotlin.MutableMap");
         }
-        return result;
+        return castToMap(obj);
+    }
+
+    public static Map asMutableMap(Object obj, String message) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableMap)) {
+            throwCce(message);
+        }
+        return castToMap(obj);
+    }
+
+    public static Map castToMap(Object obj) {
+        try {
+            return (Map) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static boolean isMutableMapEntry(Object obj) {
-        return (obj instanceof Map.Entry) &&
-               (!(obj instanceof KMappedMarker) || (obj instanceof KMutableMap.Entry));
+        return obj instanceof Map.Entry &&
+               (!(obj instanceof KMappedMarker) || obj instanceof KMutableMap.Entry);
     }
 
     public static Map.Entry asMutableMapEntry(Object obj) {
-        Map.Entry result = null;
-        try {
-            result = (Map.Entry) obj;
-        }
-        catch (ClassCastException e) {
-            throwCce(e);
-        }
-        if ((obj instanceof KMappedMarker) && !(obj instanceof KMutableMap.Entry)) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableMap.Entry)) {
             throwCce(obj, "kotlin.MutableMap.MutableEntry");
         }
-        return result;
+        return castToMapEntry(obj);
+    }
+
+    public static Map.Entry asMutableMapEntry(Object obj, String message) {
+        if (obj instanceof KMappedMarker && !(obj instanceof KMutableMap.Entry)) {
+            throwCce(message);
+        }
+        return castToMapEntry(obj);
+    }
+
+    public static Map.Entry castToMapEntry(Object obj) {
+        try {
+            return (Map.Entry) obj;
+        }
+        catch (ClassCastException e) {
+            throw throwCce(e);
+        }
     }
 
     public static int getFunctionArity(Object obj) {
@@ -275,6 +351,13 @@ public class TypeIntrinsics {
         // TODO should we instead inline bytecode for this in TypeIntrinsics.kt?
         if (obj != null && !isFunctionOfArity(obj, arity)) {
             throwCce(obj, "kotlin.jvm.functions.Function" + arity);
+        }
+        return obj;
+    }
+
+    public static Object beforeCheckcastToFunctionOfArity(Object obj, int arity, String message) {
+        if (obj != null && !isFunctionOfArity(obj, arity)) {
+            throwCce(message);
         }
         return obj;
     }

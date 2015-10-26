@@ -1,0 +1,82 @@
+<problems>
+  <problem>
+    <file>singleArgument.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="singleArgument.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'get' call with indexing operator</description>
+  </problem>
+
+  <problem>
+    <file>multiArgument.kt</file>
+    <line>6</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="multiArgument.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'get' call with indexing operator</description>
+  </problem>
+
+  <problem>
+    <file>functionalArgument.kt</file>
+    <line>6</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="functionalArgument.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'get' call with indexing operator</description>
+  </problem>
+
+  <problem>
+    <file>extensionFunction.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="extensionFunction.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'get' call with indexing operator</description>
+  </problem>
+
+  <problem>
+    <file>argumentAndFunction.kt</file>
+    <line>6</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="argumentAndFunction.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'get' call with indexing operator</description>
+  </problem>
+
+  <problem>
+    <file>acceptableVararg.kt</file>
+    <line>6</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="acceptableVararg.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'get' call with indexing operator</description>
+  </problem>
+
+  <problem>
+    <file>qualifier.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="qualifier.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'get' call with indexing operator</description>
+  </problem>
+
+  <problem>
+    <file>set.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="set.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'set' call with indexing operator</description>
+  </problem>
+
+  <problem>
+    <file>set2.kt</file>
+    <line>9</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="set2.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES"/>
+    <description>Replace 'set' call with indexing operator</description>
+  </problem>
+</problems>

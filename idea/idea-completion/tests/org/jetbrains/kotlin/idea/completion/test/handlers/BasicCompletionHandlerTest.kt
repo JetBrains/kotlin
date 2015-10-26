@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.completion.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.handlers.CompletionHandlerTestBase
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
 
 @Deprecated("All tests from here to be moved to the generated test")
@@ -77,7 +74,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testInsertVoidJavaMethod() = doTest()
 
-    fun testPropertiesSetter() = doTest()
+    fun testPropertiesGetter() = doTest()
 
     fun testExistingSingleBrackets() = doTest()
 

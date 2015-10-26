@@ -12,7 +12,7 @@ fun stringLen(s : String?) : Int {
 }
 
 fun stringReturnInLeftLen(s : String?) : Int {
-    val s1 : String = (if (s != null) { return s.length() } else { null }) ?: return 0
+    val s1 = (if (s != null) { return s.length() } else { null }) ?: return 0
 }
 
 fun box(): String {

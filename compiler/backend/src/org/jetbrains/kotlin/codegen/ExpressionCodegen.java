@@ -2007,9 +2007,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
             }
 
-            boolean directToField =
-                    (expression.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER || isSyntheticField)
-                    && contextKind() != OwnerKind.DEFAULT_IMPLS;
+            boolean directToField = isSyntheticField && contextKind() != OwnerKind.DEFAULT_IMPLS;
             KtSuperExpression superExpression =
                     resolvedCall == null ? null : CallResolverUtilKt.getSuperCallExpression(resolvedCall.getCall());
             propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);

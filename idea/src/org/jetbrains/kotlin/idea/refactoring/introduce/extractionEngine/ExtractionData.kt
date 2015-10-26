@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -126,17 +125,14 @@ data class ExtractionData(
             return function == null || !function.isInsideOf(originalElements)
         }
 
-        fun getSyntheticPropertyAccessorDeclarationIfAny(descriptor: DeclarationDescriptor): PsiNameIdentifierOwner? {
-            return (descriptor as? SyntheticJavaPropertyDescriptor ?: return null).getMethod.source.getPsi() as? PsiNameIdentifierOwner
-        }
-
-        fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiNameIdentifierOwner? {
+        tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiNameIdentifierOwner? {
             (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNameIdentifierOwner)?.let { return it }
 
             return when {
                 isExtractableIt(descriptor, context) -> itFakeDeclaration
                 isSynthesizedInvoke(descriptor) -> synthesizedInvokeDeclaration
-                else -> getSyntheticPropertyAccessorDeclarationIfAny(descriptor)
+                descriptor is SyntheticJavaPropertyDescriptor -> getDeclaration(descriptor.getMethod, context)
+                else -> null
             }
         }
 

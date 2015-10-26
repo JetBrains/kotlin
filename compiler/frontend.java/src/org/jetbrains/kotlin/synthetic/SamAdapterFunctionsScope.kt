@@ -99,7 +99,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
             fun create(sourceFunction: FunctionDescriptor): MyFunctionDescriptor {
                 val descriptor = MyFunctionDescriptor(DescriptorUtils.getContainingModule(sourceFunction),
                                                       null,
-                                                      Annotations.EMPTY, //TODO
+                                                      sourceFunction.annotations,
                                                       sourceFunction.name,
                                                       CallableMemberDescriptor.Kind.SYNTHESIZED,
                                                       sourceFunction.source)

@@ -53,6 +53,12 @@ public class CodeInsightActionTestGenerated extends AbstractCodeInsightActionTes
         doTest(fileName);
     }
 
+    @TestMetadata("javaSupersWithGenerics.kt")
+    public void testJavaSupersWithGenerics() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/javaSupersWithGenerics.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("properties.kt")
     public void testProperties() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/properties.kt");

@@ -24,7 +24,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
+import org.jetbrains.kotlin.idea.actions.createSingleImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -87,7 +87,7 @@ public class KotlinReferenceImporter : ReferenceImporter {
             val bindingContext = analyze(BodyResolveMode.PARTIAL)
             if (mainReference.resolveToDescriptors(bindingContext).isNotEmpty()) return false
 
-            var suggestions = AutoImportFix.computeSuggestions(this)
+            var suggestions = AutoImportFix(this).computeSuggestions()
 
             if (suggestions.distinctBy { it.importableFqName!! }.size() != 1) return false
 
@@ -96,7 +96,7 @@ public class KotlinReferenceImporter : ReferenceImporter {
 
             var result = false
             CommandProcessor.getInstance().runUndoTransparentAction {
-                result = KotlinAddImportAction(project, editor, this, suggestions).execute()
+                result = createSingleImportAction(project, editor, this, suggestions).execute()
             }
             return result
         }

@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
+import org.jetbrains.kotlin.idea.completion.handlers.UseSiteAnnotationTargetInsertHandler
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -47,9 +49,6 @@ object KeywordCompletion {
     private val ALL_KEYWORDS = (KEYWORDS.getTypes() + SOFT_KEYWORDS.getTypes())
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as KtKeywordToken }
-
-    private val DEFAULT_DUMMY_POSTFIX = " X"
-    private val KEYWORD_TO_DUMMY_POSTFIX = mapOf(FILE_KEYWORD to ":")
 
     private val KEYWORDS_TO_IGNORE_PREFIX = TokenSet.create(OVERRIDE_KEYWORD /* it's needed to complete overrides that should be work by member name too */)
 
@@ -86,17 +85,27 @@ object KeywordCompletion {
 
             if (!parserFilter(keywordToken)) continue
 
-            val element = LookupElementBuilder.create(KeywordLookupObject(), keyword)
-                    .bold()
-                    .withInsertHandler(if (keywordToken !in FUNCTION_KEYWORDS)
-                                           KotlinKeywordInsertHandler
-                                       else
-                                           KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false))
+            var element = LookupElementBuilder.create(KeywordLookupObject(), keyword).bold()
+
+            val isUseSiteAnnotationTarget = position.prevLeaf()?.node?.elementType == KtTokens.AT
+
+            val insertHandler = if (isUseSiteAnnotationTarget)
+                UseSiteAnnotationTargetInsertHandler
+            else if (keywordToken !in FUNCTION_KEYWORDS)
+                KotlinKeywordInsertHandler
+            else
+                KotlinFunctionInsertHandler.Normal(inputTypeArguments = false, inputValueArguments = false)
+            element = element.withInsertHandler(insertHandler)
+
+            if (isUseSiteAnnotationTarget) {
+                element = element.withPresentableText(keyword + ":")
+            }
+
             consumer(element)
         }
     }
 
-    private val FUNCTION_KEYWORDS = listOf(GET_KEYWORD, SET_KEYWORD, CONSTRUCTOR_KEYWORD)
+    private val FUNCTION_KEYWORDS = listOf(CONSTRUCTOR_KEYWORD)
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),
@@ -192,7 +201,7 @@ object KeywordCompletion {
     private fun buildFilterByText(prefixText: String, project: Project): (KtKeywordToken) -> Boolean {
         val psiFactory = KtPsiFactory(project)
         return fun (keywordTokenType): Boolean {
-            val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: DEFAULT_DUMMY_POSTFIX
+            val postfix = if (prefixText.endsWith("@")) ":X" else " X"
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
             val elementAt = file.findElementAt(prefixText.length())!!
 
@@ -201,7 +210,7 @@ object KeywordCompletion {
 
                 elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> return false
 
-                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment }?.parentsWithSelf?.any { it is PsiErrorElement } ?: false -> return false
+                isErrorElementBefore(elementAt) -> return false
 
                 keywordTokenType !is KtModifierKeywordToken -> return true
 
@@ -258,6 +267,15 @@ object KeywordCompletion {
                 }
             }
         }
+    }
+
+    private fun isErrorElementBefore(token: PsiElement): Boolean {
+        for (leaf in token.prevLeafs) {
+            if (leaf is PsiWhiteSpace || leaf is PsiComment) continue
+            if (leaf.parentsWithSelf.any { it is PsiErrorElement } ) return true
+            if (leaf.textLength != 0) break
+        }
+        return false
     }
 
     private fun IElementType.matchesKeyword(keywordType: KtKeywordToken): Boolean {

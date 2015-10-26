@@ -132,7 +132,6 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
                        JetBundle.message("options.kotlin.attribute.descriptor.instance.property") to JetHighlightingColors.INSTANCE_PROPERTY, 
                        JetBundle.message("options.kotlin.attribute.descriptor.package.property") to JetHighlightingColors.PACKAGE_PROPERTY, 
                        JetBundle.message("options.kotlin.attribute.descriptor.property.with.backing") to JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD,
-                       JetBundle.message("options.kotlin.attribute.descriptor.backing.field.access") to JetHighlightingColors.BACKING_FIELD_ACCESS,
                        JetBundle.message("options.kotlin.attribute.descriptor.field") to JetHighlightingColors.BACKING_FIELD_VARIABLE,
                        JetBundle.message("options.kotlin.attribute.descriptor.extension.property") to JetHighlightingColors.EXTENSION_PROPERTY,
                        JetBundle.message("options.kotlin.attribute.descriptor.dynamic.property") to JetHighlightingColors.DYNAMIC_PROPERTY_CALL,

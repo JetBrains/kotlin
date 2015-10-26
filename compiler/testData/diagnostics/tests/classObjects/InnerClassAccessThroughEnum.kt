@@ -42,7 +42,7 @@ fun f() {
     C.O
     C.O.InO
     C.A()
-    C.<!UNRESOLVED_REFERENCE!>B<!>()
+    C.<!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>B<!>()
 
     C.E3.<!UNRESOLVED_REFERENCE!>O_O<!>
     C.E3.<!UNRESOLVED_REFERENCE!>G<!>()

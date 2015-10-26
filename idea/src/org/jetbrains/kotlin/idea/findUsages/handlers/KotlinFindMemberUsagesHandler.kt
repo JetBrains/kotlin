@@ -17,18 +17,21 @@
 package org.jetbrains.kotlin.idea.findUsages.handlers
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector
+import com.intellij.find.FindManager
 import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.find.impl.FindManagerImpl
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.*
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
@@ -42,8 +45,11 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.resolve.getOriginalTopmostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.source.getPsi
 
 public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
     protected constructor(declaration: T, elementsToSearch: Collection<PsiElement>, factory: KotlinFindUsagesHandlerFactory)
@@ -128,17 +134,14 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                                                                     scope = options.searchScope,
                                                                     kotlinOptions = createKotlinReferencesSearchOptions(options))
 
-            val query = applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))
-            if (!query.forEach(referenceProcessor)) return false
-
-            val psiMethods = when (element) {
-                is PsiMethod -> listOf(element)
-                is KtFunction -> runReadAction { LightClassUtil.getLightClassMethods(element) }
-                else -> listOf<PsiMethod>()
+            with(applyQueryFilters(element, options, ReferencesSearch.search(searchParameters))) {
+                if (!forEach(referenceProcessor)) return false
             }
-            for (psiMethod in psiMethods) {
-                val query = applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, options.searchScope, true))
-                if (!query.forEach(referenceProcessor)) return false
+
+            for (psiMethod in runReadAction { element.toLightMethods() }) {
+                with(applyQueryFilters(element, options, MethodReferencesSearch.search(psiMethod, options.searchScope, true))) {
+                    if (!forEach(referenceProcessor)) return false
+                }
             }
         }
 
@@ -158,6 +161,22 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                                              query: Query<PsiReference>): Query<PsiReference>
 
     override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean = !isSingleFile
+
+    override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
+        val callableDescriptor = (target as? KtCallableDeclaration)?.resolveToDescriptorIfAny() as? CallableDescriptor
+        val baseDescriptors = callableDescriptor?.getOriginalTopmostOverriddenDescriptors() ?: emptyList<CallableDescriptor>()
+        val baseDeclarations = baseDescriptors.map { it.source.getPsi() }.filter { it != null && it != target }
+
+        return if (baseDeclarations.isNotEmpty()) {
+            baseDeclarations.flatMap {
+                val handler = (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(it!!, true)
+                handler?.findReferencesToHighlight(it!!, searchScope) ?: emptyList()
+            }
+        }
+        else {
+            super.findReferencesToHighlight(target, searchScope)
+        }
+    }
 
     companion object {
 

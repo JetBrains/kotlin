@@ -46,7 +46,7 @@ class Y: B() {
 
     init {
         B_()
-        B.<!UNRESOLVED_REFERENCE!>B_<!>()
+        B.<!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>B_<!>()
         Y.<!UNRESOLVED_REFERENCE!>B_<!>()
 
         B_S()

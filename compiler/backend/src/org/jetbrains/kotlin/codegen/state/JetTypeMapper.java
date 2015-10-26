@@ -36,12 +36,13 @@ import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
-import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo;
+import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.*;
@@ -782,7 +783,7 @@ public class JetTypeMapper {
 
                 FunctionDescriptor overriddenSpecialBuiltinFunction =
                         SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinWithDifferentJvmDescriptor(functionDescriptor.getOriginal());
-                FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null
+                FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null && !superCall
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
 
@@ -943,6 +944,15 @@ public class JetTypeMapper {
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
+        if (f.getOriginal().getSource() instanceof JavaSourceElement) {
+            FunctionDescriptor overridden = SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinWithDifferentJvmDescriptor(f);
+            if (overridden != null
+                && !SpecialBuiltinMembers.hasRealKotlinSuperClassWithOverrideOf(
+                    (ClassDescriptor) f.getContainingDeclaration(), overridden)
+            ) {
+                return mapSignature(overridden, kind, overridden.getValueParameters());
+            }
+        }
         if (f instanceof ConstructorDescriptor) {
             return mapSignature(f, kind, f.getOriginal().getValueParameters());
         }

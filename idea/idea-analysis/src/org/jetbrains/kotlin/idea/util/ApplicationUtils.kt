@@ -43,10 +43,3 @@ public fun <T> Project.executeCommand(name: String, groupId: Any? = null, comman
     @Suppress("USELESS_CAST")
     return result as T
 }
-
-public fun <T> Project.runWithAlternativeResolveEnabled(action: () -> T): T {
-    var result: T = null as T
-    DumbService.getInstance(this).withAlternativeResolveEnabled { result = action() }
-    @Suppress("USELESS_CAST")
-    return result as T
-}

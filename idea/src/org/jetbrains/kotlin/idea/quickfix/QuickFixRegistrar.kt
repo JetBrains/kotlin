@@ -123,13 +123,16 @@ public class QuickFixRegistrar : QuickFixContributor {
         WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
 
-        val changeToPropertyNameFactory = ChangeToPropertyNameFix.createFactory()
-        NO_BACKING_FIELD_ABSTRACT_PROPERTY.registerFactory(changeToPropertyNameFactory)
-        NO_BACKING_FIELD_CUSTOM_ACCESSORS.registerFactory(changeToPropertyNameFactory)
-        INACCESSIBLE_BACKING_FIELD.registerFactory(changeToPropertyNameFactory)
-
         UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AutoImportFix)
+
+        FUNCTION_EXPECTED.registerFactory(MissingInvokeAutoImportFix)
+
+        DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(MissingDelegateAccessorsAutoImportFix)
+        COMPONENT_FUNCTION_MISSING.registerFactory(MissingComponentsAutoImportFix)
+
+        NO_GET_METHOD.registerFactory(MissingArrayAccessorAutoImportFix)
+        NO_SET_METHOD.registerFactory(MissingArrayAccessorAutoImportFix)
 
         val removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory()
         CONFLICTING_IMPORT.registerFactory(removeImportFixFactory)
@@ -322,10 +325,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
 
         NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
-
-        BACKING_FIELD_OLD_SYNTAX.registerFactory(MigrateBackingFieldSyntaxFix)
-        BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(MigrateBackingFieldUsageFix)
-        BACKING_FIELD_USAGE_FORBIDDEN.registerFactory(IntroduceBackingPropertyFix)
 
         OPERATOR_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.OPERATOR_KEYWORD))
         INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.INFIX_KEYWORD))

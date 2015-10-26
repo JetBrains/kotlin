@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.idea.search
 
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.psi.KtFile
 
 public fun SearchScope.and(otherScope: SearchScope): SearchScope = intersectWith(otherScope)
 public fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScope)
@@ -31,3 +34,18 @@ public fun Project.allScope(): GlobalSearchScope = GlobalSearchScope.allScope(th
 public fun Project.projectScope(): GlobalSearchScope = GlobalSearchScope.projectScope(this)
 
 public fun PsiFile.fileScope(): GlobalSearchScope = GlobalSearchScope.fileScope(this)
+
+public fun SearchScope.restrictToKotlinSources(): SearchScope {
+    return when (this) {
+        is GlobalSearchScope -> GlobalSearchScope.getScopeRestrictedByFileTypes(this, KotlinFileType.INSTANCE)
+        is LocalSearchScope -> {
+            val ktElements = scope.filter { it.containingFile is KtFile }
+            when (ktElements.size) {
+                0 -> GlobalSearchScope.EMPTY_SCOPE
+                scope.size -> this
+                else -> LocalSearchScope(ktElements.toTypedArray())
+            }
+        }
+        else -> this
+    }
+}

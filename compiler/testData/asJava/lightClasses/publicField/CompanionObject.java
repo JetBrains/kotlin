@@ -7,6 +7,9 @@ public final class C {
     public C() { /* compiled code */ }
 
     public static final class Companion {
+        /**
+         * @deprecated
+         */
         public static final C.Companion INSTANCE;
 
         private Companion() { /* compiled code */ }

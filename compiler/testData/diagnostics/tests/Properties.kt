@@ -14,17 +14,9 @@ var x : Int = 1 + <!UNINITIALIZED_VARIABLE!>x<!>
 
 class Test() {
     var a : Int = 111
-    var b : Int get() = <!BACKING_FIELD_USAGE_FORBIDDEN!>$a<!>; set(x) {a = x; <!BACKING_FIELD_USAGE_FORBIDDEN!>$a<!> = x}
+    var b : Int = 222
+        get() = field
+        set(x) {a = x; field = x}
 
-    init {
-    <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!> = <!BACKING_FIELD_USAGE_FORBIDDEN!>$a<!>
-    <!BACKING_FIELD_USAGE_FORBIDDEN!>$a<!> = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
-    a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
-   }
-
-   fun f() {
-    <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!> = <!BACKING_FIELD_USAGE_FORBIDDEN!>$a<!>
-    a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
-   }
    public val i = 1
 }

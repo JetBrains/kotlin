@@ -61,7 +61,7 @@ abstract public class KtClassOrObject :
         }
     }
 
-    public fun getAnonymousInitializers(): List<KtClassInitializer> = getBody()?.getAnonymousInitializers().orEmpty()
+    public fun getAnonymousInitializers(): List<KtClassInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
     public fun getNameAsDeclaration(): KtObjectDeclarationName? =
             findChildByType<PsiElement>(KtNodeTypes.OBJECT_DECLARATION_NAME) as KtObjectDeclarationName?
@@ -72,7 +72,7 @@ abstract public class KtClassOrObject :
 
     public fun addDeclaration(declaration: KtDeclaration): KtDeclaration {
         val body = getOrCreateBody()
-        val anchor = PsiTreeUtil.skipSiblingsBackward(body.getRBrace() ?: body.getLastChild()!!, javaClass<PsiWhiteSpace>())
+        val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.getLastChild()!!, javaClass<PsiWhiteSpace>())
         return body.addAfter(declaration, anchor) as KtDeclaration
     }
 
@@ -105,7 +105,7 @@ abstract public class KtClassOrObject :
     public fun hasPrimaryConstructor(): Boolean = hasExplicitPrimaryConstructor() || !hasSecondaryConstructors()
     private fun hasSecondaryConstructors(): Boolean = !getSecondaryConstructors().isEmpty()
 
-    public fun getSecondaryConstructors(): List<KtSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
+    public fun getSecondaryConstructors(): List<KtSecondaryConstructor> = getBody()?.secondaryConstructors.orEmpty()
 
     public fun isAnnotation(): Boolean = hasModifier(KtTokens.ANNOTATION_KEYWORD)
 

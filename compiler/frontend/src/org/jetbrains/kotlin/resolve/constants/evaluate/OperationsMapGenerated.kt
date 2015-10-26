@@ -98,7 +98,7 @@ internal val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?,
     unaryOperation(SHORT, "unaryMinus", { a -> a.unaryMinus() }, { a -> a.unaryMinus() }),
     unaryOperation(SHORT, "unaryPlus", { a -> a.unaryPlus() }, emptyUnaryFun),
     unaryOperation(SHORT, "toString", { a -> a.toString() }, emptyUnaryFun),
-    unaryOperation(STRING, "length", { a -> a.length() }, emptyUnaryFun),
+    unaryOperation(STRING, "length", { a -> a.length }, emptyUnaryFun),
     unaryOperation(STRING, "toString", { a -> a.toString() }, emptyUnaryFun)
 )
 

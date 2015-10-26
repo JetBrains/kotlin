@@ -135,7 +135,6 @@ class AnonymousInitializers(var a: String, val b: String) {
 
     init {
         <!VAL_REASSIGNMENT!>i<!> = 13
-        <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$j<!> = 30
         <!VAL_REASSIGNMENT!>j<!> = 34
     }
 
@@ -241,7 +240,7 @@ class Outer() {
 }
 
 class ForwardAccessToBackingField() { //kt-147
-    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>$a<!> // error
+    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>a<!> // error
     val b = <!UNINITIALIZED_VARIABLE!>c<!> // error
     val c = 1
 }
@@ -327,7 +326,6 @@ fun func() {
         val x = b
         init {
             <!VAL_REASSIGNMENT!>b<!> = 4
-            <!UNRESOLVED_REFERENCE!>$b<!> = 3
         }
     }
 }

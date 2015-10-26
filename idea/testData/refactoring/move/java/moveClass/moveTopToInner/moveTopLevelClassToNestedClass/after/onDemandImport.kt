@@ -1,5 +1,5 @@
 import B.*
 
 fun bar() {
-    val t: C.A = B.C.A()
+    val t: C.A = C.A()
 }

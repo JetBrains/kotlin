@@ -1,0 +1,30 @@
+// FILE: first.before.kt
+// "Import" "false"
+// ERROR: Multi-declaration initializer of type some.Some must have a 'component1()' function
+// ACTION: Create extension function 'component1'
+// ACTION: Create member function 'component1'
+
+
+package testing
+
+import some.Some
+import some.component2
+
+fun testing() {
+    val (a, b) = <caret>Some()
+}
+//-----------------------
+
+
+// FILE: second.kt
+package some
+
+public class Some
+
+fun Some.component1() = 1
+operator fun Some.component2() = 3
+//-----------------------
+
+
+// FILE: first.after.kt
+// -- Empty file --

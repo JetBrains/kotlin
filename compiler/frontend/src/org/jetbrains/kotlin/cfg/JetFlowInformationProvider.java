@@ -325,9 +325,7 @@ public class JetFlowInformationProvider {
                         if (instruction instanceof ReadValueInstruction) {
                             ReadValueInstruction readValueInstruction = (ReadValueInstruction) instruction;
                             KtElement element = readValueInstruction.getElement();
-                            boolean error = checkBackingField(ctxt, element);
-                            if (!error &&
-                                PseudocodeUtil.isThisOrNoDispatchReceiver(readValueInstruction, trace.getBindingContext()) &&
+                            if (PseudocodeUtil.isThisOrNoDispatchReceiver(readValueInstruction, trace.getBindingContext()) &&
                                 declaredVariables.contains(ctxt.variableDescriptor)) {
                                 checkIsInitialized(ctxt, element, varWithUninitializedErrorGenerated);
                             }
@@ -336,17 +334,14 @@ public class JetFlowInformationProvider {
                         if (!(instruction instanceof WriteValueInstruction)) return;
                         WriteValueInstruction writeValueInstruction = (WriteValueInstruction) instruction;
                         KtElement element = writeValueInstruction.getLValue();
-                        boolean error = checkBackingField(ctxt, element);
                         if (!(element instanceof KtExpression)) return;
-                        if (!error) {
-                            error = checkValReassignment(ctxt, (KtExpression) element, writeValueInstruction,
-                                                         varWithValReassignErrorGenerated);
-                        }
+                        boolean error = checkValReassignment(ctxt, (KtExpression) element, writeValueInstruction,
+                                                             varWithValReassignErrorGenerated);
                         if (!error && processClassOrObject) {
                             error = checkAssignmentBeforeDeclaration(ctxt, (KtExpression) element);
                         }
                         if (!error && processClassOrObject) {
-                            checkInitializationUsingBackingField(ctxt, (KtExpression) element);
+                            checkInitializationForCustomSetter(ctxt, (KtExpression) element);
                         }
                     }
                 }
@@ -402,7 +397,7 @@ public class JetFlowInformationProvider {
     ) {
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
         PropertyDescriptor propertyDescriptor = SyntheticFieldDescriptorKt.getReferencedProperty(variableDescriptor);
-        if (KtPsiUtil.isBackingFieldReference(expression, variableDescriptor) && propertyDescriptor != null) {
+        if (KtPsiUtil.isBackingFieldReference(variableDescriptor) && propertyDescriptor != null) {
             KtPropertyAccessor accessor = PsiTreeUtil.getParentOfType(expression, KtPropertyAccessor.class);
             if (accessor != null) {
                 DeclarationDescriptor accessorDescriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, accessor);
@@ -491,94 +486,33 @@ public class JetFlowInformationProvider {
         return false;
     }
 
-    private boolean checkInitializationUsingBackingField(@NotNull VariableInitContext ctxt, @NotNull KtExpression expression) {
+    private boolean checkInitializationForCustomSetter(@NotNull VariableInitContext ctxt, @NotNull KtExpression expression) {
         VariableDescriptor variableDescriptor = ctxt.variableDescriptor;
-        if (variableDescriptor instanceof PropertyDescriptor
-            && !ctxt.enterInitState.mayBeInitialized()
-            && ctxt.exitInitState.mayBeInitialized()) {
-            if (!variableDescriptor.isVar()) return false;
-            if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) return false;
-            PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
-            assert property instanceof KtProperty;
-            KtPropertyAccessor setter = ((KtProperty) property).getSetter();
-            if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.FINAL && (setter == null || !setter.hasBody())) {
-                return false;
-            }
-            KtExpression variable = expression;
-            if (expression instanceof KtDotQualifiedExpression) {
-                if (((KtDotQualifiedExpression) expression).getReceiverExpression() instanceof KtThisExpression) {
-                    variable = ((KtDotQualifiedExpression) expression).getSelectorExpression();
-                }
-            }
-            if (variable instanceof KtSimpleNameExpression) {
-                KtSimpleNameExpression simpleNameExpression = (KtSimpleNameExpression) variable;
-                if (simpleNameExpression.getReferencedNameElementType() != KtTokens.FIELD_IDENTIFIER) {
-                    trace.record(IS_UNINITIALIZED, (PropertyDescriptor) variableDescriptor);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean checkBackingField(@NotNull VariableContext cxtx, @NotNull KtElement element) {
-        VariableDescriptor variableDescriptor = cxtx.variableDescriptor;
-        boolean[] error = new boolean[1];
-        if (!isCorrectBackingFieldReference(element, cxtx, error, true)) return false;
-        if (error[0]) return true;
-        if (!(variableDescriptor instanceof PropertyDescriptor)) {
-            report(Errors.NOT_PROPERTY_BACKING_FIELD.on(element), cxtx);
-            return true;
-        }
-        PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
-        boolean insideSelfAccessors = PsiTreeUtil.isAncestor(property, element, false);
-        if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor) &&
-                // not to generate error in accessors of abstract properties, there is one: declared accessor of abstract property
-                !insideSelfAccessors) {
-
-            if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.ABSTRACT) {
-                report(NO_BACKING_FIELD_ABSTRACT_PROPERTY.on(element), cxtx);
-            }
-            else {
-                report(NO_BACKING_FIELD_CUSTOM_ACCESSORS.on(element), cxtx);
-            }
-            return true;
-        }
-        if (insideSelfAccessors) return false;
-
-        DeclarationDescriptor declarationDescriptor = BindingContextUtils.getEnclosingDescriptor(trace.getBindingContext(), element);
-
-        DeclarationDescriptor containingDeclaration = variableDescriptor.getContainingDeclaration();
-        if ((containingDeclaration instanceof ClassDescriptor)
-                && DescriptorUtils.isAncestor(containingDeclaration, declarationDescriptor, false)) {
-            if (element instanceof KtSimpleNameExpression) {
-                report(Errors.BACKING_FIELD_USAGE_FORBIDDEN.on((KtSimpleNameExpression) element), cxtx);
-            }
+        if (!(variableDescriptor instanceof PropertyDescriptor)
+            || ctxt.enterInitState.mayBeInitialized()
+            || !ctxt.exitInitState.mayBeInitialized()
+            || !variableDescriptor.isVar()
+            || !trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)
+        ) {
             return false;
         }
-        report(Errors.INACCESSIBLE_BACKING_FIELD.on(element), cxtx);
-        return true;
-    }
 
-    private boolean isCorrectBackingFieldReference(
-            @Nullable KtElement element,
-            VariableContext ctxt,
-            boolean[] error,
-            boolean reportError
-    ) {
-        error[0] = false;
-        if (KtPsiUtil.isBackingFieldReference(element, null)) {
-            return true;
+        PsiElement property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
+        assert property instanceof KtProperty;
+        KtPropertyAccessor setter = ((KtProperty) property).getSetter();
+        if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.FINAL && (setter == null || !setter.hasBody())) {
+            return false;
         }
-        if (element instanceof KtDotQualifiedExpression && isCorrectBackingFieldReference(
-                ((KtDotQualifiedExpression) element).getSelectorExpression(), ctxt, error, false)) {
-            if (((KtDotQualifiedExpression) element).getReceiverExpression() instanceof KtThisExpression) {
-                return true;
+
+        KtExpression variable = expression;
+        if (expression instanceof KtDotQualifiedExpression) {
+            if (((KtDotQualifiedExpression) expression).getReceiverExpression() instanceof KtThisExpression) {
+                variable = ((KtDotQualifiedExpression) expression).getSelectorExpression();
             }
-            error[0] = true;
-            if (reportError) {
-                report(Errors.INACCESSIBLE_BACKING_FIELD.on(element), ctxt);
-            }
+        }
+        if (variable instanceof KtSimpleNameExpression) {
+            trace.record(IS_UNINITIALIZED, (PropertyDescriptor) variableDescriptor);
+            return true;
         }
         return false;
     }

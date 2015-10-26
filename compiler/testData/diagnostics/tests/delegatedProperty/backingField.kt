@@ -5,7 +5,7 @@ import kotlin.reflect.KProperty
 class B {
     val a: Int by Delegate()
 
-    fun foo() = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$a<!>
+    fun foo() =<!SYNTAX!><!> <!SYNTAX!>$a<!>
 }
 
 class Delegate {

@@ -33,6 +33,12 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Formatter extends AbstractJetFormatterTest {
+        @TestMetadata("AfterSemiColonInEnumClass.after.kt")
+        public void testAfterSemiColonInEnumClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/formatter/AfterSemiColonInEnumClass.after.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInFormatter() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }

@@ -99,9 +99,9 @@ class LookupElementsCollector(
 
                 if (context.shouldAddCompletionChar() && !isJustTyping(context, this)) {
                     when (context.getCompletionChar()) {
-                        ',' -> WithTailInsertHandler.commaTail().postHandleInsert(context, getDelegate())
+                        ',' -> WithTailInsertHandler.COMMA.postHandleInsert(context, getDelegate())
 
-                        '=' -> WithTailInsertHandler.eqTail().postHandleInsert(context, getDelegate())
+                        '=' -> WithTailInsertHandler.EQ.postHandleInsert(context, getDelegate())
 
                         '!' -> {
                             WithExpressionPrefixInsertHandler("!").postHandleInsert(context)

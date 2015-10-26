@@ -31,5 +31,11 @@ class Test {
 
         new J().getP();
         new J().setP(4);
+
+        new D().getP();
+        new D().setP(5);
+
+        new E().getP();
+        new E().setP(6);
     }
 }

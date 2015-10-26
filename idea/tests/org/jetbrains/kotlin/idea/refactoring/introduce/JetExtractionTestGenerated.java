@@ -510,6 +510,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("extractToEnumClassBody.kt")
+            public void testExtractToEnumClassBody() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractToEnumClassBody.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("fakeOverride.kt")
             public void testFakeOverride() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/fakeOverride.kt");
@@ -1994,6 +2000,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("javaSyntheticProperty.kt")
                 public void testJavaSyntheticProperty() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/javaSyntheticProperty.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("javaSyntheticPropertyWithDelegation.kt")
+                public void testJavaSyntheticPropertyWithDelegation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/javaSyntheticPropertyWithDelegation.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("javaSyntheticPropertyWithOverride.kt")
+                public void testJavaSyntheticPropertyWithOverride() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/javaSyntheticPropertyWithOverride.kt");
                     doExtractFunctionTest(fileName);
                 }
 

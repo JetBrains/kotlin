@@ -1,0 +1,40 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foo()["other"]
+// ERROR: No set method providing array access
+
+package testing
+
+import some.Some
+
+fun foo(): Some = Some()
+
+fun testing() {
+    foo()<caret>["other"] = 1
+}
+
+
+
+// FILE: second.kt
+package some
+
+public class Some
+
+operator fun Some.set(s: String) {}
+
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foo()["other"]
+// ERROR: No set method providing array access
+
+package testing
+
+import some.Some
+import some.set
+
+fun foo(): Some = Some()
+
+fun testing() {
+    foo()<caret>["other"] = 1
+}

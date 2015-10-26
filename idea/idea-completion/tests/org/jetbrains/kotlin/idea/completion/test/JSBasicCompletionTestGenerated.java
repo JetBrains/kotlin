@@ -439,6 +439,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("InnerClass.kt")
+        public void testInnerClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InnerClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InsideAnonymousClass.kt")
         public void testInsideAnonymousClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InsideAnonymousClass.kt");
@@ -685,6 +691,36 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("TopLevelClassName1.kt")
+        public void testTopLevelClassName1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelClassName1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelClassName2.kt")
+        public void testTopLevelClassName2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/topLevelClassName2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelClassName4.kt")
+        public void testTopLevelClassName4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelClassName4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelClassName5.kt")
+        public void testTopLevelClassName5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelClassName5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TopLevelClassName-3.kt")
+        public void testTopLevelClassName_3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelClassName-3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeArgCompletionBug.kt")
         public void testTypeArgCompletionBug() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeArgCompletionBug.kt");
@@ -747,6 +783,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("ForType.kt")
+            public void testForType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/ForType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FunctionAnnotation1.kt")
             public void testFunctionAnnotation1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/FunctionAnnotation1.kt");
@@ -768,6 +810,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("NoSetterParameterAutopopup.kt")
             public void testNoSetterParameterAutopopup() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/NoSetterParameterAutopopup.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OnlyAnnotations.kt")
+            public void testOnlyAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/OnlyAnnotations.kt");
                 doTest(fileName);
             }
 

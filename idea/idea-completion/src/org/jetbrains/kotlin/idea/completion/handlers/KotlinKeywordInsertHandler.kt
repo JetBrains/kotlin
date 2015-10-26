@@ -39,15 +39,20 @@ object KotlinKeywordInsertHandler : InsertHandler<LookupElement> {
                                         FILE_KEYWORD,
                                         CATCH_KEYWORD,
                                         FINALLY_KEYWORD,
-                                        DYNAMIC_KEYWORD).map { it.getValue() } + "companion object"
+                                        DYNAMIC_KEYWORD,
+                                        GET_KEYWORD,
+                                        SET_KEYWORD).map { it.value } + "companion object"
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val keyword = item.getLookupString()
-        if (keyword == FILE_KEYWORD.getValue()) {
-            WithTailInsertHandler.colonTail().postHandleInsert(context, item)
+        val keyword = item.lookupString
+        if (keyword !in NO_SPACE_AFTER) {
+            WithTailInsertHandler.SPACE.postHandleInsert(context, item)
         }
-        else if (keyword !in NO_SPACE_AFTER) {
-            WithTailInsertHandler.spaceTail().postHandleInsert(context, item)
-        }
+    }
+}
+
+object UseSiteAnnotationTargetInsertHandler : InsertHandler<LookupElement> {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        WithTailInsertHandler(":", spaceBefore = false, spaceAfter = false).postHandleInsert(context, item)
     }
 }

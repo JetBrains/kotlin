@@ -51,11 +51,7 @@ public class TypeBoundsImpl(
         bounds.add(bound)
     }
 
-    private fun filterBounds(bounds: Collection<Bound>, kind: BoundKind): Set<KotlinType> {
-        return filterBounds(bounds, kind, null)
-    }
-
-    private fun filterBounds(bounds: Collection<Bound>, kind: BoundKind, errorValues: MutableCollection<KotlinType>?): Set<KotlinType> {
+    private fun filterBounds(bounds: Collection<Bound>, kind: BoundKind, errorValues: MutableCollection<KotlinType>? = null): Set<KotlinType> {
         val result = LinkedHashSet<KotlinType>()
         for (bound in bounds) {
             if (bound.kind == kind) {
@@ -106,7 +102,7 @@ public class TypeBoundsImpl(
         values.addAll(exactBounds)
 
         val (numberLowerBounds, generalLowerBounds) =
-                filterBounds(bounds, LOWER_BOUND, values).partition { it.getConstructor() is IntegerValueTypeConstructor }
+                filterBounds(bounds, LOWER_BOUND, values).partition { it.constructor is IntegerValueTypeConstructor }
 
         val superTypeOfLowerBounds = CommonSupertypes.commonSupertypeForNonDenotableTypes(generalLowerBounds)
         if (tryPossibleAnswer(bounds, superTypeOfLowerBounds)) {
@@ -146,15 +142,28 @@ public class TypeBoundsImpl(
         return values
     }
 
+    private fun checkOnlyInputTypes(bounds: Collection<Bound>, possibleAnswer: KotlinType): Boolean {
+        if (!typeVariable.hasOnlyInputTypesAnnotation()) return true
+
+        // Only type mentioned in bounds might be the result
+        val typesInBoundsSet = bounds.filter { it.isProper && it.constrainingType.constructor.isDenotable }.map { it.constrainingType }.toSet()
+        // Flexible types are equal to inflexible
+        if (typesInBoundsSet.any { KotlinTypeChecker.DEFAULT.equalTypes(it, possibleAnswer) }) return true
+
+        // For non-denotable number types only, no valid types are mentioned, so common supertype is valid
+        val numberLowerBounds = filterBounds(bounds, LOWER_BOUND).filter { it.constructor is IntegerValueTypeConstructor }
+        val superTypeOfNumberLowerBounds = TypeUtils.commonSupertypeForNumberTypes(numberLowerBounds)
+        if (possibleAnswer == superTypeOfNumberLowerBounds) return true
+
+        return false
+    }
+
     private fun tryPossibleAnswer(bounds: Collection<Bound>, possibleAnswer: KotlinType?): Boolean {
         if (possibleAnswer == null) return false
         // a captured type might be an answer
-        if (!possibleAnswer.getConstructor().isDenotable() && !possibleAnswer.isCaptured()) return false
+        if (!possibleAnswer.constructor.isDenotable && !possibleAnswer.isCaptured()) return false
 
-        if (typeVariable.hasOnlyInputTypesAnnotation()) {
-            val typesInBoundsSet = bounds.filter { it.isProper && it.constrainingType.constructor.isDenotable }.map { it.constrainingType }.toSet()
-            if (!typesInBoundsSet.contains(possibleAnswer)) return false
-        }
+        if (!checkOnlyInputTypes(bounds, possibleAnswer)) return false
 
         for (bound in bounds) {
             when (bound.kind) {

@@ -106,7 +106,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             DO_KEYWORD,
 
             IDENTIFIER, // SimpleName
-            FIELD_IDENTIFIER, // Field reference
 
             PACKAGE_KEYWORD, // for absolute qualified names
             AT // Just for better recovery and maybe for annotations
@@ -679,9 +678,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
                        VAR_KEYWORD, TYPE_ALIAS_KEYWORD)) {
             parseLocalDeclaration();
         }
-        else if (at(FIELD_IDENTIFIER)) {
-            parseSimpleNameExpression();
-        }
         else if (at(IDENTIFIER)) {
             parseSimpleNameExpression();
         }
@@ -1019,12 +1015,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     public void parseSimpleNameExpression() {
         PsiBuilder.Marker simpleName = mark();
-        if (at(FIELD_IDENTIFIER)) {
-            advance(); //
-        }
-        else {
-            expect(IDENTIFIER, "Expecting an identifier");
-        }
+        expect(IDENTIFIER, "Expecting an identifier");
         simpleName.done(REFERENCE_EXPRESSION);
     }
 

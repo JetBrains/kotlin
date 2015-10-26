@@ -1,5 +1,5 @@
 // ACTION_CLASS: org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction
-class Foo<U> : Base<U, Int> {<caret>
+class Foo : Base {<caret>
     val x = 1
 
     fun foo() {

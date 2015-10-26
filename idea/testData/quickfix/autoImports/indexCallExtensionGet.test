@@ -1,0 +1,44 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foo()["str"]
+// ERROR: No get method providing array access
+
+package testing
+
+import some.Some
+
+fun foo(): Some = Some()
+
+fun testing() {
+    foo()<caret>["str"]
+}
+
+
+
+// FILE: second.kt
+package some
+
+public class Some
+
+operator fun Some.get(s: String) {}
+
+
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foo()["str"]
+// ERROR: No get method providing array access
+
+package testing
+
+import some.Some
+import some.get
+
+fun foo(): Some = Some()
+
+fun testing() {
+    foo()<caret>["str"]
+}
+
+
+

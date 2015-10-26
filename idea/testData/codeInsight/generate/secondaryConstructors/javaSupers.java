@@ -1,9 +1,9 @@
-public class Base<X, Y> {
-    public Base(X x) {
+public class Base {
+    public Base(int n) {
 
     }
 
-    public Base(X x, Y y) {
+    public Base(int a, int b) {
 
     }
 }

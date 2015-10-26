@@ -20,6 +20,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
@@ -61,6 +64,10 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
         private fun isApplicableArrayAccess(element: KtArrayAccessExpression, caretOffset: Int): Boolean {
             val lbracket = element.getLeftBracket() ?: return false
             val rbracket = element.getRightBracket() ?: return false
+
+            val access = element.readWriteAccess(useResolveForReadWrite = true)
+            if (access == ReferenceAccess.READ_WRITE) return false // currently not supported
+
             return lbracket.getTextRange().containsOffset(caretOffset) || rbracket.getTextRange().containsOffset(caretOffset)
         }
 
@@ -81,44 +88,37 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
         }
 
         private fun convertPrefix(element: KtPrefixExpression): KtExpression {
-            val op = element.getOperationReference().getReferencedNameElementType()
-            val base = element.getBaseExpression()!!.getText()
-
-            val call = when (op) {
-                KtTokens.PLUS -> "plus()"
-                KtTokens.MINUS -> "minus()"
-                KtTokens.PLUSPLUS -> "inc()"
-                KtTokens.MINUSMINUS -> "dec()"
-                KtTokens.EXCL -> "not()"
+            val op = element.operationReference.getReferencedNameElementType()
+            val operatorName = when (op) {
+                KtTokens.PLUS -> OperatorNameConventions.PLUS
+                KtTokens.MINUS -> OperatorNameConventions.MINUS
+                KtTokens.PLUSPLUS -> OperatorNameConventions.INC
+                KtTokens.MINUSMINUS -> OperatorNameConventions.DEC
+                KtTokens.EXCL -> OperatorNameConventions.NOT
                 else -> return element
             }
 
-            val transformation = "$base.$call"
-            val transformed = KtPsiFactory(element).createExpression(transformation)
+            val transformed = KtPsiFactory(element).createExpressionByPattern("$0.$1()", element.baseExpression!!, operatorName)
             return element.replace(transformed) as KtExpression
         }
 
         private fun convertPostFix(element: KtPostfixExpression): KtExpression {
             val op = element.getOperationReference().getReferencedNameElementType()
-            val base = element.getBaseExpression()!!.getText()
-
-            val call = when (op) {
-                KtTokens.PLUSPLUS -> "inc()"
-                KtTokens.MINUSMINUS -> "dec()"
+            val operatorName = when (op) {
+                KtTokens.PLUSPLUS -> OperatorNameConventions.INC
+                KtTokens.MINUSMINUS -> OperatorNameConventions.DEC
                 else -> return element
             }
 
-            val transformation = "$base.$call"
-            val transformed = KtPsiFactory(element).createExpression(transformation)
+            val transformed = KtPsiFactory(element).createExpressionByPattern("$0.$1()", element.baseExpression!!, operatorName)
             return element.replace(transformed) as KtExpression
         }
 
+        //TODO: don't use creation by plain text
         private fun convertBinary(element: KtBinaryExpression): KtExpression {
-            val op = element.getOperationReference().getReferencedNameElementType()
-            val left = element.getLeft()!!
-            val right = element.getRight()!!
-            val leftText = left.getText()
-            val rightText = right.getText()
+            val op = element.operationReference.getReferencedNameElementType()
+            val left = element.left!!
+            val right = element.right!!
 
             if (op == KtTokens.EQ) {
                 if (left is KtArrayAccessExpression) {
@@ -132,57 +132,66 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
             val functionName = functionCandidate?.getCandidateDescriptor()?.getName().toString()
             val elemType = context.getType(left)
 
-            val transformation = when (op) {
-                KtTokens.PLUS -> "$leftText.plus($rightText)"
-                KtTokens.MINUS -> "$leftText.minus($rightText)"
-                KtTokens.MUL -> "$leftText.times($rightText)"
-                KtTokens.DIV -> "$leftText.div($rightText)"
-                KtTokens.PERC -> "$leftText.mod($rightText)"
-                KtTokens.RANGE -> "$leftText.rangeTo($rightText)"
-                KtTokens.IN_KEYWORD -> "$rightText.contains($leftText)"
-                KtTokens.NOT_IN -> "!$rightText.contains($leftText)"
-                KtTokens.PLUSEQ -> if (functionName == "plusAssign") "$leftText.plusAssign($rightText)" else "$leftText = $leftText.plus($rightText)"
-                KtTokens.MINUSEQ -> if (functionName == "minusAssign") "$leftText.minusAssign($rightText)" else "$leftText = $leftText.minus($rightText)"
-                KtTokens.MULTEQ -> if (functionName == "multAssign") "$leftText.multAssign($rightText)" else "$leftText = $leftText.mult($rightText)"
-                KtTokens.DIVEQ -> if (functionName == "divAssign") "$leftText.divAssign($rightText)" else "$leftText = $leftText.div($rightText)"
-                KtTokens.PERCEQ -> if (functionName == "modAssign") "$leftText.modAssign($rightText)" else "$leftText = $leftText.mod($rightText)"
-                KtTokens.EQEQ -> if (elemType?.isMarkedNullable() ?: true) "$leftText?.equals($rightText) ?: $rightText.identityEquals(null)" else "$leftText.equals($rightText)"
-                KtTokens.EXCLEQ -> if (elemType?.isMarkedNullable() ?: true) "!($leftText?.equals($rightText) ?: $rightText.identityEquals(null))" else "!$leftText.equals($rightText)"
-                KtTokens.GT -> "$leftText.compareTo($rightText) > 0"
-                KtTokens.LT -> "$leftText.compareTo($rightText) < 0"
-                KtTokens.GTEQ -> "$leftText.compareTo($rightText) >= 0"
-                KtTokens.LTEQ -> "$leftText.compareTo($rightText) <= 0"
+            val pattern = when (op) {
+                KtTokens.PLUS -> "$0.plus($1)"
+                KtTokens.MINUS -> "$0.minus($1)"
+                KtTokens.MUL -> "$0.times($1)"
+                KtTokens.DIV -> "$0.div($1)"
+                KtTokens.PERC -> "$0.mod($1)"
+                KtTokens.RANGE -> "$0.rangeTo($1)"
+                KtTokens.IN_KEYWORD -> "$1.contains($0)"
+                KtTokens.NOT_IN -> "!$1.contains($0)"
+                KtTokens.PLUSEQ -> if (functionName == "plusAssign") "$0.plusAssign($1)" else "$0 = $0.plus($1)"
+                KtTokens.MINUSEQ -> if (functionName == "minusAssign") "$0.minusAssign($1)" else "$0 = $0.minus($1)"
+                KtTokens.MULTEQ -> if (functionName == "multAssign") "$0.multAssign($1)" else "$0 = $0.mult($1)"
+                KtTokens.DIVEQ -> if (functionName == "divAssign") "$0.divAssign($1)" else "$0 = $0.div($1)"
+                KtTokens.PERCEQ -> if (functionName == "modAssign") "$0.modAssign($1)" else "$0 = $0.mod($1)"
+                KtTokens.EQEQ -> if (elemType?.isMarkedNullable() ?: true) "$0?.equals($1) ?: $1.identityEquals(null)" else "$0.equals($1)"
+                KtTokens.EXCLEQ -> if (elemType?.isMarkedNullable() ?: true) "!($0?.equals($1) ?: $1.identityEquals(null))" else "!$0.equals($1)"
+                KtTokens.GT -> "$0.compareTo($1) > 0"
+                KtTokens.LT -> "$0.compareTo($1) < 0"
+                KtTokens.GTEQ -> "$0.compareTo($1) >= 0"
+                KtTokens.LTEQ -> "$0.compareTo($1) <= 0"
                 else -> return element
             }
 
-            val transformed = KtPsiFactory(element).createExpression(transformation)
-
+            val transformed = KtPsiFactory(element).createExpressionByPattern(pattern, left, right)
             return element.replace(transformed) as KtExpression
         }
 
         private fun convertArrayAccess(element: KtArrayAccessExpression): KtExpression {
-            val parent = element.getParent()
-            val array = element.getArrayExpression()!!.getText()
-            val indices = element.getIndicesNode()
-            val indicesText = indices.getText()?.removeSurrounding("[","]") ?: throw AssertionError("Indices node of ArrayExpression shouldn't be null: JetArrayAccessExpression = ${element.getText()}")
+            var expressionToReplace: KtExpression = element
+            val transformed = KtPsiFactory(element).buildExpression {
+                appendExpression(element.arrayExpression)
 
-            val transformation : String
-            val replaced : KtElement
-            if (parent is KtBinaryExpression && parent.getOperationReference().getReferencedNameElementType() == KtTokens.EQ) {
-                // part of an assignment
-                val right = parent.getRight()!!.getText()
-                transformation = "$array.set($indicesText, $right)"
-                replaced = parent
-            }
-            else {
-                transformation = "$array.get($indicesText)"
-                replaced = element
+                appendFixedText(".")
+
+                if (isAssignmentLeftSide(element)) {
+                    val parent = element.parent
+                    expressionToReplace = parent as KtBinaryExpression
+
+                    appendFixedText("set(")
+                    appendExpressions(element.indexExpressions)
+                    appendFixedText(",")
+                    appendExpression(parent.right)
+                }
+                else {
+                    appendFixedText("get(")
+                    appendExpressions(element.indexExpressions)
+                }
+
+                appendFixedText(")")
             }
 
-            val transformed = KtPsiFactory(element).createExpression(transformation)
-            return replaced.replace(transformed) as KtExpression
+            return expressionToReplace.replace(transformed) as KtExpression
         }
 
+        private fun isAssignmentLeftSide(element: KtArrayAccessExpression): Boolean {
+            val parent = element.parent
+            return parent is KtBinaryExpression && parent.operationReference.getReferencedNameElementType() == KtTokens.EQ && element == parent.left
+        }
+
+        //TODO: don't use creation by plain text
         private fun convertCall(element: KtCallExpression): KtExpression {
             val callee = element.getCalleeExpression()!!
             val arguments = element.getValueArgumentList()
@@ -197,6 +206,13 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
         }
 
         public fun convert(element: KtExpression): Pair<KtExpression, KtSimpleNameExpression> {
+            var elementToBeReplaced = element
+            if (element is KtArrayAccessExpression && isAssignmentLeftSide(element)) {
+                elementToBeReplaced = element.parent as KtExpression
+            }
+
+            val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
+
             val result = when (element) {
                 is KtPrefixExpression -> convertPrefix(element)
                 is KtPostfixExpression -> convertPostFix(element)
@@ -205,6 +221,8 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpressio
                 is KtCallExpression -> convertCall(element)
                 else -> throw IllegalArgumentException(element.toString())
             }
+
+            commentSaver.restore(result)
 
             val callName = findCallName(result)
                            ?: error("No call name found in ${result.text}")

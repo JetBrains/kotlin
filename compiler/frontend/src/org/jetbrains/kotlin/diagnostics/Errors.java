@@ -99,6 +99,8 @@ public interface Errors {
     DiagnosticFactory1<KtTypeProjection, ClassifierDescriptor> REDUNDANT_PROJECTION = DiagnosticFactory1.create(WARNING, VARIANCE_IN_PROJECTION);
     DiagnosticFactory1<PsiElement, VarianceConflictDiagnosticData> TYPE_VARIANCE_CONFLICT =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory1<PsiElement, String> FINITE_BOUNDS_VIOLATION = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> EXPANSIVE_INHERITANCE = DiagnosticFactory1.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,6 +184,8 @@ public interface Errors {
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_APPEARS_TWICE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory3<KtDelegationSpecifierList, TypeParameterDescriptor, ClassDescriptor, Collection<KotlinType>>
             INCONSISTENT_TYPE_PARAMETER_VALUES = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtTypeParameter, TypeParameterDescriptor, ClassDescriptor, Collection<KotlinType>>
+            INCONSISTENT_TYPE_PARAMETER_BOUNDS = DiagnosticFactory3.create(ERROR);
 
 
     DiagnosticFactory0<KtTypeReference> FINAL_SUPERTYPE = DiagnosticFactory0.create(ERROR);
@@ -356,9 +360,6 @@ public interface Errors {
     DiagnosticFactory0<KtProperty> FINAL_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
     DiagnosticFactory0<KtProperty> PRIVATE_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, PRIVATE_MODIFIER);
     DiagnosticFactory0<KtProperty> BACKING_FIELD_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-
-    DiagnosticFactory0<KtSimpleNameExpression> BACKING_FIELD_OLD_SYNTAX = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtSimpleNameExpression> BACKING_FIELD_USAGE_FORBIDDEN = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, String> INAPPLICABLE_LATEINIT_MODIFIER = DiagnosticFactory1.create(ERROR);
 
@@ -667,13 +668,6 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_FUN_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_CATCH_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER = DiagnosticFactory1.create(ERROR);
-
-    // Backing fields
-
-    DiagnosticFactory0<KtElement> NO_BACKING_FIELD_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement> NO_BACKING_FIELD_CUSTOM_ACCESSORS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement> INACCESSIBLE_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement> NOT_PROPERTY_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
 
     // When expressions
 

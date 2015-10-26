@@ -361,12 +361,8 @@ public class KtPsiUtil {
         return declaration.getBodyExpression() == null;
     }
 
-    public static boolean isBackingFieldReference(@NotNull KtSimpleNameExpression expression, @Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof SyntheticFieldDescriptor || expression.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER;
-    }
-
-    public static boolean isBackingFieldReference(@Nullable KtElement element, @Nullable DeclarationDescriptor descriptor) {
-        return element instanceof KtSimpleNameExpression && isBackingFieldReference((KtSimpleNameExpression) element, descriptor);
+    public static boolean isBackingFieldReference(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof SyntheticFieldDescriptor;
     }
 
     @Nullable

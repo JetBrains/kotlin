@@ -104,9 +104,9 @@ val KtQualifiedExpression.callExpression: KtCallExpression?
 val KtQualifiedExpression.calleeName: String?
     get() = (callExpression?.getCalleeExpression() as? KtNameReferenceExpression)?.getText()
 
-fun KtQualifiedExpression.toResolvedCall(): ResolvedCall<out CallableDescriptor>? {
+fun KtQualifiedExpression.toResolvedCall(bodyResolveMode: BodyResolveMode): ResolvedCall<out CallableDescriptor>? {
     val callExpression = callExpression ?: return null
-    return callExpression.getResolvedCall(callExpression.analyze()) ?: return null
+    return callExpression.getResolvedCall(callExpression.analyze(bodyResolveMode)) ?: return null
 }
 
 fun KtExpression.isExitStatement(): Boolean {

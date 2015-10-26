@@ -75,11 +75,24 @@ class QualifierReceiver (
     override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
 
     override val scope: KtScope get() {
-        val classObjectTypeScope = (classifier as? ClassDescriptor)?.classObjectType?.getMemberScope()?.let {
+        val scopes = ArrayList<KtScope>(4)
+
+        val classObjectTypeScope = (classifier as? ClassDescriptor)?.classObjectType?.memberScope?.let {
             FilteringScope(it) { it !is ClassDescriptor }
         }
-        val scopes = listOf(classObjectTypeScope, getNestedClassesAndPackageMembersScope()).filterNotNull().toTypedArray()
-        return ChainedScope(descriptor, "Member scope for " + name + " as package or class or object", *scopes)
+        scopes.addIfNotNull(classObjectTypeScope)
+
+        scopes.addIfNotNull(packageView?.memberScope)
+
+        if (classifier is ClassDescriptor) {
+            scopes.add(classifier.staticScope)
+
+            if (classifier.kind != ClassKind.ENUM_ENTRY) {
+                scopes.add(classifier.unsubstitutedInnerClassesScope)
+            }
+        }
+
+        return ChainedScope(descriptor, "Member scope for $name as package or class or object", *scopes.toTypedArray())
     }
 
     fun getClassObjectReceiver(): ReceiverValue =

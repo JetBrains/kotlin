@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -30,20 +29,16 @@ public abstract class JavaMethodDeferredKotlinUsage<T : PsiElement>(element: T) 
     abstract fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<T>
 }
 
-public class DeferredSAMUsage(
-        val functionLiteral: KtFunctionLiteral,
+public class DeferredJavaMethodOverrideOrSAMUsage(
+        val function: KtFunction,
         val functionDescriptor: FunctionDescriptor,
-        val samCallType: KotlinType
-): JavaMethodDeferredKotlinUsage<KtFunctionLiteral>(functionLiteral) {
-        override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtFunctionLiteral> {
-                return object : JavaMethodKotlinUsageWithDelegate<KtFunctionLiteral>(functionLiteral, javaMethodChangeInfo) {
-                        override val delegateUsage = JetCallableDefinitionUsage(
-                                functionLiteral,
-                                functionDescriptor,
-                                javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable, samCallType
-                        )
-                }
+        val samCallType: KotlinType?
+) : JavaMethodDeferredKotlinUsage<KtFunction>(function) {
+    override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtFunction> {
+        return object : JavaMethodKotlinUsageWithDelegate<KtFunction>(function, javaMethodChangeInfo) {
+            override val delegateUsage = JetCallableDefinitionUsage(function, functionDescriptor, javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable, samCallType)
         }
+    }
 }
 
 public class DeferredJavaMethodKotlinCallerUsage(

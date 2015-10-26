@@ -11,10 +11,8 @@ interface NoC {
 }
 
 class WithC() {
-  val x : Int
+  val x : Int = 42
   init {
-    <error>$x</error> = 1
-    <error>$y</error> = 2
     val <warning>b</warning> = x
 
   }
@@ -24,7 +22,6 @@ class WithC() {
   init {
     val <warning>z</warning> = <error>b</error>
     val <warning>zz</warning> = x
-    val <warning>zzz</warning> = <error>$a</error>
   }
 
 }

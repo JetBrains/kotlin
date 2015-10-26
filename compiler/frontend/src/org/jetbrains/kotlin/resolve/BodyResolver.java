@@ -669,18 +669,8 @@ public class BodyResolver {
         return new ObservableBindingTrace(trace).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<KtReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<KtReferenceExpression, DeclarationDescriptor> slice, KtReferenceExpression expression, DeclarationDescriptor descriptor) {
-                if (expression instanceof KtSimpleNameExpression) {
-                    KtSimpleNameExpression simpleNameExpression = (KtSimpleNameExpression) expression;
-                    if (simpleNameExpression.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER) {
-                        // This check may be considered redundant as long as $x is only accessible from accessors to $x
-                        if (descriptor == propertyDescriptor) { // TODO : original?
-                            trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this trace?
-                            trace.report(Errors.BACKING_FIELD_OLD_SYNTAX.on(simpleNameExpression));
-                        }
-                    }
-                    if (descriptor instanceof SyntheticFieldDescriptor) {
-                        trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
-                    }
+                if (expression instanceof KtSimpleNameExpression && descriptor instanceof SyntheticFieldDescriptor) {
+                    trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
                 }
             }
         });

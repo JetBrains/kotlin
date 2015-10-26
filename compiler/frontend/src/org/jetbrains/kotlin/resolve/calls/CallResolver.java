@@ -141,14 +141,7 @@ public class CallResolver {
         assert calleeExpression instanceof KtSimpleNameExpression;
         KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) calleeExpression;
         Name referencedName = nameExpression.getReferencedNameAsName();
-        CallableDescriptorCollectors<VariableDescriptor> callableDescriptorCollectors;
-        if (nameExpression.getReferencedNameElementType() == KtTokens.FIELD_IDENTIFIER) {
-            referencedName = Name.identifier(referencedName.asString().substring(1));
-            callableDescriptorCollectors = CallableDescriptorCollectors.PROPERTIES;
-        }
-        else {
-            callableDescriptorCollectors = CallableDescriptorCollectors.VARIABLES;
-        }
+        CallableDescriptorCollectors<VariableDescriptor> callableDescriptorCollectors = CallableDescriptorCollectors.VARIABLES;
         return computeTasksAndResolveCall(
                 context, referencedName, nameExpression,
                 callableDescriptorCollectors, CallTransformer.VARIABLE_CALL_TRANSFORMER);

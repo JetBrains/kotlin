@@ -9,7 +9,7 @@ class B(<!UNUSED_PARAMETER!>y<!>: Int) : A(<!UNRESOLVED_REFERENCE!>x<!>)  //x is
 
 //KT-617 Prohibit dollars in call to superclass constructors
 open class M(<!UNUSED_PARAMETER!>p<!>: Int)
-class N(val p: Int) : A(<!UNRESOLVED_REFERENCE!>$p<!>)
+class N(val p: Int) : A(<!SYNTAX!><!SYNTAX!><!>$p<!><!SYNTAX!>)<!>
 
 //KT-10 Don't allow to use properties in supertype initializers
 open class Element()

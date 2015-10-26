@@ -90,7 +90,6 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION,
             Errors.DEPRECATION,
             Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION,
-            Errors.BACKING_FIELD_OLD_SYNTAX,
             Errors.OPERATOR_MODIFIER_REQUIRED,
             Errors.DEPRECATED_UNARY_PLUS_MINUS,
             Errors.DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION,
@@ -106,7 +105,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
     }
 
     private fun Diagnostic.toCleanupFixes(): Collection<CleanupFix> {
-        return JetPsiChecker.createQuickfixes(this).filterIsInstance<CleanupFix>()
+        return JetPsiChecker.createQuickFixes(this).filterIsInstance<CleanupFix>()
     }
 
     private class Wrapper(val intention: IntentionAction, file: KtFile) : IntentionWrapper(intention, file) {

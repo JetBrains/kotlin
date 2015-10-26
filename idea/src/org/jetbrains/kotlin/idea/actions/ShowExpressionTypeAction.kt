@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.codeInsight.hint.HintManager
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
+@Deprecated("Remove once we no longer support IDEA 14.1")
 public class ShowExpressionTypeAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val editor = e.getData<Editor>(CommonDataKeys.EDITOR)!!
@@ -64,22 +66,33 @@ public class ShowExpressionTypeAction : AnAction() {
         }
     }
 
-    private fun typeByExpression(expression: KtExpression): KotlinType? {
-        val bindingContext = expression.analyze()
-
-        if (expression is KtCallableDeclaration) {
-            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, expression] as? CallableDescriptor
-            if (descriptor != null) {
-                return descriptor.getReturnType()
-            }
-        }
-
-        return bindingContext.getType(expression)
-    }
 
     override fun update(e: AnActionEvent) {
+        // hide the action in IDEA 15 where a standard platform action is available
+        if (ActionManager.getInstance().getAction("ExpressionTypeInfo") != null) {
+            e.presentation.isVisible = false
+            return
+        }
+
         val editor = e.getData<Editor>(CommonDataKeys.EDITOR)
         val psiFile = e.getData<PsiFile>(CommonDataKeys.PSI_FILE)
         e.getPresentation().setEnabled(editor != null && psiFile is KtFile)
+    }
+
+    companion object {
+        fun renderTypeHint(type: KotlinType) = "<html>" + DescriptorRenderer.HTML.renderType(type) + "</html>"
+
+        fun typeByExpression(expression: KtExpression): KotlinType? {
+            val bindingContext = expression.analyze()
+
+            if (expression is KtCallableDeclaration) {
+                val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, expression] as? CallableDescriptor
+                if (descriptor != null) {
+                    return descriptor.getReturnType()
+                }
+            }
+
+            return bindingContext.getType(expression)
+        }
     }
 }

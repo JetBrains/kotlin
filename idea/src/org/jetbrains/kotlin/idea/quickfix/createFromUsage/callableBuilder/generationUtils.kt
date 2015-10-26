@@ -58,5 +58,5 @@ public fun setupEditorSelection(editor: Editor, declaration: KtNamedDeclaration)
             caretModel.moveToOffset(declaration.endOffset)
         }
     }
-    editor.scrollingModel.scrollToCaret(ScrollType.RELATIVE)
+    editor.scrollingModel.scrollToCaret(ScrollType.CENTER)
 }

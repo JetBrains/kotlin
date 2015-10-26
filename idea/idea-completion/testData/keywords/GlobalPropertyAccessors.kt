@@ -16,12 +16,16 @@ var a : Int
 // EXIST:  final
 // EXIST:  fun
 // EXIST: get
+// EXIST: "get() = "
+// EXIST: "get() {}"
 // EXIST:  internal
 // EXIST:  object
 // EXIST:  open
 // EXIST:  private
 // EXIST:  public
 // EXIST: set
+// EXIST: "set(value) = "
+// EXIST: "set(value) {}"
 // EXIST:  interface
 // EXIST:  val
 // EXIST:  var

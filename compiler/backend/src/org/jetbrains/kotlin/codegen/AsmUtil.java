@@ -341,7 +341,7 @@ public class AsmUtil {
         }
 
         if (memberDescriptor instanceof ConstructorDescriptor && isAnonymousObject(memberDescriptor.getContainingDeclaration())) {
-            return NO_FLAG_PACKAGE_PRIVATE;
+            return getVisibilityAccessFlagForAnonymous((ClassDescriptor) memberDescriptor.getContainingDeclaration());
         }
 
         if (memberDescriptor instanceof SyntheticJavaPropertyDescriptor) {

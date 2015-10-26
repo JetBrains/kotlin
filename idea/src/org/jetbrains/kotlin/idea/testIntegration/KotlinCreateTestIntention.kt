@@ -42,8 +42,9 @@ import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.core.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.idea.util.application.runWithAlternativeResolveEnabled
+import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.runWhenSmart
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -53,10 +54,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
-class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<KtClassOrObject>(
-        KtClassOrObject::class.java,
-        CodeInsightBundle.message("intention.create.test")
-) {
+class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Create test") {
     override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (element.isLocal()) return null
         if (element is KtEnumEntry) return null
@@ -137,30 +135,32 @@ class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<KtClassOrObject
                     }
                 } as? PsiClass ?: return
 
-                val generatedFile = generatedClass.containingFile as? PsiJavaFile ?: return
+                project.runWhenSmart {
+                    val generatedFile = generatedClass.containingFile as? PsiJavaFile ?: return@runWhenSmart
 
-                if (generatedClass.language == JavaLanguage.INSTANCE) {
-                    project.executeCommand("Convert class '${generatedClass.name}' to Kotlin", this) {
-                        runWriteAction {
-                            generatedClass.methods.forEach { it.throwsList.referenceElements.forEach { it.delete() } }
-                        }
-
-                        if (existingClass != null) {
+                    if (generatedClass.language == JavaLanguage.INSTANCE) {
+                        project.executeCommand("Convert class '${generatedClass.name}' to Kotlin", this) {
                             runWriteAction {
-                                val existingMethodNames = existingClass
-                                        .declarations
-                                        .filterIsInstance<KtNamedFunction>()
-                                        .mapTo(HashSet()) { it.name }
-                                generatedClass
-                                        .methods
-                                        .filter { it.name !in existingMethodNames }
-                                        .forEach { it.j2k()?.let { existingClass.addDeclaration(it) } }
-                                generatedClass.delete()
+                                generatedClass.methods.forEach { it.throwsList.referenceElements.forEach { it.delete() } }
                             }
-                            NavigationUtil.activateFileWithPsiElement(existingClass)
-                        }
-                        else {
-                            JavaToKotlinAction.convertFiles(generatedFile.singletonList(), project, false).singleOrNull()
+
+                            if (existingClass != null) {
+                                runWriteAction {
+                                    val existingMethodNames = existingClass
+                                            .declarations
+                                            .filterIsInstance<KtNamedFunction>()
+                                            .mapTo(HashSet()) { it.name }
+                                    generatedClass
+                                            .methods
+                                            .filter { it.name !in existingMethodNames }
+                                            .forEach { it.j2k()?.let { existingClass.addDeclaration(it) } }
+                                    generatedClass.delete()
+                                }
+                                NavigationUtil.activateFileWithPsiElement(existingClass)
+                            }
+                            else {
+                                JavaToKotlinAction.convertFiles(generatedFile.singletonList(), project, false).singleOrNull()
+                            }
                         }
                     }
                 }

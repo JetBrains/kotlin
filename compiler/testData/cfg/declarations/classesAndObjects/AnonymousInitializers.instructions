@@ -4,14 +4,14 @@ class AnonymousInitializers() {
 
     val i: Int
     init {
-        $i = 12
+        i = 12
     }
 
     val j: Int
        get() = 20
 
     init {
-        $i = 13
+        i = 13
     }
 }
 ---------------------
@@ -21,19 +21,19 @@ L0:
     r(34) -> <v0>
     w(k|<v0>)
     v(val i: Int)
-  2 mark({ $i = 12 })
-    magic[IMPLICIT_RECEIVER]($i) -> <v1>
+  2 mark({ i = 12 })
+    magic[IMPLICIT_RECEIVER](i) -> <v1>
     r(12) -> <v2>
-    w($i|<v1>, <v2>)
+    w(i|<v1>, <v2>)
   1 v(val j: Int get() = 20)
-  2 mark({ $i = 13 })
-    magic[IMPLICIT_RECEIVER]($i) -> <v4>
+  2 mark({ i = 13 })
+    magic[IMPLICIT_RECEIVER](i) -> <v4>
     r(13) -> <v5>
-    w($i|<v4>, <v5>)
+    w(i|<v4>, <v5>)
 L1:
-  1 <END>                                   NEXT:[<SINK>]
+  1 <END>                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                 PREV:[]
+    <ERROR>                                PREV:[]
 sink:
-    <SINK>                                  PREV:[<ERROR>, <END>]
+    <SINK>                                 PREV:[<ERROR>, <END>]
 =====================

@@ -21,8 +21,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.MethodSignatureUtil
 import org.jetbrains.kotlin.asJava.KotlinLightElement
 import org.jetbrains.kotlin.asJava.KotlinNoOriginLightMethod
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -206,21 +208,28 @@ fun PsiReference.isUsageInContainingDeclaration(declaration: KtNamedDeclaration)
 }
 
 fun PsiReference.isCallableOverrideUsage(declaration: KtNamedDeclaration): Boolean {
-    val toDescriptor: (KtDeclaration) -> DeclarationDescriptor? = { declaration ->
+    val toDescriptor: (KtDeclaration) -> CallableDescriptor? = { declaration ->
         if (declaration is KtParameter) {
             // we don't treat parameters in overriding method as "override" here (overriding parameters usages are searched optionally and via searching of overriding methods first)
             if (declaration.hasValOrVar()) declaration.propertyDescriptor else null
         }
         else {
-            declaration.descriptor
+            declaration.descriptor as? CallableDescriptor
         }
     }
 
-    val descriptor = toDescriptor(declaration) ?: return false
+    val targetDescriptor = toDescriptor(declaration) ?: return false
 
-    return checkUsageVsOriginalDescriptor(descriptor, toDescriptor) { usageDescriptor, targetDescriptor ->
-        usageDescriptor is CallableDescriptor
-        && targetDescriptor is CallableDescriptor
-        && OverrideResolver.overrides(usageDescriptor, targetDescriptor)
+    return unwrappedTargets.any {
+        when (it) {
+            is KtDeclaration -> {
+                val usageDescriptor = toDescriptor(it)
+                usageDescriptor != null && OverrideResolver.overrides(usageDescriptor, targetDescriptor)
+            }
+            is PsiMethod -> {
+                declaration.toLightMethods().any { superMethod -> MethodSignatureUtil.isSuperMethod(superMethod, it) }
+            }
+            else -> false
+        }
     }
 }

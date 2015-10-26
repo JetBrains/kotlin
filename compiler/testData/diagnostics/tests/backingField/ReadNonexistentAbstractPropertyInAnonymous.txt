@@ -1,9 +1,0 @@
-package
-
-public abstract class ReadNonexistent {
-    public constructor ReadNonexistent()
-    public abstract val aa: kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}

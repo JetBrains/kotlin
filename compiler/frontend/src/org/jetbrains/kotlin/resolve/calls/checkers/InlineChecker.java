@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -111,6 +112,18 @@ class InlineChecker implements CallChecker {
             if (token == KtTokens.EQ || token == KtTokens.ANDAND || token == KtTokens.OROR) {
                 //assignment
                 return false;
+            }
+        }
+
+        if (parent != null) {
+            //UGLY HACK
+            //check there is no casts
+            PsiElement current = expression;
+            while (current != parent) {
+                if (current instanceof KtBinaryExpressionWithTypeRHS) {
+                    return false;
+                }
+                current = current.getParent();
             }
         }
 

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.psi.KtClass
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
 
@@ -61,6 +62,13 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             inPosition(left = ENUM_ENTRY, right = ENUM_ENTRY).emptyLinesIfLineBreakInLeft(
                     emptyLines = 0, numSpacesOtherwise = 1, numberOfLineFeedsOtherwise = 0)
+
+            inPosition(parent = CLASS_BODY, left = SEMICOLON).customRule { parent, left, right ->
+                val klass = parent.node.treeParent.psi as? KtClass ?: return@customRule null
+                if (klass.isEnum() && right.node.elementType in DECLARATIONS) {
+                    Spacing.createSpacing(0, 0, 2, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
+                } else null
+            }
 
             val parameterWithDocCommentRule = {
                 parent: ASTBlock, left: ASTBlock, right: ASTBlock ->
@@ -98,6 +106,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             // ENUM_ENTRY - ENUM_ENTRY is exception
             between(ENUM_ENTRY, DECLARATIONS).blankLines(1)
+
+            between(ENUM_ENTRY, SEMICOLON).spaces(0)
 
             beforeInside(FUN, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             beforeInside(CLASS, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()

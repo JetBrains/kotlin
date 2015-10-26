@@ -1,11 +1,11 @@
-val <!REDECLARATION, REDECLARATION!>a<!> : Int = 1
-val <!REDECLARATION, REDECLARATION!>a<!> : Int = 1
-val <!REDECLARATION, REDECLARATION!>a<!> : Int = 1
+val <!REDECLARATION!>a<!> : Int = 1
+val <!REDECLARATION!>a<!> : Int = 1
+val <!REDECLARATION!>a<!> : Int = 1
 
-val <!REDECLARATION, REDECLARATION!>b<!> : Int = 1
-val <!REDECLARATION, REDECLARATION!>b<!> : Int = 1
-val <!REDECLARATION, REDECLARATION!>b<!> : Int = 1
-val <!REDECLARATION, REDECLARATION!>b<!> : Int = 1
+val <!REDECLARATION!>b<!> : Int = 1
+val <!REDECLARATION!>b<!> : Int = 1
+val <!REDECLARATION!>b<!> : Int = 1
+val <!REDECLARATION!>b<!> : Int = 1
 
 <!CONFLICTING_OVERLOADS!>fun foo()<!> {} // and here too
 <!CONFLICTING_OVERLOADS!>fun foo()<!> {} // and here

@@ -77,13 +77,11 @@ public class JetChangeSignatureProcessor(project: Project,
                 throw BaseRefactoringProcessor.ConflictsInTestsException(conflictDescriptions.values())
             }
 
-            myPrepareSuccessfulSwingThreadCallback?.let {
-                val dialog = prepareConflictsDialog(conflictDescriptions, usages)
-                dialog.show()
-                if (!dialog.isOK()) {
-                    if (dialog.isShowConflicts()) prepareSuccessful()
-                    return false
-                }
+            val dialog = prepareConflictsDialog(conflictDescriptions, usages)
+            dialog.show()
+            if (!dialog.isOK()) {
+                if (dialog.isShowConflicts()) prepareSuccessful()
+                return false
             }
         }
 

@@ -1,0 +1,42 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Missing 'getValue(testing.BigTest, kotlin.reflect.KProperty<*>)' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
+// ERROR: Missing 'setValue(testing.BigTest, kotlin.reflect.KProperty<*>, [ERROR : Type from delegate])' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
+
+package testing
+
+import some.DelegateImpl
+
+class BigTest {
+    var a by <caret>DelegateImpl<Int>()
+}
+
+
+// FILE: second.kt
+package some
+
+class DelegateImpl<T> {
+    val value: T = null!!
+}
+
+public fun <T> DelegateImpl<T>.getValue(thisRef: Any?, property: PropertyMetadata): T = value
+public fun <T> DelegateImpl<T>.setValue(thisRef: Any, propertyMetadata: PropertyMetadata, t: T) {}
+
+
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Missing 'getValue(testing.BigTest, kotlin.reflect.KProperty<*>)' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
+// ERROR: Missing 'setValue(testing.BigTest, kotlin.reflect.KProperty<*>, [ERROR : Type from delegate])' method on delegate of type 'some.DelegateImpl<kotlin.Int>'
+
+package testing
+
+import some.DelegateImpl
+import some.getValue
+import some.setValue
+
+class BigTest {
+    var a by <caret>DelegateImpl<Int>()
+}
+
+

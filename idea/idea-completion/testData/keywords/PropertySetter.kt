@@ -10,8 +10,6 @@ class Some {
 // EXIST:  enum class
 // EXIST:  final
 // EXIST:  fun
-// EXIST:  get
-/*TODO*/
 // EXIST:  inner
 // EXIST:  internal
 // EXIST:  object
@@ -21,6 +19,8 @@ class Some {
 // EXIST:  protected
 // EXIST:  public
 // EXIST: set
+// EXIST: "set(value) = "
+// EXIST: "set(value) {}"
 // EXIST:  interface
 // EXIST:  val
 // EXIST:  var

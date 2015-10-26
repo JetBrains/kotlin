@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingOffsetIndependentIntention<KtPrefixExpression>(javaClass(), "DeMorgan Law") {
@@ -54,12 +52,7 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
         val operands = splitBooleanSequence(baseExpression)!!.asReversed()
 
         val newExpression = KtPsiFactory(element).buildExpression {
-            for ((i, operand) in operands.withIndex()) {
-                if (i > 0) {
-                    appendFixedText(operatorText)
-                }
-                appendExpression(operand.negate())
-            }
+            appendExpressions(operands.map { it.negate() }, separator = operatorText)
         }
 
         element.replace(newExpression)

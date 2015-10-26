@@ -14,9 +14,6 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
-
-    <!-- To enable counter padding, set parameter "need.counter.padding" to true on buildserver -->
-
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
     <!--
     <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,status:SUCCESS,count:1${kotlin.bootstrap.branch.locator}"/>
@@ -127,7 +124,7 @@
         </sequential>
     </macrodef>
    
-    <target name="make-native-platform-uberjar" depends="override-version">
+    <target name="make-native-platform-uberjar">
         <property name="dependencies" value="dependencies"/>
         <property name="download" value="${dependencies}/download"/>
         <property name="server" value="${gradle.libs.repo}"/>
@@ -169,7 +166,7 @@
         
     </target>
     
-    <target name="fetch-third-party" depends="do-version-padding,override-version,make-native-platform-uberjar">
+    <target name="fetch-third-party" depends="make-native-platform-uberjar">
         <mkdir dir="dependencies"/>
         <mkdir dir="dependencies/download"/>
 
@@ -280,7 +277,7 @@
                 build.locator.request="${kotlin.bootstrap.locator}"
                 artifact.path="kotlin-plugin-{build.number}.zip"
                 dest="dependencies/download/bootstrap-compiler.zip"
-                build.number.pattern="[0-9a-z-+\.]+"
+                build.number.pattern="[\w-+\.]+"
                 usetimestamp="true"/>
 
             <delete dir="dependencies/bootstrap-compiler" failonerror="false"/>
@@ -307,6 +304,8 @@
             <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin"/>
             <arg line="-name 'kotlin*' ! -name '*.bat' -exec chmod a+x '{}' ;"/>
         </exec>
+
+        <antcall target="override-version"/>
 
         <download-or-build-markdown-parser/>
     </target>
@@ -385,7 +384,7 @@
                 artifact.path="markdown_jar/markdown.jar"
                 dest="dependencies/markdown.jar"
                 usetimestamp="true"
-                build.number.pattern="\d+\s-\sKotlin\s[\d\.]+"
+                build.number.pattern="\d+\s-\sKotlin\s[\w-+\.]+"
                 />
 
             <!-- When ABI version changes, the second build should compile markdown-parser manually instead of using the old version -->
@@ -501,7 +500,7 @@
         <attribute name="artifact.path"/>
         <attribute name="dest"/>
         <attribute name="usetimestamp"/>
-        <attribute name="build.number.pattern" default="[\d\.]+"/>
+        <attribute name="build.number.pattern" default="[\w-+\.]+"/>
 
         <sequential>
             <local name="artifact.build.id"/>
@@ -847,21 +846,6 @@
         </exec>
     </target>
 
-    <target name="do-version-padding" if="need.counter.padding">
-        <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false">
-            <arg value="-cp"/>
-            <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
-            <arg value="-script"/>
-            <arg value="generators/infrastructure/counter-padding.kts"/>
-            <arg value="${teamcity.version}"/>
-            <arg value="${basedir}/dependencies/padded-version.txt"/>
-        </exec>
-
-        <loadfile property="padded.version.number" srcFile="${basedir}/dependencies/padded-version.txt"/>
-
-        <echo message="##teamcity[buildNumber '${padded.version.number}']"/>
-    </target>
-
     <target name="override-version">
         <condition property="need.version.override">
             <and>
@@ -883,10 +867,12 @@
                 <filterchain>
                     <tokenfilter>
                         <filetokenizer/>
-                        <replaceregex pattern="^(.*)\snumber=&quot;([.\d]+)&quot;(.*)$" replace="\2" flags="s"/>
+                        <replaceregex pattern="^(.*)\snumber=&quot;([\w-+\.]+)&quot;(.*)$" replace="\2" flags="s"/>
                     </tokenfilter>
                 </filterchain>
             </loadresource>
+
+            <echo message="URL: ${override.version.url} Version: ${override.version.build.number}"/>
 
             <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false">
                 <arg value="-cp"/>

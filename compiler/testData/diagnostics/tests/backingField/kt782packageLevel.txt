@@ -1,9 +1,8 @@
 package
 
 package kt782 {
-    public val w: kotlin.Int
+    public val w: kotlin.Int = 56
     public val x: kotlin.Int
     public val y: kotlin.Int = 11
     public val z: kotlin.Int = 34
-    public fun foo(): kotlin.Unit
 }

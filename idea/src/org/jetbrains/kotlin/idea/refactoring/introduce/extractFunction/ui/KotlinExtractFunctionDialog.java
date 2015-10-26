@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import javax.swing.*;
@@ -98,7 +99,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         if (!isVisibilitySectionAvailable()) return "";
 
         String value = (String) visibilityBox.getSelectedItem();
-        return "internal".equals(value) ? "" : value;
+        return KtTokens.PUBLIC_KEYWORD.getValue().equals(value) ? "" : value;
     }
 
     private boolean checkNames() {
@@ -179,7 +180,11 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         boolean enableVisibility = isVisibilitySectionAvailable();
         visibilityBox.setEnabled(enableVisibility);
         if (enableVisibility) {
-            visibilityBox.setSelectedItem(extractableCodeDescriptor.getVisibility());
+            String defaultVisibility = extractableCodeDescriptor.getVisibility();
+            if (defaultVisibility.isEmpty()) {
+                defaultVisibility = KtTokens.PUBLIC_KEYWORD.getValue();
+            }
+            visibilityBox.setSelectedItem(defaultVisibility);
         }
         visibilityBox.addItemListener(
                 new ItemListener() {

@@ -264,7 +264,7 @@ private fun createKeywordElementWithSpace(
     return if (addSpaceAfter) {
         object: LookupElementDecorator<LookupElement>(element) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler.spaceTail().handleInsert(context, getDelegate())
+                WithTailInsertHandler.SPACE.handleInsert(context, getDelegate())
             }
         }
     }

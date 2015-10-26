@@ -4,12 +4,12 @@ interface Base {
 
 var ~setter1~Int.setter1: Int = 2
     set(i: Int) {
-        $setter1 = `setter1`this@setter1
+        field = `setter1`this@setter1
     }
 
 var ~setter2~Int.setter2: Base? = null
     set(i: Base?) {
-        $setter2 = object: Base {
+        field = object: Base {
             override fun foo() {
                 `setter2`this@setter2
             }

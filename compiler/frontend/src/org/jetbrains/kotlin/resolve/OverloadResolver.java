@@ -91,29 +91,11 @@ public class OverloadResolver {
             @NotNull BodiesResolveContext c,
             @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
     ) {
+        MultiMap<FqNameUnsafe, CallableMemberDescriptor> membersByName = OverloadUtil.groupModulePackageMembersByFqName(c, inPackages);
 
-        MultiMap<FqNameUnsafe, CallableMemberDescriptor> functionsByName = MultiMap.create();
-
-        for (SimpleFunctionDescriptor function : c.getFunctions().values()) {
-            if (function.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
-                functionsByName.putValue(getFqName(function), function);
-            }
-        }
-        
-        for (PropertyDescriptor property : c.getProperties().values()) {
-            if (property.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
-                functionsByName.putValue(getFqName(property), property);
-            }
-        }
-        
-        for (Map.Entry<FqNameUnsafe, Collection<ConstructorDescriptor>> entry : inPackages.entrySet()) {
-            functionsByName.putValues(entry.getKey(), entry.getValue());
-        }
-
-        for (Map.Entry<FqNameUnsafe, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
-            // TODO: don't render FQ name here, extract this logic to somewhere
+        for (Map.Entry<FqNameUnsafe, Collection<CallableMemberDescriptor>> e : membersByName.entrySet()) {
             FqNameUnsafe fqName = e.getKey().parent();
-            checkOverloadsWithSameName(e.getValue(), fqName.isRoot() ? "root package" : fqName.asString());
+            checkOverloadsInPackage(e.getValue(), fqName);
         }
     }
 
@@ -146,32 +128,43 @@ public class OverloadResolver {
         }
         
         for (Map.Entry<Name, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
-            checkOverloadsWithSameName(e.getValue(), nameForErrorMessage(classDescriptor, klass));
+            checkOverloadsInClass(e.getValue(), classDescriptor, klass);
         }
     }
     
-    private void checkOverloadsWithSameName(
-            Collection<CallableMemberDescriptor> functions,
-            @NotNull String functionContainer
+    private void checkOverloadsInPackage(
+            @NotNull Collection<CallableMemberDescriptor> members,
+            @NotNull FqNameUnsafe packageFQN
     ) {
-        if (functions.size() == 1) {
-            // micro-optimization
-            return;
+        if (members.size() == 1) return;
+
+        for (Collection<? extends CallableMemberDescriptor> redeclarationGroup : OverloadUtil.getPossibleRedeclarationGroups(members)) {
+            Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations = findRedeclarations(redeclarationGroup);
+            // TODO: don't render FQ name here, extract this logic to somewhere
+            reportRedeclarations(packageFQN.isRoot() ? "root package" : packageFQN.asString(), redeclarations);
         }
-        reportRedeclarations(functionContainer, findRedeclarations(functions));
+    }
+
+    private void checkOverloadsInClass(
+            @NotNull Collection<CallableMemberDescriptor> members,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull KtClassOrObject ktClass
+    ) {
+        if (members.size() == 1) return;
+
+        reportRedeclarations(nameForErrorMessage(classDescriptor, ktClass), findRedeclarations(members));
     }
 
     @NotNull
-    private Set<Pair<KtDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<CallableMemberDescriptor> functions) {
+    private static Set<Pair<KtDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<? extends CallableMemberDescriptor> members) {
         Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newLinkedHashSet();
-        for (CallableMemberDescriptor member : functions) {
-            for (CallableMemberDescriptor member2 : functions) {
+        for (CallableMemberDescriptor member : members) {
+            for (CallableMemberDescriptor member2 : members) {
                 if (member == member2 || isConstructorsOfDifferentRedeclaredClasses(member, member2)) {
                     continue;
                 }
 
-                OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(member, member2);
-                if (!overloadable.isSuccess() && member.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
+                if (!OverloadUtil.isOverloadable(member, member2) && member.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
                     KtDeclaration ktDeclaration = (KtDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
                     if (ktDeclaration != null) {
                         redeclarations.add(Pair.create(ktDeclaration, member));

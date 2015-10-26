@@ -360,6 +360,6 @@ public class ArgumentTypeResolver {
                 return primitiveType;
             }
         }
-        return type;
+        return null;
     }
 }

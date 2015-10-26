@@ -81,7 +81,7 @@ fun generate(): String {
     val unaryOperationsMapIterator = unaryOperationsMap.iterator()
     while (unaryOperationsMapIterator.hasNext()) {
         val (funcName, parameters, isFunction) = unaryOperationsMapIterator.next()
-        val parenthesesOrBlank = "()" //if (isFunction) "()" else ""
+        val parenthesesOrBlank = if (isFunction) "()" else ""
         p.println(
                 "unaryOperation(",
                 parameters.map { it.asString() }.joinToString(", "),

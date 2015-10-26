@@ -1,3 +1,0 @@
-class Cyclic() {
-    val a = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>$a<!>
-}

@@ -148,8 +148,8 @@ val KtElement.mainReference: KtReference?
 
 // ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
 
-public enum class ReferenceAccess {
-    READ, WRITE, READ_WRITE
+public enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {
+    READ(true, false), WRITE(false, true), READ_WRITE(true, true)
 }
 
 public fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): ReferenceAccess {

@@ -68,10 +68,7 @@ public class WhenToIfIntention : JetSelfTargetingRangeIntention<KtWhenExpression
 
             else -> {
                 return buildExpression {
-                    for ((i, condition) in conditions.withIndex()) {
-                        if (i > 0) appendFixedText("||")
-                        appendExpression(condition.toExpression(subject))
-                    }
+                    appendExpressions(conditions.map { it.toExpression(subject) }, separator = "||")
                 }
             }
         }

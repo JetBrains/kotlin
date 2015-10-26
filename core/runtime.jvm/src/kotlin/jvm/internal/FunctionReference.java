@@ -31,11 +31,6 @@ public class FunctionReference extends FunctionImpl implements KFunction {
         this.arity = arity;
     }
 
-    @Deprecated // preserved for binary compatibility with M12 release
-    public FunctionReference() {
-        this.arity = 0;
-    }
-
     @Override
     public int getArity() {
         return arity;
