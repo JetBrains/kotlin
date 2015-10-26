@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.bindingContextUtil
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -75,8 +77,12 @@ public fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
     }
 }
 
-public fun BindingContext.getDataFlowInfo(expression: KtExpression?): DataFlowInfo =
-    expression?.let { this[BindingContext.EXPRESSION_TYPE_INFO, it]?.dataFlowInfo } ?: DataFlowInfo.EMPTY
+public fun BindingContext.getDataFlowInfo(position: PsiElement): DataFlowInfo {
+    for (element in position.parentsWithSelf) {
+        (element as? KtExpression)?.let { this[BindingContext.EXPRESSION_TYPE_INFO, it] }?.let { return it.dataFlowInfo }
+    }
+    return DataFlowInfo.EMPTY
+}
 
 public fun KtExpression.isUnreachableCode(context: BindingContext): Boolean = context[BindingContext.UNREACHABLE_CODE, this]!!
 

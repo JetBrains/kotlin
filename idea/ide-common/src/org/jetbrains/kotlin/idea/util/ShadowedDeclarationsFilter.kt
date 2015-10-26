@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -40,14 +41,14 @@ import java.util.*
 public class ShadowedDeclarationsFilter private constructor(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
-        private val context: KtExpression,
+        private val context: PsiElement,
         private val explicitReceiverValue: ReceiverValue
 ) {
     companion object {
         fun create(
                 bindingContext: BindingContext,
                 resolutionFacade: ResolutionFacade,
-                context: KtExpression,
+                context: PsiElement,
                 callTypeAndReceiver: CallTypeAndReceiver<*, *>
         ): ShadowedDeclarationsFilter? {
             val receiverExpression = when (callTypeAndReceiver) {

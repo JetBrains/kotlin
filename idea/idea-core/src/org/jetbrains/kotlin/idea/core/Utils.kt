@@ -112,7 +112,7 @@ public fun Call.resolveCandidates(
     val resolutionScope = callElement.getResolutionScope(bindingContext, resolutionFacade)
     val inDescriptor = resolutionScope.ownerDescriptor
 
-    val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
+    val dataFlowInfo = bindingContext.getDataFlowInfo(callElement)
     val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
     val callResolutionContext = BasicCallResolutionContext.create(
             bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,

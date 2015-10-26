@@ -316,7 +316,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     private fun createLookupElementFactory(callType: CallType<*>?, receiverTypes: Collection<KotlinType>?): LookupElementFactory {
         val contextVariablesProvider = {
             nameExpression?.let {
-                referenceVariantsHelper.getReferenceVariants(it, DescriptorKindFilter.VARIABLES, { true }, CallTypeAndReceiver.DEFAULT)
+                referenceVariantsHelper.getReferenceVariants(it, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, nameFilter = { true })
                         .map { it as VariableDescriptor }
             } ?: emptyList()
         }
