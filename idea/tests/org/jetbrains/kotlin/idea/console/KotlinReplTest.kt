@@ -132,4 +132,13 @@ public class KotlinReplTest : PlatformTestCase() {
         sendCommand("println(\"$message\")")
         waitForExpectedOutput(message)
     }
+
+    @Test fun testMultipleErrorsHandling() {
+        val veryLongTextWithErrors = "println($);".repeat(30)
+        sendCommand(veryLongTextWithErrors)
+        sendCommand(veryLongTextWithErrors)
+        sendCommand(veryLongTextWithErrors)
+        sendCommand("println(\"OK\")")
+        waitForExpectedOutput("OK")
+    }
 }
