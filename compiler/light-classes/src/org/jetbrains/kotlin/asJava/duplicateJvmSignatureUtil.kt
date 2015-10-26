@@ -26,14 +26,16 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
-    fun getDiagnosticsForPackage(file: KtFile): Diagnostics? {
-        val project = file.getProject()
-        val cache = KotlinLightClassForFacade.PackageFacadeStubCache.getInstance(project)
-        return cache[file.getPackageFqName(), moduleScope].getValue()?.extraDiagnostics
+    fun getDiagnosticsForFileFacade(file: KtFile): Diagnostics? {
+        val project = file.project
+        val cache = KotlinLightClassForFacade.FacadeStubCache.getInstance(project)
+        val facadeFqName = NoResolveFileClassesProvider.getFileClassInfo(file).facadeClassFqName
+        return cache[facadeFqName, moduleScope].getValue()?.extraDiagnostics
     }
 
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
@@ -58,7 +60,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
 
         when (parent) {
             is KtFile -> {
-                return getDiagnosticsForPackage(parent)
+                return getDiagnosticsForFileFacade(parent)
             }
             is KtClassBody -> {
                 val parentsParent = parent.getParent()

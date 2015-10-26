@@ -246,9 +246,6 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.versions.SuppressNotificationState"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$PackageFacadeStubCache"
-                    serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$PackageFacadeStubCache"/>
-
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$FacadeStubCache"
                     serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$FacadeStubCache"/>
 

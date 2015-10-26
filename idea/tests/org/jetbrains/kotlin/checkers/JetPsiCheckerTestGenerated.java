@@ -630,6 +630,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("topLevelMultifileRuntime.kt")
+            public void testTopLevelMultifileRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/topLevelMultifileRuntime.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("trait.kt")
             public void testTrait() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/duplicateJvmSignature/functionAndProperty/trait.kt");

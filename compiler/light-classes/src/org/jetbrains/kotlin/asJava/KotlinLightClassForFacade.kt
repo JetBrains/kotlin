@@ -46,33 +46,6 @@ public class KotlinLightClassForFacade private constructor(
 
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
 
-    public class PackageFacadeStubCache(private val project: Project) {
-        private inner class PackageFacadeCacheData {
-            val cache = object : SLRUCache<StubCacheKey, CachedValue<KotlinFacadeLightClassData>>(20, 30) {
-                override fun createValue(key: StubCacheKey): CachedValue<KotlinFacadeLightClassData> {
-                    val stubProvider = KotlinJavaFileStubProvider.createForPackageClass(project, key.fqName, key.searchScope)
-                    return CachedValuesManager.getManager(project).createCachedValue<KotlinFacadeLightClassData>(stubProvider, /*trackValue = */false)
-                }
-            }
-        }
-
-        private val cachedValue: CachedValue<PackageFacadeCacheData> = CachedValuesManager.getManager(project).createCachedValue<PackageFacadeCacheData>(
-                { CachedValueProvider.Result.create(PackageFacadeCacheData(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) },
-                /*trackValue = */ false)
-
-        public fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<KotlinFacadeLightClassData> {
-            synchronized (cachedValue) {
-                return cachedValue.getValue().cache.get(StubCacheKey(qualifiedName, searchScope))
-            }
-        }
-
-        companion object {
-            public fun getInstance(project: Project): PackageFacadeStubCache {
-                return ServiceManager.getService<PackageFacadeStubCache>(project, javaClass<PackageFacadeStubCache>())
-            }
-        }
-    }
-
     public class FacadeStubCache(private val project: Project) {
         private inner class FacadeCacheData {
             val cache = object : SLRUCache<StubCacheKey, CachedValue<KotlinFacadeLightClassData>>(20, 30) {
