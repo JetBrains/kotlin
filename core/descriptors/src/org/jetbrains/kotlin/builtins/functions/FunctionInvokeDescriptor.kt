@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
@@ -42,8 +43,8 @@ public class FunctionInvokeDescriptor private constructor(
             newOwner: DeclarationDescriptor,
             original: FunctionDescriptor?,
             kind: CallableMemberDescriptor.Kind,
-            newName: Name?
-    ): FunctionInvokeDescriptor {
+            newName: Name?, preserveSource: Boolean
+    ): FunctionDescriptorImpl {
         return FunctionInvokeDescriptor(newOwner, original as FunctionInvokeDescriptor?, kind)
     }
 

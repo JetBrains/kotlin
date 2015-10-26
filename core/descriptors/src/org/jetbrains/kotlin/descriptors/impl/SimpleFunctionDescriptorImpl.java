@@ -77,7 +77,8 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
-            @Nullable Name newName
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         return new SimpleFunctionDescriptorImpl(
                 newOwner,
@@ -86,7 +87,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 getAnnotations(),
                 newName != null ? newName : getName(),
                 kind,
-                SourceElement.NO_SOURCE
+                getSourceToUseForCopy(preserveSource, original)
         );
     }
 
@@ -109,20 +110,22 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     @NotNull
     @Override
     public SimpleFunctionDescriptor createRenamedCopy(@NotNull Name name) {
+        //noinspection ConstantConditions
         return (SimpleFunctionDescriptorImpl) doSubstitute(
                 TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
-                null, /* copyOverrides = */ true, getKind(), getValueParameters(), getExtensionReceiverParameterType(), getReturnType(), name
-        );
+                null, /* copyOverrides = */ true, getKind(), getValueParameters(), getExtensionReceiverParameterType(), getReturnType(), name,
+                /* preserveSource = */ true);
     }
 
     @NotNull
     @Override
     public SimpleFunctionDescriptor createCopyWithNewValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
+        //noinspection ConstantConditions
         return (SimpleFunctionDescriptorImpl) doSubstitute(
                 TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
-                null, /* copyOverrides = */ true, getKind(), valueParameters, getExtensionReceiverParameterType(), getReturnType(), null
-        );
+                null, /* copyOverrides = */ true, getKind(), valueParameters, getExtensionReceiverParameterType(), getReturnType(), null,
+                /* preserveSource = */ true);
     }
 }

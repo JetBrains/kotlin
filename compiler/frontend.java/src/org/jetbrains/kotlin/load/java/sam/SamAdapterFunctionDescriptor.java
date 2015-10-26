@@ -55,7 +55,8 @@ import org.jetbrains.kotlin.name.Name;
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
-            @Nullable Name newName
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         return new SamAdapterFunctionDescriptor(newOwner, (SimpleFunctionDescriptor) original, kind, declaration);
     }

@@ -114,7 +114,8 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
-            @Nullable Name newName
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         JavaMethodDescriptor result = new JavaMethodDescriptor(
                 newOwner,
@@ -122,7 +123,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 getAnnotations(),
                 newName != null ? newName : getName(),
                 kind,
-                original != null ? original.getSource() : SourceElement.NO_SOURCE
+                getSourceToUseForCopy(preserveSource, original)
         );
         result.setParameterNamesStatus(hasStableParameterNames(), hasSynthesizedParameterNames());
         return result;
@@ -146,7 +147,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), getOriginal(),
                 /* copyOverrides = */ true, getKind(),
                 enhancedValueParameters, enhancedReceiverType, enhancedReturnType,
-                null);
+                null, false);
 
         assert enhancedMethod != null : "null after substitution while enhancing " + toString();
         return enhancedMethod;

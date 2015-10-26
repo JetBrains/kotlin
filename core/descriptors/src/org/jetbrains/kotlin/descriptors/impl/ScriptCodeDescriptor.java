@@ -46,7 +46,8 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
-            @Nullable Name newName
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         throw new IllegalStateException("no need to copy script code descriptor");
     }

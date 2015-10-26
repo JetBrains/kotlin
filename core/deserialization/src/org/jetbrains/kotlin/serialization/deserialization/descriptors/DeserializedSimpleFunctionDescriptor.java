@@ -60,7 +60,8 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
-            @Nullable Name newName
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         return new DeserializedSimpleFunctionDescriptor(
                 newOwner,

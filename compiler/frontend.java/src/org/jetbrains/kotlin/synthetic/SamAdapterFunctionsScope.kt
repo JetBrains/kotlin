@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.synthetic
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
@@ -145,7 +146,8 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 newOwner: DeclarationDescriptor,
                 original: FunctionDescriptor?,
                 kind: CallableMemberDescriptor.Kind,
-                newName: Name?
+                newName: Name?,
+                preserveSource: Boolean
         ): MyFunctionDescriptor {
             return MyFunctionDescriptor(
                     containingDeclaration, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind, source
@@ -170,12 +172,13 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 newValueParameterDescriptors: MutableList<ValueParameterDescriptor>,
                 newExtensionReceiverParameterType: KotlinType?,
                 newReturnType: KotlinType,
-                name: Name?
+                name: Name?,
+                preserveSource: Boolean
         ): FunctionDescriptor? {
             val descriptor = super.doSubstitute(
                     originalSubstitutor, newOwner, newModality, newVisibility,
                     newIsOperator, newIsInfix, newIsExternal, newIsInline, newIsTailrec, original,
-                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name)
+                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name, preserveSource)
                     as MyFunctionDescriptor? ?: return null
 
             if (original == null) {

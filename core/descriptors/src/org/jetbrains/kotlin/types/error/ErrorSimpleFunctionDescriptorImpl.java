@@ -43,7 +43,8 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
-            @Nullable Name newName
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         return this;
     }

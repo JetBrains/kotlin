@@ -269,9 +269,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull Kind kind
     ) {
         return doSubstitute(originalSubstitutor,
-                newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec, original, copyOverrides, kind,
-                getValueParameters(), getExtensionReceiverParameterType(), getReturnType(),
-                            null);
+                            newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec, original, copyOverrides, kind,
+                            getValueParameters(), getExtensionReceiverParameterType(), getReturnType(),
+                            null, false);
     }
 
     @Nullable
@@ -298,9 +298,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
             @Nullable KotlinType newExtensionReceiverParameterType,
             @NotNull KotlinType newReturnType,
-            @Nullable Name name
+            @Nullable Name name,
+            boolean preserveSource
     ) {
-        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind, name);
+        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind, name, preserveSource);
 
         List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
         List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
@@ -375,8 +376,16 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind,
-            @Nullable Name newName
+            @Nullable Name newName,
+            boolean preserveSource
     );
+
+    @NotNull
+    protected SourceElement getSourceToUseForCopy(boolean preserveSource, @Nullable FunctionDescriptor original) {
+        return preserveSource
+               ? (original != null ? original.getSource() : getOriginal().getSource())
+               : SourceElement.NO_SOURCE;
+    }
 
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
