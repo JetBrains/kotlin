@@ -303,11 +303,6 @@ fun LexicalScope.addImportingScope(importScope: ImportingScope): LexicalScope
         = addImportingScopes(listOf(importScope))
 
 fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
-    // TODO: it's a hack for Repl
-    if (this is MemberScopeToImportingScopeAdapter) {
-        return MemberScopeToImportingScopeAdapter(newParent, memberScope)
-    }
-
     return object: ImportingScope by this {
         override val parent: ImportingScope?
             get() = newParent
