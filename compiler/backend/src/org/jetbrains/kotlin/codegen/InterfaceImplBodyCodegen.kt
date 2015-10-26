@@ -177,18 +177,6 @@ public class InterfaceImplBodyCodegen(
 
         override fun getDelegate() = v
 
-        override fun newField(
-                origin: JvmDeclarationOrigin,
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                value: Any?
-        ): FieldVisitor {
-            if (shouldCount) isAnythingGenerated = true
-            return super.newField(origin, access, name, desc, signature, value)
-        }
-
         override fun newMethod(
                 origin: JvmDeclarationOrigin,
                 access: Int,
@@ -197,13 +185,10 @@ public class InterfaceImplBodyCodegen(
                 signature: String?,
                 exceptions: Array<out String>?
         ): MethodVisitor {
-            if (shouldCount) isAnythingGenerated = true
+            if (shouldCount) {
+                isAnythingGenerated = true
+            }
             return super.newMethod(origin, access, name, desc, signature, exceptions)
-        }
-
-        override fun newAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
-            if (shouldCount) isAnythingGenerated = true
-            return super.newAnnotation(desc, visible)
         }
     }
 }
