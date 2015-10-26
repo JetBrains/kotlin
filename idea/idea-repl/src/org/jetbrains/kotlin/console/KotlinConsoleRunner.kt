@@ -67,7 +67,7 @@ public class KotlinConsoleRunner(
         title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
-    internal val commandHistory = CommandHistory()
+    val commandHistory = CommandHistory()
 
     var isReadLineMode: Boolean = false
         set(value) {

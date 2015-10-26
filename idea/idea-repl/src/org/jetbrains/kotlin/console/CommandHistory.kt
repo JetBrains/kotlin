@@ -25,7 +25,8 @@ class CommandHistory {
     )
 
     private val entries = arrayListOf<Entry>()
-    private var processedEntriesCount: Int = 0
+    var processedEntriesCount: Int = 0
+        private set
 
     val listeners = arrayListOf<HistoryUpdateListener>()
 
