@@ -22,11 +22,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import javax.inject.Inject;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -308,31 +309,6 @@ public class CallExpressionResolver {
     }
 
     /**
-     * Extended variant of JetTypeInfo stores additional information
-     * about data flow info from the left-more receiver, e.g. x != null for
-     * foo(x!!)?.bar(y!!)?.baz()
-     */
-    private static class JetTypeInfoInsideSafeCall extends JetTypeInfo {
-
-        private final DataFlowInfo safeCallChainInfo;
-
-        private JetTypeInfoInsideSafeCall(@NotNull JetTypeInfo typeInfo, @Nullable DataFlowInfo safeCallChainInfo) {
-            super(typeInfo.getType(), typeInfo.getDataFlowInfo(), typeInfo.getJumpOutPossible(), typeInfo.getJumpFlowInfo());
-            this.safeCallChainInfo = safeCallChainInfo;
-        }
-
-        /**
-         * Returns safe call chain information which is taken from the left-most receiver of a chain
-         * foo(x!!)?.bar(y!!)?.gav() ==> x != null is safe call chain information
-         */
-        @Nullable
-        public DataFlowInfo getSafeCallChainInfo() {
-            return safeCallChainInfo;
-        }
-    }
-
-
-    /**
      * Visits a qualified expression like x.y or x?.z controlling data flow information changes.
      *
      * @return qualified expression type together with data flow information
@@ -341,97 +317,82 @@ public class CallExpressionResolver {
     public JetTypeInfo getQualifiedExpressionTypeInfo(
             @NotNull KtQualifiedExpression expression, @NotNull ExpressionTypingContext context
     ) {
-        // TODO : functions as values
-        KtExpression selectorExpression = expression.getSelectorExpression();
-        KtExpression receiverExpression = expression.getReceiverExpression();
-        boolean safeCall = (expression.getOperationSign() == KtTokens.SAFE_ACCESS);
-        ResolutionContext contextForReceiver = context.replaceExpectedType(NO_EXPECTED_TYPE).
-                replaceContextDependency(INDEPENDENT).
-                replaceInsideCallChain(true); // Enter call chain
-        // Visit receiver (x in x.y or x?.z) here. Recursion is possible.
-        JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(receiverExpression, contextForReceiver);
+        ExpressionTypingContext currentContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
+        Deque<CallExpressionElement> elementChain = CallExpressionUnrollerKt.unroll(expression);
+
+        JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(elementChain.getFirst().getReceiver(), currentContext);
         KotlinType receiverType = receiverTypeInfo.getType();
-        QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, receiverExpression);
-
-        if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
-
-        ReceiverValue receiver = qualifierReceiver == null ? new ExpressionReceiver(receiverExpression, receiverType) : qualifierReceiver;
         DataFlowInfo receiverDataFlowInfo = receiverTypeInfo.getDataFlowInfo();
-        // Receiver changes should be always applied, at least for argument analysis
-        context = context.replaceDataFlowInfo(receiverDataFlowInfo);
+        JetTypeInfo resultTypeInfo = receiverTypeInfo;
 
-        // Visit selector (y in x.y) here. Recursion is also possible.
-        JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
-                receiver, expression.getOperationTokenNode(), selectorExpression, context);
-        KotlinType selectorReturnType = selectorReturnTypeInfo.getType();
+        boolean unconditional = true;
+        DataFlowInfo unconditionalDataFlowInfo = receiverDataFlowInfo;
 
-        resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, expression, context);
-        checkNestedClassAccess(expression, context);
+        for (CallExpressionElement element : elementChain) {
+            if (receiverType == null) {
+                receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
+            }
+            QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, element.getReceiver());
 
-        //TODO move further
-        if (safeCall) {
-            if (selectorReturnType != null) {
-                if (TypeUtils.isNullableType(receiverType)) {
-                    selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
-                    selectorReturnTypeInfo = selectorReturnTypeInfo.replaceType(selectorReturnType);
-                }
+            ReceiverValue receiver = qualifierReceiver == null ? new ExpressionReceiver(element.getReceiver(), receiverType) : qualifierReceiver;
+
+            boolean lastStage = element.getQualified() == expression;
+            assert lastStage == (element == elementChain.getLast());
+            // Drop NO_EXPECTED_TYPE / INDEPENDENT at last stage
+            // But receiver data flow info changes should be always applied, while we are inside call chain
+            ExpressionTypingContext baseContext = lastStage ? context : currentContext;
+            currentContext = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
+
+            KtExpression selectorExpression = element.getSelector();
+            JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(receiver, element.getNode(), selectorExpression, currentContext);
+            KotlinType selectorReturnType = selectorReturnTypeInfo.getType();
+
+            resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.getQualified(), currentContext);
+            checkNestedClassAccess(element.getQualified(), currentContext);
+
+            boolean safeCall = element.getSafe();
+            if (safeCall && selectorReturnType != null && TypeUtils.isNullableType(receiverType)) {
+                selectorReturnType = TypeUtils.makeNullable(selectorReturnType);
+                selectorReturnTypeInfo = selectorReturnTypeInfo.replaceType(selectorReturnType);
+            }
+
+            // TODO : this is suspicious: remove this code?
+            if (selectorExpression != null && selectorReturnType != null) {
+                currentContext.trace.recordType(selectorExpression, selectorReturnType);
+            }
+            resultTypeInfo = selectorReturnTypeInfo;
+            CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(element.getQualified(), currentContext.trace, currentContext.expectedType);
+            if (value != null && value.isPure()) {
+                resultTypeInfo =  dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, element.getQualified(), currentContext);
+                if (lastStage) return resultTypeInfo;
+            }
+            if (currentContext.contextDependency == INDEPENDENT) {
+                dataFlowAnalyzer.checkType(resultTypeInfo.getType(), element.getQualified(), currentContext);
+            }
+            // For the next stage, if any, current stage selector is the receiver!
+            receiverTypeInfo = selectorReturnTypeInfo;
+            receiverType = selectorReturnType;
+            receiverDataFlowInfo = receiverTypeInfo.getDataFlowInfo();
+            // if we have only dots and not ?. move unconditional data flow info further
+            if (safeCall) {
+                unconditional = false;
+            }
+            else if (unconditional) {
+                unconditionalDataFlowInfo = receiverDataFlowInfo;
+            }
+            //noinspection ConstantConditions
+            if (!lastStage && !currentContext.trace.get(BindingContext.PROCESSED, element.getQualified())) {
+                // Store type information (to prevent problems in call completer)
+                currentContext.trace.record(BindingContext.PROCESSED, element.getQualified());
+                currentContext.trace.record(BindingContext.EXPRESSION_TYPE_INFO, element.getQualified(),
+                                            resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo));
+                // save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
+                BindingContextUtilsKt.recordScope(currentContext.trace, currentContext.scope, element.getQualified());
+                BindingContextUtilsKt.recordDataFlowInfo(currentContext.replaceDataFlowInfo(unconditionalDataFlowInfo), element.getQualified());
             }
         }
-        // TODO : this is suspicious: remove this code?
-        if (selectorExpression != null && selectorReturnType != null) {
-            context.trace.recordType(selectorExpression, selectorReturnType);
-        }
-
-        CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(expression, context.trace, context.expectedType);
-        if (value != null && value.isPure()) {
-            return dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, expression, context);
-        }
-
-        JetTypeInfo typeInfo;
-        DataFlowInfo safeCallChainInfo;
-        if (receiverTypeInfo instanceof JetTypeInfoInsideSafeCall) {
-            safeCallChainInfo = ((JetTypeInfoInsideSafeCall) receiverTypeInfo).getSafeCallChainInfo();
-        }
-        else {
-            safeCallChainInfo = null;
-        }
-        if (safeCall) {
-            if (safeCallChainInfo == null) safeCallChainInfo = receiverDataFlowInfo;
-            if (context.insideCallChain) {
-                // If we are inside safe call chain, we SHOULD take arguments into account, for example
-                // x?.foo(y!!)?.bar(x.field)?.gav(y.field) (like smartCasts\safecalls\longChain)
-                // Also, we should provide further safe call chain data flow information or
-                // if we are in the most left safe call then just take it from receiver
-                typeInfo = new JetTypeInfoInsideSafeCall(selectorReturnTypeInfo, safeCallChainInfo);
-            }
-            else {
-                // Here we should not take selector data flow info into account because it's only one branch, see KT-7204
-                // x?.foo(y!!) // y becomes not-nullable during argument analysis
-                // y.bar()     // ERROR: y is nullable at this point
-                // So we should just take safe call chain data flow information, e.g. foo(x!!)?.bar()?.gav()
-                // If it's null, we must take receiver normal info, it's a chain with length of one like foo(x!!)?.bar() and
-                // safe call chain information does not yet exist
-                typeInfo = selectorReturnTypeInfo.replaceDataFlowInfo(safeCallChainInfo);
-            }
-        }
-        else {
-            // It's not a safe call, so we can take selector data flow information
-            // Safe call chain information also should be provided because it's can be a part of safe call chain
-            if (context.insideCallChain || safeCallChainInfo == null) {
-                // Not a safe call inside call chain with safe calls OR
-                // call chain without safe calls at all
-                typeInfo = new JetTypeInfoInsideSafeCall(selectorReturnTypeInfo, selectorReturnTypeInfo.getDataFlowInfo());
-            }
-            else {
-                // Exiting call chain with safe calls -- take data flow info from the lest-most receiver
-                // foo(x!!)?.bar().gav()
-                typeInfo = selectorReturnTypeInfo.replaceDataFlowInfo(safeCallChainInfo);
-            }
-        }
-        if (context.contextDependency == INDEPENDENT) {
-            dataFlowAnalyzer.checkType(typeInfo.getType(), expression, context);
-        }
-        return typeInfo;
+        // if we are at last stage, we should just take result type info and set unconditional data flow info
+        return resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo);
     }
 
     private void resolveDeferredReceiverInQualifiedExpression(

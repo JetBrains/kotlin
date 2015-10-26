@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
  * At the end current data flow info is x != null && y != null, but jump data flow info is x != null only.
  * Both break and continue are counted as possible jump outside of a loop, but return is not.
  */
-/*package*/ open class JetTypeInfo(
+class JetTypeInfo(
         val type: KotlinType?,
         val dataFlowInfo: DataFlowInfo,
         val jumpOutPossible: Boolean = false,
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
     fun clearType() = replaceType(null)
 
-    // NB: do not compare type with this.type because this comparison is complex and unstabld
+    // NB: do not compare type with this.type because this comparison is complex and unstable
     fun replaceType(type: KotlinType?) = JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceJumpOutPossible(jumpOutPossible: Boolean) =
