@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -127,7 +126,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtNamedFunction function = (KtNamedFunction) declarations.get(0);
             SimpleFunctionDescriptor functionDescriptor =
-                    functionDescriptorResolver.resolveFunctionDescriptor(classDescriptor, ScopeUtilsKt.asLexicalScope(scope), function,
+                    functionDescriptorResolver.resolveFunctionDescriptor(classDescriptor, TypeTestUtilsKt.asLexicalScope(scope), function,
                                                                          JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
 
             assertEquals(expectedFunctionModality, functionDescriptor.getModality());
@@ -140,7 +139,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, ScopeUtilsKt.asLexicalScope(scope), property, JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
+                    classDescriptor, TypeTestUtilsKt.asLexicalScope(scope), property, JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
 
             assertEquals(expectedPropertyModality, propertyDescriptor.getModality());
         }
@@ -153,7 +152,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, ScopeUtilsKt.asLexicalScope(scope), property, JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
+                    classDescriptor, TypeTestUtilsKt.asLexicalScope(scope), property, JetTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
             PropertyAccessorDescriptor propertyAccessor = isGetter
                                                           ? propertyDescriptor.getGetter()
                                                           : propertyDescriptor.getSetter();

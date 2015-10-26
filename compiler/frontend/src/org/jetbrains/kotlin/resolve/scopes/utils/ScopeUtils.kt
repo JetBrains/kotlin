@@ -140,15 +140,6 @@ public fun LexicalScope.asKtScope(): KtScope {
 @JvmOverloads
 public fun KtScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
 
-@Deprecated("Remove this method after scope refactoring")
-public fun KtScope.asLexicalScope(): LexicalScope
-        = if (this is LexicalToKtScopeAdapter) {
-            lexicalScope
-        }
-        else {
-            memberScopeAsImportingScope()
-        }
-
 private class LexicalToKtScopeAdapter(lexicalScope: LexicalScope): KtScope {
     val lexicalScope = lexicalScope.takeSnapshot()
 
