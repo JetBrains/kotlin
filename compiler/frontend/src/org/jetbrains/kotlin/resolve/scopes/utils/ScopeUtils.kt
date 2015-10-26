@@ -296,6 +296,7 @@ inline fun <T: Any> LexicalScope.findFirstFromImportingScopes(fetch: (ImportingS
     return findFirstFromMeAndParent { if (it is ImportingScope) fetch(it) else null }
 }
 
+//TODO: more efficient
 fun LexicalScope.addImportScopes(importScopes: Collection<ImportingScope>): LexicalScope {
     return importScopes.fold(this) { scope, importingScope -> scope.addImportScope(importingScope) }
 }
@@ -326,7 +327,7 @@ fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
 
 fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): LexicalScope {
     return if (this is ImportingScope)
-        importingScopeChain!!
+        importingScopeChain ?: LexicalScope.Empty
     else
         LexicalScopeWrapper(this, importingScopeChain)
 }
