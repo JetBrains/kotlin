@@ -10,8 +10,8 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.SourceTask
-import java.util.HashSet
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -26,13 +26,8 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.utils.LibraryUtils
-import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.ExtraPropertiesExtension
-import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.org.objectweb.asm.ClassWriter
-import java.io.IOException
-import java.lang.ref.WeakReference
 import java.io.File
+import java.util.*
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -102,7 +97,8 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     override val compiler = K2JVMCompiler()
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
-    val srcDirsSources = HashSet<SourceDirectorySet>()
+    // Should be SourceDirectorySet or File
+    val srcDirsSources = HashSet<Any>()
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
@@ -178,19 +174,25 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         }
     }
 
-    // override setSource to track source directory sets
+    // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(source: Any?) {
         srcDirsSources.clear()
         if (source is SourceDirectorySet) {
             srcDirsSources.add(source)
         }
+        else if (source is File) {
+            srcDirsSources.add(source)
+        }
         super.setSource(source)
     }
 
-    // override source to track source directory sets
+    // override source to track source directory sets and files (for generated android folders)
     override fun source(vararg sources: Any?): SourceTask? {
         for (source in sources) {
             if (source is SourceDirectorySet) {
+                srcDirsSources.add(source)
+            }
+            else if (source is File) {
                 srcDirsSources.add(source)
             }
         }
@@ -199,9 +201,16 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
     fun findSrcDirRoot(file: File): File? {
         for (source in srcDirsSources) {
-            for (root in source.getSrcDirs()) {
-                if (FileUtil.isAncestor(root, file, false)) {
-                    return root
+            if (source is SourceDirectorySet) {
+                for (root in source.getSrcDirs()) {
+                    if (FileUtil.isAncestor(root, file, false)) {
+                        return root
+                    }
+                }
+            }
+            else if (source is File) {
+                if (FileUtil.isAncestor(source, file, false)) {
+                    return source
                 }
             }
         }
