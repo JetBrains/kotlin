@@ -45,19 +45,15 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsList
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtToken
@@ -78,15 +74,13 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
+import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.DFS.CollectingNodeHandler
-import org.jetbrains.kotlin.utils.DFS.Neighbors
-import org.jetbrains.kotlin.utils.DFS.VisitedWithSet
+import org.jetbrains.kotlin.utils.DFS.*
 import java.util.*
 
 internal val KotlinBuiltIns.defaultReturnType: KotlinType get() = unitType
@@ -711,7 +705,7 @@ private fun ExtractionData.inferParametersInfo(
                     options.captureLocalFunctions
                     && originalRef.getReferencedName() == originalDescriptor.getName().asString() // to forbid calls by convention
                     && originalDeclaration is KtNamedFunction && originalDeclaration.isLocal()
-                    && (targetScope == null || originalDescriptor !in targetScope.asKtScope().getFunctions(originalDescriptor.name, NoLookupLocation.FROM_IDE))
+                    && targetScope.findFunction(originalDescriptor.name, NoLookupLocation.FROM_IDE) { it == originalDescriptor } == null
 
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
 
