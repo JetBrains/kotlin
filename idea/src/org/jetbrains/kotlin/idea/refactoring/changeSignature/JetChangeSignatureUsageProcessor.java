@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
+import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoringKt;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
@@ -420,7 +421,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                             @NotNull ThisReceiver receiverValue
                     ) {
                         DeclarationDescriptor targetDescriptor = receiverValue.getDeclarationDescriptor();
-                        if (targetDescriptor == callableDescriptor) {
+                        if (DescriptorUtilsKt.compareDescriptors(callElement.getProject(), targetDescriptor, callableDescriptor)) {
                             assert originalReceiverInfo != null : "No original receiver info provided: " + functionUsageInfo.getDeclaration().getText();
                             result.add(new JetImplicitThisToParameterUsage(callElement, originalReceiverInfo, functionUsageInfo));
                         }
