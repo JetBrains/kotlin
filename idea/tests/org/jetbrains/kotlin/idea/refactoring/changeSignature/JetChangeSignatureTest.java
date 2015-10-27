@@ -1347,6 +1347,96 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testJvmOverloadedSwapParams1() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo param = changeInfo.getNewParameters()[1];
+        changeInfo.setNewParameter(1, changeInfo.getNewParameters()[2]);
+        changeInfo.setNewParameter(2, param);
+        doTest(changeInfo);
+    }
+
+    public void testJvmOverloadedSwapParams2() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo param = changeInfo.getNewParameters()[0];
+        changeInfo.setNewParameter(0, changeInfo.getNewParameters()[2]);
+        changeInfo.setNewParameter(2, param);
+        doTest(changeInfo);
+    }
+
+    private void doTestJvmOverloadedAddDefault(int index) throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        KtExpression defaultValue = new KtPsiFactory(getProject()).createExpression("2");
+        CallableDescriptor descriptor = changeInfo.getMethodDescriptor().getBaseDescriptor();
+        changeInfo.addParameter(new JetParameterInfo(descriptor, -1, "n", BUILT_INS.getIntType(), defaultValue, defaultValue), index);
+        doTest(changeInfo);
+    }
+
+    private void doTestJvmOverloadedAddNonDefault(int index) throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        KtExpression defaultValue = new KtPsiFactory(getProject()).createExpression("2");
+        CallableDescriptor descriptor = changeInfo.getMethodDescriptor().getBaseDescriptor();
+        changeInfo.addParameter(new JetParameterInfo(descriptor, -1, "n", BUILT_INS.getIntType(), null, defaultValue), index);
+        doTest(changeInfo);
+    }
+
+    private void doTestRemoveAt(int index) throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.removeParameter(index >= 0 ? index : changeInfo.getNewParametersCount() - 1);
+        doTest(changeInfo);
+    }
+
+    public void testJvmOverloadedAddDefault1() throws Exception {
+        doTestJvmOverloadedAddDefault(0);
+    }
+
+    public void testJvmOverloadedAddDefault2() throws Exception {
+        doTestJvmOverloadedAddDefault(1);
+    }
+
+    public void testJvmOverloadedAddDefault3() throws Exception {
+        doTestJvmOverloadedAddDefault(-1);
+    }
+
+    public void testJvmOverloadedAddNonDefault1() throws Exception {
+        doTestJvmOverloadedAddNonDefault(0);
+    }
+
+    public void testJvmOverloadedAddNonDefault2() throws Exception {
+        doTestJvmOverloadedAddNonDefault(1);
+    }
+
+    public void testJvmOverloadedAddNonDefault3() throws Exception {
+        doTestJvmOverloadedAddNonDefault(-1);
+    }
+
+    public void testJvmOverloadedRemoveDefault1() throws Exception {
+        doTestRemoveAt(0);
+    }
+
+    public void testJvmOverloadedRemoveDefault2() throws Exception {
+        doTestRemoveAt(1);
+    }
+
+    public void testJvmOverloadedRemoveDefault3() throws Exception {
+        doTestRemoveAt(-1);
+    }
+
+    public void testJvmOverloadedRemoveNonDefault1() throws Exception {
+        doTestRemoveAt(0);
+    }
+
+    public void testJvmOverloadedRemoveNonDefault2() throws Exception {
+        doTestRemoveAt(1);
+    }
+
+    public void testJvmOverloadedRemoveNonDefault3() throws Exception {
+        doTestRemoveAt(-1);
+    }
+
+    public void testJvmOverloadedConstructorSwapParams() throws Exception {
+        testJvmOverloadedSwapParams1();
+    }
+
     private List<Editor> editors = null;
 
     private static final String[] EXTENSIONS = {".kt", ".java"};

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-public class JetParameterInfo(
+public class JetParameterInfo @JvmOverloads constructor (
         val callableDescriptor: CallableDescriptor,
         val originalIndex: Int = -1,
         private var name: String,

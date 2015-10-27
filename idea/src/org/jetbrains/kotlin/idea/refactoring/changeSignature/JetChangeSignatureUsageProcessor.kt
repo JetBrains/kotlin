@@ -800,14 +800,12 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val javaChangeInfos = (changeInfo as JetChangeInfo).getOrCreateJavaChangeInfos()
             assert(javaChangeInfos != null) { "JavaChangeInfo not found: " + method.text }
 
-            val javaUsageInfos = usageInfo.javaUsageInfos
-            val processors = ChangeSignatureUsageProcessor.EP_NAME.extensions
-
-            for (javaChangeInfo in javaChangeInfos!!) {
-                // Match names so that getter/setter usages are not confused with each other
-                if (javaChangeInfo.oldName != usageInfo.javaChangeInfo.oldName) continue
-
+            javaChangeInfos!!.firstOrNull {
+                changeInfo.originalToCurrentMethods[usageInfo.javaChangeInfo.method] == it.method
+            }?.let { javaChangeInfo ->
                 val nullabilityPropagator = NullabilityPropagator(javaChangeInfo.method)
+                val javaUsageInfos = usageInfo.javaUsageInfos
+                val processors = ChangeSignatureUsageProcessor.EP_NAME.extensions
 
                 for (usage in javaUsageInfos) {
                     if (isOverriderOrCaller(usage) && beforeMethodChange) continue

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -44,11 +45,12 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.LinkedHashSet
+import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.utils.removeLast
+import java.util.*
 
 public open class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
@@ -60,7 +62,17 @@ public open class JetChangeInfo(
         receiver: JetParameterInfo? = methodDescriptor.receiver,
         val context: PsiElement,
         primaryPropagationTargets: Collection<PsiElement> = emptyList()
-): ChangeInfo {
+) : ChangeInfo {
+    private class JvmOverloadSignature(
+            val method: PsiMethod,
+            val mandatoryParams: Set<KtParameter>,
+            val defaultValues: Set<KtExpression>
+    ) {
+        fun constrainBy(other: JvmOverloadSignature): JvmOverloadSignature {
+            return JvmOverloadSignature(method, mandatoryParams.intersect(other.mandatoryParams), defaultValues.intersect(other.defaultValues))
+        }
+    }
+
     var receiverParameterInfo: JetParameterInfo? = receiver
         set(value: JetParameterInfo?) {
             if (value != null && value !in newParameters) {
@@ -70,7 +82,10 @@ public open class JetChangeInfo(
         }
 
     private val newParameters = parameterInfos.toArrayList()
-    private val originalPsiMethods: List<PsiMethod> = getMethod().toLightMethods()
+
+    private val originalPsiMethods = method.toLightMethods()
+    private val originalParameters = (method as? KtFunction)?.valueParameters ?: emptyList()
+    private val originalSignatures = makeSignatures(originalParameters, originalPsiMethods, { it }, { it.defaultValue })
 
     private val oldNameToParameterIndex: Map<String, Int> by lazy {
         val map = HashMap<String, Int>()
@@ -90,6 +105,8 @@ public open class JetChangeInfo(
 
     private var isPrimaryMethodUpdated: Boolean = false
     private var javaChangeInfos: List<JavaChangeInfo>? = null
+    var originalToCurrentMethods: Map<PsiMethod, PsiMethod> = emptyMap()
+        private set
 
     public fun getOldParameterIndex(oldParameterName: String): Int? = oldNameToParameterIndex[oldParameterName]
 
@@ -114,8 +131,14 @@ public open class JetChangeInfo(
         newParameters.set(index, parameterInfo)
     }
 
-    public fun addParameter(parameterInfo: JetParameterInfo) {
-        newParameters.add(parameterInfo)
+    @JvmOverloads
+    public fun addParameter(parameterInfo: JetParameterInfo, atIndex: Int = -1) {
+        if (atIndex >= 0) {
+            newParameters.add(atIndex, parameterInfo)
+        }
+        else {
+            newParameters.add(parameterInfo)
+        }
     }
 
     public fun removeParameter(index: Int) {
@@ -264,7 +287,56 @@ public open class JetChangeInfo(
         javaChangeInfos = null
     }
 
+    private fun <Parameter> makeSignatures(
+            parameters: List<Parameter>,
+            psiMethods: List<PsiMethod>,
+            getPsi: (Parameter) -> KtParameter,
+            getDefaultValue: (Parameter) -> KtExpression?
+    ): List<JvmOverloadSignature> {
+        val defaultValueCount = parameters.count { getDefaultValue(it) != null }
+        if (psiMethods.size != defaultValueCount + 1) return emptyList()
+
+        val mandatoryParams = parameters.toArrayList()
+        val defaultValues = ArrayList<KtExpression>()
+        return psiMethods.map {
+            JvmOverloadSignature(it, mandatoryParams.map(getPsi).toSet(), defaultValues.toSet()).apply {
+                val param = mandatoryParams.removeLast { getDefaultValue(it) != null } ?: return@apply
+                defaultValues.add(getDefaultValue(param)!!)
+            }
+        }
+    }
+
     public fun getOrCreateJavaChangeInfos(): List<JavaChangeInfo>? {
+        fun initCurrentSignatures(currentPsiMethods: List<PsiMethod>): List<JvmOverloadSignature> {
+            val parameterInfoToPsi = methodDescriptor.original.parameters.zip(originalParameters).toMap()
+            val dummyParameter = KtPsiFactory(method).createParameter("dummy")
+            return makeSignatures(newParameters,
+                                  currentPsiMethods,
+                                  { parameterInfoToPsi[it] ?: dummyParameter },
+                                  { it.defaultValueForParameter })
+        }
+
+        fun matchOriginalAndCurrentMethods(currentPsiMethods: List<PsiMethod>): Map<PsiMethod, PsiMethod> {
+            if (!(isPrimaryMethodUpdated
+                  && originalBaseFunctionDescriptor is FunctionDescriptor
+                  && originalBaseFunctionDescriptor.hasJvmOverloadsAnnotation())) {
+                return (originalPsiMethods zip currentPsiMethods).toMap()
+            }
+
+            if (originalPsiMethods.isEmpty() || currentPsiMethods.isEmpty()) return emptyMap()
+
+            currentPsiMethods.singleOrNull()?.let { method -> return originalPsiMethods.keysToMap { method } }
+
+            val currentSignatures = initCurrentSignatures(currentPsiMethods)
+            return originalSignatures.toMap({ it.method }) { originalSignature ->
+                var constrainedCurrentSignatures = currentSignatures.map { it.constrainBy(originalSignature) }
+                val maxMandatoryCount = constrainedCurrentSignatures.maxBy { it.mandatoryParams.size }!!.mandatoryParams.size
+                constrainedCurrentSignatures = constrainedCurrentSignatures.filter { it.mandatoryParams.size == maxMandatoryCount }
+                val maxDefaultCount = constrainedCurrentSignatures.maxBy { it.defaultValues.size }!!.defaultValues.size
+                constrainedCurrentSignatures.last { it.defaultValues.size == maxDefaultCount }.method
+            }
+        }
+
         /*
          * When primaryMethodUpdated is false, changes to the primary Kotlin declaration are already confirmed, but not yet applied.
          * It means that originalPsiMethod has already expired, but new one can't be created until Kotlin declaration is updated
@@ -309,12 +381,27 @@ public open class JetChangeInfo(
                 currentPsiMethod: PsiMethod,
                 newParameterList: List<JetParameterInfo>
         ): MutableList<ParameterInfoImpl> {
+            val defaultValuesToSkip = newParameterList.size - currentPsiMethod.parameterList.parametersCount
+            val defaultValuesToRetain = newParameterList.count { it.defaultValueForParameter != null } - defaultValuesToSkip
+            val oldIndices = newParameterList.map { it.oldIndex }.toIntArray()
+
+            // TODO: Ugly code, need to refactor Change Signature data model
+            var defaultValuesRemained = defaultValuesToRetain
+            for (param in newParameterList) {
+                if (param.isNewParameter || param.defaultValueForParameter == null || defaultValuesRemained-- > 0) continue
+                newParameterList.withIndex().filter { it.value.oldIndex >= param.oldIndex }.forEach { oldIndices[it.index]-- }
+            }
+
+            defaultValuesRemained = defaultValuesToRetain
             val oldParameterCount = originalPsiMethod.parameterList.parametersCount
+            var indexInCurrentPsiMethod = 0
             return newParameterList.withIndex()
                     .map { pair ->
                         val (i, info) = pair
 
-                        val oldIndex = info.oldIndex
+                        if (info.defaultValueForParameter != null && defaultValuesRemained-- <= 0) return@map null
+
+                        val oldIndex = oldIndices[i]
                         val javaOldIndex = when {
                             methodDescriptor.receiver == null -> oldIndex
                             info == methodDescriptor.receiver -> 0
@@ -324,11 +411,12 @@ public open class JetChangeInfo(
                         if (javaOldIndex >= oldParameterCount) return@map null
 
                         val type = if (isPrimaryMethodUpdated)
-                            currentPsiMethod.getParameterList().getParameters()[i].getType()
+                            currentPsiMethod.getParameterList().getParameters()[indexInCurrentPsiMethod++].getType()
                         else
                             PsiType.VOID
 
-                        ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall?.getText() ?: "")
+                        val defaultValue = info.defaultValueForCall ?: info.defaultValueForParameter
+                        ParameterInfoImpl(javaOldIndex, info.getName(), type, defaultValue?.getText() ?: "")
                     }
                     .filterNotNullTo(ArrayList())
         }
@@ -364,7 +452,8 @@ public open class JetChangeInfo(
 
         if (javaChangeInfos == null) {
             val method = getMethod()
-            javaChangeInfos = (originalPsiMethods zip method.toLightMethods()).map {
+            originalToCurrentMethods = matchOriginalAndCurrentMethods(method.toLightMethods())
+            javaChangeInfos = originalToCurrentMethods.entries.map {
                 val (originalPsiMethod, currentPsiMethod) = it
 
                 when (method) {
@@ -439,11 +528,11 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
     val returnTypeText = if (returnType != null) IdeDescriptorRenderers.SOURCE_CODE.renderType(returnType) else ""
 
     return JetChangeInfo(originalChangeSignatureDescriptor,
-                          getNewName(),
-                          returnType,
-                          returnTypeText,
-                          functionDescriptor.getVisibility(),
-                          newParameters,
-                          null,
-                          method)
+                         getNewName(),
+                         returnType,
+                         returnTypeText,
+                         functionDescriptor.getVisibility(),
+                         newParameters,
+                         null,
+                         method)
 }
