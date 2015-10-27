@@ -6618,6 +6618,27 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/generics/cyclicBounds")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CyclicBounds extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInCyclicBounds() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/cyclicBounds"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("functions.kt")
+                public void testFunctions() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/cyclicBounds/functions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inClass.kt")
+                public void testInClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/cyclicBounds/inClass.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/generics/nullability")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -9249,6 +9270,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("recursiveRawUpperBound.kt")
             public void testRecursiveRawUpperBound() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/recursiveRawUpperBound.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("recursiveRawUpperBound2.kt")
+            public void testRecursiveRawUpperBound2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/recursiveRawUpperBound2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("recursiveRawUpperBound3.kt")
+            public void testRecursiveRawUpperBound3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/recursiveRawUpperBound3.kt");
                 doTest(fileName);
             }
 

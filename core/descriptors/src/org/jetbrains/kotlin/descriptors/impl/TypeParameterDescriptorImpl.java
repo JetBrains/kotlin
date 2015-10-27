@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
@@ -36,6 +39,11 @@ import java.util.List;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor {
+    @Nullable
+    private final Function1<KotlinType, Void> reportCycleError;
+    @NotNull
+    private final SupertypeLoopChecker supertypeLoopsChecker;
+
     public static TypeParameterDescriptor createWithDefaultBound(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
@@ -60,7 +68,23 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             int index,
             @NotNull SourceElement source
     ) {
-        return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source);
+        return createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index, source,
+                                            /* reportCycleError = */ null, SupertypeLoopChecker.EMPTY.INSTANCE);
+    }
+
+    public static TypeParameterDescriptorImpl createForFurtherModification(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            boolean reified,
+            @NotNull Variance variance,
+            @NotNull Name name,
+            int index,
+            @NotNull SourceElement source,
+            @Nullable Function1<KotlinType, Void> reportCycleError,
+            @NotNull SupertypeLoopChecker supertypeLoopsResolver
+    ) {
+        return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source, reportCycleError,
+                                               supertypeLoopsResolver);
     }
 
     private final List<KotlinType> upperBounds = new ArrayList<KotlinType>(1);
@@ -73,9 +97,14 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @NotNull Variance variance,
             @NotNull Name name,
             int index,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            @Nullable Function1<KotlinType, Void> reportCycleError,
+            @NotNull SupertypeLoopChecker supertypeLoopsChecker
     ) {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, annotations, name, variance, reified, index, source);
+        this.reportCycleError = reportCycleError;
+        // ?
+        this.supertypeLoopsChecker = supertypeLoopsChecker;
     }
 
     @NotNull
@@ -128,6 +157,18 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
         if (upperBounds.isEmpty()) {
             doAddUpperBound(getBuiltIns(getContainingDeclaration()).getDefaultBound());
         }
+    }
+
+    @NotNull
+    @Override
+    protected SupertypeLoopChecker getSupertypeLoopChecker() {
+        return supertypeLoopsChecker;
+    }
+
+    @Override
+    protected void reportCycleError(@NotNull KotlinType type) {
+        if (reportCycleError == null) return;
+        reportCycleError.invoke(type);
     }
 
     @NotNull

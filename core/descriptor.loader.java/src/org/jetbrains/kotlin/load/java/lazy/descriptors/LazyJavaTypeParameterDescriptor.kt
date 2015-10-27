@@ -54,4 +54,10 @@ class LazyJavaTypeParameterDescriptor(
             c.typeResolver.transformJavaType(it, TypeUsage.UPPER_BOUND.toAttributes(upperBoundForTypeParameter = this))
         }
     }
+
+    override fun getSupertypeLoopChecker() = c.components.supertypeLoopChecker
+
+    override fun reportCycleError(type: KotlinType) {
+        // Do nothing
+    }
 }
