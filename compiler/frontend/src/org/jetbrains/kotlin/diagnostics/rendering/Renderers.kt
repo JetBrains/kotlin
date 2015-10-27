@@ -249,7 +249,7 @@ public object Renderers {
     public fun renderUpperBoundViolatedInferenceError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        val constraintSystem = inferenceErrorData.constraintSystem as ConstraintSystemImpl
+        val constraintSystem = inferenceErrorData.constraintSystem
         val status = constraintSystem.getStatus()
         LOG.assertTrue(status.hasViolatedUpperBound(),
                        renderDebugMessage("Upper bound violated renderer is applied for incorrect status", inferenceErrorData))

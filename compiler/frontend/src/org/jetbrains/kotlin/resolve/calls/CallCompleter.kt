@@ -30,11 +30,11 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.resolve.calls.inference.filterConstraintsOut
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -140,8 +140,8 @@ public class CallCompleter(
             expectedType: KotlinType,
             trace: BindingTrace
     ) {
-        fun updateSystemIfSuccessful(update: (ConstraintSystemImpl) -> Boolean) {
-            val copy = (getConstraintSystem() as ConstraintSystemImpl).copy() as ConstraintSystemImpl
+        fun updateSystemIfSuccessful(update: (ConstraintSystem) -> Boolean) {
+            val copy = constraintSystem!!.copy()
             if (update(copy)) {
                 setConstraintSystem(copy)
             }

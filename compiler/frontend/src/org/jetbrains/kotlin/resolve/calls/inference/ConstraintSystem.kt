@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -84,4 +86,10 @@ public interface ConstraintSystem {
      * Returns the substitution only for type parameters that have result values, otherwise returns the type parameter itself.
      */
     public fun getPartialSubstitutor(): TypeSubstitutor
+
+    public fun copy(filterConstraintPosition: (ConstraintPosition) -> Boolean = { true }): ConstraintSystem
+}
+
+fun ConstraintSystem.filterConstraintsOut(excludePositionKind: ConstraintPositionKind): ConstraintSystem {
+    return copy { !it.derivedFrom(excludePositionKind) }
 }

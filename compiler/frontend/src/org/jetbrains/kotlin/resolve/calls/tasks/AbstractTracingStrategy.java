@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -47,6 +46,7 @@ import java.util.Collection;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqNameFromTopLevelClass;
+import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemKt.filterConstraintsOut;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
@@ -219,8 +219,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             KotlinType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
-            ConstraintSystem systemWithoutExpectedTypeConstraint =
-                    ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION);
+            ConstraintSystem systemWithoutExpectedTypeConstraint = filterConstraintsOut(constraintSystem, EXPECTED_TYPE_POSITION);
             KotlinType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
                     declaredReturnType, Variance.OUT_VARIANCE);
             assert substitutedReturnType != null; //todo

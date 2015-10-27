@@ -177,15 +177,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }.filterNotNull().filter { if (original) it in originalToVariables.keySet() else it in getAllTypeVariables() }
     }
 
-    public fun copy(): ConstraintSystem = createNewConstraintSystemFromThis { true }
-
-    public fun filterConstraintsOut(excludePositionKind: ConstraintPositionKind): ConstraintSystem {
-        return createNewConstraintSystemFromThis { !it.derivedFrom(excludePositionKind) }
-    }
-
-    private fun createNewConstraintSystemFromThis(
-            filterConstraintPosition: (ConstraintPosition) -> Boolean
-    ): ConstraintSystem {
+    override fun copy(filterConstraintPosition: (ConstraintPosition) -> Boolean): ConstraintSystem {
         val newSystem = ConstraintSystemImpl()
         for ((typeParameter, typeBounds) in allTypeParameterBounds) {
             newSystem.allTypeParameterBounds.put(typeParameter, typeBounds.filter(filterConstraintPosition))
