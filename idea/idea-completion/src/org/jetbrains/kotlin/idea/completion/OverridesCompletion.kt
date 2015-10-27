@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.completion.handlers.skipSpaces
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
@@ -99,10 +100,11 @@ class OverridesCompletion(
                 }
 
                 override fun handleInsert(context: InsertionContext) {
-                    val dummyMemberText = if (isConstructorParameter) "override val dummy" else "override fun dummy() {}"
+                    val dummyMemberText = if (isConstructorParameter) "override val dummy: Dummy $" else "override fun dummy() {}"
                     context.document.replaceString(context.startOffset, context.tailOffset, dummyMemberText)
 
-                    PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+                    val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
+                    psiDocumentManager.commitAllDocuments()
 
                     val dummyMember = context.file.findElementAt(context.startOffset)!!.getStrictParentOfType<KtNamedDeclaration>()!!
 
@@ -116,7 +118,15 @@ class OverridesCompletion(
                     ShortenReferences.DEFAULT.process(insertedMember)
 
                     if (isConstructorParameter) {
-                        context.editor.moveCaret(insertedMember.endOffset)
+                        psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
+
+                        val offset = insertedMember.endOffset
+                        val chars = context.document.charsSequence
+                        val commaOffset = chars.skipSpaces(offset)
+                        assert(chars[commaOffset] == '$') { "Incorrect char at index: '${chars[commaOffset]}', '$' expected" }
+                        context.document.deleteString(offset, commaOffset + 1)
+
+                        context.editor.moveCaret(offset)
                     }
                     else {
                         moveCaretIntoGeneratedElement(context.editor, insertedMember)

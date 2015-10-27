@@ -429,6 +429,24 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ValInConstructorParameter.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("ValInConstructorParameter2.kt")
+        public void testValInConstructorParameter2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ValInConstructorParameter2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInConstructorParameter3.kt")
+        public void testValInConstructorParameter3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ValInConstructorParameter3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValInConstructorParameter4.kt")
+        public void testValInConstructorParameter4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/override/ValInConstructorParameter4.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType")
