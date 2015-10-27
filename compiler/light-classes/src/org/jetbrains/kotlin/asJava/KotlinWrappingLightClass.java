@@ -154,9 +154,16 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                 }
 
                 if (declaration != null) {
-                    return !isTraitFakeOverride(declaration) ?
-                           new KotlinLightMethodForDeclaration(myManager, method, declaration, KotlinWrappingLightClass.this) :
-                           new KotlinLightMethodForTraitFakeOverride(myManager, method, declaration, KotlinWrappingLightClass.this);
+                    if (isTraitFakeOverride(declaration)) {
+                        return new KotlinLightMethodForTraitFakeOverride(myManager, method, declaration, KotlinWrappingLightClass.this);
+                    }
+                    else if (method instanceof PsiAnnotationMethod) {
+                        return new KotlinAnnotationLightMethod(myManager, (PsiAnnotationMethod) method, declaration,
+                                                               KotlinWrappingLightClass.this);
+                    }
+                    else {
+                        return new KotlinLightMethodForDeclaration(myManager, method, declaration, KotlinWrappingLightClass.this);
+                    }
                 }
 
                 return new KotlinNoOriginLightMethod(myManager, method, KotlinWrappingLightClass.this);
