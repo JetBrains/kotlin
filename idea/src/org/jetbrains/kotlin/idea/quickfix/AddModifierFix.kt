@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -40,12 +39,12 @@ open class AddModifierFix(
 
     override fun getText(): String {
         if (modifier == ABSTRACT_KEYWORD || modifier == KtTokens.OPEN_KEYWORD) {
-            return JetBundle.message("make.element.modifier", getElementName(element), modifier.value)
+            return "Make ${getElementName(element)} ${modifier.value}"
         }
-        return JetBundle.message("add.modifier", modifier.value)
+        return "Add '${modifier.value}' modifier"
     }
 
-    override fun getFamilyName() = JetBundle.message("add.modifier.family")
+    override fun getFamilyName() = "Add modifier"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element.addModifier(modifier)
