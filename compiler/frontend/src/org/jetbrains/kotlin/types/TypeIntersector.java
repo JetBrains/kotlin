@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImplKt.registerTypeVariables;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
@@ -186,7 +185,12 @@ public class TypeIntersector {
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
             processAllTypeParameters(expected, Variance.INVARIANT, processor);
             ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
-            registerTypeVariables(constraintSystem, parameters);
+            constraintSystem.registerTypeVariables(parameters.keySet(), new Function1<TypeParameterDescriptor, TypeParameterDescriptor>() {
+                @Override
+                public TypeParameterDescriptor invoke(TypeParameterDescriptor descriptor) {
+                    return descriptor;
+                }
+            }, false);
             constraintSystem.addSubtypeConstraint(withParameters, expected, SPECIAL.position());
 
             return constraintSystem.getStatus().isSuccessful();

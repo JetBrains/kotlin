@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
 
 public interface ConstraintSystem {
     /**
@@ -29,8 +28,7 @@ public interface ConstraintSystem {
      */
     public fun registerTypeVariables(
             typeVariables: Collection<TypeParameterDescriptor>,
-            variance: (TypeParameterDescriptor) -> Variance,
-            mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor,
+            mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor = { it },
             external: Boolean = false
     )
 

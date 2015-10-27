@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
-import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariables
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinLiteFixture
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
-import java.util.ArrayList
 
 abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
 
@@ -83,7 +81,7 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
         val variables = parseVariables(constraintsFileText)
         val fixVariables = constraintsFileText.contains("FIX_VARIABLES")
         val typeParameterDescriptors = variables.map { testDeclarations.getParameterDescriptor(it) }
-        constraintSystem.registerTypeVariables(typeParameterDescriptors, { Variance.INVARIANT })
+        constraintSystem.registerTypeVariables(typeParameterDescriptors)
 
         val constraints = parseConstraints(constraintsFileText)
         fun KotlinType.assertNotError(): KotlinType {

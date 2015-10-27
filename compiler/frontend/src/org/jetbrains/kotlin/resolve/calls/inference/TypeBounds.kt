@@ -23,17 +23,14 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_B
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.Variance
 
 public interface TypeBounds {
-    public val varianceOfPosition: Variance
-
     public val typeVariable: TypeParameterDescriptor
 
     public val bounds: Collection<Bound>
 
     public val value: KotlinType?
-        get() = if (values.size() == 1) values.first() else null
+        get() = if (values.size == 1) values.first() else null
 
     public val values: Collection<KotlinType>
 

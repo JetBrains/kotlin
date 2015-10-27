@@ -142,14 +142,13 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     override fun registerTypeVariables(
             typeVariables: Collection<TypeParameterDescriptor>,
-            variance: (TypeParameterDescriptor) -> Variance,
             mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor,
             external: Boolean
     ) {
         if (external) externalTypeParameters.addAll(typeVariables)
 
         for (typeVariable in typeVariables) {
-            allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable, variance(typeVariable)))
+            allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable))
             val original = mapToOriginal(typeVariable)
             originalToVariables[original] = typeVariable
             variablesToOriginal[typeVariable] = original
@@ -553,17 +552,6 @@ class SubstitutionFilteringInternalResolveAnnotations(substitution: TypeSubstitu
         if (!annotations.hasInternalAnnotationForResolve()) return annotations
         return FilteredAnnotations(annotations) { !it.isInternalAnnotationForResolve() }
     }
-}
-
-public fun ConstraintSystemImpl.registerTypeVariables(typeVariables: Map<TypeParameterDescriptor, Variance>) {
-    registerTypeVariables(typeVariables.keySet(), { typeVariables[it]!! }, { it })
-}
-
-public fun ConstraintSystemImpl.registerTypeVariables(
-        typeVariables: Collection<TypeParameterDescriptor>,
-        variance: (TypeParameterDescriptor) -> Variance
-) {
-    registerTypeVariables(typeVariables, variance, { it })
 }
 
 public fun createTypeSubstitutor(conversion: (TypeParameterDescriptor) -> TypeParameterDescriptor?): TypeSubstitutor {
