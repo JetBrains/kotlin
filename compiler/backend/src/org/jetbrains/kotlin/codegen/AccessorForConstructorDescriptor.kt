@@ -18,14 +18,13 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 public class AccessorForConstructorDescriptor(
         private val calleeDescriptor: ConstructorDescriptor,
         containingDeclaration: DeclarationDescriptor,
-        private val superCallExpression: KtSuperExpression?
+        private val superCallTarget: ClassDescriptor?
 ) : AbstractAccessorForFunctionDescriptor(containingDeclaration, Name.special("<init>")),
         ConstructorDescriptor,
         AccessorForCallableDescriptor<ConstructorDescriptor> {
@@ -37,7 +36,7 @@ public class AccessorForConstructorDescriptor(
 
     override fun getReturnType(): KotlinType = super.getReturnType()!!
 
-    override fun getSuperCallExpression(): KtSuperExpression? = superCallExpression
+    override fun getSuperCallTarget(): ClassDescriptor? = superCallTarget
 
     init {
         initialize(

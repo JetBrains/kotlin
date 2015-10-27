@@ -20,24 +20,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtSuperExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 
 public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
     private final FunctionDescriptor calleeDescriptor;
-    private final KtSuperExpression superCallExpression;
+    private final ClassDescriptor superCallTarget;
 
     public AccessorForFunctionDescriptor(
             @NotNull FunctionDescriptor descriptor,
             @NotNull DeclarationDescriptor containingDeclaration,
-            @Nullable KtSuperExpression superCallExpression,
+            @Nullable ClassDescriptor superCallTarget,
             @NotNull String nameSuffix
     ) {
         super(containingDeclaration,
               Name.identifier("access$" + nameSuffix));
         this.calleeDescriptor = descriptor;
-        this.superCallExpression = superCallExpression;
+        this.superCallTarget = superCallTarget;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
                    descriptor instanceof ConstructorDescriptor || AnnotationUtilKt.isPlatformStaticInObjectOrClass(descriptor)
@@ -57,7 +56,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
     }
 
     @Override
-    public KtSuperExpression getSuperCallExpression() {
-        return superCallExpression;
+    public ClassDescriptor getSuperCallTarget() {
+        return superCallTarget;
     }
 }

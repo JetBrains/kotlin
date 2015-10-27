@@ -639,7 +639,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                     boolean forceField = (AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
                                          !isCompanionObject(accessor.getContainingDeclaration())) || syntheticBackingField;
                     StackValue property = codegen.intermediateValueForProperty(
-                            original, forceField, syntheticBackingField, accessor.getSuperCallExpression(), true, StackValue.none()
+                            original, forceField, syntheticBackingField, accessor.getSuperCallTarget(), true, StackValue.none()
                     );
 
                     InstructionAdapter iv = codegen.v;
@@ -693,7 +693,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(
                 functionDescriptor,
                 accessorDescriptor instanceof AccessorForCallableDescriptor &&
-                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null
+                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null
         );
 
         boolean isTopLevelDeclaration = isTopLevelDeclaration(functionDescriptor);

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtSuperExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -88,7 +87,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private static class AccessorForPropertyDescriptorFactory {
         private final @NotNull PropertyDescriptor property;
         private final @NotNull DeclarationDescriptor containingDeclaration;
-        private final @Nullable KtSuperExpression superCallExpression;
+        private final @Nullable ClassDescriptor superCallTarget;
         private final @NotNull String nameSuffix;
 
         private AccessorForPropertyDescriptor withSyntheticGetterAndSetter = null;
@@ -98,12 +97,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         public AccessorForPropertyDescriptorFactory(
                 @NotNull PropertyDescriptor property,
                 @NotNull DeclarationDescriptor containingDeclaration,
-                @Nullable KtSuperExpression superCallExpression,
+                @Nullable ClassDescriptor superCallTarget,
                 @NotNull String nameSuffix
         ) {
             this.property = property;
             this.containingDeclaration = containingDeclaration;
-            this.superCallExpression = superCallExpression;
+            this.superCallTarget = superCallTarget;
             this.nameSuffix = nameSuffix;
         }
 
@@ -115,7 +114,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             else if (getterAccessorRequired && !setterAccessorRequired) {
                 if (withSyntheticGetter == null) {
                     withSyntheticGetter = new AccessorForPropertyDescriptor(
-                            property, containingDeclaration, superCallExpression, nameSuffix,
+                            property, containingDeclaration, superCallTarget, nameSuffix,
                             true, false);
                 }
                 return withSyntheticGetter;
@@ -123,7 +122,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             else if (!getterAccessorRequired && setterAccessorRequired) {
                 if (withSyntheticSetter == null) {
                     withSyntheticSetter = new AccessorForPropertyDescriptor(
-                            property, containingDeclaration, superCallExpression, nameSuffix,
+                            property, containingDeclaration, superCallTarget, nameSuffix,
                             false, true);
                 }
                 return withSyntheticSetter;
@@ -137,7 +136,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         public AccessorForPropertyDescriptor getOrCreateAccessorWithSyntheticGetterAndSetter() {
             if (withSyntheticGetterAndSetter == null) {
                 withSyntheticGetterAndSetter = new AccessorForPropertyDescriptor(
-                        property, containingDeclaration, superCallExpression, nameSuffix,
+                        property, containingDeclaration, superCallTarget, nameSuffix,
                         true, true);
             }
             return withSyntheticGetterAndSetter;
@@ -356,16 +355,16 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     private PropertyDescriptor getPropertyAccessor(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @Nullable KtSuperExpression superCallExpression,
+            @Nullable ClassDescriptor superCallTarget,
             boolean getterAccessorRequired,
             boolean setterAccessorRequired
     ) {
-        return getAccessor(propertyDescriptor, FieldAccessorKind.NORMAL, null, superCallExpression, getterAccessorRequired, setterAccessorRequired);
+        return getAccessor(propertyDescriptor, FieldAccessorKind.NORMAL, null, superCallTarget, getterAccessorRequired, setterAccessorRequired);
     }
 
     @NotNull
-    public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable KtSuperExpression superCallExpression) {
-        return getAccessor(descriptor, FieldAccessorKind.NORMAL, null, superCallExpression);
+    public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable ClassDescriptor superCallTarget) {
+        return getAccessor(descriptor, FieldAccessorKind.NORMAL, null, superCallTarget);
     }
 
     @SuppressWarnings("unchecked")
@@ -374,11 +373,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull D possiblySubstitutedDescriptor,
             @NotNull FieldAccessorKind accessorKind,
             @Nullable KotlinType delegateType,
-            @Nullable KtSuperExpression superCallExpression
+            @Nullable ClassDescriptor superCallTarget
     ) {
         // TODO this corresponds to default behavior for properties before fixing KT-9717. Is it Ok in general case?
         // Does not matter for other descriptor kinds.
-        return getAccessor(possiblySubstitutedDescriptor, accessorKind, delegateType, superCallExpression,
+        return getAccessor(possiblySubstitutedDescriptor, accessorKind, delegateType, superCallTarget,
                            /* getterAccessorRequired */ true,
                            /* setterAccessorRequired */ true);
     }
@@ -389,7 +388,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull D possiblySubstitutedDescriptor,
             @NotNull FieldAccessorKind accessorKind,
             @Nullable KotlinType delegateType,
-            @Nullable KtSuperExpression superCallExpression,
+            @Nullable ClassDescriptor superCallTarget,
             boolean getterAccessorRequired,
             boolean setterAccessorRequired
     ) {
@@ -401,10 +400,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         D descriptor = (D) possiblySubstitutedDescriptor.getOriginal();
-        AccessorKey key = new AccessorKey(
-                descriptor,
-                superCallExpression == null ? null : ExpressionCodegen.getSuperCallLabelTarget(this, superCallExpression)
-        );
+        AccessorKey key = new AccessorKey(descriptor, superCallTarget);
 
         // NB should check for property accessor factory first (or change property accessor tracking under propertyAccessorFactory creation)
         AccessorForPropertyDescriptorFactory propertyAccessorFactory = propertyAccessorFactories.get(key);
@@ -420,18 +416,18 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         String nameSuffix = SyntheticAccessorUtilKt.getAccessorNameSuffix(descriptor, key.superCallLabelTarget, accessorKind);
         if (descriptor instanceof SimpleFunctionDescriptor) {
             accessor = new AccessorForFunctionDescriptor(
-                    (FunctionDescriptor) descriptor, contextDescriptor, superCallExpression, nameSuffix
+                    (FunctionDescriptor) descriptor, contextDescriptor, superCallTarget, nameSuffix
             );
         }
         else if (descriptor instanceof ConstructorDescriptor) {
-            accessor = new AccessorForConstructorDescriptor((ConstructorDescriptor) descriptor, contextDescriptor, superCallExpression);
+            accessor = new AccessorForConstructorDescriptor((ConstructorDescriptor) descriptor, contextDescriptor, superCallTarget);
         }
         else if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             switch (accessorKind) {
                 case NORMAL:
                     propertyAccessorFactory = new AccessorForPropertyDescriptorFactory((PropertyDescriptor) descriptor, contextDescriptor,
-                                                                                       superCallExpression, nameSuffix);
+                                                                                       superCallTarget, nameSuffix);
                     propertyAccessorFactories.put(key, propertyAccessorFactory);
 
                     // Record worst case accessor for accessor methods generation.
@@ -511,7 +507,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public <D extends CallableMemberDescriptor> D accessibleDescriptor(
             @NotNull D descriptor,
-            @Nullable KtSuperExpression superCallExpression
+            @Nullable ClassDescriptor superCallTarget
     ) {
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         if (!isInlineMethodContext() && (
@@ -521,13 +517,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             return descriptor;
         }
 
-        return accessibleDescriptorIfNeeded(descriptor, superCallExpression);
+        return accessibleDescriptorIfNeeded(descriptor, superCallTarget);
     }
 
     public void recordSyntheticAccessorIfNeeded(@NotNull CallableMemberDescriptor descriptor, @NotNull BindingContext bindingContext) {
         if (hasThisDescriptor() && Boolean.TRUE.equals(bindingContext.get(NEED_SYNTHETIC_ACCESSOR, descriptor))) {
             // Not a super call because neither constructors nor private members can be targets of super calls
-            accessibleDescriptorIfNeeded(descriptor, /* superCallExpression = */ null);
+            accessibleDescriptorIfNeeded(descriptor, /* superCallTarget = */ null);
         }
     }
 
@@ -535,7 +531,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     private <D extends CallableMemberDescriptor> D accessibleDescriptorIfNeeded(
             @NotNull D descriptor,
-            @Nullable KtSuperExpression superCallExpression
+            @Nullable ClassDescriptor superCallTarget
     ) {
         CallableMemberDescriptor unwrappedDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor);
 
@@ -569,14 +565,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (!getterAccessorRequired && !setterAccessorRequired) {
                 return descriptor;
             }
-            return (D) descriptorContext.getPropertyAccessor(propertyDescriptor, superCallExpression, getterAccessorRequired, setterAccessorRequired);
+            return (D) descriptorContext.getPropertyAccessor(propertyDescriptor, superCallTarget, getterAccessorRequired, setterAccessorRequired);
         }
         else {
             int flag = getVisibilityAccessFlag(unwrappedDescriptor);
             if (!isAccessorRequired(flag, unwrappedDescriptor, descriptorContext)) {
                 return descriptor;
             }
-            return (D) descriptorContext.getAccessor(descriptor, superCallExpression);
+            return (D) descriptorContext.getAccessor(descriptor, superCallTarget);
         }
     }
 

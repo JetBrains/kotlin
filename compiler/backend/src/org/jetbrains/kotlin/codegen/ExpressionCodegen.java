@@ -2008,15 +2008,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
 
             boolean directToField = isSyntheticField && contextKind() != OwnerKind.DEFAULT_IMPLS;
-            KtSuperExpression superExpression =
-                    resolvedCall == null ? null : CallResolverUtilKt.getSuperCallExpression(resolvedCall.getCall());
-            propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);
+            ClassDescriptor superCallTarget = resolvedCall == null ? null : getSuperCallTarget(resolvedCall.getCall());
+            propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
 
             if (directToField) {
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
 
-            return intermediateValueForProperty(propertyDescriptor, directToField, directToField, superExpression, false, receiver);
+            return intermediateValueForProperty(propertyDescriptor, directToField, directToField, superCallTarget, false, receiver);
         }
 
         if (descriptor instanceof ClassDescriptor) {
@@ -2054,6 +2053,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+    }
+
+    @Nullable
+    private ClassDescriptor getSuperCallTarget(@NotNull Call call) {
+        KtSuperExpression superExpression = CallResolverUtilKt.getSuperCallExpression(call);
+        return superExpression == null ? null : getSuperCallLabelTarget(context, superExpression);
     }
 
     @Nullable
@@ -2134,10 +2139,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
-            @Nullable KtSuperExpression superExpression,
+            @Nullable ClassDescriptor superCallTarget,
             @NotNull StackValue receiver
     ) {
-        return intermediateValueForProperty(propertyDescriptor, forceField, false, superExpression, false, receiver);
+        return intermediateValueForProperty(propertyDescriptor, forceField, false, superCallTarget, false, receiver);
     }
 
     private CodegenContext getBackingFieldContext(
@@ -2158,7 +2163,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
             boolean syntheticBackingField,
-            @Nullable KtSuperExpression superExpression,
+            @Nullable ClassDescriptor superCallTarget,
             boolean skipAccessorsForPrivateFieldInOuterClass,
             StackValue receiver
     ) {
@@ -2178,7 +2183,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         boolean isStaticBackingField = DescriptorUtils.isStaticDeclaration(propertyDescriptor) ||
                                        AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor);
-        boolean isSuper = superExpression != null;
+        boolean isSuper = superCallTarget != null;
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
 
         KotlinType delegateType = getPropertyDelegateType(propertyDescriptor, bindingContext);
@@ -2197,7 +2202,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (!skipPropertyAccessors) {
                 //noinspection ConstantConditions
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(
-                        propertyDescriptor, fieldAccessorKind, delegateType, superExpression
+                        propertyDescriptor, fieldAccessorKind, delegateType, superCallTarget
                 );
                 assert propertyDescriptor instanceof AccessorForPropertyBackingField :
                         "Unexpected accessor descriptor: " + propertyDescriptor;
@@ -2214,15 +2219,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (!skipPropertyAccessors) {
             if (!couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context)) {
                 if (isSuper && !isJvmInterface(containingDeclaration)) {
-                    ClassDescriptor owner = getSuperCallLabelTarget(context, superExpression);
-                    CodegenContext c = context.findParentContextWithDescriptor(owner);
+                    CodegenContext c = context.findParentContextWithDescriptor(superCallTarget);
                     assert c != null : "Couldn't find a context for a super-call: " + propertyDescriptor;
                     if (c != context.getParentContext()) {
-                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor, superExpression);
+                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor, superCallTarget);
                     }
                 }
 
-                propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);
+                propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                 if (getter != null && !hasJvmFieldAnnotation(propertyDescriptor)) {
@@ -2355,7 +2359,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // $default method is not private, so you need no accessor to call it
         return usesDefaultArguments(resolvedCall)
                ? descriptor
-               : context.accessibleDescriptor(descriptor, CallResolverUtilKt.getSuperCallExpression(resolvedCall.getCall()));
+               : context.accessibleDescriptor(descriptor, getSuperCallTarget(resolvedCall.getCall()));
     }
 
     private static boolean usesDefaultArguments(@NotNull ResolvedCall<?> resolvedCall) {
@@ -2377,15 +2381,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
-        KtSuperExpression superCallExpression = CallResolverUtilKt.getSuperCallExpression(call);
-        boolean superCall = superCallExpression != null;
+        ClassDescriptor superCallTarget = getSuperCallTarget(call);
+        boolean superCall = superCallTarget != null;
 
         if (superCall && !isJvmInterface(fd.getContainingDeclaration())) {
-            ClassDescriptor owner = getSuperCallLabelTarget(context, superCallExpression);
-            CodegenContext c = context.findParentContextWithDescriptor(owner);
+            CodegenContext c = context.findParentContextWithDescriptor(superCallTarget);
             assert c != null : "Couldn't find a context for a super-call: " + fd;
             if (c != context.getParentContext()) {
-                fd = (FunctionDescriptor) c.getAccessor(fd, superCallExpression);
+                fd = (FunctionDescriptor) c.getAccessor(fd, superCallTarget);
             }
         }
 
