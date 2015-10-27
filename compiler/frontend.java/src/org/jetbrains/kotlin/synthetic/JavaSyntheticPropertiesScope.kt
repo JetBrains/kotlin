@@ -44,8 +44,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.properties.Delegates
 
-private val POSSIBLE_GETTER_NAMES_CAPACITY = 3
-
 interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
     val setMethod: FunctionDescriptor?
@@ -90,12 +88,12 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
     private fun syntheticPropertyInClassNotCached(ownerClass: ClassDescriptor, name: Name): SyntheticPropertyHolder {
 
-        fun result(descriptor: PropertyDescriptor?, getterNames: Sequence<Name>, setterName: Name? = null): SyntheticPropertyHolder {
+        fun result(descriptor: PropertyDescriptor?, getterNames: List<Name>, setterName: Name? = null): SyntheticPropertyHolder {
             if (lookupTracker == LookupTracker.DO_NOTHING) {
                 return if (descriptor == null) SyntheticPropertyHolder.EMPTY else SyntheticPropertyHolder(descriptor, emptyList())
             }
 
-            val names = ArrayList<Name>(POSSIBLE_GETTER_NAMES_CAPACITY + (setterName?.let { 1 } ?: 0))
+            val names = ArrayList<Name>(getterNames.size + (setterName?.let { 1 } ?: 0))
 
             names.addAll(getterNames)
             names.addIfNotNull(setterName)
@@ -115,7 +113,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
         val possibleGetMethodNames = possibleGetMethodNames(name)
         val getMethod = possibleGetMethodNames
-                                .flatMap { memberScope.getFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).asSequence() }
+                                .flatMap { memberScope.getFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE) }
                                 .singleOrNull {
                                     isGoodGetMethod(it) && it.hasJavaOriginInHierarchy()
                                 } ?: return result(null, possibleGetMethodNames)
@@ -228,8 +226,8 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
     //TODO: reuse code with generation?
 
-    private fun possibleGetMethodNames(propertyName: Name): Sequence<Name> {
-        val result = ArrayList<Name>(POSSIBLE_GETTER_NAMES_CAPACITY)
+    private fun possibleGetMethodNames(propertyName: Name): List<Name> {
+        val result = ArrayList<Name>(3)
         val identifier = propertyName.identifier
 
         if (JvmAbi.startsWithIsPrefix(identifier)) {
@@ -243,7 +241,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             result.add(Name.identifier("get" + capitalize2))
         }
 
-        return result.asSequence()
+        return result
                 .filter { SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(it) == propertyName } // don't accept "uRL" for "getURL" etc
     }
 
