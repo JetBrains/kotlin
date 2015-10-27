@@ -35,6 +35,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("annotationClass.kt")
+    public void testAnnotationClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/annotationClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/asJava/lightClasses/delegation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
