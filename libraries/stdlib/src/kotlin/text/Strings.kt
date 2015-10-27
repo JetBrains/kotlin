@@ -9,7 +9,7 @@ import kotlin.text.MatchResult
 import kotlin.text.Regex
 
 /**
- * Returns the string with leading and trailing characters matching the [predicate] trimmed.
+ * Returns a string with leading and trailing characters matching the [predicate] trimmed.
  */
 inline public fun CharSequence.trim(predicate: (Char) -> Boolean): String {
     var startIndex = 0
@@ -38,7 +38,7 @@ inline public fun CharSequence.trim(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns the string with leading characters matching the [predicate] trimmed.
+ * Returns a string with leading characters matching the [predicate] trimmed.
  */
 inline public fun CharSequence.trimStart(predicate: (Char) -> Boolean): String {
     for (index in this.indices)
@@ -49,7 +49,7 @@ inline public fun CharSequence.trimStart(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns the string with trailing characters matching the [predicate] trimmed.
+ * Returns a string with trailing characters matching the [predicate] trimmed.
  */
 inline public fun CharSequence.trimEnd(predicate: (Char) -> Boolean): String {
     for (index in this.indices.reversed())
@@ -60,17 +60,17 @@ inline public fun CharSequence.trimEnd(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns the string with leading and trailing characters in the [chars] array trimmed.
+ * Returns a string with leading and trailing characters in the [chars] array trimmed.
  */
 public fun CharSequence.trim(vararg chars: Char): String = trim { it in chars }
 
 /**
- * Returns the string with leading and trailing characters in the [chars] array trimmed.
+ * Returns a string with leading and trailing characters in the [chars] array trimmed.
  */
 public fun CharSequence.trimStart(vararg chars: Char): String = trimStart { it in chars }
 
 /**
- * Returns the string with trailing characters in the [chars] array trimmed.
+ * Returns a string with trailing characters in the [chars] array trimmed.
  */
 public fun CharSequence.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 
@@ -161,7 +161,7 @@ public fun CharSequence.isNotBlank(): Boolean = !isBlank()
 public fun CharSequence?.isNullOrBlank(): Boolean = this == null || this.isBlank()
 
 /**
- * Iterator for characters of given CharSequence.
+ * Iterator for characters of the given char sequence.
  */
 public operator fun CharSequence.iterator(): CharIterator = object : CharIterator() {
     private var index = 0
@@ -228,12 +228,18 @@ public fun CharSequence.slice(range: IntRange): CharSequence {
 public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)
 
 /**
- * Returns a subsequence of this sequence specified by the given [range].
+ * Returns a subsequence of this char sequence specified by the given [range].
  */
 public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence(range.start, range.end + 1)
 
+/**
+ * Returns a substring of chars from a range of this char sequence specified by [start] and [end] indices.
+ */
 public fun CharSequence.substring(start: Int, end: Int = length): String = subSequence(start, end).toString()
 
+/**
+ * Returns a substring of chars from a [range] of this char sequence.
+ */
 public fun CharSequence.substring(range: IntRange): String = subSequence(range.start, range.end + 1).toString()
 
 /**
@@ -339,7 +345,8 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
 }
 
 /**
- * Replaces the part of the string at the given range with the [replacement] string.
+ * Returns a string with content of this char sequence where its part at the given range
+ * is replaced with the [replacement] char sequence.
  * @param firstIndex the index of the first character to be replaced.
  * @param lastIndex the index of the first character after the replacement to keep in the string.
  */
@@ -354,18 +361,20 @@ public fun CharSequence.replaceRange(firstIndex: Int, lastIndex: Int, replacemen
 }
 
 /**
- * Replace the part of string at the given [range] with the [replacement] string.
+ * Returns a string with content of this char sequence where its part at the given [range]
+ * is replaced with the [replacement] char sequence.
  *
  * The end index of the [range] is included in the part to be replaced.
  */
 public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence): String = replaceRange(range.start, range.end + 1, replacement)
 
 /**
- * Removes the part of a string at a given range.
+ * Returns a string with content of this char sequence where its part at the given range is removed.
+ *
  * @param firstIndex the index of the first character to be removed.
  * @param lastIndex the index of the first character after the removed part to keep in the string.
-*
-*  [lastIndex] is not included in the removed part.
+ *
+ * [lastIndex] is not included in the removed part.
  */
 public fun CharSequence.removeRange(firstIndex: Int, lastIndex: Int): String {
     if (lastIndex < firstIndex)
@@ -381,11 +390,11 @@ public fun CharSequence.removeRange(firstIndex: Int, lastIndex: Int): String {
 }
 
 /**
- * Removes the part of a string at the given [range].
+ * Returns a string with content of this char sequence where its part at the given [range] is removed.
  *
  * The end index of the [range] is included in the removed part.
  */
-public fun CharSequence.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
+public fun CharSequence.removeRange(range: Range<Int>): String = removeRange(range.start, range.end + 1)
 
 /**
  * If this string starts with the given [prefix], returns a copy of this string
@@ -505,7 +514,7 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
 // public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean): String // JVM- and JS-specific
 
 /**
- * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
+ * Returns a new string obtained by replacing each substring of this char sequence that matches the given regular expression
  * with the given [replacement].
  *
  * The [replacement] can consist of any combination of literal text and $-substitutions. To treat the replacement string
@@ -514,14 +523,14 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
 public fun CharSequence.replace(regex: Regex, replacement: String): String = regex.replace(this, replacement)
 
 /**
- * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
+ * Returns a new string obtained by replacing each substring of this char sequence that matches the given regular expression
  * with the result of the given function [transform] that takes [MatchResult] and returns a string to be used as a
  * replacement for that match.
  */
 public fun CharSequence.replace(regex: Regex, transform: (MatchResult) -> CharSequence): String = regex.replace(this, transform)
 
 /**
- * Replaces the first occurrence of the given regular expression [regex] in this string with specified [replacement] expression.
+ * Replaces the first occurrence of the given regular expression [regex] in this char sequence with specified [replacement] expression.
  *
  * @param replacement A replacement expression that can include substitutions. See [Regex.replaceFirst] for details.
  */
@@ -563,7 +572,7 @@ public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boole
         this.length() > 0 && this[lastIndex].equals(char, ignoreCase)
 
 /**
- * Returns `true` if this CharSequence starts with the specified prefix.
+ * Returns `true` if this char sequence starts with the specified prefix.
  */
 public fun CharSequence.startsWith(prefix: CharSequence, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && prefix is String)
@@ -573,7 +582,7 @@ public fun CharSequence.startsWith(prefix: CharSequence, ignoreCase: Boolean = f
 }
 
 /**
- * Returns `true` if a substring of this CharSequence starting at the specified offset [thisOffset] starts with the specified prefix.
+ * Returns `true` if a substring of this char sequence starting at the specified offset [thisOffset] starts with the specified prefix.
  */
 public fun CharSequence.startsWith(prefix: CharSequence, thisOffset: Int, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && prefix is String)
@@ -583,7 +592,7 @@ public fun CharSequence.startsWith(prefix: CharSequence, thisOffset: Int, ignore
 }
 
 /**
- * Returns `true` if this CharSequence ends with the specified suffix.
+ * Returns `true` if this char sequence ends with the specified suffix.
  */
 public fun CharSequence.endsWith(suffix: CharSequence, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && suffix is String)
@@ -596,7 +605,7 @@ public fun CharSequence.endsWith(suffix: CharSequence, ignoreCase: Boolean = fal
 // common prefix and suffix
 
 /**
- * Returns the longest string `prefix` such that this string and [other] string both start with this prefix,
+ * Returns the longest string `prefix` such that this char sequence and [other] char sequence both start with this prefix,
  * taking care not to split surrogate pairs.
  * If this and [other] have no common prefix, returns the empty string.
 
@@ -616,7 +625,7 @@ public fun CharSequence.commonPrefixWith(other: CharSequence, ignoreCase: Boolea
 }
 
 /**
- * Returns the longest string `suffix` such that this string and [other] string both end with this suffix,
+ * Returns the longest string `suffix` such that this char sequence and [other] char sequence both end with this suffix,
  * taking care not to split surrogate pairs.
  * If this and [other] have no common suffix, returns the empty string.
 
@@ -659,8 +668,8 @@ private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase
 }
 
 /**
- * Finds the index of the first occurrence of any of the specified [chars] in this string, starting from the specified [startIndex] and
- * optionally ignoring the case.
+ * Finds the index of the first occurrence of any of the specified [chars] in this char sequence,
+ * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
  * @returns An index of the first occurrence of matched character from [chars] or -1 if none of [chars] are found.
@@ -670,8 +679,8 @@ public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignore
     findAnyOf(chars, startIndex, ignoreCase, last = false)?.first ?: -1
 
 /**
- * Finds the index of the last occurrence of any of the specified [chars] in this string, starting from the specified [startIndex] and
- * optionally ignoring the case.
+ * Finds the index of the last occurrence of any of the specified [chars] in this char sequence,
+ * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
@@ -729,11 +738,12 @@ private fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int,
 }
 
 /**
- * Finds the first occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
- * optionally ignoring the case.
+ * Finds the first occurrence of any of the specified [strings] in this char sequence,
+ * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns A pair of an index of the first occurrence of matched string from [strings] and the string matched or `null` if none of [strings] are found.
+ * @returns A pair of an index of the first occurrence of matched string from [strings] and the string matched
+ * or `null` if none of [strings] are found.
  *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the beginning to the end of this string, and finds at each position the first element in [strings]
@@ -743,8 +753,8 @@ public fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int =
     findAnyOf(strings, startIndex, ignoreCase, last = false)
 
 /**
- * Finds the last occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
- * optionally ignoring the case.
+ * Finds the last occurrence of any of the specified [strings] in this char sequence,
+ * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
@@ -758,8 +768,8 @@ public fun CharSequence.findLastAnyOf(strings: Collection<String>, startIndex: I
     findAnyOf(strings, startIndex, ignoreCase, last = true)
 
 /**
- * Finds the index of the first occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
- * optionally ignoring the case.
+ * Finds the index of the first occurrence of any of the specified [strings] in this char sequence,
+ * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @returns An index of the first occurrence of matched string from [strings] or -1 if none of [strings] are found.
@@ -772,8 +782,8 @@ public fun CharSequence.indexOfAny(strings: Collection<String>, startIndex: Int 
     findAnyOf(strings, startIndex, ignoreCase, last = false)?.first ?: -1
 
 /**
- * Finds the index of the last occurrence of any of the specified [strings] in this string, starting from the specified [startIndex] and
- * optionally ignoring the case.
+ * Finds the index of the last occurrence of any of the specified [strings] in this char sequence,
+ * starting from the specified [startIndex] and optionally ignoring the case.
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
@@ -803,10 +813,11 @@ public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boo
 }
 
 /**
- * Returns the index within this string of the first occurrence of the specified [string], starting from the specified [startIndex].
+ * Returns the index within this char sequence of the first occurrence of the specified [string],
+ * starting from the specified [startIndex].
  *
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @returns An index of the first occurrence of [string] or -1 if none is found.
+ * @returns An index of the first occurrence of [string] or `-1` if none is found.
  */
 public fun CharSequence.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
@@ -816,7 +827,8 @@ public fun CharSequence.indexOf(string: String, startIndex: Int = 0, ignoreCase:
 }
 
 /**
- * Returns the index within this string of the last occurrence of the specified character, starting from the specified [startIndex].
+ * Returns the index within this char sequence of the last occurrence of the specified character,
+ * starting from the specified [startIndex].
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a character. By default `false`.
@@ -830,7 +842,8 @@ public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ign
 }
 
 /**
- * Returns the index within this string of the last occurrence of the specified [string], starting from the specified [startIndex].
+ * Returns the index within this char sequence of the last occurrence of the specified [string],
+ * starting from the specified [startIndex].
  *
  * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
@@ -844,7 +857,7 @@ public fun CharSequence.lastIndexOf(string: String, startIndex: Int = lastIndex,
 }
 
 /**
- * Returns `true` if this string contains the specified sequence of characters as a substring.
+ * Returns `true` if this char sequence contains the specified [other] sequence of characters as a substring.
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
@@ -857,7 +870,7 @@ public operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boole
 
 
 /**
- * Returns `true` if this string contains the specified character.
+ * Returns `true` if this char sequence contains the specified character [char].
  *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
  */
@@ -865,7 +878,7 @@ public operator fun CharSequence.contains(char: Char, ignoreCase: Boolean = fals
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
 /**
- * Returns `true` if this string contains at least one match of the specified regular expression [regex].
+ * Returns `true` if this char sequence contains at least one match of the specified regular expression [regex].
  */
 public operator fun CharSequence.contains(regex: Regex): Boolean = regex.containsMatchIn(this)
 
@@ -930,7 +943,7 @@ private class DelimitedRangesSequence(private val input: CharSequence, private v
 }
 
 /**
- * Returns a sequence of index ranges of substrings in this string around occurrences of the specified [delimiters].
+ * Returns a sequence of index ranges of substrings in this char sequence around occurrences of the specified [delimiters].
  *
  * @param delimiters One or more characters to be used as delimiters.
  * @param startIndex The index to start searching delimiters from.
@@ -947,7 +960,7 @@ private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: In
 
 
 /**
- * Returns a sequence of index ranges of substrings in this string around occurrences of the specified [delimiters].
+ * Returns a sequence of index ranges of substrings in this char sequence around occurrences of the specified [delimiters].
  *
  * @param delimiters One or more strings to be used as delimiters.
  * @param startIndex The index to start searching delimiters from.
@@ -972,7 +985,7 @@ private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startI
 // split
 
 /**
- * Splits this string to a sequence of strings around occurrences of the specified [delimiters].
+ * Splits this char sequence to a sequence of strings around occurrences of the specified [delimiters].
  *
  * @param delimiters One or more strings to be used as delimiters.
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
@@ -986,7 +999,7 @@ public fun CharSequence.splitToSequence(vararg delimiters: String, ignoreCase: B
         rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).map { substring(it) }
 
 /**
- * Splits this string to a list of strings around occurrences of the specified [delimiters].
+ * Splits this char sequence to a list of strings around occurrences of the specified [delimiters].
  *
  * @param delimiters One or more strings to be used as delimiters.
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
@@ -1000,7 +1013,7 @@ public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = f
         rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
 
 /**
- * Splits this string to a sequence of strings around occurrences of the specified [delimiters].
+ * Splits this char sequence to a sequence of strings around occurrences of the specified [delimiters].
  *
  * @param delimiters One or more characters to be used as delimiters.
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
@@ -1010,7 +1023,7 @@ public fun CharSequence.splitToSequence(vararg delimiters: Char, ignoreCase: Boo
         rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).map { substring(it) }
 
 /**
- * Splits this string to a list of strings around occurrences of the specified [delimiters].
+ * Splits this char sequence to a list of strings around occurrences of the specified [delimiters].
  *
  * @param delimiters One or more characters to be used as delimiters.
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
@@ -1020,7 +1033,7 @@ public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = fal
         rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
 
 /**
- * Splits this string around matches of the given regular expression.
+ * Splits this char sequence around matches of the given regular expression.
  *
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
@@ -1028,11 +1041,11 @@ public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = fal
 public fun CharSequence.split(pattern: Regex, limit: Int = 0): List<String> = pattern.split(this, limit)
 
 /**
- * Splits this string to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
+ * Splits this char sequence to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
 public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n", "\r")
 
 /**
- * * Splits this string to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
+ * * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
 public fun CharSequence.lines(): List<String> = lineSequence().toList()
