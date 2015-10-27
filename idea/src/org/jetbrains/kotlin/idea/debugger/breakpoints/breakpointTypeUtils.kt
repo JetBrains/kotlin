@@ -16,19 +16,32 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
+import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.*
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.XDebuggerUtil
+import com.intellij.xdebugger.XSourcePosition
+import com.intellij.xdebugger.impl.XSourcePositionImpl
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.refactoring.getLineEndOffset
+import org.jetbrains.kotlin.idea.core.refactoring.getLineNumber
+import org.jetbrains.kotlin.idea.core.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.*
 
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(file)
@@ -78,6 +91,75 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
     })
 
     return result == breakpointTypeClass
+}
+
+fun computeVariants(
+        project: Project, position: XSourcePosition,
+        kotlinBreakpointType: KotlinLineBreakpointType
+): List<JavaLineBreakpointType.JavaBreakpointVariant> {
+    val file = PsiManager.getInstance(project).findFile(position.file) as? KtFile ?: return emptyList()
+
+    val pos = SourcePosition.createFromLine(file, position.line)
+    val lambdas = getLambdasAtLineIfAny(pos)
+    if (lambdas.isEmpty()) return emptyList()
+
+    val result = LinkedList<JavaLineBreakpointType.JavaBreakpointVariant>()
+
+    val mainMethod = KotlinLineBreakpointType.getContainingMethod(pos.elementAt)
+    if (mainMethod != null) {
+        result.add((kotlinBreakpointType as JavaLineBreakpointType).ExactJavaBreakpointVariant(
+                XSourcePositionImpl.createByElement(mainMethod),
+                mainMethod, -1))
+    }
+
+    lambdas.forEachIndexed { ordinal, lambda ->
+        result.add(kotlinBreakpointType.ExactKotlinJavaBreakpointVariant(
+                XSourcePositionImpl.createByElement(lambda.bodyExpression), lambda, ordinal))
+    }
+
+    if (result.size > 1) {
+        val allBreakpoint = (kotlinBreakpointType as JavaLineBreakpointType).JavaBreakpointVariant(position)
+        result.addFirst(allBreakpoint)
+    }
+
+    return result
+}
+
+fun getLambdasAtLineIfAny(sourcePosition: SourcePosition): List<KtFunction> {
+    val file = sourcePosition.file as? KtFile ?: return emptyList()
+    val lineNumber = sourcePosition.line
+    return getLambdasAtLineIfAny(file, lineNumber)
+}
+
+fun getLambdasAtLineIfAny(file: KtFile, line: Int): List<KtFunction> {
+    var lineStartOffset = file.getLineStartOffset(line) ?: return emptyList()
+    var lineEndOffset = file.getLineEndOffset(line) ?: return emptyList()
+
+    var topMostElement: PsiElement? = null
+    var elementAt: PsiElement?
+    while (topMostElement !is KtElement && lineStartOffset < lineEndOffset) {
+        elementAt = file.findElementAt(lineStartOffset)
+        if (elementAt != null) {
+            topMostElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, lineStartOffset)
+        }
+        lineStartOffset++
+    }
+
+    if (topMostElement !is KtElement) return emptyList()
+
+    val start = topMostElement.startOffset
+    val end = topMostElement.endOffset
+
+    val allInlineFunctionCalls = CodeInsightUtils.
+            findElementsOfClassInRange(file, start, end, KtFunction::class.java)
+            .filter { KtPsiUtil.getParentCallIfPresent(it as KtExpression) != null }
+            .filterIsInstance<KtFunction>()
+            .toSet()
+
+    return allInlineFunctionCalls.filter {
+        val statement = (it.bodyExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: it
+        statement.getLineNumber() == line && statement.getLineNumber(false) == line
+    }
 }
 
 

@@ -2,7 +2,7 @@ package severalFunLiterals
 
 fun main(args: Array<String>) {
     val myClass = MyClass()
-    //Breakpoint!
+    //Breakpoint! (-1)
     myClass.f1 { test() }.f2 {
         test()
     }
