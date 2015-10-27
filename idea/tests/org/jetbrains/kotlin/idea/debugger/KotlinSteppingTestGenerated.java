@@ -349,6 +349,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stepOverForWithInline.kt")
+        public void testStepOverForWithInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverForWithInline.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stepOverIfWithInline.kt")
         public void testStepOverIfWithInline() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stepOverIfWithInline.kt");

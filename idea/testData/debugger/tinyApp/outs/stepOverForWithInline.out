@@ -1,0 +1,15 @@
+LineBreakpoint created at stepOverForWithInline.kt:5
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stepOverForWithInline.StepOverForWithInlineKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+stepOverForWithInline.kt:5
+stepOverForWithInline.kt:7
+stepOverForWithInline.kt:8
+stepOverForWithInline.kt:9
+stepOverForWithInline.kt:7
+stepOverForWithInline.kt:8
+stepOverForWithInline.kt:9
+stepOverForWithInline.kt:7
+stepOverForWithInline.kt:11
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
