@@ -169,7 +169,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     @Override
-    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull PsiElement element, @NotNull UsageInfo[] allUsages) {
+    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull T element, @NotNull UsageInfo[] allUsages) {
         if (!(element instanceof KtNamedDeclaration)) return true;
 
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(element.getProject());

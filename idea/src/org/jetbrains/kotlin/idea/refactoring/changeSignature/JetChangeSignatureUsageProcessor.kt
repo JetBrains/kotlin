@@ -14,1021 +14,814 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.codeInsight.NullableNotNullManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.*;
-import com.intellij.psi.codeStyle.JavaCodeStyleManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.search.searches.MethodReferencesSearch;
-import com.intellij.psi.search.searches.OverridingMethodsSearch;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.changeSignature.*;
-import com.intellij.refactoring.rename.ResolveSnapshotProvider;
-import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.refactoring.util.MoveRenameUsageInfo;
-import com.intellij.refactoring.util.RefactoringUIUtil;
-import com.intellij.refactoring.util.TextOccurrencesUtil;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashSet;
-import com.intellij.util.containers.MultiMap;
-import kotlin.ArraysKt;
-import kotlin.CollectionsKt;
-import kotlin.MapsKt;
-import kotlin.StringsKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KotlinLightMethod;
-import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.analysis.AnalyzerUtilKt;
-import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
-import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
-import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
-import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
-import org.jetbrains.kotlin.idea.refactoring.CallableRefactoringKt;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference;
-import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
-import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions;
-import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters;
-import org.jetbrains.kotlin.idea.search.usagesSearch.UtilsKt;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ScopeUtils;
-import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.types.KotlinType;
+import com.intellij.codeInsight.NullableNotNullManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Ref
+import com.intellij.psi.*
+import com.intellij.psi.codeStyle.JavaCodeStyleManager
+import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.changeSignature.*
+import com.intellij.refactoring.rename.ResolveSnapshotProvider
+import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.refactoring.util.MoveRenameUsageInfo
+import com.intellij.refactoring.util.RefactoringUIUtil
+import com.intellij.refactoring.util.TextOccurrencesUtil
+import com.intellij.usageView.UsageInfo
+import com.intellij.util.containers.HashSet
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
+import org.jetbrains.kotlin.idea.core.compareDescriptors
+import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
+import org.jetbrains.kotlin.idea.core.refactoring.isTrueJavaMethod
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*
+import org.jetbrains.kotlin.idea.refactoring.getBodyScope
+import org.jetbrains.kotlin.idea.refactoring.getContainingScope
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
+import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
+import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
+import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.util.*
 
-import java.util.*;
-
-public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsageProcessor {
+class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     // This is special 'PsiElement' whose purpose is to wrap JetMethodDescriptor so that it can be kept in the usage list
-    private static class OriginalJavaMethodDescriptorWrapper extends UsageInfo {
-        JetMethodDescriptor originalJavaMethodDescriptor;
-
-        public OriginalJavaMethodDescriptorWrapper(@NotNull PsiElement element) {
-            super(element);
-        }
+    private class OriginalJavaMethodDescriptorWrapper(element: PsiElement) : UsageInfo(element) {
+        internal var originalJavaMethodDescriptor: JetMethodDescriptor? = null
     }
 
-    private static class DummyJetChangeInfo extends JetChangeInfo {
-        public DummyJetChangeInfo(
-                @NotNull PsiElement method,
-                @NotNull JetMethodDescriptor methodDescriptor
-        ) {
-            super(methodDescriptor,
-                  "",
-                  null,
-                  "",
-                  Visibilities.DEFAULT_VISIBILITY,
-                  Collections.<JetParameterInfo>emptyList(),
-                  null,
-                  method,
-                  Collections.<PsiElement>emptyList());
-        }
-    }
-
-    @Nullable
-    private static OriginalJavaMethodDescriptorWrapper getOriginalJavaMethodDescriptorWrapper(@NotNull UsageInfo[] usages) {
-        return CollectionsKt.firstOrNull(ArraysKt.filterIsInstance(usages, OriginalJavaMethodDescriptorWrapper.class));
-    }
+    private class DummyJetChangeInfo(
+            method: PsiElement,
+            methodDescriptor: JetMethodDescriptor
+    ) : JetChangeInfo(methodDescriptor = methodDescriptor,
+                      name = "",
+                      newReturnType = null,
+                      newReturnTypeText = "",
+                      newVisibility = Visibilities.DEFAULT_VISIBILITY,
+                      parameterInfos = emptyList<JetParameterInfo>(),
+                      receiver = null,
+                      context = method)
 
     // It's here to prevent O(usage_count^2) performance
-    private boolean initializedOriginalDescriptor;
+    private var initializedOriginalDescriptor: Boolean = false
 
-    @Override
-    public UsageInfo[] findUsages(ChangeInfo info) {
-        initializedOriginalDescriptor = false;
+    override fun findUsages(info: ChangeInfo): Array<UsageInfo> {
+        initializedOriginalDescriptor = false
 
-        Set<UsageInfo> result = new HashSet<UsageInfo>();
+        val result = HashSet<UsageInfo>()
 
-        result.add(new OriginalJavaMethodDescriptorWrapper(info.getMethod()));
+        result.add(OriginalJavaMethodDescriptorWrapper(info.method))
 
-        if (info instanceof JetChangeInfo) {
-            findAllMethodUsages((JetChangeInfo) info, result);
+        if (info is JetChangeInfo) {
+            findAllMethodUsages(info, result)
         }
         else {
-            findSAMUsages(info, result);
-            findConstructorDelegationUsages(info, result);
-            findKotlinOverrides(info, result);
-            if (info instanceof JavaChangeInfo) {
-                findKotlinCallers((JavaChangeInfo) info, result);
+            findSAMUsages(info, result)
+            findConstructorDelegationUsages(info, result)
+            findKotlinOverrides(info, result)
+            if (info is JavaChangeInfo) {
+                findKotlinCallers(info, result)
             }
         }
 
-        return result.toArray(new UsageInfo[result.size()]);
+        return result.toTypedArray()
     }
 
-    private static void findAllMethodUsages(JetChangeInfo changeInfo, Set<UsageInfo> result) {
-        for (UsageInfo functionUsageInfo : JetChangeInfoKt.getAffectedCallables(changeInfo)) {
-            if (functionUsageInfo instanceof JetCallableDefinitionUsage) {
-                findOneMethodUsages((JetCallableDefinitionUsage) functionUsageInfo, changeInfo, result);
-            }
-            else if (functionUsageInfo instanceof KotlinCallerUsage) {
-                findCallerUsages((KotlinCallerUsage) functionUsageInfo, changeInfo, result);
-            }
-            else {
-                result.add(functionUsageInfo);
+    private fun findAllMethodUsages(changeInfo: JetChangeInfo, result: MutableSet<UsageInfo>) {
+        loop@ for (functionUsageInfo in changeInfo.getAffectedCallables()) {
+            when (functionUsageInfo) {
+                is JetCallableDefinitionUsage<*> -> findOneMethodUsages(functionUsageInfo, changeInfo, result)
+                is KotlinCallerUsage -> findCallerUsages(functionUsageInfo, changeInfo, result)
+                else -> {
+                    result.add(functionUsageInfo)
 
-                boolean propagationTarget = functionUsageInfo instanceof CallerUsageInfo
-                                            || (functionUsageInfo instanceof OverriderUsageInfo
-                                                && !((OverriderUsageInfo) functionUsageInfo).isOriginalOverrider());
+                    val callee = functionUsageInfo.element ?: continue@loop
 
-                PsiElement callee = functionUsageInfo.getElement();
-                if (callee == null) continue;
+                    val propagationTarget = functionUsageInfo is CallerUsageInfo
+                                            || (functionUsageInfo is OverriderUsageInfo && !functionUsageInfo.isOriginalOverrider)
 
-                SearchScope scope = callee.getUseScope();
-                if (scope instanceof GlobalSearchScope) {
-                    scope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope) scope, KotlinFileType.INSTANCE);
-                }
 
-                for (PsiReference reference : ReferencesSearch.search(callee, scope)) {
-                    PsiElement element = reference.getElement();
-                    KtCallElement callElement = PsiTreeUtil.getParentOfType(element, KtCallElement.class);
-                    KtExpression calleeExpression = callElement != null ? callElement.getCalleeExpression() : null;
-                    if (calleeExpression != null && PsiTreeUtil.isAncestor(calleeExpression, element, false)) {
-                        result.add(propagationTarget
-                                   ? new KotlinCallerCallUsage(callElement)
-                                   : new JetFunctionCallUsage(callElement, changeInfo.getMethodDescriptor().getOriginalPrimaryCallable()));
-                    }
-                }
-            }
-        }
-    }
-
-    private static void findCallerUsages(KotlinCallerUsage callerUsage, JetChangeInfo changeInfo, final Set<UsageInfo> result) {
-        result.add(callerUsage);
-
-        KtNamedDeclaration element = callerUsage.getElement();
-        if (element == null) return;
-
-        for (PsiReference ref : ReferencesSearch.search(element, element.getUseScope())) {
-            PsiElement refElement = ref.getElement();
-            KtCallElement callElement = PsiTreeUtil.getParentOfType(refElement, KtCallElement.class);
-            if (callElement != null && PsiTreeUtil.isAncestor(callElement.getCalleeExpression(), refElement, false)) {
-                result.add(new KotlinCallerCallUsage(callElement));
-            }
-        }
-
-        KtElement body = ChangeSignatureUtilsKt.getDeclarationBody(element);
-        final Set<String> newParameterNames = CollectionsKt.mapTo(
-                changeInfo.getNonReceiverParameters(),
-                new HashSet<String>(),
-                new Function1<JetParameterInfo, String>() {
-                    @Override
-                    public String invoke(JetParameterInfo info) {
-                        return info.getName();
-                    }
-                }
-        );
-        if (body != null) {
-            final DeclarationDescriptor callerDescriptor = ResolutionUtils.resolveToDescriptor(element);
-            final BindingContext context = ResolutionUtils.analyze(body);
-            body.accept(
-                    new KtTreeVisitorVoid() {
-                        @Override
-                        public void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression) {
-                            final String currentName = expression.getReferencedName();
-                            if (!newParameterNames.contains(currentName)) return;
-
-                            ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, context);
-                            if (resolvedCall == null) return;
-
-                            if (resolvedCall.getExplicitReceiverKind() != ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) return;
-
-                            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-                            if (!(resultingDescriptor instanceof VariableDescriptor)) return;
-
-                            // Do not report usages of duplicated parameter
-                            if (resultingDescriptor instanceof ValueParameterDescriptor
-                                && resultingDescriptor.getContainingDeclaration() == callerDescriptor) return;
-
-                            KtElement callElement = resolvedCall.getCall().getCallElement();
-
-                            ReceiverValue receiver = resolvedCall.getExtensionReceiver();
-                            if (!(receiver instanceof ThisReceiver)) {
-                                receiver = resolvedCall.getDispatchReceiver();
-                            }
-                            if (receiver instanceof ThisReceiver) {
-                                result.add(new JetImplicitThisUsage(callElement, ((ThisReceiver) receiver).getDeclarationDescriptor()));
-                            }
-                            else if (!receiver.exists()) {
-                                result.add(
-                                        new UnresolvableCollisionUsageInfo(callElement, null) {
-                                            @Override
-                                            public String getDescription() {
-                                                return "There is already a variable '" + currentName + "' in " +
-                                                       IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor) +
-                                                       ". It will conflict with the new parameter.";
-                                            }
-                                        }
-                                );
-                            }
-                        }
-                    }
-            );
-        }
-    }
-
-    private static Set<PsiReference> findReferences(PsiElement functionPsi) {
-        Set<PsiReference> result = new LinkedHashSet<PsiReference>();
-
-        SearchScope searchScope = functionPsi.getUseScope();
-        KotlinReferencesSearchOptions options = new KotlinReferencesSearchOptions(true, false, false, false);
-        KotlinReferencesSearchParameters parameters = new KotlinReferencesSearchParameters(functionPsi, searchScope, false, null, options);
-        result.addAll(ReferencesSearch.search(parameters).findAll());
-        if (functionPsi instanceof KtProperty || functionPsi instanceof KtParameter) {
-            for (PsiMethod lightMethod : LightClassUtilsKt.toLightMethods(functionPsi)) {
-                result.addAll(MethodReferencesSearch.search(lightMethod, searchScope, true).findAll());
-            }
-        }
-
-        return result;
-    }
-
-    private static void findOneMethodUsages(
-            @NotNull final JetCallableDefinitionUsage<?> functionUsageInfo,
-            final JetChangeInfo changeInfo,
-            final Set<UsageInfo> result
-    ) {
-        boolean isInherited = functionUsageInfo.isInherited();
-
-        if (isInherited) {
-            result.add(functionUsageInfo);
-        }
-
-        PsiElement functionPsi = functionUsageInfo.getElement();
-        if (functionPsi == null) return;
-
-        for (PsiReference reference : findReferences(functionPsi)) {
-            PsiElement element = reference.getElement();
-
-            if (functionPsi instanceof KtClass && reference.resolve() != functionPsi) continue;
-
-            if (element instanceof KtReferenceExpression) {
-                PsiElement parent = element.getParent();
-
-                if (parent instanceof KtCallExpression)
-                    result.add(new JetFunctionCallUsage((KtCallExpression) parent, functionUsageInfo));
-                else if (parent instanceof KtUserType && parent.getParent() instanceof KtTypeReference) {
-                    parent = parent.getParent().getParent();
-
-                    if (parent instanceof KtConstructorCalleeExpression && parent.getParent() instanceof KtDelegatorToSuperCall)
-                        result.add(new JetFunctionCallUsage((KtDelegatorToSuperCall)parent.getParent(), functionUsageInfo));
-                }
-                else if (element instanceof KtSimpleNameExpression
-                         && (functionPsi instanceof KtProperty || functionPsi instanceof KtParameter)) {
-                    result.add(new JetPropertyCallUsage((KtSimpleNameExpression) element));
-                }
-            }
-        }
-
-        String oldName = JetChangeInfoKt.getOldName(changeInfo);
-
-        if (oldName != null)
-            TextOccurrencesUtil.findNonCodeUsages(functionPsi, oldName, true, true, changeInfo.getNewName(), result);
-
-        List<KtParameter> oldParameters = JetPsiUtilKt.getValueParameters((KtNamedDeclaration) functionPsi);
-
-        JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
-
-        for (JetParameterInfo parameterInfo : changeInfo.getNewParameters()) {
-            if (parameterInfo.getOldIndex() >= 0 && parameterInfo.getOldIndex() < oldParameters.size()) {
-                KtParameter oldParam = oldParameters.get(parameterInfo.getOldIndex());
-                String oldParamName = oldParam.getName();
-
-                if (parameterInfo == newReceiverInfo || (oldParamName != null && !oldParamName.equals(parameterInfo.getName()))) {
-                    for (PsiReference reference : ReferencesSearch.search(oldParam, oldParam.getUseScope())) {
-                        PsiElement element = reference.getElement();
-
-                        if ((element instanceof KtSimpleNameExpression || element instanceof KDocName) &&
-                            !(element.getParent() instanceof KtValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
-                        {
-                            JetParameterUsage parameterUsage =
-                                    new JetParameterUsage((KtElement) element, parameterInfo, functionUsageInfo);
-                            result.add(parameterUsage);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (functionPsi instanceof KtFunction && newReceiverInfo != changeInfo.getMethodDescriptor().getReceiver()) {
-            findOriginalReceiversUsages(functionUsageInfo, result, changeInfo);
-        }
-
-        if (functionPsi instanceof KtClass && ((KtClass) functionPsi).isEnum()) {
-            for (KtDeclaration declaration : ((KtClass) functionPsi).getDeclarations()) {
-                if (declaration instanceof KtEnumEntry && ((KtEnumEntry) declaration).getDelegationSpecifiers().isEmpty()) {
-                    result.add(new JetEnumEntryWithoutSuperCallUsage((KtEnumEntry) declaration));
-                }
-            }
-        }
-
-        UtilsKt.processDelegationCallConstructorUsages(
-                functionPsi,
-                functionPsi.getUseScope(),
-                new Function1<KtCallElement, Boolean>() {
-                    @Override
-                    public Boolean invoke(KtCallElement element) {
-                        if (element instanceof KtConstructorDelegationCall) {
-                            result.add(new JetConstructorDelegationCallUsage((KtConstructorDelegationCall) element, changeInfo));
-                        }
-                        else if (element instanceof KtDelegatorToSuperCall) {
-                            result.add(new JetFunctionCallUsage(element, functionUsageInfo));
-
-                        }
-                        return true;
-                    }
-                }
-        );
-    }
-
-    private static void processInternalReferences(
-            JetCallableDefinitionUsage functionUsageInfo,
-            KtTreeVisitor<BindingContext> visitor
-    ) {
-        KtFunction ktFunction = (KtFunction) functionUsageInfo.getDeclaration();
-        KtExpression body = ktFunction.getBodyExpression();
-        if (body != null) {
-            body.accept(visitor, ResolutionUtils.analyze(body, BodyResolveMode.FULL));
-        }
-        for (KtParameter parameter : ktFunction.getValueParameters()) {
-            KtExpression defaultValue = parameter.getDefaultValue();
-            if (defaultValue != null) {
-                defaultValue.accept(visitor, ResolutionUtils.analyze(defaultValue, BodyResolveMode.FULL));
-            }
-        }
-    }
-
-    private static void findOriginalReceiversUsages(
-            @NotNull final JetCallableDefinitionUsage<?> functionUsageInfo,
-            @NotNull final Set<UsageInfo> result,
-            @NotNull final JetChangeInfo changeInfo
-    ) {
-        final JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
-        final CallableDescriptor callableDescriptor = functionUsageInfo.getOriginalCallableDescriptor();
-        processInternalReferences(
-                functionUsageInfo,
-                new KtTreeVisitor<BindingContext>() {
-                    private void processExplicitThis(
-                            @NotNull KtSimpleNameExpression expression,
-                            @NotNull ReceiverParameterDescriptor receiverDescriptor
-                    ) {
-                        if (originalReceiverInfo != null && !changeInfo.hasParameter(originalReceiverInfo)) return;
-                        if (!(expression.getParent() instanceof KtThisExpression)) return;
-
-                        if (receiverDescriptor == callableDescriptor.getExtensionReceiverParameter()) {
-                            assert originalReceiverInfo != null : "No original receiver info provided: " + functionUsageInfo.getDeclaration().getText();
-                            result.add(new JetParameterUsage(expression, originalReceiverInfo, functionUsageInfo));
+                    for (reference in ReferencesSearch.search(callee, callee.useScope.restrictToKotlinSources())) {
+                        val callElement = reference.element.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: continue
+                        val usage = if (propagationTarget) {
+                            KotlinCallerCallUsage(callElement)
                         }
                         else {
-                            ClassifierDescriptor targetDescriptor = receiverDescriptor.getType().getConstructor().getDeclarationDescriptor();
-                            assert targetDescriptor != null : "Receiver type has no descriptor: " + functionUsageInfo.getDeclaration().getText();
-                            result.add(new JetNonQualifiedOuterThisUsage((KtThisExpression) expression.getParent(), targetDescriptor));
+                            JetFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)
                         }
-                    }
-
-                    private void processImplicitThis(
-                            @NotNull KtElement callElement,
-                            @NotNull ThisReceiver receiverValue
-                    ) {
-                        DeclarationDescriptor targetDescriptor = receiverValue.getDeclarationDescriptor();
-                        if (DescriptorUtilsKt.compareDescriptors(callElement.getProject(), targetDescriptor, callableDescriptor)) {
-                            assert originalReceiverInfo != null : "No original receiver info provided: " + functionUsageInfo.getDeclaration().getText();
-                            result.add(new JetImplicitThisToParameterUsage(callElement, originalReceiverInfo, functionUsageInfo));
-                        }
-                        else {
-                            result.add(new JetImplicitThisUsage(callElement, targetDescriptor));
-                        }
-                    }
-
-                    @Override
-                    public Void visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, BindingContext context) {
-                        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, context);
-                        if (resolvedCall == null) return null;
-
-                        CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-                        if (resultingDescriptor instanceof ReceiverParameterDescriptor) {
-                            processExplicitThis(expression, (ReceiverParameterDescriptor) resultingDescriptor);
-                            return null;
-                        }
-
-                        ReceiverValue receiverValue = resolvedCall.getExtensionReceiver();
-                        if (!receiverValue.exists()) {
-                            receiverValue = resolvedCall.getDispatchReceiver();
-                        }
-                        if (receiverValue instanceof ThisReceiver) {
-                            processImplicitThis(resolvedCall.getCall().getCallElement(), (ThisReceiver) receiverValue);
-                        }
-
-                        return null;
+                        result.add(usage)
                     }
                 }
-        );
-    }
-
-    private static void findSAMUsages(ChangeInfo changeInfo, Set<UsageInfo> result) {
-        PsiElement method = changeInfo.getMethod();
-        if (!JetRefactoringUtilKt.isTrueJavaMethod(method)) return;
-
-        if (((PsiMethod) method).getContainingClass() == null) return;
-
-        FunctionDescriptor methodDescriptor = JavaResolutionUtils.getJavaMethodDescriptor((PsiMethod) method);
-        if (methodDescriptor == null) return;
-
-        DeclarationDescriptor containingDescriptor = methodDescriptor.getContainingDeclaration();
-        if (!(containingDescriptor instanceof JavaClassDescriptor)) return;
-
-        if (((JavaClassDescriptor) containingDescriptor).getFunctionTypeForSamInterface() == null) return;
-
-        PsiClass samClass = ((PsiMethod) method).getContainingClass();
-        if (samClass == null) return;
-
-        for (PsiReference ref : ReferencesSearch.search(samClass)) {
-            if (!(ref instanceof KtSimpleNameReference)) continue;
-
-            KtSimpleNameExpression callee = ((KtSimpleNameReference) ref).getExpression();
-            KtCallExpression callExpression = PsiTreeUtil.getParentOfType(callee, KtCallExpression.class);
-            if (callExpression == null || callExpression.getCalleeExpression() != callee) continue;
-
-            List<? extends ValueArgument> arguments = callExpression.getValueArguments();
-            if (arguments.size() != 1) continue;
-
-            KtExpression argExpression = arguments.get(0).getArgumentExpression();
-            if (!(argExpression instanceof KtFunctionLiteralExpression)) continue;
-
-            BindingContext context = ResolutionUtils.analyze(callExpression, BodyResolveMode.FULL);
-
-            KtFunctionLiteral functionLiteral = ((KtFunctionLiteralExpression) argExpression).getFunctionLiteral();
-            FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionLiteral);
-            assert functionDescriptor != null : "No descriptor for " + functionLiteral.getText();
-
-            KotlinType samCallType = context.getType(callExpression);
-            if (samCallType == null) continue;
-
-            result.add(new DeferredJavaMethodOverrideOrSAMUsage(functionLiteral, functionDescriptor, samCallType));
-        }
-    }
-
-    private static void findConstructorDelegationUsages(@NotNull ChangeInfo changeInfo, @NotNull final Set<UsageInfo> result) {
-        PsiElement method = changeInfo.getMethod();
-        if (!(JetRefactoringUtilKt.isTrueJavaMethod(method))) return;
-
-        PsiMethod psiMethod = (PsiMethod) method;
-        if (!psiMethod.isConstructor()) return;
-
-        UtilsKt.processDelegationCallConstructorUsages(
-                psiMethod,
-                psiMethod.getUseScope(),
-                new Function1<KtCallElement, Boolean>() {
-                    @Override
-                    public Boolean invoke(KtCallElement element) {
-                        if (element instanceof KtConstructorDelegationCall) {
-                            result.add(new JavaConstructorDeferredUsageInDelegationCall((KtConstructorDelegationCall) element));
-                        }
-                        return true;
-                    }
-                }
-        );
-    }
-
-    private static void findKotlinOverrides(ChangeInfo changeInfo, Set<UsageInfo> result) {
-        PsiElement method = changeInfo.getMethod();
-        if (!JetRefactoringUtilKt.isTrueJavaMethod(method)) return;
-
-        for (PsiMethod overridingMethod : OverridingMethodsSearch.search((PsiMethod) method)) {
-            PsiElement unwrappedElement = LightClassUtilsKt.getNamedUnwrappedElement(overridingMethod);
-            if (!(unwrappedElement instanceof KtNamedFunction)) continue;
-
-            KtNamedFunction function = (KtNamedFunction) unwrappedElement;
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolutionUtils.resolveToDescriptor(function);
-
-            result.add(new DeferredJavaMethodOverrideOrSAMUsage(function, functionDescriptor, null));
-
-            findDeferredUsagesOfParameters(changeInfo, result, function, functionDescriptor);
-        }
-    }
-
-    private static void findKotlinCallers(JavaChangeInfo changeInfo, Set<UsageInfo> result) {
-        PsiElement method = changeInfo.getMethod();
-        if (!JetRefactoringUtilKt.isTrueJavaMethod(method)) return;
-
-        for (PsiMethod primaryCaller : changeInfo.getMethodsToPropagateParameters()) {
-            addDeferredCallerIfPossible(result, primaryCaller);
-            for (PsiMethod overridingCaller : OverridingMethodsSearch.search(primaryCaller)) {
-                addDeferredCallerIfPossible(result, overridingCaller);
             }
         }
     }
 
-    private static void addDeferredCallerIfPossible(Set<UsageInfo> result, PsiMethod overridingCaller) {
-        PsiElement unwrappedElement = LightClassUtilsKt.getNamedUnwrappedElement(overridingCaller);
-        if (unwrappedElement instanceof KtFunction || unwrappedElement instanceof KtClass) {
-            result.add(new DeferredJavaMethodKotlinCallerUsage((KtNamedDeclaration) unwrappedElement));
+    private fun findCallerUsages(callerUsage: KotlinCallerUsage, changeInfo: JetChangeInfo, result: MutableSet<UsageInfo>) {
+        result.add(callerUsage)
+
+        val element = callerUsage.element ?: return
+
+        for (ref in ReferencesSearch.search(element, element.useScope)) {
+            val callElement = ref.element.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: continue
+            result.add(KotlinCallerCallUsage(callElement))
         }
-    }
 
-    private static void findDeferredUsagesOfParameters(
-            ChangeInfo changeInfo,
-            Set<UsageInfo> result,
-            KtNamedFunction function,
-            FunctionDescriptor functionDescriptor
-    ) {
-        final JetCallableDefinitionUsage<?> functionInfoForParameters =
-                new JetCallableDefinitionUsage<PsiElement>(function, functionDescriptor, null, null);
-        List<KtParameter> oldParameters = JetPsiUtilKt.getValueParameters(function);
-        ParameterInfo[] parameters = changeInfo.getNewParameters();
-        for (int i = 0; i < parameters.length; i++) {
-            final int paramIndex = i;
-            ParameterInfo parameterInfo = parameters[paramIndex];
-            if (parameterInfo.getOldIndex() >= 0 && parameterInfo.getOldIndex() < oldParameters.size()) {
-                KtParameter oldParam = oldParameters.get(parameterInfo.getOldIndex());
-                String oldParamName = oldParam.getName();
+        val body = element.getDeclarationBody() ?: return
+        val callerDescriptor = element.resolveToDescriptorIfAny() ?: return
+        val context = body.analyze()
+        val newParameterNames = changeInfo.getNonReceiverParameters().mapTo(HashSet<String>()) { it.name }
+        body.accept(
+                object : KtTreeVisitorVoid() {
+                    override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+                        val currentName = expression.getReferencedName()
+                        if (currentName !in newParameterNames) return
 
-                if (oldParamName != null && !oldParamName.equals(parameterInfo.getName())) {
-                    for (PsiReference reference : ReferencesSearch.search(oldParam, oldParam.getUseScope())) {
-                        final PsiElement element = reference.getElement();
+                        val resolvedCall = expression.getResolvedCall(context) ?: return
 
-                        if ((element instanceof KtSimpleNameExpression || element instanceof KDocName) &&
-                            !(element.getParent() instanceof KtValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
-                        {
+                        if (resolvedCall.explicitReceiverKind != ExplicitReceiverKind.NO_EXPLICIT_RECEIVER) return
+
+                        val resultingDescriptor = resolvedCall.resultingDescriptor
+                        if (resultingDescriptor !is VariableDescriptor) return
+
+                        // Do not report usages of duplicated parameter
+                        if (resultingDescriptor is ValueParameterDescriptor
+                            && resultingDescriptor.containingDeclaration === callerDescriptor) return
+
+                        val callElement = resolvedCall.call.callElement
+
+                        var receiver = resolvedCall.extensionReceiver
+                        if (receiver !is ThisReceiver) {
+                            receiver = resolvedCall.dispatchReceiver
+                        }
+
+                        if (receiver is ThisReceiver) {
+                            result.add(JetImplicitThisUsage(callElement, receiver.declarationDescriptor))
+                        }
+                        else if (!receiver.exists()) {
                             result.add(
-                                    new JavaMethodDeferredKotlinUsage<KtElement>((KtElement) element) {
-                                        @NotNull
-                                        @Override
-                                        public JavaMethodKotlinUsageWithDelegate<KtElement> resolve(@NotNull JetChangeInfo javaMethodChangeInfo) {
-                                            return new JavaMethodKotlinUsageWithDelegate<KtElement>((KtElement) element,
-                                                                                                    javaMethodChangeInfo) {
-                                                @NotNull
-                                                @Override
-                                                public JetUsageInfo<KtElement> getDelegateUsage() {
-                                                    return new JetParameterUsage((KtElement) element,
-                                                                                 getJavaMethodChangeInfo().getNewParameters()[paramIndex],
-                                                                                 functionInfoForParameters);
-                                                }
-                                            };
+                                    object : UnresolvableCollisionUsageInfo(callElement, null) {
+                                        override fun getDescription(): String {
+                                            val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor)
+                                            return "There is already a variable '$currentName' in $signature. It will conflict with the new parameter."
                                         }
                                     }
-                            );
+                            )
+                        }
+                    }
+                })
+    }
+
+    private fun findReferences(functionPsi: PsiElement): Set<PsiReference> {
+        val result = LinkedHashSet<PsiReference>()
+
+        val searchScope = functionPsi.useScope
+        val options = KotlinReferencesSearchOptions(true, false, false, false)
+        val parameters = KotlinReferencesSearchParameters(functionPsi, searchScope, false, null, options)
+        result.addAll(ReferencesSearch.search(parameters).findAll())
+        if (functionPsi is KtProperty || functionPsi is KtParameter) {
+            functionPsi.toLightMethods().flatMapTo(result) { MethodReferencesSearch.search(it, searchScope, true).findAll() }
+        }
+
+        return result
+    }
+
+    private fun findOneMethodUsages(
+            functionUsageInfo: JetCallableDefinitionUsage<*>,
+            changeInfo: JetChangeInfo,
+            result: MutableSet<UsageInfo>
+    ) {
+        val isInherited = functionUsageInfo.isInherited
+
+        if (isInherited) {
+            result.add(functionUsageInfo)
+        }
+
+        val functionPsi = functionUsageInfo.element ?: return
+
+        for (reference in findReferences(functionPsi)) {
+            val element = reference.element
+
+            if (functionPsi is KtClass && reference.resolve() !== functionPsi) continue
+
+            if (element is KtReferenceExpression) {
+                var parent = element.parent
+
+                when {
+                    parent is KtCallExpression ->
+                        result.add(JetFunctionCallUsage(parent, functionUsageInfo))
+
+                    parent is KtUserType && parent.parent is KtTypeReference -> {
+                        parent = parent.parent.parent
+
+                        if (parent is KtConstructorCalleeExpression && parent.parent is KtDelegatorToSuperCall)
+                            result.add(JetFunctionCallUsage(parent.parent as KtDelegatorToSuperCall, functionUsageInfo))
+                    }
+
+                    element is KtSimpleNameExpression && (functionPsi is KtProperty || functionPsi is KtParameter) ->
+                        result.add(JetPropertyCallUsage(element))
+                }
+            }
+        }
+
+        val oldName = changeInfo.oldName
+
+        if (oldName != null) {
+            TextOccurrencesUtil.findNonCodeUsages(functionPsi, oldName, true, true, changeInfo.newName, result)
+        }
+
+        val oldParameters = (functionPsi as KtNamedDeclaration).getValueParameters()
+
+        val newReceiverInfo = changeInfo.receiverParameterInfo
+
+        for (parameterInfo in changeInfo.newParameters) {
+            if (parameterInfo.oldIndex >= 0 && parameterInfo.oldIndex < oldParameters.size) {
+                val oldParam = oldParameters[parameterInfo.oldIndex]
+                val oldParamName = oldParam.name
+
+                if (parameterInfo == newReceiverInfo || (oldParamName != null && oldParamName != parameterInfo.name)) {
+                    for (reference in ReferencesSearch.search(oldParam, oldParam.useScope)) {
+                        val element = reference.element
+
+                        // Usages in named arguments of the calls usage will be changed when the function call is changed
+                        if ((element is KtSimpleNameExpression || element is KDocName) && element.parent !is KtValueArgumentName) {
+                            result.add(JetParameterUsage(element as KtElement, parameterInfo, functionUsageInfo))
                         }
                     }
                 }
             }
         }
+
+        if (functionPsi is KtFunction && newReceiverInfo != changeInfo.methodDescriptor.receiver) {
+            findOriginalReceiversUsages(functionUsageInfo, result, changeInfo)
+        }
+
+        if (functionPsi is KtClass && functionPsi.isEnum()) {
+            for (declaration in functionPsi.declarations) {
+                if (declaration is KtEnumEntry && declaration.getDelegationSpecifiers().isEmpty()) {
+                    result.add(JetEnumEntryWithoutSuperCallUsage(declaration))
+                }
+            }
+        }
+
+        functionPsi.processDelegationCallConstructorUsages(functionPsi.useScope) {
+            when (it) {
+                is KtConstructorDelegationCall -> result.add(JetConstructorDelegationCallUsage(it, changeInfo))
+                is KtDelegatorToSuperCall -> result.add(JetFunctionCallUsage(it, functionUsageInfo))
+            }
+            true
+        }
     }
 
-    @Override
-    public MultiMap<PsiElement, String> findConflicts(ChangeInfo info, Ref<UsageInfo[]> refUsages) {
-        MultiMap<PsiElement, String> result = new MultiMap<PsiElement, String>();
+    private fun processInternalReferences(functionUsageInfo: JetCallableDefinitionUsage<*>, visitor: KtTreeVisitor<BindingContext>) {
+        val ktFunction = functionUsageInfo.declaration as KtFunction
+
+        val body = ktFunction.bodyExpression
+        body?.accept(visitor, body.analyze(BodyResolveMode.FULL))
+
+        for (parameter in ktFunction.valueParameters) {
+            val defaultValue = parameter.defaultValue
+            defaultValue?.accept(visitor, defaultValue.analyze(BodyResolveMode.FULL))
+        }
+    }
+
+    private fun findOriginalReceiversUsages(
+            functionUsageInfo: JetCallableDefinitionUsage<*>,
+            result: MutableSet<UsageInfo>,
+            changeInfo: JetChangeInfo
+    ) {
+        val originalReceiverInfo = changeInfo.methodDescriptor.receiver
+        val callableDescriptor = functionUsageInfo.originalCallableDescriptor
+        processInternalReferences(
+                functionUsageInfo,
+                object : KtTreeVisitor<BindingContext>() {
+                    private fun processExplicitThis(
+                            expression: KtSimpleNameExpression,
+                            receiverDescriptor: ReceiverParameterDescriptor) {
+                        if (originalReceiverInfo != null && !changeInfo.hasParameter(originalReceiverInfo)) return
+                        if (expression.parent !is KtThisExpression) return
+
+                        if (receiverDescriptor === callableDescriptor.extensionReceiverParameter) {
+                            assert(originalReceiverInfo != null) { "No original receiver info provided: " + functionUsageInfo.declaration.text }
+                            result.add(JetParameterUsage(expression, originalReceiverInfo!!, functionUsageInfo))
+                        }
+                        else {
+                            val targetDescriptor = receiverDescriptor.type.constructor.declarationDescriptor
+                            assert(targetDescriptor != null) { "Receiver type has no descriptor: " + functionUsageInfo.declaration.text }
+                            result.add(JetNonQualifiedOuterThisUsage(expression.parent as KtThisExpression, targetDescriptor!!))
+                        }
+                    }
+
+                    private fun processImplicitThis(
+                            callElement: KtElement,
+                            receiverValue: ThisReceiver) {
+                        val targetDescriptor = receiverValue.declarationDescriptor
+                        if (compareDescriptors(callElement.project, targetDescriptor, callableDescriptor)) {
+                            assert(originalReceiverInfo != null) { "No original receiver info provided: " + functionUsageInfo.declaration.text }
+                            result.add(JetImplicitThisToParameterUsage(callElement, originalReceiverInfo!!, functionUsageInfo))
+                        }
+                        else {
+                            result.add(JetImplicitThisUsage(callElement, targetDescriptor))
+                        }
+                    }
+
+                    override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, context: BindingContext): Void? {
+                        val resolvedCall = expression.getResolvedCall(context) ?: return null
+
+                        val resultingDescriptor = resolvedCall.resultingDescriptor
+                        if (resultingDescriptor is ReceiverParameterDescriptor) {
+                            processExplicitThis(expression, resultingDescriptor)
+                            return null
+                        }
+
+                        var receiverValue = resolvedCall.extensionReceiver
+                        if (!receiverValue.exists()) {
+                            receiverValue = resolvedCall.dispatchReceiver
+                        }
+                        if (receiverValue is ThisReceiver) {
+                            processImplicitThis(resolvedCall.call.callElement, receiverValue)
+                        }
+
+                        return null
+                    }
+                })
+    }
+
+    private fun findSAMUsages(changeInfo: ChangeInfo, result: MutableSet<UsageInfo>) {
+        val method = changeInfo.method
+        if (!method.isTrueJavaMethod()) return
+        method as PsiMethod
+
+        if (method.containingClass == null) return
+
+        val containingDescriptor = method.getJavaMethodDescriptor()?.containingDeclaration as? JavaClassDescriptor ?: return
+        if (containingDescriptor.functionTypeForSamInterface == null) return
+        val samClass = method.containingClass ?: return
+
+        for (ref in ReferencesSearch.search(samClass)) {
+            if (ref !is KtSimpleNameReference) continue
+
+            val callee = ref.expression
+            val callExpression = callee.getNonStrictParentOfType<KtCallExpression>() ?: continue
+            if (callExpression.calleeExpression !== callee) continue
+
+            val arguments = callExpression.valueArguments
+            if (arguments.size != 1) continue
+
+            val argExpression = arguments[0].getArgumentExpression()
+            if (argExpression !is KtFunctionLiteralExpression) continue
+
+            val context = callExpression.analyze(BodyResolveMode.FULL)
+
+            val functionLiteral = argExpression.functionLiteral
+            val functionDescriptor = context.get(BindingContext.FUNCTION, functionLiteral)
+            assert(functionDescriptor != null) { "No descriptor for " + functionLiteral.text }
+
+            val samCallType = context.getType(callExpression) ?: continue
+
+            result.add(DeferredJavaMethodOverrideOrSAMUsage(functionLiteral, functionDescriptor!!, samCallType))
+        }
+    }
+
+    private fun findConstructorDelegationUsages(changeInfo: ChangeInfo, result: MutableSet<UsageInfo>) {
+        val method = changeInfo.method
+        if (!(method.isTrueJavaMethod())) return
+        method as PsiMethod
+
+        if (!method.isConstructor) return
+
+        method.processDelegationCallConstructorUsages(method.useScope) {
+            if (it is KtConstructorDelegationCall) {
+                result.add(JavaConstructorDeferredUsageInDelegationCall(it))
+            }
+            true
+        }
+    }
+
+    private fun findKotlinOverrides(changeInfo: ChangeInfo, result: MutableSet<UsageInfo>) {
+        val method = changeInfo.method
+        if (!method.isTrueJavaMethod()) return
+
+        for (overridingMethod in OverridingMethodsSearch.search(method as PsiMethod)) {
+            val unwrappedElement = overridingMethod.namedUnwrappedElement as? KtNamedFunction ?: continue
+            val functionDescriptor = unwrappedElement.resolveToDescriptorIfAny() as? FunctionDescriptor ?: continue
+            result.add(DeferredJavaMethodOverrideOrSAMUsage(unwrappedElement, functionDescriptor, null))
+            findDeferredUsagesOfParameters(changeInfo, result, unwrappedElement, functionDescriptor)
+        }
+    }
+
+    private fun findKotlinCallers(changeInfo: JavaChangeInfo, result: MutableSet<UsageInfo>) {
+        val method = changeInfo.method
+        if (!method.isTrueJavaMethod()) return
+
+        for (primaryCaller in changeInfo.methodsToPropagateParameters) {
+            addDeferredCallerIfPossible(result, primaryCaller)
+            for (overridingCaller in OverridingMethodsSearch.search(primaryCaller)) {
+                addDeferredCallerIfPossible(result, overridingCaller)
+            }
+        }
+    }
+
+    private fun addDeferredCallerIfPossible(result: MutableSet<UsageInfo>, overridingCaller: PsiMethod) {
+        val unwrappedElement = overridingCaller.namedUnwrappedElement
+        if (unwrappedElement is KtFunction || unwrappedElement is KtClass) {
+            result.add(DeferredJavaMethodKotlinCallerUsage(unwrappedElement as KtNamedDeclaration))
+        }
+    }
+
+    private fun findDeferredUsagesOfParameters(
+            changeInfo: ChangeInfo,
+            result: MutableSet<UsageInfo>,
+            function: KtNamedFunction,
+            functionDescriptor: FunctionDescriptor) {
+        val functionInfoForParameters = JetCallableDefinitionUsage<PsiElement>(function, functionDescriptor, null, null)
+        val oldParameters = function.valueParameters
+        val parameters = changeInfo.newParameters
+        for ((paramIndex, parameterInfo) in parameters.withIndex()) {
+            if (!(parameterInfo.oldIndex >= 0 && parameterInfo.oldIndex < oldParameters.size)) continue
+
+            val oldParam = oldParameters[parameterInfo.oldIndex]
+            val oldParamName = oldParam.name
+
+            if (!(oldParamName != null && oldParamName != parameterInfo.name)) continue
+
+            for (reference in ReferencesSearch.search(oldParam, oldParam.useScope)) {
+                val element = reference.element
+                // Usages in named arguments of the calls usage will be changed when the function call is changed
+                if (!((element is KtSimpleNameExpression || element is KDocName) && element.parent !is KtValueArgumentName)) continue
+
+                result.add(
+                        object : JavaMethodDeferredKotlinUsage<KtElement>(element as KtElement) {
+                            override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtElement> {
+                                return object : JavaMethodKotlinUsageWithDelegate<KtElement>(element as KtElement, javaMethodChangeInfo) {
+                                    override val delegateUsage: JetUsageInfo<KtElement>
+                                        get() = JetParameterUsage(element as KtElement,
+                                                                  this.javaMethodChangeInfo.newParameters[paramIndex],
+                                                                  functionInfoForParameters)
+                                }
+                            }
+                        }
+                )
+            }
+        }
+    }
+
+    override fun findConflicts(info: ChangeInfo, refUsages: Ref<Array<UsageInfo>>): MultiMap<PsiElement, String> {
+        val result = MultiMap<PsiElement, String>()
 
         // Delete OverriderUsageInfo and CallerUsageInfo for Kotlin declarations since they can't be processed correctly
         // TODO (OverriderUsageInfo only): Drop when OverriderUsageInfo.getElement() gets deleted
-        UsageInfo[] usageInfos = refUsages.get();
-        List<UsageInfo> adjustedUsages = ArraysKt.filterNot(
-                usageInfos,
-                new Function1<UsageInfo, Boolean>() {
-                    @Override
-                    public Boolean invoke(UsageInfo info) {
-                        return getOverriderOrCaller(info) instanceof KotlinLightMethod;
-                    }
-                }
-        );
-        if (adjustedUsages.size() < usageInfos.length) {
-            refUsages.set(adjustedUsages.toArray(new UsageInfo[adjustedUsages.size()]));
+        val usageInfos = refUsages.get()
+        val adjustedUsages = usageInfos.filterNot { getOverriderOrCaller(it) is KotlinLightMethod }
+        if (adjustedUsages.size < usageInfos.size) {
+            refUsages.set(adjustedUsages.toTypedArray())
         }
 
-        if (!(info instanceof JetChangeInfo)) return result;
+        if (info !is JetChangeInfo) return result
 
-        Set<String> parameterNames = new HashSet<String>();
-        JetChangeInfo changeInfo = (JetChangeInfo) info;
-        PsiElement function = info.getMethod();
-        PsiElement element = function != null ? function : changeInfo.getContext();
-        BindingContext bindingContext = ResolutionUtils.analyze((KtElement) element, BodyResolveMode.FULL);
-        CallableDescriptor oldDescriptor = JetChangeInfoKt.getOriginalBaseFunctionDescriptor(changeInfo);
-        DeclarationDescriptor containingDeclaration = oldDescriptor.getContainingDeclaration();
+        val parameterNames = HashSet<String>()
+        val function = info.method
+        val element = function
+        val bindingContext = (element as KtElement).analyze(BodyResolveMode.FULL)
+        val oldDescriptor = info.originalBaseFunctionDescriptor
+        val containingDeclaration = oldDescriptor.containingDeclaration
 
-        LexicalScope parametersScope = null;
-        if (oldDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptorWithResolutionScopes)
-            parametersScope = ((ClassDescriptorWithResolutionScopes) containingDeclaration).getScopeForInitializerResolution();
-        else if (function instanceof KtFunction)
-            parametersScope = CallableRefactoringKt.getBodyScope((KtFunction) function, bindingContext);
+        val parametersScope = when {
+            oldDescriptor is ConstructorDescriptor && containingDeclaration is ClassDescriptorWithResolutionScopes ->
+                containingDeclaration.scopeForInitializerResolution
+            function is KtFunction ->
+                function.getBodyScope(bindingContext)
+            else ->
+                null
+        }
 
-        LexicalScope callableScope = CallableRefactoringKt.getContainingScope(oldDescriptor);
+        val callableScope = oldDescriptor.getContainingScope()
 
-        JetMethodDescriptor.Kind kind = JetChangeInfoKt.getKind(changeInfo);
-        if (!kind.isConstructor() && callableScope != null && !info.getNewName().isEmpty()) {
-            Name newName = Name.identifier(info.getNewName());
-            Collection<? extends CallableDescriptor> conflicts = oldDescriptor instanceof FunctionDescriptor
-                                                                 ? ScopeUtils.getAllAccessibleFunctions(callableScope, newName)
-                                                                 : ScopeUtils.getAllAccessibleVariables(callableScope, newName);
-            for (CallableDescriptor conflict : conflicts) {
-                if (conflict == oldDescriptor) continue;
+        val kind = info.kind
+        if (!kind.isConstructor && callableScope != null && !info.newName.isEmpty()) {
+            val newName = Name.identifier(info.newName)
+            val conflicts = if (oldDescriptor is FunctionDescriptor)
+                callableScope.getAllAccessibleFunctions(newName)
+            else
+                callableScope.getAllAccessibleVariables(newName)
+            for (conflict in conflicts) {
+                if (conflict === oldDescriptor) continue
 
-                PsiElement conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(conflict);
-                if (conflictElement == changeInfo.getMethod()) continue;
+                val conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(conflict)
+                if (conflictElement === info.method) continue
 
-                if (getCallableParameterTypes(conflict).equals(getCallableParameterTypes(oldDescriptor))) {
-                    result.putValue(conflictElement, "Function already exists: '" + DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict) + "'");
-                    break;
+                if (conflict.valueParameters.map { it.type } == oldDescriptor.valueParameters.map { it.type }) {
+                    result.putValue(conflictElement, "Function already exists: '" + DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict) + "'")
+                    break
                 }
             }
         }
 
-        for (JetParameterInfo parameter : changeInfo.getNonReceiverParameters()) {
-            JetValVar valOrVar = parameter.getValOrVar();
-            String parameterName = parameter.getName();
+        for (parameter in info.getNonReceiverParameters()) {
+            val valOrVar = parameter.valOrVar
+            val parameterName = parameter.name
 
             if (!parameterNames.add(parameterName)) {
-                result.putValue(element, "Duplicating parameter '" + parameterName + "'");
+                result.putValue(element, "Duplicating parameter '$parameterName'")
             }
-            if (parametersScope != null) {
-                if (kind == JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar != JetValVar.None) {
-                    for (VariableDescriptor property : ScopeUtils.getVariablesFromImplicitReceivers(parametersScope, Name.identifier(parameterName))) {
-                        PsiElement propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property);
 
-                        if (propertyDeclaration != null && !(propertyDeclaration.getParent() instanceof KtParameterList)) {
-                            result.putValue(propertyDeclaration, "Duplicating property '" + parameterName + "'");
-                            break;
+            if (parametersScope != null) {
+                if (kind === JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar !== JetValVar.None) {
+                    for (property in parametersScope.getVariablesFromImplicitReceivers(Name.identifier(parameterName))) {
+                        val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) ?: continue
+                        if (propertyDeclaration.parent !is KtParameterList) {
+                            result.putValue(propertyDeclaration, "Duplicating property '$parameterName'")
+                            break
                         }
                     }
                 }
-                else if (function instanceof KtFunction) {
-                    VariableDescriptor variable = ScopeUtilsKt.findLocalVariable(parametersScope, Name.identifier(parameterName));
-
-                    if (variable != null && !(variable instanceof ValueParameterDescriptor)) {
-                        PsiElement conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(variable);
-                        result.putValue(conflictElement, "Duplicating local variable '" + parameterName + "'");
+                else if (function is KtFunction) {
+                    for (variable in parametersScope.getContributedVariables(Name.identifier(parameterName), NoLookupLocation.FROM_IDE)) {
+                        if (variable is ValueParameterDescriptor) continue
+                        val conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(variable)
+                        result.putValue(conflictElement, "Duplicating local variable '$parameterName'")
                     }
                 }
             }
         }
 
-        JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
-        JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
-        if (function instanceof KtCallableDeclaration && newReceiverInfo != originalReceiverInfo) {
-            findReceiverIntroducingConflicts(result, function, newReceiverInfo);
-            findInternalExplicitReceiverConflicts(refUsages.get(), result, originalReceiverInfo);
-            findThisLabelConflicts(refUsages, result, changeInfo, (KtCallableDeclaration) function);
+        val newReceiverInfo = info.receiverParameterInfo
+        val originalReceiverInfo = info.methodDescriptor.receiver
+        if (function is KtCallableDeclaration && newReceiverInfo != originalReceiverInfo) {
+            findReceiverIntroducingConflicts(result, function, newReceiverInfo)
+            findInternalExplicitReceiverConflicts(refUsages.get(), result, originalReceiverInfo)
+            findThisLabelConflicts(refUsages, result, info, function)
         }
 
-        for (UsageInfo usageInfo : usageInfos) {
-            if (!(usageInfo instanceof KotlinCallerUsage)) continue;
-
-            KtNamedDeclaration caller = (KtNamedDeclaration) usageInfo.getElement();
-            DeclarationDescriptor callerDescriptor = ResolutionUtils.resolveToDescriptor(caller);
-
-            findParameterDuplicationInCaller(result, changeInfo, caller, callerDescriptor);
+        for (usageInfo in usageInfos) {
+            if (usageInfo !is KotlinCallerUsage) continue
+            val callerDescriptor = usageInfo.element?.resolveToDescriptorIfAny() ?: continue
+            findParameterDuplicationInCaller(result, info, usageInfo.element!!, callerDescriptor)
         }
 
-        return result;
+        return result
     }
 
-    private static void findParameterDuplicationInCaller(
-            MultiMap<PsiElement, String> result,
-            JetChangeInfo changeInfo,
-            KtNamedDeclaration caller,
-            DeclarationDescriptor callerDescriptor
-    ) {
-        List<KtParameter> valueParameters = JetPsiUtilKt.getValueParameters(caller);
-        Map<String, KtParameter> existingParameters = CollectionsKt.toMap(
-                valueParameters,
-                new Function1<KtParameter, String>() {
-                    @Override
-                    public String invoke(KtParameter parameter) {
-                        return parameter.getName();
-                    }
-                }
-        );
-        for (JetParameterInfo parameterInfo : changeInfo.getNonReceiverParameters()) {
-            if (!(parameterInfo.isNewParameter())) continue;
+    private fun findParameterDuplicationInCaller(
+            result: MultiMap<PsiElement, String>,
+            changeInfo: JetChangeInfo,
+            caller: KtNamedDeclaration,
+            callerDescriptor: DeclarationDescriptor) {
+        val valueParameters = caller.getValueParameters()
+        val existingParameters = valueParameters.toMapBy { it.name }
+        val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor)
+        for (parameterInfo in changeInfo.getNonReceiverParameters()) {
+            if (!(parameterInfo.isNewParameter)) continue
 
-            String name = parameterInfo.getName();
-            KtParameter parameter = existingParameters.get(name);
-            if (parameter != null) {
-                result.putValue(parameter, "There is already a parameter '" + name + "' in " +
-                                           IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(callerDescriptor) +
-                                           ". It will conflict with the new parameter.");
-            }
+            val name = parameterInfo.name
+            val parameter = existingParameters[name] ?: continue
+
+            result.putValue(parameter, "There is already a parameter '$name' in $signature. It will conflict with the new parameter.")
         }
     }
 
-    private static void findThisLabelConflicts(
-            Ref<UsageInfo[]> refUsages,
-            MultiMap<PsiElement, String> result,
-            JetChangeInfo changeInfo,
-            KtCallableDeclaration callable
-    ) {
-        KtPsiFactory psiFactory = new KtPsiFactory(callable.getProject());
-        for (UsageInfo usageInfo : refUsages.get()) {
-            if (!(usageInfo instanceof JetParameterUsage)) continue;
+    private fun findThisLabelConflicts(
+            refUsages: Ref<Array<UsageInfo>>,
+            result: MultiMap<PsiElement, String>,
+            changeInfo: JetChangeInfo,
+            callable: KtCallableDeclaration) {
+        val psiFactory = KtPsiFactory(callable.project)
+        for (usageInfo in refUsages.get()) {
+            if (usageInfo !is JetParameterUsage) continue
 
-            String newExprText = ((JetParameterUsage) usageInfo).getReplacementText(changeInfo);
-            if (!newExprText.startsWith("this")) continue;
+            val newExprText = usageInfo.getReplacementText(changeInfo)
+            if (!newExprText.startsWith("this")) continue
 
-            if (usageInfo.getElement() instanceof KDocName) continue; // TODO support converting parameter to receiver in KDoc
+            if (usageInfo.element is KDocName) continue // TODO support converting parameter to receiver in KDoc
 
-            KtExpression originalExpr = (KtExpression) usageInfo.getElement();
-            BindingContext bindingContext = ResolutionUtils.analyze(originalExpr, BodyResolveMode.FULL);
-            LexicalScope scope = ScopeUtils.getResolutionScope(
-                    originalExpr, bindingContext, ResolutionUtils.getResolutionFacade(originalExpr));
+            val originalExpr = usageInfo.element as? KtExpression ?: continue
+            val bindingContext = originalExpr.analyze(BodyResolveMode.FULL)
+            val scope = originalExpr.getResolutionScope(bindingContext, originalExpr.getResolutionFacade())
 
-            KtThisExpression newExpr = (KtThisExpression) psiFactory.createExpression(newExprText);
+            val newExpr = psiFactory.createExpression(newExprText) as KtThisExpression
 
-            BindingContext newContext = AnalyzerUtilKt.analyzeInContext(newExpr, scope, originalExpr);
+            val newContext = newExpr.analyzeInContext(scope, originalExpr)
 
-            KtSimpleNameExpression labelExpr = newExpr.getTargetLabel();
+            val labelExpr = newExpr.getTargetLabel()
             if (labelExpr != null && newContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, labelExpr) != null) {
                 result.putValue(
                         originalExpr,
-                        "Parameter reference can't be safely replaced with " +
-                        newExprText +
-                        " since " +
-                        labelExpr.getText() +
-                        " is ambiguous in this context"
-                );
-                continue;
+                        "Parameter reference can't be safely replaced with " + newExprText + " since " + labelExpr.text + " is ambiguous in this context")
+                continue
             }
 
-            DeclarationDescriptor thisTarget = newContext.get(BindingContext.REFERENCE_TARGET, newExpr.getInstanceReference());
-            PsiElement thisTargetPsi = thisTarget instanceof DeclarationDescriptorWithSource
-                                 ? KotlinSourceElementKt.getPsi(((DeclarationDescriptorWithSource) thisTarget).getSource())
-                                 : null;
-            if (thisTargetPsi != null && PsiTreeUtil.isAncestor(callable, thisTargetPsi, true)) {
+            val thisTarget = newContext.get(BindingContext.REFERENCE_TARGET, newExpr.instanceReference)
+            val thisTargetPsi = (thisTarget as? DeclarationDescriptorWithSource)?.source?.getPsi()
+            if (thisTargetPsi != null && callable.isAncestor(thisTargetPsi, true)) {
                 result.putValue(
                         originalExpr,
-                        "Parameter reference can't be safely replaced with " +
-                        newExprText +
-                        " since target function can't be referenced in this context"
-                );
+                        "Parameter reference can't be safely replaced with $newExprText since target function can't be referenced in this context")
             }
         }
     }
 
-    private static void findInternalExplicitReceiverConflicts(
-            UsageInfo[] usages,
-            MultiMap<PsiElement, String> result,
-            JetParameterInfo originalReceiverInfo
+    private fun findInternalExplicitReceiverConflicts(
+            usages: Array<UsageInfo>,
+            result: MultiMap<PsiElement, String>,
+            originalReceiverInfo: JetParameterInfo?
     ) {
-        if (originalReceiverInfo == null) {
-            for (UsageInfo usageInfo : usages) {
-                if (!(usageInfo instanceof JetFunctionCallUsage || usageInfo instanceof JetPropertyCallUsage)) continue;
+        if (originalReceiverInfo != null) return
 
-                KtElement callElement = (KtElement) usageInfo.getElement();
-                if (callElement == null) continue;
+        for (usageInfo in usages) {
+            if (!(usageInfo is JetFunctionCallUsage || usageInfo is JetPropertyCallUsage)) continue
 
-                PsiElement parent = callElement.getParent();
-                if (parent instanceof KtQualifiedExpression && ((KtQualifiedExpression) parent).getSelectorExpression() == callElement) {
-                    String message = "Explicit receiver is already present in call element: " +
-                                     CommonRefactoringUtil.htmlEmphasize(parent.getText());
-                    result.putValue(callElement, message);
+            val callElement = usageInfo.element as? KtElement ?: continue
+
+            val parent = callElement.parent
+            if (parent is KtQualifiedExpression && parent.selectorExpression === callElement) {
+                val message = "Explicit receiver is already present in call element: " + CommonRefactoringUtil.htmlEmphasize(parent.text)
+                result.putValue(callElement, message)
+            }
+        }
+    }
+
+    private fun findReceiverIntroducingConflicts(
+            result: MultiMap<PsiElement, String>,
+            callable: PsiElement,
+            newReceiverInfo: JetParameterInfo?) {
+        if (newReceiverInfo != null && (callable is KtNamedFunction) && callable.bodyExpression != null) {
+            val noReceiverRefToContext = JetFileReferencesResolver.resolve(callable, true, true).filter {
+                val resolvedCall = it.key.getResolvedCall(it.value)
+                resolvedCall != null && !resolvedCall.dispatchReceiver.exists() && !resolvedCall.extensionReceiver.exists()
+            }
+
+            val psiFactory = KtPsiFactory(callable.project)
+            val tempFile = (callable.containingFile as KtFile).createTempCopy { it }
+            val functionWithReceiver = tempFile.findElementAt(callable.textOffset)?.getNonStrictParentOfType<KtNamedFunction>() ?: return
+            val receiverTypeRef = psiFactory.createType(newReceiverInfo.currentTypeText)
+            functionWithReceiver.setReceiverTypeReference(receiverTypeRef)
+            val newContext = functionWithReceiver.bodyExpression!!.analyze(BodyResolveMode.FULL)
+
+            val originalOffset = callable.bodyExpression!!.textOffset
+            val newBody = functionWithReceiver.bodyExpression ?: return
+            for ((originalRef, originalContext) in noReceiverRefToContext.entries) {
+                val newRef = newBody
+                        .findElementAt(originalRef.textOffset - originalOffset)
+                        ?.getNonStrictParentOfType<KtReferenceExpression>()
+                val newResolvedCall = newRef.getResolvedCall(newContext)
+                if (newResolvedCall == null || newResolvedCall.extensionReceiver.exists() || newResolvedCall.dispatchReceiver.exists()) {
+                    val descriptor = originalRef.getResolvedCall(originalContext)!!.candidateDescriptor
+                    val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(callable.project, descriptor)
+                    val prefix = if (declaration != null) RefactoringUIUtil.getDescription(declaration, true) else originalRef.text
+                    result.putValue(originalRef, prefix.capitalize() + " will no longer be accessible after signature change")
                 }
             }
         }
     }
 
-    private static void findReceiverIntroducingConflicts(
-            MultiMap<PsiElement, String> result,
-            PsiElement callable,
-            JetParameterInfo newReceiverInfo
-    ) {
-        if (newReceiverInfo != null && (callable instanceof KtNamedFunction) && ((KtNamedFunction) callable).getBodyExpression() != null) {
-            Map<KtReferenceExpression, BindingContext> noReceiverRefToContext = MapsKt.filter(
-                    JetFileReferencesResolver.INSTANCE$.resolve((KtNamedFunction) callable, true, true),
-                    new Function1<Map.Entry<? extends KtReferenceExpression, ? extends BindingContext>, Boolean>() {
-                        @Override
-                        public Boolean invoke(Map.Entry<? extends KtReferenceExpression, ? extends BindingContext> entry) {
-                            ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(entry.getKey(), entry.getValue());
-                            return resolvedCall != null
-                                   && !resolvedCall.getDispatchReceiver().exists()
-                                   && !resolvedCall.getExtensionReceiver().exists();
-                        }
-                    }
-            );
-
-            KtPsiFactory psiFactory = new KtPsiFactory(callable.getProject());
-            KtFile tempFile = JetRefactoringUtilKt.createTempCopy(
-                    (KtFile) callable.getContainingFile(),
-                    new Function1<String, String>() {
-                        @Override
-                        public String invoke(String s) {
-                            return s;
-                        }
-                    }
-            );
-            KtNamedFunction functionWithReceiver =
-                    PsiTreeUtil.getParentOfType(tempFile.findElementAt(callable.getTextOffset()), KtNamedFunction.class);
-            KtTypeReference receiverTypeRef = psiFactory.createType(newReceiverInfo.getCurrentTypeText());
-            TypeRefHelpersKt.setReceiverTypeReference(functionWithReceiver, receiverTypeRef);
-            //noinspection ConstantConditions
-            BindingContext newContext = ResolutionUtils.analyze(functionWithReceiver.getBodyExpression(), BodyResolveMode.FULL);
-
-            //noinspection ConstantConditions
-            int originalOffset = ((KtNamedFunction) callable).getBodyExpression().getTextOffset();
-            KtExpression newBody = functionWithReceiver.getBodyExpression();
-            for (Map.Entry<KtReferenceExpression, BindingContext> entry : noReceiverRefToContext.entrySet()) {
-                KtReferenceExpression originalRef = entry.getKey();
-                BindingContext originalContext = entry.getValue();
-                //noinspection ConstantConditions
-                KtReferenceExpression newRef = PsiTreeUtil.getParentOfType(
-                        newBody.findElementAt(originalRef.getTextOffset() - originalOffset),
-                        KtReferenceExpression.class
-                );
-                ResolvedCall<?> newResolvedCall = CallUtilKt.getResolvedCall(newRef, newContext);
-                if (newResolvedCall == null
-                        || newResolvedCall.getExtensionReceiver().exists()
-                        || newResolvedCall.getDispatchReceiver().exists()) {
-                    //noinspection ConstantConditions
-                    CallableDescriptor descriptor =
-                            CallUtilKt.getResolvedCall(originalRef, originalContext).getCandidateDescriptor();
-                    PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(callable.getProject(), descriptor);
-                    String prefix = declaration != null ? RefactoringUIUtil.getDescription(declaration, true) : originalRef.getText();
-                    result.putValue(
-                            originalRef,
-                            StringsKt.capitalize(prefix + " will no longer be accessible after signature change")
-                    );
-                }
-            }
-        }
-    }
-
-    private static List<KotlinType> getCallableParameterTypes(CallableDescriptor descriptor) {
-        return ContainerUtil.map(descriptor.getValueParameters(), new Function<ValueParameterDescriptor, KotlinType>() {
-            @Override
-            public KotlinType fun(ValueParameterDescriptor descriptor) {
-                return descriptor.getType();
-            }
-        });
-    }
-
-    private static boolean isJavaMethodUsage(UsageInfo usageInfo) {
+    private fun isJavaMethodUsage(usageInfo: UsageInfo): Boolean {
         // MoveRenameUsageInfo corresponds to non-Java usage of Java method
-        return usageInfo instanceof JavaMethodDeferredKotlinUsage || usageInfo instanceof MoveRenameUsageInfo;
+        return usageInfo is JavaMethodDeferredKotlinUsage<*> || usageInfo is MoveRenameUsageInfo
     }
 
-    @Nullable
-    private static UsageInfo createReplacementUsage(UsageInfo originalUsageInfo, JetChangeInfo javaMethodChangeInfo, UsageInfo[] allUsages) {
-        if (originalUsageInfo instanceof JavaMethodDeferredKotlinUsage) {
-            return ((JavaMethodDeferredKotlinUsage<?>) originalUsageInfo).resolve(javaMethodChangeInfo);
-        }
+    private fun createReplacementUsage(
+            originalUsageInfo: UsageInfo,
+            javaMethodChangeInfo: JetChangeInfo,
+            allUsages: Array<UsageInfo>
+    ): UsageInfo? {
+        if (originalUsageInfo is JavaMethodDeferredKotlinUsage<*>) return originalUsageInfo.resolve(javaMethodChangeInfo)
 
-        KtCallElement callElement = PsiTreeUtil.getParentOfType(originalUsageInfo.getElement(), KtCallElement.class);
-        if (callElement == null) return null;
-
-        PsiReference ref = originalUsageInfo.getReference();
-        PsiElement refTarget = ref != null ? ref.resolve() : null;
-        return new JavaMethodKotlinCallUsage(callElement,
-                                             javaMethodChangeInfo,
-                                             refTarget != null && ChangeSignatureUtilsKt.isCaller(refTarget, allUsages));
+        val callElement = PsiTreeUtil.getParentOfType(originalUsageInfo.element, KtCallElement::class.java) ?: return null
+        val refTarget = originalUsageInfo.reference?.resolve()
+        return JavaMethodKotlinCallUsage(callElement, javaMethodChangeInfo, refTarget != null && refTarget.isCaller(allUsages))
     }
 
-    private static boolean canCreateReplacementUsage(UsageInfo originalUsageInfo) {
-        if (originalUsageInfo instanceof JavaMethodDeferredKotlinUsage) return true;
-        return PsiTreeUtil.getParentOfType(originalUsageInfo.getElement(), KtCallElement.class) != null;
-    }
+    private class NullabilityPropagator(baseMethod: PsiMethod) {
+        private val nullManager: NullableNotNullManager
+        private val javaPsiFacade: JavaPsiFacade
+        private val javaCodeStyleManager: JavaCodeStyleManager
+        private val methodAnnotation: PsiAnnotation?
+        private val parameterAnnotations: Array<PsiAnnotation?>
 
-    private static class NullabilityPropagator {
-        private final NullableNotNullManager nullManager;
-        private final JavaPsiFacade javaPsiFacade;
-        private final JavaCodeStyleManager javaCodeStyleManager;
-        private final PsiAnnotation methodAnnotation;
-        private final PsiAnnotation[] parameterAnnotations;
+        init {
+            val project = baseMethod.project
+            this.nullManager = NullableNotNullManager.getInstance(project)
+            this.javaPsiFacade = JavaPsiFacade.getInstance(project)
+            this.javaCodeStyleManager = JavaCodeStyleManager.getInstance(project)
 
-        public NullabilityPropagator(@NotNull PsiMethod baseMethod) {
-            Project project = baseMethod.getProject();
-            this.nullManager = NullableNotNullManager.getInstance(project);
-            this.javaPsiFacade = JavaPsiFacade.getInstance(project);
-            this.javaCodeStyleManager = JavaCodeStyleManager.getInstance(project);
-
-            this.methodAnnotation = getNullabilityAnnotation(baseMethod);
-            this.parameterAnnotations = ContainerUtil.map2Array(
-                    baseMethod.getParameterList().getParameters(),
-                    PsiAnnotation.class,
-                    new Function<PsiParameter, PsiAnnotation>() {
-                        @Override
-                        public PsiAnnotation fun(PsiParameter parameter) {
-                            return getNullabilityAnnotation(parameter);
-                        }
-                    }
-            );
+            this.methodAnnotation = getNullabilityAnnotation(baseMethod)
+            this.parameterAnnotations = baseMethod.parameterList.parameters.map { getNullabilityAnnotation(it) }.toTypedArray()
         }
 
-        @Nullable
-        private PsiAnnotation getNullabilityAnnotation(@NotNull PsiModifierListOwner element) {
-            PsiAnnotation nullAnnotation = nullManager.getNullableAnnotation(element, false);
-            PsiAnnotation notNullAnnotation = nullManager.getNotNullAnnotation(element, false);
-            if ((nullAnnotation == null) == (notNullAnnotation == null)) return null;
-            return nullAnnotation != null ? nullAnnotation : notNullAnnotation;
+        private fun getNullabilityAnnotation(element: PsiModifierListOwner): PsiAnnotation? {
+            val nullAnnotation = nullManager.getNullableAnnotation(element, false)
+            val notNullAnnotation = nullManager.getNotNullAnnotation(element, false)
+            if ((nullAnnotation == null) == (notNullAnnotation == null)) return null
+            return nullAnnotation ?: notNullAnnotation
         }
 
-        private void addNullabilityAnnotationIfApplicable(@NotNull PsiModifierListOwner element, @Nullable PsiAnnotation annotation) {
-            PsiAnnotation nullableAnnotation = nullManager.getNullableAnnotation(element, false);
-            PsiAnnotation notNullAnnotation = nullManager.getNotNullAnnotation(element, false);
+        private fun addNullabilityAnnotationIfApplicable(element: PsiModifierListOwner, annotation: PsiAnnotation?) {
+            val nullableAnnotation = nullManager.getNullableAnnotation(element, false)
+            val notNullAnnotation = nullManager.getNotNullAnnotation(element, false)
 
-            if (notNullAnnotation != null && nullableAnnotation == null && element instanceof PsiMethod) return;
+            if (notNullAnnotation != null && nullableAnnotation == null && element is PsiMethod) return
 
-            String annotationQualifiedName = annotation != null ? annotation.getQualifiedName() : null;
+            val annotationQualifiedName = annotation?.qualifiedName
             if (annotationQualifiedName != null
-                && javaPsiFacade.findClass(annotationQualifiedName, element.getResolveScope()) == null) return;
+                && javaPsiFacade.findClass(annotationQualifiedName, element.resolveScope) == null) return
 
-            if (notNullAnnotation != null) {
-                notNullAnnotation.delete();
-            }
-            if (nullableAnnotation != null) {
-                nullableAnnotation.delete();
-            }
+            notNullAnnotation?.delete()
+            nullableAnnotation?.delete()
 
-            if (annotationQualifiedName == null) return;
+            if (annotationQualifiedName == null) return
 
-            PsiModifierList modifierList = element.getModifierList();
+            val modifierList = element.modifierList
             if (modifierList != null) {
-                modifierList.addAnnotation(annotationQualifiedName);
-                javaCodeStyleManager.shortenClassReferences(element);
+                modifierList.addAnnotation(annotationQualifiedName)
+                javaCodeStyleManager.shortenClassReferences(element)
             }
         }
 
-        public void processMethod(@NotNull PsiMethod currentMethod) {
-            PsiParameter[] currentParameters = currentMethod.getParameterList().getParameters();
-            addNullabilityAnnotationIfApplicable(currentMethod, methodAnnotation);
-            for (int i = 0; i < parameterAnnotations.length; i++) {
-                addNullabilityAnnotationIfApplicable(currentParameters[i], parameterAnnotations[i]);
+        fun processMethod(currentMethod: PsiMethod) {
+            val currentParameters = currentMethod.parameterList.parameters
+            addNullabilityAnnotationIfApplicable(currentMethod, methodAnnotation)
+            for (i in parameterAnnotations.indices) {
+                addNullabilityAnnotationIfApplicable(currentParameters[i], parameterAnnotations[i])
             }
         }
     }
 
-    private static boolean isOverriderOrCaller(UsageInfo usage) {
-        return usage instanceof OverriderUsageInfo || usage instanceof CallerUsageInfo;
-    }
+    private fun isOverriderOrCaller(usage: UsageInfo) = usage is OverriderUsageInfo || usage is CallerUsageInfo
 
-    @Nullable
-    private static PsiMethod getOverriderOrCaller(UsageInfo usage) {
-        if (usage instanceof OverriderUsageInfo) return ((OverriderUsageInfo) usage).getOverridingMethod();
-        if (usage instanceof CallerUsageInfo) {
-            PsiElement element = usage.getElement();
-            return element instanceof PsiMethod ? (PsiMethod) element : null;
+    private fun getOverriderOrCaller(usage: UsageInfo): PsiMethod? {
+        if (usage is OverriderUsageInfo) return usage.overridingMethod
+        if (usage is CallerUsageInfo) {
+            val element = usage.element
+            return if (element is PsiMethod) element else null
         }
-        return null;
+        return null
     }
 
-    @Override
-    public boolean processUsage(ChangeInfo changeInfo, UsageInfo usageInfo, boolean beforeMethodChange, UsageInfo[] usages) {
-        PsiElement method = changeInfo.getMethod();
-        boolean isJavaMethodUsage = isJavaMethodUsage(usageInfo);
+    override fun processUsage(changeInfo: ChangeInfo, usageInfo: UsageInfo, beforeMethodChange: Boolean, usages: Array<UsageInfo>): Boolean {
+        val method = changeInfo.method
+        val isJavaMethodUsage = isJavaMethodUsage(usageInfo)
 
-        if (usageInfo instanceof KotlinWrapperForJavaUsageInfos) {
-            List<JavaChangeInfo> javaChangeInfos = ((JetChangeInfo) changeInfo).getOrCreateJavaChangeInfos(false);
-            assert javaChangeInfos != null : "JavaChangeInfo not found: " + method.getText();
+        if (usageInfo is KotlinWrapperForJavaUsageInfos) {
+            val javaChangeInfos = (changeInfo as JetChangeInfo).getOrCreateJavaChangeInfos(false)
+            assert(javaChangeInfos != null) { "JavaChangeInfo not found: " + method.text }
 
-            KotlinWrapperForJavaUsageInfos wrapperForJavaUsageInfos = (KotlinWrapperForJavaUsageInfos) usageInfo;
-            UsageInfo[] javaUsageInfos = wrapperForJavaUsageInfos.getJavaUsageInfos();
-            ChangeSignatureUsageProcessor[] processors = ChangeSignatureUsageProcessor.EP_NAME.getExtensions();
+            val javaUsageInfos = usageInfo.javaUsageInfos
+            val processors = ChangeSignatureUsageProcessor.EP_NAME.extensions
 
-            for (JavaChangeInfo javaChangeInfo : javaChangeInfos) {
+            for (javaChangeInfo in javaChangeInfos!!) {
                 // Match names so that getter/setter usages are not confused with each other
-                if (!javaChangeInfo.getOldName().equals(wrapperForJavaUsageInfos.getJavaChangeInfo().getOldName())) continue;
+                if (javaChangeInfo.oldName != usageInfo.javaChangeInfo.oldName) continue
 
-                NullabilityPropagator nullabilityPropagator = new NullabilityPropagator(javaChangeInfo.getMethod());
+                val nullabilityPropagator = NullabilityPropagator(javaChangeInfo.method)
 
-                for (UsageInfo usage : javaUsageInfos) {
-                    if (isOverriderOrCaller(usage) && beforeMethodChange) continue;
-                    for (ChangeSignatureUsageProcessor processor : processors) {
-                        if (processor instanceof JetChangeSignatureUsageProcessor) continue;
+                for (usage in javaUsageInfos) {
+                    if (isOverriderOrCaller(usage) && beforeMethodChange) continue
+                    for (processor in processors) {
+                        if (processor is JetChangeSignatureUsageProcessor) continue
                         if (isOverriderOrCaller(usage)) {
-                            processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos);
+                            processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos)
                         }
-                        if (processor.processUsage(javaChangeInfo, usage, beforeMethodChange, javaUsageInfos)) break;
+                        if (processor.processUsage(javaChangeInfo, usage, beforeMethodChange, javaUsageInfos)) break
                     }
-                    if (usage instanceof OverriderUsageInfo && ((OverriderUsageInfo) usage).isOriginalOverrider()) {
-                        PsiMethod overridingMethod = ((OverriderUsageInfo) usage).getOverridingMethod();
-                        if (overridingMethod != null && !(overridingMethod instanceof KotlinLightMethod)) {
-                            nullabilityPropagator.processMethod(overridingMethod);
+                    if (usage is OverriderUsageInfo && usage.isOriginalOverrider) {
+                        val overridingMethod = usage.overridingMethod
+                        if (overridingMethod != null && overridingMethod !is KotlinLightMethod) {
+                            nullabilityPropagator.processMethod(overridingMethod)
                         }
                     }
                 }
@@ -1036,93 +829,82 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         }
 
         if (beforeMethodChange) {
-            if (!(method instanceof PsiMethod) || initializedOriginalDescriptor) return true;
+            if (method !is PsiMethod || initializedOriginalDescriptor) return true
 
-            OriginalJavaMethodDescriptorWrapper descriptorWrapper = getOriginalJavaMethodDescriptorWrapper(usages);
-            if (descriptorWrapper == null || descriptorWrapper.originalJavaMethodDescriptor != null) return true;
+            val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
+            if (descriptorWrapper == null || descriptorWrapper.originalJavaMethodDescriptor != null) return true
 
-            FunctionDescriptor methodDescriptor = JavaResolutionUtils.getJavaMethodDescriptor((PsiMethod) method);
-            assert methodDescriptor != null;
-            descriptorWrapper.originalJavaMethodDescriptor =
-                    new JetChangeSignatureData(methodDescriptor, method, Collections.singletonList(methodDescriptor));
+            val methodDescriptor = method.getJavaMethodDescriptor()
+            assert(methodDescriptor != null)
+            descriptorWrapper.originalJavaMethodDescriptor = JetChangeSignatureData(methodDescriptor!!, method, listOf(methodDescriptor))
 
             // This change info is used as a placeholder before primary method update
             // It gets replaced with real change info afterwards
-            JetChangeInfo dummyChangeInfo = new DummyJetChangeInfo(changeInfo.getMethod(), descriptorWrapper.originalJavaMethodDescriptor);
-            for (int i = 0; i < usages.length; i++) {
-                UsageInfo oldUsageInfo = usages[i];
-                if (!isJavaMethodUsage(oldUsageInfo)) continue;
+            val dummyChangeInfo = DummyJetChangeInfo(changeInfo.method, descriptorWrapper.originalJavaMethodDescriptor!!)
+            for (i in usages.indices) {
+                val oldUsageInfo = usages[i]
+                if (!isJavaMethodUsage(oldUsageInfo)) continue
 
-                UsageInfo newUsageInfo = createReplacementUsage(oldUsageInfo, dummyChangeInfo, usages);
+                val newUsageInfo = createReplacementUsage(oldUsageInfo, dummyChangeInfo, usages)
                 if (newUsageInfo != null) {
-                    usages[i] = newUsageInfo;
+                    usages[i] = newUsageInfo
                 }
             }
 
-            initializedOriginalDescriptor = true;
+            initializedOriginalDescriptor = true
 
-            return true;
+            return true
         }
 
-        PsiElement element = usageInfo.getElement();
-        if (element == null) return false;
+        val element = usageInfo.element ?: return false
 
-        if (usageInfo instanceof JavaMethodKotlinUsageWithDelegate) {
-            JavaMethodKotlinUsageWithDelegate usageWithDelegate = (JavaMethodKotlinUsageWithDelegate) usageInfo;
+        if (usageInfo is JavaMethodKotlinUsageWithDelegate<*>) {
             // Do not call getOriginalJavaMethodDescriptorWrapper() on each usage to avoid O(usage_count^2) performance
-            if (((JavaMethodKotlinUsageWithDelegate) usageInfo).getJavaMethodChangeInfo() instanceof DummyJetChangeInfo) {
-                OriginalJavaMethodDescriptorWrapper descriptorWrapper = getOriginalJavaMethodDescriptorWrapper(usages);
-                JetMethodDescriptor methodDescriptor = descriptorWrapper != null ? descriptorWrapper.originalJavaMethodDescriptor : null;
-                if (methodDescriptor == null) return true;
+            if (usageInfo.javaMethodChangeInfo is DummyJetChangeInfo) {
+                val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
+                val methodDescriptor = (descriptorWrapper?.originalJavaMethodDescriptor) ?: return true
 
-                JetChangeInfo javaMethodChangeInfo = JetChangeInfoKt.toJetChangeInfo(changeInfo, methodDescriptor);
-                for (UsageInfo info : usages) {
-                    if (info instanceof JavaMethodKotlinUsageWithDelegate) {
-                        ((JavaMethodKotlinUsageWithDelegate) info).setJavaMethodChangeInfo(javaMethodChangeInfo);
-                    }
+                val javaMethodChangeInfo = changeInfo.toJetChangeInfo(methodDescriptor)
+                for (info in usages) {
+                    (info as? JavaMethodKotlinUsageWithDelegate<*>)?.javaMethodChangeInfo = javaMethodChangeInfo
                 }
             }
 
-            return usageWithDelegate.processUsage(usages);
+            return usageInfo.processUsage(usages)
         }
 
-        if (usageInfo instanceof MoveRenameUsageInfo && isJavaMethodUsage) {
-            KtSimpleNameExpression callee = PsiTreeUtil.getParentOfType(usageInfo.getElement(), KtSimpleNameExpression.class, false);
-            PsiReference ref = callee != null ? ReferenceUtilKt.getMainReference(callee) : null;
-            if (ref instanceof KtSimpleNameReference) {
-                ((KtSimpleNameReference) ref).handleElementRename(((PsiMethod)method).getName());
-                return true;
+        if (usageInfo is MoveRenameUsageInfo && isJavaMethodUsage) {
+            val callee = PsiTreeUtil.getParentOfType(usageInfo.element, KtSimpleNameExpression::class.java, false)
+            val ref = callee?.mainReference
+            if (ref is KtSimpleNameReference) {
+                ref.handleElementRename((method as PsiMethod).name)
+                return true
             }
 
-            return false;
+            return false
         }
 
-        return usageInfo instanceof JetUsageInfo ? ((JetUsageInfo) usageInfo).processUsage((JetChangeInfo) changeInfo, element, usages) : true;
+        @Suppress("UNCHECKED_CAST")
+        return (usageInfo as? JetUsageInfo<PsiElement>)?.processUsage(changeInfo as JetChangeInfo, element, usages) ?: true
     }
 
-    @Override
-    public boolean processPrimaryMethod(ChangeInfo changeInfo) {
-        if (!(changeInfo instanceof JetChangeInfo)) return false;
+    override fun processPrimaryMethod(changeInfo: ChangeInfo): Boolean {
+        if (changeInfo !is JetChangeInfo) return false
 
-        JetChangeInfo jetChangeInfo = (JetChangeInfo) changeInfo;
-        for (JetCallableDefinitionUsage primaryFunction : jetChangeInfo.getMethodDescriptor().getPrimaryCallables()) {
-            primaryFunction.processUsage(jetChangeInfo, primaryFunction.getDeclaration(), UsageInfo.EMPTY_ARRAY);
+        for (primaryFunction in changeInfo.methodDescriptor.primaryCallables) {
+            primaryFunction.processUsage(changeInfo, primaryFunction.declaration, UsageInfo.EMPTY_ARRAY)
         }
-        jetChangeInfo.primaryMethodUpdated();
-        return true;
+        changeInfo.primaryMethodUpdated()
+        return true
     }
 
-    @Override
-    public boolean shouldPreviewUsages(ChangeInfo changeInfo, UsageInfo[] usages) {
-        return false;
-    }
+    override fun shouldPreviewUsages(changeInfo: ChangeInfo, usages: Array<UsageInfo>) = false
 
-    @Override
-    public boolean setupDefaultValues(ChangeInfo changeInfo, Ref<UsageInfo[]> refUsages, Project project) {
-        return true;
-    }
+    override fun setupDefaultValues(changeInfo: ChangeInfo, refUsages: Ref<Array<UsageInfo>>, project: Project) = true
 
-    @Override
-    public void registerConflictResolvers(List<ResolveSnapshotProvider.ResolveSnapshot> snapshots, @NotNull ResolveSnapshotProvider resolveSnapshotProvider, UsageInfo[] usages, ChangeInfo changeInfo) {
+    override fun registerConflictResolvers(
+            snapshots: List<ResolveSnapshotProvider.ResolveSnapshot>,
+            resolveSnapshotProvider: ResolveSnapshotProvider,
+            usages: Array<UsageInfo>, changeInfo: ChangeInfo) {
     }
 }
