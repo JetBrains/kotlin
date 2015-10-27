@@ -20,16 +20,18 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiNameIdentifierOwner
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.ABSTRACT_KEYWORD
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 open class AddModifierFix(
         element: KtModifierListOwner,
@@ -83,6 +85,19 @@ open class AddModifierFix(
                     return AddModifierFix(modifierListOwner, modifier)
                 }
             }
+        }
+    }
+
+    object MakeClassOpenFactory : JetSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val typeReference = diagnostic.psiElement as KtTypeReference
+            val bindingContext = typeReference.analyze(BodyResolveMode.PARTIAL)
+            val type = bindingContext[BindingContext.TYPE, typeReference] ?: return null
+            val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
+            if (!QuickFixUtil.canModifyElement(declaration)) return null
+            if (declaration.isEnum()) return null
+            return AddModifierFix(declaration, KtTokens.OPEN_KEYWORD)
         }
     }
 }
