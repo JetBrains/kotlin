@@ -6,18 +6,6 @@ import kotlin.test.*
 import org.junit.Test as test
 
 class StringJVMTest {
-    @test fun stringBuilderIterator() {
-        var sum = 0
-        val sb = StringBuilder()
-        for(c in "239")
-            sb.append(c)
-
-        println(sb)
-
-        for(c in sb)
-            sum += (c.toInt() - '0'.toInt())
-        assertTrue(sum == 14)
-    }
 
     @test fun orEmpty() {
         val s: String? = "hey"
@@ -51,14 +39,12 @@ class StringJVMTest {
         assertEquals(77.toLong(), "77".toLong())
     }
 
-    @test fun count() {
-        val text = "hello there\tfoo\nbar"
+    @test fun count() = withOneCharSequenceArg("hello there\tfoo\nbar") { text ->
         val whitespaceCount = text.count { it.isWhitespace() }
         assertEquals(3, whitespaceCount)
     }
 
-    @test fun testSplitByChar() {
-        val s = "ab\n[|^$&\\]^cd"
+    @test fun testSplitByChar() = withOneCharSequenceArg("ab\n[|^$&\\]^cd") { s ->
         var list = s.split('b');
         assertEquals(2, list.size())
         assertEquals("a", list[0])
@@ -68,11 +54,10 @@ class StringJVMTest {
         assertEquals("cd", list[2])
         list = s.split('.')
         assertEquals(1, list.size())
-        assertEquals(s, list[0])
+        assertEquals(s.toString(), list[0])
     }
 
-    @test fun testSplitByPattern() {
-        val s = "ab1cd2def3"
+    @test fun testSplitByPattern() = withOneCharSequenceArg("ab1cd2def3") { s ->
         val isDigit = "\\d".toRegex()
         assertEquals(listOf("ab", "cd", "def", ""), s.split(isDigit))
         assertEquals(listOf("ab", "cd", "def3"), s.split(isDigit, 3))
@@ -85,7 +70,9 @@ class StringJVMTest {
         }
     }
 
-    @test fun repeat() {
+    @test fun repeat() = withOneCharSequenceArg { arg1 ->
+        fun String.repeat(n: Int): String = arg1(this).repeat(n)
+
         assertFails { "foo".repeat(-1) }
         assertEquals("", "foo".repeat(0))
         assertEquals("foo", "foo".repeat(1))
@@ -93,25 +80,28 @@ class StringJVMTest {
         assertEquals("foofoofoo", "foo".repeat(3))
     }
 
-    @test fun filter() {
-        assertEquals("acdca", "abcdcba".filter { !it.equals('b') })
-        assertEquals("1234", "a1b2c3d4".filter { it.isDigit() })
+    @test fun filter() = withOneCharSequenceArg { arg1 ->
+        assertEquals("acdca", arg1("abcdcba").filter { !it.equals('b') })
+        assertEquals("1234", arg1("a1b2c3d4").filter { it.isDigit() })
     }
 
-    @test fun filterNot() {
-        assertEquals("acdca", "abcdcba".filterNot { it.equals('b') })
-        assertEquals("abcd", "a1b2c3d4".filterNot { it.isDigit() })
+    @test fun filterNot() = withOneCharSequenceArg { arg1 ->
+        assertEquals("acdca", arg1("abcdcba").filterNot { it.equals('b') })
+        assertEquals("abcd", arg1("a1b2c3d4").filterNot { it.isDigit() })
     }
 
-    @test fun forEach() {
-        val data = "abcd1234"
+    @test fun forEach() = withOneCharSequenceArg("abcd1234") { data ->
         var count = 0
-        data.forEach{ count++ }
-        assertEquals(data.length(), count)
+        val sb = StringBuilder()
+        data.forEach {
+            count++
+            sb.append(it)
+        }
+        assertEquals(data.length, count)
+        assertEquals(data.toString(), sb.toString())
     }
 
-    @test fun all() {
-        val data = "AbCd"
+    @test fun all() = withOneCharSequenceArg("AbCd") { data ->
         assertTrue {
             data.all { it.isJavaIdentifierPart() }
         }
@@ -120,8 +110,7 @@ class StringJVMTest {
         }
     }
 
-    @test fun any() {
-        val data = "a1bc"
+    @test fun any() = withOneCharSequenceArg("a1bc") { data ->
         assertTrue {
             data.any() { it.isDigit() }
         }
@@ -137,114 +126,109 @@ class StringJVMTest {
         assertEquals("<k^o^t^l^i^n>", sb.toString())
     }
 
-    @test fun find() {
-        val data = "a1b2c3"
+    @test fun find() = withOneCharSequenceArg("a1b2c3") { data ->
         assertEquals('1', data.first { it.isDigit() })
         assertNull(data.firstOrNull { it.isUpperCase() })
     }
 
-    @test fun findNot() {
-        val data = "1a2b3c"
+    @test fun findNot() = withOneCharSequenceArg("1a2b3c") { data ->
         assertEquals('a', data.filterNot { it.isDigit() }.firstOrNull())
         assertNull(data.filterNot { it.isJavaIdentifierPart() }.firstOrNull())
     }
 
-    @test fun partition() {
-        val data = "a1b2c3"
+    @test fun partition() = withOneCharSequenceArg("a1b2c3") { data ->
         val pair = data.partition { it.isDigit() }
         assertEquals("123", pair.first, "pair.first")
         assertEquals("abc", pair.second, "pair.second")
     }
 
-    @test fun map() {
-        assertEquals(listOf('a', 'b', 'c'), "abc".map { it })
+    @test fun map() = withOneCharSequenceArg { arg1 ->
+        assertEquals(listOf('a', 'b', 'c'), arg1("abc").map { it })
 
-        assertEquals(listOf(true, false, true), "AbC".map { it.isUpperCase() })
+        assertEquals(listOf(true, false, true), arg1("AbC").map { it.isUpperCase() })
 
-        assertEquals(listOf<Boolean>(), "".map { it.isUpperCase() })
+        assertEquals(listOf<Boolean>(), arg1("").map { it.isUpperCase() })
 
-        assertEquals(listOf(97, 98, 99), "abc".map { it.toInt() })
+        assertEquals(listOf(97, 98, 99), arg1("abc").map { it.toInt() })
     }
 
-    @test fun mapTo() {
+    @test fun mapTo() = withOneCharSequenceArg { arg1 ->
         val result1 = arrayListOf<Char>()
-        val return1 = "abc".mapTo(result1, { it })
+        val return1 = arg1("abc").mapTo(result1, { it })
         assertEquals(result1, return1)
         assertEquals(arrayListOf('a', 'b', 'c'), result1)
 
         val result2 = arrayListOf<Boolean>()
-        val return2 = "AbC".mapTo(result2, { it.isUpperCase() })
+        val return2 = arg1("AbC").mapTo(result2, { it.isUpperCase() })
         assertEquals(result2, return2)
         assertEquals(arrayListOf(true, false, true), result2)
 
         val result3 = arrayListOf<Boolean>()
-        val return3 = "".mapTo(result3, { it.isUpperCase() })
+        val return3 = arg1("").mapTo(result3, { it.isUpperCase() })
         assertEquals(result3, return3)
         assertEquals(arrayListOf<Boolean>(), result3)
 
         val result4 = arrayListOf<Int>()
-        val return4 = "abc".mapTo(result4, { it.toInt() })
+        val return4 = arg1("abc").mapTo(result4, { it.toInt() })
         assertEquals(result4, return4)
         assertEquals(arrayListOf(97, 98, 99), result4)
     }
 
-    @test fun flatMap() {
-        val data = "abcd"
-        val result = data.flatMap { listOf(it) }
-        assertEquals(data.length(), result.count())
-        assertEquals(data.toCharList(), result)
+    @test fun flatMap() = withOneCharSequenceArg("abcd") { data ->
+        val result = data.flatMap { ('a'..it) + ' ' }
+        assertEquals("a ab abc abcd ".toCharList(), result)
     }
 
-    @test fun fold() {
+    @test fun fold() = withOneCharSequenceArg { arg1 ->
         // calculate number of digits in the string
-        val data = "a1b2c3def"
+        val data = arg1("a1b2c3def")
         val result = data.fold(0, { digits, c -> if(c.isDigit()) digits + 1 else digits } )
         assertEquals(3, result)
 
         //simulate all method
-        assertEquals(true, "ABCD".fold(true, { r, c -> r && c.isUpperCase() }))
+        assertEquals(true, arg1("ABCD").fold(true, { r, c -> r && c.isUpperCase() }))
 
         //get string back
-        assertEquals(data, data.fold("", { s, c -> s + c }))
+        assertEquals(data.toString(), data.fold("", { s, c -> s + c }))
     }
 
-    @test fun foldRight() {
+    @test fun foldRight() = withOneCharSequenceArg { arg1 ->
         // calculate number of digits in the string
-        val data = "a1b2c3def"
+        val data = arg1("a1b2c3def")
         val result = data.foldRight(0, { c, digits -> if(c.isDigit()) digits + 1 else digits })
         assertEquals(3, result)
 
         //simulate all method
-        assertEquals(true, "ABCD".foldRight(true, { c, r -> r && c.isUpperCase() }))
+        assertEquals(true, arg1("ABCD").foldRight(true, { c, r -> r && c.isUpperCase() }))
 
         //get string back
-        assertEquals(data, data.foldRight("", { s, c -> "" + s + c }))
+        assertEquals(data.toString(), data.foldRight("", { s, c -> "" + s + c }))
     }
 
-    @test fun reduce() {
+    @test fun reduce() = withOneCharSequenceArg { arg1 ->
         // get the smallest character(by char value)
-        assertEquals('a', "bacfd".reduce { v, c -> if (v > c) c else v })
+        assertEquals('a', arg1("bacfd").reduce { v, c -> if (v > c) c else v })
 
         assertFailsWith(UnsupportedOperationException::class) {
-            "".reduce { a, b -> '\n' }
+            arg1("").reduce { a, b -> '\n' }
         }
     }
 
-    @test fun reduceRight() {
+    @test fun reduceRight() = withOneCharSequenceArg { arg1 ->
         // get the smallest character(by char value)
-        assertEquals('a', "bacfd".reduceRight { c, v -> if (v > c) c else v })
+        assertEquals('a', arg1("bacfd").reduceRight { c, v -> if (v > c) c else v })
 
         assertFailsWith(UnsupportedOperationException::class) {
-            "".reduceRight { a, b -> '\n' }
+            arg1("").reduceRight { a, b -> '\n' }
         }
     }
 
-    @test fun groupBy() {
+    @test fun groupBy() = withOneCharSequenceArg("abAbaABcD") { data ->
         // group characters by their case
-        val data = "abAbaABcD"
         val result = data.groupBy { it.isLowerCase() }
-        assertEquals(2, result.size())
-        assertEquals(listOf('a','b','b','a','c'), result.get(true))
+        assertEquals(2, result.size)
+        assertEquals(listOf('a','b','b','a','c'), result[true])
+        assertEquals(listOf('A','A','B','D'), result[false])
     }
 
     @test fun joinToString() {
@@ -271,12 +255,21 @@ class StringJVMTest {
         assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
     }
 
+
+
     @test fun dropWhile() {
         val data = "ab1cd2"
         assertEquals("1cd2", data.dropWhile { it.isJavaIdentifierStart() })
         assertEquals("", data.dropWhile { true })
         assertEquals("ab1cd2", data.dropWhile { false })
     }
+
+    @test fun dropWhileCharSequence() = withOneCharSequenceArg("ab1cd2") { data ->
+        assertContentEquals("1cd2", data.dropWhile { it.isJavaIdentifierStart() })
+        assertContentEquals("", data.dropWhile { true })
+        assertContentEquals("ab1cd2", data.dropWhile { false })
+    }
+
 
     @test fun drop() {
         val data = "abcd1234"
@@ -287,11 +280,25 @@ class StringJVMTest {
         assertEquals("", data.drop(data.length() + 5))
     }
 
+    @test fun dropCharSequence() = withOneCharSequenceArg("abcd1234") { data ->
+        assertContentEquals("d1234", data.drop(3))
+        assertFails {
+            data.drop(-2)
+        }
+        assertContentEquals("", data.drop(data.length() + 5))
+    }
+
     @test fun takeWhile() {
         val data = "ab1cd2"
         assertEquals("ab", data.takeWhile { it.isJavaIdentifierStart() })
         assertEquals("", data.takeWhile { false })
         assertEquals("ab1cd2", data.takeWhile { true })
+    }
+
+    @test fun takeWhileCharSequence() = withOneCharSequenceArg("ab1cd2") { data ->
+        assertContentEquals("ab", data.takeWhile { it.isJavaIdentifierStart() })
+        assertContentEquals("", data.takeWhile { false })
+        assertContentEquals("ab1cd2", data.takeWhile { true })
     }
 
     @test fun take() {
@@ -301,6 +308,14 @@ class StringJVMTest {
             data.take(-7)
         }
         assertEquals(data, data.take(data.length() + 42))
+    }
+
+    @test fun takeCharSequence() = withOneCharSequenceArg("abcd1234") { data ->
+        assertEquals("abc", data.take(3))
+        assertFails {
+            data.take(-7)
+        }
+        assertContentEquals(data.toString(), data.take(data.length + 42))
     }
 
     @test fun formatter() {
@@ -318,32 +333,28 @@ class StringJVMTest {
         assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset.name())))
     }
 
-    @test fun testReplaceAllClosure() {
-        val s = "test123zzz"
+    @test fun testReplaceAllClosure() = withOneCharSequenceArg("test123zzz") { s ->
         val result = s.replace("\\d+".toRegex()) { mr ->
             "[" + mr.value + "]"
         }
         assertEquals("test[123]zzz", result)
     }
 
-    @test fun testReplaceAllClosureAtStart() {
-        val s = "123zzz"
+    @test fun testReplaceAllClosureAtStart() = withOneCharSequenceArg("123zzz") { s ->
         val result = s.replace("\\d+".toRegex()) { mr ->
             "[" + mr.value + "]"
         }
         assertEquals("[123]zzz", result)
     }
 
-    @test fun testReplaceAllClosureAtEnd() {
-        val s = "test123"
+    @test fun testReplaceAllClosureAtEnd() = withOneCharSequenceArg("test123") { s ->
         val result = s.replace("\\d+".toRegex()) { mr ->
             "[" + mr.value + "]"
         }
         assertEquals("test[123]", result)
     }
 
-    @test fun testReplaceAllClosureEmpty() {
-        val s = ""
+    @test fun testReplaceAllClosureEmpty() = withOneCharSequenceArg("") { s ->
         val result = s.replace("\\d+".toRegex()) { mr ->
             "x"
         }
@@ -351,23 +362,21 @@ class StringJVMTest {
 
     }
 
-    @test fun slice() {
+    @test fun slice() = withOneCharSequenceArg { arg1 ->
         val iter = listOf(4, 3, 0, 1)
 
-        val builder = StringBuilder()
-        builder.append("ABCD")
-        builder.append("abcd")
+        val data = arg1("ABCDabcd")
         // ABCDabcd
         // 01234567
-        assertEquals("BCDabc", builder.slice(1..6).toString())
-        assertEquals("baD", builder.slice(5 downTo 3).toString())
-        assertEquals("aDAB", builder.slice(iter).toString())
+        assertEquals("BCDabc", data.slice(1..6).toString())
+        assertEquals("baD", data.slice(5 downTo 3).toString())
+        assertEquals("aDAB", data.slice(iter).toString())
 
         assertFails {
-            "abc".slice(listOf(1,4))
+            arg1("abc").slice(listOf(1,4))
         }
         assertFails {
-            builder.slice(listOf(10))
+            data.slice(listOf(10))
         }
     }
 
