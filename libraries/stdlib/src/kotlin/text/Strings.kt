@@ -873,11 +873,11 @@ public operator fun CharSequence.contains(regex: Regex): Boolean = regex.contain
 // rangesDelimitedBy
 
 
-private class DelimitedRangesSequence(private val string: String, private val startIndex: Int, private val limit: Int, private val getNextMatch: String.(Int) -> Pair<Int, Int>?): Sequence<IntRange> {
+private class DelimitedRangesSequence(private val input: CharSequence, private val startIndex: Int, private val limit: Int, private val getNextMatch: CharSequence.(Int) -> Pair<Int, Int>?): Sequence<IntRange> {
 
     override fun iterator(): Iterator<IntRange> = object : Iterator<IntRange> {
         var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
-        var currentStartIndex: Int = Math.min(Math.max(startIndex, 0), string.length())
+        var currentStartIndex: Int = Math.min(Math.max(startIndex, 0), input.length())
         var nextSearchIndex: Int = currentStartIndex
         var nextItem: IntRange? = null
         var counter: Int = 0
@@ -888,14 +888,14 @@ private class DelimitedRangesSequence(private val string: String, private val st
                 nextItem = null
             }
             else {
-                if (limit > 0 && ++counter >= limit || nextSearchIndex > string.length()) {
-                    nextItem = currentStartIndex..string.lastIndex
+                if (limit > 0 && ++counter >= limit || nextSearchIndex > input.length()) {
+                    nextItem = currentStartIndex..input.lastIndex
                     nextSearchIndex = -1
                 }
                 else {
-                    val match = string.getNextMatch(nextSearchIndex)
+                    val match = input.getNextMatch(nextSearchIndex)
                     if (match == null) {
-                        nextItem = currentStartIndex..string.lastIndex
+                        nextItem = currentStartIndex..input.lastIndex
                         nextSearchIndex = -1
                     }
                     else {
@@ -939,7 +939,7 @@ private class DelimitedRangesSequence(private val string: String, private val st
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
  */
-private fun String.rangesDelimitedBy(vararg delimiters: Char, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
+private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     require(limit >= 0, { "Limit must be non-negative, but was $limit" })
 
     return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimiters, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to 1 } })
@@ -960,7 +960,7 @@ private fun String.rangesDelimitedBy(vararg delimiters: Char, startIndex: Int = 
  * the beginning to the end of this string, and finds at each position the first element in [delimiters]
  * that matches this string at that position.
  */
-private fun String.rangesDelimitedBy(vararg delimiters: String, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
+private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
     val delimitersList = delimiters.asList()
 
@@ -982,8 +982,8 @@ private fun String.rangesDelimitedBy(vararg delimiters: String, startIndex: Int 
  * the beginning to the end of this string, and finds at each position the first element in [delimiters]
  * that matches this string at that position.
  */
-public fun String.splitToSequence(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): Sequence<String> =
-        rangesDelimitedBy(*delimiters, ignoreCase = ignoreCase, limit = limit) map { substring(it) }
+public fun CharSequence.splitToSequence(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): Sequence<String> =
+        rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).map { substring(it) }
 
 /**
  * Splits this string to a list of strings around occurrences of the specified [delimiters].
@@ -996,8 +996,8 @@ public fun String.splitToSequence(vararg delimiters: String, ignoreCase: Boolean
  * the beginning to the end of this string, and matches at each position the first element in [delimiters]
  * that is equal to a delimiter in this instance at that position.
  */
-public fun String.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
-        splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
+public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
+        rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
 
 /**
  * Splits this string to a sequence of strings around occurrences of the specified [delimiters].
@@ -1006,8 +1006,8 @@ public fun String.split(vararg delimiters: String, ignoreCase: Boolean = false, 
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
  */
-public fun String.splitToSequence(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): Sequence<String> =
-        rangesDelimitedBy(*delimiters, ignoreCase = ignoreCase, limit = limit) map { substring(it) }
+public fun CharSequence.splitToSequence(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): Sequence<String> =
+        rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).map { substring(it) }
 
 /**
  * Splits this string to a list of strings around occurrences of the specified [delimiters].
@@ -1016,8 +1016,8 @@ public fun String.splitToSequence(vararg delimiters: Char, ignoreCase: Boolean =
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
  */
-public fun String.split(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
-        splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
+public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
+        rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
 
 /**
  * Splits this string around matches of the given regular expression.
@@ -1025,14 +1025,14 @@ public fun String.split(vararg delimiters: Char, ignoreCase: Boolean = false, li
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
-public fun String.split(pattern: Regex, limit: Int = 0): List<String> = pattern.split(this, limit)
+public fun CharSequence.split(pattern: Regex, limit: Int = 0): List<String> = pattern.split(this, limit)
 
 /**
  * Splits this string to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
-public fun String.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n", "\r")
+public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n", "\r")
 
 /**
  * * Splits this string to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
-public fun String.lines(): List<String> = lineSequence().toList()
+public fun CharSequence.lines(): List<String> = lineSequence().toList()

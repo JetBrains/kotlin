@@ -670,104 +670,6 @@ public operator fun String.contains(char: Char, ignoreCase: Boolean = false): Bo
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
 
-// rangesDelimitedBy
-
-/*
-private class DelimitedRangesSequence(private val string: String, private val startIndex: Int, private val limit: Int, private val getNextMatch: String.(Int) -> Pair<Int, Int>?): Sequence<IntRange> {
-
-    override fun iterator(): Iterator<IntRange> = object : Iterator<IntRange> {
-        var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
-        var currentStartIndex: Int = Math.min(Math.max(startIndex, 0), string.length())
-        var nextSearchIndex: Int = currentStartIndex
-        var nextItem: IntRange? = null
-        var counter: Int = 0
-
-        private fun calcNext() {
-            if (nextSearchIndex < 0) {
-                nextState = 0
-                nextItem = null
-            }
-            else {
-                if (limit > 0 && ++counter >= limit || nextSearchIndex > string.length()) {
-                    nextItem = currentStartIndex..string.lastIndex
-                    nextSearchIndex = -1
-                }
-                else {
-                    val match = string.getNextMatch(nextSearchIndex)
-                    if (match == null) {
-                        nextItem = currentStartIndex..string.lastIndex
-                        nextSearchIndex = -1
-                    }
-                    else {
-                        val (index,length) = match
-                        nextItem = currentStartIndex..index-1
-                        currentStartIndex = index + length
-                        nextSearchIndex = currentStartIndex + if (length == 0) 1 else 0
-                    }
-                }
-                nextState = 1
-            }
-        }
-
-        override fun next(): IntRange {
-            if (nextState == -1)
-                calcNext()
-            if (nextState == 0)
-                throw NoSuchElementException()
-            val result = nextItem as IntRange
-            // Clean next to avoid keeping reference on yielded instance
-            nextItem = null
-            nextState = -1
-            return result
-        }
-
-        override fun hasNext(): Boolean {
-            if (nextState == -1)
-                calcNext()
-            return nextState == 1
-        }
-    }
-}
-
-
-/**
- * Returns a sequence of index ranges of substrings in this string around occurrences of the specified [delimiters].
- *
- * @param delimiters One or more characters to be used as delimiters.
- * @param startIndex The index to start searching delimiters from.
- *  No range having its start value less than [startIndex] is returned.
- *  [startIndex] is coerced to be non-negative and not greater than length of this string.
- * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
- * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
- */
-private fun String.rangesDelimitedBy(vararg delimiters: Char, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit" })
-
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimiters, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to 1 } })
-}
-
-
-/**
- * Returns a sequence of index ranges of substrings in this string around occurrences of the specified [delimiters].
- *
- * @param delimiters One or more strings to be used as delimiters.
- * @param startIndex The index to start searching delimiters from.
- *  No range having its start value less than [startIndex] is returned.
- *  [startIndex] is coerced to be non-negative and not greater than length of this string.
- * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
- * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
- *
- * To avoid ambiguous results when strings in [delimiters] have characters in common, this method proceeds from
- * the beginning to the end of this string, and finds at each position the first element in [delimiters]
- * that matches this string at that position.
- */
-private fun String.rangesDelimitedBy(vararg delimiters: String, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
-    val delimitersList = delimiters.asList()
-
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimitersList, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length ()} })
-
-}
 
 
 // split
@@ -783,8 +685,9 @@ private fun String.rangesDelimitedBy(vararg delimiters: String, startIndex: Int 
  * the beginning to the end of this string, and finds at each position the first element in [delimiters]
  * that matches this string at that position.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.splitToSequence(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): Sequence<String> =
-        rangesDelimitedBy(*delimiters, ignoreCase = ignoreCase, limit = limit) map { substring(it) }
+        splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit)
 
 /**
  * Splits this string to a list of strings around occurrences of the specified [delimiters].
@@ -797,6 +700,7 @@ public fun String.splitToSequence(vararg delimiters: String, ignoreCase: Boolean
  * the beginning to the end of this string, and matches at each position the first element in [delimiters]
  * that is equal to a delimiter in this instance at that position.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
         splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
 
@@ -807,8 +711,9 @@ public fun String.split(vararg delimiters: String, ignoreCase: Boolean = false, 
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.splitToSequence(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): Sequence<String> =
-        rangesDelimitedBy(*delimiters, ignoreCase = ignoreCase, limit = limit) map { substring(it) }
+        splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit)
 
 /**
  * Splits this string to a list of strings around occurrences of the specified [delimiters].
@@ -817,6 +722,7 @@ public fun String.splitToSequence(vararg delimiters: Char, ignoreCase: Boolean =
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.split(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
         splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
 
@@ -826,16 +732,18 @@ public fun String.split(vararg delimiters: Char, ignoreCase: Boolean = false, li
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.split(pattern: Regex, limit: Int = 0): List<String> = pattern.split(this, limit)
 
 /**
  * Splits this string to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
-public fun String.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n", "\r")
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.lineSequence(): Sequence<String> = lineSequence()
 
 /**
  * * Splits this string to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.lines(): List<String> = lineSequence().toList()
 
-*/
