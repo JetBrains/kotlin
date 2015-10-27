@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -71,7 +72,16 @@ class LazyJavaClassDescriptor(
 
     override fun getKind() = kind
     override fun getModality() = modality
-    override fun getVisibility() = visibility
+
+    // To workaround a problem with Scala compatibility (KT-9700),
+    // we consider private visibility of a Java top level class as package private
+    // Shortly: Scala plugin introduces special kind of "private in package" classes
+    // which can be inherited from the same package.
+    // Kotlin considers this "private in package" just as "private" and thinks they are invisible for inheritors,
+    // so their functions are invisible fake which is not true.
+    override fun getVisibility() =
+            if (visibility == Visibilities.PRIVATE && jClass.outerClass == null) JavaVisibilities.PACKAGE_VISIBILITY else visibility
+
     override fun isInner() = isInner
     override fun isData() = false
 
