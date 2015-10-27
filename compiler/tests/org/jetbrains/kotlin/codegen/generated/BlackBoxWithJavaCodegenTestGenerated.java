@@ -627,5 +627,23 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("protectedSamConstructor")
+        public void testProtectedSamConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/protectedSamConstructor/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("protectedStatic")
+        public void testProtectedStatic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/protectedStatic/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("protectedStatic2")
+        public void testProtectedStatic2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/protectedStatic2/");
+            doTestWithJava(fileName);
+        }
+
     }
 }

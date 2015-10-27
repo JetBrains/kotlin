@@ -24,12 +24,15 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.load.java.JavaVisibilities;
+import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -542,6 +545,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (classContext instanceof ClassContext) {
                 descriptorContext = ((ClassContext) classContext).getCompanionObjectContext();
             }
+        }
+
+        if (descriptorContext == null &&
+            JavaVisibilities.PROTECTED_STATIC_VISIBILITY == descriptor.getVisibility() &&
+            !(descriptor instanceof SamConstructorDescriptor)) {
+            //seems we need static receiver in resolved call
+            descriptorContext = ExpressionCodegen.getParentContextSubclassOf((ClassDescriptor) enclosed, this);
+            superCallTarget = (ClassDescriptor) enclosed;
         }
 
         if (descriptorContext == null) {

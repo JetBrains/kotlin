@@ -373,7 +373,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return labelTarget;
         }
         assert descriptor instanceof ClassDescriptor : "Don't know how to generate super-call to not a class";
-        return getParentContextSubclassOf((ClassDescriptor) descriptor, context).getThisDescriptor();
+        CodegenContext result = getParentContextSubclassOf((ClassDescriptor) descriptor, context);
+        assert result != null : "Can't find parent context for " + descriptor;
+        return result.getThisDescriptor();
     }
 
     @NotNull
@@ -2397,17 +2399,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return callable.invokeMethodWithArguments(resolvedCall, receiver, this);
     }
 
+    @Nullable
     // Find the first parent of the current context which corresponds to a subclass of a given class
-    @NotNull
-    private static CodegenContext getParentContextSubclassOf(ClassDescriptor descriptor, CodegenContext context) {
+    public static CodegenContext getParentContextSubclassOf(ClassDescriptor descriptor, CodegenContext context) {
         CodegenContext c = context;
-        while (true) {
+        while (c != null) {
             if (c instanceof ClassContext && DescriptorUtils.isSubclass(c.getThisDescriptor(), descriptor)) {
                 return c;
             }
             c = c.getParentContext();
-            assert c != null;
         }
+        return null;
     }
 
     @NotNull
