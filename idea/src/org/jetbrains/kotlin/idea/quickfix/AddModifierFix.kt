@@ -78,8 +78,7 @@ open class AddModifierFix(
                 public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                     val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass) ?: return null
 
-                    if (modifier == KtTokens.ABSTRACT_KEYWORD && modifierListOwner is KtObjectDeclaration && modifierListOwner.isObjectLiteral())
-                        return null
+                    if (modifier == KtTokens.ABSTRACT_KEYWORD && modifierListOwner is KtObjectDeclaration) return null
 
                     return AddModifierFix(modifierListOwner, modifier)
                 }
