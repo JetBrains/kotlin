@@ -16,8 +16,6 @@
 
 package kotlin.jvm.internal;
 
-import java.lang.Override;
-
 public class Ref {
     private Ref() {}
 

@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import java.util.concurrent.atomic.AtomicBoolean
 
 public object JarUserDataManager {
     enum class State {
@@ -34,7 +35,7 @@ public object JarUserDataManager {
 
     val version = 2
 
-    val fileAttributeService: FileAttributeService? = ServiceManager.getService(javaClass<FileAttributeService>())
+    val fileAttributeService: FileAttributeService? = ServiceManager.getService(FileAttributeService::class.java)
 
     public fun register(counter: JarBooleanPropertyCounter) {
         fileAttributeService?.register(counter.key.toString(), version)
@@ -51,7 +52,7 @@ public object JarUserDataManager {
         }
 
         if (stored == null && fileAttributeService != null) {
-            val savedData = fileAttributeService.readAttribute(counter.key.toString(), localJarFile, javaClass<State>())
+            val savedData = fileAttributeService.readAttribute(counter.key.toString(), localJarFile, State::class.java)
             if (savedData != null && savedData.value != null) {
                 val hasFileWithProperty = savedData.value == State.HAS_FILE
 
@@ -77,6 +78,13 @@ public object JarUserDataManager {
 
         ApplicationManager.getApplication().executeOnPooledThread {
             runReadAction {
+                val data = localJarFile.getUserData(counter.key)
+                if (data != null &&
+                        ((data.hasFileWithProperty != null && localJarFile.timeStamp == data.timestamp) || !data.isProcessStarted.compareAndSet(false, true))) {
+                    // Processing has started in some other thread or is already finished
+                    return@runReadAction
+                }
+
                 val hasFileWithProperty = !VfsUtilCore.processFilesRecursively(jarFile) { file ->
                     !counter.hasProperty(file)
                 }
@@ -96,7 +104,7 @@ public object JarUserDataManager {
         assert((timestamp == null) == (hasFileWithProperty == null)) { "Using empty timestamp is only allowed for storing not counted value" }
 
         localJarFile.putUserData(counter.key,
-                                 PropertyData(hasFileWithProperty, timestamp ?: localJarFile.timeStamp))
+                                 PropertyData(hasFileWithProperty, timestamp ?: localJarFile.timeStamp, isProcessStarted = AtomicBoolean(false)))
     }
 
     object JarFileSystemUtil {
@@ -122,7 +130,7 @@ public object JarUserDataManager {
         }
     }
 
-    data class PropertyData(val hasFileWithProperty: Boolean?, val timestamp: Long)
+    data class PropertyData(val hasFileWithProperty: Boolean?, val timestamp: Long, val isProcessStarted: AtomicBoolean)
 
     abstract class JarBooleanPropertyCounter(keyName: String) {
         val key: Key<PropertyData> = Key.create<PropertyData>(keyName)

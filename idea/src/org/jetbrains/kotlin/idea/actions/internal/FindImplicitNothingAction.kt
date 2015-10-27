@@ -19,30 +19,30 @@ package org.jetbrains.kotlin.idea.actions.internal
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiManager
-import java.util.ArrayList
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import javax.swing.SwingUtilities
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.psi.PsiManager
+import com.intellij.usageView.UsageInfo
+import com.intellij.usages.UsageInfo2UsageAdapter
+import com.intellij.usages.UsageTarget
+import com.intellij.usages.UsageViewManager
+import com.intellij.usages.UsageViewPresentation
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import com.intellij.usages.UsageViewManager
-import com.intellij.usages.UsageInfo2UsageAdapter
-import com.intellij.usageView.UsageInfo
-import com.intellij.usages.UsageTarget
-import com.intellij.usages.UsageViewPresentation
-import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.types.KotlinType
+import java.util.*
+import javax.swing.SwingUtilities
 
 public class FindImplicitNothingAction : AnAction() {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction")
@@ -140,8 +140,10 @@ public class FindImplicitNothingAction : AnAction() {
             e.getPresentation().setVisible(false)
             e.getPresentation().setEnabled(false)
         }
-        e.getPresentation().setVisible(true)
-        e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
+        else {
+            e.getPresentation().setVisible(true)
+            e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
+        }
     }
 
     private fun selectedKotlinFiles(e: AnActionEvent): Sequence<KtFile> {

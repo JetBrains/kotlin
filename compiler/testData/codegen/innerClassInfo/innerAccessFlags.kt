@@ -2,7 +2,9 @@ class A {
     // Kind
     annotation class Annotation
     enum class Enum
-    interface Trait
+    interface Trait {
+        fun boo() {}
+    }
 
     // Modality
     open class OpenStaticClass

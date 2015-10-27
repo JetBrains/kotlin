@@ -35,8 +35,6 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.concurrent.schedule
 
-val DAEMON_SHUTDOWN_DELAY_MS = 1000L
-
 fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
 interface CompilerSelector {
@@ -63,10 +61,10 @@ class CompileServiceImpl(
             alive = false
             UnicastRemoteObject.unexportObject(this, true)
             log.info("Shutdown complete")
-            if (System.getProperty(COMPILE_DAEMON_FORCE_SHUTDOWN_PROPERTY) != null) {
+            if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE) {
                 // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
                 // the watcher is a daemon thread, meaning it should not prevent JVM to exit normally
-                Timer(true).schedule(DAEMON_SHUTDOWN_DELAY_MS) {
+                Timer(true).schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
                     log.info("force JVM shutdown")
                     System.exit(0)
                 }

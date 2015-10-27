@@ -27,7 +27,7 @@ sealed class EffectiveVisibility(val name: String) {
     //                    Public
     //                /--/   |  \-------------\
     // Protected(Base)       |                 \
-    //       |         Protected(Other)        Internal
+    //       |         Protected(Other)        Internal = PackagePrivate
     // Protected(Derived) |                   /     \
     //             |      |                  /    InternalProtected(Base)
     //       ProtectedBound                 /        \
@@ -53,21 +53,27 @@ sealed class EffectiveVisibility(val name: String) {
                 if (this == other) Permissiveness.SAME else Permissiveness.MORE
     }
 
-    object Internal : EffectiveVisibility("internal") {
+    abstract class InternalOrPackage protected constructor(internal: Boolean) : EffectiveVisibility(
+            if (internal) "internal" else "public/*package*/"
+    ) {
         override fun relation(other: EffectiveVisibility) = when (other) {
             Public -> Permissiveness.LESS
             Private, Local, InternalProtectedBound, is InternalProtected -> Permissiveness.MORE
-            Internal -> Permissiveness.SAME
+            is InternalOrPackage -> Permissiveness.SAME
             ProtectedBound, is Protected -> Permissiveness.UNKNOWN
         }
 
         override fun lowerBound(other: EffectiveVisibility) = when (other) {
             Public -> this
-            Private, Local, InternalProtectedBound, Internal, is InternalProtected -> other
+            Private, Local, InternalProtectedBound, is InternalOrPackage, is InternalProtected -> other
             is Protected -> InternalProtected(other.container)
             ProtectedBound -> InternalProtectedBound
         }
     }
+
+    object Internal : InternalOrPackage(true)
+
+    object PackagePrivate : InternalOrPackage(false)
 
     class Protected(val container: ClassDescriptor?) : EffectiveVisibility("protected") {
 
@@ -86,7 +92,7 @@ sealed class EffectiveVisibility(val name: String) {
                 Permissiveness.SAME, Permissiveness.MORE -> Permissiveness.MORE
                 Permissiveness.UNKNOWN, Permissiveness.LESS -> Permissiveness.UNKNOWN
             }
-            Internal -> Permissiveness.UNKNOWN
+            is InternalOrPackage -> Permissiveness.UNKNOWN
         }
 
         override fun lowerBound(other: EffectiveVisibility) = when (other) {
@@ -101,7 +107,7 @@ sealed class EffectiveVisibility(val name: String) {
                 Permissiveness.LESS -> other
                 else -> InternalProtectedBound
             }
-            Internal -> InternalProtected(container)
+            is InternalOrPackage -> InternalProtected(container)
         }
     }
 
@@ -111,13 +117,13 @@ sealed class EffectiveVisibility(val name: String) {
             Public, is Protected -> Permissiveness.LESS
             Private, Local, InternalProtectedBound -> Permissiveness.MORE
             ProtectedBound -> Permissiveness.SAME
-            Internal, is InternalProtected -> Permissiveness.UNKNOWN
+            is InternalOrPackage, is InternalProtected -> Permissiveness.UNKNOWN
         }
 
         override fun lowerBound(other: EffectiveVisibility) = when (other) {
             Public, is Protected -> this
             Private, Local, ProtectedBound, InternalProtectedBound -> other
-            Internal, is InternalProtected -> InternalProtectedBound
+            is InternalOrPackage, is InternalProtected -> InternalProtectedBound
         }
     }
 
@@ -131,7 +137,7 @@ sealed class EffectiveVisibility(val name: String) {
         override fun toString() = "${super.toString()} (in ${container?.name ?: '?'})"
 
         override fun relation(other: EffectiveVisibility) = when (other) {
-            Public, Internal -> Permissiveness.LESS
+            Public, is InternalOrPackage -> Permissiveness.LESS
             Private, Local, InternalProtectedBound -> Permissiveness.MORE
             is InternalProtected -> containerRelation(container, other.container)
             is Protected -> when (containerRelation(container, other.container)) {
@@ -143,7 +149,7 @@ sealed class EffectiveVisibility(val name: String) {
         }
 
         override fun lowerBound(other: EffectiveVisibility) = when (other) {
-            Public, Internal -> this
+            Public, is InternalOrPackage -> this
             Private, Local, InternalProtectedBound -> other
             is Protected, is InternalProtected -> when (relation(other)) {
                 Permissiveness.SAME, Permissiveness.MORE -> this
@@ -157,7 +163,7 @@ sealed class EffectiveVisibility(val name: String) {
     // Lower bound for internal and protected lower bound
     object InternalProtectedBound : EffectiveVisibility("internal & protected (in different classes)") {
         override fun relation(other: EffectiveVisibility) = when (other) {
-            Public, is Protected, is InternalProtected, ProtectedBound, Internal -> Permissiveness.LESS
+            Public, is Protected, is InternalProtected, ProtectedBound, is InternalOrPackage -> Permissiveness.LESS
             Private, Local -> Permissiveness.MORE
             InternalProtectedBound -> Permissiveness.SAME
         }

@@ -18,9 +18,9 @@ package kotlin.jvm.internal;
 
 import kotlin.KotlinNullPointerException;
 import kotlin.UninitializedPropertyAccessException;
-import kotlin.jvm.internal.markers.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class Intrinsics {
@@ -28,43 +28,108 @@ public class Intrinsics {
     }
 
     public static String stringPlus(String self, Object other) {
-        return String.valueOf(self) + String.valueOf(other);
+        return self + other;
+    }
+
+    public static void checkNotNull(Object object) {
+        if (object == null) {
+            throwNpe();
+        }
+    }
+
+    public static void checkNotNull(Object object, String message) {
+        if (object == null) {
+            throwNpe(message);
+        }
     }
 
     public static void throwNpe() {
         throw sanitizeStackTrace(new KotlinNullPointerException());
     }
 
-    public static void throwUninitializedPropertyAccessException(String propertyName) {
-        throw sanitizeStackTrace(new UninitializedPropertyAccessException(propertyName));
+    public static void throwNpe(String message) {
+        throw sanitizeStackTrace(new KotlinNullPointerException(message));
     }
 
-    public static void checkExpressionValueIsNotNull(Object value, String message) {
+    public static void throwUninitializedProperty(String message) {
+        throw sanitizeStackTrace(new UninitializedPropertyAccessException(message));
+    }
+
+    public static void throwUninitializedPropertyAccessException(String propertyName) {
+        throwUninitializedProperty("lateinit property " + propertyName + " has not been initialized");
+    }
+
+    public static void throwAssert() {
+        throw sanitizeStackTrace(new AssertionError());
+    }
+
+    public static void throwAssert(String message) {
+        throw sanitizeStackTrace(new AssertionError(message));
+    }
+
+    public static void throwIllegalArgument() {
+        throw sanitizeStackTrace(new IllegalArgumentException());
+    }
+
+    public static void throwIllegalArgument(String message) {
+        throw sanitizeStackTrace(new IllegalArgumentException(message));
+    }
+
+    public static void throwIllegalState() {
+        throw sanitizeStackTrace(new IllegalStateException());
+    }
+
+    public static void throwIllegalState(String message) {
+        throw sanitizeStackTrace(new IllegalStateException(message));
+    }
+
+    public static void checkExpressionValueIsNotNull(Object value, String expression) {
         if (value == null) {
-            IllegalStateException exception = new IllegalStateException(message + " must not be null");
-            throw sanitizeStackTrace(exception);
+            throw sanitizeStackTrace(new IllegalStateException(expression + " must not be null"));
+        }
+    }
+
+    public static void checkNotNullExpressionValue(Object value, String message) {
+        if (value == null) {
+            throw sanitizeStackTrace(new IllegalStateException(message));
         }
     }
 
     public static void checkReturnedValueIsNotNull(Object value, String className, String methodName) {
         if (value == null) {
-            IllegalStateException exception =
-                    new IllegalStateException("Method specified as non-null returned null: " + className + "." + methodName);
-            throw sanitizeStackTrace(exception);
+            throw sanitizeStackTrace(
+                    new IllegalStateException("Method specified as non-null returned null: " + className + "." + methodName)
+            );
+        }
+    }
+
+    public static void checkReturnedValueIsNotNull(Object value, String message) {
+        if (value == null) {
+            throw sanitizeStackTrace(new IllegalStateException(message));
         }
     }
 
     public static void checkFieldIsNotNull(Object value, String className, String fieldName) {
         if (value == null) {
-            IllegalStateException exception =
-                    new IllegalStateException("Field specified as non-null is null: " + className + "." + fieldName);
-            throw sanitizeStackTrace(exception);
+            throw sanitizeStackTrace(new IllegalStateException("Field specified as non-null is null: " + className + "." + fieldName));
+        }
+    }
+
+    public static void checkFieldIsNotNull(Object value, String message) {
+        if (value == null) {
+            throw sanitizeStackTrace(new IllegalStateException(message));
         }
     }
 
     public static void checkParameterIsNotNull(Object value, String paramName) {
         if (value == null) {
             throwParameterIsNullException(paramName);
+        }
+    }
+
+    public static void checkNotNullParameter(Object value, String message) {
+        if (value == null) {
+            throw sanitizeStackTrace(new IllegalArgumentException(message));
         }
     }
 
@@ -98,28 +163,54 @@ public class Intrinsics {
         return first == null ? second == null : first.equals(second);
     }
 
-    private static void throwUndefinedForReified() {
-        throw new UnsupportedOperationException("You should not use functions with reified parameter without inline");
+    public static void throwUndefinedForReified() {
+        throwUndefinedForReified(
+                "This function has a reified type parameter and thus can only be inlined at compilation time, not called directly."
+        );
+    }
+
+    public static void throwUndefinedForReified(String message) {
+        throw new UnsupportedOperationException(message);
     }
 
     public static void reifyNewArray(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
+    public static void reifyNewArray(String typeParameterIdentifier, String message) {
+        throwUndefinedForReified(message);
+    }
+
     public static void reifyCheckcast(String typeParameterIdentifier) {
         throwUndefinedForReified();
+    }
+
+    public static void reifyCheckcast(String typeParameterIdentifier, String message) {
+        throwUndefinedForReified(message);
     }
 
     public static void reifyInstanceof(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
+    public static void reifyInstanceof(String typeParameterIdentifier, String message) {
+        throwUndefinedForReified(message);
+    }
+
     public static void reifyJavaClass(String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
+    public static void reifyJavaClass(String typeParameterIdentifier, String message) {
+        throwUndefinedForReified(message);
+    }
+
     public static void needClassReification() {
         throwUndefinedForReified();
+    }
+
+    public static void needClassReification(String message) {
+        throwUndefinedForReified(message);
     }
 
     private static <T extends Throwable> T sanitizeStackTrace(T throwable) {

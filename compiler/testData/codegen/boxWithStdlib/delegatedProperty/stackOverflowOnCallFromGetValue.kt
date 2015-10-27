@@ -1,23 +1,50 @@
 // FULL_JDK
 
-import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty0
-import kotlin.test.assertFailsWith
+import java.lang.reflect.InvocationTargetException
+import kotlin.reflect.*
 
-class Delegate {
+object Delegate {
     fun getValue(t: Any?, p: KProperty<*>): String {
-        return (p as KProperty0<String>).get()
+        (p as? KProperty0<String>)?.get()
+        (p as? KProperty1<O, String>)?.get(O)
+        (p as? KProperty2<O, O, String>)?.get(O, O)
+        return "Fail"
+    }
+
+    fun setValue(t: Any?, p: KProperty<*>, v: String) {
+        (p as? KMutableProperty0<String>)?.set(v)
+        (p as? KMutableProperty1<O, String>)?.set(O, v)
+        (p as? KMutableProperty2<O, O, String>)?.set(O, O, v)
     }
 }
 
-val prop: String by Delegate()
+var topLevel: String by Delegate
+object O {
+    var member: String by Delegate
+    var O.memExt: String by Delegate
+}
+
+fun check(lambda: () -> Unit) {
+    try {
+        lambda()
+        throw AssertionError("Getting the property value with .get() from getValue() or setting it with .set() in setValue() " +
+                             "is effectively an endless recursion and should fail")
+    } catch (e: Throwable) {
+        if (e !is InvocationTargetException && e !is StackOverflowError) {
+            throw AssertionError("The current implementation uses reflection to get the value of the property," +
+                                 "so either InvocationTargetException or StackOverflowError should have happened, but was: ${e}")
+        }
+    }
+}
 
 fun box(): String {
-    assertFailsWith(
-            StackOverflowError::class.java,
-            "Getting the property value with .get() from getValue is effectively an endless recursion and should fail"
-    ) {
-        prop
+    check { topLevel }
+    check { topLevel = "" }
+    check { O.member }
+    check { O.member = "" }
+    with (O) {
+        check { O.memExt }
+        check { O.memExt = "" }
     }
 
     return "OK"

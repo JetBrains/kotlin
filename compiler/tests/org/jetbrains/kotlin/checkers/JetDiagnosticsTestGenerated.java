@@ -5943,6 +5943,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("packagePrivate.kt")
+            public void testPackagePrivate() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/packagePrivate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("privateFromLocal.kt")
             public void testPrivateFromLocal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/exposed/privateFromLocal.kt");
@@ -11892,6 +11898,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("RedeclarationInMultiFile.kt")
             public void testRedeclarationInMultiFile() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/RedeclarationInMultiFile.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RedeclarationMainInFile.kt")
+            public void testRedeclarationMainInFile() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInFile.kt");
                 doTest(fileName);
             }
 
