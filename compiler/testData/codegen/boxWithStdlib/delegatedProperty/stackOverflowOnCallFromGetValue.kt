@@ -27,14 +27,15 @@ object O {
 fun check(lambda: () -> Unit) {
     try {
         lambda()
-        throw AssertionError("Getting the property value with .get() from getValue() or setting it with .set() in setValue() " +
-                             "is effectively an endless recursion and should fail")
     } catch (e: Throwable) {
         if (e !is InvocationTargetException && e !is StackOverflowError) {
             throw AssertionError("The current implementation uses reflection to get the value of the property," +
                                  "so either InvocationTargetException or StackOverflowError should have happened, but was: ${e}")
         }
+        return
     }
+    throw AssertionError("Getting the property value with .get() from getValue() or setting it with .set() in setValue() " +
+                         "is effectively an endless recursion and should fail")
 }
 
 fun box(): String {
