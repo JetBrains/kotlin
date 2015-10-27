@@ -5943,6 +5943,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SamAdapterNeededBecauseOfLabeledReturn.kt")
+        public void testSamAdapterNeededBecauseOfLabeledReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/SamAdapterNeededBecauseOfLabeledReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/Simple.kt");

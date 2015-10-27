@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -167,6 +168,8 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
             if (samConstructorCallArguments.isEmpty()) return emptyList()
 
+            if (samConstructorCallArguments.any { hasLabeledReturnPreventingConversion(it.toCallExpression()!!) }) return emptyList()
+
             val originalFunctionDescriptor = functionResolvedCall.resultingDescriptor.original as? FunctionDescriptor ?: return emptyList()
             val containingClass = originalFunctionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 
@@ -225,6 +228,12 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             }
 
             return parametersWithSamTypeCount == samConstructorsCount
+        }
+
+        private fun hasLabeledReturnPreventingConversion(samConstructorCall: KtCallExpression): Boolean {
+            val argument = samConstructorCall.samConstructorValueArgument()!!
+            val samConstructorName = (samConstructorCall.calleeExpression as KtSimpleNameExpression).getReferencedNameAsName()
+            return argument.anyDescendantOfType<KtReturnExpression> { it.getLabelNameAsName() == samConstructorName }
         }
     }
 }
