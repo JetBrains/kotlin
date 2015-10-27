@@ -308,25 +308,33 @@ public open class JetChangeInfo(
             return javaChangeInfo
         }
 
-        fun getJavaParameterInfos(currentPsiMethod: PsiMethod, newParameterList: List<JetParameterInfo>): MutableList<ParameterInfoImpl> {
-            return newParameterList.withIndex().mapTo(ArrayList()) { pair ->
-                val (i, info) = pair
+        fun getJavaParameterInfos(
+                originalPsiMethod: PsiMethod,
+                currentPsiMethod: PsiMethod,
+                newParameterList: List<JetParameterInfo>
+        ): MutableList<ParameterInfoImpl> {
+            val oldParameterCount = originalPsiMethod.parameterList.parametersCount
+            return newParameterList.withIndex()
+                    .map { pair ->
+                        val (i, info) = pair
 
-                val type = if (isPrimaryMethodUpdated)
-                    currentPsiMethod.getParameterList().getParameters()[i].getType()
-                else
-                    PsiType.VOID
+                        val oldIndex = info.oldIndex
+                        val javaOldIndex = when {
+                            methodDescriptor.receiver == null -> oldIndex
+                            info == methodDescriptor.receiver -> 0
+                            oldIndex >= 0 -> oldIndex + 1
+                            else -> -1
+                        }
+                        if (javaOldIndex >= oldParameterCount) return@map null
 
-                val oldIndex = info.getOldIndex()
-                val javaOldIndex = when {
-                    methodDescriptor.receiver == null -> oldIndex
-                    info == methodDescriptor.receiver -> 0
-                    oldIndex >= 0 -> oldIndex + 1
-                    else -> -1
-                }
+                        val type = if (isPrimaryMethodUpdated)
+                            currentPsiMethod.getParameterList().getParameters()[i].getType()
+                        else
+                            PsiType.VOID
 
-                ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall?.getText() ?: "")
-            }
+                        ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall?.getText() ?: "")
+                    }
+                    .filterNotNullTo(ArrayList())
         }
 
         fun createJavaChangeInfoForFunctionOrGetter(
@@ -335,13 +343,13 @@ public open class JetChangeInfo(
                 isGetter: Boolean
         ): JavaChangeInfo? {
             val newParameterList = receiverParameterInfo.singletonOrEmptyList() + getNonReceiverParameters()
-            val newJavaParameters = getJavaParameterInfos(currentPsiMethod, newParameterList).toTypedArray()
+            val newJavaParameters = getJavaParameterInfos(originalPsiMethod, currentPsiMethod, newParameterList).toTypedArray()
             val newName = if (isGetter) JvmAbi.getterName(getNewName()) else getNewName()
             return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, currentPsiMethod.getReturnType(), newJavaParameters)
         }
 
         fun createJavaChangeInfoForSetter(originalPsiMethod: PsiMethod, currentPsiMethod: PsiMethod): JavaChangeInfo? {
-            val newJavaParameters = getJavaParameterInfos(currentPsiMethod, receiverParameterInfo.singletonOrEmptyList())
+            val newJavaParameters = getJavaParameterInfos(originalPsiMethod, currentPsiMethod, receiverParameterInfo.singletonOrEmptyList())
             val oldIndex = if (methodDescriptor.receiver != null) 1 else 0
             if (isPrimaryMethodUpdated) {
                 val newIndex = if (receiverParameterInfo != null) 1 else 0
