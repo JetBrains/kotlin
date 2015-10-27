@@ -77,7 +77,8 @@ class OverridesCompletion(
             val baseClassName = baseClass.name.asString()
 
             val baseIcon = (lookupElement.`object` as DeclarationLookupObject).getIcon(0)
-            val additionalIcon = if (descriptor.modality == Modality.ABSTRACT)
+            val isImplement = descriptor.modality == Modality.ABSTRACT
+            val additionalIcon = if (isImplement)
                 AllIcons.Gutter.ImplementingMethod
             else
                 AllIcons.Gutter.OverridingMethod
@@ -94,6 +95,7 @@ class OverridesCompletion(
                     super.renderElement(presentation)
 
                     presentation.itemText = text
+                    presentation.isItemTextBold = isImplement
                     presentation.icon = icon
                     presentation.clearTail()
                     presentation.setTypeText(baseClassName, baseClassIcon)
@@ -134,7 +136,7 @@ class OverridesCompletion(
                 }
             }
 
-            lookupElement.assignPriority(ItemPriority.OVERRIDE)
+            lookupElement.assignPriority(if (isImplement) ItemPriority.IMPLEMENT else ItemPriority.OVERRIDE)
 
             collector.addElement(lookupElement)
         }

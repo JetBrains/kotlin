@@ -1683,6 +1683,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("PreferImplementToOverride.kt")
+            public void testPreferImplementToOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/PreferImplementToOverride.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SecondConstructorParameter.kt")
             public void testSecondConstructorParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/override/SecondConstructorParameter.kt");
