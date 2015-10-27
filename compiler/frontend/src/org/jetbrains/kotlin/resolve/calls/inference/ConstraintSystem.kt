@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
 public interface ConstraintSystem {
-
     /**
      * Registers variables in a constraint system.
      * The type variables for the corresponding function are local, the type variables of inner arguments calls are non-local.
@@ -41,50 +40,50 @@ public interface ConstraintSystem {
     public fun getTypeVariables(): Set<TypeParameterDescriptor>
 
     /**
-     * Adds a constraint that the constraining type is a subtype of the subject type.<p/>
-     * Asserts that only subject type may contain registered type variables. <p/>
+     * Adds a constraint that the constraining type is a subtype of the subject type.
+     * Asserts that only subject type may contain registered type variables.
      *
-     * For example, for {@code "fun <T> id(t: T) {}"} to infer <tt>T</tt> in invocation <tt>"id(1)"</tt>
-     * should be generated a constraint <tt>"Int is a subtype of T"</tt> where T is a subject type, and Int is a constraining type.
+     * For example, for `fun <T> id(t: T) {}` to infer `T` in invocation `id(1)`
+     * the constraint "Int is a subtype of T" should be generated where T is a subject type, and Int is a constraining type.
      */
     public fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition)
 
     /**
-     * Adds a constraint that the constraining type is a supertype of the subject type. <p/>
-     * Asserts that only subject type may contain registered type variables. <p/>
+     * Adds a constraint that the constraining type is a supertype of the subject type.
+     * Asserts that only subject type may contain registered type variables.
      *
-     * For example, for {@code "fun <T> create() : T"} to infer <tt>T</tt> in invocation <tt>"val i: Int = create()"</tt>
-     * should be generated a constraint <tt>"Int is a supertype of T"</tt> where T is a subject type, and Int is a constraining type.
+     * For example, for `fun <T> create(): T` to infer `T` in invocation `val i: Int = create()`
+     * the constraint "Int is a supertype of T" should be generated where T is a subject type, and Int is a constraining type.
      */
     public fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition)
 
     public fun getStatus(): ConstraintSystemStatus
 
     /**
-     * Returns the resulting type constraints of solving the constraint system for specific type variable. <p/>
+     * Returns the resulting type constraints of solving the constraint system for specific type variable.
      * Throws IllegalArgumentException if the type variable was not registered.
      */
     public fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBounds
 
     /**
-     * Returns a result of solving the constraint system (mapping from the type variable to the resulting type projection). <p/>
-     * In the resulting substitution should be concerned: <p/>
-     * - type constraints <p/>
-     * - variance of the type variable  // not implemented yet <p/>
-     * - type parameter bounds (that can bind type variables with each other). // not implemented yet
+     * Returns the result of solving the constraint system (mapping from the type variable to the resulting type projection).
+     * In the resulting substitution the following should be of concern:
+     * - type constraints
+     * - variance of the type variable  // not implemented yet
+     * - type parameter bounds (that can bind type variables with each other) // not implemented yet
      * If the addition of the 'expected type' constraint made the system fail,
      * this constraint is not included in the resulting substitution.
      */
     public fun getResultingSubstitutor(): TypeSubstitutor
 
     /**
-     * Returns a current result of solving the constraint system (mapping from the type variable to the resulting type projection).
+     * Returns the current result of solving the constraint system (mapping from the type variable to the resulting type projection).
      * If there is no information for type parameter, returns type projection for DONT_CARE type.
      */
     public fun getCurrentSubstitutor(): TypeSubstitutor
 
     /**
-     * Returns a substitution only for type parameters that have result values, otherwise returns a type parameter itself.
+     * Returns the substitution only for type parameters that have result values, otherwise returns the type parameter itself.
      */
     public fun getPartialSubstitutor(): TypeSubstitutor
 }
