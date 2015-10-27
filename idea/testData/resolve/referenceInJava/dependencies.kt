@@ -52,4 +52,4 @@ public class TraitWithDelegatedWithImpl(f: TraitWithImpl) : TraitWithImpl by f
 kotlin.jvm.jvmOverloads
 public fun withJvmOverloads(i: Int, b: Boolean = false, s: String="hello") {}
 
-
+annotation class KAnno(val c: Int = 4, val d: String)
