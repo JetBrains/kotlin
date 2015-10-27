@@ -42,7 +42,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XBreakpointType
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
-import com.sun.jdi.request.StepRequest
 import org.jetbrains.kotlin.idea.core.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
@@ -304,7 +303,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                     javaBreakpoint.setWatchModification(fileText.getValueForSetting("WATCH_FIELD_MODIFICATION", true))
                     javaBreakpoint.setWatchInitialization(fileText.getValueForSetting("WATCH_FIELD_INITIALISATION", false))
                     BreakpointManager.addBreakpoint(javaBreakpoint)
-                    println("KotlinFieldBreakpoint created at ${file.getVirtualFile().getName()}:$lineIndex", ProcessOutputTypes.SYSTEM)
+                    println("KotlinFieldBreakpoint created at ${file.getVirtualFile().getName()}:${lineIndex + 1}", ProcessOutputTypes.SYSTEM)
                 }
             }
         }
