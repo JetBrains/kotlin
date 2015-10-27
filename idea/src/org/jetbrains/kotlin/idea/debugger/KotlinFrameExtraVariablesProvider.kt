@@ -40,18 +40,14 @@ import java.util.LinkedHashSet
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 
 public class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
-    override fun isAvailable(sourcePosition: SourcePosition?, evalContext: EvaluationContext?): Boolean {
-        if (sourcePosition == null) return false
+    override fun isAvailable(sourcePosition: SourcePosition, evalContext: EvaluationContext): Boolean {
         if (sourcePosition.getLine() < 0) return false
         return sourcePosition.getFile().getFileType() == KotlinFileType.INSTANCE && DebuggerSettings.getInstance().AUTO_VARIABLES_MODE
     }
 
-    override fun collectVariables(sourcePosition: SourcePosition?, evalContext: EvaluationContext?, alreadyCollected: Set<String>?
-    ): Set<TextWithImports>? {
-        if (sourcePosition != null) {
-            return runReadAction { findAdditionalExpressions(sourcePosition) }
-        }
-        return setOf()
+    override fun collectVariables(
+            sourcePosition: SourcePosition, evalContext: EvaluationContext, alreadyCollected: MutableSet<String>): Set<TextWithImports> {
+        return runReadAction { findAdditionalExpressions(sourcePosition) }
     }
 }
 
