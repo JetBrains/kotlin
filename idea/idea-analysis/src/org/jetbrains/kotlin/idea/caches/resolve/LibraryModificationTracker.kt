@@ -44,8 +44,10 @@ class LibraryModificationTracker(project: Project) : SimpleModificationTracker()
                 events.filter(::isRelevantEvent).let { createEvents ->
                     if (createEvents.isNotEmpty()) {
                         ApplicationManager.getApplication().invokeLater {
-                            processBulk(createEvents) {
-                                projectFileIndex.isInLibraryClasses(it) || isLibraryArchiveRoot(it)
+                            if (!project.isDisposed) {
+                                processBulk(createEvents) {
+                                    projectFileIndex.isInLibraryClasses(it) || isLibraryArchiveRoot(it)
+                                }
                             }
                         }
                     }
