@@ -120,15 +120,6 @@ fun printField(s: String, steps: Int) {
     }
 }
 
-
-fun <T> Array<T>.toList(): List<T> = this.to(ArrayList<T>())
-
-fun <T, C : MutableCollection<T>> Array<T>.to(result: C): C {
-    for (elem in this)
-        result.add(elem)
-    return result
-}
-
 fun makeField(s: String): Field {
     val lines: List<String> = s.split("\n")
 
@@ -155,12 +146,3 @@ fun makeField(s: String): Field {
 
     return Field(w.length(), lines.size()) { i, j -> data[i][j] }
 }
-
-// An excerpt from the Standard Library
-val String?.indices: IntRange get() = IntRange(0, this!!.size)
-
-fun <K, V> MutableMap<K, V>.set(k: K, v: V) {
-    put(k, v)
-}
-
-val <T> Array<T>.isEmpty: Boolean get() = size() == 0
