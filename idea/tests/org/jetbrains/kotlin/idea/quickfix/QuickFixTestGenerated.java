@@ -4744,6 +4744,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("withConstructor.kt")
+            public void testWithConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/withConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/finalJavaClass")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

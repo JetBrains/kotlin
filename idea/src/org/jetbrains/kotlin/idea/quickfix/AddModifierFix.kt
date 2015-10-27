@@ -45,7 +45,7 @@ open class AddModifierFix(
 
     override fun getFamilyName() = JetBundle.message("add.modifier.family")
 
-    public override operator fun invoke(project: Project, editor: Editor?, file: KtFile) {
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element.addModifier(modifier)
     }
 
