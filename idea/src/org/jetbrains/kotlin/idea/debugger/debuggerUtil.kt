@@ -17,53 +17,26 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debugProcess: DebugProcessImpl): Boolean {
-    return isInsideInlineArgument(inlineArgument, location.visibleVariables(debugProcess))
-}
-
-fun isInsideInlineArgument(inlineArgument: KtFunction, visibleVariables: List<LocalVariable>): Boolean {
+    val visibleVariables = location.visibleVariables(debugProcess)
     val lambdaOrdinalIndex = runReadAction { lambdaOrdinalIndex(inlineArgument) }
     val markerLocalVariables = visibleVariables.filter { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) }
-    for (variable in markerLocalVariables) {
-        val lambdaOrdinal = lambdaOrdinal(variable.name())
-        if (lambdaOrdinalIndex[inlineArgument] == lambdaOrdinal) {
-            return true
-        }
-    }
-    return false
+    return markerLocalVariables.firstOrNull { lambdaOrdinal(it.name()) == lambdaOrdinalIndex } != null
 }
 
-private fun lambdaOrdinalIndex(elementAt: PsiElement): HashMap<KtFunction, Int> {
-    val parent = elementAt.parents.firstIsInstanceOrNull<KtNamedFunction>()
+private fun lambdaOrdinalIndex(elementAt: KtFunction): Int {
+    val typeMapper = JetPositionManager.createTypeMapper(elementAt.getContainingJetFile())
 
-    val actualLambdaOrdinals = hashMapOf<KtFunction, Int>()
-    parent?.accept(object : KtTreeVisitorVoid() {
-        override fun visitNamedFunction(function: KtNamedFunction) {
-            if (function != parent) {
-                actualLambdaOrdinals[function] = actualLambdaOrdinals.size + 1
-            }
-            super.visitNamedFunction(function)
-        }
-
-        override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
-            actualLambdaOrdinals[expression.functionLiteral] = actualLambdaOrdinals.size + 1
-            super.visitFunctionLiteralExpression(expression)
-        }
-    })
-    return actualLambdaOrdinals
+    val type = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, elementAt)
+    return type.className.substringAfterLast("$").toInt()
 }
 
 private fun Location.visibleVariables(debugProcess: DebugProcessImpl): List<LocalVariable> {
