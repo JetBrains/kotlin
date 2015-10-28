@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -273,24 +274,27 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         descriptorKindFilter?.let { collectReferenceVariants(it) }
     }
 
-    private fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, runtimeReceiverType: KotlinType? = null): ReferenceVariants {
+    private fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, runtimeReceiver: ExpressionReceiver? = null): ReferenceVariants {
         var variants = referenceVariantsHelper.getReferenceVariants(
                 nameExpression!!,
                 descriptorKindFilter,
                 descriptorNameFilter,
                 filterOutJavaGettersAndSetters = false,
                 filterOutShadowed = false,
-                useReceiverType = runtimeReceiverType)
+                useReceiverType = runtimeReceiver?.type)
 
         variants = variants.excludeNonInitializedVariable(nameExpression)
 
-        val shadowedDeclarationsFilter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, position, callTypeAndReceiver)
+        val shadowedDeclarationsFilter = if (runtimeReceiver != null)
+            ShadowedDeclarationsFilter(bindingContext, resolutionFacade, position, runtimeReceiver)
+         else
+            ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, position, callTypeAndReceiver)
 
         var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
         if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
             val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
-            val extensions = if (runtimeReceiverType != null)
-                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiverType), nameFilter)
+            val extensions = if (runtimeReceiver != null)
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), nameFilter)
             else
                 indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, nameFilter)
 
@@ -332,7 +336,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         val runtimeType = evaluator(explicitReceiver)
         if (runtimeType == null || runtimeType == type) return null
 
-        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, runtimeType)
+        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, ExpressionReceiver(explicitReceiver, runtimeType))
         val normalVariants = referenceVariants!!.imported + referenceVariants!!.notImportedExtensions
         val filteredVariants = variants.filter { descriptor -> normalVariants.none { compareDescriptors(project, it, descriptor) } }
         val filteredNotImportedExtensions = notImportedExtensions.filter { descriptor -> normalVariants.none { compareDescriptors(project, it, descriptor) } }

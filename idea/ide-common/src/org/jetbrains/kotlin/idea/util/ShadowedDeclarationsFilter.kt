@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.*
 
-public class ShadowedDeclarationsFilter private constructor(
+public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
         private val context: PsiElement,
