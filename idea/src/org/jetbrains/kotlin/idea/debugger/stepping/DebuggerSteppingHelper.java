@@ -52,7 +52,7 @@ public class DebuggerSteppingHelper {
                         @Override
                         public DebugProcessImpl.ResumeCommand compute() {
                             try {
-                                XSourcePositionImpl position = KotlinSteppingCommandProviderKt.getStepOutPosition(
+                                XSourcePositionImpl position = KotlinSteppingCommandProviderKt.getStepOverPosition(
                                         frameProxy.location(),
                                         file,
                                         linesRange,
@@ -96,7 +96,7 @@ public class DebuggerSteppingHelper {
                         @Override
                         public DebugProcessImpl.ResumeCommand compute() {
                             try {
-                                XSourcePositionImpl position = KotlinSteppingCommandProviderKt.getStepOverPosition(
+                                XSourcePositionImpl position = KotlinSteppingCommandProviderKt.getStepOutPosition(
                                         frameProxy.location(),
                                         suspendContext,
                                         inlineFunctions,

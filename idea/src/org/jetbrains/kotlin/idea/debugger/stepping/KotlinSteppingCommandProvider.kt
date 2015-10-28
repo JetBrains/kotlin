@@ -283,7 +283,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     }
 }
 
-fun getStepOutPosition(
+fun getStepOverPosition(
         location: Location,
         file: KtFile,
         range: Range<Int>,
@@ -325,7 +325,7 @@ fun getStepOutPosition(
     return null
 }
 
-fun getStepOverPosition(
+fun getStepOutPosition(
         location: Location,
         suspendContext: SuspendContextImpl,
         inlineFunctions: List<KtNamedFunction>,
