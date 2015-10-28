@@ -381,6 +381,10 @@ fun main(args: Array<String>) {
             model("checker/infos", testMethod = "doTestWithInfos")
         }
 
+        testClass<AbstractJavaAgainstKotlinSourceCheckerTest>() {
+            model("kotlinAndJavaChecker")
+        }
+
         testClass<AbstractJetPsiUnifierTest>() {
             model("unifier")
         }
