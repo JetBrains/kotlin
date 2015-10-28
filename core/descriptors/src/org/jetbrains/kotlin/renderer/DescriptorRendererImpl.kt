@@ -677,7 +677,7 @@ internal class DescriptorRendererImpl(
         }
 
         if (verbose) {
-            builder.append("/*").append(valueParameter.getIndex()).append("*/ ")
+            builder.append("/*").append(valueParameter.index).append("*/ ")
         }
 
         renderAnnotations(valueParameter, builder)
@@ -704,7 +704,7 @@ internal class DescriptorRendererImpl(
     private fun renderVariable(variable: VariableDescriptor, includeName: Boolean, builder: StringBuilder, topLevel: Boolean) {
         val realType = variable.getType()
 
-        val varargElementType = (variable as? ValueParameterDescriptor)?.getVarargElementType()
+        val varargElementType = (variable as? ValueParameterDescriptor)?.varargElementType
         val typeToRender = varargElementType ?: realType
 
         if (varargElementType != null) {

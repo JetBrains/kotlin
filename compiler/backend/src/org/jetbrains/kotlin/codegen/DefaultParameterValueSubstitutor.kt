@@ -175,7 +175,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             }
             else {
                 AsmUtil.pushDefaultValueOnStack(paramType, v)
-                val i = parameterDescriptor.getIndex()
+                val i = parameterDescriptor.index
                 if (i != 0 && i % Integer.SIZE == 0) {
                     masks.add(mask)
                     mask = 0

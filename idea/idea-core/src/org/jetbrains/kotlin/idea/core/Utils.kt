@@ -78,7 +78,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
                     val parameter = parameters[positionalArgumentIndex]
                     map[argument] = parameter
 
-                    if (parameter.getVarargElementType() == null) {
+                    if (parameter.varargElementType == null) {
                         positionalArgumentIndex++
                     }
                 }

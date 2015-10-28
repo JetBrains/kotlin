@@ -93,7 +93,7 @@ public class CallArgumentTranslator private constructor(
         var concatArguments: MutableList<JsExpression>? = null
 
         for (parameterDescriptor in valueParameters) {
-            val actualArgument = valueArgumentsByIndex.get(parameterDescriptor.getIndex())
+            val actualArgument = valueArgumentsByIndex.get(parameterDescriptor.index)
 
             val argContext = context().innerBlock()
 

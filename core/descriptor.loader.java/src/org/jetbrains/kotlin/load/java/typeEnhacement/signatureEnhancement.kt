@@ -37,7 +37,7 @@ public fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
             else null
 
     val enhancedValueParametersTypes = getValueParameters().map {
-        p -> parts(isCovariant = false) { it.getValueParameters()[p.getIndex()].getType() }.enhance()
+        p -> parts(isCovariant = false) { it.getValueParameters()[p.index].getType() }.enhance()
     }
 
     val enhancedReturnType = parts(isCovariant = true) { it.getReturnType()!! }.enhance()

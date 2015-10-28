@@ -167,7 +167,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
 
             return when (descriptor) {
                 is FunctionDescriptor -> {
-                    if (descriptor.getValueParameters().any { it.getVarargElementType() != null }) {
+                    if (descriptor.getValueParameters().any { it.varargElementType != null }) {
                         val message = JetRefactoringBundle.message("error.cant.refactor.vararg.functions")
                         CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
                         return null

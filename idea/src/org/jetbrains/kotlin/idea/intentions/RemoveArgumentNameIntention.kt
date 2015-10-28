@@ -41,7 +41,7 @@ public class RemoveArgumentNameIntention
         val callExpr = argumentList.getParent() as? KtExpression ?: return null
         val resolvedCall = callExpr.getResolvedCall(callExpr.analyze(BodyResolveMode.PARTIAL)) ?: return null
         val argumentMatch = resolvedCall.getArgumentMapping(element) as? ArgumentMatch ?: return null
-        if (argumentMatch.valueParameter.getIndex() != arguments.indexOf(element)) return null
+        if (argumentMatch.valueParameter.index != arguments.indexOf(element)) return null
 
         val expression = element.getArgumentExpression() ?: return null
         return TextRange(element.startOffset, expression.startOffset)

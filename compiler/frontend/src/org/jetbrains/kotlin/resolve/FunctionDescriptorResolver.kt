@@ -201,7 +201,7 @@ class FunctionDescriptorResolver(
                 val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
                                                       valueParameterDescriptor.getType(), valueParameterDescriptor.declaresDefaultValue(),
                                                       valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
-                                                      valueParameterDescriptor.getVarargElementType(), SourceElement.NO_SOURCE)
+                                                      valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE)
                 trace.record(BindingContext.AUTO_CREATED_IT, it)
                 return listOf(it)
             }

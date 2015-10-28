@@ -131,7 +131,7 @@ public fun getExpectedTypePredicate(
             val candidateParameter = mapping.valueParameter
             val resolvedArgument = candidateArgumentMap.get(candidateParameter)
             val expectedType = if (resolvedArgument is VarargValueArgument)
-                candidateParameter.getVarargElementType()
+                candidateParameter.varargElementType
             else
                 candidateParameter.getType()
 
@@ -190,7 +190,7 @@ public fun getExpectedTypePredicate(
                         it.arguments[value]?.let { parameter ->
                             val expectedType = when (it.resolvedCall.getValueArguments()[parameter]) {
                                 is VarargValueArgument ->
-                                    parameter.getVarargElementType()
+                                    parameter.varargElementType
                                 else ->
                                     parameter.getType()
                             }

@@ -137,7 +137,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @NotNull
     @Override
-    public Collection<? extends ValueParameterDescriptor> getOverriddenDescriptors() {
+    public Collection<ValueParameterDescriptor> getOverriddenDescriptors() {
         return CollectionsKt.map(
                 getContainingDeclaration().getOverriddenDescriptors(),
                 new Function1<CallableDescriptor, ValueParameterDescriptor>() {

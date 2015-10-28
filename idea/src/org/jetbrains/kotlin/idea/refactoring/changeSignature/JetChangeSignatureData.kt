@@ -62,10 +62,10 @@ public class JetChangeSignatureData(
         }
         parameters = baseDescriptor.getValueParameters()
                 .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
-                    val jetParameter = valueParameters?.get(parameterDescriptor.getIndex())
+                    val jetParameter = valueParameters?.get(parameterDescriptor.index)
                     JetParameterInfo(
                             callableDescriptor = baseDescriptor,
-                            originalIndex = parameterDescriptor.getIndex(),
+                            originalIndex = parameterDescriptor.index,
                             name = parameterDescriptor.getName().asString(),
                             type = parameterDescriptor.getType(),
                             defaultValueForParameter = jetParameter?.getDefaultValue(),

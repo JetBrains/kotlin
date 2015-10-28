@@ -53,7 +53,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
     fun append(any: Any): StringBuilder = stringBuilder.append(any)
 
     fun renderParameter(parameter: ValueParameterDescriptor): String {
-        val varargElementType = parameter.getVarargElementType()
+        val varargElementType = parameter.varargElementType
         val parameterType = varargElementType ?: parameter.getType()
         val renderedParameter =
                 (if (varargElementType != null) "<b>vararg</b> " else "") +

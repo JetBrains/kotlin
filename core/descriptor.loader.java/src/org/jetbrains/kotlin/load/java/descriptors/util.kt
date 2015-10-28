@@ -46,14 +46,14 @@ fun copyValueParameters(
         ValueParameterDescriptorImpl(
                 newOwner,
                 oldParameter,
-                oldParameter.getIndex(),
+                oldParameter.index,
                 oldParameter.getAnnotations(),
                 oldParameter.getName(),
                 newType,
                 oldParameter.declaresDefaultValue(),
                 oldParameter.isCrossinline,
                 oldParameter.isNoinline,
-                if (oldParameter.getVarargElementType() != null) newOwner.module.builtIns.getArrayElementType(newType) else null,
+                if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newType) else null,
                 oldParameter.getSource()
         )
     }

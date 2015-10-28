@@ -39,7 +39,7 @@ public abstract class KotlinClsFileBase(val provider: KotlinClassFileViewProvide
         if (original is ValueParameterDescriptor) {
             val callable = original.getContainingDeclaration()
             val callableDeclaration = getDeclarationForDescriptor(callable) as? KtCallableDeclaration ?: return null
-            return callableDeclaration.getValueParameters()[original.getIndex()]
+            return callableDeclaration.getValueParameters()[original.index]
         }
 
         if (original is ConstructorDescriptor && original.isPrimary()) {

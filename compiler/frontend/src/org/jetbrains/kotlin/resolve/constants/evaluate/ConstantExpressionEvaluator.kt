@@ -83,7 +83,7 @@ public class ConstantExpressionEvaluator(
             parameterDescriptor: ValueParameterDescriptor,
             resolvedArgument: ResolvedValueArgument
     ): ConstantValue<*>? {
-        val varargElementType = parameterDescriptor.getVarargElementType()
+        val varargElementType = parameterDescriptor.varargElementType
         val argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument)
         val constantType = if (argumentsAsVararg) varargElementType else parameterDescriptor.getType()
         val compileTimeConstants = resolveAnnotationValueArguments(resolvedArgument, constantType!!, trace)
@@ -153,7 +153,7 @@ public class ConstantExpressionEvaluator(
 
         val argumentEntry = resolvedCall.getValueArguments().entrySet().single()
 
-        val elementType = argumentEntry.getKey().getVarargElementType() ?: return null
+        val elementType = argumentEntry.getKey().varargElementType ?: return null
 
         val result = arrayListOf<KtExpression>()
         for (valueArgument in argumentEntry.getValue().getArguments()) {
@@ -588,7 +588,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
         // arrayOf()
         if (CompileTimeConstantUtils.isArrayMethodCall(call)) {
-            val varargType = resultingDescriptor.getValueParameters().first().getVarargElementType()!!
+            val varargType = resultingDescriptor.getValueParameters().first().varargElementType!!
 
             val arguments = call.getValueArguments().values().flatMap { resolveArguments(it.getArguments(), varargType) }
 

@@ -128,11 +128,11 @@ public class ShadowedDeclarationsFilter(
 
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for filtering shadowed declarations")
         for ((expression, parameter) in dummyArgumentExpressions.zip(parameters)) {
-            bindingTrace.recordType(expression, parameter.getVarargElementType() ?: parameter.getType())
+            bindingTrace.recordType(expression, parameter.varargElementType ?: parameter.getType())
             bindingTrace.record(BindingContext.PROCESSED, expression, true)
         }
 
-        val firstVarargIndex = parameters.withIndex().firstOrNull { it.value.getVarargElementType() != null }?.index
+        val firstVarargIndex = parameters.withIndex().firstOrNull { it.value.varargElementType != null }?.index
         val useNamedFromIndex = if (firstVarargIndex != null && firstVarargIndex != parameters.lastIndex) firstVarargIndex else parameters.size()
 
         class DummyArgument(val index: Int) : ValueArgument {
@@ -232,7 +232,7 @@ public class ShadowedDeclarationsFilter(
             for (i in parameters1.indices) {
                 val p1 = parameters1[i]
                 val p2 = parameters2[i]
-                if (p1.getVarargElementType() != p2.getVarargElementType()) return false // both should be vararg or or both not
+                if (p1.varargElementType != p2.varargElementType) return false // both should be vararg or or both not
                 if (p1.getType() != p2.getType()) return false
             }
             return true

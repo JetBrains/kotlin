@@ -71,7 +71,7 @@ public class AddNameToArgumentIntention
 
         if (!resolvedCall.getResultingDescriptor().hasStableParameterNames()) return null
 
-        if (argumentMatch.valueParameter.getVarargElementType() != null) {
+        if (argumentMatch.valueParameter.varargElementType != null) {
             val varargArgument = resolvedCall.getValueArguments()[argumentMatch.valueParameter] as? VarargValueArgument ?: return null
             if (varargArgument.getArguments().size() != 1) return null
         }

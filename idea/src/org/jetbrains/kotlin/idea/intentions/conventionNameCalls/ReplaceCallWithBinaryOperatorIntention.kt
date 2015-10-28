@@ -37,7 +37,7 @@ public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeInten
         if (!resolvedCall.isReallySuccess()) return null
         if (resolvedCall.getCall().getTypeArgumentList() != null) return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
-        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return null
+        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.index != 0) return null
 
         if (!element.isReceiverExpressionWithValue()) return null
 

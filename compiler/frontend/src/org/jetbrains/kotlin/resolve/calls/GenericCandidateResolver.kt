@@ -75,7 +75,7 @@ class GenericCandidateResolver(
         // Value parameters
         for (entry in candidateCall.getValueArguments().entrySet()) {
             val resolvedValueArgument = entry.getValue()
-            val valueParameterDescriptor = candidate.getValueParameters().get(entry.getKey().getIndex())
+            val valueParameterDescriptor = candidate.getValueParameters().get(entry.getKey().index)
 
 
             for (valueArgument in resolvedValueArgument.getArguments()) {
@@ -131,7 +131,7 @@ class GenericCandidateResolver(
         val typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, resolveFunctionArgumentBodies)
         context.candidateCall.getDataFlowInfoForArguments().updateInfo(valueArgument, typeInfoForCall.dataFlowInfo)
 
-        val constraintPosition = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex())
+        val constraintPosition = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
 
         if (addConstraintForNestedCall(argumentExpression, constraintPosition, constraintSystem, newContext, effectiveExpectedType)) return
 
@@ -240,7 +240,7 @@ class GenericCandidateResolver(
 
         //todo analyze function literal body once in 'dependent' mode, then complete it with respect to expected type
         val hasExpectedReturnType = !hasUnknownReturnType(expectedType)
-        val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex())
+        val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
         if (hasExpectedReturnType) {
             val temporaryToResolveFunctionLiteral = TemporaryTraceAndCache.create(
                     context, "trace to resolve function literal with expected return type", argumentExpression)
@@ -279,7 +279,7 @@ class GenericCandidateResolver(
                            ?: return
         if (!ReflectionTypes.isCallableType(expectedType)) return
         val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument)
-        val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex())
+        val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
         constraintSystem.addSubtypeConstraint(resolvedType, effectiveExpectedType, position)
     }
 

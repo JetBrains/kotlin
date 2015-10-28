@@ -14,53 +14,41 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.descriptors;
+package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
 
-import java.util.Collection;
-
-public interface ValueParameterDescriptor extends VariableDescriptor, ParameterDescriptor {
-    @NotNull
-    @Override
-    CallableDescriptor getContainingDeclaration();
+interface ValueParameterDescriptor : VariableDescriptor, ParameterDescriptor {
+    override fun getContainingDeclaration(): CallableDescriptor
 
     /**
      * Returns the 0-based index of the value parameter in the parameter list of its containing function.
-     *
+
      * @return the parameter index
      */
-    int getIndex();
+    val index: Int
 
     /**
      * @return true iff this parameter belongs to a declared function (not a fake override) and declares the default value,
      * i.e. explicitly specifies it in the function signature. Also see 'hasDefaultValue' extension in DescriptorUtils.kt
      */
-    boolean declaresDefaultValue();
+    fun declaresDefaultValue(): Boolean
 
-    @Nullable
-    KotlinType getVarargElementType();
+    val varargElementType: KotlinType?
 
-    @NotNull
-    @Override
-    ValueParameterDescriptor getOriginal();
+    override fun getOriginal(): ValueParameterDescriptor
 
-    @NotNull
-    ValueParameterDescriptor copy(@NotNull CallableDescriptor newOwner, @NotNull Name newName);
+    fun copy(newOwner: CallableDescriptor, newName: Name): ValueParameterDescriptor
 
     /**
      * Parameter p1 overrides p2 iff
      * a) their respective owners (function declarations) f1 override f2
      * b) p1 and p2 have the same indices in the owners' parameter lists
      */
-    @NotNull
-    @Override
-    Collection<? extends ValueParameterDescriptor> getOverriddenDescriptors();
+    override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor>
 
-    boolean isCrossinline();
+    val isCrossinline: Boolean
 
-    boolean isNoinline();
+    val isNoinline: Boolean
 }

@@ -148,13 +148,13 @@ public fun getSuperCallExpression(call: Call): KtSuperExpression? {
 
 public fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KotlinType {
     if (argument.getSpreadElement() != null) {
-        if (parameterDescriptor.getVarargElementType() == null) {
+        if (parameterDescriptor.varargElementType == null) {
             // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
             return DONT_CARE
         }
         return parameterDescriptor.getType()
     }
-    val varargElementType = parameterDescriptor.getVarargElementType()
+    val varargElementType = parameterDescriptor.varargElementType
     if (varargElementType != null) {
         return varargElementType
     }
