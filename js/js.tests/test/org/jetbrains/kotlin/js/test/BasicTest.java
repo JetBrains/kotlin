@@ -358,7 +358,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         for (String libFileName : list) {
             VirtualFile virtualFile = rootFile == null ? fileSystem.findFileByPath(libFileName) : rootFile.findFileByRelativePath(libFileName);
             //TODO logging?
-            assert virtualFile != null;
+            assert virtualFile != null : "virtual file is missing, most likely the file doesn't exist: " + libFileName;
             PsiFile psiFile = psiManager.findFile(virtualFile);
             libFiles.add((KtFile) psiFile);
         }
