@@ -1,6 +1,6 @@
 package example
 
-import kotlin.js.dom.html.document
+import kotlin.browser.document
 import example.library.Counter
 
 
