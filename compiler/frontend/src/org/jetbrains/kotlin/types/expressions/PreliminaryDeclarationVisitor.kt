@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -41,11 +43,13 @@ class PreliminaryDeclarationVisitor(val declaration: KtDeclaration): AssignedVar
             expression.getStrictParentOfType<KtDeclaration>()?.let { createForDeclaration(it, trace) }
         }
 
+        private fun topMostNonClassDeclaration(declaration: KtDeclaration) =
+                declaration.parentsWithSelf.filterIsInstance<KtDeclaration>().findLast { it !is KtClassOrObject } ?: declaration
+
         fun createForDeclaration(declaration: KtDeclaration, trace: BindingTrace) {
-            // TODO: find top-most declaration (but not class!!!)
-            if (trace.get(BindingContext.PRELIMINARY_VISITOR, declaration) != null) return
-            // Can this declaration be synthetic? If yes, it would be better not to record it
-            trace.record(BindingContext.PRELIMINARY_VISITOR, declaration, PreliminaryDeclarationVisitor(declaration));
+            val visitorOwner = topMostNonClassDeclaration(declaration)
+            if (trace.get(BindingContext.PRELIMINARY_VISITOR, visitorOwner) != null) return
+            trace.record(BindingContext.PRELIMINARY_VISITOR, visitorOwner, PreliminaryDeclarationVisitor(visitorOwner))
         }
 
         fun getVisitorByVariable(variableDescriptor: VariableDescriptor, bindingContext: BindingContext): PreliminaryDeclarationVisitor? {
