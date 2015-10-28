@@ -108,7 +108,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                                                       sourceFunction.annotations,
                                                       sourceFunction.name,
                                                       CallableMemberDescriptor.Kind.SYNTHESIZED,
-                                                      sourceFunction.source)
+                                                      sourceFunction.original.source)
                 descriptor.sourceFunction = sourceFunction
 
                 val sourceTypeParams = (sourceFunction.typeParameters).toArrayList()
