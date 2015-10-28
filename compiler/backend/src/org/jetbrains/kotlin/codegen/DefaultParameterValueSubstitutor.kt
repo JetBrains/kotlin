@@ -38,13 +38,15 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      * If all of the parameters of the specified constructor declare default values,
      * generates a no-argument constructor that passes default values for all arguments.
      */
-    fun generateConstructorOverloadsIfNeeded(
+    fun generatePrimaryConstructorOverloadsIfNeeded(
             constructorDescriptor: ConstructorDescriptor,
             classBuilder: ClassBuilder,
             contextKind: OwnerKind,
             classOrObject: KtClassOrObject
     ) {
-        if (generateOverloadsIfNeeded(classOrObject, constructorDescriptor, constructorDescriptor, contextKind, classBuilder)) {
+        val methodElement = classOrObject.getPrimaryConstructor() ?: classOrObject
+
+        if (generateOverloadsIfNeeded(methodElement, constructorDescriptor, constructorDescriptor, contextKind, classBuilder)) {
             return
         }
 
@@ -52,7 +54,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             return
         }
 
-        generateOverloadWithSubstitutedParameters(constructorDescriptor, constructorDescriptor, classBuilder, classOrObject, contextKind,
+        generateOverloadWithSubstitutedParameters(constructorDescriptor, constructorDescriptor, classBuilder, methodElement, contextKind,
                                                   constructorDescriptor.countDefaultParameters())
     }
 

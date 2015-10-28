@@ -558,6 +558,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("jvmOverloaded.0.kt")
+            public void testJvmOverloaded() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/jvmOverloaded.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kotlinInternalMethodUsages.0.kt")
             public void testKotlinInternalMethodUsages() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/kotlinInternalMethodUsages.0.kt");
@@ -813,6 +819,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/kotlin/findPrimaryConstructorUsages"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
             }
 
+            @TestMetadata("jvmOverloaded.0.kt")
+            public void testJvmOverloaded() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPrimaryConstructorUsages/jvmOverloaded.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("missingName.0.kt")
             public void testMissingName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findPrimaryConstructorUsages/missingName.0.kt");
@@ -1002,6 +1014,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
             @TestMetadata("defaultSecondaryConstructor.0.kt")
             public void testDefaultSecondaryConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findSecondaryConstructorUsages/defaultSecondaryConstructor.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmOverloaded.0.kt")
+            public void testJvmOverloaded() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findSecondaryConstructorUsages/jvmOverloaded.0.kt");
                 doTest(fileName);
             }
 
