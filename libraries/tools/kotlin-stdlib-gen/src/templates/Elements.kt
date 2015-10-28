@@ -643,7 +643,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        body(ArraysOfPrimitives, ArraysOfObjects, Lists) {
+        body(CharSequences, Strings, ArraysOfPrimitives, ArraysOfObjects, Lists) {
             """
             for (index in this.indices.reversed()) {
                 val element = this[index]
@@ -678,7 +678,7 @@ fun elements(): List<GenericFunction> {
             """
         }
 
-        body(ArraysOfPrimitives, ArraysOfObjects, Lists) {
+        body(CharSequences, Strings, ArraysOfPrimitives, ArraysOfObjects, Lists) {
             """
             for (index in this.indices.reversed()) {
                 val element = this[index]

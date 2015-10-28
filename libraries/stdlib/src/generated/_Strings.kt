@@ -265,16 +265,11 @@ public fun String.last(): Char {
  * @throws [NoSuchElementException] if no such character is found.
  */
 public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
-    var last: Char? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
-    return last as Char
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -283,16 +278,11 @@ public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun String.last(predicate: (Char) -> Boolean): Char {
-    var last: Char? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
-    return last as Char
+    throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
 }
 
 /**
@@ -314,13 +304,11 @@ public fun String.lastOrNull(): Char? {
  * Returns the last character matching the given [predicate], or `null` if no such character was found.
  */
 public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
-    var last: Char? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
@@ -328,13 +316,11 @@ public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun String.lastOrNull(predicate: (Char) -> Boolean): Char? {
-    var last: Char? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
+    for (index in this.indices.reversed()) {
+        val element = this[index]
+        if (predicate(element)) return element
     }
-    return last
+    return null
 }
 
 /**
