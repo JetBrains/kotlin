@@ -43,10 +43,9 @@ class PreliminaryDeclarationVisitor(val declaration: KtDeclaration): AssignedVar
 
         fun createForDeclaration(declaration: KtDeclaration, trace: BindingTrace) {
             // TODO: find top-most declaration (but not class!!!)
-            // TODO: check if already exists
-            val visitor = PreliminaryDeclarationVisitor(declaration)
+            if (trace.get(BindingContext.PRELIMINARY_VISITOR, declaration) != null) return
             // Can this declaration be synthetic? If yes, it would be better not to record it
-            trace.record(BindingContext.PRELIMINARY_VISITOR, declaration, visitor);
+            trace.record(BindingContext.PRELIMINARY_VISITOR, declaration, PreliminaryDeclarationVisitor(declaration));
         }
 
         fun getVisitorByVariable(variableDescriptor: VariableDescriptor, bindingContext: BindingContext): PreliminaryDeclarationVisitor? {
