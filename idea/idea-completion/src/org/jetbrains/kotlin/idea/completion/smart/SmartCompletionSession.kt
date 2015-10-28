@@ -73,17 +73,9 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             if (nameExpression != null) {
                 val filter = smartCompletion!!.descriptorFilter
                 if (filter != null) {
-                    referenceVariants.forEach { collector.addElements(filter(it)) }
-                    flushToResultSet()
-
-                    if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
-                        for (extension in getCallableTopLevelExtensions()) {
-                            val elements = filter(extension)
-                            if (elements.isNotEmpty()) {
-                                collector.addElements(elements, !isImportableDescriptorImported(extension))
-                            }
-                        }
-                    }
+                    val (imported, notImported) = referenceVariants!!
+                    imported.forEach { collector.addElements(filter(it)) }
+                    notImported.forEach { collector.addElements(filter(it), notImported = true) }
 
                     flushToResultSet()
 

@@ -260,18 +260,41 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         return context
     }
 
-    protected val referenceVariants: Collection<DeclarationDescriptor> by lazy(LazyThreadSafetyMode.NONE) {
-        if (descriptorKindFilter != null) {
-            referenceVariantsHelper.getReferenceVariants(
-                    nameExpression!!,
-                    descriptorKindFilter!!,
-                    descriptorNameFilter,
-                    filterOutJavaGettersAndSetters = configuration.filterOutJavaGettersAndSetters
-            ).excludeNonInitializedVariable(nameExpression)
+    /* TODO: not protected because of KT-9809 */
+    data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
+
+    protected val referenceVariants: ReferenceVariants? by lazy {
+        if (descriptorKindFilter == null) return@lazy null
+
+        var variants = referenceVariantsHelper.getReferenceVariants(
+                nameExpression!!,
+                descriptorKindFilter!!,
+                descriptorNameFilter,
+                filterOutJavaGettersAndSetters = false,
+                filterOutShadowed = false)
+
+        variants = variants.excludeNonInitializedVariable(nameExpression)
+
+        val shadowedDeclarationsFilter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, position, callTypeAndReceiver)
+
+        var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
+        if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
+            val extensions = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, callTypeAndReceiver, expression!!, bindingContext)
+            val pair = extensions.partition { isImportableDescriptorImported(it) }
+            variants += pair.first
+            notImportedExtensions = pair.second
         }
-        else {
-            emptyList()
+
+        if (shadowedDeclarationsFilter != null) {
+            variants = shadowedDeclarationsFilter.filter(variants)
+            notImportedExtensions = shadowedDeclarationsFilter.filterNonImported(notImportedExtensions, variants)
         }
+
+        if (configuration.filterOutJavaGettersAndSetters) {
+            variants = referenceVariantsHelper.filterOutJavaGettersAndSetters(variants)
+        }
+
+        ReferenceVariants(variants, notImportedExtensions)
     }
 
     // filters out variable inside its initializer
@@ -296,7 +319,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 filterOutJavaGettersAndSetters = configuration.filterOutJavaGettersAndSetters
         ).excludeNonInitializedVariable(nameExpression)
         return descriptors.filter { descriptor ->
-            referenceVariants.none { compareDescriptors(project, it, descriptor) }
+            referenceVariants!!.imported.none { compareDescriptors(project, it, descriptor) }
         }
     }
 
@@ -317,14 +340,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                && this !is CallTypeAndReceiver.IMPORT_DIRECTIVE
     }
 
-    protected fun getCallableTopLevelExtensions(): Collection<CallableDescriptor> {
-        return indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, callTypeAndReceiver, expression!!, bindingContext)
-                .filterShadowedNonImported() //TODO: not correct!
-    }
-
     private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
         val filter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
-        return if (filter != null) filter.filterNonImported(this, referenceVariants) else this
+        return if (filter != null) filter.filterNonImported(this, referenceVariants!!.imported) else this
     }
 
     protected fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean) {

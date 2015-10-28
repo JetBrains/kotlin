@@ -58,10 +58,11 @@ class ReferenceVariantsHelper(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             filterOutJavaGettersAndSetters: Boolean = false,
+            filterOutShadowed: Boolean = true,
             useRuntimeReceiverType: Boolean = false
     ): Collection<DeclarationDescriptor>
             = getReferenceVariants(expression, CallTypeAndReceiver.detect(expression),
-                                   kindFilter, nameFilter, filterOutJavaGettersAndSetters, useRuntimeReceiverType)
+                                   kindFilter, nameFilter, filterOutJavaGettersAndSetters, filterOutShadowed, useRuntimeReceiverType)
 
     fun getReferenceVariants(
             contextElement: PsiElement,
@@ -69,30 +70,37 @@ class ReferenceVariantsHelper(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             filterOutJavaGettersAndSetters: Boolean = false,
+            filterOutShadowed: Boolean = true,
             useRuntimeReceiverType: Boolean = false
     ): Collection<DeclarationDescriptor> {
         var variants: Collection<DeclarationDescriptor>
                 = getReferenceVariantsNoVisibilityFilter(contextElement, kindFilter, nameFilter, callTypeAndReceiver, useRuntimeReceiverType)
                 .filter { !it.isAnnotatedAsHidden() && visibilityFilter(it) }
 
-        ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, contextElement, callTypeAndReceiver)?.let {
-            variants = it.filter(variants)
+        if (filterOutShadowed) {
+            ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, contextElement, callTypeAndReceiver)?.let {
+                variants = it.filter(variants)
+            }
         }
 
 
         if (filterOutJavaGettersAndSetters) {
-            val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
-            for (variant in variants) {
-                if (variant is SyntheticJavaPropertyDescriptor) {
-                    accessorMethodsToRemove.add(variant.getMethod.original)
-                    accessorMethodsToRemove.addIfNotNull(variant.setMethod?.original)
-                }
-            }
-
-            variants = variants.filter { it !is FunctionDescriptor || it.original !in accessorMethodsToRemove }
+            variants = filterOutJavaGettersAndSetters(variants)
         }
 
         return variants
+    }
+
+    fun filterOutJavaGettersAndSetters(variants: Collection<DeclarationDescriptor>): Collection<DeclarationDescriptor> {
+        val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
+        for (variant in variants) {
+            if (variant is SyntheticJavaPropertyDescriptor) {
+                accessorMethodsToRemove.add(variant.getMethod.original)
+                accessorMethodsToRemove.addIfNotNull(variant.setMethod?.original)
+            }
+        }
+
+        return variants.filter { it !is FunctionDescriptor || it.original !in accessorMethodsToRemove }
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(

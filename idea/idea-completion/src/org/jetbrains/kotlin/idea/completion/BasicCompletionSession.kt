@@ -209,7 +209,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 collector.addElements(additionalItems)
             }
 
-            collector.addDescriptorElements(referenceVariants)
+            referenceVariants?.let {
+                val (imported, notImported) = it
+                collector.addDescriptorElements(imported)
+                collector.addDescriptorElements(notImported, notImported = true)
+            }
 
             completeKeywords()
 
@@ -232,13 +236,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             flushToResultSet()
-
-            if (completionKind == CompletionKind.ALL && callTypeAndReceiver.shouldCompleteCallableExtensions()) {
-                for (extension in getCallableTopLevelExtensions()) {
-                    collector.addDescriptorElements(extension, !isImportableDescriptorImported(extension))
-                }
-                flushToResultSet()
-            }
 
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
                 completeNonImported()
@@ -411,7 +408,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (callTypeAndReceiver.receiver != null) {
-            val referenceVariantsSet = referenceVariants.toSet()
+            val referenceVariantsSet = referenceVariants!!.imported.toSet()
             superClasses = superClasses.filter { it in referenceVariantsSet }
         }
 
