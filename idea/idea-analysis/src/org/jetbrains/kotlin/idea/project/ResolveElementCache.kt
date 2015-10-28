@@ -113,6 +113,9 @@ public class ResolveElementCache(
     override fun resolveFunctionBody(function: KtNamedFunction)
             = getElementAdditionalResolve(function, function, BodyResolveMode.FULL)
 
+    public fun resolvePrimaryConstructorParametersDefaultValues(ktClass: KtClass): BindingContext {
+        return constructorAdditionalResolve(resolveSession, ktClass, ktClass.getContainingJetFile()).bindingContext
+    }
 
     fun getElementAdditionalResolve(resolveElement: KtElement, contextElement: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
         // check if full additional resolve already performed and is up-to-date

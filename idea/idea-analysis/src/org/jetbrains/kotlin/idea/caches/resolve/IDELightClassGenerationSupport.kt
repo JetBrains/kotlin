@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
+import org.jetbrains.kotlin.idea.project.ResolveElementCache
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope.kotlinSourceAndClassFiles
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -68,26 +70,43 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     }
 
     override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
-        val resolutionFacade = classOrObject.getResolutionFacade()
-
-        val moduleDescriptor = resolutionFacade.moduleDescriptor
-        val bindingContext = resolutionFacade.analyze(classOrObject, BodyResolveMode.FULL)
         if (classOrObject.isLocal()) {
-            val descriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
+            return getContextForLocalClassOrObject(classOrObject)
+        }
+        else {
+            return getContextForNonLocalClassOrObject(classOrObject)
+        }
+    }
 
+    private fun getContextForNonLocalClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
+        val resolutionFacade = classOrObject.getResolutionFacade()
+        ForceResolveUtil.forceResolveAllContents(resolutionFacade.resolveToDescriptor(classOrObject))
+        val bindingContext = if (classOrObject is KtClass && classOrObject.isAnnotation()) {
+            // need to make sure default values for parameters are resolved
+            // because java resolve depends on whether there is a default value for an annotation attribute
+            resolutionFacade.getFrontendService(ResolveElementCache::class.java)
+                    .resolvePrimaryConstructorParametersDefaultValues(classOrObject)
+        }
+        else {
+            resolutionFacade.analyze(classOrObject)
+        }
+        return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
+    }
 
-            if (descriptor == null) {
-                LOG.warn("No class descriptor in context for class: " + classOrObject.getElementTextWithContext())
-                return LightClassConstructionContext(bindingContext, moduleDescriptor)
-            }
+    private fun getContextForLocalClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
+        val resolutionFacade = classOrObject.getResolutionFacade()
+        val bindingContext = resolutionFacade.analyze(classOrObject)
 
-            ForceResolveUtil.forceResolveAllContents<ClassDescriptor>(descriptor)
+        val descriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
 
-            return LightClassConstructionContext(bindingContext, moduleDescriptor)
+        if (descriptor == null) {
+            LOG.warn("No class descriptor in context for class: " + classOrObject.getElementTextWithContext())
+            return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
         }
 
-        ForceResolveUtil.forceResolveAllContents(resolutionFacade.resolveToDescriptor(classOrObject))
-        return LightClassConstructionContext(bindingContext, moduleDescriptor)
+        ForceResolveUtil.forceResolveAllContents<ClassDescriptor>(descriptor)
+
+        return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
     }
 
     override fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext {
