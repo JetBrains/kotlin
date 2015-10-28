@@ -14298,6 +14298,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("comparisonUnderAnd.kt")
+            public void testComparisonUnderAnd() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/comparisonUnderAnd.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("complexComparison.kt")
+            public void testComplexComparison() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/complexComparison.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dataFlowInfoForArguments.kt")
             public void testDataFlowInfoForArguments() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/dataFlowInfoForArguments.kt");

@@ -85,8 +85,11 @@ public class DataFlowAnalyzer {
                     DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, context);
                     KtExpression expressionRight = expression.getRight();
                     if (expressionRight != null) {
-                        DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, context);
                         boolean and = operationToken == KtTokens.ANDAND;
+                        DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(
+                                expressionRight, conditionValue,
+                                and == conditionValue ? context.replaceDataFlowInfo(dataFlowInfo) : context
+                        );
                         if (and == conditionValue) { // this means: and && conditionValue || !and && !conditionValue
                             dataFlowInfo = dataFlowInfo.and(rightInfo);
                         }
