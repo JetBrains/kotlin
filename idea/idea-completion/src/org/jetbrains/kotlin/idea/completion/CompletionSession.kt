@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import java.util.*
 
 class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
@@ -337,10 +338,24 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         if (runtimeType == null || runtimeType == type) return null
 
         val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, ExpressionReceiver(explicitReceiver, runtimeType))
-        val normalVariants = referenceVariants!!.imported + referenceVariants!!.notImportedExtensions
-        val filteredVariants = variants.filter { descriptor -> normalVariants.none { compareDescriptors(project, it, descriptor) } }
-        val filteredNotImportedExtensions = notImportedExtensions.filter { descriptor -> normalVariants.none { compareDescriptors(project, it, descriptor) } }
+        val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants!!.imported)
+        val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants!!.notImportedExtensions)
         return ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
+    }
+
+    private fun <TDescriptor : DeclarationDescriptor> filterVariantsForRuntimeReceiverType(
+            runtimeVariants: Collection<TDescriptor>,
+            baseVariants: Collection<TDescriptor>
+    ): Collection<TDescriptor> {
+        val baseVariantsByName = baseVariants.groupBy { it.name }
+        val result = ArrayList<TDescriptor>()
+        for (variant in runtimeVariants) {
+            val candidates = baseVariantsByName[variant.name]
+            if (candidates == null || candidates.none { compareDescriptors(project, variant, it) }) {
+                result.add(variant)
+            }
+        }
+        return result
     }
 
     protected fun shouldCompleteTopLevelCallablesFromIndex(): Boolean {
