@@ -35,8 +35,6 @@ public class StdLibTestToJSTest extends StdLibQUnitTestSupport {
                           "../../../js/js.libraries/test/core/assertTypeEquals.kt",
                           "text/StringTest.kt",
                           // TODO review: somethings FAILED if run:
-                          "js/JsDomTest.kt",
-                          "dom/DomTest.kt",
                           "collections/SequenceTest.kt",
                           "collections/IterableTests.kt",
                           "collections/ArraysTest.kt",
