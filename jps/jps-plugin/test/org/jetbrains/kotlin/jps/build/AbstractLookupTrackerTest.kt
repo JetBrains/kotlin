@@ -36,11 +36,10 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 
     override fun createLookupTracker(): LookupTracker = TestLookupTracker()
 
-    override fun checkLookups(modifications: List<Modification>, lookupTracker: LookupTracker) {
+    override fun checkLookups(lookupTracker: LookupTracker, compiledFiles: Set<File>) {
         if (lookupTracker !is TestLookupTracker) throw AssertionError("Expected TestLookupTracker, but: ${lookupTracker.javaClass}")
 
         val fileToLookups = lookupTracker.lookups.groupBy { it.lookupContainingFile }
-        val workSrcDir = File(workDir, "src")
 
         fun checkLookupsInFile(expectedFile: File, actualFile: File) {
 
@@ -96,25 +95,10 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
             JetTestUtils.assertEqualsToFile(expectedFile, actual)
         }
 
-        if (modifications.isNotEmpty()) {
-            for (modification in modifications) {
-                if (modification !is ModifyContent) continue
+        for (actualFile in compiledFiles) {
+            val expectedFile = mapWorkingToOriginalFile[actualFile]!!
 
-                val expectedFile = modification.dataFile
-                val actualFile = File(workDir, modification.path)
-
-                checkLookupsInFile(expectedFile, actualFile)
-            }
-        }
-        else {
-            for (actualFile in workSrcDir.walkTopDown()) {
-                if (!actualFile.isFile) continue
-
-                val independentFilePath = FileUtil.toSystemIndependentName(actualFile.path)
-                val expectedFile = File(testDataDir, independentFilePath.replace(".*/src/".toRegex(), ""))
-
-                checkLookupsInFile(expectedFile, actualFile)
-            }
+            checkLookupsInFile(expectedFile, actualFile)
         }
     }
 
