@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
  * At the end current data flow info is x != null && y != null, but jump data flow info is x != null only.
  * Both break and continue are counted as possible jump outside of a loop, but return is not.
  */
-class JetTypeInfo(
+class KotlinTypeInfo(
         val type: KotlinType?,
         val dataFlowInfo: DataFlowInfo,
         val jumpOutPossible: Boolean = false,
@@ -40,20 +40,20 @@ class JetTypeInfo(
     fun clearType() = replaceType(null)
 
     // NB: do not compare type with this.type because this comparison is complex and unstable
-    fun replaceType(type: KotlinType?) = JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+    fun replaceType(type: KotlinType?) = KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceJumpOutPossible(jumpOutPossible: Boolean) =
-            if (jumpOutPossible == this.jumpOutPossible) this else JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+            if (jumpOutPossible == this.jumpOutPossible) this else KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceJumpFlowInfo(jumpFlowInfo: DataFlowInfo) =
-            if (jumpFlowInfo == this.jumpFlowInfo) this else JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+            if (jumpFlowInfo == this.jumpFlowInfo) this else KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
 
     fun replaceDataFlowInfo(dataFlowInfo: DataFlowInfo) = when (this.dataFlowInfo) {
         // Nothing changed
         dataFlowInfo -> this
         // Jump info is the same as data flow info: change both
-        jumpFlowInfo -> JetTypeInfo(type, dataFlowInfo, jumpOutPossible, dataFlowInfo)
+        jumpFlowInfo -> KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, dataFlowInfo)
         // Jump info is not the same: change data flow info only
-        else -> JetTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
+        else -> KotlinTypeInfo(type, dataFlowInfo, jumpOutPossible, jumpFlowInfo)
     }
 }

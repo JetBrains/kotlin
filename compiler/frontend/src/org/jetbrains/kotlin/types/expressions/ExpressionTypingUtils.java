@@ -93,9 +93,9 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static KotlinType safeGetType(@NotNull JetTypeInfo typeInfo) {
+    public static KotlinType safeGetType(@NotNull KotlinTypeInfo typeInfo) {
         KotlinType type = typeInfo.getType();
-        assert type != null : "safeGetType should be invoked on safe JetTypeInfo; safeGetTypeInfo should return @NotNull type";
+        assert type != null : "safeGetType should be invoked on safe KotlinTypeInfo; safeGetTypeInfo should return @NotNull type";
         return type;
     }
 
@@ -156,7 +156,7 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static JetTypeInfo getTypeInfoOrNullType(
+    public static KotlinTypeInfo getTypeInfoOrNullType(
             @Nullable KtExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull ExpressionTypingInternals facade

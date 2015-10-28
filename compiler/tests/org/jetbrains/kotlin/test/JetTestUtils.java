@@ -76,7 +76,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -185,7 +185,7 @@ public class JetTestUtils {
         @Nullable
         @Override
         public KotlinType getType(@NotNull KtExpression expression) {
-            JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+            KotlinTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
             return typeInfo != null ? typeInfo.getType() : null;
         }
 

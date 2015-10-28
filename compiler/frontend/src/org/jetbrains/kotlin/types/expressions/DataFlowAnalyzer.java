@@ -160,7 +160,7 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    public JetTypeInfo checkType(@NotNull JetTypeInfo typeInfo, @NotNull KtExpression expression, @NotNull ResolutionContext context) {
+    public KotlinTypeInfo checkType(@NotNull KotlinTypeInfo typeInfo, @NotNull KtExpression expression, @NotNull ResolutionContext context) {
         return typeInfo.replaceType(checkType(typeInfo.getType(), expression, context));
     }
 
@@ -276,12 +276,12 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    public JetTypeInfo checkImplicitCast(@NotNull JetTypeInfo typeInfo, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
+    public KotlinTypeInfo checkImplicitCast(@NotNull KotlinTypeInfo typeInfo, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
         return typeInfo.replaceType(checkImplicitCast(typeInfo.getType(), expression, context, isStatement));
     }
 
     @NotNull
-    public JetTypeInfo illegalStatementType(@NotNull KtExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
+    public KotlinTypeInfo illegalStatementType(@NotNull KtExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
         facade.checkStatementType(
                 expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
         context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
@@ -304,7 +304,7 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    public JetTypeInfo createCheckedTypeInfo(
+    public KotlinTypeInfo createCheckedTypeInfo(
             @Nullable KotlinType type,
             @NotNull ResolutionContext<?> context,
             @NotNull KtExpression expression
@@ -313,7 +313,7 @@ public class DataFlowAnalyzer {
     }
 
     @NotNull
-    public JetTypeInfo createCompileTimeConstantTypeInfo(
+    public KotlinTypeInfo createCompileTimeConstantTypeInfo(
             @NotNull CompileTimeConstant<?> value,
             @NotNull KtExpression expression,
             @NotNull ExpressionTypingContext context

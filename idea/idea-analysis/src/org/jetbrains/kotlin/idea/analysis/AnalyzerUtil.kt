@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
 @JvmOverloads
@@ -38,7 +38,7 @@ public fun KtExpression.computeTypeInfoInContext(
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false
-): JetTypeInfo {
+): KotlinTypeInfo {
     PreliminaryDeclarationVisitor.createForExpression(this, trace)
     return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
             .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)

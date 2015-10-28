@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import javax.inject.Inject;
@@ -142,7 +142,7 @@ public class CallExpressionResolver {
     }
 
     @NotNull
-    public JetTypeInfo getSimpleNameExpressionTypeInfo(
+    public KotlinTypeInfo getSimpleNameExpressionTypeInfo(
             @NotNull KtSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
@@ -181,11 +181,11 @@ public class CallExpressionResolver {
     }
 
     @NotNull
-    public JetTypeInfo getCallExpressionTypeInfo(
+    public KotlinTypeInfo getCallExpressionTypeInfo(
             @NotNull KtCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
-        JetTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
+        KotlinTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
         if (context.contextDependency == INDEPENDENT) {
             dataFlowAnalyzer.checkType(typeInfo.getType(), callExpression, context);
         }
@@ -197,7 +197,7 @@ public class CallExpressionResolver {
      * Determines the result type and data flow information after the call.
      */
     @NotNull
-    public JetTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
+    public KotlinTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
             @NotNull KtCallExpression callExpression, @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
@@ -244,7 +244,7 @@ public class CallExpressionResolver {
             DataFlowInfo jumpFlowInfo = resultFlowInfo;
             boolean jumpOutPossible = false;
             for (ValueArgument argument: arguments) {
-                JetTypeInfo argTypeInfo = context.trace.get(BindingContext.EXPRESSION_TYPE_INFO, argument.getArgumentExpression());
+                KotlinTypeInfo argTypeInfo = context.trace.get(BindingContext.EXPRESSION_TYPE_INFO, argument.getArgumentExpression());
                 if (argTypeInfo != null && argTypeInfo.getJumpOutPossible()) {
                     jumpOutPossible = true;
                     jumpFlowInfo = argTypeInfo.getJumpFlowInfo();
@@ -289,7 +289,7 @@ public class CallExpressionResolver {
     }
 
     @NotNull
-    private JetTypeInfo getSelectorReturnTypeInfo(
+    private KotlinTypeInfo getSelectorReturnTypeInfo(
             @NotNull ReceiverValue receiver,
             @Nullable ASTNode callOperationNode,
             @Nullable KtExpression selectorExpression,
@@ -314,16 +314,16 @@ public class CallExpressionResolver {
      * @return qualified expression type together with data flow information
      */
     @NotNull
-    public JetTypeInfo getQualifiedExpressionTypeInfo(
+    public KotlinTypeInfo getQualifiedExpressionTypeInfo(
             @NotNull KtQualifiedExpression expression, @NotNull ExpressionTypingContext context
     ) {
         ExpressionTypingContext currentContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         Deque<CallExpressionElement> elementChain = CallExpressionUnrollerKt.unroll(expression);
 
-        JetTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(elementChain.getFirst().getReceiver(), currentContext);
+        KotlinTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(elementChain.getFirst().getReceiver(), currentContext);
         KotlinType receiverType = receiverTypeInfo.getType();
         DataFlowInfo receiverDataFlowInfo = receiverTypeInfo.getDataFlowInfo();
-        JetTypeInfo resultTypeInfo = receiverTypeInfo;
+        KotlinTypeInfo resultTypeInfo = receiverTypeInfo;
 
         boolean unconditional = true;
         DataFlowInfo unconditionalDataFlowInfo = receiverDataFlowInfo;
@@ -344,7 +344,8 @@ public class CallExpressionResolver {
             currentContext = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
 
             KtExpression selectorExpression = element.getSelector();
-            JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(receiver, element.getNode(), selectorExpression, currentContext);
+            KotlinTypeInfo selectorReturnTypeInfo =
+                    getSelectorReturnTypeInfo(receiver, element.getNode(), selectorExpression, currentContext);
             KotlinType selectorReturnType = selectorReturnTypeInfo.getType();
 
             resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.getQualified(), currentContext);

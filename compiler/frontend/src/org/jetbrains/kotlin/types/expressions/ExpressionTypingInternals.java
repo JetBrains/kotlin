@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.*;
 
 /*package*/ interface ExpressionTypingInternals extends ExpressionTypingFacade {
     @NotNull
-    JetTypeInfo checkInExpression(
+    KotlinTypeInfo checkInExpression(
             @NotNull KtElement callElement,
             @NotNull KtSimpleNameExpression operationSign,
             @NotNull ValueArgument leftArgument,
