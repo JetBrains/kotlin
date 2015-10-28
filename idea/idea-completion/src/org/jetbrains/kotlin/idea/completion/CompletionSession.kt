@@ -284,8 +284,6 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 filterOutShadowed = false,
                 useReceiverType = runtimeReceiver?.type)
 
-        variants = variants.excludeNonInitializedVariable(nameExpression)
-
         val shadowedDeclarationsFilter = if (runtimeReceiver != null)
             ShadowedDeclarationsFilter(bindingContext, resolutionFacade, position, runtimeReceiver)
          else
@@ -314,19 +312,6 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         }
 
         return ReferenceVariants(variants, notImportedExtensions)
-    }
-
-    // filters out variable inside its initializer
-    private fun Collection<DeclarationDescriptor>.excludeNonInitializedVariable(expression: KtExpression): Collection<DeclarationDescriptor> {
-        for (element in expression.parentsWithSelf) {
-            val parent = element.getParent()
-            if (parent is KtVariableDeclaration && element == parent.getInitializer()) {
-                val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent]
-                return this.filter { it != descriptor }
-            }
-            if (element is KtDeclaration) break // we can use variable inside lambda or anonymous object located in its initializer
-        }
-        return this
     }
 
     protected fun getRuntimeReceiverTypeReferenceVariants(): Pair<ReferenceVariants, LookupElementFactory>? {

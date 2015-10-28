@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
@@ -85,6 +84,8 @@ class ReferenceVariantsHelper(
             variants = filterOutJavaGettersAndSetters(variants)
         }
 
+        variants = variants.excludeNonInitializedVariable(contextElement)
+
         return variants
     }
 
@@ -98,6 +99,19 @@ class ReferenceVariantsHelper(
         }
 
         return variants.filter { it !is FunctionDescriptor || it.original !in accessorMethodsToRemove }
+    }
+
+    // filters out variable inside its initializer
+    private fun Collection<DeclarationDescriptor>.excludeNonInitializedVariable(contextElement: PsiElement): Collection<DeclarationDescriptor> {
+        for (element in contextElement.parentsWithSelf) {
+            val parent = element.parent
+            if (parent is KtVariableDeclaration && element == parent.initializer) {
+                val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent]
+                return this.filter { it != descriptor }
+            }
+            if (element is KtDeclaration) break // we can use variable inside lambda or anonymous object located in its initializer
+        }
+        return this
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(
