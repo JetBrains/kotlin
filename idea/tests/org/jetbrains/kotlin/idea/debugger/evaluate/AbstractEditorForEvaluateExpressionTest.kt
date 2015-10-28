@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
-import kotlin.test.fail
 
 public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {

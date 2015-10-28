@@ -3,6 +3,7 @@ fun foo(o: Any) {
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: read, write
+// EXIST: { itemText: "read", attributes: "bold" }
+// EXIST: { itemText: "write", attributes: "bold" }
 
 // RUNTIME_TYPE: java.util.concurrent.locks.ReentrantReadWriteLock

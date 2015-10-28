@@ -33,6 +33,5 @@ public abstract class AbstractJvmWithLibBasicCompletionTest : JetFixtureCompleti
     }
 
     override fun getPlatform() = JvmPlatform
-
-    override fun complete(invocationCount: Int) = myFixture.complete(CompletionType.BASIC, invocationCount)
+    override fun defaultCompletionType() = CompletionType.BASIC
 }

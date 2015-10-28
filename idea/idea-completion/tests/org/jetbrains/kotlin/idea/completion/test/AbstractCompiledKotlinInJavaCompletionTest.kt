@@ -24,6 +24,5 @@ public abstract class AbstractCompiledKotlinInJavaCompletionTest : JetFixtureCom
     override fun getPlatform() = JvmPlatform
 
     override fun getProjectDescriptor() = JdkAndMockLibraryProjectDescriptor(COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib", false)
-
-    override fun complete(invocationCount: Int) = myFixture.complete(CompletionType.BASIC, invocationCount)
+    override fun defaultCompletionType() = CompletionType.BASIC
 }

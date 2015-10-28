@@ -4,26 +4,29 @@ fun main(args: Array<String>) {
 }
 
 open class Base {
-    fun funInBase() {}
+    fun funInBase(): Int = 0
 
-    open fun funWithOverride() { }
-    open fun funWithoutOverride() { }
+    open fun funWithOverride(): Int = 0
+    open fun funWithoutOverride(): Int = 0
 
-    fun funInBoth() { }
+    fun funInBoth(): Int = 0
 }
 
 open class Intermediate : Base() {
-    fun funInIntermediate(){}
+    fun funInIntermediate() = 0
 }
 
 class Derived : Intermediate() {
-    fun funInDerived() { }
+    fun funInDerived(): Int = 0
 
-    override fun funWithOverride() { }
+    override fun funWithOverride(): Int = 0
 
-    fun funInBoth(p: Int) { }
+    fun funInBoth(p: Int): Int = 0
+
+    fun funWrongType(): String = ""
 }
 
+// COMPLETION_TYPE: SMART
 // INVOCATION_COUNT: 1
 // EXIST: { itemText: "funInBase", tailText: "()", attributes: "bold" }
 // EXIST: { itemText: "funWithOverride", tailText: "()", attributes: "bold" }

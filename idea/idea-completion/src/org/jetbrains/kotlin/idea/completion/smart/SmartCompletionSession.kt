@@ -50,7 +50,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {
             SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter,
-                            prefixMatcher, originalSearchScope, toFromOriginalFileMapper, lookupElementFactory,
+                            prefixMatcher, originalSearchScope, toFromOriginalFileMapper,
                             callTypeAndReceiver, isJvmModule)
         }
     }
@@ -67,28 +67,30 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         if (expression != null) {
             addFunctionLiteralArgumentCompletions()
 
-            val (additionalItems, inheritanceSearcher) = smartCompletion!!.additionalItems()
+            val (additionalItems, inheritanceSearcher) = smartCompletion!!.additionalItems(lookupElementFactory)
             collector.addElements(additionalItems)
 
             if (nameExpression != null) {
                 val filter = smartCompletion!!.descriptorFilter
                 if (filter != null) {
                     val (imported, notImported) = referenceVariants!!
-                    imported.forEach { collector.addElements(filter(it)) }
-                    notImported.forEach { collector.addElements(filter(it), notImported = true) }
+                    imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
+                    notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
 
                     flushToResultSet()
 
                     if (shouldCompleteTopLevelCallablesFromIndex()) {
-                        getTopLevelCallables().forEach { collector.addElements(filter(it), notImported = true) }
+                        getTopLevelCallables().forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
                         flushToResultSet()
                     }
 
                     if (position.getContainingFile() is KtCodeFragment) {
-                        val variants = getRuntimeReceiverTypeReferenceVariants()
-                        if (variants != null) {
-                            variants.imported.forEach { collector.addElements(filter(it).map { it.withReceiverCast() }) }
-                            variants.notImportedExtensions.forEach { collector.addElements(filter(it).map { it.withReceiverCast() }, notImported = true) }
+                        val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
+                        if (variantsAndFactory != null) {
+                            val variants = variantsAndFactory.first
+                            val lookupElementFactory = variantsAndFactory.second
+                            variants.imported.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }) }
+                            variants.notImportedExtensions.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }, notImported = true) }
                             flushToResultSet()
                         }
                     }

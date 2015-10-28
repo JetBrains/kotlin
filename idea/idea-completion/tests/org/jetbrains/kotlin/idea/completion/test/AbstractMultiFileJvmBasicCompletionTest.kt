@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion.test
 
+import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -24,10 +25,11 @@ public abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletion
         configureByFile(getTestName(false) + ".kt", "")
         val shouldFail = testPath.contains("NoSpecifiedType")
         AstAccessControl.testWithControlledAccessToAst(shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
-            testCompletion(getFile().getText(), JvmPlatform, { invocationCount ->
+            testCompletion(getFile().getText(), JvmPlatform, { completionType, invocationCount ->
+                setType(completionType)
                 complete(invocationCount)
                 myItems
-            }, 0)
+            }, CompletionType.BASIC, 0)
         })
     }
 

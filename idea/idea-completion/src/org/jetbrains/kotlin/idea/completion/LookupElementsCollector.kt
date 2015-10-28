@@ -31,7 +31,6 @@ class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
-        private val lookupElementFactory: LookupElementFactory,
         private val sorter: CompletionSorter
 ) {
 
@@ -59,24 +58,28 @@ class LookupElementsCollector(
     }
 
     public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
+                                     lookupElementFactory: LookupElementFactory,
                                      notImported: Boolean = false,
                                      withReceiverCast: Boolean = false
     ) {
         for (descriptor in descriptors) {
-            addDescriptorElements(descriptor, notImported, withReceiverCast)
+            addDescriptorElements(descriptor, lookupElementFactory, notImported, withReceiverCast)
         }
     }
 
-    public fun addDescriptorElements(descriptor: DeclarationDescriptor, notImported: Boolean = false, withReceiverCast: Boolean = false) {
-        run {
-            var lookupElements = lookupElementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes = true)
+    public fun addDescriptorElements(
+            descriptor: DeclarationDescriptor,
+            lookupElementFactory: LookupElementFactory,
+            notImported: Boolean = false,
+            withReceiverCast: Boolean = false
+    ) {
+        var lookupElements = lookupElementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes = true)
 
-            if (withReceiverCast) {
-                lookupElements = lookupElements.map { it.withReceiverCast() }
-            }
-
-            addElements(lookupElements, notImported)
+        if (withReceiverCast) {
+            lookupElements = lookupElements.map { it.withReceiverCast() }
         }
+
+        addElements(lookupElements, notImported)
     }
 
     public fun addElement(element: LookupElement, notImported: Boolean = false) {

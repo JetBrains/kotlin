@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.completion.test;
 
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
@@ -37,8 +36,9 @@ public abstract class AbstractJvmSmartCompletionTest extends JetFixtureCompletio
         return JvmPlatform.INSTANCE$;
     }
 
+    @NotNull
     @Override
-    protected LookupElement[] complete(int invocationCount) {
-        return myFixture.complete(CompletionType.SMART, invocationCount);
+    protected CompletionType defaultCompletionType() {
+        return CompletionType.SMART;
     }
 }

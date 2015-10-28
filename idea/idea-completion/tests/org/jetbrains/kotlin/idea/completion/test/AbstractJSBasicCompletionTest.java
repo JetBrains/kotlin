@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -44,8 +45,9 @@ public abstract class AbstractJSBasicCompletionTest extends JetFixtureCompletion
         KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary();
     }
 
+    @NotNull
     @Override
-    protected LookupElement[] complete(int invocationCount) {
-        return myFixture.complete(CompletionType.BASIC, invocationCount);
+    protected CompletionType defaultCompletionType() {
+        return CompletionType.BASIC;
     }
 }

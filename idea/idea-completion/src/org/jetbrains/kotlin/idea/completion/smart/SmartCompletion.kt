@@ -56,7 +56,6 @@ class SmartCompletion(
         private val prefixMatcher: PrefixMatcher,
         private val inheritorSearchScope: GlobalSearchScope,
         private val toFromOriginalFileMapper: ToFromOriginalFileMapper,
-        private val lookupElementFactory: LookupElementFactory,
         private val callTypeAndReceiver: CallTypeAndReceiver<*, *>,
         private val isJvmModule: Boolean,
         private val forBasicCompletion: Boolean = false
@@ -83,11 +82,13 @@ class SmartCompletion(
         SmartCastCalculator(bindingContext, resolutionFacade.moduleDescriptor, expression, resolutionFacade)
     }
 
-    public val descriptorFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?
-            = { descriptor: DeclarationDescriptor -> filterDescriptor(descriptor).map { postProcess(it) } }.check { expectedInfos.isNotEmpty() }
+    public val descriptorFilter: ((DeclarationDescriptor, LookupElementFactory) -> Collection<LookupElement>)? =
+            { descriptor: DeclarationDescriptor, lookupElementFactory: LookupElementFactory ->
+                filterDescriptor(descriptor, lookupElementFactory).map { postProcess(it) }
+            }.check { expectedInfos.isNotEmpty() }
 
-    public fun additionalItems(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
-        val (items, inheritanceSearcher) = additionalItemsNoPostProcess()
+    public fun additionalItems(lookupElementFactory: LookupElementFactory): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
+        val (items, inheritanceSearcher) = additionalItemsNoPostProcess(lookupElementFactory)
         val postProcessedItems = items.map { postProcess(it) }
         //TODO: could not use "let" because of KT-8754
         val postProcessedSearcher = if (inheritanceSearcher != null)
@@ -152,7 +153,7 @@ class SmartCompletion(
         return@lazy emptySet()
     }
 
-    private fun filterDescriptor(descriptor: DeclarationDescriptor): Collection<LookupElement> {
+    private fun filterDescriptor(descriptor: DeclarationDescriptor, lookupElementFactory: LookupElementFactory): Collection<LookupElement> {
         val callType = callTypeAndReceiver.callType
         if (descriptor in descriptorsToSkip) return emptyList()
 
@@ -165,14 +166,14 @@ class SmartCompletion(
         }
 
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-            result.addCallableReferenceLookupElements(descriptor)
+            result.addCallableReferenceLookupElements(descriptor, lookupElementFactory)
         }
 
         return result
     }
 
-    private fun additionalItemsNoPostProcess(): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
-        val asTypePositionItems = buildForAsTypePosition()
+    private fun additionalItemsNoPostProcess(lookupElementFactory: LookupElementFactory): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
+        val asTypePositionItems = buildForAsTypePosition(lookupElementFactory)
         if (asTypePositionItems != null) {
             assert(expectedInfos.isEmpty())
             return Pair(asTypePositionItems, null)
@@ -320,7 +321,7 @@ class SmartCompletion(
         return null
     }
 
-    private fun MutableCollection<LookupElement>.addCallableReferenceLookupElements(descriptor: DeclarationDescriptor) {
+    private fun MutableCollection<LookupElement>.addCallableReferenceLookupElements(descriptor: DeclarationDescriptor, lookupElementFactory: LookupElementFactory) {
         if (callableTypeExpectedInfo.isEmpty()) return
 
         fun toLookupElement(descriptor: CallableDescriptor): LookupElement? {
@@ -367,7 +368,7 @@ class SmartCompletion(
         }
     }
 
-    private fun buildForAsTypePosition(): Collection<LookupElement>? {
+    private fun buildForAsTypePosition(lookupElementFactory: LookupElementFactory): Collection<LookupElement>? {
         val binaryExpression = ((expression.getParent() as? KtUserType)
                 ?.getParent() as? KtTypeReference)
                     ?.getParent() as? KtBinaryExpressionWithTypeRHS

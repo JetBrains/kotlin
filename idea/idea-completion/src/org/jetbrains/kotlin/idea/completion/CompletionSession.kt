@@ -143,7 +143,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
     protected val collector: LookupElementsCollector by lazy(LazyThreadSafetyMode.NONE) {
-        LookupElementsCollector(prefixMatcher, parameters, resultSet, lookupElementFactory, createSorter())
+        LookupElementsCollector(prefixMatcher, parameters, resultSet, createSorter())
     }
 
     protected val originalSearchScope: GlobalSearchScope = getResolveScope(parameters.getOriginalFile() as KtFile)
@@ -329,7 +329,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         return this
     }
 
-    protected fun getRuntimeReceiverTypeReferenceVariants(): ReferenceVariants? {
+    protected fun getRuntimeReceiverTypeReferenceVariants(): Pair<ReferenceVariants, LookupElementFactory>? {
         val explicitReceiver = callTypeAndReceiver.receiver as? KtExpression ?: return null
         val type = bindingContext.getType(explicitReceiver) ?: return null
         if (!TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)) return null
@@ -340,7 +340,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, ExpressionReceiver(explicitReceiver, runtimeType))
         val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants!!.imported)
         val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants!!.notImportedExtensions)
-        return ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
+
+        val referenceVariants = ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
+        return Pair(referenceVariants, lookupElementFactory.copy(receiverTypes = listOf(runtimeType)))
     }
 
     private fun <TDescriptor : DeclarationDescriptor> filterVariantsForRuntimeReceiverType(
@@ -383,7 +385,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(parameters, indicesHelper, prefixMatcher, resolutionFacade, kindFilter)
                 .collect(
-                        { descriptor -> collector.addDescriptorElements(descriptor, notImported = true) },
+                        { descriptor -> collector.addDescriptorElements(descriptor, lookupElementFactory, notImported = true) },
                         { javaClass -> collector.addElement(lookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true) }
                 )
     }

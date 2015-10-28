@@ -94,7 +94,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     private val smartCompletion = expression?.let {
         SmartCompletion(
                 it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, prefixMatcher,
-                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, lookupElementFactory, callTypeAndReceiver,
+                GlobalSearchScope.EMPTY_SCOPE, toFromOriginalFileMapper, callTypeAndReceiver,
                 isJvmModule, forBasicCompletion = true
         )
     }
@@ -197,7 +197,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
             if (smartCompletion != null) {
-                val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems()
+                val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(lookupElementFactory)
 
                 // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
                 for (item in additionalItems) {
@@ -211,8 +211,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
             referenceVariants?.let {
                 val (imported, notImported) = it
-                collector.addDescriptorElements(imported)
-                collector.addDescriptorElements(notImported, notImported = true)
+                collector.addDescriptorElements(imported, lookupElementFactory)
+                collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
             }
 
             completeKeywords()
@@ -243,10 +243,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 flushToResultSet()
 
                 if (position.getContainingFile() is KtCodeFragment) {
-                    val variants = getRuntimeReceiverTypeReferenceVariants()
-                    if (variants != null) {
-                        collector.addDescriptorElements(variants.imported, withReceiverCast = true)
-                        collector.addDescriptorElements(variants.notImportedExtensions, withReceiverCast = true, notImported = true)
+                    val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
+                    if (variantsAndFactory != null) {
+                        val variants = variantsAndFactory.first
+                        val lookupElementFactory = variantsAndFactory.second
+                        collector.addDescriptorElements(variants.imported, lookupElementFactory, withReceiverCast = true)
+                        collector.addDescriptorElements(variants.notImportedExtensions, lookupElementFactory, withReceiverCast = true, notImported = true)
                         flushToResultSet()
                     }
                 }
@@ -380,7 +382,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private fun completeNonImported() {
         if (shouldCompleteTopLevelCallablesFromIndex()) {
-            collector.addDescriptorElements(getTopLevelCallables(), notImported = true)
+            collector.addDescriptorElements(getTopLevelCallables(), lookupElementFactory, notImported = true)
         }
 
         val classKindFilter: ((ClassKind) -> Boolean)?
