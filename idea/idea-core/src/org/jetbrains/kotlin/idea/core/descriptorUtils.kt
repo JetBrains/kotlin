@@ -60,9 +60,8 @@ fun DeclarationDescriptorWithVisibility.isVisible(
     return false
 }
 
-private fun compareDescriptorsText(project: Project, d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
+private fun compareDescriptorsText(project: Project, d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {
     if (d1 == d2) return true
-    if (d1 == null || d2 == null) return false
     if (d1.name != d2.name) return false
 
     val renderedD1 = IdeDescriptorRenderers.SOURCE_CODE.render(d1)
@@ -77,7 +76,10 @@ private fun compareDescriptorsText(project: Project, d1: DeclarationDescriptor?,
 }
 
 public fun compareDescriptors(project: Project, currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
-    if (currentDescriptor?.name != originalDescriptor?.name) return false
+    if (currentDescriptor == originalDescriptor) return true
+    if (currentDescriptor == null || originalDescriptor == null) return false
+
+    if (currentDescriptor.name != originalDescriptor.name) return false
 
     if (originalDescriptor is SyntheticJavaPropertyDescriptor && currentDescriptor is SyntheticJavaPropertyDescriptor) {
         return compareDescriptors(project, currentDescriptor.getMethod, originalDescriptor.getMethod)
@@ -89,8 +91,8 @@ public fun compareDescriptors(project: Project, currentDescriptor: DeclarationDe
         val overriddenOriginalDescriptor = originalDescriptor.getOriginalTopmostOverriddenDescriptors()
         val overriddenCurrentDescriptor = currentDescriptor.getOriginalTopmostOverriddenDescriptors()
 
-        if (overriddenOriginalDescriptor.size() != overriddenCurrentDescriptor.size()) return false
-        return (overriddenCurrentDescriptor zip overriddenOriginalDescriptor ).all {
+        if (overriddenOriginalDescriptor.size != overriddenCurrentDescriptor.size) return false
+        return overriddenCurrentDescriptor.zip(overriddenOriginalDescriptor).all {
             compareDescriptorsText(project, it.first, it.second)
         }
     }
