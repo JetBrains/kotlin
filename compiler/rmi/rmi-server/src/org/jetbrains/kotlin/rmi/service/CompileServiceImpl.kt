@@ -32,8 +32,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 import kotlin.concurrent.read
-import kotlin.concurrent.write
 import kotlin.concurrent.schedule
+import kotlin.concurrent.write
 
 fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
@@ -49,9 +49,16 @@ class CompileServiceImpl(
         port: Int
 ) : CompileService {
 
+    private val classpathWatcher = LazyClasspathWatcher(selfCompilerId.compilerClasspath)
+
     // RMI-exposed API
 
-    override fun getCompilerId(): CompilerId = ifAlive { selfCompilerId }
+    override fun checkCompilerId(compilerId: CompilerId): Boolean =
+        ifAlive {
+            (selfCompilerId.compilerVersion.isEmpty() || selfCompilerId.compilerVersion == compilerId.compilerVersion) &&
+            (selfCompilerId.compilerClasspath.all { compilerId.compilerClasspath.contains(it) }) &&
+            !classpathWatcher.isChanged
+        }
 
     override fun getUsedMemory(): Long = ifAlive { usedMemory(withGC = true) }
 
@@ -146,6 +153,7 @@ class CompileServiceImpl(
                           operationsTracer: RemoteOperationsTracer?,
                           body: (PrintStream, Profiler) -> ExitCode): Int =
             ifAlive {
+
                 operationsTracer?.before("compile")
                 val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                 val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))

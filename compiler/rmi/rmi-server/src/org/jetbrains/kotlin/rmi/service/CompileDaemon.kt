@@ -116,14 +116,14 @@ public object CompileDaemon {
             //            if (System.getSecurityManager() == null)
             //                System.setSecurityManager (RMISecurityManager())
             //
-            //            setDaemonPpermissions(daemonOptions.port)
+            //            setDaemonPermissions(daemonOptions.port)
 
             val (registry, port) = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
             val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
             runFileDir.mkdirs()
             val runFile = File(runFileDir,
                                makeRunFilenameString(timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                                                     digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
+                                                     digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
                                                      port = port.toString()))
             try {
                 if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
