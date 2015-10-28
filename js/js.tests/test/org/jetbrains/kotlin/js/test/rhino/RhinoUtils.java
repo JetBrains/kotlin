@@ -109,6 +109,7 @@ public final class RhinoUtils {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+        context.setOptimizationLevel(-1);
         context.evaluateString(scope, result, inputFile, 1, null);
     }
 
