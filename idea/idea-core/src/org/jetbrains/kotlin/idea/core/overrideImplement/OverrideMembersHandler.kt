@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.core.overrideImplement
 import com.intellij.openapi.project.Project
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
 public class OverrideMembersHandler : OverrideImplementMembersHandler() {
@@ -29,6 +31,8 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                 && (member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE || member.kind == CallableMemberDescriptor.Kind.DELEGATION)) {
                 val overridden = member.overriddenDescriptors
                 if (overridden.any { it.modality == Modality.FINAL || Visibilities.isPrivate(it.visibility.normalize()) }) continue
+
+                if (DescriptorUtils.isInterface(descriptor) && overridden.any { descriptor.builtIns.isMemberOfAny(it) }) continue
 
                 class Data(
                         val realSuper: CallableMemberDescriptor,
