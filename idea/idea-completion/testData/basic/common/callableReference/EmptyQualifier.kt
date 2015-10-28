@@ -55,3 +55,6 @@ abstract class AbstractClass
 // ABSENT: class.java
 // EXIST: { itemText: "funWithFunctionParameter", tailText: "(p: () -> Unit) (<root>)", attributes: "" }
 // ABSENT: genericFun
+
+// ABSENT: "kotlin"
+// ABSENT: "java"

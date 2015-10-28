@@ -199,7 +199,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         completeKeywords()
 
         // getting root packages from scope is very slow so we do this in alternative way
-        if (callTypeAndReceiver.receiver == null && (descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
+        if (callTypeAndReceiver.receiver == null && callTypeAndReceiver.callType.descriptorKindFilter.kindMask.and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
             //TODO: move this code somewhere else?
             val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
                     .toMutableSet()
