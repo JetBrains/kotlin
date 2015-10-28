@@ -986,6 +986,10 @@ public abstract class KotlinBuiltIns {
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(type, getBooleanType());
     }
 
+    public boolean isMemberOfAny(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor.getContainingDeclaration() == getAny();
+    }
+
     public static boolean isString(@Nullable KotlinType type) {
         return type != null && isNotNullConstructedFromGivenClass(type, FQ_NAMES.string);
     }
