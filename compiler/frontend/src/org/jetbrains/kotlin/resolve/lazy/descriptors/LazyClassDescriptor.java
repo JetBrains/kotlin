@@ -490,20 +490,16 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         @Mutable
         public final Collection<KotlinType> trueSupertypes;
         @Mutable
-        public final Collection<KotlinType> cyclicSupertypes;
+        public final Collection<KotlinType> allSuperTypes;
 
-        private Supertypes(@Mutable @NotNull Collection<KotlinType> trueSupertypes) {
-            this(trueSupertypes, new ArrayList<KotlinType>(0));
-        }
-
-        private Supertypes(@Mutable @NotNull Collection<KotlinType> trueSupertypes, @Mutable @NotNull Collection<KotlinType> cyclicSupertypes) {
-            this.trueSupertypes = trueSupertypes;
-            this.cyclicSupertypes = cyclicSupertypes;
+        private Supertypes(@Mutable @NotNull Collection<KotlinType> allSuperTypes) {
+            this.trueSupertypes = allSuperTypes;
+            this.allSuperTypes = new ArrayList<KotlinType>(allSuperTypes);
         }
 
         @NotNull
         public Collection<KotlinType> getAllSupertypes() {
-            return CollectionsKt.plus(trueSupertypes, cyclicSupertypes);
+            return allSuperTypes;
         }
     }
 
@@ -537,7 +533,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 new Function1<Supertypes, Unit>() {
                     @Override
                     public Unit invoke(@NotNull Supertypes supertypes) {
-                        findAndDisconnectLoopsInTypeHierarchy(supertypes);
+                        findAndDisconnectLoopsInTypeHierarchy(supertypes.trueSupertypes);
                         return Unit.INSTANCE$;
                     }
                 }
@@ -585,12 +581,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             return supertypes.invoke().trueSupertypes;
         }
 
-        private void findAndDisconnectLoopsInTypeHierarchy(Supertypes supertypes) {
-            for (Iterator<KotlinType> iterator = supertypes.trueSupertypes.iterator(); iterator.hasNext(); ) {
+        private void findAndDisconnectLoopsInTypeHierarchy(@Mutable Collection<KotlinType> supertypes) {
+            for (Iterator<KotlinType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
                 KotlinType supertype = iterator.next();
                 if (isReachable(supertype.getConstructor(), this, new HashSet<TypeConstructor>())) {
                     iterator.remove();
-                    supertypes.cyclicSupertypes.add(supertype);
 
                     ClassifierDescriptor supertypeDescriptor = supertype.getConstructor().getDeclarationDescriptor();
                     if (supertypeDescriptor instanceof ClassDescriptor) {
