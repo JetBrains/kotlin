@@ -479,14 +479,6 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         return false;
     }
 
-    public static void generateModuleNameField(
-            @NotNull GenerationState state,
-            @NotNull ClassBuilder classBuilder
-    ) {
-        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.MODULE_NAME_FIELD,
-                              AsmTypes.JAVA_STRING_TYPE.getDescriptor(), null, state.getModuleName());
-    }
-
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {
         List<KtProperty> delegatedProperties = new ArrayList<KtProperty>();
         for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {

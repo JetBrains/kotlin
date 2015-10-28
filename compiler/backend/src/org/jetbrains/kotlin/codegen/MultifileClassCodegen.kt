@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.fileClasses.getFileClassType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.PackageParts
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
@@ -138,9 +137,7 @@ public class MultifileClassCodegen(
             tasks: Map<CallableMemberDescriptor, () -> Unit>,
             partFqNames: List<FqName>
     ) {
-        MemberCodegen.generateModuleNameField(state, classBuilder)
-
-        for (member in tasks.keySet().sortedWith(MemberComparator.INSTANCE)) {
+        for (member in tasks.keys.sortedWith(MemberComparator.INSTANCE)) {
             tasks[member]!!()
         }
 
