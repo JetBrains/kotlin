@@ -1,13 +1,13 @@
-fun <E : String?, T : ((CharSequence).() -> Unit)?> foo(x: E, y: T) {
+fun <E : String?, T : ((CharSequence) -> Unit)?> foo(x: E, y: T) {
     if (x != null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.<!UNSAFE_CALL, INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION!>y<!>()
+        <!UNSAFE_CALL!>y<!>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     }
 
     if (y != null) {
-        x<!UNSAFE_CALL!>.<!><!INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION, DEBUG_INFO_SMARTCAST!>y<!>()
+        <!DEBUG_INFO_SMARTCAST!>y<!>(<!TYPE_MISMATCH!>x<!>)
     }
 
     if (x != null && y != null) {
-        <!DEBUG_INFO_SMARTCAST!>x<!>.<!INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION, DEBUG_INFO_SMARTCAST!>y<!>()
+        <!DEBUG_INFO_SMARTCAST!>y<!>(<!DEBUG_INFO_SMARTCAST!>x<!>)
     }
 }

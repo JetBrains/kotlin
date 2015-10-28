@@ -1,0 +1,17 @@
+package
+
+public val </*0*/ T : (kotlin.Int) -> kotlin.String> bar: (kotlin.Int) -> kotlin.String
+public fun </*0*/ T : (kotlin.Int) -> kotlin.String> foo(): kotlin.Unit
+
+public final class A</*0*/ T : () -> kotlin.Unit, /*1*/ U : (kotlin.Int) -> kotlin.Double, /*2*/ V : (T, U) -> U> {
+    public constructor A</*0*/ T : () -> kotlin.Unit, /*1*/ U : (kotlin.Int) -> kotlin.Double, /*2*/ V : (T, U) -> U>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B</*0*/ T, /*1*/ U : (T) -> kotlin.Unit> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
