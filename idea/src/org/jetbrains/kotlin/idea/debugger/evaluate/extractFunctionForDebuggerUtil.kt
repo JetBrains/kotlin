@@ -84,7 +84,8 @@ fun getFunctionForExtractedFragment(
         val options = ExtractionOptions(inferUnitTypeForUnusedValues = false,
                                         enableListBoxing = true,
                                         allowSpecialClassNames = true,
-                                        captureLocalFunctions = true)
+                                        captureLocalFunctions = true,
+                                        canWrapInWith = true)
         val analysisResult = ExtractionData(tmpFile, newDebugExpressions.toRange(), targetSibling, null, options).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
             throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult, tmpFile))
