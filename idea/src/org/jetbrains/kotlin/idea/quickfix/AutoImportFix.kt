@@ -33,16 +33,18 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.actions.*
+import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
+import org.jetbrains.kotlin.idea.actions.createGroupedImportsAction
+import org.jetbrains.kotlin.idea.actions.createSingleImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
@@ -166,7 +168,7 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T, val di
             }
         }
 
-        result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == nameStr }, callTypeAndReceiver, element, bindingContext))
+        result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, element, bindingContext) { it == nameStr })
 
         return if (result.size > 1)
             reduceCandidatesBasedOnDependencyRuleViolation(result, file)

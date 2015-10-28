@@ -90,13 +90,22 @@ public class KotlinIndicesHelper(
     }
 
     public fun getCallableTopLevelExtensions(
-            nameFilter: (String) -> Boolean,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
             position: KtExpression,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
+            nameFilter: (String) -> Boolean
     ): Collection<CallableDescriptor> {
         val receiverTypes = callTypeAndReceiver.receiverTypes(bindingContext, position, moduleDescriptor, resolutionFacade, predictableSmartCastsOnly = false)
-        if (receiverTypes == null || receiverTypes.isEmpty()) return emptyList()
+                            ?: return emptyList()
+        return getCallableTopLevelExtensions(callTypeAndReceiver, receiverTypes, nameFilter)
+    }
+
+    public fun getCallableTopLevelExtensions(
+            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+            receiverTypes: Collection<KotlinType>,
+            nameFilter: (String) -> Boolean
+    ): Collection<CallableDescriptor> {
+        if (receiverTypes.isEmpty()) return emptyList()
 
         val receiverTypeNames = HashSet<String>()
         receiverTypes.forEach { receiverTypeNames.addTypeNames(it) }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -43,8 +42,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProper
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -59,10 +56,10 @@ class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean,
             filterOutJavaGettersAndSetters: Boolean = false,
             filterOutShadowed: Boolean = true,
-            useRuntimeReceiverType: Boolean = false
+            useReceiverType: KotlinType? = null
     ): Collection<DeclarationDescriptor>
             = getReferenceVariants(expression, CallTypeAndReceiver.detect(expression),
-                                   kindFilter, nameFilter, filterOutJavaGettersAndSetters, filterOutShadowed, useRuntimeReceiverType)
+                                   kindFilter, nameFilter, filterOutJavaGettersAndSetters, filterOutShadowed, useReceiverType)
 
     fun getReferenceVariants(
             contextElement: PsiElement,
@@ -71,10 +68,10 @@ class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean,
             filterOutJavaGettersAndSetters: Boolean = false,
             filterOutShadowed: Boolean = true,
-            useRuntimeReceiverType: Boolean = false
+            useReceiverType: KotlinType? = null
     ): Collection<DeclarationDescriptor> {
         var variants: Collection<DeclarationDescriptor>
-                = getReferenceVariantsNoVisibilityFilter(contextElement, kindFilter, nameFilter, callTypeAndReceiver, useRuntimeReceiverType)
+                = getReferenceVariantsNoVisibilityFilter(contextElement, kindFilter, nameFilter, callTypeAndReceiver, useReceiverType)
                 .filter { !it.isAnnotatedAsHidden() && visibilityFilter(it) }
 
         if (filterOutShadowed) {
@@ -108,7 +105,7 @@ class ReferenceVariantsHelper(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
-            useRuntimeReceiverType: Boolean
+            useReceiverType: KotlinType?
     ): Collection<DeclarationDescriptor> {
         val callType = callTypeAndReceiver.callType
 
@@ -164,19 +161,26 @@ class ReferenceVariantsHelper(
                 descriptors.addAll(qualifier.scope.getDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
             }
 
-            val expressionType = if (useRuntimeReceiverType)
-                                        getQualifierRuntimeType(receiverExpression)
-                                    else
-                                        bindingContext.getType(receiverExpression)
-            if (expressionType != null && !expressionType.isError()) {
-                val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
-                val explicitReceiverTypes = smartCastManager
-                        .getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, containingDeclaration, dataFlowInfo)
-
-                descriptors.processAll(implicitReceiverTypes, explicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
+            val explicitReceiverTypes = if (useReceiverType != null) {
+                listOf(useReceiverType)
             }
+            else {
+                val expressionType = bindingContext.getType(receiverExpression)
+                if (expressionType != null && !expressionType.isError()) {
+                    val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
+                    smartCastManager.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, containingDeclaration, dataFlowInfo)
+
+                }
+                else {
+                    emptyList()
+                }
+            }
+
+            descriptors.processAll(implicitReceiverTypes, explicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
         }
         else {
+            assert(useReceiverType == null) { "'useReceiverType' parameter is not supported for implicit receiver" }
+
             descriptors.processAll(implicitReceiverTypes, implicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
 
             // add non-instance members
@@ -310,6 +314,7 @@ class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean
     ) {
         if (kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) return
+        if (receiverTypes.isEmpty()) return
 
         fun process(extension: CallableDescriptor) {
             if (kindFilter.accepts(extension) && nameFilter(extension.name)) {
@@ -333,16 +338,5 @@ class ReferenceVariantsHelper(
                 process(extension)
             }
         }
-    }
-
-    private fun getQualifierRuntimeType(receiver: KtExpression): KotlinType? {
-        val type = bindingContext.getType(receiver)
-        if (type != null && TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)) {
-            val evaluator = receiver.getContainingFile().getCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR)
-            val runtimeType = evaluator?.invoke(receiver)
-            if (runtimeType == type) return null
-            return runtimeType
-        }
-        return type
     }
 }

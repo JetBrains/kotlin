@@ -49,6 +49,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -268,14 +270,17 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
 
     protected val referenceVariants: ReferenceVariants? by lazy {
-        if (descriptorKindFilter == null) return@lazy null
+        descriptorKindFilter?.let { collectReferenceVariants(it) }
+    }
 
+    private fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, runtimeReceiverType: KotlinType? = null): ReferenceVariants {
         var variants = referenceVariantsHelper.getReferenceVariants(
                 nameExpression!!,
-                descriptorKindFilter!!,
+                descriptorKindFilter,
                 descriptorNameFilter,
                 filterOutJavaGettersAndSetters = false,
-                filterOutShadowed = false)
+                filterOutShadowed = false,
+                useReceiverType = runtimeReceiverType)
 
         variants = variants.excludeNonInitializedVariable(nameExpression)
 
@@ -283,7 +288,12 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
         var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
         if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
-            val extensions = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, callTypeAndReceiver, expression!!, bindingContext)
+            val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
+            val extensions = if (runtimeReceiverType != null)
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiverType), nameFilter)
+            else
+                indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression!!, bindingContext, nameFilter)
+
             val pair = extensions.partition { isImportableDescriptorImported(it) }
             variants += pair.first
             notImportedExtensions = pair.second
@@ -298,7 +308,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             variants = referenceVariantsHelper.filterOutJavaGettersAndSetters(variants)
         }
 
-        ReferenceVariants(variants, notImportedExtensions)
+        return ReferenceVariants(variants, notImportedExtensions)
     }
 
     // filters out variable inside its initializer
@@ -315,14 +325,15 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected fun getRuntimeReceiverTypeReferenceVariants(): Collection<DeclarationDescriptor> {
-        val descriptors = referenceVariantsHelper.getReferenceVariants(
-                nameExpression!!,
-                descriptorKindFilter!!,
-                descriptorNameFilter,
-                useRuntimeReceiverType = true,
-                filterOutJavaGettersAndSetters = configuration.filterOutJavaGettersAndSetters
-        ).excludeNonInitializedVariable(nameExpression)
-        return descriptors.filter { descriptor ->
+        val explicitReceiver = callTypeAndReceiver.receiver as? KtExpression ?: return emptyList()
+        val type = bindingContext.getType(explicitReceiver) ?: return emptyList()
+        if (!TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)) return emptyList()
+        val evaluator = file.getCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) ?: return emptyList()
+        val runtimeType = evaluator(explicitReceiver)
+        if (runtimeType == null || runtimeType == type) return emptyList()
+
+        val (variants, notImportedExtensions/*TODO: use them*/) = collectReferenceVariants(descriptorKindFilter!!, runtimeType)
+        return variants.filter { descriptor ->
             referenceVariants!!.imported.none { compareDescriptors(project, it, descriptor) }
         }
     }
