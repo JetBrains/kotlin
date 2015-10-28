@@ -86,11 +86,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         filter
     }
 
-    private val parameterNameAndTypeCompletion = if (shouldCompleteParameterNameAndType())
-        ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
-    else
-        null
-
     private val smartCompletion = expression?.let {
         SmartCompletion(
                 it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter, prefixMatcher,
@@ -165,97 +160,107 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
         }
 
-        if (completionKind == CompletionKind.SUPER_QUALIFIER) {
-            completeSuperQualifier()
-            return
-        }
+        when (completionKind) {
+            CompletionKind.SUPER_QUALIFIER -> completeSuperQualifier()
 
-        if (completionKind == CompletionKind.TOP_LEVEL_CLASS_NAME) {
-            completeTopLevelClassName()
-            return
-        }
+            CompletionKind.TOP_LEVEL_CLASS_NAME -> completeTopLevelClassName()
 
-        // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
-        if (parameterNameAndTypeCompletion != null) {
-            val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
-                override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
-            })
-            collector.restartCompletionOnPrefixChange(prefixPattern)
+            CompletionKind.NAMED_ARGUMENTS_ONLY -> NamedArgumentCompletion.complete(collector, expectedInfos)
 
-            collector.addLookupElementPostProcessor { lookupElement ->
-                lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
-                lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
-                lookupElement
+            CompletionKind.KEYWORDS_ONLY -> completeKeywords()
+
+            CompletionKind.PARAMETER_NAME -> {
+                completeKeywords()
+                completeParameterNameAndType()
             }
 
-            parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilter)
-            flushToResultSet()
-
-            parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilter)
-            flushToResultSet()
+            CompletionKind.ALL -> completeAll()
         }
+    }
 
-        if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
-            if (smartCompletion != null) {
-                val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(lookupElementFactory)
+    private fun completeAll() {
+        if (smartCompletion != null) {
+            val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(lookupElementFactory)
 
-                // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
-                for (item in additionalItems) {
-                    if (item.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == null) {
-                        item.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, SmartCompletionItemPriority.DEFAULT)
-                    }
+            // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
+            for (item in additionalItems) {
+                if (item.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == null) {
+                    item.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, SmartCompletionItemPriority.DEFAULT)
                 }
-
-                collector.addElements(additionalItems)
             }
 
-            referenceVariants?.let {
-                val (imported, notImported) = it
-                collector.addDescriptorElements(imported, lookupElementFactory)
-                collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
-            }
+            collector.addElements(additionalItems)
+        }
 
-            completeKeywords()
+        val (imported, notImported) = referenceVariants!!
+        collector.addDescriptorElements(imported, lookupElementFactory)
+        collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
 
-            // getting root packages from scope is very slow so we do this in alternative way
-            if (callTypeAndReceiver.receiver == null && (descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
-                //TODO: move this code somewhere else?
-                val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
-                        .toMutableSet()
+        completeKeywords()
 
-                if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as KtFile)) {
-                    JavaPsiFacade.getInstance(project).findPackage("")?.getSubPackages(originalSearchScope)?.forEach { psiPackage ->
-                        val name = psiPackage.getName()
-                        if (Name.isValidIdentifier(name!!)) {
-                            packageNames.add(FqName(name))
-                        }
-                    }
-                }
+        // getting root packages from scope is very slow so we do this in alternative way
+        if (callTypeAndReceiver.receiver == null && (descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
+            //TODO: move this code somewhere else?
+            val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
+                    .toMutableSet()
 
-                packageNames.forEach { collector.addElement(lookupElementFactory.createLookupElementForPackage(it)) }
-            }
-
-            flushToResultSet()
-
-            if (completionKind != CompletionKind.KEYWORDS_ONLY) {
-                completeNonImported()
-
-                flushToResultSet()
-
-                if (position.getContainingFile() is KtCodeFragment) {
-                    val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
-                    if (variantsAndFactory != null) {
-                        val variants = variantsAndFactory.first
-                        val lookupElementFactory = variantsAndFactory.second
-                        collector.addDescriptorElements(variants.imported, lookupElementFactory, withReceiverCast = true)
-                        collector.addDescriptorElements(variants.notImportedExtensions, lookupElementFactory, withReceiverCast = true, notImported = true)
-                        flushToResultSet()
+            if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as KtFile)) {
+                JavaPsiFacade.getInstance(project).findPackage("")?.getSubPackages(originalSearchScope)?.forEach { psiPackage ->
+                    val name = psiPackage.getName()
+                    if (Name.isValidIdentifier(name!!)) {
+                        packageNames.add(FqName(name))
                     }
                 }
             }
+
+            packageNames.forEach { collector.addElement(lookupElementFactory.createLookupElementForPackage(it)) }
         }
+
+        flushToResultSet()
 
         NamedArgumentCompletion.complete(collector, expectedInfos)
+        flushToResultSet()
+
+        if (completionKind != CompletionKind.KEYWORDS_ONLY) {
+            completeNonImported()
+            flushToResultSet()
+        }
+
+        if (completionKind == CompletionKind.ALL && position.getContainingFile() is KtCodeFragment) {
+            val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
+            if (variantsAndFactory != null) {
+                val variants = variantsAndFactory.first
+                val lookupElementFactory = variantsAndFactory.second
+                collector.addDescriptorElements(variants.imported, lookupElementFactory, withReceiverCast = true)
+                collector.addDescriptorElements(variants.notImportedExtensions, lookupElementFactory, withReceiverCast = true, notImported = true)
+                flushToResultSet()
+            }
+        }
+    }
+
+    private fun completeParameterNameAndType() {
+        if (!shouldCompleteParameterNameAndType()) return
+        val parameterNameAndTypeCompletion = ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
+
+        // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
+        val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
+            override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
+        })
+        collector.restartCompletionOnPrefixChange(prefixPattern)
+
+        collector.addLookupElementPostProcessor { lookupElement ->
+            lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+            lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
+            lookupElement
+        }
+
+        parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilter)
+        flushToResultSet()
+
+        parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilter)
+        flushToResultSet()
+
+        parameterNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper)
     }
 
     private fun completeKeywords() {
@@ -399,8 +404,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 collector.advertiseSecondCompletion()
             }
         }
-
-        parameterNameAndTypeCompletion?.addFromAllClasses(parameters, indicesHelper)
     }
 
     private fun completeSuperQualifier() {
