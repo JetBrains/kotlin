@@ -31,3 +31,6 @@ fun f() {
 // EXIST: "and"
 
 // ABSENT: "ttt"
+
+// ABSENT: "kotlin"
+// ABSENT: "java"
