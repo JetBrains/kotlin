@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
@@ -29,7 +26,6 @@ import org.jetbrains.kotlin.load.java.lazy.resolveKotlinBinaryClass
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -103,11 +99,21 @@ public class LazyJavaPackageScope(
         }
     }
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-            if (SpecialNames.isSafeIdentifier(name)) classes(name) else null
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        if (!SpecialNames.isSafeIdentifier(name)) return null
 
-    override fun getProperties(name: Name, location: LookupLocation) = deserializedPackageScope().getProperties(name, location)
-    override fun getFunctions(name: Name, location: LookupLocation) = deserializedPackageScope().getFunctions(name, location) + super.getFunctions(name, location)
+        recordLookup(name, location)
+        return classes(name)
+    }
+
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+        recordLookup(name, location)
+        return deserializedPackageScope().getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+    }
+    override fun getFunctions(name: Name, location: LookupLocation): List<FunctionDescriptor> {
+        recordLookup(name, location)
+        return deserializedPackageScope().getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+    }
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                      kindFilter: DescriptorKindFilter,

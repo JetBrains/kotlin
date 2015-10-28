@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -213,7 +214,10 @@ public abstract class LazyJavaScope(
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation) = functions(name)
+    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        recordLookup(name, location)
+        return functions(name)
+    }
 
     protected open fun getFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = memberIndex().getMethodNames(nameFilter)
@@ -294,7 +298,10 @@ public abstract class LazyJavaScope(
         return propertyType
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = properties(name)
+    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+        recordLookup(name, location)
+        return properties(name)
+    }
 
     override fun getOwnDeclaredDescriptors() = getDescriptors()
 
@@ -356,5 +363,9 @@ public abstract class LazyJavaScope(
 
         p.popIndent()
         p.println("}")
+    }
+
+    protected fun recordLookup(name: Name, from: LookupLocation) {
+        c.components.lookupTracker.record(from, this, name)
     }
 }
