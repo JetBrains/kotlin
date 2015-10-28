@@ -2374,12 +2374,6 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
-        @TestMetadata("TopLevelFromStandardLibraryWithoutParam.kt")
-        public void testTopLevelFromStandardLibraryWithoutParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/TopLevelFromStandardLibraryWithoutParam.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("idea/idea-completion/testData/basic/java/boldOrGrayed")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
