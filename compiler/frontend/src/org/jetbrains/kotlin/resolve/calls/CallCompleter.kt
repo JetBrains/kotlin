@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.filterConstraintsOut
@@ -149,7 +148,7 @@ public class CallCompleter(
 
         val returnType = getCandidateDescriptor().getReturnType()
         if (returnType != null) {
-            getConstraintSystem()!!.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION.position())
+            constraintSystem!!.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION.position())
         }
 
         val constraintSystemCompleter = trace[CONSTRAINT_SYSTEM_COMPLETER, getCall().getCalleeExpression()]
@@ -172,10 +171,9 @@ public class CallCompleter(
             }
         }
 
-        val constraintSystem = getConstraintSystem() as ConstraintSystemImpl
-        constraintSystem.fixVariables()
+        constraintSystem!!.fixVariables()
 
-        setResultingSubstitutor(getConstraintSystem()!!.getResultingSubstitutor())
+        setResultingSubstitutor(constraintSystem!!.getResultingSubstitutor())
     }
 
     private fun <D : CallableDescriptor> MutableResolvedCall<D>.updateResolutionStatusFromConstraintSystem(

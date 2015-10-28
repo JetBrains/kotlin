@@ -207,7 +207,7 @@ public object Renderers {
     public fun renderParameterConstraintError(
             inferenceErrorData: InferenceErrorData, renderer: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        val constraintErrors = (inferenceErrorData.constraintSystem as ConstraintSystemImpl).constraintErrors
+        val constraintErrors = inferenceErrorData.constraintSystem.getStatus().constraintErrors
         val errorPositions = constraintErrors.filter { it is ParameterConstraintError }.map { it.constraintPosition }
         return renderer.table(
                 TabledDescriptorRenderer
@@ -308,8 +308,8 @@ public object Renderers {
     public fun renderCannotCaptureTypeParameterError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        val constraintSystem = inferenceErrorData.constraintSystem as ConstraintSystemImpl
-        val errors = constraintSystem.constraintErrors
+        val constraintSystem = inferenceErrorData.constraintSystem
+        val errors = constraintSystem.getStatus().constraintErrors
         val typeParameterWithCapturedConstraint = (errors.firstOrNull { it is CannotCapture } as? CannotCapture)?.typeVariable
         if (typeParameterWithCapturedConstraint == null) {
             LOG.error(renderDebugMessage("An error 'cannot capture type parameter' is not found in errors", inferenceErrorData))

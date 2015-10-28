@@ -63,8 +63,6 @@ public class ConstraintSystemImpl : ConstraintSystem {
     private val usedInBounds = HashMap<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>()
 
     private val errors = ArrayList<ConstraintError>()
-    public val constraintErrors: List<ConstraintError>
-        get() = errors
 
     private val initialConstraints = ArrayList<Constraint>()
 
@@ -106,6 +104,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasTypeParameterWithUnsatisfiedOnlyInputTypesError() =
                 localTypeParameterBounds.values.any { it.typeVariable.hasOnlyInputTypesAnnotation() && it.value == null }
+
+        override val constraintErrors: List<ConstraintError>
+            get() = errors
     }
 
     private fun getParameterToInferredValueMap(
@@ -171,10 +172,10 @@ public class ConstraintSystemImpl : ConstraintSystem {
         type -> type.getConstructor().getDeclarationDescriptor() in getAllTypeVariables()
     }
 
-    fun KotlinType.getNestedTypeVariables(original: Boolean = true): List<TypeParameterDescriptor> {
-        return getNestedArguments().map { typeProjection ->
-            typeProjection.getType().getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
-        }.filterNotNull().filter { if (original) it in originalToVariables.keySet() else it in getAllTypeVariables() }
+    override fun getNestedTypeVariables(type: KotlinType, original: Boolean): List<TypeParameterDescriptor> {
+        return type.getNestedArguments().map { typeProjection ->
+            typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
+        }.filterNotNull().filter { if (original) it in originalToVariables.keys else it in getAllTypeVariables() }
     }
 
     override fun copy(filterConstraintPosition: (ConstraintPosition) -> Boolean): ConstraintSystem {
@@ -349,7 +350,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         typeBounds.addBound(bound)
 
         if (!bound.isProper) {
-            for (dependentTypeVariable in bound.constrainingType.getNestedTypeVariables(original = false)) {
+            for (dependentTypeVariable in getNestedTypeVariables(bound.constrainingType, original = false)) {
                 val dependentBounds = usedInBounds.getOrPut(dependentTypeVariable) { arrayListOf() }
                 dependentBounds.add(bound)
             }
@@ -489,7 +490,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (typeBounds.isFixed) return
         typeBounds.setFixed()
 
-        val nestedTypeVariables = typeBounds.bounds.flatMap { it.constrainingType.getNestedTypeVariables(original = false) }
+        val nestedTypeVariables = typeBounds.bounds.flatMap { getNestedTypeVariables(it.constrainingType, original = false) }
         nestedTypeVariables.forEach { fixVariable(it) }
 
         val value = typeBounds.value ?: return
@@ -497,7 +498,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         addBound(typeVariable, value, TypeBounds.BoundKind.EXACT_BOUND, ConstraintContext(ConstraintPositionKind.FROM_COMPLETER.position()))
     }
 
-    fun fixVariables() {
+    override fun fixVariables() {
         // todo variables should be fixed in the right order
         val (external, functionTypeParameters) = getAllTypeVariables().partition { externalTypeParameters.contains(it) }
         external.forEach { fixVariable(it) }

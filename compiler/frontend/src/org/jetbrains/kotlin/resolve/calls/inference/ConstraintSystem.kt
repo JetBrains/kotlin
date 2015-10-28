@@ -88,6 +88,10 @@ public interface ConstraintSystem {
     public fun getPartialSubstitutor(): TypeSubstitutor
 
     public fun copy(filterConstraintPosition: (ConstraintPosition) -> Boolean = { true }): ConstraintSystem
+
+    public fun fixVariables()
+
+    public fun getNestedTypeVariables(type: KotlinType, original: Boolean): List<TypeParameterDescriptor>
 }
 
 fun ConstraintSystem.filterConstraintsOut(excludePositionKind: ConstraintPositionKind): ConstraintSystem {

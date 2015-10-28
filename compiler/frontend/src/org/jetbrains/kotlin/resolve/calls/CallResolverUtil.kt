@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
@@ -70,11 +69,8 @@ private fun getReturnTypeForCallable(type: KotlinType) =
         type.getArguments().last().getType()
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
-    val returnType = getReturnType() ?: return false
-
-    val nestedTypeVariables = with (constraintSystem as ConstraintSystemImpl) {
-        returnType.getNestedTypeVariables()
-    }
+    val returnType = returnType ?: return false
+    val nestedTypeVariables = constraintSystem.getNestedTypeVariables(returnType, original = true)
     return nestedTypeVariables.any { constraintSystem.getTypeBounds(it).value == null }
 }
 

@@ -148,14 +148,13 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val resultingCall = resolutionResults.resultingCall
         if (resultingCall.isCompleted) return false
 
-        val argumentConstraintSystem = resultingCall.constraintSystem as ConstraintSystemImpl? ?: return false
+        val argumentConstraintSystem = resultingCall.constraintSystem ?: return false
 
         val candidateDescriptor = resultingCall.candidateDescriptor
         val returnType = candidateDescriptor.returnType ?: return false
 
-        val nestedTypeVariables = with (argumentConstraintSystem) {
-            returnType.getNestedTypeVariables()
-        }
+        val nestedTypeVariables = argumentConstraintSystem.getNestedTypeVariables(returnType, original = true)
+
         // we add an additional type variable only if no information is inferred for it.
         // otherwise we add currently inferred return type as before
         if (nestedTypeVariables.any { argumentConstraintSystem.getTypeBounds(it).bounds.isNotEmpty() }) return false

@@ -21,12 +21,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.Constra
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
+import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
@@ -57,7 +58,8 @@ fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
         addBound(getMyTypeVariable(constrainingType)!!, typeVariable.correspondingType, newBound.kind.reverse(), context)
         return
     }
-    constrainingType.getNestedTypeVariables().forEach {
+
+    getNestedTypeVariables(constrainingType, original = true).forEach {
         val boundsForNestedVariable = getTypeBounds(it).bounds
         for (index in boundsForNestedVariable.indices) {
             generateNewBound(newBound, boundsForNestedVariable[index])
@@ -98,7 +100,7 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
 
     fun addNewBound(newConstrainingType: KotlinType, newBoundKind: BoundKind) {
         // We don't generate new recursive constraints
-        val nestedTypeVariables = newConstrainingType.getNestedTypeVariables(original = false)
+        val nestedTypeVariables = getNestedTypeVariables(newConstrainingType, original = false)
         if (nestedTypeVariables.contains(bound.typeVariable)) return
 
         // We don't generate constraint if a type variable was substituted twice
