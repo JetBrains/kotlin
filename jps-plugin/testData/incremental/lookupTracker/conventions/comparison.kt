@@ -6,13 +6,13 @@ package foo.bar
     na /*c:foo.bar.A(equals)*/== a
     na /*c:foo.bar.A(equals)*/== null
 
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/> b
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/< b
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/>= b
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/<= b
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/> b
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/< b
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/>= b
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/<= b
 
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/> c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/< c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/>= c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/<= c
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/> c
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/< c
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/>= c
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo)*/<= c
 }

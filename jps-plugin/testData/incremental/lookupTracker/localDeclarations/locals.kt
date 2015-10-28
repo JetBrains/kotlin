@@ -31,7 +31,7 @@ import bar.*
     }
 
     localFun()
-    1./*p:local.declarations p:bar*/localExtFun()
+    1./*p:local.declarations p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/localExtFun()
 
     val c = LocalC()
     c.a
