@@ -27,12 +27,10 @@ import java.io.PrintStream
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 import kotlin.concurrent.read
-import kotlin.concurrent.schedule
 import kotlin.concurrent.write
 
 fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
@@ -46,7 +44,8 @@ class CompileServiceImpl(
         val compiler: CompilerSelector,
         val selfCompilerId: CompilerId,
         val daemonOptions: DaemonOptions,
-        port: Int
+        port: Int,
+        val onShutdown: () -> Unit
 ) : CompileService {
 
     private val classpathWatcher = LazyClasspathWatcher(selfCompilerId.compilerClasspath)
@@ -68,14 +67,7 @@ class CompileServiceImpl(
             alive = false
             UnicastRemoteObject.unexportObject(this, true)
             log.info("Shutdown complete")
-            if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE) {
-                // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
-                // the watcher is a daemon thread, meaning it should not prevent JVM to exit normally
-                Timer(true).schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
-                    log.info("force JVM shutdown")
-                    System.exit(0)
-                }
-            }
+            onShutdown()
         }
     }
 

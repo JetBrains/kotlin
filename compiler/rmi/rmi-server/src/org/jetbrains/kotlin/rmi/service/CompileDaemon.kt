@@ -32,6 +32,7 @@ import java.util.jar.Manifest
 import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
+import kotlin.concurrent.schedule
 import kotlin.concurrent.timer
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
@@ -140,7 +141,17 @@ public object CompileDaemon {
                     CompileService.TargetPlatform.JS -> js
                 }
             }
-            val compilerService = CompileServiceImpl(registry, compilerSelector, compilerId, daemonOptions, port)
+            val compilerService = CompileServiceImpl(registry, compilerSelector, compilerId, daemonOptions, port,
+                                                     onShutdown = {
+                                                         if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE) {
+                                                             // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
+                                                             // the watcher is a daemon thread, meaning it should not prevent JVM to exit normally
+                                                             Timer(true).schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
+                                                                 log.info("force JVM shutdown")
+                                                                 System.exit(0)
+                                                             }
+                                                         }
+                                                     })
 
             if (daemonOptions.runFilesPath.isNotEmpty())
                 println(daemonOptions.runFilesPath)
@@ -169,7 +180,7 @@ public object CompileDaemon {
             }
 
             // stopping daemon if any shutdown condition is met
-            timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
+            timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS, daemon = true) {
                 try {
                     val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
                     if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
