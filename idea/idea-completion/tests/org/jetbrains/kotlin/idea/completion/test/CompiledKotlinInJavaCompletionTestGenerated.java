@@ -35,6 +35,12 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/injava"), Pattern.compile("^(.+)\\.java$"), true);
     }
 
+    @TestMetadata("AnnotationParameter.java")
+    public void testAnnotationParameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/AnnotationParameter.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("Class.java")
     public void testClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/injava/Class.java");

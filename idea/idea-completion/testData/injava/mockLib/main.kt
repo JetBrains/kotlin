@@ -53,3 +53,5 @@ class F() {
 interface MyInterface {
     fun foo() = 1
 }
+
+annotation class Anno(val c: Int = 3, val d: String)
