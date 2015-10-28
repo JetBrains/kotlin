@@ -14,137 +14,62 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.descriptors.impl;
+package org.jetbrains.kotlin.descriptors.impl
 
-import kotlin.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
-import java.util.Collection;
+class ValueParameterDescriptorImpl(
+        containingDeclaration: CallableDescriptor,
+        original: ValueParameterDescriptor?,
+        override val index: Int,
+        annotations: Annotations,
+        name: Name,
+        outType: KotlinType,
+        private val declaresDefaultValue: Boolean,
+        override val isCrossinline: Boolean,
+        override val isNoinline: Boolean,
+        override val varargElementType: KotlinType?,
+        source: SourceElement
+) : VariableDescriptorImpl(containingDeclaration, annotations, name, outType, source), ValueParameterDescriptor {
+    private val original: ValueParameterDescriptor = original ?: this
 
-public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements ValueParameterDescriptor {
-    private final boolean declaresDefaultValue;
-    private final boolean isCrossinline;
-    private final boolean isNoinline;
-    private final KotlinType varargElementType;
-    private final int index;
-    private final ValueParameterDescriptor original;
+    override fun getContainingDeclaration() = super.getContainingDeclaration() as CallableDescriptor
 
-    public ValueParameterDescriptorImpl(
-            @NotNull CallableDescriptor containingDeclaration,
-            @Nullable ValueParameterDescriptor original,
-            int index,
-            @NotNull Annotations annotations,
-            @NotNull Name name,
-            @NotNull KotlinType outType,
-            boolean declaresDefaultValue,
-            boolean isCrossinline,
-            boolean isNoinline,
-            @Nullable KotlinType varargElementType,
-            @NotNull SourceElement source
-    ) {
-        super(containingDeclaration, annotations, name, outType, source);
-        this.original = original == null ? this : original;
-        this.index = index;
-        this.declaresDefaultValue = declaresDefaultValue;
-        this.isCrossinline = isCrossinline;
-        this.isNoinline = isNoinline;
-        this.varargElementType = varargElementType;
+    override fun declaresDefaultValue(): Boolean {
+        return declaresDefaultValue && (containingDeclaration as CallableMemberDescriptor).kind.isReal
     }
 
-    @NotNull
-    @Override
-    public CallableDescriptor getContainingDeclaration() {
-        return (CallableDescriptor) super.getContainingDeclaration();
+    override fun getOriginal() = if (original === this) this else original.original
+
+    override fun substitute(substitutor: TypeSubstitutor): ValueParameterDescriptor {
+        if (substitutor.isEmpty) return this
+        throw UnsupportedOperationException() // TODO
     }
 
-    @Override
-    public int getIndex() {
-        return index;
+    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
+        return visitor.visitValueParameterDescriptor(this, data)
     }
 
-    @Override
-    public boolean declaresDefaultValue() {
-        return declaresDefaultValue && ((CallableMemberDescriptor) getContainingDeclaration()).getKind().isReal();
+    override fun isVar() = false
+
+    override fun getCompileTimeInitializer() = null
+
+    override fun copy(newOwner: CallableDescriptor, newName: Name): ValueParameterDescriptor {
+        return ValueParameterDescriptorImpl(
+                newOwner, null, index, annotations, newName, type, declaresDefaultValue(),
+                isCrossinline, isNoinline, varargElementType, SourceElement.NO_SOURCE
+        )
     }
 
-    @Override
-    public boolean isCrossinline() {
-        return isCrossinline;
-    }
+    override fun getVisibility() = Visibilities.LOCAL
 
-    @Override
-    public boolean isNoinline() {
-        return isNoinline;
-    }
-
-    @Nullable
-    @Override
-    public KotlinType getVarargElementType() {
-        return varargElementType;
-    }
-
-    @NotNull
-    @Override
-    public ValueParameterDescriptor getOriginal() {
-        return original == this ? this : original.getOriginal();
-    }
-
-    @NotNull
-    @Override
-    public ValueParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        if (substitutor.isEmpty()) return this;
-        throw new UnsupportedOperationException(); // TODO
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitValueParameterDescriptor(this, data);
-    }
-
-    @Override
-    public boolean isVar() {
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public ConstantValue<?> getCompileTimeInitializer() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public ValueParameterDescriptor copy(@NotNull CallableDescriptor newOwner, @NotNull Name newName) {
-        return new ValueParameterDescriptorImpl(
-                newOwner, null, index, getAnnotations(), newName, getType(), declaresDefaultValue(), isCrossinline(), isNoinline(), varargElementType,
-                SourceElement.NO_SOURCE
-        );
-    }
-
-    @NotNull
-    @Override
-    public Visibility getVisibility() {
-        return Visibilities.LOCAL;
-    }
-
-    @NotNull
-    @Override
-    public Collection<ValueParameterDescriptor> getOverriddenDescriptors() {
-        return CollectionsKt.map(
-                getContainingDeclaration().getOverriddenDescriptors(),
-                new Function1<CallableDescriptor, ValueParameterDescriptor>() {
-                    @Override
-                    public ValueParameterDescriptor invoke(CallableDescriptor descriptor) {
-                        return descriptor.getValueParameters().get(getIndex());
-                    }
-                });
+    override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> {
+        return containingDeclaration.overriddenDescriptors.map {
+            it.valueParameters[index]
+        }
     }
 }
