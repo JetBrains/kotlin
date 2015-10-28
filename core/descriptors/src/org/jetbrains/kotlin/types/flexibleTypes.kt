@@ -129,17 +129,6 @@ public open class DelegatingFlexibleType protected constructor(
         }
     }
 
-    init {
-        if (ASSERTIONS_ENABLED) { // workaround for KT-7540
-            assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
-            assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
-            assert (lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
-            assert (KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
-                "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
-            }
-        }
-    }
-
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         val extra = extraCapabilities.getCapability(capabilityClass, this, this)
         if (extra != null) return extra
@@ -161,7 +150,18 @@ public open class DelegatingFlexibleType protected constructor(
 
     override fun isMarkedNullable(): Boolean = getCapability(javaClass<NullAwareness>())!!.computeIsNullable()
 
-    override val delegateType: KotlinType = lowerBound
+    override val delegateType: KotlinType by lazy {
+            // we can't check this in init block, because lowerBound & upperBound can be LazyType. see EA-74904
+            if (ASSERTIONS_ENABLED) { // workaround for KT-7540
+                assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
+                assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
+                assert (lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
+                assert (KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
+                    "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
+                }
+            }
+            lowerBound
+        }
 
     override fun getDelegate() = getCapability(javaClass<FlexibleTypeDelegation>())!!.delegateType
 
