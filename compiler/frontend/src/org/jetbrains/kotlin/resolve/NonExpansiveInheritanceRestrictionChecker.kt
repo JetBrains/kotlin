@@ -52,15 +52,15 @@ public object NonExpansiveInheritanceRestrictionChecker {
         for (typeParameter in typeConstructor.parameters) {
             if (typeParameter in problemNodes) {
                 val element = DescriptorToSourceUtils.descriptorToDeclaration(typeParameter) ?: declaration
-                diagnosticHolder.report(Errors.EXPANSIVE_INHERITANCE.on(element, "Type argument is not within its bounds (violation of Non-Expansive Inheritance Restriction"))
+                diagnosticHolder.report(Errors.EXPANSIVE_INHERITANCE.on(element))
                 return
             }
         }
 
         if (problemNodes.any { it.source != SourceElement.NO_SOURCE }) return
 
-        val superTypeFqNames = problemNodes.map { it.containingDeclaration }.map { it.fqNameUnsafe.asString() }.toSortedSet()
-        diagnosticHolder.report(Errors.EXPANSIVE_INHERITANCE.on(declaration, "Violation of Non-Expansive Inheritance Restriction for supertypes: " + superTypeFqNames.joinToString(", ")))
+        val typeFqNames = problemNodes.map { it.containingDeclaration }.map { it.fqNameUnsafe.asString() }.toSortedSet()
+        diagnosticHolder.report(Errors.EXPANSIVE_INHERITANCE_IN_JAVA.on(declaration, typeFqNames.joinToString(", ")))
     }
 
     private class GraphBuilder(val typeConstructor: TypeConstructor) {
