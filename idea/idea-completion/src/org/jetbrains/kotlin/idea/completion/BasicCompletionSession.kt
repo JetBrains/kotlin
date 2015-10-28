@@ -240,9 +240,15 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
                 completeNonImported()
 
+                flushToResultSet()
+
                 if (position.getContainingFile() is KtCodeFragment) {
-                    flushToResultSet()
-                    collector.addDescriptorElements(getRuntimeReceiverTypeReferenceVariants(), withReceiverCast = true)
+                    val variants = getRuntimeReceiverTypeReferenceVariants()
+                    if (variants != null) {
+                        collector.addDescriptorElements(variants.imported, withReceiverCast = true)
+                        collector.addDescriptorElements(variants.notImportedExtensions, withReceiverCast = true, notImported = true)
+                        flushToResultSet()
+                    }
                 }
             }
         }

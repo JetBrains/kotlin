@@ -85,10 +85,12 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                     }
 
                     if (position.getContainingFile() is KtCodeFragment) {
-                        getRuntimeReceiverTypeReferenceVariants().forEach {
-                            collector.addElements(filter(it).map { it.withReceiverCast() })
+                        val variants = getRuntimeReceiverTypeReferenceVariants()
+                        if (variants != null) {
+                            variants.imported.forEach { collector.addElements(filter(it).map { it.withReceiverCast() }) }
+                            variants.notImportedExtensions.forEach { collector.addElements(filter(it).map { it.withReceiverCast() }, notImported = true) }
+                            flushToResultSet()
                         }
-                        flushToResultSet()
                     }
                 }
 

@@ -115,6 +115,12 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
             doTest(fileName);
         }
 
+        @TestMetadata("notImportedExtension.kt")
+        public void testNotImportedExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/notImportedExtension.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("runtimeCast.kt")
         public void testRuntimeCast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/runtimeCast.kt");

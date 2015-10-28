@@ -324,18 +324,19 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         return this
     }
 
-    protected fun getRuntimeReceiverTypeReferenceVariants(): Collection<DeclarationDescriptor> {
-        val explicitReceiver = callTypeAndReceiver.receiver as? KtExpression ?: return emptyList()
-        val type = bindingContext.getType(explicitReceiver) ?: return emptyList()
-        if (!TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)) return emptyList()
-        val evaluator = file.getCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) ?: return emptyList()
+    protected fun getRuntimeReceiverTypeReferenceVariants(): ReferenceVariants? {
+        val explicitReceiver = callTypeAndReceiver.receiver as? KtExpression ?: return null
+        val type = bindingContext.getType(explicitReceiver) ?: return null
+        if (!TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)) return null
+        val evaluator = file.getCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) ?: return null
         val runtimeType = evaluator(explicitReceiver)
-        if (runtimeType == null || runtimeType == type) return emptyList()
+        if (runtimeType == null || runtimeType == type) return null
 
-        val (variants, notImportedExtensions/*TODO: use them*/) = collectReferenceVariants(descriptorKindFilter!!, runtimeType)
-        return variants.filter { descriptor ->
-            referenceVariants!!.imported.none { compareDescriptors(project, it, descriptor) }
-        }
+        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, runtimeType)
+        val normalVariants = referenceVariants!!.imported + referenceVariants!!.notImportedExtensions
+        val filteredVariants = variants.filter { descriptor -> normalVariants.none { compareDescriptors(project, it, descriptor) } }
+        val filteredNotImportedExtensions = notImportedExtensions.filter { descriptor -> normalVariants.none { compareDescriptors(project, it, descriptor) } }
+        return ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
     }
 
     protected fun shouldCompleteTopLevelCallablesFromIndex(): Boolean {
