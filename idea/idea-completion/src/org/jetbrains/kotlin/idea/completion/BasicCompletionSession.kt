@@ -72,12 +72,18 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     private val completionKind = detectCompletionKind()
 
-    override val descriptorKindFilter = if (isNoQualifierContext()) {
-        // it's an optimization because obtaining top-level packages from scope is very slow, we obtains them in other way
-        completionKind.descriptorKindFilter?.exclude(DescriptorKindExclude.TopLevelPackages)
-    }
-    else {
-        completionKind.descriptorKindFilter
+    override val descriptorKindFilter: DescriptorKindFilter? by lazy {
+        var filter = completionKind.descriptorKindFilter ?: return@lazy null
+
+        if (filter.kindMask.and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
+            filter = filter.exclude(DescriptorKindExclude.TopLevelPackages)
+        }
+
+        if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
+            filter = filter.exclude(topLevelExtensionsExclude) // completed via indices
+        }
+
+        filter
     }
 
     private val parameterNameAndTypeCompletion = if (shouldCompleteParameterNameAndType())
@@ -208,7 +214,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             completeKeywords()
 
             // getting root packages from scope is very slow so we do this in alternative way
-            if (isNoQualifierContext() && (descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
+            if (callTypeAndReceiver.receiver == null && (descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.PACKAGES_MASK) != 0) {
                 //TODO: move this code somewhere else?
                 val packageNames = PackageIndexUtil.getSubPackageFqNames(FqName.ROOT, originalSearchScope, project, prefixMatcher.asNameFilter())
                         .toMutableSet()
@@ -225,13 +231,16 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 packageNames.forEach { collector.addElement(lookupElementFactory.createLookupElementForPackage(it)) }
             }
 
-            if (completionKind != CompletionKind.KEYWORDS_ONLY) {
-                flushToResultSet()
+            flushToResultSet()
 
-                if (!configuration.completeNonImportedDeclarations && isNoQualifierContext()) {
-                    collector.advertiseSecondCompletion()
+            if (completionKind == CompletionKind.ALL && callTypeAndReceiver.shouldCompleteCallableExtensions()) {
+                for (extension in getCallableTopLevelExtensions()) {
+                    collector.addDescriptorElements(extension, !isImportableDescriptorImported(extension))
                 }
+                flushToResultSet()
+            }
 
+            if (completionKind != CompletionKind.KEYWORDS_ONLY) {
                 completeNonImported()
 
                 if (position.getContainingFile() is KtCodeFragment) {
@@ -367,23 +376,22 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     }
 
     private fun completeNonImported() {
-        if (completionKind == CompletionKind.ALL) {
-            collector.addDescriptorElements(getTopLevelExtensions(), notImported = true)
+        if (shouldCompleteTopLevelCallablesFromIndex()) {
+            collector.addDescriptorElements(getTopLevelCallables(), notImported = true)
         }
 
-        flushToResultSet()
-
-        if (shouldRunTopLevelCompletion()) {
-            if (completionKind == CompletionKind.ALL) {
-                val classKindFilter: ((ClassKind) -> Boolean)?
-                when (callTypeAndReceiver) {
-                    is CallTypeAndReceiver.ANNOTATION -> classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
-                    is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> classKindFilter = { it != ClassKind.ENUM_ENTRY }
-                    else -> classKindFilter = null
-                }
-                classKindFilter?.let { addAllClasses(it) }
-
-                collector.addDescriptorElements(getTopLevelCallables(), notImported = true)
+        val classKindFilter: ((ClassKind) -> Boolean)?
+        when (callTypeAndReceiver) {
+            is CallTypeAndReceiver.ANNOTATION -> classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
+            is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> classKindFilter = { it != ClassKind.ENUM_ENTRY }
+            else -> classKindFilter = null
+        }
+        if (classKindFilter != null) {
+            if (configuration.completeNonImportedDeclarations) {
+                addClassesFromIndex(classKindFilter)
+            }
+            else {
+                collector.advertiseSecondCompletion()
             }
         }
 
@@ -402,7 +410,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             superClasses += classDescriptor.builtIns.any
         }
 
-        if (!isNoQualifierContext()) {
+        if (callTypeAndReceiver.receiver != null) {
             val referenceVariantsSet = referenceVariants.toSet()
             superClasses = superClasses.filter { it in referenceVariantsSet }
         }

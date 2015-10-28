@@ -29,6 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
@@ -41,9 +42,12 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -152,6 +156,20 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val toFromOriginalFileMapper: ToFromOriginalFileMapper
             = ToFromOriginalFileMapper(parameters.originalFile as KtFile, position.containingFile as KtFile, parameters.offset)
 
+    // excludes top-level extensions except for ones declared in the current file - those that are fetched from indices
+    protected val topLevelExtensionsExclude = object : DescriptorKindExclude() {
+        val extensionsFromThisFile = file.declarations
+                .filter { it.isExtensionDeclaration() }
+                .map { it.resolveToDescriptor() }
+                .toSet()
+
+        override fun excludes(descriptor: DeclarationDescriptor)
+                = descriptor.isExtension && descriptor.containingDeclaration is PackageFragmentDescriptor && descriptor !in extensionsFromThisFile
+
+        override val fullyExcludedDescriptorKinds: Int
+            get() = 0
+    }
+
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (!configuration.completeJavaClassesNotToBeUsed && descriptor is ClassDescriptor) {
             val classification = descriptor.importableFqName?.let { importableFqNameClassifier.classify(it, isPackage = false) }
@@ -206,7 +224,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected abstract val expectedInfos: Collection<ExpectedInfo>
 
-    private val importableFqNameClassifier = ImportableFqNameClassifier(file)
+    protected val importableFqNameClassifier = ImportableFqNameClassifier(file)
 
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
@@ -282,12 +300,11 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         }
     }
 
-    protected fun shouldRunTopLevelCompletion(): Boolean
-            = configuration.completeNonImportedDeclarations && isNoQualifierContext()
-
-    protected fun isNoQualifierContext(): Boolean {
-        val parent = position.getParent()
-        return parent is KtSimpleNameExpression && !KtPsiUtil.isSelectorInQualified(parent)
+    protected fun shouldCompleteTopLevelCallablesFromIndex(): Boolean {
+        if (!configuration.completeNonImportedDeclarations) return false
+        if ((descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.CALLABLES_MASK) == 0) return false
+        if (callTypeAndReceiver is CallTypeAndReceiver.IMPORT_DIRECTIVE) return false
+        return callTypeAndReceiver.receiver == null
     }
 
     protected fun getTopLevelCallables(): Collection<DeclarationDescriptor> {
@@ -295,9 +312,14 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 .filterShadowedNonImported()
     }
 
-    protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
+    protected fun CallTypeAndReceiver<*, *>.shouldCompleteCallableExtensions(): Boolean {
+        return callType.descriptorKindFilter.kindMask.and(DescriptorKindFilter.CALLABLES_MASK) != 0
+               && this !is CallTypeAndReceiver.IMPORT_DIRECTIVE
+    }
+
+    protected fun getCallableTopLevelExtensions(): Collection<CallableDescriptor> {
         return indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, callTypeAndReceiver, expression!!, bindingContext)
-                .filterShadowedNonImported()
+                .filterShadowedNonImported() //TODO: not correct!
     }
 
     private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
@@ -305,7 +327,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         return if (filter != null) filter.filterNonImported(this, referenceVariants) else this
     }
 
-    protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
+    protected fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(parameters, indicesHelper, prefixMatcher, resolutionFacade, kindFilter)
                 .collect(
                         { descriptor -> collector.addDescriptorElements(descriptor, notImported = true) },
@@ -343,5 +365,11 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         }
 
         return callTypeAndReceiver to receiverTypes
+    }
+
+    protected fun isImportableDescriptorImported(descriptor: DeclarationDescriptor): Boolean {
+        val classification = importableFqNameClassifier.classify(descriptor.importableFqName!!, false)
+        return classification != ImportableFqNameClassifier.Classification.notImported
+               && classification != ImportableFqNameClassifier.Classification.hasImportFromSamePackage
     }
 }

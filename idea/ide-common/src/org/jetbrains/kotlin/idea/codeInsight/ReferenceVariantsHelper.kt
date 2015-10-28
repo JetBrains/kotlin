@@ -304,7 +304,7 @@ class ReferenceVariantsHelper(
         if (kindFilter.excludes.contains(DescriptorKindExclude.Extensions)) return
 
         fun process(extension: CallableDescriptor) {
-            if (nameFilter(extension.name) && kindFilter.accepts(extension)) {
+            if (kindFilter.accepts(extension) && nameFilter(extension.name)) {
                 addAll(extension.substituteExtensionIfCallable(receiverTypes, callType))
             }
         }
