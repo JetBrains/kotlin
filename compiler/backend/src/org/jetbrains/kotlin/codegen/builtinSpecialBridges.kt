@@ -119,8 +119,7 @@ private fun <Signature> needGenerateSpecialBridge(
     return !classDescriptor.hasRealKotlinSuperClassWithOverrideOf(specialCallableDescriptor)
             && specialCallableDescriptor.modality != Modality.FINAL
             && reachableDeclarations.none {
-                it.containingDeclaration is JavaClassDescriptor
-                        && it.modality == Modality.FINAL
+                    it.modality == Modality.FINAL
                         && signatureByDescriptor(it) == overriddenBuiltinSignature
             }
 }

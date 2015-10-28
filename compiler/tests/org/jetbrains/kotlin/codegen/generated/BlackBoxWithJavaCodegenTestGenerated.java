@@ -215,6 +215,30 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("irrelevantImplCharSequenceKotlin")
+        public void testIrrelevantImplCharSequenceKotlin() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplCharSequenceKotlin/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("irrelevantImplMutableList")
+        public void testIrrelevantImplMutableList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplMutableList/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("irrelevantImplMutableListKotlin")
+        public void testIrrelevantImplMutableListKotlin() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplMutableListKotlin/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("irrelevantImplMutableListSubstitution")
+        public void testIrrelevantImplMutableListSubstitution() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplMutableListSubstitution/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("irrelevantRemoveAtOverrideInJava")
         public void testIrrelevantRemoveAtOverrideInJava() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantRemoveAtOverrideInJava/");
