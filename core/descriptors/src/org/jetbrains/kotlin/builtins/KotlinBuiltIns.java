@@ -870,7 +870,7 @@ public abstract class KotlinBuiltIns {
         List<TypeProjection> arguments = type.getArguments();
         int first = isExtensionFunctionType(type) ? 1 : 0;
         int last = arguments.size() - 2;
-        List<TypeProjection> parameterTypes = new ArrayList<TypeProjection>(last - first + 1);
+        List<TypeProjection> parameterTypes = new ArrayList<TypeProjection>(Math.max(0, last - first + 1));
         for (int i = first; i <= last; i++) {
             parameterTypes.add(arguments.get(i));
         }
