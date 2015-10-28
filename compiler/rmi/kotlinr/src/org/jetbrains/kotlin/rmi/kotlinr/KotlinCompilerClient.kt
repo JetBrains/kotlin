@@ -59,7 +59,7 @@ public object KotlinCompilerClient {
             while (attempts++ < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
                 val service = tryFindDaemon(File(daemonOptions.runFilesPath), compilerId, reportingTargets)
                 if (service != null) {
-                    if (!checkId || checkCompilerId(service, compilerId)) {
+                    if (!checkId || service.checkCompilerId(compilerId)) {
                         reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
                         return service
                     }
@@ -186,8 +186,6 @@ public object KotlinCompilerClient {
                 throw IllegalArgumentException("Cannot find compiler jar")
             else
                 println("desired compiler classpath: " + compilerId.compilerClasspath.joinToString(File.pathSeparator))
-
-            compilerId.updateDigest()
         }
 
         val daemon = connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, DaemonReportingTargets(out = System.out), autostart = !clientOptions.stop, checkId = !clientOptions.stop)
@@ -206,7 +204,7 @@ public object KotlinCompilerClient {
             }
             filteredArgs.none() -> {
                 // so far used only in tests
-                println("Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${checkCompilerId(daemon, compilerId)}")
+                println("Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${daemon.checkCompilerId(compilerId)}")
             }
             else -> {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
@@ -264,7 +262,7 @@ public object KotlinCompilerClient {
 
 
     private fun tryFindDaemon(registryDir: File, compilerId: CompilerId, reportingTargets: DaemonReportingTargets): CompileService? {
-        val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest()
+        val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
         val daemons = registryDir.walk()
                 .map { Pair(it, it.name.extractPortFromRunFilename(classPathDigest)) }
                 .filter { it.second != 0 }
@@ -377,20 +375,12 @@ public object KotlinCompilerClient {
     }
 
 
-    private fun checkCompilerId(compiler: CompileService, localId: CompilerId): Boolean {
-        val remoteId = compiler.getCompilerId()
-        return (localId.compilerVersion.isEmpty() || localId.compilerVersion == remoteId.compilerVersion) &&
-               (localId.compilerClasspath.all { remoteId.compilerClasspath.contains(it) }) &&
-               (localId.compilerDigest.isEmpty() || remoteId.compilerDigest.isEmpty() || localId.compilerDigest == remoteId.compilerDigest)
-    }
-
-
     class FileBasedLock(compilerId: CompilerId, daemonOptions: DaemonOptions) {
 
         private val lockFile: File =
                 File(daemonOptions.runFilesPath,
                      makeRunFilenameString(timestamp = "lock",
-                                           digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
+                                           digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
                                            port = "0"))
         @Volatile private var locked = acquireLockFile(lockFile)
         private val channel = if (locked) RandomAccessFile(lockFile, "rw").channel else null

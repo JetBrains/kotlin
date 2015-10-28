@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.rmi
 import java.io.File
 import java.io.Serializable
 import java.lang.management.ManagementFactory
-import java.security.DigestInputStream
 import java.security.MessageDigest
 import kotlin.reflect.KMutableProperty1
 
@@ -51,8 +50,7 @@ public val COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE: Long = 0L
 public val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
     FileSystem.getRuntimeStateFilesPath("kotlin", "daemon")
 
-val COMPILER_ID_DIGEST = "MD5"
-
+val CLASSPATH_ID_DIGEST = "MD5"
 
 public fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String = "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
 
@@ -222,60 +220,21 @@ public data class DaemonOptions(
 }
 
 
-fun updateSingleFileDigest(file: File, md: MessageDigest) {
-    DigestInputStream(file.inputStream(), md).use {
-        val buf = ByteArray(1024)
-        while (it.read(buf) != -1) {}
-        it.close()
-    }
-}
-
-fun updateForAllClasses(dir: File, md: MessageDigest) {
-    dir.walk().forEach { updateEntryDigest(it, md) }
-}
-
-fun updateEntryDigest(entry: File, md: MessageDigest) {
-    when {
-        entry.isDirectory
-            -> updateForAllClasses(entry, md)
-        entry.isFile &&
-        (entry.extension.equals("class", ignoreCase = true) ||
-         entry.extension.equals("jar", ignoreCase = true))
-            -> updateSingleFileDigest(entry, md)
-    // else skip
-    }
-}
-
-@JvmName("getFilesClasspathDigest_Files")
-fun Iterable<File>.getFilesClasspathDigest(): String {
-    val md = MessageDigest.getInstance(COMPILER_ID_DIGEST)
-    this.forEach { updateEntryDigest(it, md) }
-    return md.digest().joinToString("", transform = { "%02x".format(it) })
-}
-
-@JvmName("getFilesClasspathDigest_Strings")
-fun Iterable<String>.getFilesClasspathDigest(): String = map { File(it) }.getFilesClasspathDigest()
-
-fun Iterable<String>.distinctStringsDigest(): String =
-        MessageDigest.getInstance(COMPILER_ID_DIGEST)
+fun Iterable<String>.distinctStringsDigest(): ByteArray =
+        MessageDigest.getInstance(CLASSPATH_ID_DIGEST)
                 .digest(this.distinct().sorted().joinToString("").toByteArray())
-                .joinToString("", transform = { "%02x".format(it) })
+
+fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 
 public data class CompilerId(
         public var compilerClasspath: List<String> = listOf(),
-        public var compilerDigest: String = "",
         public var compilerVersion: String = ""
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(PropMapper(this, CompilerId::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trimQuotes().split(File.pathSeparator) }),
-                       StringPropMapper(this, CompilerId::compilerDigest),
                        StringPropMapper(this, CompilerId::compilerVersion))
-
-    public fun updateDigest() {
-        compilerDigest = compilerClasspath.getFilesClasspathDigest()
-    }
 
     companion object {
         @JvmStatic
@@ -283,7 +242,7 @@ public data class CompilerId(
 
         @JvmStatic
         public fun makeCompilerId(paths: Iterable<File>): CompilerId =
-                CompilerId(compilerClasspath = paths.map { it.absolutePath }, compilerDigest = paths.getFilesClasspathDigest())
+                CompilerId(compilerClasspath = paths.map { it.absolutePath })
     }
 }
 

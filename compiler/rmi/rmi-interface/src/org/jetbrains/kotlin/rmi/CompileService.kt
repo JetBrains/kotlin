@@ -32,7 +32,7 @@ public interface CompileService : Remote {
     }
 
     @Throws(RemoteException::class)
-    public fun getCompilerId(): CompilerId
+    public fun checkCompilerId(compilerId: CompilerId): Boolean
 
     @Throws(RemoteException::class)
     public fun getUsedMemory(): Long
