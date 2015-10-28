@@ -166,6 +166,10 @@ public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
         doTest();
     }
 
+    public void testKotlinAnnotations() throws Exception {
+        doTest();
+    }
+
     public void doTest() throws Exception {
         doTest(true, true, getTestName(false) + ".java", getTestName(false) + ".kt");
     }
