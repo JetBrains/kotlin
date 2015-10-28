@@ -582,18 +582,27 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
 
         private void findAndDisconnectLoopsInTypeHierarchy(@Mutable Collection<KotlinType> supertypes) {
-            for (Iterator<KotlinType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
-                KotlinType supertype = iterator.next();
-                if (isReachable(supertype.getConstructor(), this, new HashSet<TypeConstructor>())) {
-                    iterator.remove();
+            FindLoopsInSupertypes.findLoopsInSupertypesAndDisconnect(
+                    typeConstructor, supertypes,
+                    new Function1<TypeConstructor, Iterable<? extends KotlinType>>() {
+                        @Override
+                        public Iterable<? extends KotlinType> invoke(TypeConstructor typeConstructor) {
+                            return getNeighbors(typeConstructor);
+                        }
+                    },
+                    new Function1<KotlinType, Unit>() {
+                        @Override
+                        public Unit invoke(KotlinType type) {
+                            ClassifierDescriptor supertypeDescriptor = type.getConstructor().getDeclarationDescriptor();
+                            if (supertypeDescriptor instanceof ClassDescriptor) {
+                                ClassDescriptor superclass = (ClassDescriptor) supertypeDescriptor;
+                                reportCyclicInheritanceHierarchyError(c.getTrace(), LazyClassDescriptor.this, superclass);
+                            }
 
-                    ClassifierDescriptor supertypeDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-                    if (supertypeDescriptor instanceof ClassDescriptor) {
-                        ClassDescriptor superclass = (ClassDescriptor) supertypeDescriptor;
-                        reportCyclicInheritanceHierarchyError(c.getTrace(), LazyClassDescriptor.this, superclass);
+                            return Unit.INSTANCE;
+                        }
                     }
-                }
-            }
+            );
         }
 
         private void reportCyclicInheritanceHierarchyError(
@@ -625,20 +634,6 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             if (elementToMark != null) {
                 trace.report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
             }
-        }
-
-        private boolean isReachable(TypeConstructor from, TypeConstructor to, Set<TypeConstructor> visited) {
-            if (!visited.add(from)) return false;
-            for (KotlinType supertype : getNeighbors(from)) {
-                TypeConstructor supertypeConstructor = supertype.getConstructor();
-                if (supertypeConstructor == to) {
-                    return true;
-                }
-                if (isReachable(supertypeConstructor, to, visited)) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private Collection<KotlinType> getNeighbors(TypeConstructor from) {
