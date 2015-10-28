@@ -797,7 +797,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val isJavaMethodUsage = isJavaMethodUsage(usageInfo)
 
         if (usageInfo is KotlinWrapperForJavaUsageInfos) {
-            val javaChangeInfos = (changeInfo as JetChangeInfo).getOrCreateJavaChangeInfos(false)
+            val javaChangeInfos = (changeInfo as JetChangeInfo).getOrCreateJavaChangeInfos()
             assert(javaChangeInfos != null) { "JavaChangeInfo not found: " + method.text }
 
             val javaUsageInfos = usageInfo.javaUsageInfos
