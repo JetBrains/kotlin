@@ -77,7 +77,7 @@ public class AddModifierFix extends KotlinQuickFixAction<KtModifierListOwner> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         getElement().addModifier(modifier);
     }
 
@@ -89,13 +89,11 @@ public class AddModifierFix extends KotlinQuickFixAction<KtModifierListOwner> {
     public static <T extends KtModifierListOwner> JetSingleIntentionActionFactory createFactory(final KtModifierKeywordToken modifier, final Class<T> modifierOwnerClass) {
         return new JetSingleIntentionActionFactory() {
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 KtModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass);
                 if (modifierListOwner == null) return null;
 
-                if (modifier == KtTokens.ABSTRACT_KEYWORD &&
-                    modifierListOwner instanceof KtObjectDeclaration &&
-                    ((KtObjectDeclaration) modifierListOwner).isObjectLiteral()) return null;
+                if (modifier == KtTokens.ABSTRACT_KEYWORD && modifierListOwner instanceof KtObjectDeclaration) return null;
 
                 return new AddModifierFix(modifierListOwner, modifier);
             }

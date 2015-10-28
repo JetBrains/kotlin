@@ -35,12 +35,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
     }
 
-    @TestMetadata("anonymousObject.kt")
-    public void testAnonymousObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/anonymousObject.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("idea/testData/quickfix/abstract")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -4499,6 +4493,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("nestedClassNotAllowed.kt")
         public void testNestedClassNotAllowed() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/nestedClassNotAllowed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noAbstractForAnonymousObject.kt")
+        public void testNoAbstractForAnonymousObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/noAbstractForAnonymousObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noAbstractForObject.kt")
+        public void testNoAbstractForObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/noAbstractForObject.kt");
             doTest(fileName);
         }
 
