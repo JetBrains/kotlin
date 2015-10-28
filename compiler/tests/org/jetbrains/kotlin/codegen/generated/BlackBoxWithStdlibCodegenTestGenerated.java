@@ -1462,15 +1462,15 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
-        @TestMetadata("protectedVarWithPrivateSet.kt")
-        public void testProtectedVarWithPrivateSet() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/protectedVarWithPrivateSet.kt");
-            doTestWithStdlib(fileName);
-        }
-
         @TestMetadata("kt9712.kt")
         public void testKt9712() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/kt9712.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("protectedVarWithPrivateSet.kt")
+        public void testProtectedVarWithPrivateSet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/protectedVarWithPrivateSet.kt");
             doTestWithStdlib(fileName);
         }
 
