@@ -18,22 +18,29 @@
 
 package kotlin
 
+@Deprecated("Use IntProgression instead.", ReplaceWith("IntProgression"), level = DeprecationLevel.WARNING)
 /**
  * A progression of values of type `Byte`.
  */
-public class ByteProgression(
+public open class ByteProgression(
         override val start: Byte,
-        override val endInclusive: Byte,
+                 val endInclusive: Byte,
         override val increment: Int
-) : InclusiveRangeProgression<Byte> {
+) : Progression<Byte>, Iterable<Byte> {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
+    /**
+     * The end value of the progression (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: Byte get() = endInclusive
+
     override fun iterator(): ByteIterator = ByteProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is ByteProgression && (isEmpty() && other.isEmpty() ||
@@ -48,19 +55,25 @@ public class ByteProgression(
 /**
  * A progression of values of type `Char`.
  */
-public class CharProgression(
+public open class CharProgression(
         override val start: Char,
-        override val endInclusive: Char,
+                 val endInclusive: Char,
         override val increment: Int
-) : InclusiveRangeProgression<Char> {
+) : Progression<Char>, Iterable<Char> {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
+    /**
+     * The end value of the progression (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: Char get() = endInclusive
+
     override fun iterator(): CharIterator = CharProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is CharProgression && (isEmpty() && other.isEmpty() ||
@@ -72,22 +85,29 @@ public class CharProgression(
     override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
 }
 
+@Deprecated("Use IntProgression instead.", ReplaceWith("IntProgression"), level = DeprecationLevel.WARNING)
 /**
  * A progression of values of type `Short`.
  */
-public class ShortProgression(
+public open class ShortProgression(
         override val start: Short,
-        override val endInclusive: Short,
+                 val endInclusive: Short,
         override val increment: Int
-) : InclusiveRangeProgression<Short> {
+) : Progression<Short>, Iterable<Short> {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
+    /**
+     * The end value of the progression (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: Short get() = endInclusive
+
     override fun iterator(): ShortIterator = ShortProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is ShortProgression && (isEmpty() && other.isEmpty() ||
@@ -102,19 +122,25 @@ public class ShortProgression(
 /**
  * A progression of values of type `Int`.
  */
-public class IntProgression(
+public open class IntProgression(
         override val start: Int,
-        override val endInclusive: Int,
+                 val endInclusive: Int,
         override val increment: Int
-) : InclusiveRangeProgression<Int> {
+) : Progression<Int>, Iterable<Int> {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
+    /**
+     * The end value of the progression (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: Int get() = endInclusive
+
     override fun iterator(): IntIterator = IntProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is IntProgression && (isEmpty() && other.isEmpty() ||
@@ -129,19 +155,25 @@ public class IntProgression(
 /**
  * A progression of values of type `Long`.
  */
-public class LongProgression(
+public open class LongProgression(
         override val start: Long,
-        override val endInclusive: Long,
+                 val endInclusive: Long,
         override val increment: Long
-) : InclusiveRangeProgression<Long> {
+) : Progression<Long>, Iterable<Long> {
     init {
         if (increment == 0L) throw IllegalArgumentException("Increment must be non-zero")
     }
 
+    /**
+     * The end value of the progression (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: Long get() = endInclusive
+
     override fun iterator(): LongIterator = LongProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is LongProgression && (isEmpty() && other.isEmpty() ||
@@ -153,25 +185,31 @@ public class LongProgression(
     override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
 }
 
-@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
 @Suppress("DEPRECATION_ERROR")
 /**
  * A progression of values of type `Float`.
  */
-public class FloatProgression(
+public open class FloatProgression(
         override val start: Float,
-        override val endInclusive: Float,
+                 val endInclusive: Float,
         override val increment: Float
-) : InclusiveRangeProgression<Float> {
+) : Progression<Float>, Iterable<Float> {
     init {
         if (java.lang.Float.isNaN(increment)) throw IllegalArgumentException("Increment must be not NaN")
         if (increment == 0.0f) throw IllegalArgumentException("Increment must be non-zero")
     }
 
+    /**
+     * The end value of the progression (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: Float get() = endInclusive
+
     override fun iterator(): FloatIterator = FloatProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is FloatProgression && (isEmpty() && other.isEmpty() ||
@@ -183,25 +221,31 @@ public class FloatProgression(
     override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
 }
 
-@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
 @Suppress("DEPRECATION_ERROR")
 /**
  * A progression of values of type `Double`.
  */
-public class DoubleProgression(
+public open class DoubleProgression(
         override val start: Double,
-        override val endInclusive: Double,
+                 val endInclusive: Double,
         override val increment: Double
-) : InclusiveRangeProgression<Double> {
+) : Progression<Double>, Iterable<Double> {
     init {
         if (java.lang.Double.isNaN(increment)) throw IllegalArgumentException("Increment must be not NaN")
         if (increment == 0.0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
+    /**
+     * The end value of the progression (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: Double get() = endInclusive
+
     override fun iterator(): DoubleIterator = DoubleProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is DoubleProgression && (isEmpty() && other.isEmpty() ||

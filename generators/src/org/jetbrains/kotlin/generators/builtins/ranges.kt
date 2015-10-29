@@ -68,21 +68,19 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 out.println("""@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)""")
                 out.println("""@Suppress("DEPRECATION_ERROR")""")
             }
+            if (kind == SHORT || kind == BYTE) {
+                out.println("""@Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)""")
+            }
 
             out.println(
 """/**
  * A range of values of type `$t`.
  */
-public class $range(override val start: $t, override val endInclusive: $t) : InclusiveRange<$t>, InclusiveRangeProgression<$t> {
+public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), InclusiveRange<$t> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: $t get() = endInclusive
 
-    override val increment: $incrementType
-        get() = $increment
-
     override fun contains(item: $t): Boolean = start <= item && item <= endInclusive
-
-    override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, endInclusive, $increment)
 
     override fun isEmpty(): Boolean = start > endInclusive
 

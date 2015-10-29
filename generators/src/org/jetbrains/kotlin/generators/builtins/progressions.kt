@@ -65,27 +65,37 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
 
             if (kind == FLOAT || kind == DOUBLE) {
-                out.println("""@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)""")
+                out.println("""@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)""")
                 out.println("""@Suppress("DEPRECATION_ERROR")""")
+            }
+
+            if (kind == SHORT || kind == BYTE) {
+                out.println("""@Deprecated("Use IntProgression instead.", ReplaceWith("IntProgression"), level = DeprecationLevel.WARNING)""")
             }
 
             out.println(
 """/**
  * A progression of values of type `$t`.
  */
-public class $progression(
+public open class $progression(
         override val start: $t,
-        override val endInclusive: $t,
+                 val endInclusive: $t,
         override val increment: $incrementType
-) : InclusiveRangeProgression<$t> {
+) : Progression<$t>, Iterable<$t> {
     init {
         $constructor
     }
 
+    /**
+     * The end value of the progression (inclusive).
+     */
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    public override val end: $t get() = endInclusive
+
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, endInclusive, increment)
 
     /** Checks if the progression is empty. */
-    public fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is $progression && (isEmpty() && other.isEmpty() ||

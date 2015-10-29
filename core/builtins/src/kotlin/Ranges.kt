@@ -18,19 +18,15 @@
 
 package kotlin
 
+@Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)
 /**
  * A range of values of type `Byte`.
  */
-public class ByteRange(override val start: Byte, override val endInclusive: Byte) : InclusiveRange<Byte>, InclusiveRangeProgression<Byte> {
+public class ByteRange(start: Byte, endInclusive: Byte) : ByteProgression(start, endInclusive, 1), InclusiveRange<Byte> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Byte get() = endInclusive
 
-    override val increment: Int
-        get() = 1
-
     override fun contains(item: Byte): Boolean = start <= item && item <= endInclusive
-
-    override fun iterator(): ByteIterator = ByteProgressionIterator(start, endInclusive, 1)
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -52,16 +48,11 @@ public class ByteRange(override val start: Byte, override val endInclusive: Byte
 /**
  * A range of values of type `Char`.
  */
-public class CharRange(override val start: Char, override val endInclusive: Char) : InclusiveRange<Char>, InclusiveRangeProgression<Char> {
+public class CharRange(start: Char, endInclusive: Char) : CharProgression(start, endInclusive, 1), InclusiveRange<Char> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Char get() = endInclusive
 
-    override val increment: Int
-        get() = 1
-
     override fun contains(item: Char): Boolean = start <= item && item <= endInclusive
-
-    override fun iterator(): CharIterator = CharProgressionIterator(start, endInclusive, 1)
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -80,19 +71,15 @@ public class CharRange(override val start: Char, override val endInclusive: Char
     }
 }
 
+@Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)
 /**
  * A range of values of type `Short`.
  */
-public class ShortRange(override val start: Short, override val endInclusive: Short) : InclusiveRange<Short>, InclusiveRangeProgression<Short> {
+public class ShortRange(start: Short, endInclusive: Short) : ShortProgression(start, endInclusive, 1), InclusiveRange<Short> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Short get() = endInclusive
 
-    override val increment: Int
-        get() = 1
-
     override fun contains(item: Short): Boolean = start <= item && item <= endInclusive
-
-    override fun iterator(): ShortIterator = ShortProgressionIterator(start, endInclusive, 1)
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -114,16 +101,11 @@ public class ShortRange(override val start: Short, override val endInclusive: Sh
 /**
  * A range of values of type `Int`.
  */
-public class IntRange(override val start: Int, override val endInclusive: Int) : InclusiveRange<Int>, InclusiveRangeProgression<Int> {
+public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, endInclusive, 1), InclusiveRange<Int> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Int get() = endInclusive
 
-    override val increment: Int
-        get() = 1
-
     override fun contains(item: Int): Boolean = start <= item && item <= endInclusive
-
-    override fun iterator(): IntIterator = IntProgressionIterator(start, endInclusive, 1)
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -145,16 +127,11 @@ public class IntRange(override val start: Int, override val endInclusive: Int) :
 /**
  * A range of values of type `Long`.
  */
-public class LongRange(override val start: Long, override val endInclusive: Long) : InclusiveRange<Long>, InclusiveRangeProgression<Long> {
+public class LongRange(start: Long, endInclusive: Long) : LongProgression(start, endInclusive, 1), InclusiveRange<Long> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Long get() = endInclusive
 
-    override val increment: Long
-        get() = 1
-
     override fun contains(item: Long): Boolean = start <= item && item <= endInclusive
-
-    override fun iterator(): LongIterator = LongProgressionIterator(start, endInclusive, 1)
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -178,16 +155,11 @@ public class LongRange(override val start: Long, override val endInclusive: Long
 /**
  * A range of values of type `Float`.
  */
-public class FloatRange(override val start: Float, override val endInclusive: Float) : InclusiveRange<Float>, InclusiveRangeProgression<Float> {
+public class FloatRange(start: Float, endInclusive: Float) : FloatProgression(start, endInclusive, 1.0f), InclusiveRange<Float> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Float get() = endInclusive
 
-    override val increment: Float
-        get() = 1.0f
-
     override fun contains(item: Float): Boolean = start <= item && item <= endInclusive
-
-    override fun iterator(): FloatIterator = FloatProgressionIterator(start, endInclusive, 1.0f)
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -211,16 +183,11 @@ public class FloatRange(override val start: Float, override val endInclusive: Fl
 /**
  * A range of values of type `Double`.
  */
-public class DoubleRange(override val start: Double, override val endInclusive: Double) : InclusiveRange<Double>, InclusiveRangeProgression<Double> {
+public class DoubleRange(start: Double, endInclusive: Double) : DoubleProgression(start, endInclusive, 1.0), InclusiveRange<Double> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Double get() = endInclusive
 
-    override val increment: Double
-        get() = 1.0
-
     override fun contains(item: Double): Boolean = start <= item && item <= endInclusive
-
-    override fun iterator(): DoubleIterator = DoubleProgressionIterator(start, endInclusive, 1.0)
 
     override fun isEmpty(): Boolean = start > endInclusive
 

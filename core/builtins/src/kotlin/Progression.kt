@@ -22,7 +22,7 @@ package kotlin
  * bytecode generation for it. Progressions with a step of -1 can be created through the
  * `downTo` method on classes representing primitive types.
  */
-@Deprecated("This progression has unclear inclusiveness of end value. Use InclusiveRangeProgression instead.", ReplaceWith("InclusiveRangeProgression<N>"))
+@Deprecated("This generic progression interface is not of much use and will be removed soon. Use concrete progression implementation instead: IntProgression, LongProgression or CharProgression.")
 public interface Progression<out N : Any> : Iterable<N> {
     /**
      * The start value of the progression.
@@ -39,34 +39,3 @@ public interface Progression<out N : Any> : Iterable<N> {
      */
     public val increment: Number
 }
-
-
-/**
- * Represents an arithmetical progression of numbers or characters with a given start value, end value and step.
- * This class is intended to be used in 'for' loops, and the JVM backend suggests efficient
- * bytecode generation for it. Progressions with a step of -1 can be created through the
- * `downTo` method on classes representing primitive types.
- */
-public interface InclusiveRangeProgression<out N : Any> : Progression<N> {
-    /**
-     * The start value of the progression.
-     */
-    public override val start: N
-
-    /**
-     * The end value of the progression (inclusive).
-     */
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    public override val end: N get() = endInclusive
-
-    /**
-     * The end value of the progression (inclusive).
-     */
-    public val endInclusive: N
-
-    /**
-     * The step of the progression.
-     */
-    public override val increment: Number
-}
-
