@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -49,12 +49,12 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheck
     fun doTestWithImport(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
 
-        runWriteAction {
+        project.executeWriteCommand("Imports insertion") {
             val fileText = FileUtil.loadFile(File(filePath), true)
             val file = myFixture.getFile() as KtFile
             InTextDirectivesUtils.findListWithPrefixes(fileText, "// IMPORT: ").forEach {
                 val descriptor = file.resolveImportReference(FqName(it)).singleOrNull()
-                                            ?: error("Could not resolve descriptor to import: $it")
+                                 ?: error("Could not resolve descriptor to import: $it")
                 ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptor)
             }
         }
