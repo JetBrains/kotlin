@@ -32,6 +32,16 @@ class FilesMap(file: File) : BasicMap<Int, Collection<String>>(file, ExternalInt
         storage.append(hash) { it.writeUTF(path) }
         return hash
     }
+
+    public fun remove(path: String) {
+        val hash = FileUtil.PATH_HASHING_STRATEGY.computeHashCode(path)
+        val collection = storage[hash] as? MutableCollection<String> ?: return
+        collection.remove(path)
+
+        if (collection.isNotEmpty()) {
+            storage.remove(hash)
+        }
+    }
 }
 
 

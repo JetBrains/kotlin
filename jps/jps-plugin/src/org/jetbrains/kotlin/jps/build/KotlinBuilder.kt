@@ -22,22 +22,19 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.MultiMap
 import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
-import org.jetbrains.jps.builders.*
+import org.jetbrains.jps.builders.BuildTarget
+import org.jetbrains.jps.builders.DirtyFilesHolder
 import org.jetbrains.jps.builders.impl.BuildTargetRegistryImpl
 import org.jetbrains.jps.builders.impl.TargetOutputIndexImpl
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
-import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
-import org.jetbrains.jps.indices.IgnoredFileIndex
-import org.jetbrains.jps.indices.ModuleExcludeIndex
-import org.jetbrains.jps.model.JpsModel
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
@@ -156,7 +153,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val project = projectDescriptor.project
 
         val lookupTracker = dataManager.getStorage(LOOKUP_TRACKER_TARGET, LOOKUP_TRACKER_STORAGE_PROVIDER)
-        val incrementalCaches = getIncrementalCaches(chunk, context)
+        val incrementalCaches = getIncrementalCaches(chunk, context, lookupTracker)
         val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
@@ -626,7 +623,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 private val Iterable<BuildTarget<*>>.moduleTargets: Iterable<ModuleBuildTarget>
     get() = filterIsInstance(javaClass<ModuleBuildTarget>())
 
-private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): Map<ModuleBuildTarget, IncrementalCacheImpl> {
+private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext, lookupTrackerImpl: LookupTrackerImpl?): Map<ModuleBuildTarget, IncrementalCacheImpl> {
     val dataManager = context.projectDescriptor.dataManager
     val targets = chunk.targets
 
@@ -656,6 +653,8 @@ private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): M
         dependents[target]?.forEach {
             cache.addDependentCache(caches[it]!!)
         }
+
+        cache.setLookupTracker(lookupTrackerImpl)
     }
 
     return caches

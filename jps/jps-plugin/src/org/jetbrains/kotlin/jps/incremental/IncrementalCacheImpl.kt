@@ -89,6 +89,11 @@ public class IncrementalCacheImpl(
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
     private val dependents = arrayListOf<IncrementalCacheImpl>()
     private val outputDir = requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" }
+    private var lookupTrackerImpl: LookupTrackerImpl? = null
+
+    public fun setLookupTracker(lookupTrackerImpl: LookupTrackerImpl?) {
+        this.lookupTrackerImpl = lookupTrackerImpl
+    }
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
         inlinedTo.add(fromPath, jvmSignature, toPath)
@@ -480,17 +485,26 @@ public class IncrementalCacheImpl(
 
     private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, STRING_LIST_EXTERNALIZER) {
         public fun clearOutputsForSource(sourceFile: File) {
-            storage.remove(sourceFile.absolutePath)
+            remove(sourceFile.absolutePath)
         }
 
         public fun add(sourceFile: File, className: JvmClassName) {
-            storage.append(sourceFile.absolutePath, { out -> IOUtil.writeUTF(out, className.getInternalName()) })
+            storage.append(sourceFile.absolutePath, { out -> IOUtil.writeUTF(out, className.internalName) })
         }
 
         public fun get(sourceFile: File): Collection<JvmClassName> =
                 storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }
 
         override fun dumpValue(value: List<String>) = value.toString()
+
+        override fun clean() {
+            storage.keys.forEach { remove(it) }
+        }
+
+        private fun remove(path: String) {
+            storage.remove(path)
+            lookupTrackerImpl?.removeLookupsFrom(path)
+        }
     }
 
     private inner class DirtyOutputClassesMap(storageFile: File) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {

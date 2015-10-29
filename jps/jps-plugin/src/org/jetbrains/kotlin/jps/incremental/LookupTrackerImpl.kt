@@ -50,5 +50,9 @@ class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), Loo
     override fun flush(memoryCachesOnly: Boolean) {
         lookupMap.flush(memoryCachesOnly)
     }
+
+    fun removeLookupsFrom(path: String) {
+        filesMap.remove(path)
+    }
 }
 
