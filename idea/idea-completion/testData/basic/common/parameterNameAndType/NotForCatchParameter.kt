@@ -7,4 +7,4 @@ fun f() {
     }
 }
 
-// ABSENT: "exception: Exception"
+// ABSENT: { itemText: "exception: Exception" }

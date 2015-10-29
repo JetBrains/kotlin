@@ -1,3 +1,3 @@
 fun f(file<caret>)
 
-// ELEMENT: "file: File"
+// ELEMENT_TEXT: "file: File"
