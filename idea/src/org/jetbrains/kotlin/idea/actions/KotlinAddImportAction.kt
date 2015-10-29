@@ -103,7 +103,7 @@ internal fun createGroupedImportsAction(project: Project,
  * Automatically adds import directive to the file for resolving reference.
  * Based on {@link AddImportAction}
  */
-internal class KotlinAddImportAction(
+class KotlinAddImportAction internal constructor(
         private val project: Project,
         private val editor: Editor,
         private val element: KtElement,
