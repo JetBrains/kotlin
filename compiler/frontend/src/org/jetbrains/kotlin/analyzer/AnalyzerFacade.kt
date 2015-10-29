@@ -116,6 +116,8 @@ public interface ModuleInfo {
     public fun dependencies(): List<ModuleInfo>
     public fun friends(): Collection<ModuleInfo> = listOf()
     public fun dependencyOnBuiltins(): DependencyOnBuiltins = DependenciesOnBuiltins.LAST
+    val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+        get() = emptyMap()
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
     public interface DependencyOnBuiltins {
@@ -158,7 +160,7 @@ public abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             val descriptorByModule = HashMap<M, ModuleDescriptorImpl>()
             modules.forEach {
                 module ->
-                descriptorByModule[module] = targetPlatform.createModule(module.name, storageManager)
+                descriptorByModule[module] = targetPlatform.createModule(module.name, storageManager, module.capabilities)
             }
             return ResolverForProjectImpl(debugName, descriptorByModule, delegateResolver)
         }

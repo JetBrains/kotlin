@@ -51,6 +51,12 @@ public class ErrorUtils {
     private static final ModuleDescriptor ERROR_MODULE;
     static {
         ERROR_MODULE = new ModuleDescriptor() {
+            @Nullable
+            @Override
+            public <T> T getCapability(@NotNull Capability<T> capability) {
+                return null;
+            }
+
             @NotNull
             @Override
             public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {

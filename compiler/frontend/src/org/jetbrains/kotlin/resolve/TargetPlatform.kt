@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
@@ -88,8 +89,10 @@ open class PlatformConfigurator(
     }
 }
 
+@JvmOverloads
 fun TargetPlatform.createModule(
         name: Name,
-        storageManager: StorageManager
-) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns)
+        storageManager: StorageManager,
+        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+) = ModuleDescriptorImpl(name, storageManager, defaultModuleParameters, builtIns, capabilities)
 

@@ -41,6 +41,10 @@ public interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
     public fun getPackage(fqName: FqName): PackageViewDescriptor
 
     public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
+
+    fun <T> getCapability(capability: Capability<T>): T?
+
+    class Capability<T>(val name: String)
 }
 
 interface ModuleParameters {
