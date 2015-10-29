@@ -75,12 +75,13 @@ public class MockLibraryUtil {
 
             File classesDir = new File(contentDir, "classes");
 
-            List<File> kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), new File(sourcesPath));
-            if (!kotlinFiles.isEmpty()) {
+            File srcFile = new File(sourcesPath);
+            List<File> kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), srcFile);
+            if (srcFile.isFile() || !kotlinFiles.isEmpty()) {
                 compileKotlin(sourcesPath, classesDir, extraClasspath);
             }
 
-            List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), new File(sourcesPath));
+            List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile);
             if (!javaFiles.isEmpty()) {
                 List<String> classpath = new ArrayList<String>();
                 classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
@@ -170,7 +171,9 @@ public class MockLibraryUtil {
 
     public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir, @NotNull String... extraClasspath) {
         List<String> classpath = new ArrayList<String>();
-        classpath.add(sourcesPath);
+        if (new File(sourcesPath).isDirectory()) {
+            classpath.add(sourcesPath);
+        }
         Collections.addAll(classpath, extraClasspath);
 
         List<String> args = new ArrayList<String>();

@@ -39,7 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public abstract class AbstractJavaAgainstKotlinSourceCheckerTest extends KotlinDaemonAnalyzerTestCase {
+public abstract class AbstractJavaAgainstKotlinCheckerTest extends KotlinDaemonAnalyzerTestCase {
 
     private static final LocalInspectionTool[] DEFAULT_TOOLS = new LocalInspectionTool[] {
             new StaticCallOnSubclassInspection(),
@@ -62,7 +62,7 @@ public abstract class AbstractJavaAgainstKotlinSourceCheckerTest extends KotlinD
 
     @Nullable
     protected String getConfigFileText() {
-        File configureFile = new File(PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/" + getTestName(false) + ".txt");
+        File configureFile = new File(PluginTestCaseBase.getTestDataPathBase() + "/kotlinAndJavaChecker/javaAgainstKotlin/" + getTestName(false) + ".txt");
         if (!configureFile.exists()) return null;
 
         try {
@@ -108,9 +108,5 @@ public abstract class AbstractJavaAgainstKotlinSourceCheckerTest extends KotlinD
     @Override
     protected String getTestDataPath() {
         return JetTestUtils.getHomeDirectory() + "/";
-    }
-
-    public void doTest(String path) throws Exception {
-        doTest(true, true, path.replace(".kt", ".java"), path);
     }
 }

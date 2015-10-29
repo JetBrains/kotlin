@@ -382,7 +382,12 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractJavaAgainstKotlinSourceCheckerTest>() {
-            model("kotlinAndJavaChecker")
+            model("kotlinAndJavaChecker/javaAgainstKotlin")
+            model("kotlinAndJavaChecker/javaWithKotlin")
+        }
+
+        testClass<AbstractJavaAgainstKotlinBinariesCheckerTest>() {
+            model("kotlinAndJavaChecker/javaAgainstKotlin")
         }
 
         testClass<AbstractJetPsiUnifierTest>() {
