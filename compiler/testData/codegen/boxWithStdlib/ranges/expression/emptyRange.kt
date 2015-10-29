@@ -12,23 +12,23 @@ fun box(): String {
         return "Wrong elements for 10..5: $list1"
     }
 
-    val list2 = ArrayList<Byte>()
+    val list2 = ArrayList<Int>()
     val range2 = 10.toByte()..(-5).toByte()
     for (i in range2) {
         list2.add(i)
         if (list2.size() > 23) break
     }
-    if (list2 != listOf<Byte>()) {
+    if (list2 != listOf<Int>()) {
         return "Wrong elements for 10.toByte()..(-5).toByte(): $list2"
     }
 
-    val list3 = ArrayList<Short>()
+    val list3 = ArrayList<Int>()
     val range3 = 10.toShort()..(-5).toShort()
     for (i in range3) {
         list3.add(i)
         if (list3.size() > 23) break
     }
-    if (list3 != listOf<Short>()) {
+    if (list3 != listOf<Int>()) {
         return "Wrong elements for 10.toShort()..(-5).toShort(): $list3"
     }
 

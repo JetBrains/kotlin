@@ -70,10 +70,6 @@ public class GenerateRangesCodegenTestData {
             .put("\"", "Char")
             .put("Float.NaN", "Float")
             .put("Double.NaN", "Double")
-            .put("MaxB", "Byte")
-            .put("MinB", "Byte")
-            .put("MaxS", "Short")
-            .put("MinS", "Short")
             .put("MaxL", "Long")
             .put("MinL", "Long")
             .put("MaxC", "Char")
@@ -83,7 +79,8 @@ public class GenerateRangesCodegenTestData {
     private static String detectElementType(String rangeExpression) {
         Matcher matcher = Pattern.compile("\\.to(\\w+)").matcher(rangeExpression);
         if (matcher.find()) {
-            return matcher.group(1);
+            String elementType = matcher.group(1);
+            return elementType.equals("Byte") || elementType.equals("Short") ? "Int" : elementType;
         }
         if (Pattern.compile("\\d\\.\\d").matcher(rangeExpression).find()) {
             return "Double";

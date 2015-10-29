@@ -67,7 +67,8 @@ public class RangeTest {
         assertTrue(9.toByte() in openRange)
         assertFalse(10.toByte() in openRange)
 
-        assertTrue(assertFails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
+        // byte arguments now construct IntRange so no overflow here
+        // assertTrue(assertFails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
 
     }
 
@@ -100,7 +101,8 @@ public class RangeTest {
         assertTrue(9.toShort() in openRange)
         assertFalse(10.toShort() in openRange)
 
-        assertTrue(assertFails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
+        // short arguments now construct IntRange so no overflow here
+        // assertTrue(assertFails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
     }
 
     @test fun longRange() {

@@ -22,21 +22,21 @@ fun box(): String {
         return "Wrong elements for (MinI + 2) downTo MinI step 1: $list1"
     }
 
-    val list2 = ArrayList<Byte>()
+    val list2 = ArrayList<Int>()
     for (i in (MinB + 2).toByte() downTo MinB step 1) {
         list2.add(i)
         if (list2.size() > 23) break
     }
-    if (list2 != listOf<Byte>((MinB + 2).toByte(), (MinB + 1).toByte(), MinB)) {
+    if (list2 != listOf<Int>((MinB + 2).toInt(), (MinB + 1).toInt(), MinB.toInt())) {
         return "Wrong elements for (MinB + 2).toByte() downTo MinB step 1: $list2"
     }
 
-    val list3 = ArrayList<Short>()
+    val list3 = ArrayList<Int>()
     for (i in (MinS + 2).toShort() downTo MinS step 1) {
         list3.add(i)
         if (list3.size() > 23) break
     }
-    if (list3 != listOf<Short>((MinS + 2).toShort(), (MinS + 1).toShort(), MinS)) {
+    if (list3 != listOf<Int>((MinS + 2).toInt(), (MinS + 1).toInt(), MinS.toInt())) {
         return "Wrong elements for (MinS + 2).toShort() downTo MinS step 1: $list3"
     }
 
