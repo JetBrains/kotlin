@@ -37,8 +37,6 @@ import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope.kotlinSourceAndClassFiles
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -205,10 +203,8 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         }
     }
 
-
     private fun forceResolvePackageDeclarations(files: Collection<KtFile>, session: ResolveSession) {
         for (file in files) {
-            // SCRIPT: not supported
             if (file.isScript) continue
 
             val packageFqName = file.packageFqName

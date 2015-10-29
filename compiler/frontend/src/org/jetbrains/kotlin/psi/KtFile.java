@@ -172,7 +172,6 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
     @Override
     public void setPackageName(String packageName) { }
 
-    // SCRIPT: find script in file
     @Nullable
     public KtScript getScript() {
         return PsiTreeUtil.getChildOfType(this, KtScript.class);

@@ -158,7 +158,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     @NotNull
     public Collection<ClassDescriptorWithResolutionScopes> getAllClasses() {
-        // SCRIPT: all classes are declared classes + script classes
         Collection<ClassDescriptorWithResolutionScopes> scriptClasses = CollectionsKt.map(
                 getScripts().values(),
                 new Function1<ScriptDescriptor, ClassDescriptorWithResolutionScopes>() {

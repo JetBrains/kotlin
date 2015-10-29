@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
-// SCRIPT: Members of a script class
 public class LazyScriptClassMemberScope protected constructor(
         private val resolveSession: ResolveSession,
         declarationProvider: ClassMemberDeclarationProvider,

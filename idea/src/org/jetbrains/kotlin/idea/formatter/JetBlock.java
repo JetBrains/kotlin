@@ -436,7 +436,6 @@ public class JetBlock extends AbstractBlock {
         ASTNode childParent = child.getTreeParent();
         IElementType childType = child.getElementType();
 
-        // SCRIPT: Avoid indenting script top BLOCK contents
         if (childParent != null && childParent.getTreeParent() != null) {
             if (childParent.getElementType() == BLOCK && childParent.getTreeParent().getElementType() == SCRIPT) {
                 return Indent.getNoneIndent();

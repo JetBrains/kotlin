@@ -33,10 +33,8 @@ import java.util.Map;
 
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
-// SCRIPT: resolve symbols in scripts
 public class ScriptBodyResolver {
-
-    @NotNull private final ExpressionTypingServices expressionTypingServices;
+    private final ExpressionTypingServices expressionTypingServices;
 
     public ScriptBodyResolver(
             @NotNull ExpressionTypingServices expressionTypingServices

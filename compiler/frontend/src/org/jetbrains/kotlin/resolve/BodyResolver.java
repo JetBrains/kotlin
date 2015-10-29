@@ -112,7 +112,6 @@ public class BodyResolver {
 
         resolveFunctionBodies(c);
 
-        // SCRIPT: resolve script bodies
         scriptBodyResolverResolver.resolveScriptBodies(c);
 
         if (!c.getTopDownAnalysisMode().isLocalDeclarations()) {

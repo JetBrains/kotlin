@@ -649,7 +649,6 @@ public class DescriptorResolver {
         DeclarationDescriptor containingDeclaration = scope.getOwnerDescriptor();
         VariableDescriptor result;
         KotlinType type;
-        // SCRIPT: Create property descriptors
         if (KtPsiUtil.isScriptDeclaration(variable)) {
             PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                     containingDeclaration,

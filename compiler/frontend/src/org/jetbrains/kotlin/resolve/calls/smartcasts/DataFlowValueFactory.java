@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue.Kind;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -125,7 +125,6 @@ public class DataFlowValueFactory {
             @NotNull DeclarationDescriptor containingDeclarationOrModule
     ) {
         if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
-            // SCRIPT: smartcasts data flow
             KotlinType type = receiverValue.getType();
             return new DataFlowValue(receiverValue, type, STABLE_VALUE, getImmanentNullability(type));
         }

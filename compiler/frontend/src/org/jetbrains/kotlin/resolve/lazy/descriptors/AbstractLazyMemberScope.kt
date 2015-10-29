@@ -55,7 +55,6 @@ protected constructor(
 
     private fun resolveClassDescriptor(name: Name): List<ClassDescriptor> {
         return declarationProvider.getClassOrObjectDeclarations(name).map {
-            // SCRIPT: Creating a script class
             if (it is JetScriptInfo)
                 LazyScriptClassDescriptor(c as ResolveSession, thisDescriptor, name, it)
             else

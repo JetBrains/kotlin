@@ -101,7 +101,6 @@ public class PackageCodegen {
             else if (declaration instanceof KtScript) {
                 KtScript script = (KtScript) declaration;
 
-                // SCRIPT: generate script code, should be separate execution branch
                 if (state.getGenerateDeclaredClassFilter().shouldGenerateScript(script)) {
                     ScriptCodegen.createScriptCodegen(script, state, packagePartContext).generate();
                 }
