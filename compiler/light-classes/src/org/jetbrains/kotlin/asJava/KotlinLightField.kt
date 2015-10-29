@@ -14,177 +14,137 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.intellij.lang.Language;
-import com.intellij.lang.java.JavaLanguage;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.light.LightElement;
-import com.intellij.psi.javadoc.PsiDocComment;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.KtDeclaration;
+import com.intellij.lang.Language
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightElement
+import com.intellij.psi.javadoc.PsiDocComment
+import com.intellij.psi.search.SearchScope
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.psi.KtDeclaration
 
 // Copied from com.intellij.psi.impl.light.LightField
-public abstract class KotlinLightField<T extends KtDeclaration, D extends PsiField> extends LightElement
-        implements PsiField, KotlinLightElement<T, D> {
-    private final T origin;
-    private final D delegate;
-    private final PsiClass containingClass;
+abstract class KotlinLightField<T : KtDeclaration, D : PsiField>(
+        manager: PsiManager,
+        private val origin: T,
+        private val delegate: D,
+        private val containingClass: PsiClass
+) : LightElement(manager, JavaLanguage.INSTANCE), PsiField, KotlinLightElement<T, D> {
 
-    public KotlinLightField(@NotNull PsiManager manager, @NotNull T origin, @NotNull D delegate, @NotNull PsiClass containingClass) {
-        super(manager, JavaLanguage.INSTANCE);
-        this.origin = origin;
-        this.delegate = delegate;
-        this.containingClass = containingClass;
+    abstract override fun copy(): KotlinLightField<T, D>
+
+    @Throws(IncorrectOperationException::class)
+    override fun setInitializer(initializer: PsiExpression?) {
+        throw IncorrectOperationException("Not supported")
     }
 
-    @NotNull
-    @Override
-    public abstract KotlinLightField<T, D> copy();
-
-    @Override
-    public void setInitializer(@Nullable PsiExpression initializer) throws IncorrectOperationException {
-        throw new IncorrectOperationException("Not supported");
+    override fun getUseScope(): SearchScope {
+        return origin.useScope
     }
 
-    @NotNull
-    @Override
-    public SearchScope getUseScope() {
-        return origin.getUseScope();
+    override fun getName(): String? {
+        return delegate.name
     }
 
-    @Override
-    public String getName() {
-        return delegate.getName();
+    override fun getNameIdentifier(): PsiIdentifier {
+        return delegate.nameIdentifier
     }
 
-    @NotNull
-    @Override
-    public PsiIdentifier getNameIdentifier() {
-        return delegate.getNameIdentifier();
+    override fun getDocComment(): PsiDocComment? {
+        return delegate.docComment
     }
 
-    @Override
-    public PsiDocComment getDocComment() {
-        return delegate.getDocComment();
+    override fun isDeprecated(): Boolean {
+        return delegate.isDeprecated
     }
 
-    @Override
-    public boolean isDeprecated() {
-        return delegate.isDeprecated();
+    override fun getContainingClass(): PsiClass? {
+        return containingClass
     }
 
-    @Override
-    public PsiClass getContainingClass() {
-        return containingClass;
+    override fun getType(): PsiType {
+        return delegate.type
     }
 
-    @NotNull
-    @Override
-    public PsiType getType() {
-        return delegate.getType();
+    override fun getTypeElement(): PsiTypeElement? {
+        return delegate.typeElement
     }
 
-    @Override
-    public PsiTypeElement getTypeElement() {
-        return delegate.getTypeElement();
+    override fun getInitializer(): PsiExpression? {
+        return delegate.initializer
     }
 
-    @Override
-    public PsiExpression getInitializer() {
-        return delegate.getInitializer();
+    override fun hasInitializer(): Boolean {
+        return delegate.hasInitializer()
     }
 
-    @Override
-    public boolean hasInitializer() {
-        return delegate.hasInitializer();
+    @Throws(IncorrectOperationException::class)
+    override fun normalizeDeclaration() {
+        throw IncorrectOperationException("Not supported")
     }
 
-    @Override
-    public void normalizeDeclaration() throws IncorrectOperationException {
-        throw new IncorrectOperationException("Not supported");
+    override fun computeConstantValue(): Any? {
+        return delegate.computeConstantValue()
     }
 
-    @Override
-    public Object computeConstantValue() {
-        return delegate.computeConstantValue();
+    @Throws(IncorrectOperationException::class)
+    override fun setName(@NonNls name: String): PsiElement {
+        throw IncorrectOperationException("Not supported")
     }
 
-    @Override
-    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        throw new IncorrectOperationException("Not supported");
+    override fun getModifierList(): PsiModifierList? {
+        return delegate.modifierList
     }
 
-    @Override
-    public PsiModifierList getModifierList() {
-        return delegate.getModifierList();
+    override fun hasModifierProperty(@NonNls name: String): Boolean {
+        return delegate.hasModifierProperty(name)
     }
 
-    @Override
-    public boolean hasModifierProperty(@NonNls @NotNull String name) {
-        return delegate.hasModifierProperty(name);
+    override fun getText(): String {
+        return delegate.text
     }
 
-    @Override
-    public String getText() {
-        return delegate.getText();
+    override fun getTextRange(): TextRange {
+        return TextRange(-1, -1)
     }
 
-    @Override
-    public TextRange getTextRange() {
-        return new TextRange(-1, -1);
+    override fun isValid(): Boolean {
+        return containingClass.isValid
     }
 
-    @Override
-    public boolean isValid() {
-        return containingClass.isValid();
+    override fun toString(): String {
+        return "KotlinLightField:" + name!!
     }
 
-    @Override
-    public String toString() {
-        return "KotlinLightField:" + getName();
+    override fun getOrigin(): T {
+        return origin
     }
 
-    @NotNull
-    @Override
-    public T getOrigin() {
-        return origin;
+    override fun getDelegate(): D {
+        return delegate
     }
 
-    @NotNull
-    @Override
-    public D getDelegate() {
-        return delegate;
+    override fun getNavigationElement(): PsiElement {
+        return getOrigin()
     }
 
-    @NotNull
-    @Override
-    public PsiElement getNavigationElement() {
-        return getOrigin();
+    override fun getLanguage(): Language {
+        return KotlinLanguage.INSTANCE
     }
 
-    @NotNull
-    @Override
-    public Language getLanguage() {
-        return KotlinLanguage.INSTANCE;
-    }
-
-    @Override
-    public boolean isEquivalentTo(PsiElement another) {
-        if (another instanceof KotlinLightField && origin.isEquivalentTo(((KotlinLightField) another).getOrigin())) {
-            return true;
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        if (another is KotlinLightField<*, *> && origin.isEquivalentTo(another.getOrigin())) {
+            return true
         }
-        return super.isEquivalentTo(another);
+        return super.isEquivalentTo(another)
     }
 
-    @Override
-    public boolean isWritable() {
-        return getOrigin().isWritable();
+    override fun isWritable(): Boolean {
+        return getOrigin().isWritable
     }
 }
