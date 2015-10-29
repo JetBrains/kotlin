@@ -20,6 +20,7 @@ import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.jps.incremental.ProtoCompareGenerated.ProtoBufClassKind
 import org.jetbrains.kotlin.jps.incremental.ProtoCompareGenerated.ProtoBufPackageKind
+import org.jetbrains.kotlin.jps.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.Deserialization
@@ -34,7 +35,6 @@ public sealed class DifferenceKind() {
     public class MEMBERS(val names: Collection<String>): DifferenceKind()
 }
 
-data class ProtoMapValue(val isPackageFacade: Boolean, val bytes: ByteArray, val strings: Array<String>)
 
 public fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): DifferenceKind {
     if (oldData.isPackageFacade != newData.isPackageFacade) return DifferenceKind.CLASS_SIGNATURE

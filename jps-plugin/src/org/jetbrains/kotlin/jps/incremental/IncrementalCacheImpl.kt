@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.io.*
+import com.intellij.util.io.BooleanDataDescriptor
+import com.intellij.util.io.EnumeratorStringDescriptor
+import com.intellij.util.io.IOUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.BuildTarget
@@ -29,8 +31,7 @@ import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
-import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
-import org.jetbrains.kotlin.jps.incremental.storage.BasicStringMap
+import org.jetbrains.kotlin.jps.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.header.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -38,9 +39,6 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartPro
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.org.objectweb.asm.*
-import java.io.DataInput
-import java.io.DataInputStream
-import java.io.DataOutput
 import java.io.File
 import java.security.MessageDigest
 import java.util.*
@@ -270,7 +268,7 @@ public class IncrementalCacheImpl(
         cacheFormatVersion.clean()
     }
 
-    private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
+    private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, PROTO_MAP_VALUE_EXTERNALIZER) {
 
         public fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): ChangesInfo {
             val header = kotlinClass.classHeader
@@ -316,7 +314,7 @@ public class IncrementalCacheImpl(
         }
     }
 
-    private inner class ConstantsMap(storageFile: File) : BasicStringMap<Map<String, Any>>(storageFile, ConstantsMapExternalizer) {
+    private inner class ConstantsMap(storageFile: File) : BasicStringMap<Map<String, Any>>(storageFile, CONSTANTS_MAP_EXTERNALIZER) {
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any>? {
             val result = HashMap<String, Any>()
 
@@ -364,65 +362,7 @@ public class IncrementalCacheImpl(
                 value.dumpMap(Any::toString)
     }
 
-    private object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
-        override fun save(out: DataOutput, map: Map<String, Any>?) {
-            out.writeInt(map!!.size())
-            for (name in map.keySet().sorted()) {
-                IOUtil.writeString(name, out)
-                val value = map[name]!!
-                when (value) {
-                    is Int -> {
-                        out.writeByte(Kind.INT.ordinal())
-                        out.writeInt(value)
-                    }
-                    is Float -> {
-                        out.writeByte(Kind.FLOAT.ordinal())
-                        out.writeFloat(value)
-                    }
-                    is Long -> {
-                        out.writeByte(Kind.LONG.ordinal())
-                        out.writeLong(value)
-                    }
-                    is Double -> {
-                        out.writeByte(Kind.DOUBLE.ordinal())
-                        out.writeDouble(value)
-                    }
-                    is String -> {
-                        out.writeByte(Kind.STRING.ordinal())
-                        IOUtil.writeString(value, out)
-                    }
-                    else -> throw IllegalStateException("Unexpected constant class: ${value.javaClass}")
-                }
-            }
-        }
-
-        override fun read(`in`: DataInput): Map<String, Any>? {
-            val size = `in`.readInt()
-            val map = HashMap<String, Any>(size)
-
-            repeat(size) {
-                val name = IOUtil.readString(`in`)!!
-
-                val kind = Kind.values()[`in`.readByte().toInt()]
-                val value = when (kind) {
-                    Kind.INT -> `in`.readInt()
-                    Kind.FLOAT -> `in`.readFloat()
-                    Kind.LONG -> `in`.readLong()
-                    Kind.DOUBLE -> `in`.readDouble()
-                    Kind.STRING -> IOUtil.readString(`in`)!!
-                }
-                map[name] = value
-            }
-
-            return map
-        }
-
-        private enum class Kind {
-            INT, FLOAT, LONG, DOUBLE, STRING
-        }
-    }
-
-    private inner class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
+    private inner class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, STRING_TO_LONG_MAP_EXTERNALIZER) {
         private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
             val result = HashMap<String, Long>()
 
@@ -508,7 +448,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
+    private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, STRING_LIST_EXTERNALIZER) {
         public fun add(facadeName: JvmClassName, partNames: List<String>) {
             storage[facadeName.internalName] = partNames
         }
@@ -538,7 +478,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: String): String = value
     }
 
-    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, StringListExternalizer) {
+    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, STRING_LIST_EXTERNALIZER) {
         public fun clearOutputsForSource(sourceFile: File) {
             storage.remove(sourceFile.absolutePath)
         }
@@ -571,7 +511,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
+    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, STRING_LIST_EXTERNALIZER) {
         public fun getEntries(): Map<JvmClassName, List<String>> =
             storage.keys.toMap(JvmClassName::byInternalName) { storage[it]!! }
 
@@ -592,7 +532,7 @@ public class IncrementalCacheImpl(
      *  * inlineFunction - jvmSignature of some inline function in source file
      *  * target files - collection of files inlineFunction has been inlined to
      */
-    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathFunctionPairKeyDescriptor, PathCollectionExternalizer) {
+    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PATH_FUNCTION_PAIR_KEY_DESCRIPTOR, PATH_COLLECTION_EXTERNALIZER) {
         public fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
             val key = PathFunctionPair(sourcePath, jvmSignature)
             storage.append(key) { out ->
@@ -661,73 +601,6 @@ private fun ByteArray.md5(): Long {
            )
 }
 
-private abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
-    override fun save(out: DataOutput, map: Map<String, T>?) {
-        out.writeInt(map!!.size())
-
-        for ((key, value) in map.entrySet()) {
-            IOUtil.writeString(key, out)
-            writeValue(out, value)
-        }
-    }
-
-    override fun read(`in`: DataInput): Map<String, T>? {
-        val size = `in`.readInt()
-        val map = HashMap<String, T>(size)
-
-        repeat(size) {
-            val name = IOUtil.readString(`in`)!!
-            map[name] = readValue(`in`)
-        }
-
-        return map
-    }
-
-    protected abstract fun writeValue(output: DataOutput, value: T)
-    protected abstract fun readValue(input: DataInput): T
-}
-
-private object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
-    override fun readValue(input: DataInput): Long =
-            input.readLong()
-
-    override fun writeValue(output: DataOutput, value: Long) {
-        output.writeLong(value)
-    }
-}
-
-private object StringListExternalizer : DataExternalizer<List<String>> {
-    override fun save(out: DataOutput, value: List<String>) {
-        value.forEach { IOUtil.writeUTF(out, it) }
-    }
-
-    override fun read(`in`: DataInput): List<String> {
-        val result = ArrayList<String>()
-        while ((`in` as DataInputStream).available() > 0) {
-            result.add(IOUtil.readUTF(`in`))
-        }
-        return result
-    }
-}
-
-object PathCollectionExternalizer : DataExternalizer<Collection<String>> {
-    override fun save(out: DataOutput, value: Collection<String>) {
-        for (str in value) {
-            IOUtil.writeUTF(out, str)
-        }
-    }
-
-    override fun read(`in`: DataInput): Collection<String> {
-        val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
-        val stream = `in` as DataInputStream
-        while (stream.available() > 0) {
-            val str = IOUtil.readUTF(stream)
-            result.add(str)
-        }
-        return result
-    }
-}
-
 private val File.normalizedPath: String
     get() = FileUtil.toSystemIndependentName(canonicalPath)
 
@@ -749,68 +622,3 @@ private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): St
 @TestOnly
 public fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
         "[${sorted().joinToString(", ", transform = Any::toString)}]"
-
-private class PathFunctionPair(
-        public val path: String,
-        public val function: String
-): Comparable<PathFunctionPair> {
-    override fun compareTo(other: PathFunctionPair): Int {
-        val pathComp = FileUtil.comparePaths(path, other.path)
-
-        if (pathComp != 0) return pathComp
-
-        return function.compareTo(other.function)
-    }
-
-    override fun equals(other: Any?): Boolean =
-        when (other) {
-            is PathFunctionPair ->
-                FileUtil.pathsEqual(path, other.path) && function == other.function
-            else ->
-                false
-        }
-
-    override fun hashCode(): Int = 31 * FileUtil.pathHashCode(path) + function.hashCode()
-}
-
-private object PathFunctionPairKeyDescriptor : KeyDescriptor<PathFunctionPair> {
-    override fun getHashCode(value: PathFunctionPair): Int =
-            value.hashCode()
-
-    override fun isEqual(val1: PathFunctionPair, val2: PathFunctionPair): Boolean =
-            val1 == val2
-
-    override fun read(`in`: DataInput): PathFunctionPair {
-        val path = IOUtil.readUTF(`in`)
-        val function = IOUtil.readUTF(`in`)
-        return PathFunctionPair(path, function)
-    }
-
-    override fun save(out: DataOutput, value: PathFunctionPair) {
-        IOUtil.writeUTF(out, value.path)
-        IOUtil.writeUTF(out, value.function)
-    }
-
-}
-
-private object ProtoMapValueExternalizer : DataExternalizer<ProtoMapValue> {
-    override fun save(out: DataOutput, value: ProtoMapValue) {
-        out.writeBoolean(value.isPackageFacade)
-        out.writeInt(value.bytes.size())
-        out.write(value.bytes)
-        out.writeInt(value.strings.size())
-        for (string in value.strings) {
-            out.writeUTF(string)
-        }
-    }
-
-    override fun read(`in`: DataInput): ProtoMapValue {
-        val isPackageFacade = `in`.readBoolean()
-        val bytesLength = `in`.readInt()
-        val bytes = ByteArray(bytesLength)
-        `in`.readFully(bytes, 0, bytesLength)
-        val stringsLength = `in`.readInt()
-        val strings = Array<String>(stringsLength) { `in`.readUTF() }
-        return ProtoMapValue(isPackageFacade, bytes, strings)
-    }
-}
