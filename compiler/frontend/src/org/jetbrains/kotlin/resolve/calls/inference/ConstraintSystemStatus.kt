@@ -20,73 +20,73 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 
 public interface ConstraintSystemStatus {
     /**
-     * Returns <tt>true</tt> if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).
+     * Returns `true` if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).
      */
     public fun isSuccessful(): Boolean
 
     /**
-     * Return <tt>true</tt> if constraint system has no contradiction (it can be not successful because of the lack of information for a type variable).
+     * Return `true` if constraint system has no contradiction (it can be not successful because of the lack of information for a type variable).
      */
     public fun hasContradiction(): Boolean
 
     /**
-     * Returns <tt>true</tt> if type constraints for some type variable are contradicting. <p/>
+     * Returns `true` if type constraints for some type variable are contradicting.
      *
-     * For example, for <pre>fun &lt;R&gt; foo(r: R, t: java.util.List&lt;R&gt;) {}</pre> in invocation <tt>foo(1, arrayList("s"))</tt>
-     * type variable <tt>R</tt> has two conflicting constraints: <p/>
-     * - <tt>"R is a supertype of Int"</tt> <p/>
-     * - <tt>"List&lt;R&gt; is a supertype of List&lt;String&gt;"</tt> which leads to <tt>"R is equal to String"</tt>
+     * For example, for `fun <R> foo(r: R, t: java.util.List<R>) {}` in invocation `foo(1, arrayList("s"))`
+     * type variable `R` has two conflicting constraints:
+     * - "R is a supertype of Int"
+     * - "List<R> is a supertype of List<String>" which leads to "R is equal to String"
      */
     public fun hasConflictingConstraints(): Boolean
 
     /**
-     * Returns <tt>true</tt> if contradiction of type constraints comes from declared bounds for type parameters.
+     * Returns `true` if contradiction of type constraints comes from declared bounds for type parameters.
      *
-     * For example, for <pre>fun &lt;R: Any&gt; foo(r: R) {}</pre> in invocation <tt>foo(null)</tt>
-     * upper bounds <tt>Any</tt> for type parameter <tt>R</tt> is violated. <p/>
+     * For example, for `fun <R: Any> foo(r: R) {}` in invocation `foo(null)`
+     * upper bounds `Any` for type parameter `R` is violated.
      *
      * It's the special case of 'hasConflictingConstraints' case.
      */
     public fun hasViolatedUpperBound(): Boolean
 
     /**
-     * Returns <tt>true</tt> if there is no information for some registered type variable.
+     * Returns `true` if there is no information for some registered type variable.
      *
-     * For example, for <pre>fun &lt;E&gt; newList()</pre> in invocation <tt>"val nl = newList()"</tt>
-     * there is no information to infer type variable <tt>E</tt>.
+     * For example, for `fun <E> newList()` in invocation `val nl = newList()`
+     * there is no information to infer type variable `E`.
      */
     public fun hasUnknownParameters(): Boolean
 
     /**
-     * Returns <tt>true</tt> if some constraint cannot be processed because of type constructor mismatch.
+     * Returns `true` if some constraint cannot be processed because of type constructor mismatch.
      *
-     * For example, for <pre>fun &lt;R&gt; foo(t: List&lt;R&gt;) {}</pre> in invocation <tt>foo(hashSet("s"))</tt>
-     * there is type constructor mismatch: <tt>"HashSet&lt;String&gt; cannot be a subtype of List&lt;R&gt;"</tt>.
+     * For example, for `fun <R> foo(t: List<R>) {}` in invocation `foo(hashSetOf("s"))`
+     * there is type constructor mismatch: "HashSet<String> cannot be a subtype of List<R>".
      */
     public fun hasParameterConstraintError(): Boolean
 
     /**
-     * Returns <tt>true</tt> if there is type constructor mismatch only in constraintPosition or
+     * Returns `true` if there is type constructor mismatch only in constraintPosition or
      * constraint system is successful without constraints from this position.
      */
     public fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean
 
     /**
-     * Returns <tt>true</tt> if there is an error in constraining types. <p/>
+     * Returns `true` if there is an error in constraining types.
      * Is used not to generate type inference error if there was one in argument types.
      */
     public fun hasErrorInConstrainingTypes(): Boolean
 
     /**
-     * Returns <tt>true</tt> if a user type contains the type projection that cannot be captured.
+     * Returns `true` if a user type contains the type projection that cannot be captured.
      *
-     * For example, for <pre>fun &lt;T&gt; foo(t: Array&lt;Array&lt;T&gt;&gt;) {}</pre>
-     * in invocation <tt>foo(array)</tt> where array has type <tt>Array&lt;Array&lt;out Int&gt;&gt;</tt>.
+     * For example, for `fun <T> foo(t: Array<Array<T>>) {}`
+     * in invocation `foo(array)` where `array` has type `Array<Array<out Int>>`.
      */
     public fun hasCannotCaptureTypesError(): Boolean
 
     /**
-     * Returns <tt>true</tt> if there's an error in constraint system incorporation.
+     * Returns `true` if there's an error in constraint system incorporation.
      */
     public fun hasTypeInferenceIncorporationError(): Boolean
 
