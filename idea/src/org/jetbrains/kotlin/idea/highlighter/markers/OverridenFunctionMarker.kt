@@ -38,10 +38,15 @@ import com.intellij.psi.util.PsiUtil
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 import gnu.trove.THashSet
-import org.jetbrains.kotlin.asJava.KotlinLightMethodForTraitFakeOverride
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.isTraitFakeOverride
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.JComponent
+
+private fun PsiMethod.isMethodWithDeclarationInOtherClass(): Boolean {
+    return this is KotlinLightMethod && this.isTraitFakeOverride()
+}
 
 internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
     val overridden = HashSet<T>()
@@ -50,7 +55,7 @@ internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, 
             override fun process(pair: Pair<PsiMethod, PsiMethod>?): Boolean {
                 ProgressManager.checkCanceled()
 
-                if (pair!!.getSecond() !is KotlinLightMethodForTraitFakeOverride) {
+                if (!pair!!.getSecond().isMethodWithDeclarationInOtherClass()) {
                     val superMethod = pair.getFirst()
 
                     val declaration = mappingToJava.get(superMethod)
@@ -80,7 +85,7 @@ public fun getOverriddenMethodTooltip(method: PsiMethod): String? {
 
     val comparator = MethodCellRenderer(false).getComparator()
 
-    val overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodForTraitFakeOverride } sortedWith (comparator)
+    val overridingJavaMethods = processor.getCollection().filter { !it.isMethodWithDeclarationInOtherClass() } sortedWith (comparator)
     if (overridingJavaMethods.isEmpty()) return null
 
     val start = if (isAbstract) DaemonBundle.message("method.is.implemented.header") else DaemonBundle.message("method.is.overriden.header")
@@ -103,7 +108,7 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
         return
     }
 
-    var overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodForTraitFakeOverride }
+    var overridingJavaMethods = processor.getCollection().filter { !it.isMethodWithDeclarationInOtherClass() }
     if (overridingJavaMethods.isEmpty()) return
 
     val showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridingJavaMethods.toTypedArray())

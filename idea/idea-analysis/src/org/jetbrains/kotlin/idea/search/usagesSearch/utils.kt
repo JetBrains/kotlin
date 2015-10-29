@@ -22,10 +22,7 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.MethodSignatureUtil
-import org.jetbrains.kotlin.asJava.KotlinLightElement
-import org.jetbrains.kotlin.asJava.KotlinNoOriginLightMethod
-import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
@@ -131,7 +128,7 @@ private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: Searc
 private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
     if (this is KotlinLightElement<*, *>) return true
     // TODO: Temporary hack to avoid NPE while KotlinNoOriginLightMethod is around
-    if (this is KotlinNoOriginLightMethod) return true
+    if (this is KotlinLightMethod && this.getOrigin() == null) return true
     if (!(this is PsiMethod && isConstructor())) return true
     val klass = getContainingClass() ?: return true
     val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return true

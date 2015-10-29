@@ -153,20 +153,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
                     declaration = PsiTreeUtil.getParentOfType(declaration, KtProperty.class);
                 }
 
-                if (declaration != null) {
-                    if (isTraitFakeOverride(declaration)) {
-                        return new KotlinLightMethodForTraitFakeOverride(myManager, method, declaration, KotlinWrappingLightClass.this);
-                    }
-                    else if (method instanceof PsiAnnotationMethod) {
-                        return new KotlinAnnotationLightMethod(myManager, (PsiAnnotationMethod) method, declaration,
-                                                               KotlinWrappingLightClass.this);
-                    }
-                    else {
-                        return new KotlinLightMethodForDeclaration(myManager, method, declaration, KotlinWrappingLightClass.this);
-                    }
-                }
-
-                return new KotlinNoOriginLightMethod(myManager, method, KotlinWrappingLightClass.this);
+                return KotlinLightMethodImpl.Factory.create(method, declaration, KotlinWrappingLightClass.this);
             }
         });
     }
@@ -192,20 +179,6 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
     @Override
     public Language getLanguage() {
         return KotlinLanguage.INSTANCE;
-    }
-
-    private boolean isTraitFakeOverride(@NotNull KtDeclaration originMethodDeclaration) {
-        if (!(originMethodDeclaration instanceof KtNamedFunction ||
-              originMethodDeclaration instanceof KtPropertyAccessor ||
-              originMethodDeclaration instanceof KtProperty)) {
-            return false;
-        }
-
-        KtClassOrObject parentOfMethodOrigin = PsiTreeUtil.getParentOfType(originMethodDeclaration, KtClassOrObject.class);
-        KtClassOrObject thisClassDeclaration = getOrigin();
-
-        // Method was generated from declaration in some other trait
-        return (parentOfMethodOrigin != null && thisClassDeclaration != parentOfMethodOrigin && KtPsiUtil.isTrait(parentOfMethodOrigin));
     }
 
     @Override

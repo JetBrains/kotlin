@@ -16,25 +16,10 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightField
-import com.intellij.psi.impl.light.LightMethod
-
-
-public class KotlinNoOriginLightMethod(manager: PsiManager, method: PsiMethod, containingClass: PsiClass) :
-        LightMethod(manager, method, containingClass) {
-
-    override fun toString() = "KotlinNoOriginLightMethod:${getName()}" + if (isConstructor()) " ctor" else ""
-
-    override fun accept(visitor: PsiElementVisitor) {
-        if (visitor is JavaElementVisitor) {
-            visitor.visitMethod(this)
-        }
-        else {
-            visitor.visitElement(this)
-        }
-    }
-}
 
 public class KotlinNoOriginLightField(manager: PsiManager, field: PsiField, containingClass: PsiClass) :
         LightField(manager, field, containingClass) {
