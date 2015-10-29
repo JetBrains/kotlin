@@ -39,11 +39,11 @@ fun box(): String {
 
     if (result != "5, 6, 7, 8") return "int:" + result
 
-    result = (1.toShort()..4.toShort()).map(::shortFoo).joinToString()
+    result = (listOf<Short>(1, 2, 3, 4)).map(::shortFoo).joinToString()
 
     if (result != "5, 6, 7, 8") return "short:" + result
 
-    result = (1.toByte()..4.toByte()).map(::byteFoo).joinToString()
+    result = (listOf<Byte>(1, 2, 3, 4)).map(::byteFoo).joinToString()
 
     if (result != "5, 6, 7, 8") return "byte:" + result
 
