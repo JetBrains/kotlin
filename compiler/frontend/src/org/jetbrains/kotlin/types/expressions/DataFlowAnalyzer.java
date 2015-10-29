@@ -286,6 +286,9 @@ public class DataFlowAnalyzer {
                     return expressionType;
                 }
             }
+            else if (isIfExpression && context.expectedType != NO_EXPECTED_TYPE) {
+                return expressionType;
+            }
             else {
                 context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));
             }
