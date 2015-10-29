@@ -375,8 +375,9 @@ public fun String.toHashSet(): HashSet<Char> {
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun String.toLinkedList(): LinkedList<Char> {
-    return toCollection(LinkedList<Char>())
+    return toCollection(LinkedList())
 }
 
 /**

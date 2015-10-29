@@ -962,8 +962,9 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun <T> Iterable<T>.toLinkedList(): LinkedList<T> {
-    return toCollection(LinkedList<T>())
+    return toCollection(LinkedList())
 }
 
 /**

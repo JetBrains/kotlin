@@ -5450,64 +5450,73 @@ public fun ShortArray.toHashSet(): HashSet<Short> {
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun <T> Array<out T>.toLinkedList(): LinkedList<T> {
-    return toCollection(LinkedList<T>())
+    return toCollection(LinkedList())
 }
 
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun BooleanArray.toLinkedList(): LinkedList<Boolean> {
-    return toCollection(LinkedList<Boolean>())
+    return toCollection(LinkedList())
 }
 
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun ByteArray.toLinkedList(): LinkedList<Byte> {
-    return toCollection(LinkedList<Byte>())
+    return toCollection(LinkedList())
 }
 
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun CharArray.toLinkedList(): LinkedList<Char> {
-    return toCollection(LinkedList<Char>())
+    return toCollection(LinkedList())
 }
 
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun DoubleArray.toLinkedList(): LinkedList<Double> {
-    return toCollection(LinkedList<Double>())
+    return toCollection(LinkedList())
 }
 
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun FloatArray.toLinkedList(): LinkedList<Float> {
-    return toCollection(LinkedList<Float>())
+    return toCollection(LinkedList())
 }
 
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun IntArray.toLinkedList(): LinkedList<Int> {
-    return toCollection(LinkedList<Int>())
+    return toCollection(LinkedList())
 }
 
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun LongArray.toLinkedList(): LinkedList<Long> {
-    return toCollection(LinkedList<Long>())
+    return toCollection(LinkedList())
 }
 
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun ShortArray.toLinkedList(): LinkedList<Short> {
-    return toCollection(LinkedList<Short>())
+    return toCollection(LinkedList())
 }
 
 /**

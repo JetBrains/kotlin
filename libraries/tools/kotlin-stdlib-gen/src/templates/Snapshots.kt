@@ -90,7 +90,7 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toLinkedList()") {
         doc { "Returns a [LinkedList] containing all elements." }
         returns("LinkedList<T>")
-        body { "return toCollection(LinkedList<T>())" }
+        deprecate { Deprecation("Use toCollection(LinkedList()) instead.", replaceWith = "toCollection(LinkedList())") }
     }
 
     templates add f("toMap(selector: (T) -> K)") {
