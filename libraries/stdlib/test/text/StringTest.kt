@@ -436,6 +436,8 @@ class StringTest {
         assertEquals("<value", "<value".removeSurrounding(pre, post), "Only removes surrounding when both prefix and suffix present")
         assertEquals("value>", "value>".removeSurrounding(pre, post), "Only removes surrounding when both prefix and suffix present")
         assertEquals("value", "value".removeSurrounding(pre, post))
+
+        assertEquals("<->", "<->".removeSurrounding(arg1("<-"), arg1("->")), "Does not remove overlapping prefix and suffix")
     }
 
     @test fun removePrefixCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
@@ -466,6 +468,8 @@ class StringTest {
         assertContentEquals("<value", "<value".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
         assertContentEquals("value>", "value>".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
         assertContentEquals("value", "value".removeSurrounding("<", ">"))
+
+        assertContentEquals("<->", "<->".removeSurrounding("<-", "->"), "Does not remove overlapping prefix and suffix")
     }
 
     /*

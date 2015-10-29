@@ -534,7 +534,7 @@ public fun String.removeSuffix(suffix: CharSequence): String {
  * Otherwise returns a new char sequence with the same characters.
  */
 public fun CharSequence.removeSurrounding(prefix: CharSequence, suffix: CharSequence): CharSequence {
-    if (startsWith(prefix) && endsWith(suffix)) {
+    if ((length >= prefix.length + suffix.length) && startsWith(prefix) && endsWith(suffix)) {
         return subSequence(prefix.length, length - suffix.length)
     }
     return subSequence(0, length)
@@ -546,7 +546,7 @@ public fun CharSequence.removeSurrounding(prefix: CharSequence, suffix: CharSequ
  * Otherwise returns this string unchanged.
  */
 public fun String.removeSurrounding(prefix: CharSequence, suffix: CharSequence): String {
-    if (startsWith(prefix) && endsWith(suffix)) {
+    if ((length >= prefix.length + suffix.length) && startsWith(prefix) && endsWith(suffix)) {
         return substring(prefix.length, length - suffix.length)
     }
     return this
