@@ -75,9 +75,13 @@ public class ConfigLibraryUtil {
                                              PathUtil.getKotlinPathsForDistDirectory().getJsStdLibJarPath()), module);
     }
 
+    public static void unConfigureKotlinRuntime(Module module) {
+        removeLibrary(module, DEFAULT_JAVA_RUNTIME_LIB_NAME);
+    }
+
     public static void unConfigureKotlinRuntimeAndSdk(Module module, Sdk sdk) {
         configureSdk(module, sdk);
-        removeLibrary(module, DEFAULT_JAVA_RUNTIME_LIB_NAME);
+        unConfigureKotlinRuntime(module);
     }
 
     public static void unConfigureKotlinJsRuntimeAndSdk(Module module, Sdk sdk) {

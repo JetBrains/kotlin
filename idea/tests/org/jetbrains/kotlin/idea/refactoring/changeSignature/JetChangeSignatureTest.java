@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -1348,13 +1349,15 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         editors = new ArrayList<Editor>();
+        ConfigLibraryUtil.configureKotlinRuntime(getModule());
     }
 
     @Override
     protected void tearDown() throws Exception {
-        super.tearDown();
+        ConfigLibraryUtil.unConfigureKotlinRuntime(getModule());
         editors.clear();
         editors = null;
+        super.tearDown();
     }
 
     @NotNull

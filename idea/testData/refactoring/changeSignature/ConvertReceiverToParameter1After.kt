@@ -4,8 +4,6 @@ fun <caret>foo(x: X, s: String, k: Int): Boolean {
 
 class X(val k: Int)
 
-fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
-
 fun test() {
     foo(X(0), "1", 2)
     with(X(0)) {

@@ -1,5 +1,3 @@
-public inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
-
 open class A {
     open var String.p: Int = 1
 }
