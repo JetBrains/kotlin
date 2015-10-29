@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -93,8 +90,12 @@ public fun ResolutionFacade.resolveImportReference(
 // this scope can't be used to search for kotlin declarations in index in order to resolve in that case
 // see com.intellij.psi.impl.file.impl.ResolveScopeManagerImpl.getInherentResolveScope
 public fun getResolveScope(file: KtFile): GlobalSearchScope {
+    if (file is KtCodeFragment) {
+        file.forcedResolveScope?.let { return it }
+    }
+
     return when (file.getModuleInfo()) {
-        is ModuleSourceInfo -> file.getResolveScope()
+        is ModuleSourceInfo -> file.resolveScope
         else -> GlobalSearchScope.EMPTY_SCOPE
     }
 }

@@ -22,6 +22,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
@@ -78,6 +79,7 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
                 fragmentText,
                 KotlinCodeFragmentFactory.getContextElement(fooFunctionFromLibrary.getBodyExpression())
         )
+        codeFragment.forceResolveScope(GlobalSearchScope.allScope(project))
         myFixture.configureFromExistingVirtualFile(codeFragment.getVirtualFile())
     }
 
