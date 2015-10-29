@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental
+package org.jetbrains.kotlin.jps.incremental.storage
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.incremental.storage.StorageOwner
-import org.jetbrains.kotlin.jps.incremental.storage.BasicMap
 
 open class BasicMapsOwner : StorageOwner {
     private val maps = arrayListOf<BasicMap<*, *>>()
