@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.incremental
 import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
+import org.jetbrains.kotlin.jps.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.jps.incremental.storage.LookupMap
 import java.io.File
 
