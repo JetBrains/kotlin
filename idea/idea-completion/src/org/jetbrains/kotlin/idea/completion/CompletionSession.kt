@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -167,11 +166,13 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 .toSet()
 
         override fun excludes(descriptor: DeclarationDescriptor): Boolean {
-            return descriptor is CallableMemberDescriptor
-                   && descriptor.extensionReceiverParameter != null
-                   && descriptor.containingDeclaration is PackageFragmentDescriptor
-                   && descriptor !in extensionsFromThisFile
-                   && descriptor.kind == CallableMemberDescriptor.Kind.DECLARATION /* do not filter out synthetic extensions from packages */
+            if (descriptor !is CallableMemberDescriptor) return false
+            if (descriptor.extensionReceiverParameter == null) return false
+            if (descriptor in extensionsFromThisFile) return false
+            if (descriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) return false /* do not filter out synthetic extensions from packages */
+            val containingPackage = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
+            if (containingPackage.fqName.asString().startsWith("kotlinx.android.synthetic.")) return false // TODO: temporary solution for Android synthetic extensions
+            return true
         }
 
         override val fullyExcludedDescriptorKinds: Int
