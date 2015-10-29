@@ -24,7 +24,7 @@ import kotlin.internal.getProgressionFinalElement
  * An iterator over a progression of values of type `Byte`.
  * @property increment the number by which the value is incremented on each step.
  */
-class ByteProgressionIterator(start: Byte, end: Byte, val increment: Int) : ByteIterator() {
+internal class ByteProgressionIterator(start: Byte, end: Byte, val increment: Int) : ByteIterator() {
     private var next = start.toInt()
     private val finalElement: Byte = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toByte()
     private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
@@ -47,7 +47,7 @@ class ByteProgressionIterator(start: Byte, end: Byte, val increment: Int) : Byte
  * An iterator over a progression of values of type `Char`.
  * @property increment the number by which the value is incremented on each step.
  */
-class CharProgressionIterator(start: Char, end: Char, val increment: Int) : CharIterator() {
+internal class CharProgressionIterator(start: Char, end: Char, val increment: Int) : CharIterator() {
     private var next = start.toInt()
     private val finalElement: Char = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toChar()
     private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
@@ -70,7 +70,7 @@ class CharProgressionIterator(start: Char, end: Char, val increment: Int) : Char
  * An iterator over a progression of values of type `Short`.
  * @property increment the number by which the value is incremented on each step.
  */
-class ShortProgressionIterator(start: Short, end: Short, val increment: Int) : ShortIterator() {
+internal class ShortProgressionIterator(start: Short, end: Short, val increment: Int) : ShortIterator() {
     private var next = start.toInt()
     private val finalElement: Short = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toShort()
     private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
@@ -93,7 +93,7 @@ class ShortProgressionIterator(start: Short, end: Short, val increment: Int) : S
  * An iterator over a progression of values of type `Int`.
  * @property increment the number by which the value is incremented on each step.
  */
-class IntProgressionIterator(start: Int, end: Int, val increment: Int) : IntIterator() {
+internal class IntProgressionIterator(start: Int, end: Int, val increment: Int) : IntIterator() {
     private var next = start
     private val finalElement: Int = getProgressionFinalElement(start, end, increment)
     private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
@@ -116,7 +116,7 @@ class IntProgressionIterator(start: Int, end: Int, val increment: Int) : IntIter
  * An iterator over a progression of values of type `Long`.
  * @property increment the number by which the value is incremented on each step.
  */
-class LongProgressionIterator(start: Long, end: Long, val increment: Long) : LongIterator() {
+internal class LongProgressionIterator(start: Long, end: Long, val increment: Long) : LongIterator() {
     private var next = start
     private val finalElement: Long = getProgressionFinalElement(start, end, increment)
     private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
@@ -139,8 +139,8 @@ class LongProgressionIterator(start: Long, end: Long, val increment: Long) : Lon
  * An iterator over a progression of values of type `Float`.
  * @property increment the number by which the value is incremented on each step.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
-class FloatProgressionIterator(start: Float, val end: Float, val increment: Float) : FloatIterator() {
+@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+internal class FloatProgressionIterator(start: Float, val end: Float, val increment: Float) : FloatIterator() {
     private var next = start
 
     override fun hasNext(): Boolean = if (increment > 0) next <= end else next >= end
@@ -156,8 +156,8 @@ class FloatProgressionIterator(start: Float, val end: Float, val increment: Floa
  * An iterator over a progression of values of type `Double`.
  * @property increment the number by which the value is incremented on each step.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
-class DoubleProgressionIterator(start: Double, val end: Double, val increment: Double) : DoubleIterator() {
+@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+internal class DoubleProgressionIterator(start: Double, val end: Double, val increment: Double) : DoubleIterator() {
     private var next = start
 
     override fun hasNext(): Boolean = if (increment > 0) next <= end else next >= end

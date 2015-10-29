@@ -35,7 +35,7 @@ fun integerProgressionIterator(kind: ProgressionKind): String {
  * An iterator over a progression of values of type `$t`.
  * @property increment the number by which the value is incremented on each step.
  */
-class ${t}ProgressionIterator(start: $t, end: $t, val increment: $incrementType) : ${t}Iterator() {
+internal class ${t}ProgressionIterator(start: $t, end: $t, val increment: $incrementType) : ${t}Iterator() {
     private var next = start$toInt
     private val finalElement: $t = getProgressionFinalElement(start$toInt, end$toInt, increment)$toType
     private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
@@ -61,8 +61,8 @@ fun floatingPointProgressionIterator(kind: ProgressionKind): String {
  * An iterator over a progression of values of type `$t`.
  * @property increment the number by which the value is incremented on each step.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
-class ${t}ProgressionIterator(start: $t, val end: $t, val increment: $t) : ${t}Iterator() {
+@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
+internal class ${t}ProgressionIterator(start: $t, val end: $t, val increment: $t) : ${t}Iterator() {
     private var next = start
 
     override fun hasNext(): Boolean = if (increment > 0) next <= end else next >= end
