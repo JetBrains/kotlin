@@ -354,6 +354,10 @@ public class InlineCodegen extends CallGenerator {
                 parentCodegen
         );
 
+        if (isLambda) {
+            codegen.propagateChildReifiedTypeParametersUsages(parentCodegen.getReifiedTypeParametersUsages());
+        }
+
         return createSMAPWithDefaultMapping(expression, parentCodegen.getOrCreateSourceMapper().getResultMappings());
     }
 
