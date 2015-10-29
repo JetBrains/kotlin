@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy;
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
-
 
 // SCRIPT: resolve symbols in scripts
 public class ScriptBodyResolver {
@@ -54,18 +54,17 @@ public class ScriptBodyResolver {
     @NotNull
     public KotlinType resolveScriptReturnType(
             @NotNull KtScript script,
-            @NotNull ScriptDescriptor scriptDescriptor,
+            @NotNull LexicalScope scopeForBodyResolution,
             @NotNull BindingTrace trace
     ) {
         // Resolve all contents of the script
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace,
-                scriptDescriptor.getScopeForBodyResolution(),
-                DataFlowInfo.EMPTY,
-                NO_EXPECTED_TYPE
+                trace, scopeForBodyResolution, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE
         );
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(script, trace);
-        KotlinType returnType = expressionTypingServices.getBlockReturnedType(script.getBlockExpression(), CoercionStrategy.NO_COERCION, context).getType();
+        KotlinType returnType = expressionTypingServices.getBlockReturnedType(
+                script.getBlockExpression(), CoercionStrategy.NO_COERCION, context
+        ).getType();
         if (returnType == null) {
             returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
         }

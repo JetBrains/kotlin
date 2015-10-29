@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
-// see ScopeUtils.kt in the frontend module
+// see utils/ScopeUtils.kt
 
 interface LexicalScope {
     val parent: LexicalScope?
