@@ -30,7 +30,7 @@ internal abstract class BasicMap<K : Comparable<K>, V>(
 ) {
     protected val storage = LazyStorage(storageFile, keyDescriptor, valueExternalizer)
 
-    fun clean() {
+    open fun clean() {
         storage.clean()
     }
 
