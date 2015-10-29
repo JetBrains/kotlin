@@ -17,25 +17,28 @@
 @file:JvmName("FindLoopsInSupertypes")
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.utils.DFS
 
-fun findLoopsInSupertypesAndDisconnect(
-        currentTypeConstructor: TypeConstructor,
-        superTypes: MutableCollection<KotlinType>,
-        neighbors: (TypeConstructor) -> Iterable<KotlinType>,
-        reportLoopAt: (KotlinType) -> Unit
-) {
+class SupertypeLoopCheckerImpl : SupertypeLoopChecker {
+    override fun findLoopsInSupertypesAndDisconnect(
+            currentTypeConstructor: TypeConstructor,
+            superTypes: MutableCollection<KotlinType>,
+            neighbors: (TypeConstructor) -> Iterable<KotlinType>,
+            reportLoop: (KotlinType) -> Unit
+    ) {
 
-    val graph = DFS.Neighbors<TypeConstructor> { node -> neighbors(node).map { it.constructor } }
+        val graph = DFS.Neighbors<TypeConstructor> { node -> neighbors(node).map { it.constructor } }
 
-    val iterator = superTypes.iterator()
-    while (iterator.hasNext()) {
-        val item = iterator.next()
-        if (isReachable(item.constructor, currentTypeConstructor, graph)) {
-            iterator.remove()
-            reportLoopAt(item)
+        val iterator = superTypes.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (isReachable(item.constructor, currentTypeConstructor, graph)) {
+                iterator.remove()
+                reportLoop(item)
+            }
         }
     }
 }

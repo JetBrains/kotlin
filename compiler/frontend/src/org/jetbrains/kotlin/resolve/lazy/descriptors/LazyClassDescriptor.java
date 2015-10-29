@@ -582,7 +582,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
 
         private void findAndDisconnectLoopsInTypeHierarchy(@Mutable Collection<KotlinType> supertypes) {
-            FindLoopsInSupertypes.findLoopsInSupertypesAndDisconnect(
+            c.getSupertypeLoopChecker().findLoopsInSupertypesAndDisconnect(
                     typeConstructor, supertypes,
                     new Function1<TypeConstructor, Iterable<? extends KotlinType>>() {
                         @Override

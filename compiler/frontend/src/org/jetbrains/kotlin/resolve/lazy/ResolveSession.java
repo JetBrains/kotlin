@@ -79,6 +79,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private DeclarationScopeProvider declarationScopeProvider;
     private LookupTracker lookupTracker;
     private LocalDescriptorResolver localDescriptorResolver;
+    private SupertypeLoopChecker supertypeLoopsResolver;
 
     @Inject
     public void setJetImportFactory(KtImportsFactory jetImportFactory) {
@@ -409,6 +410,17 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public LookupTracker getLookupTracker() {
         return lookupTracker;
+    }
+
+    @NotNull
+    @Override
+    public SupertypeLoopChecker getSupertypeLoopChecker() {
+        return supertypeLoopsResolver;
+    }
+
+    @Inject
+    public void setSupertypeLoopsResolver(@NotNull SupertypeLoopChecker supertypeLoopsResolver) {
+        this.supertypeLoopsResolver = supertypeLoopsResolver;
     }
 
     @Inject
