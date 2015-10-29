@@ -18,21 +18,23 @@ package org.jetbrains.kotlin.jps.incremental.storage
 
 import java.io.File
 
-class LookupMap(
-        storage: File,
-        private val filesMap: FilesMap
-) : BasicMap<IntPair, Set<Int>>(storage, INT_PAIR_KEY_DESCRIPTOR, INT_SET_EXTERNALIZER) {
+class LookupMap(storage: File) : BasicMap<IntPair, Set<Int>>(storage, INT_PAIR_KEY_DESCRIPTOR, INT_SET_EXTERNALIZER) {
     override fun dumpKey(key: IntPair): String = key.toString()
 
     override fun dumpValue(value: Set<Int>): String = value.toString()
 
-    public fun add(name: String, scope: String, path: String) {
-        val pathHash = filesMap.add(path)
-        storage.append(HashPair(name, scope)) { out -> out.writeInt(pathHash) }
+    public fun add(name: String, scope: String, fileId: Int) {
+        storage.append(HashPair(name, scope)) { out -> out.writeInt(fileId) }
     }
 
-    public fun get(name: String, scope: String): Set<Int>? = storage[HashPair(name, scope)]
+    public operator fun get(name: String, scope: String): Set<Int>? = storage[HashPair(name, scope)]
+
+    public operator fun get(lookupHash: IntPair): Set<Int>? = storage[lookupHash]
+
+    public operator fun set(key: IntPair, fileIds: Set<Int>) {
+        storage.set(key, fileIds)
+    }
+
+    public val lookupHashes: Collection<IntPair>
+        get() = storage.keys
 }
-
-
-

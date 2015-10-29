@@ -503,7 +503,7 @@ public class IncrementalCacheImpl(
 
         private fun remove(path: String) {
             storage.remove(path)
-            lookupTrackerImpl?.removeLookupsFrom(path)
+            lookupTrackerImpl?.removeLookupsFrom(File(path))
         }
     }
 
