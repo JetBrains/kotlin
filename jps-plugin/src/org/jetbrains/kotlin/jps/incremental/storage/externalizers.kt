@@ -26,6 +26,7 @@ import gnu.trove.decorator.TIntHashSetDecorator
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
+import java.io.File
 import java.util.*
 
 object INT_PAIR_KEY_DESCRIPTOR : KeyDescriptor<IntPair> {
@@ -236,4 +237,34 @@ object INT_SET_EXTERNALIZER : DataExternalizer<Set<Int>> {
 
         return TIntHashSetDecorator(result)
     }
+}
+
+object INT_EXTERNALIZER : DataExternalizer<Int> {
+    override fun read(`in`: DataInput): Int = `in`.readInt()
+
+    override fun save(out: DataOutput, value: Int) {
+        out.writeInt(value)
+    }
+}
+
+object FILE_EXTERNALIZER : DataExternalizer<File> {
+    override fun read(`in`: DataInput): File = File(`in`.readUTF())
+
+    override fun save(out: DataOutput, value: File) {
+        out.writeUTF(value.canonicalPath)
+    }
+}
+
+object FILE_KEY_DESCRIPTOR : KeyDescriptor<File> {
+    override fun read(`in`: DataInput): File = File(`in`.readUTF())
+
+    override fun save(out: DataOutput, value: File) {
+        out.writeUTF(value.canonicalPath)
+    }
+
+    override fun getHashCode(value: File?): Int =
+            FileUtil.FILE_HASHING_STRATEGY.computeHashCode(value)
+
+    override fun isEqual(val1: File?, val2: File?): Boolean =
+            FileUtil.FILE_HASHING_STRATEGY.equals(val1, val2)
 }
