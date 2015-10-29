@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
-import org.jetbrains.kotlin.load.java.sources.JavaSourceElement;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.*;
@@ -955,15 +954,14 @@ public class JetTypeMapper {
 
     @NotNull
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
-        if (f.getOriginal().getSource() instanceof JavaSourceElement) {
-            FunctionDescriptor overridden = SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinWithDifferentJvmDescriptor(f);
-            if (overridden != null
-                && !SpecialBuiltinMembers.hasRealKotlinSuperClassWithOverrideOf(
-                    (ClassDescriptor) f.getContainingDeclaration(), overridden)
-            ) {
-                return mapSignature(overridden, kind, overridden.getValueParameters());
+        if (f.getInitialSignatureDescriptor() != null && f != f.getInitialSignatureDescriptor()) {
+            // Overrides of special builtin in Kotlin classes always have special signature
+            if (SpecialBuiltinMembers.getOverriddenBuiltinWithDifferentJvmDescriptor(f) == null ||
+                f.getContainingDeclaration().getOriginal() instanceof JavaClassDescriptor) {
+                return mapSignature(f.getInitialSignatureDescriptor(), kind);
             }
         }
+
         if (f instanceof ConstructorDescriptor) {
             return mapSignature(f, kind, f.getOriginal().getValueParameters());
         }

@@ -147,7 +147,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), getOriginal(),
                 /* copyOverrides = */ true, getKind(),
                 enhancedValueParameters, enhancedReceiverType, enhancedReturnType,
-                null, false);
+                null, /* preserveSource */false, /* signatureChange = */ false);
 
         assert enhancedMethod != null : "null after substitution while enhancing " + toString();
         return enhancedMethod;

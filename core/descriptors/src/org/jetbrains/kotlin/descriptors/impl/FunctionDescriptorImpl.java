@@ -50,6 +50,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
     private final FunctionDescriptor original;
     private final Kind kind;
+    @Nullable
+    private FunctionDescriptor initialSignatureDescriptor = null;
 
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -271,7 +273,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         return doSubstitute(originalSubstitutor,
                             newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec, original, copyOverrides, kind,
                             getValueParameters(), getExtensionReceiverParameterType(), getReturnType(),
-                            null, false);
+                            null, /* preserveSource = */ false, /* signatureChange */ false);
     }
 
     @Nullable
@@ -299,7 +301,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @Nullable KotlinType newExtensionReceiverParameterType,
             @NotNull KotlinType newReturnType,
             @Nullable Name name,
-            boolean preserveSource
+            boolean preserveSource,
+            boolean signatureChange
     ) {
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind, name, preserveSource);
 
@@ -362,6 +365,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
 
+        if (signatureChange || getInitialSignatureDescriptor() != null) {
+            FunctionDescriptor initialSignature = (getInitialSignatureDescriptor() != null ? getInitialSignatureDescriptor() : this);
+            FunctionDescriptor initialSignatureSubstituted = initialSignature.substitute(substitutor);
+            substitutedDescriptor.setInitialSignatureDescriptor(initialSignatureSubstituted);
+        }
+
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                 substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
@@ -423,5 +432,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             );
         }
         return result;
+    }
+
+    @Override
+    @Nullable
+    public FunctionDescriptor getInitialSignatureDescriptor() {
+        return initialSignatureDescriptor;
+    }
+
+    public void setInitialSignatureDescriptor(@Nullable FunctionDescriptor initialSignatureDescriptor) {
+        this.initialSignatureDescriptor = initialSignatureDescriptor;
     }
 }

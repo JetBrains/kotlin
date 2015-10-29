@@ -173,12 +173,14 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 newExtensionReceiverParameterType: KotlinType?,
                 newReturnType: KotlinType,
                 name: Name?,
-                preserveSource: Boolean
+                preserveSource: Boolean,
+                signatureChange: Boolean
         ): FunctionDescriptor? {
             val descriptor = super.doSubstitute(
                     originalSubstitutor, newOwner, newModality, newVisibility,
                     newIsOperator, newIsInfix, newIsExternal, newIsInline, newIsTailrec, original,
-                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name, preserveSource)
+                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name,
+                    preserveSource, signatureChange)
                     as MyFunctionDescriptor? ?: return null
 
             if (original == null) {

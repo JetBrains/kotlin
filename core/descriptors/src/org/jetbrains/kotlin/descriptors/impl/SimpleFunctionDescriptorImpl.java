@@ -115,7 +115,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
                 null, /* copyOverrides = */ true, getKind(), getValueParameters(), getExtensionReceiverParameterType(), getReturnType(), name,
-                /* preserveSource = */ true);
+                /* preserveSource = */ true, /* signatureChange = */ true);
     }
 
     @NotNull
@@ -126,6 +126,6 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
                 null, /* copyOverrides = */ true, getKind(), valueParameters, getExtensionReceiverParameterType(), getReturnType(), null,
-                /* preserveSource = */ true);
+                /* preserveSource = */ true, /* signatureChange = */ true);
     }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
@@ -37,6 +38,9 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     @Override
     @NotNull
     Collection<? extends FunctionDescriptor> getOverriddenDescriptors();
+
+    @Nullable
+    FunctionDescriptor getInitialSignatureDescriptor();
 
     @NotNull
     @Override

@@ -37,6 +37,8 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     private final PropertyDescriptor correspondingProperty;
     private final Kind kind;
     private Visibility visibility;
+    @Nullable
+    private FunctionDescriptor initialSignatureDescriptor = null;
 
     public PropertyAccessorDescriptorImpl(
             @NotNull Modality modality,
@@ -189,4 +191,14 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     @NotNull
     @Override
     public abstract PropertyAccessorDescriptor getOriginal();
+
+    @Override
+    @Nullable
+    public FunctionDescriptor getInitialSignatureDescriptor() {
+        return initialSignatureDescriptor;
+    }
+
+    public void setInitialSignatureDescriptor(@Nullable FunctionDescriptor initialSignatureDescriptor) {
+        this.initialSignatureDescriptor = initialSignatureDescriptor;
+    }
 }

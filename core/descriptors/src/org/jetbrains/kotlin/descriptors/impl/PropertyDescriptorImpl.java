@@ -257,15 +257,18 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, getter.getAnnotations(), newModality, getter.getVisibility(),
-                getter.hasBody(), getter.isDefault(), getter.isExternal(), kind, original == null ? null : original.getGetter(), SourceElement.NO_SOURCE
+                getter.hasBody(), getter.isDefault(), getter.isExternal(), kind, original == null ? null : original.getGetter(),
+                SourceElement.NO_SOURCE
         );
         if (newGetter != null) {
             KotlinType returnType = getter.getReturnType();
+            newGetter.setInitialSignatureDescriptor(getSubstitutedInitialSignatureDescriptor(substitutor, getter));
             newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
                 substitutedDescriptor, setter.getAnnotations(), newModality, setter.getVisibility(),
-                setter.hasBody(), setter.isDefault(), setter.isExternal(), kind, original == null ? null : original.getSetter(), SourceElement.NO_SOURCE
+                setter.hasBody(), setter.isDefault(), setter.isExternal(), kind, original == null ? null : original.getSetter(),
+                SourceElement.NO_SOURCE
         );
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(
@@ -285,6 +288,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             if (substitutedValueParameters.size() != 1) {
                 throw new IllegalStateException();
             }
+            newSetter.setInitialSignatureDescriptor(getSubstitutedInitialSignatureDescriptor(substitutor, setter));
             newSetter.initialize(substitutedValueParameters.get(0));
         }
 
@@ -297,6 +301,15 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         }
 
         return substitutedDescriptor;
+    }
+
+    private static FunctionDescriptor getSubstitutedInitialSignatureDescriptor(
+            @NotNull TypeSubstitutor substitutor,
+            @NotNull PropertyAccessorDescriptor accessorDescriptor
+    ) {
+        return accessorDescriptor.getInitialSignatureDescriptor() != null
+               ? accessorDescriptor.getInitialSignatureDescriptor().substitute(substitutor)
+               : null;
     }
 
     @NotNull
