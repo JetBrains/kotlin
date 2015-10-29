@@ -1,8 +1,6 @@
 package ppp
 
-import kotlin.platform.platformStatic
-
 public object Dependency {
-    @platformStatic
+    @JvmStatic
     public val FIELD: Int = 1
 }

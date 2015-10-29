@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class PlatformStaticGenerator(
+class JvmStaticGenerator(
         val descriptor: FunctionDescriptor,
         val declarationOrigin: JvmDeclarationOrigin,
         val state: GenerationState

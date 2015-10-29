@@ -1,9 +1,8 @@
 import kotlin.jvm.*
-import kotlin.platform.*
 
 class C {
     companion object {
-        private @platformStatic external fun foo()
+        private @JvmStatic external fun foo()
     }
 
     fun bar() {

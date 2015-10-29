@@ -1,9 +1,9 @@
 package test
 
 @field:test.A(s = "2") public var v: kotlin.Int
-    @kotlin.platform.platformName(name = "vget") @test.A(s = "3") public fun <get-v>(): kotlin.Int
-    @kotlin.platform.platformName(name = "vset") @test.A(s = "4") public fun <set-v>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
-@kotlin.platform.platformName(name = "bar") @test.A(s = "1") public fun foo(): kotlin.String
+    @test.A(s = "3") @kotlin.jvm.JvmName(name = "vget") public fun <get-v>(): kotlin.Int
+    @test.A(s = "4") @kotlin.jvm.JvmName(name = "vset") public fun <set-v>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+@test.A(s = "1") @kotlin.jvm.JvmName(name = "bar") public fun foo(): kotlin.String
 
 public final annotation class A : kotlin.Annotation {
     /*primary*/ public constructor A(/*0*/ s: kotlin.String)

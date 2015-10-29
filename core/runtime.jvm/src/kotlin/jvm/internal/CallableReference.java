@@ -45,7 +45,7 @@ public abstract class CallableReference implements KCallable {
     }
 
     /**
-     * @return Kotlin name of the callable, the one which was declared in the source code (@platformName doesn't change it)
+     * @return Kotlin name of the callable, the one which was declared in the source code (@JvmName doesn't change it)
      */
     @Override
     public String getName() {

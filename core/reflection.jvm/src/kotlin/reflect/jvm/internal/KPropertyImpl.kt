@@ -97,7 +97,6 @@ private fun KPropertyImpl.Accessor<*>.computeCallerForAccessor(isGetter: Boolean
         return false
     }
     fun isJvmStaticProperty() =
-            property.descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null ||
             property.descriptor.annotations.findAnnotation(JVM_STATIC) != null
 
 

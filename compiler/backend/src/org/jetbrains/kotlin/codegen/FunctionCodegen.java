@@ -187,7 +187,7 @@ public class FunctionCodegen {
         boolean staticInCompanionObject = AnnotationUtilKt.isPlatformStaticInCompanionObject(functionDescriptor);
         if (staticInCompanionObject) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
-            parentBodyCodegen.addAdditionalTask(new PlatformStaticGenerator(functionDescriptor, origin, state));
+            parentBodyCodegen.addAdditionalTask(new JvmStaticGenerator(functionDescriptor, origin, state));
         }
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, contextKind)) {
@@ -209,9 +209,9 @@ public class FunctionCodegen {
             generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen);
         }
         else if (staticInCompanionObject) {
-            // native platformStatic foo() in companion object should delegate to the static native function moved to the outer class
+            // native @JvmStatic foo() in companion object should delegate to the static native function moved to the outer class
             mv.visitCode();
-            FunctionDescriptor staticFunctionDescriptor = PlatformStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
+            FunctionDescriptor staticFunctionDescriptor = JvmStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
             JvmMethodSignature jvmMethodSignature =
                     typeMapper.mapSignature(memberCodegen.getContext().accessibleDescriptor(staticFunctionDescriptor, null));
             Type owningType = typeMapper.mapClass((ClassifierDescriptor) staticFunctionDescriptor.getContainingDeclaration());

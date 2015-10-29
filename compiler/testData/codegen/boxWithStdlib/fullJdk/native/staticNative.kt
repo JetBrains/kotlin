@@ -1,16 +1,15 @@
 package foo
 
 import kotlin.jvm.*
-import kotlin.platform.*
 
 class WithNative {
     companion object {
-        @platformStatic external fun bar(l: Long, s: String): Double
+        @JvmStatic external fun bar(l: Long, s: String): Double
     }
 }
 
 object ObjWithNative {
-    @platformStatic external fun bar(l: Long, s: String): Double
+    @JvmStatic external fun bar(l: Long, s: String): Double
 }
 
 fun box(): String {
