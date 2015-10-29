@@ -3,7 +3,7 @@ interface I {
 }
 
 open class Base {
-    open fun aaa()
+    open fun aaa() {}
 }
 
 class A : Base(), I {
