@@ -16,7 +16,7 @@ class MyClass {
     }
 
     fun inClass() {
-        //Breakpoint! (-1)
+        //Breakpoint! (lambdaOrdinal = -1)
         f1 { test() }.f2 {
             test()
         }

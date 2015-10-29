@@ -21,7 +21,9 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.debugger.engine.*
+import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.settings.DebuggerSettings
@@ -300,8 +302,9 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                     }
                 }
                 else if (comment.startsWith("//Breakpoint!")) {
-                    val ordinal = if (comment.contains(" (")) comment.substringAfter("//Breakpoint! (").substringBefore(")").toInt() else null
-                    createLineBreakpoint(breakpointManager, file, lineIndex, ordinal)
+                    val ordinal = getPropertyFromComment(comment, "lambdaOrdinal")?.toInt() ?: null
+                    val condition = getPropertyFromComment(comment, "condition")
+                    createLineBreakpoint(breakpointManager, file, lineIndex, ordinal, condition)
                 }
                 else {
                     throw AssertionError("Cannot create breakpoint at line ${lineIndex + 1}")
@@ -317,11 +320,25 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         }
     }
 
+    private fun getPropertyFromComment(comment: String, propertyName: String): String? {
+        if (comment.contains("$propertyName = ")) {
+            val result = comment.substringAfter("$propertyName = ")
+            if (result.contains(", ")) {
+                return result.substringBefore(", ")
+            }
+            if (result.contains(")")) {
+                return result.substringBefore(")")
+            }
+        }
+        return null
+    }
+
     private fun createLineBreakpoint(
             breakpointManager: XBreakpointManager,
             file: PsiFile,
             lineIndex: Int,
-            lambdaOrdinal: Int?
+            lambdaOrdinal: Int?,
+            condition: String?
     ) {
         val kotlinLineBreakpointType = findBreakpointType(KotlinLineBreakpointType::class.java)
         val javaBreakpoint = createBreakpointOfType(
@@ -330,17 +347,19 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                 lineIndex,
                 file.virtualFile)
         if (javaBreakpoint is LineBreakpoint<*>) {
+            val properties = javaBreakpoint.xBreakpoint.properties as? JavaLineBreakpointProperties ?: return
+            var suffix = ""
             if (lambdaOrdinal != null) {
-                val properties = javaBreakpoint.xBreakpoint.properties as? JavaLineBreakpointProperties ?: return
                 properties.lambdaOrdinal = lambdaOrdinal
+                suffix += " lambdaOrdinal = $lambdaOrdinal"
+            }
+            if (condition != null) {
+                javaBreakpoint.setCondition(TextWithImportsImpl(CodeFragmentKind.EXPRESSION, condition))
+                suffix += " condition = $condition"
+            }
 
-                BreakpointManager.addBreakpoint(javaBreakpoint)
-                println("LineBreakpoint created at ${file.virtualFile.name}:${lineIndex + 1} lambdaOrdinal = $lambdaOrdinal", ProcessOutputTypes.SYSTEM)
-            }
-            else {
-                BreakpointManager.addBreakpoint(javaBreakpoint)
-                println("LineBreakpoint created at ${file.virtualFile.name}:${lineIndex + 1}", ProcessOutputTypes.SYSTEM)
-            }
+            BreakpointManager.addBreakpoint(javaBreakpoint)
+            println("LineBreakpoint created at ${file.virtualFile.name}:${lineIndex + 1}$suffix", ProcessOutputTypes.SYSTEM)
         }
     }
 
@@ -403,7 +422,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             val index = psiSourceFile.getText()!!.indexOf(lineMarker)
             val lineNumber = document.getLineNumber(index) + 1 // lineMarker is for previous line
 
-            createLineBreakpoint(breakpointManager, psiSourceFile, lineNumber, ordinal)
+            createLineBreakpoint(breakpointManager, psiSourceFile, lineNumber, ordinal, null)
         }
 
         DebuggerInvocationUtil.invokeAndWait(project, runnable, ModalityState.defaultModalityState())

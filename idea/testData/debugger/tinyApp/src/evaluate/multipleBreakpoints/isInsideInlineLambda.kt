@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
 
     // EXPRESSION: it + 1
     // RESULT: 2: I
-    //Breakpoint! (0)
+    //Breakpoint! (lambdaOrdinal = 0)
     a.foo(1) { 1 }
 
 
@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     a.foo(1) {
         // EXPRESSION: it + 2
         // RESULT: 3: I
-        //Breakpoint! (0)
+        //Breakpoint! (lambdaOrdinal = 0)
         a.foo(1) { 1 }
         1
     }
@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     // inside variable declaration
     // EXPRESSION: it + 3
     // RESULT: 4: I
-    //Breakpoint! (0)
+    //Breakpoint! (lambdaOrdinal = 0)
     val x = a.foo(1) { 1 }
 
     // inside object declaration
@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
         fun foo() {
             // EXPRESSION: it + 4
             // RESULT: 5: I
-            //Breakpoint! (0)
+            //Breakpoint! (lambdaOrdinal = 0)
             a.foo(1) { 1 }
         }
     }
@@ -39,7 +39,7 @@ fun main(args: Array<String>) {
     fun local() {
         // EXPRESSION: it + 5
         // RESULT: 6: I
-        //Breakpoint! (0)
+        //Breakpoint! (lambdaOrdinal = 0)
         a.foo(1) { 1 }
     }
     local()

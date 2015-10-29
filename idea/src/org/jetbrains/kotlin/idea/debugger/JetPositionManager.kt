@@ -76,7 +76,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
     private val myTypeMappers = WeakHashMap<String, CachedValue<JetTypeMapper>>()
 
     override fun evaluateCondition(context: EvaluationContext, frame: StackFrameProxyImpl, location: Location, expression: String): ThreeState? {
-        return null
+        return ThreeState.UNSURE
     }
 
     override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
