@@ -122,22 +122,7 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
             @Override
             public PsiField fun(PsiField field) {
                 KtDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
-                if (declaration instanceof KtEnumEntry) {
-                    assert field instanceof PsiEnumConstant : "Field delegate should be an enum constant (" + field.getName() + "):\n" +
-                                                              PsiUtilsKt.getElementTextWithContext(declaration);
-                    KtEnumEntry enumEntry = (KtEnumEntry) declaration;
-                    PsiEnumConstant enumConstant = (PsiEnumConstant) field;
-                    FqName enumConstantFqName = new FqName(getFqName().asString() + "." + enumEntry.getName());
-                    KotlinLightClassForEnumEntry initializingClass =
-                            enumEntry.getDeclarations().isEmpty()
-                            ? null
-                            : new KotlinLightClassForEnumEntry(myManager, enumConstantFqName, enumEntry, enumConstant);
-                    return new KotlinLightEnumConstant(myManager, enumEntry, enumConstant, KotlinWrappingLightClass.this, initializingClass);
-                }
-                if (declaration != null) {
-                    return new KotlinLightFieldForDeclaration(myManager, declaration, field, KotlinWrappingLightClass.this);
-                }
-                return new KotlinNoOriginLightField(myManager, field, KotlinWrappingLightClass.this);
+                return KotlinLightFieldImpl.Factory.create(declaration, field, KotlinWrappingLightClass.this);
             }
         });
     }

@@ -192,7 +192,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                                 if (originLightClass != null) {
                                     val lightDeclarations: List<KotlinLightElement<*, *>?> =
                                             originLightClass.methods.map { it as? KotlinLightMethod } +
-                                            originLightClass.fields.map { it as? KotlinLightFieldForDeclaration }
+                                            originLightClass.fields.map { it as? KotlinLightField }
 
                                     for (declaration in element.declarations) {
                                         val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }

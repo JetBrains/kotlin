@@ -422,7 +422,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             identifier = Identifier("size()", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
-            if (target is KotlinLightField<*, *> && target.getOrigin() is KtObjectDeclaration) {
+            if (target is KotlinLightField && target.getOrigin() is KtObjectDeclaration) {
                 result = codeConverter.convertExpression(qualifier)
                 return
             }

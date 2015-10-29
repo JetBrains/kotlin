@@ -179,7 +179,7 @@ public object LightClassUtil {
         }
 
         for (field in psiClass.fields) {
-            if (field is KotlinLightField<*, *> && field.getOrigin() === declaration) {
+            if (field is KotlinLightField && field.getOrigin() === declaration) {
                 return field
             }
         }
