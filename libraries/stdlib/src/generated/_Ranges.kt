@@ -31,6 +31,7 @@ public operator fun Range<Long>.contains(item: Byte): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Byte): Boolean {
     return start <= item && item <= end
@@ -75,6 +76,7 @@ public operator fun Range<Long>.contains(item: Double): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Double): Boolean {
     return start <= item && item <= end
@@ -83,6 +85,7 @@ public operator fun Range<Byte>.contains(item: Double): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Double): Boolean {
     return start <= item && item <= end
@@ -117,6 +120,7 @@ public operator fun Range<Long>.contains(item: Float): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Float): Boolean {
     return start <= item && item <= end
@@ -125,6 +129,7 @@ public operator fun Range<Byte>.contains(item: Float): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Float): Boolean {
     return start <= item && item <= end
@@ -151,6 +156,7 @@ public operator fun Range<Long>.contains(item: Int): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Int): Boolean {
     return start <= item && item <= end
@@ -159,6 +165,7 @@ public operator fun Range<Byte>.contains(item: Int): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Int): Boolean {
     return start <= item && item <= end
@@ -195,6 +202,7 @@ public operator fun Range<Int>.contains(item: Long): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Long): Boolean {
     return start <= item && item <= end
@@ -203,6 +211,7 @@ public operator fun Range<Byte>.contains(item: Long): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Long): Boolean {
     return start <= item && item <= end
@@ -247,6 +256,7 @@ public operator fun Range<Long>.contains(item: Short): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("This range will be removed soon.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Short): Boolean {
     return start <= item && item <= end
@@ -292,16 +302,16 @@ public infix fun Long.downTo(to: Byte): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Byte): ByteProgression {
-    return ByteProgression(this, to, -1)
+public infix fun Byte.downTo(to: Byte): IntProgression {
+    return IntProgression(this.toInt(), to.toInt(), -1)
 }
 
 /**
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Byte): ShortProgression {
-    return ShortProgression(this, to.toShort(), -1)
+public infix fun Short.downTo(to: Byte): IntProgression {
+    return IntProgression(this.toInt(), to.toInt(), -1)
 }
 
 /**
@@ -576,16 +586,16 @@ public infix fun Long.downTo(to: Short): LongProgression {
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Short): ShortProgression {
-    return ShortProgression(this.toShort(), to, -1)
+public infix fun Byte.downTo(to: Short): IntProgression {
+    return IntProgression(this.toInt(), to.toInt(), -1)
 }
 
 /**
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Short): ShortProgression {
-    return ShortProgression(this, to, -1)
+public infix fun Short.downTo(to: Short): IntProgression {
+    return IntProgression(this.toInt(), to.toInt(), -1)
 }
 
 /**
@@ -611,13 +621,6 @@ public infix fun Float.downTo(to: Short): FloatProgression {
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
-public fun ByteProgression.reversed(): ByteProgression {
-    return ByteProgression(end, start, -increment)
-}
-
-/**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
 public fun CharProgression.reversed(): CharProgression {
     return CharProgression(end, start, -increment)
 }
@@ -634,20 +637,6 @@ public fun IntProgression.reversed(): IntProgression {
  */
 public fun LongProgression.reversed(): LongProgression {
     return LongProgression(end, start, -increment)
-}
-
-/**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
-public fun ShortProgression.reversed(): ShortProgression {
-    return ShortProgression(end, start, -increment)
-}
-
-/**
- * Returns a progression that goes over this range in reverse direction.
- */
-public fun ByteRange.reversed(): ByteProgression {
-    return ByteProgression(end, start, -1)
 }
 
 /**
@@ -672,10 +661,12 @@ public fun LongRange.reversed(): LongProgression {
 }
 
 /**
- * Returns a progression that goes over this range in reverse direction.
+ * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
-public fun ShortRange.reversed(): ShortProgression {
-    return ShortProgression(end, start, -1)
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public fun ByteProgression.reversed(): ByteProgression {
+    return ByteProgression(end, start, -increment)
 }
 
 /**
@@ -697,6 +688,24 @@ public fun FloatProgression.reversed(): FloatProgression {
 }
 
 /**
+ * Returns a progression that goes over the same range in the opposite direction with the same step.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public fun ShortProgression.reversed(): ShortProgression {
+    return ShortProgression(end, start, -increment)
+}
+
+/**
+ * Returns a progression that goes over this range in reverse direction.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public fun ByteRange.reversed(): ByteProgression {
+    return ByteProgression(end, start, -1)
+}
+
+/**
  * Returns a progression that goes over this range in reverse direction.
  */
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
@@ -715,11 +724,12 @@ public fun FloatRange.reversed(): FloatProgression {
 }
 
 /**
- * Returns a progression that goes over the same range with the given step.
+ * Returns a progression that goes over this range in reverse direction.
  */
-public infix fun ByteProgression.step(step: Int): ByteProgression {
-    checkStepIsPositive(step > 0, step)
-    return ByteProgression(start, end, if (increment > 0) step else -step)
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public fun ShortRange.reversed(): ShortProgression {
+    return ShortProgression(end, start, -1)
 }
 
 /**
@@ -747,22 +757,6 @@ public infix fun LongProgression.step(step: Long): LongProgression {
 }
 
 /**
- * Returns a progression that goes over the same range with the given step.
- */
-public infix fun ShortProgression.step(step: Int): ShortProgression {
-    checkStepIsPositive(step > 0, step)
-    return ShortProgression(start, end, if (increment > 0) step else -step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
-public infix fun ByteRange.step(step: Int): ByteProgression {
-    checkStepIsPositive(step > 0, step)
-    return ByteProgression(start, end, step)
-}
-
-/**
  * Returns a progression that goes over this range with given step.
  */
 public infix fun CharRange.step(step: Int): CharProgression {
@@ -787,11 +781,13 @@ public infix fun LongRange.step(step: Long): LongProgression {
 }
 
 /**
- * Returns a progression that goes over this range with given step.
+ * Returns a progression that goes over the same range with the given step.
  */
-public infix fun ShortRange.step(step: Int): ShortProgression {
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public infix fun ByteProgression.step(step: Int): ByteProgression {
     checkStepIsPositive(step > 0, step)
-    return ShortProgression(start, end, step)
+    return ByteProgression(start, end, if (increment > 0) step else -step)
 }
 
 /**
@@ -812,6 +808,26 @@ public infix fun DoubleProgression.step(step: Double): DoubleProgression {
 public infix fun FloatProgression.step(step: Float): FloatProgression {
     checkStepIsPositive(step > 0, step)
     return FloatProgression(start, end, if (increment > 0) step else -step)
+}
+
+/**
+ * Returns a progression that goes over the same range with the given step.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public infix fun ShortProgression.step(step: Int): ShortProgression {
+    checkStepIsPositive(step > 0, step)
+    return ShortProgression(start, end, if (increment > 0) step else -step)
+}
+
+/**
+ * Returns a progression that goes over this range with given step.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public infix fun ByteRange.step(step: Int): ByteProgression {
+    checkStepIsPositive(step > 0, step)
+    return ByteProgression(start, end, step)
 }
 
 /**
@@ -837,6 +853,16 @@ public infix fun FloatRange.step(step: Float): FloatProgression {
 }
 
 /**
+ * Returns a progression that goes over this range with given step.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public infix fun ShortRange.step(step: Int): ShortProgression {
+    checkStepIsPositive(step > 0, step)
+    return ShortProgression(start, end, step)
+}
+
+/**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
 public infix fun Int.until(to: Byte): IntRange {
@@ -852,19 +878,16 @@ public infix fun Long.until(to: Byte): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
- * The [to] value must be greater than [Byte.MIN_VALUE].
  */
-public infix fun Byte.until(to: Byte): ByteRange {
-    val to_  = (to - 1).toByte()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this .. to_
+public infix fun Byte.until(to: Byte): IntRange {
+    return this.toInt() .. (to.toInt() - 1).toInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public infix fun Short.until(to: Byte): ShortRange {
-    return this .. (to.toShort() - 1).toShort()
+public infix fun Short.until(to: Byte): IntRange {
+    return this.toInt() .. (to.toInt() - 1).toInt()
 }
 
 /**
@@ -970,22 +993,16 @@ public infix fun Long.until(to: Short): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
- * The [to] value must be greater than [Short.MIN_VALUE].
  */
-public infix fun Byte.until(to: Short): ShortRange {
-    val to_  = (to - 1).toShort()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this.toShort() .. to_
+public infix fun Byte.until(to: Short): IntRange {
+    return this.toInt() .. (to.toInt() - 1).toInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
- * The [to] value must be greater than [Short.MIN_VALUE].
  */
-public infix fun Short.until(to: Short): ShortRange {
-    val to_  = (to - 1).toShort()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this .. to_
+public infix fun Short.until(to: Short): IntRange {
+    return this.toInt() .. (to.toInt() - 1).toInt()
 }
 
 /**

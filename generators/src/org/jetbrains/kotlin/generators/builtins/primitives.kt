@@ -113,14 +113,16 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (otherKind in PrimitiveType.onlyNumeric) {
             val returnType = getOperatorReturnType(thisKind, otherKind)
             out.println("    /** $doc */")
-            out.println("    public operator fun $name(other: ${otherKind.capitalized}): $returnType")
+            out.println("    public operator fun $name(other: ${otherKind.capitalized}): ${returnType.capitalized}")
         }
         out.println()
     }
 
     private fun generateRangeTo(thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
-            val returnType = if (otherKind.ordinal() > thisKind.ordinal()) otherKind else thisKind
+            val returnType =
+                maxByDomainCapacity(thisKind, otherKind)
+                .let { if (it == PrimitiveType.CHAR) it else maxByDomainCapacity(it, PrimitiveType.INT) }
             out.println("     /** Creates a range from this value to the specified [other] value. */")
             out.println("    public operator fun rangeTo(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
         }
@@ -159,10 +161,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         }
     }
 
-    private fun getOperatorReturnType(kind1: PrimitiveType, kind2: PrimitiveType): String {
-        if (kind1 == PrimitiveType.DOUBLE || kind2 == PrimitiveType.DOUBLE) return "Double"
-        if (kind1 == PrimitiveType.FLOAT || kind2 == PrimitiveType.FLOAT) return "Float"
-        if (kind1 == PrimitiveType.LONG || kind2 == PrimitiveType.LONG) return "Long"
-        return "Int"
+    private fun maxByDomainCapacity(type1: PrimitiveType, type2: PrimitiveType): PrimitiveType
+            = if (type1.ordinal > type2.ordinal) type1 else type2
+
+    private fun getOperatorReturnType(kind1: PrimitiveType, kind2: PrimitiveType): PrimitiveType {
+        require(kind1 != PrimitiveType.BOOLEAN) { "kind1 must not be BOOLEAN" }
+        require(kind2 != PrimitiveType.BOOLEAN) { "kind2 must not be BOOLEAN" }
+        return maxByDomainCapacity(maxByDomainCapacity(kind1, kind2), PrimitiveType.INT)
     }
 }
