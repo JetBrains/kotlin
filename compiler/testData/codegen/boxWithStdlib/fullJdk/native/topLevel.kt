@@ -1,7 +1,6 @@
 package foo
 
 import kotlin.jvm.*
-import kotlin.platform.*
 
 external fun bar(l: Long, s: String): Double
 

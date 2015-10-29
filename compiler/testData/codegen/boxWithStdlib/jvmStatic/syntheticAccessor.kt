@@ -1,8 +1,6 @@
-import kotlin.platform.*
-
 class C {
     companion object {
-        private @platformStatic fun foo(): String {
+        private @JvmStatic fun foo(): String {
             return "OK"
         }
     }

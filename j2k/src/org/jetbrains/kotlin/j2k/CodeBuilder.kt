@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.LinkedHashSet
-import kotlin.platform.platformName
 
 fun<T> CodeBuilder.buildList(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {

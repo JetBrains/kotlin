@@ -1,11 +1,8 @@
 package companions
 
-import kotlin.platform.platformName
-import kotlin.platform.platformStatic
-
 class A {
     companion object {
-        @platformStatic
+        @JvmStatic
         fun main(args: Array<String>) {
             // yes
         }
@@ -22,8 +19,8 @@ class B {
 
 class C {
     companion object {
-        @platformStatic
-        @platformName("main0")
+        @JvmStatic
+        @JvmName("main0")
         fun main(args: Array<String>) { // no
         }
     }
@@ -31,8 +28,8 @@ class C {
 
 class D {
     companion object {
-        @platformStatic
-        @platformName("main")
+        @JvmStatic
+        @JvmName("main")
         fun badName(args: Array<String>) { // yes
         }
     }

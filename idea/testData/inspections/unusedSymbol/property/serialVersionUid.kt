@@ -1,10 +1,8 @@
 // FULL_JDK
 
-import kotlin.platform.platformStatic
-
 class Klass : java.io.Serializable {
     companion object {
-        private platformStatic val serialVersionUID: Long = 239
+        private @JvmStatic val serialVersionUID: Long = 239
     }
 }
 

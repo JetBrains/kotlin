@@ -209,7 +209,7 @@ public class FunctionCodegen {
             generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, memberCodegen);
         }
         else if (staticInCompanionObject) {
-            // native platformStatic foo() in companion object should delegate to the static native function moved to the outer class
+            // native @JvmStatic foo() in companion object should delegate to the static native function moved to the outer class
             mv.visitCode();
             FunctionDescriptor staticFunctionDescriptor = PlatformStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
             JvmMethodSignature jvmMethodSignature =

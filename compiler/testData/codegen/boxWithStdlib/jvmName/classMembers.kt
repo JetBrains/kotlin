@@ -1,5 +1,3 @@
-import kotlin.platform.*
-
 // See:
 // http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-platformname
 // https://youtrack.jetbrains.com/issue/KT-5524
@@ -10,18 +8,18 @@ val ints = listOf(1, 2, 3)
 class C {
     // Instance methods
 
-    @platformName("instMethodStr")
+    @JvmName("instMethodStr")
     fun instMethod(list: List<String>): String = "instMethodStr"
 
-    @platformName("instMethodInt")
+    @JvmName("instMethodInt")
     fun instMethod(list: List<Int>): String = "instMethodInt"
 
     // Properties
 
     var rwProperty: Int
-        @platformName("get_rwProperty")
+        @JvmName("get_rwProperty")
         get() = 123
-        @platformName("set_rwProperty")
+        @JvmName("set_rwProperty")
         set(v) {}
 
     var rwValue = 111
@@ -36,27 +34,27 @@ class C {
 
     class Inner
 
-    @platformName("extMethodWithGenericParamStr")
+    @JvmName("extMethodWithGenericParamStr")
     fun Inner.extMethodWithGenericParam(list: List<String>): String = "extMethodWithGenericParamStr"
 
-    @platformName("extMethodWithGenericParamInt")
+    @JvmName("extMethodWithGenericParamInt")
     fun Inner.extMethodWithGenericParam(list: List<Int>): String = "extMethodWithGenericParamInt"
 
     // This is already covered by extMethodWithGenericParam(), but might be relevant for a platform
     // with extension method code generation strategy different from Java 6.
 
-    @platformName("extMethodWithGenericReceiverStr")
+    @JvmName("extMethodWithGenericReceiverStr")
     fun List<String>.extMethodWithGenericReceiver(): String = "extMethodWithGenericReceiverStr"
 
-    @platformName("extMethodWithGenericReceiverInt")
+    @JvmName("extMethodWithGenericReceiverInt")
     fun List<Int>.extMethodWithGenericReceiver(): String = "extMethodWithGenericReceiverInt"
 
     // Extension method vs instance method
 
-    @platformName("ambigMethod1")
+    @JvmName("ambigMethod1")
     fun ambigMethod(str: String): String = "ambigMethod1"
 
-    @platformName("ambigMethod2")
+    @JvmName("ambigMethod2")
     fun String.ambigMethod(): String = "ambigMethod2"
 
 }

@@ -1,7 +1,5 @@
 package k
 
-import kotlin.platform.platformStatic
-
 public class Class() {
     public val prop: Int = 0
     fun function() = 1
@@ -32,7 +30,7 @@ public interface StaticFieldInClassObjectInTrait {
 }
 
 object PlatformStaticFun {
-    platformStatic
+    @JvmStatic
     fun test() {
     }
 }
