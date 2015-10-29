@@ -21,6 +21,8 @@ import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import gnu.trove.THashSet
+import gnu.trove.TIntHashSet
+import gnu.trove.decorator.TIntHashSetDecorator
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
@@ -214,5 +216,24 @@ object CONSTANTS_MAP_EXTERNALIZER : DataExternalizer<Map<String, Any>> {
 
     private enum class Kind {
         INT, FLOAT, LONG, DOUBLE, STRING
+    }
+}
+
+
+object INT_SET_EXTERNALIZER : DataExternalizer<Set<Int>> {
+    override fun save(out: DataOutput, value: Set<Int>) {
+        value.forEach { out.writeInt(it) }
+    }
+
+    override fun read(`in`: DataInput): Set<Int> {
+        val result = TIntHashSet()
+        val stream = `in` as DataInputStream
+
+        while (stream.available() > 0) {
+            val str = stream.readInt()
+            result.add(str)
+        }
+
+        return TIntHashSetDecorator(result)
     }
 }

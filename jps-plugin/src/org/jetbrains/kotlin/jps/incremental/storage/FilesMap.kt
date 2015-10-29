@@ -16,22 +16,22 @@
 
 package org.jetbrains.kotlin.jps.incremental.storage
 
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.io.ExternalIntegerKeyDescriptor
 import java.io.File
 
-class LookupMap(
-        storage: File,
-        private val filesMap: FilesMap
-) : BasicMap<IntPair, Set<Int>>(storage, INT_PAIR_KEY_DESCRIPTOR, INT_SET_EXTERNALIZER) {
-    override fun dumpKey(key: IntPair): String = key.toString()
+class FilesMap(file: File) : BasicMap<Int, Collection<String>>(file, ExternalIntegerKeyDescriptor(), PATH_COLLECTION_EXTERNALIZER) {
+    override fun dumpKey(key: Int): String = key.toString()
 
-    override fun dumpValue(value: Set<Int>): String = value.toString()
+    override fun dumpValue(value: Collection<String>): String = value.toString()
 
-    public fun add(name: String, scope: String, path: String) {
-        val pathHash = filesMap.add(path)
-        storage.append(HashPair(name, scope)) { out -> out.writeInt(pathHash) }
+    public fun get(hash: Int): Collection<String>? = storage[hash]
+
+    public fun add(path: String): Int {
+        val hash = FileUtil.PATH_HASHING_STRATEGY.computeHashCode(path)
+        storage.append(hash) { it.writeUTF(path) }
+        return hash
     }
-
-    public fun get(name: String, scope: String): Set<Int>? = storage[HashPair(name, scope)]
 }
 
 
