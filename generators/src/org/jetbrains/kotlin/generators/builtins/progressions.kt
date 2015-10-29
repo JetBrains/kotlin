@@ -81,7 +81,7 @@ public open class $progression(
         override val start: $t,
                  val endInclusive: $t,
         override val increment: $incrementType
-) : Progression<$t>, Iterable<$t> {
+) : Progression<$t> /*, Iterable<$t> */ {
     init {
         $constructor
     }

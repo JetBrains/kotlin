@@ -26,7 +26,7 @@ public open class ByteProgression(
         override val start: Byte,
                  val endInclusive: Byte,
         override val increment: Int
-) : Progression<Byte>, Iterable<Byte> {
+) : Progression<Byte> /*, Iterable<Byte> */ {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
@@ -59,7 +59,7 @@ public open class CharProgression(
         override val start: Char,
                  val endInclusive: Char,
         override val increment: Int
-) : Progression<Char>, Iterable<Char> {
+) : Progression<Char> /*, Iterable<Char> */ {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
@@ -93,7 +93,7 @@ public open class ShortProgression(
         override val start: Short,
                  val endInclusive: Short,
         override val increment: Int
-) : Progression<Short>, Iterable<Short> {
+) : Progression<Short> /*, Iterable<Short> */ {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
@@ -126,7 +126,7 @@ public open class IntProgression(
         override val start: Int,
                  val endInclusive: Int,
         override val increment: Int
-) : Progression<Int>, Iterable<Int> {
+) : Progression<Int> /*, Iterable<Int> */ {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
@@ -159,7 +159,7 @@ public open class LongProgression(
         override val start: Long,
                  val endInclusive: Long,
         override val increment: Long
-) : Progression<Long>, Iterable<Long> {
+) : Progression<Long> /*, Iterable<Long> */ {
     init {
         if (increment == 0L) throw IllegalArgumentException("Increment must be non-zero")
     }
@@ -194,7 +194,7 @@ public open class FloatProgression(
         override val start: Float,
                  val endInclusive: Float,
         override val increment: Float
-) : Progression<Float>, Iterable<Float> {
+) : Progression<Float> /*, Iterable<Float> */ {
     init {
         if (java.lang.Float.isNaN(increment)) throw IllegalArgumentException("Increment must be not NaN")
         if (increment == 0.0f) throw IllegalArgumentException("Increment must be non-zero")
@@ -230,7 +230,7 @@ public open class DoubleProgression(
         override val start: Double,
                  val endInclusive: Double,
         override val increment: Double
-) : Progression<Double>, Iterable<Double> {
+) : Progression<Double> /*, Iterable<Double> */ {
     init {
         if (java.lang.Double.isNaN(increment)) throw IllegalArgumentException("Increment must be not NaN")
         if (increment == 0.0) throw IllegalArgumentException("Increment must be non-zero")
