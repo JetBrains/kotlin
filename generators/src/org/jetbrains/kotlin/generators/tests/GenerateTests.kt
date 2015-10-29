@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletio
 import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
+import org.jetbrains.kotlin.idea.debugger.AbstractBeforeExtractFunctionInsertionTest
 import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.kotlin.idea.debugger.AbstractPositionManagerTest
 import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
@@ -679,6 +680,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractSmartStepIntoTest>() {
             model("debugger/smartStepInto")
+        }
+
+        testClass<AbstractBeforeExtractFunctionInsertionTest>() {
+            model("debugger/insertBeforeExtractFunction", extension = "kt")
         }
 
         testClass<AbstractKotlinSteppingTest>() {

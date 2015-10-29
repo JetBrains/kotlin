@@ -71,15 +71,9 @@ fun getFunctionForExtractedFragment(
     fun generateFunction(): ExtractionResult? {
         val originalFile = breakpointFile as KtFile
 
-        val tmpFile = originalFile.createTempCopy { it }
-        tmpFile.suppressDiagnosticsInDebugMode = true
-
-        val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.context, breakpointLine) ?: return null
-
-        addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
-
-        val newDebugExpressions = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
+        val newDebugExpressions = addDebugExpressionIntoTmpFileForExtractFunction(originalFile, codeFragment, breakpointLine)
         if (newDebugExpressions.isEmpty()) return null
+        val tmpFile = newDebugExpressions.first().getContainingKtFile()
 
         val targetSibling = tmpFile.declarations.firstOrNull() ?: return null
 
@@ -107,29 +101,34 @@ fun getFunctionForExtractedFragment(
     return runReadAction { generateFunction() }
 }
 
+fun addDebugExpressionIntoTmpFileForExtractFunction(originalFile: KtFile, codeFragment: KtCodeFragment, line: Int): List<KtExpression> {
+    val tmpFile = originalFile.createTempCopy { it }
+    tmpFile.suppressDiagnosticsInDebugMode = true
+
+    val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.context, line) ?: return emptyList()
+
+    addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
+
+    return addDebugExpressionBeforeContextElement(codeFragment, contextElement)
+}
+
 private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
-    if (newImportList != null) {
+    if (newImportList != null && newImportList.imports.isNotEmpty()) {
         val tmpFileImportList = tmpFile.importList
-        val packageDirective = tmpFile.packageDirective
         val psiFactory = KtPsiFactory(tmpFile)
         if (tmpFileImportList == null) {
+            val packageDirective = tmpFile.packageDirective
             tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
             tmpFile.addAfter(newImportList, tmpFile.packageDirective)
         }
         else {
-            val tmpFileImports = tmpFileImportList.imports
-            if (tmpFileImports.isEmpty()) {
-                tmpFileImportList.replace(newImportList)
+            newImportList.imports.forEach {
+                tmpFileImportList.add(psiFactory.createNewLine())
+                tmpFileImportList.add(it)
             }
-            else {
-                val lastImport = tmpFileImports.last()
-                newImportList.imports.forEach {
-                    tmpFileImportList.addAfter(it, lastImport)
-                }
-                tmpFileImportList.addAfter(psiFactory.createNewLine(), lastImport)
-            }
+
+            tmpFileImportList.add(psiFactory.createNewLine())
         }
-        tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
     }
 }
 
