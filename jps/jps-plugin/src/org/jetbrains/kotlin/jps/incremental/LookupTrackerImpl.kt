@@ -20,6 +20,7 @@ import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMapsOwner
+import org.jetbrains.kotlin.jps.incremental.storage.FilesMap
 import org.jetbrains.kotlin.jps.incremental.storage.LookupMap
 import java.io.File
 
@@ -31,7 +32,8 @@ class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), Loo
     private val String.storageFile: File
         get() = File(targetDataDir, this + IncrementalCacheImpl.CACHE_EXTENSION)
 
-    private val lookupMap = registerMap(LookupMap("lookups".storageFile))
+    private val filesMap = registerMap(FilesMap("files".storageFile))
+    private val lookupMap = registerMap(LookupMap("lookups".storageFile, filesMap))
 
     override fun record(lookupContainingFile: String, lookupLine: Int?, lookupColumn: Int?, scopeFqName: String, scopeKind: ScopeKind, name: String) {
         lookupMap.add(name, scopeFqName, lookupContainingFile)
