@@ -40,5 +40,5 @@ fun test(_ab: a.b) {
     _ab._ab()
 
     val _ab2 = a.b()
-    _ab2.<!UNRESOLVED_REFERENCE!>_ab<!>() // todo
+    _ab2._ab() // todo
 }

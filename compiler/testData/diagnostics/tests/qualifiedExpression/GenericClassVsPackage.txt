@@ -42,7 +42,7 @@ package a {
 package
 
 public fun test(/*0*/ ab_c: a.b.c): kotlin.Unit
-public fun test2(/*0*/ a_bc: a.b.c): kotlin.Unit
+public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
 
 package a {
 
@@ -110,3 +110,5 @@ package a {
         // -- Module: <top_m1> --
     }
 }
+
+

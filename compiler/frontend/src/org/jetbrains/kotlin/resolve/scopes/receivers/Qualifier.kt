@@ -61,10 +61,8 @@ public interface Qualifier: ReceiverValue {
     public val scope: KtScope
 }
 
-class QualifierReceiver (
-        val referenceExpression: KtSimpleNameExpression,
-        override val packageView: PackageViewDescriptor?,
-        override val classifier: ClassifierDescriptor?
+abstract class QualifierReceiver(
+        val referenceExpression: KtSimpleNameExpression
 ) : Qualifier {
 
     override val expression: KtExpression = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
@@ -74,53 +72,78 @@ class QualifierReceiver (
 
     override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
 
-    override val scope: KtScope get() {
-        val scopes = ArrayList<KtScope>(4)
-
-        val classObjectTypeScope = (classifier as? ClassDescriptor)?.classObjectType?.memberScope?.let {
-            FilteringScope(it) { it !is ClassDescriptor }
-        }
-        scopes.addIfNotNull(classObjectTypeScope)
-
-        scopes.addIfNotNull(packageView?.memberScope)
-
-        if (classifier is ClassDescriptor) {
-            scopes.add(classifier.staticScope)
-
-            if (classifier.kind != ClassKind.ENUM_ENTRY) {
-                scopes.add(classifier.unsubstitutedInnerClassesScope)
-            }
-        }
-
-        return ChainedScope(descriptor, "Member scope for $name as package or class or object", *scopes.toTypedArray())
-    }
-
     fun getClassObjectReceiver(): ReceiverValue =
             (classifier as? ClassDescriptor)?.classObjectType?.let { ExpressionReceiver(referenceExpression, it) }
             ?: ReceiverValue.NO_RECEIVER
 
-    fun getNestedClassesAndPackageMembersScope(): KtScope {
-        val scopes = ArrayList<KtScope>(4)
-
-        scopes.addIfNotNull(packageView?.memberScope)
-
-        if (classifier is ClassDescriptor) {
-            scopes.add(classifier.getStaticScope())
-
-            if (classifier.getKind() != ClassKind.ENUM_ENTRY) {
-                scopes.add(DescriptorUtils.getStaticNestedClassesScope(classifier))
-            }
-        }
-
-        return ChainedScope(descriptor, "Static scope for " + name + " as package or class or object", *scopes.toTypedArray())
-    }
+    abstract fun getNestedClassesAndPackageMembersScope(): KtScope
 
     override fun getType(): KotlinType = throw IllegalStateException("No type corresponds to QualifierReceiver '$this'")
 
     override fun exists() = true
-
-    override fun toString() = "Package{$packageView} OR Class{$classifier}"
 }
+
+class PackageQualifier(
+        referenceExpression: KtSimpleNameExpression,
+        override val packageView: PackageViewDescriptor
+) : QualifierReceiver(referenceExpression) {
+
+    override val classifier: ClassifierDescriptor? get() = null
+
+    override val scope: KtScope get() = packageView.memberScope
+
+    override fun getNestedClassesAndPackageMembersScope(): KtScope = packageView.memberScope
+
+    override fun toString() = "Package{$packageView}"
+}
+
+class ClassifierQualifier(
+        referenceExpression: KtSimpleNameExpression,
+        override val classifier: ClassifierDescriptor
+) : QualifierReceiver(referenceExpression) {
+
+    override val packageView: PackageViewDescriptor? get() = null
+
+    override val scope: KtScope get() {
+        if (classifier !is ClassDescriptor) {
+            return KtScope.Empty
+        }
+
+        val scopes = ArrayList<KtScope>(3)
+
+        val classObjectTypeScope = classifier.classObjectType?.memberScope?.let {
+            FilteringScope(it) { it !is ClassDescriptor }
+        }
+        scopes.addIfNotNull(classObjectTypeScope)
+
+        scopes.add(classifier.staticScope)
+
+        if (classifier.kind != ClassKind.ENUM_ENTRY) {
+            scopes.add(classifier.unsubstitutedInnerClassesScope)
+        }
+
+        return ChainedScope(descriptor, "Member scope for $name as class or object", *scopes.toTypedArray())
+    }
+
+    override fun getNestedClassesAndPackageMembersScope(): KtScope {
+        if (classifier !is ClassDescriptor) {
+            return KtScope.Empty
+        }
+
+        val scopes = ArrayList<KtScope>(2)
+
+        scopes.add(classifier.staticScope)
+
+        if (classifier.kind != ClassKind.ENUM_ENTRY) {
+            scopes.add(DescriptorUtils.getStaticNestedClassesScope(classifier))
+        }
+
+        return ChainedScope(descriptor, "Static scope for $name as class or object", *scopes.toTypedArray())
+    }
+
+    override fun toString() = "Classifier{$classifier}"
+}
+
 
 fun createQualifier(
         expression: KtSimpleNameExpression,
@@ -141,7 +164,18 @@ fun createQualifier(
 
     context.trace.recordScope(context.scope, expression)
 
-    val qualifier = QualifierReceiver(expression, packageViewDescriptor, classifierDescriptor)
+    val qualifier =
+            if (receiver is PackageQualifier)
+                if (packageViewDescriptor != null)
+                    PackageQualifier(expression, packageViewDescriptor)
+                else
+                    ClassifierQualifier(expression, classifierDescriptor!!)
+            else
+                if (classifierDescriptor != null)
+                    ClassifierQualifier(expression, classifierDescriptor)
+                else
+                    PackageQualifier(expression, packageViewDescriptor!!)
+
     context.trace.record(QUALIFIER, qualifier.expression, qualifier)
     return qualifier
 }
@@ -150,6 +184,8 @@ fun QualifierReceiver.resolveAsStandaloneExpression(
         context: ExpressionTypingContext,
         symbolUsageValidator: SymbolUsageValidator
 ): KotlinType? {
+    val classifier = this.classifier
+
     resolveAndRecordReferenceTarget(context, symbolUsageValidator, selector = null)
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))
@@ -168,6 +204,8 @@ fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(
         symbolUsageValidator: SymbolUsageValidator,
         selector: DeclarationDescriptor?
 ) {
+    val classifier = this.classifier
+
     resolveAndRecordReferenceTarget(context, symbolUsageValidator, selector)
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier))
@@ -191,6 +229,9 @@ private fun QualifierReceiver.resolveReferenceTarget(
         symbolUsageValidator: SymbolUsageValidator,
         selector: DeclarationDescriptor?
 ): DeclarationDescriptor {
+    val classifier = this.classifier
+    val packageView = this.packageView
+
     if (classifier is TypeParameterDescriptor) {
         return classifier
     }

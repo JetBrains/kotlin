@@ -11862,6 +11862,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("PackageVsClass2.kt")
+            public void testPackageVsClass2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/PackageVsClass2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PackageVsRootClass.kt")
             public void testPackageVsRootClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/qualifiedExpression/PackageVsRootClass.kt");
