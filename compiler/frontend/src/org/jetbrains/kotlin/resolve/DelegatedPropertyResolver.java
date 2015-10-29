@@ -352,7 +352,7 @@ public class DelegatedPropertyResolver {
         return new ConstraintSystemCompleter() {
             @Override
             public void completeConstraintSystem(
-                    @NotNull ConstraintSystem constraintSystem, @NotNull ResolvedCall<?> resolvedCall
+                    @NotNull ConstraintSystem.Builder constraintSystem, @NotNull ResolvedCall<?> resolvedCall
             ) {
                 KotlinType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
                 if (returnType == null) return;
@@ -407,7 +407,7 @@ public class DelegatedPropertyResolver {
                         results.getResultCode() == OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
             }
 
-            private void addConstraintForThisValue(ConstraintSystem constraintSystem, FunctionDescriptor resultingDescriptor) {
+            private void addConstraintForThisValue(ConstraintSystem.Builder constraintSystem, FunctionDescriptor resultingDescriptor) {
                 ReceiverParameterDescriptor extensionReceiver = propertyDescriptor.getExtensionReceiverParameter();
                 ReceiverParameterDescriptor dispatchReceiver = propertyDescriptor.getDispatchReceiverParameter();
                 KotlinType typeOfThis =

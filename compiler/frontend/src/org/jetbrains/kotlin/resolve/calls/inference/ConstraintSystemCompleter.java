@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 
 public interface ConstraintSystemCompleter {
     void completeConstraintSystem(
-            @NotNull ConstraintSystem constraintSystem,
+            @NotNull ConstraintSystem.Builder constraintSystem,
             @NotNull ResolvedCall<?> resolvedCall
     );
 }

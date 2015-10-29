@@ -70,7 +70,7 @@ private fun getReturnTypeForCallable(type: KotlinType) =
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
     val returnType = returnType ?: return false
-    val nestedTypeVariables = constraintSystem.getNestedTypeVariables(returnType, original = true)
+    val nestedTypeVariables = constraintSystem.getNestedTypeVariables(returnType)
     return nestedTypeVariables.any { constraintSystem.getTypeBounds(it).value == null }
 }
 

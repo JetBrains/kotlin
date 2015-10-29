@@ -139,16 +139,19 @@ public class CallCompleter(
             expectedType: KotlinType,
             trace: BindingTrace
     ) {
-        fun updateSystemIfSuccessful(update: (ConstraintSystem) -> Boolean) {
-            val copy = constraintSystem!!.copy()
-            if (update(copy)) {
-                setConstraintSystem(copy)
+        fun updateSystemIfNeeded(buildSystemWithAdditionalConstraints: (ConstraintSystem.Builder) -> ConstraintSystem?) {
+            val system = buildSystemWithAdditionalConstraints(constraintSystem!!.toBuilder())
+            if (system != null) {
+                setConstraintSystem(system)
             }
         }
 
         val returnType = getCandidateDescriptor().getReturnType()
         if (returnType != null) {
-            constraintSystem!!.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION.position())
+            updateSystemIfNeeded { builder ->
+                builder.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION.position())
+                builder.build()
+            }
         }
 
         val constraintSystemCompleter = trace[CONSTRAINT_SYSTEM_COMPLETER, getCall().getCalleeExpression()]
@@ -156,24 +159,29 @@ public class CallCompleter(
             // todo improve error reporting with errors in constraints from completer
             // todo add constraints from completer unconditionally; improve constraints from completer for generic methods
             // add the constraints only if they don't lead to errors (except errors from upper bounds to improve diagnostics)
-            updateSystemIfSuccessful {
-                system ->
-                constraintSystemCompleter.completeConstraintSystem(system, this)
-                !system.filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().hasOnlyErrorsDerivedFrom(FROM_COMPLETER)
+            updateSystemIfNeeded { builder ->
+                constraintSystemCompleter.completeConstraintSystem(builder, this)
+                val system = builder.build()
+                val status = system.filterConstraintsOut(TYPE_BOUND_POSITION).getStatus()
+                if (status.hasOnlyErrorsDerivedFrom(FROM_COMPLETER)) null else system
             }
         }
 
         if (returnType != null && expectedType === TypeUtils.UNIT_EXPECTED_TYPE) {
-            updateSystemIfSuccessful {
-                system ->
-                system.addSupertypeConstraint(builtIns.getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
-                system.getStatus().isSuccessful()
+            updateSystemIfNeeded { builder ->
+                builder.addSupertypeConstraint(builtIns.getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
+                val system = builder.build()
+                if (system.getStatus().isSuccessful()) system else null
             }
         }
 
-        constraintSystem!!.fixVariables()
 
-        setResultingSubstitutor(constraintSystem!!.getResultingSubstitutor())
+        val builder = constraintSystem!!.toBuilder()
+        builder.fixVariables()
+        val system = builder.build()
+        setConstraintSystem(system)
+
+        setResultingSubstitutor(system.getResultingSubstitutor())
     }
 
     private fun <D : CallableDescriptor> MutableResolvedCall<D>.updateResolutionStatusFromConstraintSystem(

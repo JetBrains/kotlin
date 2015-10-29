@@ -27,21 +27,21 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasInternalAnnotationForResolve
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isInternalAnnotationForResolve
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-public class ConstraintSystemImpl : ConstraintSystem {
+public class ConstraintSystemImpl : ConstraintSystem.Builder {
 
     data class Constraint(val kind: ConstraintKind, val subtype: KotlinType, val superType: KotlinType, val position: ConstraintPosition)
 
@@ -52,94 +52,18 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     fun ConstraintKind.toBound() = if (this == SUB_TYPE) UPPER_BOUND else EXACT_BOUND
 
-    private val allTypeParameterBounds = LinkedHashMap<TypeParameterDescriptor, TypeBoundsImpl>()
-    private val externalTypeParameters = HashSet<TypeParameterDescriptor>()
-    private val localTypeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>
-        get() = if (externalTypeParameters.isEmpty()) allTypeParameterBounds
-            else allTypeParameterBounds.filter { !externalTypeParameters.contains(it.key) }
-
-    private val cachedTypeForVariable = HashMap<TypeParameterDescriptor, KotlinType>()
-
-    private val usedInBounds = HashMap<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>()
-
-    private val errors = ArrayList<ConstraintError>()
-
-    private val initialConstraints = ArrayList<Constraint>()
+    internal val allTypeParameterBounds = LinkedHashMap<TypeParameterDescriptor, TypeBoundsImpl>()
+    internal val externalTypeParameters = HashSet<TypeParameterDescriptor>()
+    internal val cachedTypeForVariable = HashMap<TypeParameterDescriptor, KotlinType>()
+    internal val usedInBounds = HashMap<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>()
+    internal val errors = ArrayList<ConstraintError>()
+    internal val initialConstraints = ArrayList<Constraint>()
+    internal val originalToVariables = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
+    internal val variablesToOriginal = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
 
     private val originalToVariablesSubstitutor: TypeSubstitutor by lazy {
         createTypeSubstitutor { originalToVariables[it] }
     }
-    private val originalToVariables = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
-    private val variablesToOriginal = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
-
-    private val constraintSystemStatus = object : ConstraintSystemStatus {
-        // for debug ConstraintsUtil.getDebugMessageForStatus might be used
-
-        override fun isSuccessful() = !hasContradiction() && !hasUnknownParameters()
-
-        override fun hasContradiction() = hasParameterConstraintError() || hasConflictingConstraints()
-                                          || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
-
-
-        override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().isSuccessful()
-
-        override fun hasConflictingConstraints() = localTypeParameterBounds.values().any { it.values.size() > 1 }
-
-        override fun hasUnknownParameters() =
-                localTypeParameterBounds.values().any { it.values.isEmpty() } || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
-
-        override fun hasParameterConstraintError() = errors.any { it is ParameterConstraintError }
-
-        override fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean {
-            if (isSuccessful()) return false
-            if (filterConstraintsOut(kind).getStatus().isSuccessful()) return true
-            return errors.isNotEmpty() && errors.all { it.constraintPosition.derivedFrom(kind) }
-        }
-
-        override fun hasErrorInConstrainingTypes() = errors.any { it is ErrorInConstrainingType }
-
-        override fun hasCannotCaptureTypesError() = errors.any { it is CannotCapture }
-
-        override fun hasTypeInferenceIncorporationError() = errors.any { it is TypeInferenceError } || !satisfyInitialConstraints()
-
-        override fun hasTypeParameterWithUnsatisfiedOnlyInputTypesError() =
-                localTypeParameterBounds.values.any { it.typeVariable.hasOnlyInputTypesAnnotation() && it.value == null }
-
-        override val constraintErrors: List<ConstraintError>
-            get() = errors
-    }
-
-    private fun getParameterToInferredValueMap(
-            typeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>,
-            getDefaultTypeProjection: (TypeParameterDescriptor) -> TypeProjection,
-            substituteOriginal: Boolean
-    ): Map<TypeParameterDescriptor, TypeProjection> {
-        val substitutionContext = HashMap<TypeParameterDescriptor, TypeProjection>()
-        for ((variable, typeBounds) in typeParameterBounds) {
-            val typeProjection: TypeProjection
-            val value = typeBounds.value
-            val typeParameter = if (substituteOriginal) variablesToOriginal[variable]!! else variable
-            if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) {
-                typeProjection = TypeProjectionImpl(value)
-            }
-            else {
-                typeProjection = getDefaultTypeProjection(typeParameter)
-            }
-            substitutionContext.put(typeParameter, typeProjection)
-        }
-        return substitutionContext
-    }
-
-    private fun replaceUninferredBy(
-            getDefaultValue: (TypeParameterDescriptor) -> TypeProjection,
-            substituteOriginal: Boolean
-    ): TypeSubstitutor {
-        val parameterToInferredValueMap = getParameterToInferredValueMap(allTypeParameterBounds, getDefaultValue, substituteOriginal)
-        val substitution = TypeConstructorSubstitution.createByParametersMap(parameterToInferredValueMap)
-        return SubstitutionFilteringInternalResolveAnnotations(substitution).buildSubstitutor()
-    }
-
-    override fun getStatus(): ConstraintSystemStatus = constraintSystemStatus
 
     override fun registerTypeVariables(
             typeVariables: Collection<TypeParameterDescriptor>,
@@ -172,28 +96,10 @@ public class ConstraintSystemImpl : ConstraintSystem {
         type -> type.getConstructor().getDeclarationDescriptor() in getAllTypeVariables()
     }
 
-    override fun getNestedTypeVariables(type: KotlinType, original: Boolean): List<TypeParameterDescriptor> {
+    fun getNestedTypeVariables(type: KotlinType, original: Boolean): List<TypeParameterDescriptor> {
         return type.getNestedArguments().map { typeProjection ->
             typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
         }.filterNotNull().filter { if (original) it in originalToVariables.keys else it in getAllTypeVariables() }
-    }
-
-    override fun copy(filterConstraintPosition: (ConstraintPosition) -> Boolean): ConstraintSystem {
-        val newSystem = ConstraintSystemImpl()
-        for ((typeParameter, typeBounds) in allTypeParameterBounds) {
-            newSystem.allTypeParameterBounds.put(typeParameter, typeBounds.filter(filterConstraintPosition))
-        }
-        newSystem.usedInBounds.putAll(usedInBounds.map {
-            val (variable, bounds) = it
-            variable to bounds.filterTo(arrayListOf<Bound>()) { filterConstraintPosition(it.position )}
-        }.toMap())
-        newSystem.externalTypeParameters.addAll(externalTypeParameters )
-        newSystem.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) })
-
-        newSystem.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) })
-        newSystem.originalToVariables.putAll(originalToVariables)
-        newSystem.variablesToOriginal.putAll(variablesToOriginal)
-        return newSystem
     }
 
     override fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
@@ -423,13 +329,11 @@ public class ConstraintSystemImpl : ConstraintSystem {
         addBound(typeVariable, capturedType, EXACT_BOUND, constraintContext)
     }
 
-    override fun getTypeVariables() = originalToVariables.keySet()
-
     fun getAllTypeVariables() = allTypeParameterBounds.keySet()
 
     fun getBoundsUsedIn(typeVariable: TypeParameterDescriptor): List<Bound> = usedInBounds[typeVariable] ?: emptyList()
 
-    override fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBoundsImpl {
+    fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBoundsImpl {
         val variableForOriginal = originalToVariables[typeVariable]
         if (variableForOriginal != null && variableForOriginal != typeVariable) {
             return getTypeBounds(variableForOriginal)
@@ -449,40 +353,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
         return if (typeParameterDescriptor != null && isMyTypeVariable(typeParameterDescriptor)) typeParameterDescriptor else null
     }
 
-    override fun getResultingSubstitutor() =
-            getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
-
-    override fun getCurrentSubstitutor() =
-            getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(TypeUtils.DONT_CARE) }
-
-    override fun getPartialSubstitutor() =
-            getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(it.correspondingType) }
-
-    private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeParameterDescriptor) -> TypeProjection) =
-            replaceUninferredBy(getDefaultValue, substituteOriginal).setApproximateCapturedTypes()
-
     private fun storeInitialConstraint(constraintKind: ConstraintKind, subType: KotlinType, superType: KotlinType, position: ConstraintPosition) {
         initialConstraints.add(Constraint(constraintKind, subType, superType, position))
-    }
-
-    private fun satisfyInitialConstraints(): Boolean {
-        fun KotlinType.substitute(): KotlinType? {
-            val substitutor = getSubstitutor(substituteOriginal = false) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
-            return substitutor.substitute(this, Variance.INVARIANT) ?: return null
-        }
-        return initialConstraints.all {
-            constraint ->
-            val resultSubType = constraint.subtype.substitute()?.let {
-                // the call might be done via safe access, so we check for notNullable receiver type;
-                // 'unsafe call' error is reported otherwise later
-                if (constraint.position.kind != ConstraintPositionKind.RECEIVER_POSITION) it else it.makeNotNullable()
-            } ?: return false
-            val resultSuperType = constraint.superType.substitute() ?: return false
-            when (constraint.kind) {
-                SUB_TYPE -> KotlinTypeChecker.DEFAULT.isSubtypeOf(resultSubType, resultSuperType)
-                EQUAL -> KotlinTypeChecker.DEFAULT.equalTypes(resultSubType, resultSuperType)
-            }
-        }
     }
 
     fun fixVariable(typeVariable: TypeParameterDescriptor) {
@@ -505,6 +377,10 @@ public class ConstraintSystemImpl : ConstraintSystem {
         functionTypeParameters.forEach { fixVariable(it) }
     }
 
+    override fun build(): ConstraintSystem {
+        return ConstraintSystemSnapshot(allTypeParameterBounds, externalTypeParameters, usedInBounds, errors, initialConstraints,
+                                        originalToVariables, variablesToOriginal)
+    }
 }
 
 fun createTypeForFunctionPlaceholder(
@@ -532,7 +408,7 @@ fun createTypeForFunctionPlaceholder(
     return functionPlaceholder.builtIns.getFunctionType(Annotations.EMPTY, receiverType, newArgumentTypes, DONT_CARE)
 }
 
-private fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {
+internal fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {
     return TypeSubstitutor.create(SubstitutionWithCapturedTypeApproximation(getSubstitution()))
 }
 

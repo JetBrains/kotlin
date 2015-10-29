@@ -76,12 +76,12 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
         val constraintsFile = File(filePath)
         val constraintsFileText = constraintsFile.readLines()
 
-        val constraintSystem = ConstraintSystemImpl()
+        val builder = ConstraintSystemImpl()
 
         val variables = parseVariables(constraintsFileText)
         val fixVariables = constraintsFileText.contains("FIX_VARIABLES")
         val typeParameterDescriptors = variables.map { testDeclarations.getParameterDescriptor(it) }
-        constraintSystem.registerTypeVariables(typeParameterDescriptors)
+        builder.registerTypeVariables(typeParameterDescriptors)
 
         val constraints = parseConstraints(constraintsFileText)
         fun KotlinType.assertNotError(): KotlinType {
@@ -93,17 +93,20 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
             val secondType = testDeclarations.getType(constraint.secondType).assertNotError()
             val context = ConstraintContext(SPECIAL.position(), initial = true)
             when (constraint.kind) {
-                MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, context.position)
-                MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, context.position)
-                MyConstraintKind.EQUAL -> constraintSystem.addConstraint(
+                MyConstraintKind.SUBTYPE -> builder.addSubtypeConstraint(firstType, secondType, context.position)
+                MyConstraintKind.SUPERTYPE -> builder.addSupertypeConstraint(firstType, secondType, context.position)
+                MyConstraintKind.EQUAL -> builder.addConstraint(
                         ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, context)
             }
         }
-        if (fixVariables) constraintSystem.fixVariables()
 
-        val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM_SHORT.render(constraintSystem)
+        if (fixVariables) builder.fixVariables()
 
-        val resultingSubstitutor = constraintSystem.getResultingSubstitutor()
+        val system = builder.build()
+
+        val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM_SHORT.render(system)
+
+        val resultingSubstitutor = system.getResultingSubstitutor()
         val result = typeParameterDescriptors.map {
             val parameterType = testDeclarations.getType(it.getName().asString())
             val resultType = resultingSubstitutor.substitute(parameterType, Variance.INVARIANT)
