@@ -1,12 +1,11 @@
 package ppp
 
 interface I {
-    val p: Nested
+    val p: CCCC.Nested
+}
 
+class CCCC(override val p: CCCC.Nested<caret>val x: Int) : I {
     interface Nested
 }
 
-class CCCC(override val p: I.Nested<caret>val x: Int) : I {
-}
-
-// ELEMENT_TEXT: "override val p: I.Nested"
+// ELEMENT_TEXT: "override val p: CCCC.Nested"
