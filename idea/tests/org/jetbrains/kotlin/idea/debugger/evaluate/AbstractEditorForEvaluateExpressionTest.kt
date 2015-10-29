@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.name.FqName
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {
@@ -73,17 +76,44 @@ public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractComple
 
     override fun doTest(testPath: String) {
         super.doTest(testPath)
+
         val fragment = myFixture.getFile() as KtCodeFragment
+        fragment.checkImports(testPath)
+    }
+}
 
-        val importList = fragment.importsAsImportList()
-        val fragmentAfterFile = File(testPath + ".after.imports")
+public abstract class AbstractCodeFragmentAutoImportTest : AbstractJetPsiCheckerTest() {
+    override fun doTest(filePath: String) {
+        myFixture.configureByCodeFragment(filePath)
+        myFixture.doHighlighting()
 
-        if (importList != null && fragmentAfterFile.exists()) {
-            JetTestUtils.assertEqualsToFile(fragmentAfterFile, StringUtil.convertLineSeparators(importList.getText()))
-        }
-        else if (fragmentAfterFile.exists()) {
-            fail("ImportList is empty")
-        }
+        val importFix = myFixture.availableIntentions.singleOrNull { it.familyName == "Import" }
+                        ?: error("No import fix available")
+        importFix.invoke(project, editor, file)
+
+        myFixture.checkResultByFile(filePath + ".after")
+
+        val fragment = myFixture.file as KtCodeFragment
+        fragment.checkImports(testDataPath + File.separator + filePath)
+
+        val fixAfter = myFixture.availableIntentions.firstOrNull { it.familyName == "Import" }
+        assertNull(fixAfter, "No import fix should be available after")
+    }
+
+    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
+}
+
+private fun KtCodeFragment.checkImports(testPath: String) {
+    val importList = importsAsImportList()
+    val importsText = StringUtil.convertLineSeparators(importList?.text ?: "")
+    val fragmentAfterFile = File(testPath + ".after.imports")
+
+    if (fragmentAfterFile.exists()) {
+        JetTestUtils.assertEqualsToFile(fragmentAfterFile, importsText)
+    }
+    else {
+        assertTrue(importsText.isEmpty(), "Unexpected imports found: $importsText" )
     }
 }
 
