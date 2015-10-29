@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.jps.incremental.storage
 
-import com.intellij.util.io.KeyDescriptor
-import java.io.DataInput
-import java.io.DataOutput
+import com.intellij.openapi.util.io.FileUtil
 
 data class IntPair(val first: Int, val second: Int) : Comparable<IntPair> {
     override fun compareTo(other: IntPair): Int {
@@ -32,21 +30,27 @@ data class IntPair(val first: Int, val second: Int) : Comparable<IntPair> {
 
 fun HashPair(a: Any, b: Any): IntPair = IntPair(a.hashCode(), b.hashCode())
 
-internal object INT_PAIR_KEY_DESCRIPTOR : KeyDescriptor<IntPair> {
-    override fun read(`in`: DataInput): IntPair {
-        val first = `in`.readInt()
-        val second = `in`.readInt()
-        return IntPair(first, second)
+class PathFunctionPair(
+        public val path: String,
+        public val function: String
+): Comparable<PathFunctionPair> {
+    override fun compareTo(other: PathFunctionPair): Int {
+        val pathComp = FileUtil.comparePaths(path, other.path)
+
+        if (pathComp != 0) return pathComp
+
+        return function.compareTo(other.function)
     }
 
-    override fun save(out: DataOutput, value: IntPair?) {
-        if (value == null) return
+    override fun equals(other: Any?): Boolean =
+            when (other) {
+                is PathFunctionPair ->
+                    FileUtil.pathsEqual(path, other.path) && function == other.function
+                else ->
+                    false
+            }
 
-        out.writeInt(value.first)
-        out.writeInt(value.second)
-    }
-
-    override fun getHashCode(value: IntPair?): Int = value?.hashCode() ?: 0
-
-    override fun isEqual(val1: IntPair?, val2: IntPair?): Boolean = val1 == val2
+    override fun hashCode(): Int = 31 * FileUtil.pathHashCode(path) + function.hashCode()
 }
+
+data class ProtoMapValue(val isPackageFacade: Boolean, val bytes: ByteArray, val strings: Array<String>)

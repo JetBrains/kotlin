@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.jps.incremental.storage
 
-import org.jetbrains.kotlin.jps.incremental.PathCollectionExternalizer
 import java.io.File
 
-class LookupMap(file: File) : BasicMap<IntPair, Collection<String>>(file, INT_PAIR_KEY_DESCRIPTOR, PathCollectionExternalizer) {
+class LookupMap(file: File) : BasicMap<IntPair, Collection<String>>(file, INT_PAIR_KEY_DESCRIPTOR, PATH_COLLECTION_EXTERNALIZER) {
     override fun dumpKey(key: IntPair): String = key.toString()
 
     override fun dumpValue(value: Collection<String>): String = value.toString()
