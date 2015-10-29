@@ -24,32 +24,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class JetCodeStyleSettings extends CustomCodeStyleSettings {
 
+    public final PackageEntryTable PACKAGES_TO_USE_STAR_IMPORTS = new PackageEntryTable();
     public boolean SPACE_AROUND_RANGE = false;
-
     public boolean SPACE_BEFORE_TYPE_COLON = false;
     public boolean SPACE_AFTER_TYPE_COLON = true;
-
     public boolean SPACE_BEFORE_EXTEND_COLON = true;
     public boolean SPACE_AFTER_EXTEND_COLON = true;
-
     public boolean INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = true;
     public boolean ALIGN_IN_COLUMNS_CASE_BRANCH = false;
-
     public boolean SPACE_AROUND_FUNCTION_TYPE_ARROW = true;
-
     public boolean SPACE_AROUND_WHEN_ARROW = true;
     public boolean SPACE_BEFORE_LAMBDA_ARROW = true;
-
     public boolean LBRACE_ON_NEXT_LINE = false;
-
     public int NAME_COUNT_TO_USE_STAR_IMPORT = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 5;
     public int NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : 3;
     public boolean IMPORT_NESTED_CLASSES = false;
-    public final PackageEntryTable PACKAGES_TO_USE_STAR_IMPORTS = new PackageEntryTable();
-
-    public static JetCodeStyleSettings getInstance(Project project) {
-        return CodeStyleSettingsManager.getSettings(project).getCustomSettings(JetCodeStyleSettings.class);
-    }
 
     public JetCodeStyleSettings(CodeStyleSettings container) {
         super("JetCodeStyleSettings", container);
@@ -57,7 +46,12 @@ public class JetCodeStyleSettings extends CustomCodeStyleSettings {
         // defaults in IDE but not in tests
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
             PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new PackageEntry(false, "java.util", false));
+            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new PackageEntry(false, "kotlinx.android.synthetic", true));
         }
+    }
+
+    public static JetCodeStyleSettings getInstance(Project project) {
+        return CodeStyleSettingsManager.getSettings(project).getCustomSettings(JetCodeStyleSettings.class);
     }
 
     @Override
