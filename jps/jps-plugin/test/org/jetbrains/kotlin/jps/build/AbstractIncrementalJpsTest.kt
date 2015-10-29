@@ -392,7 +392,9 @@ public abstract class AbstractIncrementalJpsTest(
 
         fun prepareSources(relativePathToSrc: String, filePrefix: String) {
             val srcDir = File(workDir, relativePathToSrc)
-            FileUtil.copyDir(testDataDir, srcDir) { it.name.startsWith(filePrefix) && (it.name.endsWith(".kt") || it.name.endsWith(".java")) }
+            FileUtil.copyDir(testDataDir, srcDir) {
+                it.isDirectory || it.name.startsWith(filePrefix) && (it.name.endsWith(".kt") || it.name.endsWith(".java"))
+            }
 
             srcDir.walk().forEach { mapWorkingToOriginalFile[it] = File(testDataDir, filePrefix + it.name) }
 
