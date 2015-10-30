@@ -20,7 +20,7 @@ package kotlin
  * Represents a range of values (for example, numbers or characters).
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/ranges.html) for more information.
  */
-@Deprecated("This range has unclear inclusiveness of end value. Use InclusiveRange instead.", ReplaceWith("InclusiveRange<T>"))
+@Deprecated("This range has unclear inclusiveness of end value. Use ClosedRange instead.", ReplaceWith("ClosedRange<T>"))
 public interface Range<T : Comparable<T>> {
     /**
      * The minimum value in the range.
@@ -47,7 +47,7 @@ public interface Range<T : Comparable<T>> {
  * Represents a range of values (for example, numbers or characters).
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/ranges.html) for more information.
  */
-public interface InclusiveRange<T: Comparable<T>> : Range<T> {
+public interface ClosedRange<T: Comparable<T>> : Range<T> {
     /**
      * The minimum value in the range.
      */

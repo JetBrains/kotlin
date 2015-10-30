@@ -76,7 +76,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 """/**
  * A range of values of type `$t`.
  */
-public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), InclusiveRange<$t> {
+public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: $t get() = endInclusive
 
