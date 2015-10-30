@@ -35,6 +35,7 @@ import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
@@ -151,9 +153,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION)
 
         val project = projectDescriptor.project
-
-        val lookupTracker = dataManager.getStorage(LOOKUP_TRACKER_TARGET, LOOKUP_TRACKER_STORAGE_PROVIDER)
-        val incrementalCaches = getIncrementalCaches(chunk, context, lookupTracker)
+        val (lookupTracker, lookupStorage) = getLookupTrackerAndStorage(dataManager, project)
+        val incrementalCaches = getIncrementalCaches(chunk, context, lookupStorage)
         val environment = createCompileEnvironment(incrementalCaches, lookupTracker, context)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
@@ -623,7 +624,37 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 private val Iterable<BuildTarget<*>>.moduleTargets: Iterable<ModuleBuildTarget>
     get() = filterIsInstance(javaClass<ModuleBuildTarget>())
 
-private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext, lookupTrackerImpl: LookupTrackerImpl?): Map<ModuleBuildTarget, IncrementalCacheImpl> {
+private fun getLookupTrackerAndStorage(dataManager: BuildDataManager, project: JpsProject): Pair<LookupTracker, LookupStorage> {
+    var lookupTracker = LookupTracker.DO_NOTHING
+    var lookupStorage = LookupStorage.DO_NOTHING
+
+    if (IncrementalCompilation.isExperimental()) {
+        val lookupTrackerImpl = dataManager.getStorage(LOOKUP_TRACKER_TARGET, LOOKUP_TRACKER_STORAGE_PROVIDER)
+        lookupTracker = lookupTrackerImpl
+        lookupStorage = lookupTrackerImpl
+    }
+
+    val inTest = "true".equals(System.getProperty("kotlin.jps.tests"), ignoreCase = true)
+    if (inTest) {
+        val testTracker = project.container.getChild(KotlinBuilder.LOOKUP_TRACKER)?.data
+
+        if (testTracker != null) {
+            lookupTracker = CopyingLookupTracker(lookupTracker, testTracker)
+        }
+    }
+
+    return lookupTracker to lookupStorage
+}
+
+private class CopyingLookupTracker(private val lookupTrackers: Collection<LookupTracker>) : LookupTracker {
+    constructor(vararg lookupTrackers: LookupTracker) : this(lookupTrackers.toList())
+
+    override fun record(lookupContainingFile: String, lookupLine: Int?, lookupColumn: Int?, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+        lookupTrackers.forEach { it.record(lookupContainingFile, lookupLine, lookupColumn, scopeFqName, scopeKind, name) }
+    }
+}
+
+private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext, lookupStorage: LookupStorage): Map<ModuleBuildTarget, IncrementalCacheImpl> {
     val dataManager = context.projectDescriptor.dataManager
     val targets = chunk.targets
 
@@ -654,7 +685,7 @@ private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext, lo
             cache.addDependentCache(caches[it]!!)
         }
 
-        cache.setLookupTracker(lookupTrackerImpl)
+        cache.setLookupStorage(lookupStorage)
     }
 
     return caches

@@ -29,7 +29,17 @@ object LOOKUP_TRACKER_STORAGE_PROVIDER : StorageProvider<LookupTrackerImpl>() {
     override fun createStorage(targetDataDir: File): LookupTrackerImpl = LookupTrackerImpl(targetDataDir)
 }
 
-class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), LookupTracker {
+interface LookupStorage {
+    fun removeLookupsFrom(file: File)
+
+    companion object {
+        val DO_NOTHING: LookupStorage = object : LookupStorage {
+            override fun removeLookupsFrom(file: File) {}
+        }
+    }
+}
+
+class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), LookupTracker, LookupStorage {
 
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
@@ -60,7 +70,7 @@ class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), Loo
         lookupMap.add(name, scopeFqName, fileId)
     }
 
-    fun removeLookupsFrom(file: File) {
+    override fun removeLookupsFrom(file: File) {
         val id = fileToId[file] ?: return
         idToFile.remove(id)
         fileToId.remove(file)
