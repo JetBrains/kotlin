@@ -297,36 +297,6 @@ public fun CharSequence.substring(start: Int, end: Int = length): String = subSe
 public fun CharSequence.substring(range: IntRange): String = subSequence(range.start, range.end + 1).toString()
 
 /**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
- */
-@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
-public fun Iterable<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinToString(separator, prefix, postfix, limit, truncated)
-}
-
-/**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the array could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
- */
-@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
-public fun Array<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinToString(separator, prefix, postfix, limit, truncated)
-}
-
-/**
- * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
- * If the stream could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
- * elements will be appended, followed by the [truncated] string (which defaults to "...").
- */
-@Deprecated("Use joinToString instead.", ReplaceWith("joinToString(separator, prefix, postfix, limit, truncated)"))
-public fun Sequence<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinToString(separator, prefix, postfix, limit, truncated)
-}
-
-/**
  * Returns a substring before the first occurrence of [delimiter].
  * If the string does not contain the delimiter, returns [missingDelimiterValue] which defaults to the original string.
  */
