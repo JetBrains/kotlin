@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 
 public interface KotlinLightField : PsiField, KotlinLightElement<KtDeclaration, PsiField>
 
@@ -96,7 +95,7 @@ sealed class KotlinLightFieldImpl(
     override fun copy() = Factory.create(origin?.copy() as? KtDeclaration, delegate, containingClass)
 
     class KotlinLightEnumConstant(
-            origin: KtEnumEntry,
+            origin: KtEnumEntry?,
             enumConstant: PsiEnumConstant,
             containingClass: KotlinLightClass,
             private val initializingClass: PsiEnumConstantInitializer?
@@ -121,17 +120,18 @@ sealed class KotlinLightFieldImpl(
 
     companion object Factory {
         fun create(origin: KtDeclaration?, delegate: PsiField, containingClass: KotlinLightClass): KotlinLightField {
-            if (origin is KtEnumEntry) {
-                assert(delegate is PsiEnumConstant) { "Field delegate should be an enum constant (${delegate.name}):\n${origin.getElementTextWithContext()}" }
-                val enumConstant = delegate as PsiEnumConstant
-                val enumConstantFqName = FqName(containingClass.getFqName().asString() + "." + origin.name)
-                val initializingClass = if (origin.declarations.isEmpty())
-                    null
-                else
-                    KotlinLightClassForEnumEntry(delegate.manager, enumConstantFqName, origin, enumConstant)
-                return KotlinLightEnumConstant(origin, enumConstant, containingClass, initializingClass)
+            when (delegate) {
+                is PsiEnumConstant -> {
+                    val kotlinEnumEntry = origin as? KtEnumEntry
+                    val initializingClass = if (kotlinEnumEntry != null && kotlinEnumEntry.declarations.isNotEmpty()) {
+                        val enumConstantFqName = FqName(containingClass.getFqName().asString() + "." + kotlinEnumEntry.name)
+                        KotlinLightClassForEnumEntry(delegate.manager, enumConstantFqName, kotlinEnumEntry, delegate)
+                    }
+                    else null
+                    return KotlinLightEnumConstant(kotlinEnumEntry, delegate, containingClass, initializingClass)
+                }
+                else -> return KotlinLightFieldForDeclaration(origin, delegate, containingClass)
             }
-            return KotlinLightFieldForDeclaration(origin, delegate, containingClass)
         }
     }
 }
