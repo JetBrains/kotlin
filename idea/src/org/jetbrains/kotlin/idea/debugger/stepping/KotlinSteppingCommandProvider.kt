@@ -53,7 +53,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     ): DebugProcessImpl.ResumeCommand? {
         if (suspendContext == null || suspendContext.isResumed) return null
 
-        val sourcePosition = suspendContext.debugProcess.debuggerContext.sourcePosition
+        val sourcePosition = suspendContext.debugProcess.debuggerContext.sourcePosition ?: return null
         return getStepOverCommand(suspendContext, ignoreBreakpoints, sourcePosition)
     }
 
