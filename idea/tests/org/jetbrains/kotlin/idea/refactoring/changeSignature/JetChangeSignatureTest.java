@@ -1600,7 +1600,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                 checkResultByFile(afterFilePath);
             }
             catch (ComparisonFailure e) {
-                KotlinTestUtils.assertEqualsToFile(new File(afterFilePath), getEditor());
+                KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + afterFilePath), getEditor());
             }
             if (checkErrorsAfter && currentFile instanceof KtFile) {
                 DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) currentFile);
