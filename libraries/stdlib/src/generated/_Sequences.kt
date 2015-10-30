@@ -422,7 +422,7 @@ public fun <T : Comparable<T>> Sequence<T>.sorted(): Sequence<T> {
     return object : Sequence<T> {
         override fun iterator(): Iterator<T> {
             val sortedList = this@sorted.toArrayList()
-            java.util.Collections.sort(sortedList)
+            sortedList.sort()
             return sortedList.iterator()
         }
     }
@@ -446,7 +446,7 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.sortedByDescending(crossinl
  * Returns a sequence that yields elements of this sequence sorted descending according to their natural sort order.
  */
 public fun <T : Comparable<T>> Sequence<T>.sortedDescending(): Sequence<T> {
-    return sortedWith(comparator { x, y -> y.compareTo(x) })
+    return sortedWith(reverseOrder())
 }
 
 /**
@@ -456,7 +456,7 @@ public fun <T> Sequence<T>.sortedWith(comparator: Comparator<in T>): Sequence<T>
     return object : Sequence<T> {
         override fun iterator(): Iterator<T> {
             val sortedList = this@sortedWith.toArrayList()
-            java.util.Collections.sort(sortedList, comparator)
+            sortedList.sortWith(comparator)
             return sortedList.iterator()
         }
     }

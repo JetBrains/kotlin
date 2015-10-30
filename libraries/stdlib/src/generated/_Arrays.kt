@@ -4478,75 +4478,150 @@ public fun ShortArray.reversedArray(): ShortArray {
 }
 
 /**
+ * Sorts elements in the array in-place according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareBy(selector))
+}
+
+/**
+ * Sorts elements in the array in-place descending according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareByDescending(selector))
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun <T : Comparable<T>> Array<out T>.sortDescending(): Unit {
+    sortWith(reverseOrder())
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun ByteArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun CharArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun DoubleArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun FloatArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun IntArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun LongArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun ShortArray.sortDescending(): Unit {
+    if (size > 1) {
+        sort()
+        reverse()
+    }
+}
+
+/**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun ByteArray.sorted(): List<Byte> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun CharArray.sorted(): List<Char> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun DoubleArray.sorted(): List<Double> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun FloatArray.sorted(): List<Float> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun IntArray.sorted(): List<Int> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun LongArray.sorted(): List<Long> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun ShortArray.sorted(): List<Short> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
@@ -4618,8 +4693,7 @@ public fun ShortArray.sortedArray(): ShortArray {
  */
 public fun <T : Comparable<T>> Array<out T>.sortedArrayDescending(): Array<out T> {
     if (isEmpty()) return this
-    // TODO: Use reverseOrder<T>()
-    return this.copyOf().apply { sortWith(comparator { a, b -> b.compareTo(a) }) }
+    return this.copyOf().apply { sortWith(reverseOrder()) }
 }
 
 /**
@@ -4627,8 +4701,7 @@ public fun <T : Comparable<T>> Array<out T>.sortedArrayDescending(): Array<out T
  */
 public fun ByteArray.sortedArrayDescending(): ByteArray {
     if (isEmpty()) return this
-    // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray()
+    return this.copyOf().apply { sortDescending() }
 }
 
 /**
@@ -4636,8 +4709,7 @@ public fun ByteArray.sortedArrayDescending(): ByteArray {
  */
 public fun CharArray.sortedArrayDescending(): CharArray {
     if (isEmpty()) return this
-    // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray()
+    return this.copyOf().apply { sortDescending() }
 }
 
 /**
@@ -4645,8 +4717,7 @@ public fun CharArray.sortedArrayDescending(): CharArray {
  */
 public fun DoubleArray.sortedArrayDescending(): DoubleArray {
     if (isEmpty()) return this
-    // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray()
+    return this.copyOf().apply { sortDescending() }
 }
 
 /**
@@ -4654,8 +4725,7 @@ public fun DoubleArray.sortedArrayDescending(): DoubleArray {
  */
 public fun FloatArray.sortedArrayDescending(): FloatArray {
     if (isEmpty()) return this
-    // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray()
+    return this.copyOf().apply { sortDescending() }
 }
 
 /**
@@ -4663,8 +4733,7 @@ public fun FloatArray.sortedArrayDescending(): FloatArray {
  */
 public fun IntArray.sortedArrayDescending(): IntArray {
     if (isEmpty()) return this
-    // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray()
+    return this.copyOf().apply { sortDescending() }
 }
 
 /**
@@ -4672,8 +4741,7 @@ public fun IntArray.sortedArrayDescending(): IntArray {
  */
 public fun LongArray.sortedArrayDescending(): LongArray {
     if (isEmpty()) return this
-    // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray()
+    return this.copyOf().apply { sortDescending() }
 }
 
 /**
@@ -4681,8 +4749,7 @@ public fun LongArray.sortedArrayDescending(): LongArray {
  */
 public fun ShortArray.sortedArrayDescending(): ShortArray {
     if (isEmpty()) return this
-    // TODO: Use in-place reverse
-    return this.copyOf().apply { sort() }.reversedArray()
+    return this.copyOf().apply { sortDescending() }
 }
 
 /**
@@ -4823,7 +4890,7 @@ public inline fun <R : Comparable<R>> ShortArray.sortedByDescending(crossinline 
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
-    return sortedWith(comparator { x, y -> y.compareTo(x) })
+    return sortedWith(reverseOrder())
 }
 
 /**
@@ -4879,81 +4946,63 @@ public fun ShortArray.sortedDescending(): List<Short> {
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun <T> Array<out T>.sortedWith(comparator: Comparator<in T>): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun BooleanArray.sortedWith(comparator: Comparator<in Boolean>): List<Boolean> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun ByteArray.sortedWith(comparator: Comparator<in Byte>): List<Byte> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun DoubleArray.sortedWith(comparator: Comparator<in Double>): List<Double> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun FloatArray.sortedWith(comparator: Comparator<in Float>): List<Float> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun IntArray.sortedWith(comparator: Comparator<in Int>): List<Int> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun LongArray.sortedWith(comparator: Comparator<in Long>): List<Long> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**

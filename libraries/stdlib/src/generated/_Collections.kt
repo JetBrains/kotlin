@@ -807,12 +807,31 @@ public fun <T> Iterable<T>.reversed(): List<T> {
 }
 
 /**
+ * Sorts elements in the collection in-place according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareBy(selector))
+}
+
+/**
+ * Sorts elements in the collection in-place descending according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> MutableList<T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareByDescending(selector))
+}
+
+/**
+ * Sorts elements in the collection in-place descending according to their natural sort order.
+ */
+public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
+    sortWith(reverseOrder())
+}
+
+/**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
@@ -833,16 +852,14 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinl
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
-    return sortedWith(comparator { x, y -> y.compareTo(x) })
+    return sortedWith(reverseOrder())
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**

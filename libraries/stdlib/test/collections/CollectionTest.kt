@@ -563,16 +563,40 @@ class CollectionTest {
         expect(listOf(1)) { listOf(1) take 10 }
     }
 
+    @test fun sortInPlace() {
+        val data = listOf(11, 3, 7)
+
+        val asc = data.toArrayList()
+        asc.sort()
+        assertEquals(listOf(3, 7, 11), asc)
+
+        val desc = data.toArrayList()
+        desc.sortDescending()
+        assertEquals(listOf(11, 7, 3), desc)
+    }
+
     @test fun sorted() {
         val data = listOf(11, 3, 7)
         assertEquals(listOf(3, 7, 11), data.sorted())
         assertEquals(listOf(11, 7, 3), data.sortedDescending())
     }
 
+    @test fun sortByInPlace() {
+        val data = arrayListOf("aa" to 20, "ab" to 3, "aa" to 3)
+        data.sortBy { it.second }
+        assertEquals(listOf("ab" to 3, "aa" to 3, "aa" to 20), data)
+
+        data.sortBy { it.first }
+        assertEquals(listOf("aa" to 3, "aa" to 20, "ab" to 3), data)
+
+        data.sortByDescending { (it.first + it.second).length }
+        assertEquals(listOf("aa" to 20, "aa" to 3, "ab" to 3), data)
+    }
+
     @test fun sortedBy() {
-        assertEquals(listOf("two" to 2, "three" to 3), listOf("three" to 3, "two" to 2).sortedBy { it.second })
-        assertEquals(listOf("three" to 3, "two" to 2), listOf("three" to 3, "two" to 2).sortedBy { it.first })
-        assertEquals(listOf("three", "two"), listOf("two", "three").sortedByDescending { it.length() })
+        assertEquals(listOf("two" to 3, "three" to 20), listOf("three" to 20, "two" to 3).sortedBy { it.second })
+        assertEquals(listOf("three" to 20, "two" to 3), listOf("three" to 20, "two" to 3).sortedBy { it.first })
+        assertEquals(listOf("three", "two"), listOf("two", "three").sortedByDescending { it.length })
     }
 
     @test fun sortedNullableBy() {

@@ -3,6 +3,8 @@
 
 package kotlin
 
+import java.util.*
+
 /**
  * Checks if all elements in the specified collection are contained in this collection.
  *
@@ -246,4 +248,18 @@ public fun <T> MutableCollection<in T>.retainAll(sequence: Sequence<T>) {
         retainAll(set)
     else
         clear()
+}
+
+/**
+ * Sorts elements in the list in-place according to their natural sort order.
+ * */
+public fun <T: Comparable<T>> MutableList<T>.sort(): Unit {
+    if (size > 1) java.util.Collections.sort(this)
+}
+
+/**
+ *  Sorts elements in the list in-place according to order specified with [comparator].
+ */
+public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
+    if (size > 1) java.util.Collections.sort(this, comparator)
 }
