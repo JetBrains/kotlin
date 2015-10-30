@@ -1683,6 +1683,39 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/typedDelegation.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/box/classes/inner")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inner extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInInner() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classes/inner"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("instantiateInDerived.kt")
+            public void testInstantiateInDerived() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/inner/instantiateInDerived.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("instantiateInDerivedLabeled.kt")
+            public void testInstantiateInDerivedLabeled() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/inner/instantiateInDerivedLabeled.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("instantiateInSameClass.kt")
+            public void testInstantiateInSameClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/inner/instantiateInSameClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("properOuter.kt")
+            public void testProperOuter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/inner/properOuter.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/closures")

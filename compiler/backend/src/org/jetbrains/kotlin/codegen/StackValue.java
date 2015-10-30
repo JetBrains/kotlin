@@ -535,7 +535,7 @@ public abstract class StackValue {
     ) {
         if (receiver == none()) {
             if (receiverValue.exists()) {
-                return codegen.generateReceiverValue(receiverValue);
+                return codegen.generateReceiverValue(receiverValue, false);
             }
             else if (isLocalFunCall(callableMethod) && !isExtension) {
                 StackValue value = codegen.findLocalOrCapturedValue(resolvedCall.getResultingDescriptor().getOriginal());
@@ -862,7 +862,7 @@ public abstract class StackValue {
 
             if (resolvedSetCall.getDispatchReceiver().exists()) {
                 if (resolvedSetCall.getExtensionReceiver().exists()) {
-                    codegen.generateReceiverValue(resolvedSetCall.getDispatchReceiver()).put(OBJECT_TYPE, v);
+                    codegen.generateReceiverValue(resolvedSetCall.getDispatchReceiver(), false).put(OBJECT_TYPE, v);
                 }
                 v.load(realReceiverIndex, realReceiverType);
             }

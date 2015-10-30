@@ -2562,7 +2562,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue) {
+    public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue, boolean isSuper) {
         if (receiverValue instanceof ClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
             if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
@@ -2575,7 +2575,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
             }
             else {
-                return StackValue.thisOrOuter(this, receiverDescriptor, false, isEnumEntry(receiverDescriptor));
+                return StackValue.thisOrOuter(this, receiverDescriptor, isSuper, isEnumEntry(receiverDescriptor));
             }
         }
         else if (receiverValue instanceof ScriptReceiver) {
@@ -3437,14 +3437,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 ConstructorDescriptor constructor = getConstructorDescriptor(resolvedCall);
 
                 ReceiverParameterDescriptor dispatchReceiver = constructor.getDispatchReceiverParameter();
+                ClassDescriptor containingDeclaration = constructor.getContainingDeclaration();
                 if (dispatchReceiver != null) {
                     Type receiverType = typeMapper.mapType(dispatchReceiver.getType());
-                    generateReceiverValue(resolvedCall.getDispatchReceiver()).put(receiverType, v);
+                    ReceiverValue receiver = resolvedCall.getDispatchReceiver();
+                    boolean callSuper = containingDeclaration.isInner() &&
+                                        receiver instanceof ClassReceiver &&
+                                        ((ClassReceiver) receiver).getDeclarationDescriptor().getOriginal() !=
+                                        containingDeclaration.getOriginal();
+                    generateReceiverValue(receiver, callSuper).put(receiverType, v);
                 }
 
                 // Resolved call to local class constructor doesn't have dispatchReceiver, so we need to generate closure on stack
                 // See StackValue.receiver for more info
-                pushClosureOnStack(constructor.getContainingDeclaration(), dispatchReceiver == null, defaultCallGenerator);
+                pushClosureOnStack(containingDeclaration, dispatchReceiver == null, defaultCallGenerator);
 
                 constructor = SamCodegenUtil.resolveSamAdapter(constructor);
                 CallableMethod method = typeMapper.mapToCallableMethod(constructor, false);
