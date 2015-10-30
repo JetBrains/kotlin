@@ -443,15 +443,6 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("merge(other: Iterable<R>, transform: (T, R) -> V)") {
-        exclude(Sequences, Strings)
-        typeParam("R")
-        typeParam("V")
-        returns("List<V>")
-        inline(true)
-        deprecate(Deprecation("Use zip() with transform instead.", replaceWith = "zip(other, transform)"))
-    }
-
     templates add f("zip(other: Iterable<R>, transform: (T, R) -> V)") {
         exclude(Sequences, Strings)
         doc {
@@ -486,15 +477,6 @@ fun generators(): List<GenericFunction> {
             return list
             """
         }
-    }
-
-    templates add f("merge(array: Array<out R>, transform: (T, R) -> V)") {
-        exclude(Sequences, Strings)
-        typeParam("R")
-        typeParam("V")
-        returns("List<V>")
-        inline(true)
-        deprecate(Deprecation("Use zip() with transform instead.", replaceWith = "zip(array, transform)"))
     }
 
     templates add f("zip(array: Array<out R>, transform: (T, R) -> V)") {
@@ -533,14 +515,6 @@ fun generators(): List<GenericFunction> {
 
     }
 
-    templates add f("merge(array: SELF, transform: (T, T) -> V)") {
-        only(ArraysOfPrimitives)
-        typeParam("V")
-        returns("List<V>")
-        inline(true)
-        deprecate(Deprecation("Use zip() with transform instead.", replaceWith = "zip(array, transform)"))
-    }
-
     templates add f("zip(array: SELF, transform: (T, T) -> V)") {
         only(ArraysOfPrimitives)
         doc {
@@ -561,14 +535,6 @@ fun generators(): List<GenericFunction> {
             return list
             """
         }
-    }
-
-    templates add f("merge(sequence: Sequence<R>, transform: (T, R) -> V)") {
-        only(Sequences)
-        typeParam("R")
-        typeParam("V")
-        returns("Sequence<V>")
-        deprecate(Deprecation("Use zip() with transform instead.", replaceWith = "zip(sequence, transform)"))
     }
 
     templates add f("zip(sequence: Sequence<R>, transform: (T, R) -> V)") {

@@ -838,11 +838,6 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
     return map { it ?: throw IllegalArgumentException("null element found in $this.") }
 }
 
-@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(sequence, transform)"))
-public fun <T, R, V> Sequence<T>.merge(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
-    return zip(sequence, transform)
-}
-
 /**
  * Returns a sequence containing all elements of original sequence except the elements contained in the given [array].
  * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from

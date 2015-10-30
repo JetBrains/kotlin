@@ -1397,16 +1397,6 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
     return this as List<T>
 }
 
-@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
-public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    return zip(array, transform)
-}
-
-@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
-public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
-    return zip(other, transform)
-}
-
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [array].
  */
