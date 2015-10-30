@@ -89,10 +89,10 @@ public class IncrementalCacheImpl(
     private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
     private val dependents = arrayListOf<IncrementalCacheImpl>()
     private val outputDir = requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" }
-    private var lookupTrackerImpl: LookupTrackerImpl? = null
+    private var _lookupStorage: LookupStorage = LookupStorage.DO_NOTHING
 
-    public fun setLookupTracker(lookupTrackerImpl: LookupTrackerImpl?) {
-        this.lookupTrackerImpl = lookupTrackerImpl
+    public fun setLookupStorage(lookupStorage: LookupStorage) {
+        this._lookupStorage = lookupStorage
     }
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
@@ -503,7 +503,7 @@ public class IncrementalCacheImpl(
 
         private fun remove(path: String) {
             storage.remove(path)
-            lookupTrackerImpl?.removeLookupsFrom(File(path))
+            _lookupStorage.removeLookupsFrom(File(path))
         }
     }
 
