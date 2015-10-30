@@ -22,6 +22,10 @@ import org.jetbrains.jps.incremental.storage.StorageOwner
 open class BasicMapsOwner : StorageOwner {
     private val maps = arrayListOf<BasicMap<*, *>>()
 
+    companion object {
+        val CACHE_EXTENSION = "tab"
+    }
+
     protected fun <K, V, M : BasicMap<K, V>> registerMap(map: M): M {
         maps.add(map)
         return map

@@ -54,8 +54,6 @@ public class IncrementalCacheImpl(
         private val target: ModuleBuildTarget
 ) : BasicMapsOwner(), IncrementalCache {
     companion object {
-        val CACHE_EXTENSION = ".tab"
-
         val PROTO_MAP = "proto"
         val CONSTANTS_MAP = "constants"
         val INLINE_FUNCTIONS = "inline-functions"
@@ -73,7 +71,7 @@ public class IncrementalCacheImpl(
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
 
     private val String.storageFile: File
-        get() = File(baseDir, this + CACHE_EXTENSION)
+        get() = File(baseDir, this + "." + CACHE_EXTENSION)
 
     private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
     private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile))
@@ -273,7 +271,7 @@ public class IncrementalCacheImpl(
         cacheFormatVersion.clean()
     }
 
-    private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, PROTO_MAP_VALUE_EXTERNALIZER) {
+    private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
 
         public fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean, checkChangesIsOpenPart: Boolean = true): ChangesInfo {
             val header = kotlinClass.classHeader
@@ -319,7 +317,7 @@ public class IncrementalCacheImpl(
         }
     }
 
-    private inner class ConstantsMap(storageFile: File) : BasicStringMap<Map<String, Any>>(storageFile, CONSTANTS_MAP_EXTERNALIZER) {
+    private inner class ConstantsMap(storageFile: File) : BasicStringMap<Map<String, Any>>(storageFile, ConstantsMapExternalizer) {
         private fun getConstantsMap(bytes: ByteArray): Map<String, Any>? {
             val result = HashMap<String, Any>()
 
@@ -367,7 +365,7 @@ public class IncrementalCacheImpl(
                 value.dumpMap(Any::toString)
     }
 
-    private inner class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, STRING_TO_LONG_MAP_EXTERNALIZER) {
+    private inner class InlineFunctionsMap(storageFile: File) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
         private fun getInlineFunctionsMap(bytes: ByteArray): Map<String, Long> {
             val result = HashMap<String, Long>()
 
@@ -453,7 +451,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, STRING_LIST_EXTERNALIZER) {
+    private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
         public fun add(facadeName: JvmClassName, partNames: List<String>) {
             storage[facadeName.internalName] = partNames
         }
@@ -483,7 +481,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: String): String = value
     }
 
-    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, STRING_LIST_EXTERNALIZER) {
+    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, StringListExternalizer) {
         public fun clearOutputsForSource(sourceFile: File) {
             remove(sourceFile.absolutePath)
         }
@@ -525,7 +523,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, STRING_LIST_EXTERNALIZER) {
+    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
         public fun getEntries(): Map<JvmClassName, List<String>> =
             storage.keys.toMap(JvmClassName::byInternalName) { storage[it]!! }
 
@@ -546,7 +544,7 @@ public class IncrementalCacheImpl(
      *  * inlineFunction - jvmSignature of some inline function in source file
      *  * target files - collection of files inlineFunction has been inlined to
      */
-    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PATH_FUNCTION_PAIR_KEY_DESCRIPTOR, PATH_COLLECTION_EXTERNALIZER) {
+    private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathFunctionPairKeyDescriptor, PathCollectionExternalizer) {
         public fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
             val key = PathFunctionPair(sourcePath, jvmSignature)
             storage.append(key) { out ->
