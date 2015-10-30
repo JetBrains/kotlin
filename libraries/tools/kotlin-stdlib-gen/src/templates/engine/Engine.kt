@@ -1,11 +1,9 @@
 package templates
 
-import generators.SourceFile
 import templates.Family.*
 import templates.Family.Collections
 import java.io.StringReader
 import java.util.*
-import kotlin.properties.Delegates
 
 enum class Family {
     Sequences,

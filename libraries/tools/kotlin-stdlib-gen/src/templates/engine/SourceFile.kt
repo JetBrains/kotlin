@@ -1,4 +1,4 @@
-package generators
+package templates
 
 enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = true) {
 
