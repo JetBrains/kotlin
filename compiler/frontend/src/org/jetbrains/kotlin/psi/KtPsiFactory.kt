@@ -533,7 +533,7 @@ public class KtPsiFactory(private val project: Project) {
         public fun lazyBody(body: String): CallableBuilder {
             assert(target == Target.READ_ONLY_PROPERTY && (state == State.BODY || state == State.TYPE_CONSTRAINTS))
 
-            sb.append(" by kotlin.properties.Delegates.lazy {\n").append(body).append("\n}")
+            sb.append(" by kotlin.lazy {\n").append(body).append("\n}")
             state = State.DONE
 
             return this
