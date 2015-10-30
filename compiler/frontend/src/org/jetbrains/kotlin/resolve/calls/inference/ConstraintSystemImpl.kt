@@ -17,13 +17,17 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasInternalAnnotationForResolve
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.isInternalAnnotationForResolve
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -31,7 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-class ConstraintSystemImpl(
+internal class ConstraintSystemImpl(
         private val allTypeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>,
         private val externalTypeParameters: Set<TypeParameterDescriptor>,
         private val usedInBounds: Map<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>,
@@ -131,7 +135,13 @@ class ConstraintSystemImpl(
         get() = getSubstitutor(substituteOriginal = true) { TypeUtils.DONT_CARE }
 
     private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeParameterDescriptor) -> KotlinType) =
-            replaceUninferredBy(getDefaultValue, substituteOriginal).setApproximateCapturedTypes()
+            replaceUninferredBy(getDefaultValue, substituteOriginal).run {
+                TypeSubstitutor.create(SubstitutionWithCapturedTypeApproximation(this.substitution))
+            }
+
+    private class SubstitutionWithCapturedTypeApproximation(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
+        override fun approximateCapturedTypes() = true
+    }
 
     private fun satisfyInitialConstraints(): Boolean {
         fun KotlinType.substitute(): KotlinType? {
@@ -170,5 +180,12 @@ class ConstraintSystemImpl(
         result.variablesToOriginal.putAll(variablesToOriginal)
 
         return result
+    }
+}
+
+internal class SubstitutionFilteringInternalResolveAnnotations(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
+    override fun filterAnnotations(annotations: Annotations): Annotations {
+        if (!annotations.hasInternalAnnotationForResolve()) return annotations
+        return FilteredAnnotations(annotations) { !it.isInternalAnnotationForResolve() }
     }
 }
