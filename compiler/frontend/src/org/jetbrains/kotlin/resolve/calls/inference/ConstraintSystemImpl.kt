@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-class ConstraintSystemSnapshot(
+class ConstraintSystemImpl(
         private val allTypeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>,
         private val externalTypeParameters: Set<TypeParameterDescriptor>,
         private val usedInBounds: Map<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>,

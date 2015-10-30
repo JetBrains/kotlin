@@ -378,8 +378,8 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     }
 
     override fun build(): ConstraintSystem {
-        return ConstraintSystemSnapshot(allTypeParameterBounds, externalTypeParameters, usedInBounds, errors, initialConstraints,
-                                        originalToVariables, variablesToOriginal)
+        return ConstraintSystemImpl(allTypeParameterBounds, externalTypeParameters, usedInBounds, errors, initialConstraints,
+                                    originalToVariables, variablesToOriginal)
     }
 }
 
