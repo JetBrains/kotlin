@@ -284,6 +284,9 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         if (nameExpression != null && descriptorKindFilter != null) collectReferenceVariants(descriptorKindFilter!!, nameExpression) else null
     }
 
+    protected val referenceVariantsWithNonInitializedVarExcluded: ReferenceVariants? by lazy {
+        referenceVariants?.let { ReferenceVariants(referenceVariantsHelper.excludeNonInitializedVariable(it.imported, position), it.notImportedExtensions) }
+    }
 
     private fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, nameExpression: KtSimpleNameExpression, runtimeReceiver: ExpressionReceiver? = null): ReferenceVariants {
         var variants = referenceVariantsHelper.getReferenceVariants(
@@ -292,6 +295,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 descriptorNameFilter,
                 filterOutJavaGettersAndSetters = false,
                 filterOutShadowed = false,
+                excludeNonInitializedVariable = false,
                 useReceiverType = runtimeReceiver?.type)
 
         val shadowedDeclarationsFilter = if (runtimeReceiver != null)

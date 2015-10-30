@@ -172,7 +172,7 @@ class BasicCompletionSession(
             val contextVariableTypesForSmartCompletion = withCollectRequiredContextVariableTypes(::completeWithSmartCompletion)
 
             fun completeReferenceVariants(lookupElementFactory: LookupElementFactory) {
-                val (imported, notImported) = referenceVariants!!
+                val (imported, notImported) = referenceVariantsWithNonInitializedVarExcluded!!
                 collector.addDescriptorElements(imported, lookupElementFactory)
                 collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
             }

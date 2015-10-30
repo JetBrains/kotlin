@@ -53,20 +53,22 @@ class ReferenceVariantsHelper(
             expression: KtSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
-            filterOutJavaGettersAndSetters: Boolean = false,
+            filterOutJavaGettersAndSetters: Boolean = true,
             filterOutShadowed: Boolean = true,
+            excludeNonInitializedVariable: Boolean = true,
             useReceiverType: KotlinType? = null
     ): Collection<DeclarationDescriptor>
             = getReferenceVariants(expression, CallTypeAndReceiver.detect(expression),
-                                   kindFilter, nameFilter, filterOutJavaGettersAndSetters, filterOutShadowed, useReceiverType)
+                                   kindFilter, nameFilter, filterOutJavaGettersAndSetters, filterOutShadowed, excludeNonInitializedVariable, useReceiverType)
 
     fun getReferenceVariants(
             contextElement: PsiElement,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
-            filterOutJavaGettersAndSetters: Boolean = false,
+            filterOutJavaGettersAndSetters: Boolean = true,
             filterOutShadowed: Boolean = true,
+            excludeNonInitializedVariable: Boolean = true,
             useReceiverType: KotlinType? = null
     ): Collection<DeclarationDescriptor> {
         var variants: Collection<DeclarationDescriptor>
@@ -79,12 +81,13 @@ class ReferenceVariantsHelper(
             }
         }
 
-
-        if (filterOutJavaGettersAndSetters) {
+        if (filterOutJavaGettersAndSetters && kindFilter.kindMask.and(DescriptorKindFilter.FUNCTIONS_MASK) != 0) {
             variants = filterOutJavaGettersAndSetters(variants)
         }
 
-        variants = variants.excludeNonInitializedVariable(contextElement)
+        if (excludeNonInitializedVariable && kindFilter.kindMask.and(DescriptorKindFilter.VARIABLES_MASK) != 0) {
+            variants = excludeNonInitializedVariable(variants, contextElement)
+        }
 
         return variants
     }
@@ -102,16 +105,16 @@ class ReferenceVariantsHelper(
     }
 
     // filters out variable inside its initializer
-    private fun Collection<DeclarationDescriptor>.excludeNonInitializedVariable(contextElement: PsiElement): Collection<DeclarationDescriptor> {
+    fun excludeNonInitializedVariable(variants: Collection<DeclarationDescriptor>, contextElement: PsiElement): Collection<DeclarationDescriptor> {
         for (element in contextElement.parentsWithSelf) {
             val parent = element.parent
             if (parent is KtVariableDeclaration && element == parent.initializer) {
                 val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent]
-                return this.filter { it != descriptor }
+                return variants.filter { it != descriptor }
             }
             if (element is KtDeclaration) break // we can use variable inside lambda or anonymous object located in its initializer
         }
-        return this
+        return variants
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(

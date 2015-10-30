@@ -1929,6 +1929,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("InInitializer7.kt")
+            public void testInInitializer7() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/InInitializer7.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Locals1.kt")
             public void testLocals1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/Locals1.kt");

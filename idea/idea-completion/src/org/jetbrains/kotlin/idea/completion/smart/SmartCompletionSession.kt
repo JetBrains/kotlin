@@ -78,7 +78,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         val filter = smartCompletion!!.descriptorFilter
         var contextVariableTypesForReferenceVariants = filter?.let {
             withCollectRequiredContextVariableTypes { lookupElementFactory ->
-                val (imported, notImported) = referenceVariants ?: return@withCollectRequiredContextVariableTypes
+                val (imported, notImported) = referenceVariantsWithNonInitializedVarExcluded ?: return@withCollectRequiredContextVariableTypes
                 imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
                 notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
             }
