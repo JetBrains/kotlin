@@ -1,0 +1,7 @@
+package
+
+public var u: kotlin.String
+public var v: kotlin.String
+public var x: kotlin.Int
+public var y: kotlin.Int
+public var z: kotlin.Int

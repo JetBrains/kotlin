@@ -323,6 +323,7 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_NULLABLE_CHECK, "Non-null type is checked for instance of nullable type");
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "Setter parameter type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "Getter return type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit");
         MAP.put(NO_COMPANION_OBJECT, "Please specify constructor invocation; classifier ''{0}'' does not have a companion object", NAME);
         MAP.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", NAME);
         MAP.put(TYPE_PARAMETER_ON_LHS_OF_DOT, "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot", NAME);

@@ -340,6 +340,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> WRONG_SETTER_RETURN_TYPE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtModifierListOwner>
             ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = DiagnosticFactory0.create(ERROR, ABSTRACT_MODIFIER);
