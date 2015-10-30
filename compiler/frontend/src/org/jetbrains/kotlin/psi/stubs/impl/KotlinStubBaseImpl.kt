@@ -36,7 +36,7 @@ public open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubEleme
         if (propertiesValues.isEmpty()) {
             return ""
         }
-        return propertiesValues.join(separator = ", ", prefix = "[", postfix = "]")
+        return propertiesValues.joinToString(separator = ", ", prefix = "[", postfix = "]")
     }
 
     private fun renderPropertyValues(stubInterface: Class<out Any?>): List<String> {

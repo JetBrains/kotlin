@@ -40,7 +40,7 @@ public class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndepende
                 .mapIndexed { index, entry ->
                     entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
                 }
-                .join(separator = "+")
+                .joinToString(separator = "+")
                 .replace("""$quote+$quote""", "")
 
         val replacement = KtPsiFactory(element).createExpression(text)

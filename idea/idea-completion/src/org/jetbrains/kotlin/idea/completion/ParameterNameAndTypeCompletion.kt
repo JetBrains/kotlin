@@ -63,9 +63,9 @@ class ParameterNameAndTypeCompletion(
         val nameSuggestionPrefixes = if (prefix.isEmpty() || prefix[0].isUpperCase())
             emptyList()
         else
-            prefixWords.indices.map { index -> if (index == 0) prefix else prefixWords.drop(index).join("") }
+            prefixWords.indices.map { index -> if (index == 0) prefix else prefixWords.drop(index).joinToString("") }
 
-        userPrefixes = nameSuggestionPrefixes.indices.map { prefixWords.take(it).join("") }
+        userPrefixes = nameSuggestionPrefixes.indices.map { prefixWords.take(it).joinToString("") }
         classNamePrefixMatchers = nameSuggestionPrefixes.map { CamelHumpMatcher(it.capitalize(), false) }
     }
 

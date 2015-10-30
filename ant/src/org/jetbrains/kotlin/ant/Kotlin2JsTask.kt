@@ -52,7 +52,7 @@ public class Kotlin2JsTask : KotlinCompilerBaseTask() {
         // TODO: write test
         library?.let {
             args.add("-library-files")
-            args.add(it.list().map { File(it).canonicalPath }.join(separator = ","))
+            args.add(it.list().joinToString(separator = ",") { File(it).canonicalPath })
         }
 
         outputPrefix?.let {

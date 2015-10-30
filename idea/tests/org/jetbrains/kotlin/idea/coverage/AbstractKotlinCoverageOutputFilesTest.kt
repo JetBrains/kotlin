@@ -41,7 +41,7 @@ public abstract class AbstractKotlinCoverageOutputFilesTest(): KotlinLightCodeIn
             }
 
             val actualClasses = KotlinCoverageExtension.collectGeneratedClassQualifiedNames(outDir, kotlinFile)
-            KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.txt")), actualClasses!!.join("\n"))
+            KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.txt")), actualClasses!!.joinToString("\n"))
         }
         finally {
             runWriteAction {

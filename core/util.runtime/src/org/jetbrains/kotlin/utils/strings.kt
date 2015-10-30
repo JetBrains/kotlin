@@ -17,4 +17,4 @@
 package org.jetbrains.kotlin.utils
 
 // Needed for Java interop: otherwise you need to specify all the optional parameters to join, i.e. prefix, postfix, limit, truncated
-fun Iterable<Any>.join(separator: String) = joinToString(separator)
+fun join(collection: Iterable<Any>, separator: String) = collection.joinToString(separator)

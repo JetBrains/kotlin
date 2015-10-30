@@ -54,7 +54,7 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
 
         compileClasspath?.let {
             args.add("-classpath")
-            args.add(it.list().join(pathSeparator))
+            args.add(it.list().joinToString(pathSeparator))
         }
 
 

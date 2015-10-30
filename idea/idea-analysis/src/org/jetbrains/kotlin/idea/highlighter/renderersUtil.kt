@@ -78,7 +78,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
 
         append("<br/>$indent<i>where</i> ")
         if (!notInferredTypeParameters.isEmpty()) {
-            append(notInferredTypeParameters.map { typeParameter -> renderError(typeParameter.getName()) }.join())
+            append(notInferredTypeParameters.map { typeParameter -> renderError(typeParameter.getName()) }.joinToString())
             append("<i> cannot be inferred</i>")
             if (!inferredTypeParameters.isEmpty()) {
                 append("; ")
@@ -88,8 +88,8 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
         val typeParameterToTypeArgumentMap = resolvedCall.getTypeArguments()
         if (!inferredTypeParameters.isEmpty()) {
             append(inferredTypeParameters.map { typeParameter ->
-                "${typeParameter.getName()} = ${htmlRenderer.renderType(typeParameterToTypeArgumentMap[typeParameter]!!)}"
-            }.join())
+                    "${typeParameter.getName()} = ${htmlRenderer.renderType(typeParameterToTypeArgumentMap[typeParameter]!!)}"
+                }.joinToString())
         }
     }
 
@@ -99,7 +99,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
         append(htmlRenderer.renderType(receiverParameter.getType())).append(".")
     }
     append(resultingDescriptor.getName()).append("(")
-    append(resultingDescriptor.getValueParameters().map { parameter -> renderParameter(parameter) }.join())
+    append(resultingDescriptor.getValueParameters().map { parameter -> renderParameter(parameter) }.joinToString())
     append(if (resolvedCall.hasUnmappedArguments()) renderError(")") else ")")
 
     if (!resolvedCall.getCandidateDescriptor().getTypeParameters().isEmpty()) {

@@ -73,8 +73,8 @@ public class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQui
         }
 
         Collections.sort(containingDeclarationsNames)
-        val declarations = containingDeclarationsNames.subList(0, containingDeclarationsNames.size()-1).join(", ") + " and " +
-            containingDeclarationsNames.last()
+        val declarations = containingDeclarationsNames.subList(0, containingDeclarationsNames.size()-1).joinToString(", ") + " and " +
+                           containingDeclarationsNames.last()
         return "Make '${element.name}' in $declarations open"
     }
 

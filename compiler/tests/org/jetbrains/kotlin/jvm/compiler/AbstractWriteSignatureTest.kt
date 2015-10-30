@@ -134,7 +134,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             methodExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
             fieldExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
             Assert.assertTrue(
-                    "Unchecked expectations (${uncheckedExpectations.size()} total):\n  " + uncheckedExpectations.join("\n  "),
+                    "Unchecked expectations (${uncheckedExpectations.size()} total):\n  " + uncheckedExpectations.joinToString("\n  "),
                     uncheckedExpectations.isEmpty())
         }
 

@@ -110,10 +110,10 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
             val parameterType = testDeclarations.getType(it.getName().asString())
             val resultType = resultingSubstitutor.substitute(parameterType, Variance.INVARIANT)
             "${it.getName()}=${resultType?.let { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}"
-        }.join("\n", prefix = "result:\n")
+        }.joinToString("\n", prefix = "result:\n")
 
         val boundsFile = File(filePath.replace("constraints", "bounds"))
-        KotlinTestUtils.assertEqualsToFile(boundsFile, "${constraintsFileText.join("\n")}\n\n$resultingStatus\n\n$result")
+        KotlinTestUtils.assertEqualsToFile(boundsFile, "${constraintsFileText.joinToString("\n")}\n\n$resultingStatus\n\n$result")
     }
 
     class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String)

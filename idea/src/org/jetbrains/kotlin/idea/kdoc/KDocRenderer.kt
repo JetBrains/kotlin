@@ -97,7 +97,7 @@ object KDocRenderer {
         // Avoid wrapping the entire converted contents in a <p> tag if it's just a single paragraph
         val maybeSingleParagraph = markdownNode.children.filter { it.type != MarkdownTokenTypes.EOL }.singleOrNull()
         if (maybeSingleParagraph != null && !allowSingleParagraph) {
-            return maybeSingleParagraph.children.map { it.toHtml() }.join("")
+            return maybeSingleParagraph.children.joinToString("") { it.toHtml() }
         } else {
             return markdownNode.toHtml()
         }

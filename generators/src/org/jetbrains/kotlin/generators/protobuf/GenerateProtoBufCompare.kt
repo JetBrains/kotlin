@@ -238,7 +238,7 @@ class GenerateProtoBufCompare {
         val allFields = fields + extFields
 
         p.println("public enum class ${className}Kind {")
-        p.println(allFields.map { "    " + it.enumName }.join(",\n    "))
+        p.println(allFields.joinToString(",\n    ") { "    " + it.enumName })
         p.println("}")
 
         p.println()
@@ -440,5 +440,5 @@ class GenerateProtoBufCompare {
     }
 
     private val String.javaName: String
-        get() = this.split("_").map { it.capitalize() }.join("").decapitalize()
+        get() = this.split("_").joinToString("") { it.capitalize() }.decapitalize()
 }
