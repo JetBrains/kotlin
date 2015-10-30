@@ -11102,6 +11102,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt9850.kt")
+                public void testKt9850() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/typeParameters/kt9850.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("simpleVisitorTwoAccepts.kt")
                 public void testSimpleVisitorTwoAccepts() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/typeParameters/simpleVisitorTwoAccepts.kt");
