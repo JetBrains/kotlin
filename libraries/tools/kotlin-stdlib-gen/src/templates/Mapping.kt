@@ -71,6 +71,7 @@ fun mapping(): List<GenericFunction> {
         include(Maps)
     }
 
+    /*
     templates add f("mapNotNull(transform: (T) -> R)") {
         inline(true)
         exclude(Strings, ArraysOfPrimitives)
@@ -95,6 +96,7 @@ fun mapping(): List<GenericFunction> {
             """
         }
     }
+    */
 
     templates add f("mapTo(destination: C, transform: (T) -> R)") {
         inline(true)
@@ -143,6 +145,7 @@ fun mapping(): List<GenericFunction> {
         include(Maps)
     }
 
+    /*
     templates add f("mapNotNullTo(destination: C, transform: (T) -> R)") {
         inline(true)
         exclude(Strings, ArraysOfPrimitives)
@@ -170,6 +173,7 @@ fun mapping(): List<GenericFunction> {
             """
         }
     }
+    */
 
     templates add f("flatMap(transform: (T) -> Iterable<R>)") {
         inline(true)

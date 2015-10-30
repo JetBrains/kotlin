@@ -63,6 +63,7 @@ public class SequenceTest {
         assertEquals(listOf("foo", "bar"), filtered.toList())
     }
 
+    /*
     @test fun mapNotNull() {
         val data = sequenceOf(null, "foo", null, "bar")
         val foo = data.mapNotNull { it.length() }
@@ -72,6 +73,7 @@ public class SequenceTest {
             foo is Sequence<Int>
         }
     }
+    */
 
     @test fun mapIndexed() {
         assertEquals(listOf(0, 1, 2, 6, 12), fibonacci().mapIndexed { index, value -> index * value }.takeWhile { i: Int -> i < 20 }.toList())

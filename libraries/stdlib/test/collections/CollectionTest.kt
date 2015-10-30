@@ -36,6 +36,7 @@ class CollectionTest {
         }
     }
 
+    /*
     @test fun mapNotNull() {
         val data = listOf(null, "foo", null, "bar")
         val foo = data.mapNotNull { it.length() }
@@ -46,6 +47,7 @@ class CollectionTest {
             foo is List<Int>
         }
     }
+    */
 
     @test fun listOfNotNull() {
         val l1: List<Int> = listOfNotNull(null)
