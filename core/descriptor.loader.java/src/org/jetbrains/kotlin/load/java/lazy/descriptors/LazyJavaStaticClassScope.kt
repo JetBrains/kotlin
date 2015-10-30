@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesProperty
+import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
@@ -71,7 +69,7 @@ public class LazyJavaStaticClassScope(
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
         val nestedClassesScope = getContainingDeclaration().getUnsubstitutedInnerClassesScope()
-        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, nestedClassesScope))
+        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, nestedClassesScope, NoLookupLocation.FOR_ALREADY_TRACKED))
 
         val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, getContainingDeclaration())
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))

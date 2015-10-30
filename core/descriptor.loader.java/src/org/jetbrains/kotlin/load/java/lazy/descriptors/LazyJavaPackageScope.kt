@@ -151,7 +151,7 @@ public class LazyJavaPackageScope(
     )
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, this))
+        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, this, NoLookupLocation.FOR_ALREADY_TRACKED))
     }
 
     override fun getSubPackages() = subPackages()
