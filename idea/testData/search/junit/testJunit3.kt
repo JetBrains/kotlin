@@ -9,4 +9,4 @@ class Test2: junit.framework.TestCase() {
 }
 
 // CLASS: junit.framework.TestCase
-// SEARCH: KotlinLightClass:Test1, KotlinLightClass:Test2
+// SEARCH: class:Test1, class:Test2

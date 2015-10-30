@@ -7,5 +7,5 @@
 annotation class MyAnnotation(val first: String, val second: String)
 
 // ANNOTATION: MyAnnotation
-// SEARCH: KotlinLightMethodForDeclaration:test1
-// SEARCH: KotlinLightClass:Test1
+// SEARCH: method:test1
+// SEARCH: class:Test1
