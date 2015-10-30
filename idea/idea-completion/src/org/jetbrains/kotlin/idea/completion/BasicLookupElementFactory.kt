@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 class BasicLookupElementFactory(
         private val project: Project,
-        private val insertHandlerProvider: InsertHandlerProvider
+        val insertHandlerProvider: InsertHandlerProvider
 ) {
     public fun createLookupElement(
             descriptor: DeclarationDescriptor,

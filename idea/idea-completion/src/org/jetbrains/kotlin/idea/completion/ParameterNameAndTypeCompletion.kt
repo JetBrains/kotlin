@@ -48,7 +48,7 @@ import java.util.*
 
 class ParameterNameAndTypeCompletion(
         private val collector: LookupElementsCollector,
-        private val lookupElementFactory: LookupElementFactory,
+        private val lookupElementFactory: BasicLookupElementFactory,
         private val prefixMatcher: PrefixMatcher,
         private val resolutionFacade: ResolutionFacade
 ) {
@@ -112,9 +112,9 @@ class ParameterNameAndTypeCompletion(
                 if (descriptor != null) {
                     val parameterType = descriptor.getType()
                     if (parameterType.isVisible(visibilityFilter)) {
-                        val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), lookupElementFactory)
+                        val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), lookupElementFactory)!!
                         val count = lookupElementToCount[lookupElement] ?: 0
-                        lookupElementToCount[lookupElement!!] = count + 1
+                        lookupElementToCount[lookupElement] = count + 1
                     }
                 }
             }
@@ -159,24 +159,24 @@ class ParameterNameAndTypeCompletion(
     }
 
     private abstract class Type(private val idString: String) {
-        abstract fun createTypeLookupElement(lookupElementFactory: LookupElementFactory): LookupElement?
+        abstract fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory): LookupElement?
 
         override fun equals(other: Any?) = other is Type && other.idString == idString
         override fun hashCode() = idString.hashCode()
     }
 
     private class DescriptorType(private val classifier: ClassifierDescriptor) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)) {
-        override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
-                = lookupElementFactory.createLookupElement(classifier, useReceiverTypes = false, qualifyNestedClasses = true)
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
+                = lookupElementFactory.createLookupElement(classifier, qualifyNestedClasses = true)
     }
 
     private class JavaClassType(private val psiClass: PsiClass) : Type(psiClass.getQualifiedName()!!) {
-        override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
                 = lookupElementFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses = true)
     }
 
     private class ArbitraryType(private val type: KotlinType) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)) {
-        override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
                 = lookupElementFactory.createLookupElementForType(type)
     }
 
@@ -187,7 +187,7 @@ class ParameterNameAndTypeCompletion(
     ) : LookupElementDecorator<LookupElement>(typeLookupElement) {
 
         companion object {
-            fun create(parameterName: String, type: Type, factory: LookupElementFactory): LookupElement? {
+            fun create(parameterName: String, type: Type, factory: BasicLookupElementFactory): LookupElement? {
                 val typeLookupElement = type.createTypeLookupElement(factory) ?: return null
                 val lookupElement = MyLookupElement(parameterName, type, typeLookupElement)
                 return lookupElement.suppressAutoInsertion()

@@ -16,8 +16,31 @@
 
 package org.jetbrains.kotlin.idea.completion.handlers
 
+import com.intellij.codeInsight.completion.CompletionInitializationContext
+import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.lexer.KtTokens
+
+fun surroundWithBracesIfInStringTemplate(context: InsertionContext) {
+    val startOffset = context.startOffset
+    val document = context.document
+    if (startOffset > 0 && document.charsSequence[startOffset - 1] == '$') {
+        val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
+        psiDocumentManager.commitAllDocuments()
+        psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
+
+        if (context.file.findElementAt(startOffset - 1)?.node?.elementType == KtTokens.SHORT_TEMPLATE_ENTRY_START) {
+            document.insertString(startOffset, "{")
+            context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, startOffset + 1)
+
+            val tailOffset = context.tailOffset
+            document.insertString(tailOffset, "}")
+            context.tailOffset = tailOffset
+        }
+    }
+}
 
 fun CharSequence.indexOfSkippingSpace(c: Char, startIndex: Int): Int? {
     for (i in startIndex..this.length() - 1) {

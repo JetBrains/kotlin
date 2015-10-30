@@ -154,22 +154,30 @@ class BasicCompletionSession(
         }
 
         override fun doComplete() {
-            if (smartCompletion != null) {
-                val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(lookupElementFactory)
+            fun completeWithSmartCompletion(lookupElementFactory: LookupElementFactory) {
+                if (smartCompletion != null) {
+                    val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(lookupElementFactory)
 
-                // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
-                for (item in additionalItems) {
-                    if (item.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == null) {
-                        item.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, SmartCompletionItemPriority.DEFAULT)
+                    // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
+                    for (item in additionalItems) {
+                        if (item.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == null) {
+                            item.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, SmartCompletionItemPriority.DEFAULT)
+                        }
                     }
-                }
 
-                collector.addElements(additionalItems)
+                    collector.addElements(additionalItems)
+                }
             }
 
-            val (imported, notImported) = referenceVariants!!
-            collector.addDescriptorElements(imported, lookupElementFactory)
-            collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+            val contextVariableTypesForSmartCompletion = withCollectRequiredContextVariableTypes(::completeWithSmartCompletion)
+
+            fun completeReferenceVariants(lookupElementFactory: LookupElementFactory) {
+                val (imported, notImported) = referenceVariants!!
+                collector.addDescriptorElements(imported, lookupElementFactory)
+                collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+            }
+
+            val contextVariableTypesForReferenceVariants = withCollectRequiredContextVariableTypes(::completeReferenceVariants)
 
             KEYWORDS_ONLY.doComplete()
 
@@ -188,7 +196,7 @@ class BasicCompletionSession(
                     }
                 }
 
-                packageNames.forEach { collector.addElement(lookupElementFactory.createLookupElementForPackage(it)) }
+                packageNames.forEach { collector.addElement(basicLookupElementFactory.createLookupElementForPackage(it)) }
             }
 
             flushToResultSet()
@@ -196,22 +204,35 @@ class BasicCompletionSession(
             NamedArgumentCompletion.complete(collector, expectedInfos)
             flushToResultSet()
 
-            completeNonImported()
-            flushToResultSet()
+            val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
+            withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
+                if (contextVariableTypesForSmartCompletion.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+                    completeWithSmartCompletion(lookupElementFactory)
+                }
 
-            if (position.containingFile is KtCodeFragment) {
-                val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
-                if (variantsAndFactory != null) {
-                    val variants = variantsAndFactory.first
-                    val lookupElementFactory = variantsAndFactory.second
-                    collector.addDescriptorElements(variants.imported, lookupElementFactory, withReceiverCast = true)
-                    collector.addDescriptorElements(variants.notImportedExtensions, lookupElementFactory, withReceiverCast = true, notImported = true)
-                    flushToResultSet()
+                if (contextVariableTypesForReferenceVariants.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+                    val (imported, notImported) = referenceVariantsWithSingleFunctionTypeParameter()!!
+                    collector.addDescriptorElements(imported, lookupElementFactory)
+                    collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+                }
+
+                completeNonImported(lookupElementFactory)
+                flushToResultSet()
+
+                if (position.containingFile is KtCodeFragment) {
+                    val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants(lookupElementFactory)
+                    if (variantsAndFactory != null) {
+                        val variants = variantsAndFactory.first
+                        @Suppress("NAME_SHADOWING") val lookupElementFactory = variantsAndFactory.second
+                        collector.addDescriptorElements(variants.imported, lookupElementFactory, withReceiverCast = true)
+                        collector.addDescriptorElements(variants.notImportedExtensions, lookupElementFactory, withReceiverCast = true, notImported = true)
+                        flushToResultSet()
+                    }
                 }
             }
         }
 
-        private fun completeNonImported() {
+        private fun completeNonImported(lookupElementFactory: LookupElementFactory) {
             if (shouldCompleteTopLevelCallablesFromIndex()) {
                 collector.addDescriptorElements(getTopLevelCallables(), lookupElementFactory, notImported = true)
             }
@@ -292,7 +313,7 @@ class BasicCompletionSession(
                     "override" -> {
                         collector.addElement(lookupElement)
 
-                        OverridesCompletion(collector, lookupElementFactory).complete(position)
+                        OverridesCompletion(collector, basicLookupElementFactory).complete(position)
                     }
 
                     "class" -> {
@@ -377,7 +398,7 @@ class BasicCompletionSession(
             KEYWORDS_ONLY.doComplete()
 
             if (shouldCompleteParameterNameAndType()) {
-                val parameterNameAndTypeCompletion = ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
+                val parameterNameAndTypeCompletion = ParameterNameAndTypeCompletion(collector, basicLookupElementFactory, prefixMatcher, resolutionFacade)
 
                 // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
                 val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
@@ -470,7 +491,7 @@ class BasicCompletionSession(
             }
 
             superClasses
-                    .map { lookupElementFactory.createLookupElement(it, useReceiverTypes = false, qualifyNestedClasses = true, includeClassTypeArguments = false) }
+                    .map { basicLookupElementFactory.createLookupElement(it, qualifyNestedClasses = true, includeClassTypeArguments = false) }
                     .forEach { collector.addElement(it) }
         }
     }

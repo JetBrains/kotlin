@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class OverridesCompletion(
         private val collector: LookupElementsCollector,
-        private val lookupElementFactory: LookupElementFactory
+        private val lookupElementFactory: BasicLookupElementFactory
 ) {
     private val PRESENTATION_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
         modifiers = emptySet()
@@ -66,7 +66,7 @@ class OverridesCompletion(
             if (isConstructorParameter && memberObject.descriptor !is PropertyDescriptor) continue
 
             val descriptor = memberObject.descriptor
-            var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
+            var lookupElement = lookupElementFactory.createLookupElement(descriptor)
 
             var text = "override " + PRESENTATION_RENDERER.render(descriptor)
             if (descriptor is FunctionDescriptor) {

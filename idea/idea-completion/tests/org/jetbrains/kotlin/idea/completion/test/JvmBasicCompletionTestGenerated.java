@@ -1389,6 +1389,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("ContextVariables3.kt")
+            public void testContextVariables3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/ContextVariables3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ContextVariablesFilter.kt")
             public void testContextVariablesFilter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/ContextVariablesFilter.kt");

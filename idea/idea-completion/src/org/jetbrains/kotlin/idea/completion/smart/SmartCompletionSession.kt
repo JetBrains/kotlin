@@ -64,44 +64,67 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             return
         }
 
-        if (expression != null) {
-            addFunctionLiteralArgumentCompletions()
+        if (expression == null) return
 
-            val (additionalItems, inheritanceSearcher) = smartCompletion!!.additionalItems(lookupElementFactory)
-            collector.addElements(additionalItems)
+        addFunctionLiteralArgumentCompletions()
 
-            if (nameExpression != null) {
-                val filter = smartCompletion!!.descriptorFilter
-                if (filter != null) {
-                    val (imported, notImported) = referenceVariants!!
-                    imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
-                    notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+        var inheritanceSearcher: InheritanceItemsSearcher? = null
+        val contextVariableTypesForAdditionalItems = withCollectRequiredContextVariableTypes { lookupElementFactory ->
+            val pair = smartCompletion!!.additionalItems(lookupElementFactory)
+            collector.addElements(pair.first)
+            inheritanceSearcher = pair.second
+        }
 
+        val filter = smartCompletion!!.descriptorFilter
+        var contextVariableTypesForReferenceVariants = filter?.let {
+            withCollectRequiredContextVariableTypes { lookupElementFactory ->
+                val (imported, notImported) = referenceVariants ?: return@withCollectRequiredContextVariableTypes
+                imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
+                notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+            }
+        }
+
+        flushToResultSet()
+
+        val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
+        withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
+            if (contextVariableTypesForAdditionalItems.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+                val additionalItems = smartCompletion!!.additionalItems(lookupElementFactory).first
+                collector.addElements(additionalItems)
+            }
+
+            if (filter != null && contextVariableTypesForReferenceVariants!!.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+                val (imported, notImported) = referenceVariantsWithSingleFunctionTypeParameter()!!
+                imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
+                notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+            }
+
+            flushToResultSet()
+
+            if (filter != null) {
+                if (shouldCompleteTopLevelCallablesFromIndex()) {
+                    getTopLevelCallables().forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
                     flushToResultSet()
+                }
 
-                    if (shouldCompleteTopLevelCallablesFromIndex()) {
-                        getTopLevelCallables().forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+                if (position.getContainingFile() is KtCodeFragment) {
+                    val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants(lookupElementFactory)
+                    if (variantsAndFactory != null) {
+                        val variants = variantsAndFactory.first
+                        @Suppress("NAME_SHADOWING") val lookupElementFactory = variantsAndFactory.second
+                        variants.imported.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }) }
+                        variants.notImportedExtensions.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }, notImported = true) }
                         flushToResultSet()
                     }
-
-                    if (position.getContainingFile() is KtCodeFragment) {
-                        val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
-                        if (variantsAndFactory != null) {
-                            val variants = variantsAndFactory.first
-                            val lookupElementFactory = variantsAndFactory.second
-                            variants.imported.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }) }
-                            variants.notImportedExtensions.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }, notImported = true) }
-                            flushToResultSet()
-                        }
-                    }
-                }
-
-                // it makes no sense to search inheritors if there is no reference because it means that we have prefix like "this@"
-                inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
-                    collector.addElement(it)
-                    flushToResultSet()
                 }
             }
+        }
+
+
+        // it makes no sense to search inheritors if there is no reference because it means that we have prefix like "this@"
+        inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
+            collector.addElement(it)
+            flushToResultSet()
         }
     }
 

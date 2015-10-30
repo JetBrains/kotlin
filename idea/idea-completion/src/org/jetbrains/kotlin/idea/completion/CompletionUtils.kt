@@ -29,12 +29,8 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.findLabelAndCall
-import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -90,22 +86,6 @@ fun LookupElement.withReceiverCast(): LookupElement {
         override fun handleInsert(context: InsertionContext) {
             super.handleInsert(context)
             CastReceiverInsertHandler.postHandleInsert(context, delegate)
-        }
-    }
-}
-
-fun LookupElement.withBracesSurrounding(): LookupElement {
-    return object: LookupElementDecorator<LookupElement>(this) {
-        override fun handleInsert(context: InsertionContext) {
-            val startOffset = context.getStartOffset()
-            context.getDocument().insertString(startOffset, "{")
-            context.getOffsetMap().addOffset(CompletionInitializationContext.START_OFFSET, startOffset + 1)
-
-            val tailOffset = context.getTailOffset()
-            context.getDocument().insertString(tailOffset, "}")
-            context.setTailOffset(tailOffset)
-
-            super.handleInsert(context)
         }
     }
 }
@@ -310,7 +290,7 @@ fun breakOrContinueExpressionItems(position: KtElement, breakOrContinue: String)
     return result
 }
 
-fun LookupElementFactory.createLookupElementForType(type: KotlinType): LookupElement? {
+fun BasicLookupElementFactory.createLookupElementForType(type: KotlinType): LookupElement? {
     if (type.isError()) return null
 
     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
@@ -320,7 +300,7 @@ fun LookupElementFactory.createLookupElementForType(type: KotlinType): LookupEle
     }
     else {
         val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
-        val baseLookupElement = createLookupElement(classifier, useReceiverTypes = false, qualifyNestedClasses = true, includeClassTypeArguments = false)
+        val baseLookupElement = createLookupElement(classifier, qualifyNestedClasses = true, includeClassTypeArguments = false)
 
         val itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
 

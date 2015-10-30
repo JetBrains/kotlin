@@ -132,13 +132,15 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, isVisibleFilter)
 
     protected val callTypeAndReceiver: CallTypeAndReceiver<*, *>
-    protected val lookupElementFactory: LookupElementFactory
+    protected val receiverTypes: Collection<KotlinType>?
 
     init {
         val (callTypeAndReceiver, receiverTypes) = detectCallTypeAndReceiverTypes()
         this.callTypeAndReceiver = callTypeAndReceiver
-        this.lookupElementFactory = createLookupElementFactory(callTypeAndReceiver.callType, receiverTypes)
+        this.receiverTypes = receiverTypes
     }
+
+    protected val basicLookupElementFactory = BasicLookupElementFactory(project, InsertHandlerProvider(callTypeAndReceiver.callType) { expectedInfos })
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
     protected val collector: LookupElementsCollector by lazy(LazyThreadSafetyMode.NONE) {
@@ -273,12 +275,13 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
 
     protected val referenceVariants: ReferenceVariants? by lazy {
-        descriptorKindFilter?.let { collectReferenceVariants(it) }
+        if (nameExpression != null && descriptorKindFilter != null) collectReferenceVariants(descriptorKindFilter!!, nameExpression) else null
     }
 
-    private fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, runtimeReceiver: ExpressionReceiver? = null): ReferenceVariants {
+
+    private fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, nameExpression: KtSimpleNameExpression, runtimeReceiver: ExpressionReceiver? = null): ReferenceVariants {
         var variants = referenceVariantsHelper.getReferenceVariants(
-                nameExpression!!,
+                nameExpression,
                 descriptorKindFilter,
                 descriptorNameFilter,
                 filterOutJavaGettersAndSetters = false,
@@ -315,8 +318,15 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         return ReferenceVariants(variants, notImportedExtensions)
     }
 
-    protected fun getRuntimeReceiverTypeReferenceVariants(): Pair<ReferenceVariants, LookupElementFactory>? {
+    protected fun referenceVariantsWithSingleFunctionTypeParameter(): ReferenceVariants? {
+        val variants = referenceVariants ?: return null
+        val filter: (DeclarationDescriptor) -> Boolean = { it is FunctionDescriptor && LookupElementFactory.hasSingleFunctionTypeParameter(it) }
+        return ReferenceVariants(variants.imported.filter(filter), variants.notImportedExtensions.filter(filter))
+    }
+
+    protected fun getRuntimeReceiverTypeReferenceVariants(lookupElementFactory: LookupElementFactory): Pair<ReferenceVariants, LookupElementFactory>? {
         val evaluator = file.getCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) ?: return null
+        val referenceVariants = referenceVariants ?: return null
 
         val explicitReceiver = callTypeAndReceiver.receiver as? KtExpression ?: return null
         val type = bindingContext.getType(explicitReceiver) ?: return null
@@ -325,12 +335,12 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         val runtimeType = evaluator(explicitReceiver)
         if (runtimeType == null || runtimeType == type) return null
 
-        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, ExpressionReceiver(explicitReceiver, runtimeType))
-        val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants!!.imported)
-        val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants!!.notImportedExtensions)
+        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, nameExpression!!, ExpressionReceiver(explicitReceiver, runtimeType))
+        val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants.imported)
+        val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants.notImportedExtensions)
 
-        val referenceVariants = ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
-        return Pair(referenceVariants, lookupElementFactory.copy(receiverTypes = listOf(runtimeType)))
+        val runtimeVariants = ReferenceVariants(filteredVariants, filteredNotImportedExtensions)
+        return Pair(runtimeVariants, lookupElementFactory.copy(receiverTypes = listOf(runtimeType)))
     }
 
     private fun <TDescriptor : DeclarationDescriptor> filterVariantsForRuntimeReceiverType(
@@ -373,24 +383,26 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     protected fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(parameters, indicesHelper, prefixMatcher, resolutionFacade, kindFilter)
                 .collect(
-                        { descriptor -> collector.addDescriptorElements(descriptor, lookupElementFactory, notImported = true) },
-                        { javaClass -> collector.addElement(lookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true) }
+                        { descriptor -> collector.addElement(basicLookupElementFactory.createLookupElement(descriptor), notImported = true) },
+                        { javaClass -> collector.addElement(basicLookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true) }
                 )
     }
 
-    private fun createLookupElementFactory(callType: CallType<*>?, receiverTypes: Collection<KotlinType>?): LookupElementFactory {
-        val contextVariablesProvider = {
-            nameExpression?.let {
-                val descriptorFilter = DescriptorKindFilter.VARIABLES exclude DescriptorKindExclude.Extensions // we exclude extensions by performance reasons
-                referenceVariantsHelper.getReferenceVariants(it, CallTypeAndReceiver.DEFAULT, descriptorFilter, nameFilter = { true })
-                        .map { it as VariableDescriptor }
-            } ?: emptyList()
-        }
+    protected fun withCollectRequiredContextVariableTypes(action: (LookupElementFactory) -> Unit): Collection<FuzzyType> {
+        val provider = CollectRequiredTypesContextVariablesProvider()
+        val lookupElementFactory = createLookupElementFactory(provider)
+        action(lookupElementFactory)
+        return provider.requiredTypes
+    }
 
-        val insertHandlerProvider = InsertHandlerProvider(callType) { expectedInfos }
-        return LookupElementFactory(resolutionFacade, receiverTypes,
-                                    callType, expression?.parent is KtSimpleNameStringTemplateEntry,
-                                    insertHandlerProvider, contextVariablesProvider)
+    protected fun withContextVariablesProvider(contextVariablesProvider: ContextVariablesProvider, action: (LookupElementFactory) -> Unit) {
+        val lookupElementFactory = createLookupElementFactory(contextVariablesProvider)
+        action(lookupElementFactory)
+    }
+
+    protected fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory {
+        return LookupElementFactory(basicLookupElementFactory, resolutionFacade, receiverTypes,
+                                    callTypeAndReceiver.callType, contextVariablesProvider)
     }
 
     private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<KotlinType>?> {

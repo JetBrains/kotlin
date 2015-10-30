@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        surroundWithBracesIfInStringTemplate(context)
+
         super.handleInsert(context, item)
 
         val file = context.getFile()

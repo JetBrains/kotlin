@@ -21,7 +21,6 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
-import com.intellij.psi.PsiClass
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -31,9 +30,8 @@ import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
@@ -44,18 +42,20 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 data /* we need copy() */
 class LookupElementFactory(
+        val basicFactory: BasicLookupElementFactory,
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<KotlinType>?,
         private val callType: CallType<*>?,
-        private val isInStringTemplateAfterDollar: Boolean,
-        public val insertHandlerProvider: InsertHandlerProvider,
-        private val contextVariablesProvider: () -> Collection<VariableDescriptor>
+        private val contextVariablesProvider: ContextVariablesProvider
 ) {
-    private val basicFactory = BasicLookupElementFactory(resolutionFacade.project, insertHandlerProvider)
-
-    private val functionTypeContextVariables by lazy(LazyThreadSafetyMode.NONE) {
-        contextVariablesProvider().filter { KotlinBuiltIns.isFunctionOrExtensionFunctionType(it.type) }
+    companion object {
+        fun hasSingleFunctionTypeParameter(descriptor: FunctionDescriptor): Boolean {
+            val parameter = descriptor.original.valueParameters.singleOrNull() ?: return false
+            return KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.type)
+        }
     }
+
+    val insertHandlerProvider = basicFactory.insertHandlerProvider
 
     public fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
         val result = SmartList<LookupElement>()
@@ -63,9 +63,6 @@ class LookupElementFactory(
         val isNormalCall = callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE
 
         var lookupElement = createLookupElement(descriptor, useReceiverTypes, parametersAndTypeGrayed = !isNormalCall && callType != CallType.INFIX)
-        if (isInStringTemplateAfterDollar && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
-            lookupElement = lookupElement.withBracesSurrounding()
-        }
         result.add(lookupElement)
 
         // add special item for function with one argument of function type with more than one parameter
@@ -80,11 +77,12 @@ class LookupElementFactory(
         // check that all parameters except for the last one are optional
         val lastParameter = descriptor.valueParameters.lastOrNull() ?: return
         if (!descriptor.valueParameters.all { it == lastParameter || it.hasDefaultValue() }) return
-        val parameterType = lastParameter.type
-        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-            val isSingleParameter = descriptor.valueParameters.size() == 1
 
-            val functionParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(lastParameter.original.type)) {
+            val isSingleParameter = descriptor.valueParameters.size == 1
+
+            val parameterType = lastParameter.type
+            val functionParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size
             // we don't need special item inserting lambda for single functional parameter that does not need multiple arguments because the default item will be special in this case
             if (!isSingleParameter || functionParameterCount > 1) {
                 add(createFunctionCallElementWithLambda(descriptor, parameterType, functionParameterCount > 1, useReceiverTypes))
@@ -94,12 +92,9 @@ class LookupElementFactory(
                 //TODO: also ::function? at least for local functions
                 //TODO: order for them
                 val fuzzyParameterType = FuzzyType(parameterType, descriptor.typeParameters)
-                for (variable in functionTypeContextVariables) {
-                    val substitutor = variable.fuzzyReturnType()?.checkIsSubtypeOf(fuzzyParameterType)
-                    if (substitutor != null) {
-                        val substitutedDescriptor = descriptor.substitute(substitutor) ?: continue
-                        add(createFunctionCallElementWithArgument(substitutedDescriptor, variable.name.asString(), useReceiverTypes))
-                    }
+                for ((variable, substitutor) in contextVariablesProvider.functionTypeVariables(fuzzyParameterType)) {
+                    val substitutedDescriptor = descriptor.substitute(substitutor)
+                    add(createFunctionCallElementWithArgument(substitutedDescriptor, variable.name.render(), useReceiverTypes))
                 }
             }
         }
@@ -139,10 +134,6 @@ class LookupElementFactory(
             }
         }
 
-        if (isInStringTemplateAfterDollar) {
-            lookupElement = lookupElement.withBracesSurrounding()
-        }
-
         return lookupElement
     }
 
@@ -150,13 +141,7 @@ class LookupElementFactory(
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
 
         val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
-        lookupElement = FunctionCallWithArgumentLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
-
-        if (isInStringTemplateAfterDollar) {
-            lookupElement = lookupElement.withBracesSurrounding()
-        }
-
-        return lookupElement
+        return FunctionCallWithArgumentLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
     }
 
     private inner class FunctionCallWithArgumentLookupElement(
@@ -282,13 +267,5 @@ class LookupElementFactory(
         val receiverParameter = original.extensionReceiverParameter ?: return false
         val typeParameter = receiverParameter.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
         return typeParameter.containingDeclaration == original
-    }
-
-    public fun createLookupElementForJavaClass(psiClass: PsiClass, qualifyNestedClasses: Boolean = false, includeClassTypeArguments: Boolean = true): LookupElement {
-        return basicFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses, includeClassTypeArguments)
-    }
-
-    public fun createLookupElementForPackage(name: FqName): LookupElement {
-        return basicFactory.createLookupElementForPackage(name)
     }
 }

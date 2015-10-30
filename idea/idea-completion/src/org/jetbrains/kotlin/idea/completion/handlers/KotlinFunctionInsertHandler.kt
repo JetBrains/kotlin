@@ -58,16 +58,20 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
         ) = Normal(inputTypeArguments, inputValueArguments, argumentText, lambdaInfo, argumentsOnly)
 
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
+            val document = context.document
+
             if (!argumentsOnly) {
+                surroundWithBracesIfInStringTemplate(context)
+
                 super.handleInsert(context, item)
             }
 
-            val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
             psiDocumentManager.commitAllDocuments()
-            psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
+            psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
-            val startOffset = context.getStartOffset()
-            val element = context.getFile().findElementAt(startOffset) ?: return
+            val startOffset = context.startOffset
+            val element = context.file.findElementAt(startOffset) ?: return
 
             addArguments(context, element)
         }

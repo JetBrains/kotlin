@@ -173,7 +173,7 @@ class SmartCompletion(
     }
 
     private fun additionalItemsNoPostProcess(lookupElementFactory: LookupElementFactory): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
-        val asTypePositionItems = buildForAsTypePosition(lookupElementFactory)
+        val asTypePositionItems = buildForAsTypePosition(lookupElementFactory.basicFactory)
         if (asTypePositionItems != null) {
             assert(expectedInfos.isEmpty())
             return Pair(asTypePositionItems, null)
@@ -209,7 +209,7 @@ class SmartCompletion(
                             .addToCollection(items, expectedInfos, expression, descriptorsToSkip)
                 }
 
-                ClassLiteralItems.addToCollection(items, expectedInfos, lookupElementFactory, isJvmModule)
+                ClassLiteralItems.addToCollection(items, expectedInfos, lookupElementFactory.basicFactory, isJvmModule)
 
                 if (!forBasicCompletion) {
                     LambdaItems.addToCollection(items, expectedInfos)
@@ -368,7 +368,7 @@ class SmartCompletion(
         }
     }
 
-    private fun buildForAsTypePosition(lookupElementFactory: LookupElementFactory): Collection<LookupElement>? {
+    private fun buildForAsTypePosition(lookupElementFactory: BasicLookupElementFactory): Collection<LookupElement>? {
         val binaryExpression = ((expression.getParent() as? KtUserType)
                 ?.getParent() as? KtTypeReference)
                     ?.getParent() as? KtBinaryExpressionWithTypeRHS
