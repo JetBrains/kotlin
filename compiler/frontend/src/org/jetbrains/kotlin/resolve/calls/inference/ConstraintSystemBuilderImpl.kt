@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
 import java.util.*
 
-public class ConstraintSystemImpl : ConstraintSystem.Builder {
+public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
 
     data class Constraint(val kind: ConstraintKind, val subtype: KotlinType, val superType: KotlinType, val position: ConstraintPosition)
 

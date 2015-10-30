@@ -20,7 +20,7 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -116,7 +116,7 @@ class FuzzyType(
             return if (type.checkInheritance(otherType.type)) TypeSubstitutor.EMPTY else null
         }
 
-        val builder = ConstraintSystemImpl()
+        val builder = ConstraintSystemBuilderImpl()
         builder.registerTypeVariables(freeParameters)
         builder.registerTypeVariables(otherType.freeParameters)
 

@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
@@ -39,7 +39,7 @@ data class ConstraintContext(
         val derivedFrom: Set<TypeParameterDescriptor>? = null,
         val initial: Boolean = false)
 
-fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
+fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {
     val typeVariable = newBound.typeVariable
     val typeBounds = getTypeBounds(typeVariable)
 
@@ -67,7 +67,7 @@ fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
     }
 }
 
-private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound) {
+private fun ConstraintSystemBuilderImpl.addConstraintFromBounds(old: Bound, new: Bound) {
     if (old == new) return
 
     val oldType = old.constrainingType
@@ -81,7 +81,7 @@ private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound)
     }
 }
 
-private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bound) {
+private fun ConstraintSystemBuilderImpl.generateNewBound(bound: Bound, substitution: Bound) {
     // Let's have a bound 'T <=> My<R>', and a substitution 'R <=> Type'.
     // Here <=> means lower_bound, upper_bound or exact_bound constraint.
     // Then a new bound 'T <=> My<_/in/out Type>' can be generated.

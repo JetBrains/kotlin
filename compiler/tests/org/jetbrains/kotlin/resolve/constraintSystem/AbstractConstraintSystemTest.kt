@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintContext
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -76,7 +76,7 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
         val constraintsFile = File(filePath)
         val constraintsFileText = constraintsFile.readLines()
 
-        val builder = ConstraintSystemImpl()
+        val builder = ConstraintSystemBuilderImpl()
 
         val variables = parseVariables(constraintsFileText)
         val fixVariables = constraintsFileText.contains("FIX_VARIABLES")
@@ -96,7 +96,7 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
                 MyConstraintKind.SUBTYPE -> builder.addSubtypeConstraint(firstType, secondType, context.position)
                 MyConstraintKind.SUPERTYPE -> builder.addSupertypeConstraint(firstType, secondType, context.position)
                 MyConstraintKind.EQUAL -> builder.addConstraint(
-                        ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, context)
+                        ConstraintSystemBuilderImpl.ConstraintKind.EQUAL, firstType, secondType, context)
             }
         }
 

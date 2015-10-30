@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
@@ -38,7 +38,7 @@ class ConstraintSystemSnapshot(
         private val externalTypeParameters: Set<TypeParameterDescriptor>,
         private val usedInBounds: Map<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>,
         private val errors: List<ConstraintError>,
-        private val initialConstraints: List<ConstraintSystemImpl.Constraint>,
+        private val initialConstraints: List<ConstraintSystemBuilderImpl.Constraint>,
         private val originalToVariables: Map<TypeParameterDescriptor, TypeParameterDescriptor>,
         private val variablesToOriginal: Map<TypeParameterDescriptor, TypeParameterDescriptor>
 ) : ConstraintSystem {
@@ -166,7 +166,7 @@ class ConstraintSystemSnapshot(
     }
 
     override fun toBuilder(filterConstraintPosition: (ConstraintPosition) -> Boolean): ConstraintSystem.Builder {
-        val result = ConstraintSystemImpl()
+        val result = ConstraintSystemBuilderImpl()
         for ((typeParameter, typeBounds) in allTypeParameterBounds) {
             result.allTypeParameterBounds.put(typeParameter, typeBounds.filter(filterConstraintPosition))
         }

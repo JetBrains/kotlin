@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
@@ -53,7 +53,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val candidateCall = context.candidateCall
         val candidate = candidateCall.candidateDescriptor
 
-        val builder = ConstraintSystemImpl()
+        val builder = ConstraintSystemBuilderImpl()
 
         // If the call is recursive, e.g.
         //   fun foo<T>(t : T) : T = foo(t)

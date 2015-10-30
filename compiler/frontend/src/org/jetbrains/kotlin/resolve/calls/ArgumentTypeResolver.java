@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImplKt;
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImplKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -99,7 +99,7 @@ public class ArgumentTypeResolver {
             @NotNull KotlinType expectedType
     ) {
         if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
-            KotlinType functionType = ConstraintSystemImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
+            KotlinType functionType = ConstraintSystemBuilderImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
             return KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
         }
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
