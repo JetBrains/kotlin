@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -237,9 +238,12 @@ public class KotlinCoreEnvironment private constructor(
         public fun createForProduction(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
         ): KotlinCoreEnvironment {
-            // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
-            // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
-            if (System.getProperty("kotlin.environment.keepalive") == null) {
+            val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths)
+            // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
+            // breaks a lot of tests, therefore it is disabled for production and enabled for tests
+            if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) == null || appEnv.application.isUnitTestMode) {
+                // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
+                // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
                 Disposer.register(parentDisposable, object : Disposable {
                     override fun dispose() {
                         synchronized (APPLICATION_LOCK) {
@@ -250,7 +254,7 @@ public class KotlinCoreEnvironment private constructor(
                     }
                 })
             }
-            val environment = KotlinCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths), configuration)
+            val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration)
 
             synchronized (APPLICATION_LOCK) {
                 ourProjectCount++
