@@ -5,31 +5,20 @@ fun main(args: Array<String>) {
     //Breakpoint!
     val myClass = MyClass()
 
-    // STEP_OVER: 1
-    // SMART_STEP_INTO_BY_INDEX: 4
     // smart step into f2.invoke(), one-line lambda
     myClass.f1 { test() }
            .f2 { test() }
 
-    // STEP_OVER: 1
-    // SMART_STEP_INTO_BY_INDEX: 2
     // smart step into map.invoke(), multiline lambda
     array.map {
         it *2
     }
 
-    // STEP_OVER: 1
-    // SMART_STEP_INTO_BY_INDEX: 4
     // smart step into filter.invoke()
     array.map { it * 2 }
          .filter {
              it > 2
          }
-
-    // STEP_OVER: 1
-    // SMART_STEP_INTO_BY_INDEX: 4
-    // smart step into f2.invoke(), one-line lambda
-    myClass.f1 { test() }.f2 { test() }
 }
 
 class MyClass {
@@ -47,3 +36,10 @@ class MyClass {
 }
 
 fun test() {}
+
+// STEP_OVER: 1
+// SMART_STEP_INTO_BY_INDEX: 4
+// STEP_OVER: 1
+// SMART_STEP_INTO_BY_INDEX: 2
+// STEP_OVER: 1
+// SMART_STEP_INTO_BY_INDEX: 4

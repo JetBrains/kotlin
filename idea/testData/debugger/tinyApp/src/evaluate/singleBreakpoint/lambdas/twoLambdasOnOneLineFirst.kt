@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
     // EXPRESSION: it
     // RESULT: 1: I
     // STEP_INTO: 2
-    //Breakpoint! (-1)
+    //Breakpoint!
     a.foo { a }.foo { a }
 }
 
