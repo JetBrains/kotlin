@@ -15,8 +15,8 @@ public object ServiceLocator {
         val descriptor = lookupDescriptor(category, implementationName)
         val loadedClass = javaClass.classLoader.loadClass(descriptor.className)
         val constructor = loadedClass.constructors
-                .filter { it.parameterTypes.isEmpty() || (it.parameterTypes.size() == 1 && conf.javaClass.isInstance(it.parameterTypes[0])) }
-                .sortedByDescending { it.parameterTypes.size() }
+                .filter { it.parameterTypes.isEmpty() || (it.parameterTypes.size == 1 && conf.javaClass.isInstance(it.parameterTypes[0])) }
+                .sortedByDescending { it.parameterTypes.size }
                 .firstOrNull() ?: throw ServiceLookupException("Class ${descriptor.className} has no corresponding constructor")
 
         val implementationRawType: Any = if (constructor.parameterTypes.isEmpty()) constructor.newInstance() else constructor.newInstance(constructor)
@@ -81,18 +81,12 @@ public object ServiceLocator {
     } ?: emptyList()
 }
 
-public inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String, conf: DokkaGenerator): T = lookup(javaClass<T>(), category, implementationName, conf)
-public inline fun <reified T : Any> ServiceLocator.lookupClass(category: String, implementationName: String): Class<T> = lookupClass(javaClass<T>(), category, implementationName)
+public inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String, conf: DokkaGenerator): T = lookup(T::class.java, category, implementationName, conf)
+public inline fun <reified T : Any> ServiceLocator.lookupClass(category: String, implementationName: String): Class<T> = lookupClass(T::class.java, category, implementationName)
 public inline fun <reified T : Any> ServiceLocator.lookupOrNull(category: String, implementationName: String, conf: DokkaGenerator): T? = try {
-    lookup(javaClass<T>(), category, implementationName, conf)
+    lookup(T::class.java, category, implementationName, conf)
 } catch (any: Throwable) {
     null
-}
-
-fun main(args: Array<String>) {
-    ServiceLocator.allServices("format").forEach {
-        println(it)
-    }
 }
 
 private val ZipEntry.fileName: String
