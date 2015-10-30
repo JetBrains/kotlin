@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl
 import org.jetbrains.kotlin.jps.incremental.getCacheDirectoryName
 import org.jetbrains.kotlin.jps.incremental.getKotlinCacheVersion
+import org.jetbrains.kotlin.jps.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
@@ -96,7 +96,7 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
         val fileNames = cacheDir.list() ?: arrayOf()
         val cacheFiles = fileNames
                 .map { File(cacheDir, it) }
-                .filter { it.isFile && it.extension == IncrementalCacheImpl.CACHE_EXTENSION }
+                .filter { it.isFile && it.extension == BasicMapsOwner.CACHE_EXTENSION }
         return cacheFiles.map { it.name }
     }
 }

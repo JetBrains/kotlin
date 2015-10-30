@@ -18,17 +18,17 @@ package org.jetbrains.kotlin.jps.incremental.storage
 
 import com.intellij.openapi.util.io.FileUtil
 
-data class IntPair(val first: Int, val second: Int) : Comparable<IntPair> {
-    override fun compareTo(other: IntPair): Int {
-        val firstCmp = first.compareTo(other.first)
+data class LookupHashPair(val nameHash: Int, val scopeHash: Int) : Comparable<LookupHashPair> {
+    public constructor(name: String, scope: String) : this(name.hashCode(), scope.hashCode())
 
-        if (firstCmp != 0) return firstCmp
+    override fun compareTo(other: LookupHashPair): Int {
+        val nameCmp = nameHash.compareTo(other.nameHash)
 
-        return second.compareTo(other.second)
+        if (nameCmp != 0) return nameCmp
+
+        return scopeHash.compareTo(other.scopeHash)
     }
 }
-
-fun HashPair(a: Any, b: Any): IntPair = IntPair(a.hashCode(), b.hashCode())
 
 class PathFunctionPair(
         public val path: String,

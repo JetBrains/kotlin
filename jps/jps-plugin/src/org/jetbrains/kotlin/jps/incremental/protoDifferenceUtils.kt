@@ -35,7 +35,6 @@ public sealed class DifferenceKind() {
     public class MEMBERS(val names: Collection<String>): DifferenceKind()
 }
 
-
 public fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): DifferenceKind {
     if (oldData.isPackageFacade != newData.isPackageFacade) return DifferenceKind.CLASS_SIGNATURE
 

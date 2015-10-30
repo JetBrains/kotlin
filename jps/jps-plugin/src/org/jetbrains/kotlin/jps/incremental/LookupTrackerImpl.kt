@@ -47,7 +47,7 @@ class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), Loo
     }
 
     private val String.storageFile: File
-        get() = File(targetDataDir, this + IncrementalCacheImpl.CACHE_EXTENSION)
+        get() = File(targetDataDir, this + "." + CACHE_EXTENSION)
 
     private val countersFile = "counters".storageFile
     private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile))
@@ -108,7 +108,7 @@ class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), Loo
     private fun removeGarbageIfNeeded() {
         if (size <= MINIMUM_GARBAGE_COLLECTIBLE_SIZE && deletedCount.toDouble() / size <= DELETED_TO_SIZE_TRESHOLD) return
 
-        for (hash in lookupMap.lookupHashes) {
+        for (hash in lookupMap.keys) {
             lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
         }
 
