@@ -885,7 +885,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
 
         @Suppress("UNCHECKED_CAST")
-        return (usageInfo as? JetUsageInfo<PsiElement>)?.processUsage(changeInfo as JetChangeInfo, element, usages) ?: true
+        return (usageInfo as? JetUsageInfo<PsiElement>)?.processUsage(changeInfo as JetChangeInfo, element, usages) ?: false
     }
 
     override fun processPrimaryMethod(changeInfo: ChangeInfo): Boolean {
