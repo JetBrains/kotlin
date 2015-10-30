@@ -1,11 +1,13 @@
-// ERROR: 'internal open val member: kotlin.Int defined in test.ClassBB1' has no access to 'internal abstract val member: kotlin.Int defined in test.ClassB1', so it cannot override it
-// ERROR: Cannot access 'InternalClass1': it is 'internal' in 'test'
-// ERROR: Cannot access 'member': it is 'invisible_fake' in 'ClassAA1'
+@file:InternalFileAnnotation
+
 package test
+
+import test.InternalClass1
 
 // InternalClass1, ClassA1, ClassB1 are in module1
 class ClassInheritedFromInternal1: InternalClass1()
 
+@InternalClassAnnotation
 class ClassAA1 : ClassA1(10)
 
 class ClassBB1 : ClassB1() {

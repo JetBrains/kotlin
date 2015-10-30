@@ -20,6 +20,10 @@ import org.junit.Test
 
 import junit.framework.Assert.assertEquals
 
+class PublicClassHeir : PublicClass() {
+    override internal fun baz(): String = "PublicClassHeir.baz()"
+}
+
 class HelloWorldTest {
 
     @Test
@@ -33,6 +37,11 @@ class HelloWorldTest {
 
         assertEquals("foo", PublicClass().foo())
         assertEquals("bar", PublicClass().bar)
+        assertEquals("PublicClass.baz()", PublicClass().baz())
+
+        assertEquals("foo", PublicClassHeir().foo())
+        assertEquals("bar", PublicClassHeir().bar)
+        assertEquals("PublicClassHeir.baz()", PublicClassHeir().baz())
 
         val data = InternalDataClass(10, 20)
         assertEquals(10, data.x)

@@ -1,3 +1,5 @@
+@file:InternalTestAnnotation
+
 package test
 
 import test.InternalClass1
@@ -5,6 +7,7 @@ import test.InternalClass1
 // InternalClass1, ClassA1, ClassB1 are in module1
 class ClassInheritedFromInternal1: InternalClass1()
 
+@InternalClassAnnotation
 class ClassAA1 : ClassA1(10)
 
 class ClassBB1 : ClassB1() {

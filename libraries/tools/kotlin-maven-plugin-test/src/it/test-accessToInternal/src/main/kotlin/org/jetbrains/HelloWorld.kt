@@ -26,9 +26,10 @@ internal fun getGreeting() : String {
 
 internal val CONST = "CONST"
 
-class PublicClass {
+open class PublicClass {
     internal fun foo(): String = "foo"
     internal val bar: String = "bar"
+    open internal fun baz(): String = "PublicClass.baz()"
 }
 
 internal data class InternalDataClass(val x: Int, val y: Int)

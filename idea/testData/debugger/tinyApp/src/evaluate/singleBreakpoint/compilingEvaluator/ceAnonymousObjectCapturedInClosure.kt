@@ -3,7 +3,7 @@ package ceAnonymousObjectCapturedInClosure
 fun main(args: Array<String>) {
     val localObject = object { fun test() = 1 }
     var localObjectVar = object { fun test() = 1 }
-    //Breakpoint!
+    //Breakpoint! (lambdaOrdinal = -1)
     lambda { localObjectVar.test() }
 }
 
