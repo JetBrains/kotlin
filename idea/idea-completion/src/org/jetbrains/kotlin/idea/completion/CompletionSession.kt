@@ -23,14 +23,10 @@ import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.StandardPatterns
-import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
@@ -44,6 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -192,11 +189,20 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         if (descriptor is DeclarationDescriptorWithVisibility) {
             val visible = descriptor.isVisible(inDescriptor, bindingContext, nameExpression)
             if (visible) return true
-            if (!configuration.completeNonAccessibleDeclarations) return false
-            return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) !is PsiCompiledElement
+            return configuration.completeNonAccessibleDeclarations && !descriptor.isFromLibrary()
         }
 
         return true
+    }
+
+    private fun DeclarationDescriptor.isFromLibrary(): Boolean {
+        if (module.getCapability(OriginCapability) == ModuleOrigin.LIBRARY) return true
+
+        if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            return overriddenDescriptors.all { it.isFromLibrary() }
+        }
+
+        return false
     }
 
     private fun isTypeParameterVisible(typeParameter: TypeParameterDescriptor): Boolean {
