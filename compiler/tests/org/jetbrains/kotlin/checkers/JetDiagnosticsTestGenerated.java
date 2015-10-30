@@ -13013,6 +13013,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("extensionValueAsNonExtension.kt")
+                public void testExtensionValueAsNonExtension() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/extensionValueAsNonExtension.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("implicitInvoke.kt")
                 public void testImplicitInvoke() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/implicitInvoke.kt");

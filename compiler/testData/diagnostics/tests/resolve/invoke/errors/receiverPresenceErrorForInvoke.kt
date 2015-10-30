@@ -1,7 +1,7 @@
 fun test1(f: String.() -> Unit) {
-    <!MISSING_RECEIVER!>(f)<!>()
+    (f)(<!NO_VALUE_FOR_PARAMETER!>)<!>
 
-    <!MISSING_RECEIVER!>f<!>()
+    f(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
 fun test2(f: (Int) -> Int) {
