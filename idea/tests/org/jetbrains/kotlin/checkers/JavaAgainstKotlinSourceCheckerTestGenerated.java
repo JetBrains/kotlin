@@ -91,6 +91,12 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             doTest(fileName);
         }
 
+        @TestMetadata("ReturnInnerClasses.kt")
+        public void testReturnInnerClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ReturnInnerClasses.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TopLevelFunctionInDataFlowInspection.kt")
         public void testTopLevelFunctionInDataFlowInspection() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/TopLevelFunctionInDataFlowInspection.kt");
