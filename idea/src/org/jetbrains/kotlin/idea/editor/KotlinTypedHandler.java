@@ -124,9 +124,27 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             case ':':
                 autoPopupCallableReferenceLookup(project, editor);
                 return Result.CONTINUE;
+
+            case '[':
+                autoPopupParameterInfo(project, editor);
+                return Result.CONTINUE;
         }
 
         return Result.CONTINUE;
+    }
+
+    private static void autoPopupParameterInfo(Project project, Editor editor) {
+        int offset = editor.getCaretModel().getOffset();
+        if (offset == 0) return;
+
+        HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(offset - 1);
+        IElementType tokenType = iterator.getTokenType();
+        if (KtTokens.COMMENTS.contains(tokenType)
+            || tokenType == KtTokens.REGULAR_STRING_PART
+            || tokenType == KtTokens.OPEN_QUOTE
+            || tokenType == KtTokens.CHARACTER_LITERAL) return;
+
+        AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, null);
     }
 
     private static void autoPopupMemberLookup(Project project, final Editor editor) {
