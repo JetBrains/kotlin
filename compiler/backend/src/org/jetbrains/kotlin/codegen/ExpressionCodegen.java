@@ -681,13 +681,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 @SuppressWarnings("ConstantConditions") final Type componentAsmType = asmType(componentDescriptor.getReturnType());
                 final int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
+                final Label variableStartLabel = new Label();
                 scheduleLeaveVariable(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leave(componentDescriptor);
                         v.visitLocalVariable(componentDescriptor.getName().asString(),
                                              componentAsmType.getDescriptor(), null,
-                                             bodyStart, bodyEnd,
+                                             variableStartLabel, bodyEnd,
                                              componentVarIndex);
                     }
                 });
@@ -698,6 +699,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 StackValue value = invokeFunction(call, resolvedCall, StackValue.local(loopParameterVar, asmElementType));
                 StackValue.local(componentVarIndex, componentAsmType).store(value, v);
+                v.visitLabel(variableStartLabel);
             }
         }
 
