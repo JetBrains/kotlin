@@ -14,10 +14,8 @@ object DocExtensions {
     val Family.collection: String
         get() = when (this) {
             CharSequences -> "char sequence"
-            Strings -> "string"
-            Sequences -> "sequence"
-            Maps -> "map"
             ArraysOfObjects, ArraysOfPrimitives, InvariantArraysOfObjects -> "array"
+            Strings, Sequences, Maps, Lists, Sets, Ranges -> name.singularize().decapitalize()
             else -> "collection"
         }
 
@@ -26,6 +24,8 @@ object DocExtensions {
             Sequences -> "sequence"
             else -> "list"
         }
+
+    private fun String.singularize() = removeSuffix("s")
 
     fun String.prefixWithArticle() = (if ("aeiou".any { this.startsWith(it, ignoreCase = true) }) "an " else "a ").concat(this)
 

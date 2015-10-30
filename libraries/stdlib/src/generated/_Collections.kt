@@ -90,7 +90,7 @@ public fun <T> Iterable<T>.elementAt(index: Int): T {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this list.
  */
 public fun <T> List<T>.elementAt(index: Int): T {
     return get(index)
@@ -115,7 +115,7 @@ public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
 }
 
 /**
- * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
 public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
@@ -140,7 +140,7 @@ public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
 }
 
 /**
- * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  */
 public fun <T> List<T>.elementAtOrNull(index: Int): T? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -190,7 +190,7 @@ public fun <T> Iterable<T>.first(): T {
 
 /**
  * Returns first element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * @throws [NoSuchElementException] if the list is empty.
  */
 public fun <T> List<T>.first(): T {
     if (isEmpty())
@@ -228,7 +228,7 @@ public fun <T> Iterable<T>.firstOrNull(): T? {
 }
 
 /**
- * Returns the first element, or `null` if the collection is empty.
+ * Returns the first element, or `null` if the list is empty.
  */
 public fun <T> List<T>.firstOrNull(): T? {
     return if (isEmpty()) null else this[0]
@@ -243,14 +243,14 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
 public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
 /**
- * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  */
 public fun <T> List<T>.getOrNull(index: Int): T? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -295,7 +295,7 @@ public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
+ * Returns index of the first element matching the given [predicate], or -1 if the list does not contain such element.
  */
 public inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     for (index in indices) {
@@ -321,7 +321,7 @@ public inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
+ * Returns index of the last element matching the given [predicate], or -1 if the list does not contain such element.
  */
 public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -342,7 +342,7 @@ public inline fun Iterable<*>.indexOfRaw(element: Any?): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element.
+ * Returns first index of [element], or -1 if the list does not contain element.
  * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -376,7 +376,7 @@ public fun <T> Iterable<T>.last(): T {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * @throws [NoSuchElementException] if the list is empty.
  */
 public fun <T> List<T>.last(): T {
     if (isEmpty())
@@ -451,7 +451,7 @@ public inline fun Iterable<*>.lastIndexOfRaw(element: Any?): Int {
 }
 
 /**
- * Returns last index of [element], or -1 if the collection does not contain element.
+ * Returns last index of [element], or -1 if the list does not contain element.
  * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -478,7 +478,7 @@ public fun <T> Iterable<T>.lastOrNull(): T? {
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty.
+ * Returns the last element, or `null` if the list is empty.
  */
 public fun <T> List<T>.lastOrNull(): T? {
     return if (isEmpty()) null else this[size() - 1]
@@ -533,7 +533,7 @@ public fun <T> Iterable<T>.single(): T {
 }
 
 /**
- * Returns the single element, or throws an exception if the collection is empty or has more than one element.
+ * Returns the single element, or throws an exception if the list is empty or has more than one element.
  */
 public fun <T> List<T>.single(): T {
     return when (size()) {
@@ -579,7 +579,7 @@ public fun <T> Iterable<T>.singleOrNull(): T? {
 }
 
 /**
- * Returns single element, or `null` if the collection is empty or has more than one element.
+ * Returns single element, or `null` if the list is empty or has more than one element.
  */
 public fun <T> List<T>.singleOrNull(): T? {
     return if (size() == 1) this[0] else null
