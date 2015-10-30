@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
@@ -64,7 +65,7 @@ public class LazyJavaPackageFragmentProvider(
 
             javaClass.outerClass?.let { outerClass ->
                 val outerClassScope = resolveClass(outerClass)?.unsubstitutedInnerClassesScope
-                return outerClassScope?.getClassifier(javaClass.name) as? ClassDescriptor
+                return outerClassScope?.getClassifier(javaClass.name, NoLookupLocation.FROM_JAVA_LOADER) as? ClassDescriptor
             }
 
             val kotlinResult = c.resolveKotlinBinaryClass(c.components.kotlinClassFinder.findKotlinClass(javaClass))

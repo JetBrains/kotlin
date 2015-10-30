@@ -130,7 +130,7 @@ public class DeserializedClassDescriptor(
         if (!classProto.hasCompanionObjectName()) return null
 
         val companionObjectName = c.nameResolver.getName(classProto.getCompanionObjectName())
-        return memberScope.getClassifier(companionObjectName) as? ClassDescriptor
+        return memberScope.getClassifier(companionObjectName, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor
     }
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()

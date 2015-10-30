@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
@@ -133,7 +134,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private fun resolveEnumValue(enumClassId: ClassId, enumEntryName: Name): ConstantValue<*> {
         val enumClass = resolveClass(enumClassId)
         if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-            val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(enumEntryName)
+            val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(enumEntryName, NoLookupLocation.FROM_DESERIALIZATION)
             if (enumEntry is ClassDescriptor) {
                 return factory.createEnumValue(enumEntry)
             }

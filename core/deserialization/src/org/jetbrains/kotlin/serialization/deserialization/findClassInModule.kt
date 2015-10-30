@@ -17,18 +17,17 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 
 public fun ModuleDescriptor.findClassAcrossModuleDependencies(classId: ClassId): ClassDescriptor? {
-    val packageViewDescriptor = getPackage(classId.getPackageFqName())
-    val segments = classId.getRelativeClassName().pathSegments()
-    val topLevelClass = packageViewDescriptor.memberScope.getClassifier(segments.first()) as? ClassDescriptor ?: return null
+    val packageViewDescriptor = getPackage(classId.packageFqName)
+    val segments = classId.relativeClassName.pathSegments()
+    val topLevelClass = packageViewDescriptor.memberScope.getClassifier(segments.first(), NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
     var result = topLevelClass
     for (name in segments.subList(1, segments.size())) {
-        result = result.getUnsubstitutedInnerClassesScope().getClassifier(name) as? ClassDescriptor ?: return null
+        result = result.unsubstitutedInnerClassesScope.getClassifier(name, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
     }
     return result
 }

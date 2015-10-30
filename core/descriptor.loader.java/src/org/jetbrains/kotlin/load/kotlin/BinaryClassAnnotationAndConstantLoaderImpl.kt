@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.name.ClassId
@@ -36,8 +37,7 @@ import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleD
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 public class BinaryClassAnnotationAndConstantLoaderImpl(
         private val module: ModuleDescriptor,
@@ -152,7 +152,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             private fun enumEntryValue(enumClassId: ClassId, name: Name): ConstantValue<*> {
                 val enumClass = resolveClass(enumClassId)
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-                    val classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name)
+                    val classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
                     if (classifier is ClassDescriptor) {
                         return factory.createEnumValue(classifier)
                     }
