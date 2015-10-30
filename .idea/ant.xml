@@ -17,5 +17,6 @@
         <property name="dokka.path" value="../../dokka" />
       </properties>
     </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/TeamCityRelay.xml" />
   </component>
 </project>
