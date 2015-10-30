@@ -46,6 +46,8 @@ class KotlinLightClassForDecompiledDeclaration(
 
     override fun getFqName() = fqName
 
+    override fun getParent() = clsClass.parent
+
     override fun equals(other: Any?): Boolean =
             other is KotlinLightClassForDecompiledDeclaration &&
             getFqName() == other.getFqName()
