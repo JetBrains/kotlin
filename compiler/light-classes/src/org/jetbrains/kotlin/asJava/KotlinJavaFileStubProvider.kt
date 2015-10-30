@@ -14,450 +14,360 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.ClassFileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.compiled.ClsFileImpl;
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
-import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.PsiClassHolderFileStub;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Stack;
-import kotlin.jvm.functions.Function0;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
-import org.jetbrains.kotlin.codegen.MultifileClassCodegen;
-import org.jetbrains.kotlin.codegen.PackageCodegen;
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
-import org.jetbrains.kotlin.codegen.context.PackageContext;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.fileClasses.FileClasses;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtPsiUtil;
-import org.jetbrains.kotlin.psi.KtScript;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.org.objectweb.asm.Type;
+import com.google.common.collect.Lists
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.ClassFileViewProvider
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.compiled.ClsFileImpl
+import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.PsiClassHolderFileStub
+import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
+import org.jetbrains.kotlin.fileClasses.getFileClassType
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+class KotlinJavaFileStubProvider<T : WithFileStubAndExtraDiagnostics> private constructor(
+        private val project: Project,
+        private val local: Boolean,
+        private val stubGenerationStrategy: StubGenerationStrategy<T>) : CachedValueProvider<T> {
 
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
+    override fun compute(): CachedValueProvider.Result<T>? {
+        val packageFqName = stubGenerationStrategy.packageFqName
+        val files = stubGenerationStrategy.files
 
-public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostics> implements CachedValueProvider<T> {
+        checkForBuiltIns(packageFqName, files)
 
-    @NotNull
-    public static CachedValueProvider<KotlinFacadeLightClassData> createForFacadeClass(
-            @NotNull final Project project,
-            @NotNull final FqName facadeFqName,
-            @NotNull final GlobalSearchScope searchScope
-    ) {
-        return new KotlinJavaFileStubProvider<KotlinFacadeLightClassData>(
-                project,
-                false,
-                new StubGenerationStrategy<KotlinFacadeLightClassData>() {
-                    @NotNull
-                    @Override
-                    public Collection<KtFile> getFiles() {
-                        return LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope);
-                    }
+        val context = stubGenerationStrategy.getContext(files)
 
-                    @NotNull
-                    @Override
-                    public FqName getPackageFqName() {
-                        return facadeFqName.parent();
-                    }
-
-                    @NotNull
-                    @Override
-                    public LightClassConstructionContext getContext(@NotNull Collection<KtFile> files) {
-                        return LightClassGenerationSupport.getInstance(project).getContextForFacade(files);
-                    }
-
-                    @NotNull
-                    @Override
-                    public KotlinFacadeLightClassData createLightClassData(
-                            PsiJavaFileStub javaFileStub,
-                            BindingContext bindingContext,
-                            Diagnostics extraDiagnostics
-                    ) {
-                        return new KotlinFacadeLightClassData(javaFileStub, extraDiagnostics);
-                    }
-
-                    @Override
-                    public GenerationState.GenerateClassFilter getGenerateClassFilter() {
-                        return new GenerationState.GenerateClassFilter() {
-                            @Override
-                            public boolean shouldAnnotateClass(KtClassOrObject classOrObject) {
-                                return shouldGenerateClass(classOrObject);
-                            }
-
-                            @Override
-                            public boolean shouldGenerateClass(KtClassOrObject classOrObject) {
-                                return KtPsiUtil.isLocal(classOrObject);
-                            }
-
-                            @Override
-                            public boolean shouldGeneratePackagePart(KtFile jetFile) {
-                                return true;
-                            }
-
-                            @Override
-                            public boolean shouldGenerateScript(KtScript script) {
-                                return false;
-                            }
-                        };
-                    }
-
-                    @Override
-                    public void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files) {
-                        if (!files.isEmpty()) {
-                            KtFile representativeFile = files.iterator().next();
-                            JvmFileClassInfo fileClassInfo = NoResolveFileClassesProvider.INSTANCE.getFileClassInfo(representativeFile);
-                            if (!fileClassInfo.getWithJvmMultifileClass()) {
-                                PackageCodegen codegen = state.getFactory().forPackage(representativeFile.getPackageFqName(), files);
-                                codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
-                                state.getFactory().asList();
-                                return;
-                            }
-                        }
-
-                        MultifileClassCodegen codegen = state.getFactory().forMultifileClass(facadeFqName, files);
-                        codegen.generate(CompilationErrorHandler.THROW_EXCEPTION);
-                        state.getFactory().asList();
-                    }
-
-                    @Override
-                    public String toString() {
-                        return StubGenerationStrategy.class.getName() + " for facade class";
-                    }
-                });
-    }
-
-    @NotNull
-    public static KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData> createForDeclaredClass(@NotNull final KtClassOrObject classOrObject) {
-        return new KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData>(
-                classOrObject.getProject(),
-                classOrObject.isLocal(),
-                new StubGenerationStrategy<OutermostKotlinClassLightClassData>() {
-                    private KtFile getFile() {
-                        return classOrObject.getContainingKtFile();
-                    }
-
-                    @NotNull
-                    @Override
-                    public LightClassConstructionContext getContext(@NotNull Collection<KtFile> files) {
-                        return LightClassGenerationSupport.getInstance(classOrObject.getProject()).getContextForClassOrObject(classOrObject);
-                    }
-
-                    @NotNull
-                    @Override
-                    public OutermostKotlinClassLightClassData createLightClassData(
-                            PsiJavaFileStub javaFileStub,
-                            BindingContext bindingContext,
-                            Diagnostics extraDiagnostics
-                    ) {
-                        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
-                        if (classDescriptor == null) {
-                            return new OutermostKotlinClassLightClassData(
-                                    javaFileStub, extraDiagnostics, FqName.ROOT, classOrObject,
-                                    Collections.<KtClassOrObject, InnerKotlinClassLightClassData>emptyMap()
-                            );
-                        }
-
-                        FqName fqName = predictClassFqName(bindingContext, classDescriptor);
-                        Collection<ClassDescriptor> allInnerClasses = CodegenBinding.getAllInnerClasses(bindingContext, classDescriptor);
-
-                        Map<KtClassOrObject, InnerKotlinClassLightClassData> innerClassesMap = ContainerUtil.newHashMap();
-                        for (ClassDescriptor innerClassDescriptor : allInnerClasses) {
-                            PsiElement declaration = descriptorToDeclaration(innerClassDescriptor);
-                            if (!(declaration instanceof KtClassOrObject)) continue;
-                            KtClassOrObject innerClass = (KtClassOrObject) declaration;
-
-                            InnerKotlinClassLightClassData innerLightClassData = new InnerKotlinClassLightClassData(
-                                    predictClassFqName(bindingContext, innerClassDescriptor),
-                                    innerClass
-                            );
-
-                            innerClassesMap.put(innerClass, innerLightClassData);
-                        }
-
-                        return new OutermostKotlinClassLightClassData(
-                                javaFileStub,
-                                extraDiagnostics,
-                                fqName,
-                                classOrObject,
-                                innerClassesMap
-                        );
-                    }
-
-                    @NotNull
-                    private FqName predictClassFqName(BindingContext bindingContext, ClassDescriptor classDescriptor) {
-                        Type asmType = CodegenBinding.getAsmType(bindingContext, classDescriptor);
-                        //noinspection ConstantConditions
-                        return JvmClassName.byInternalName(asmType.getClassName().replace('.', '/')).getFqNameForClassNameWithoutDollars();
-                    }
-
-                    @NotNull
-                    @Override
-                    public Collection<KtFile> getFiles() {
-                        return Collections.singletonList(getFile());
-                    }
-
-                    @NotNull
-                    @Override
-                    public FqName getPackageFqName() {
-                        return getFile().getPackageFqName();
-                    }
-
-                    @Override
-                    public GenerationState.GenerateClassFilter getGenerateClassFilter() {
-                        return new GenerationState.GenerateClassFilter() {
-
-                            @Override
-                            public boolean shouldGeneratePackagePart(KtFile jetFile) {
-                                return true;
-                            }
-
-                            @Override
-                            public boolean shouldAnnotateClass(KtClassOrObject classOrObject) {
-                                return shouldGenerateClass(classOrObject);
-                            }
-
-                            @Override
-                            public boolean shouldGenerateClass(KtClassOrObject generatedClassOrObject) {
-                                // Trivial: generate and analyze class we are interested in.
-                                if (generatedClassOrObject == classOrObject) return true;
-
-                                // Process all parent classes as they are context for current class
-                                // Process child classes because they probably affect members (heuristic)
-                                if (PsiTreeUtil.isAncestor(generatedClassOrObject, classOrObject, true) ||
-                                    PsiTreeUtil.isAncestor(classOrObject, generatedClassOrObject, true)) {
-                                    return true;
-                                }
-
-                                if (generatedClassOrObject.isLocal() && classOrObject.isLocal()) {
-                                    // Local classes should be process by CodegenAnnotatingVisitor to
-                                    // decide what class they should be placed in.
-                                    //
-                                    // Example:
-                                    // class A
-                                    // fun foo() {
-                                    //     trait Z: A {}
-                                    //     fun bar() {
-                                    //         class <caret>O2: Z {}
-                                    //     }
-                                    // }
-
-                                    // TODO: current method will process local classes in irrelevant declarations, it should be fixed.
-                                    PsiElement commonParent = PsiTreeUtil.findCommonParent(generatedClassOrObject, classOrObject);
-                                    return commonParent != null && !(commonParent instanceof PsiFile);
-                                }
-
-                                return false;
-                            }
-
-                            @Override
-                            public boolean shouldGenerateScript(KtScript script) {
-                                // We generate all enclosing classes
-                                return PsiTreeUtil.isAncestor(script, classOrObject, false);
-                            }
-                        };
-                    }
-
-                    @Override
-                    public void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files) {
-                        PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
-                        KtFile file = classOrObject.getContainingKtFile();
-                        Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
-                        PackageContext context = state.getRootContext().intoPackagePart(packageCodegen.getPackageFragment(), packagePartType, file);
-                        packageCodegen.generateClassOrObject(classOrObject, context);
-                        state.getFactory().asList();
-                    }
-
-                    @Override
-                    public String toString() {
-                        return StubGenerationStrategy.class.getName() + " for explicit class " + classOrObject.getName();
-                    }
-                }
-        );
-    }
-
-    private static final Logger LOG = Logger.getInstance(KotlinJavaFileStubProvider.class);
-
-    private final Project project;
-    private final StubGenerationStrategy<T> stubGenerationStrategy;
-    private final boolean local;
-
-    private KotlinJavaFileStubProvider(
-            @NotNull Project project,
-            boolean local,
-            @NotNull StubGenerationStrategy<T> stubGenerationStrategy
-    ) {
-        this.project = project;
-        this.stubGenerationStrategy = stubGenerationStrategy;
-        this.local = local;
-    }
-
-    @Nullable
-    @Override
-    public Result<T> compute() {
-        FqName packageFqName = stubGenerationStrategy.getPackageFqName();
-        Collection<KtFile> files = stubGenerationStrategy.getFiles();
-
-        checkForBuiltIns(packageFqName, files);
-
-        LightClassConstructionContext context = stubGenerationStrategy.getContext(files);
-
-        PsiJavaFileStub javaFileStub = createJavaFileStub(packageFqName, files);
-        BindingContext bindingContext;
-        BindingTraceContext forExtraDiagnostics = new BindingTraceContext();
+        val javaFileStub = createJavaFileStub(packageFqName, files)
+        val bindingContext: BindingContext
+        val forExtraDiagnostics = BindingTraceContext()
         try {
-            Stack<StubElement> stubStack = new Stack<StubElement>();
-            stubStack.push(javaFileStub);
+            val stubStack = Stack<StubElement<PsiElement>>()
+            stubStack.push(javaFileStub)
 
-            GenerationState state = new GenerationState(
+            val state = GenerationState(
                     project,
-                    new KotlinLightClassBuilderFactory(stubStack),
-                    context.getModule(),
-                    context.getBindingContext(),
+                    KotlinLightClassBuilderFactory(stubStack),
+                    context.module,
+                    context.bindingContext,
                     Lists.newArrayList(files),
                     /*disable not-null assertions*/false, false,
-                    /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
+                    /*generateClassFilter=*/stubGenerationStrategy.generateClassFilter,
                     /*disableInline=*/false,
                     /*disableOptimization=*/false,
                     /*useTypeTableInSerializer=*/false,
-                    forExtraDiagnostics
-            );
-            KotlinCodegenFacade.prepareForCompilation(state);
+                    forExtraDiagnostics)
+            KotlinCodegenFacade.prepareForCompilation(state)
 
-            bindingContext = state.getBindingContext();
+            bindingContext = state.bindingContext
 
-            stubGenerationStrategy.generate(state, files);
+            stubGenerationStrategy.generate(state, files)
 
-            StubElement pop = stubStack.pop();
-            if (pop != javaFileStub) {
-                LOG.error("Unbalanced stack operations: " + pop);
+            val pop = stubStack.pop()
+            if (pop !== javaFileStub) {
+                LOG.error("Unbalanced stack operations: " + pop)
             }
         }
-        catch (ProcessCanceledException e) {
-            throw e;
+        catch (e: ProcessCanceledException) {
+            throw e
         }
-        catch (RuntimeException e) {
-            logErrorWithOSInfo(e, packageFqName, null);
-            throw e;
+        catch (e: RuntimeException) {
+            logErrorWithOSInfo(e, packageFqName, null)
+            throw e
         }
 
-        Diagnostics extraDiagnostics = forExtraDiagnostics.getBindingContext().getDiagnostics();
-        return Result.create(
+        val extraDiagnostics = forExtraDiagnostics.bindingContext.diagnostics
+        return CachedValueProvider.Result.create(
                 stubGenerationStrategy.createLightClassData(javaFileStub, bindingContext, extraDiagnostics),
-                local ? PsiModificationTracker.MODIFICATION_COUNT : PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
-        );
+                if (local) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
     }
 
-    @NotNull
-    private static ClsFileImpl createFakeClsFile(
-            @NotNull Project project,
-            @NotNull final FqName packageFqName,
-            @NotNull Collection<KtFile> files,
-            @NotNull final Function0<? extends PsiClassHolderFileStub> fileStubProvider
-    ) {
-        PsiManager manager = PsiManager.getInstance(project);
+    private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
+        val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), true)
+        javaFileStub.psiFactory = ClsWrapperStubPsiFactory()
 
-        VirtualFile virtualFile = getRepresentativeVirtualFile(files);
-        ClsFileImpl fakeFile = new ClsFileImpl(new ClassFileViewProvider(manager, virtualFile)) {
-            @NotNull
-            @Override
-            public PsiClassHolderFileStub getStub() {
-                return fileStubProvider.invoke();
+        val fakeFile = createFakeClsFile(project, packageFqName, files, object : Function0<PsiClassHolderFileStub<PsiFile>> {
+            override fun invoke(): PsiClassHolderFileStub<PsiFile> {
+                return javaFileStub
+            }
+        })
+
+        javaFileStub.setPsi(fakeFile)
+        return javaFileStub
+    }
+
+    companion object {
+
+        fun createForFacadeClass(
+                project: Project,
+                facadeFqName: FqName,
+                searchScope: GlobalSearchScope): CachedValueProvider<KotlinFacadeLightClassData> {
+            return KotlinJavaFileStubProvider(
+                    project,
+                    false,
+                    object : StubGenerationStrategy<KotlinFacadeLightClassData> {
+                        override val files: Collection<KtFile>
+                            get() = LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
+
+                        override val packageFqName: FqName
+                            get() = facadeFqName.parent()
+
+                        override fun getContext(files: Collection<KtFile>): LightClassConstructionContext {
+                            return LightClassGenerationSupport.getInstance(project).getContextForFacade(files)
+                        }
+
+                        override fun createLightClassData(
+                                javaFileStub: PsiJavaFileStub,
+                                bindingContext: BindingContext,
+                                extraDiagnostics: Diagnostics): KotlinFacadeLightClassData {
+                            return KotlinFacadeLightClassData(javaFileStub, extraDiagnostics)
+                        }
+
+                        override val generateClassFilter: GenerationState.GenerateClassFilter
+                            get() = object : GenerationState.GenerateClassFilter() {
+                                override fun shouldAnnotateClass(classOrObject: KtClassOrObject): Boolean {
+                                    return shouldGenerateClass(classOrObject)
+                                }
+
+                                override fun shouldGenerateClass(classOrObject: KtClassOrObject): Boolean {
+                                    return KtPsiUtil.isLocal(classOrObject)
+                                }
+
+                                override fun shouldGeneratePackagePart(jetFile: KtFile): Boolean {
+                                    return true
+                                }
+
+                                override fun shouldGenerateScript(script: KtScript): Boolean {
+                                    return false
+                                }
+                            }
+
+                        override fun generate(state: GenerationState, files: Collection<KtFile>) {
+                            if (!files.isEmpty()) {
+                                val representativeFile = files.iterator().next()
+                                val fileClassInfo = NoResolveFileClassesProvider.getFileClassInfo(representativeFile)
+                                if (!fileClassInfo.withJvmMultifileClass) {
+                                    val codegen = state.factory.forPackage(representativeFile.packageFqName, files)
+                                    codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
+                                    state.factory.asList()
+                                    return
+                                }
+                            }
+
+                            val codegen = state.factory.forMultifileClass(facadeFqName, files)
+                            codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
+                            state.factory.asList()
+                        }
+
+                        override fun toString(): String {
+                            return StubGenerationStrategy::class.java.name + " for facade class"
+                        }
+                    })
+        }
+
+        fun createForDeclaredClass(classOrObject: KtClassOrObject): KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData> {
+            return KotlinJavaFileStubProvider(
+                    classOrObject.project,
+                    classOrObject.isLocal(),
+                    object : StubGenerationStrategy<OutermostKotlinClassLightClassData> {
+                        private val file: KtFile
+                            get() = classOrObject.getContainingKtFile()
+
+                        override fun getContext(files: Collection<KtFile>): LightClassConstructionContext {
+                            return LightClassGenerationSupport.getInstance(classOrObject.project).getContextForClassOrObject(classOrObject)
+                        }
+
+                        override fun createLightClassData(
+                                javaFileStub: PsiJavaFileStub,
+                                bindingContext: BindingContext,
+                                extraDiagnostics: Diagnostics): OutermostKotlinClassLightClassData {
+                            val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject) ?: return OutermostKotlinClassLightClassData(
+                                    javaFileStub, extraDiagnostics, FqName.ROOT, classOrObject,
+                                    emptyMap<KtClassOrObject, InnerKotlinClassLightClassData>())
+
+                            val fqName = predictClassFqName(bindingContext, classDescriptor)
+                            val allInnerClasses = CodegenBinding.getAllInnerClasses(bindingContext, classDescriptor)
+
+                            val innerClassesMap = ContainerUtil.newHashMap<KtClassOrObject, InnerKotlinClassLightClassData>()
+                            for (innerClassDescriptor in allInnerClasses) {
+                                val declaration = descriptorToDeclaration(innerClassDescriptor)
+                                if (declaration !is KtClassOrObject) continue
+
+                                val innerLightClassData = InnerKotlinClassLightClassData(
+                                        predictClassFqName(bindingContext, innerClassDescriptor),
+                                        declaration)
+
+                                innerClassesMap.put(declaration, innerLightClassData)
+                            }
+
+                            return OutermostKotlinClassLightClassData(
+                                    javaFileStub,
+                                    extraDiagnostics,
+                                    fqName,
+                                    classOrObject,
+                                    innerClassesMap)
+                        }
+
+                        private fun predictClassFqName(bindingContext: BindingContext, classDescriptor: ClassDescriptor): FqName {
+                            val asmType = CodegenBinding.getAsmType(bindingContext, classDescriptor)
+                            //noinspection ConstantConditions
+                            return JvmClassName.byInternalName(asmType.className.replace('.', '/')).fqNameForClassNameWithoutDollars
+                        }
+
+                        override val files: Collection<KtFile>
+                            get() = listOf(file)
+
+                        override val packageFqName: FqName
+                            get() = file.packageFqName
+
+                        override // Trivial: generate and analyze class we are interested in.
+                                // Process all parent classes as they are context for current class
+                                // Process child classes because they probably affect members (heuristic)
+                                // Local classes should be process by CodegenAnnotatingVisitor to
+                                // decide what class they should be placed in.
+                                //
+                                // Example:
+                                // class A
+                                // fun foo() {
+                                //     trait Z: A {}
+                                //     fun bar() {
+                                //         class <caret>O2: Z {}
+                                //     }
+                                // }
+                                // TODO: current method will process local classes in irrelevant declarations, it should be fixed.
+                                // We generate all enclosing classes
+                        val generateClassFilter: GenerationState.GenerateClassFilter
+                            get() = object : GenerationState.GenerateClassFilter() {
+
+                                override fun shouldGeneratePackagePart(jetFile: KtFile): Boolean {
+                                    return true
+                                }
+
+                                override fun shouldAnnotateClass(classOrObject: KtClassOrObject): Boolean {
+                                    return shouldGenerateClass(classOrObject)
+                                }
+
+                                override fun shouldGenerateClass(generatedClassOrObject: KtClassOrObject): Boolean {
+                                    if (generatedClassOrObject === classOrObject) return true
+                                    if (PsiTreeUtil.isAncestor(generatedClassOrObject, classOrObject, true) || PsiTreeUtil.isAncestor(classOrObject, generatedClassOrObject, true)) {
+                                        return true
+                                    }
+
+                                    if (generatedClassOrObject.isLocal() && classOrObject.isLocal()) {
+                                        val commonParent = PsiTreeUtil.findCommonParent(generatedClassOrObject, classOrObject)
+                                        return commonParent != null && commonParent !is PsiFile
+                                    }
+
+                                    return false
+                                }
+
+                                override fun shouldGenerateScript(script: KtScript): Boolean {
+                                    return PsiTreeUtil.isAncestor(script, classOrObject, false)
+                                }
+                            }
+
+                        override fun generate(state: GenerationState, files: Collection<KtFile>) {
+                            val packageCodegen = state.factory.forPackage(packageFqName, files)
+                            val file = classOrObject.getContainingKtFile()
+                            val packagePartType = state.fileClassesProvider.getFileClassType(file)
+                            val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
+                            packageCodegen.generateClassOrObject(classOrObject, context)
+                            state.factory.asList()
+                        }
+
+                        override fun toString(): String {
+                            return StubGenerationStrategy::class.java.name + " for explicit class " + classOrObject.name
+                        }
+                    })
+        }
+
+        private val LOG = Logger.getInstance(KotlinJavaFileStubProvider::class.java)
+
+        private fun createFakeClsFile(
+                project: Project,
+                packageFqName: FqName,
+                files: Collection<KtFile>,
+                fileStubProvider: Function0<PsiClassHolderFileStub<PsiFile>>): ClsFileImpl {
+            val manager = PsiManager.getInstance(project)
+
+            val virtualFile = getRepresentativeVirtualFile(files)
+            val fakeFile = object : ClsFileImpl(ClassFileViewProvider(manager, virtualFile)) {
+                override fun getStub(): PsiClassHolderFileStub<PsiFile> {
+                    return fileStubProvider.invoke()
+                }
+
+                override fun getPackageName(): String {
+                    return packageFqName.asString()
+                }
             }
 
-            @NotNull
-            @Override
-            public String getPackageName() {
-                return packageFqName.asString();
-            }
-        };
+            fakeFile.isPhysical = false
+            return fakeFile
+        }
 
-        fakeFile.setPhysical(false);
-        return fakeFile;
-    }
+        private fun getRepresentativeVirtualFile(files: Collection<KtFile>): VirtualFile {
+            val firstFile = files.iterator().next()
+            val virtualFile = firstFile.virtualFile
+            assert(virtualFile != null) { "No virtual file for " + firstFile }
+            return virtualFile
+        }
 
-    @NotNull
-    private PsiJavaFileStub createJavaFileStub(@NotNull FqName packageFqName, @NotNull Collection<KtFile> files) {
-        final PsiJavaFileStubImpl javaFileStub = new PsiJavaFileStubImpl(packageFqName.asString(), true);
-        javaFileStub.setPsiFactory(new ClsWrapperStubPsiFactory());
-
-        ClsFileImpl fakeFile = createFakeClsFile(project, packageFqName, files, new Function0<PsiClassHolderFileStub>() {
-            @Override
-            public PsiClassHolderFileStub invoke() {
-                return javaFileStub;
-            }
-        });
-
-        javaFileStub.setPsi(fakeFile);
-        return javaFileStub;
-    }
-
-    @NotNull
-    private static VirtualFile getRepresentativeVirtualFile(@NotNull Collection<KtFile> files) {
-        KtFile firstFile = files.iterator().next();
-        VirtualFile virtualFile = firstFile.getVirtualFile();
-        assert virtualFile != null : "No virtual file for " + firstFile;
-        return virtualFile;
-    }
-
-    private static void checkForBuiltIns(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
-        for (KtFile file : files) {
-            if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(file)) {
-                // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
-                // If it fails later, there will be an exception logged
-                logErrorWithOSInfo(null, fqName, file.getVirtualFile());
+        private fun checkForBuiltIns(fqName: FqName, files: Collection<KtFile>) {
+            for (file in files) {
+                if (LightClassUtil.belongsToKotlinBuiltIns(file)) {
+                    // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
+                    // If it fails later, there will be an exception logged
+                    logErrorWithOSInfo(null, fqName, file.virtualFile)
+                }
             }
         }
+
+        private fun logErrorWithOSInfo(cause: Throwable?, fqName: FqName, virtualFile: VirtualFile?) {
+            val path = if (virtualFile == null) "<null>" else virtualFile.path
+            LOG.error(
+                    "Could not generate LightClass for " + fqName + " declared in " + path + "\n" + "built-ins dir URL is " + LightClassUtil.builtInsDirUrl + "\n" + "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
+                    cause)
+        }
     }
+}
 
-    private static void logErrorWithOSInfo(@Nullable Throwable cause, @NotNull FqName fqName, @Nullable VirtualFile virtualFile) {
-        String path = virtualFile == null ? "<null>" : virtualFile.getPath();
-        LOG.error(
-                "Could not generate LightClass for " + fqName + " declared in " + path + "\n" +
-                "built-ins dir URL is " + LightClassUtil.INSTANCE$.getBuiltInsDirUrl() + "\n" +
-                "System: " + SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION + " Java Runtime: " + SystemInfo.JAVA_RUNTIME_VERSION,
-                cause);
-    }
+private interface StubGenerationStrategy<T : WithFileStubAndExtraDiagnostics> {
+    val files: Collection<KtFile>
+    val packageFqName: FqName
 
-    private interface StubGenerationStrategy<T extends WithFileStubAndExtraDiagnostics> {
-        @NotNull Collection<KtFile> getFiles();
-        @NotNull FqName getPackageFqName();
+    fun getContext(files: Collection<KtFile>): LightClassConstructionContext
+    fun createLightClassData(javaFileStub: PsiJavaFileStub, bindingContext: BindingContext, extraDiagnostics: Diagnostics): T
 
-        @NotNull LightClassConstructionContext getContext(@NotNull Collection<KtFile> files);
-        @NotNull T createLightClassData(PsiJavaFileStub javaFileStub, BindingContext bindingContext, Diagnostics extraDiagnostics);
-
-        GenerationState.GenerateClassFilter getGenerateClassFilter();
-        void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files);
-    }
+    val generateClassFilter: GenerationState.GenerateClassFilter
+    fun generate(state: GenerationState, files: Collection<KtFile>)
 }
