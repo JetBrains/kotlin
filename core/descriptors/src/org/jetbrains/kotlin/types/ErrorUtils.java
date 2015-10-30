@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
@@ -155,15 +154,7 @@ public class ErrorUtils {
         return false;
     }
 
-    private static abstract class AbstractErrorScope implements KtScope {
-        @Nullable
-        @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name) {
-            return getClassifier(name, NoLookupLocation.UNSORTED);
-        }
-    }
-
-    public static class ErrorScope extends AbstractErrorScope {
+    public static class ErrorScope implements KtScope {
         private final String debugMessage;
 
         private ErrorScope(@NotNull String debugMessage) {
@@ -279,7 +270,7 @@ public class ErrorUtils {
         }
     }
 
-    private static class ThrowingScope extends AbstractErrorScope {
+    private static class ThrowingScope implements KtScope {
         private final String debugMessage;
 
         private ThrowingScope(@NotNull String message) {
@@ -683,7 +674,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public TypeCapabilities getCapabilities() {
-            return TypeCapabilities.NONE.INSTANCE$;
+            return TypeCapabilities.NONE.INSTANCE;
         }
 
         @Override

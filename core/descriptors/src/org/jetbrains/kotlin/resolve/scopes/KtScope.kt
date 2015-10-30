@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
@@ -46,10 +45,6 @@ public interface KtScope {
     public fun getContainingDeclaration(): DeclarationDescriptor
 
     public fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor>
-
-    // Temporary overloads which will be dropped when all usages will be processed
-    @Deprecated("Provide `location` explicitly", replaceWith = ReplaceWith("getClassifier(name, NoLookupLocation.UNSORTED)"))
-    public fun getClassifier(name: Name): ClassifierDescriptor? = getClassifier(name, NoLookupLocation.UNSORTED)
 
     /**
      * All visible descriptors from current scope.
