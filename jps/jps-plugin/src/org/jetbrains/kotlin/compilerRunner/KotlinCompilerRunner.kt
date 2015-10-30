@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -111,6 +112,9 @@ public object KotlinCompilerRunner {
                 val stream = ByteArrayOutputStream()
                 val out = PrintStream(stream)
 
+                if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) == null)
+                    System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "")
+
                 val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, argsArray, environment, messageCollector, out)
 
                 // exec() returns an ExitCode object, class of which is loaded with a different class loader,
@@ -139,7 +143,7 @@ public object KotlinCompilerRunner {
                 // the property should be set by default for daemon builds to avoid parallel building problems
                 // but it cannot be currently set by default globally, because it seems breaks many tests
                 // TODO: find out how to get rid of the property and make it the default behavior
-                daemonJVMOptions.jvmParams.add("Dkotlin.environment.keepalive")
+                daemonJVMOptions.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY")
 
                 val daemonReportMessages = ArrayList<DaemonReportMessage>()
 
