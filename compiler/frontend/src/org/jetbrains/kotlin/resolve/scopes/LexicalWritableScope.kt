@@ -70,13 +70,14 @@ class LexicalWritableScope(
         addVariableOrClassDescriptor(classifierDescriptor)
     }
 
-    override fun getDeclaredDescriptors() = checkMayRead().addedDescriptors
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+            = checkMayRead().addedDescriptors
 
-    override fun getDeclaredClassifier(name: Name, location: LookupLocation) = checkMayRead().getDeclaredClassifier(name)
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = checkMayRead().getDeclaredClassifier(name)
 
-    override fun getDeclaredVariables(name: Name, location: LookupLocation) = checkMayRead().getDeclaredVariables(name)
+    override fun getContributedVariables(name: Name, location: LookupLocation) = checkMayRead().getDeclaredVariables(name)
 
-    override fun getDeclaredFunctions(name: Name, location: LookupLocation) = checkMayRead().getDeclaredFunctions(name)
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = checkMayRead().getDeclaredFunctions(name)
 
     private fun checkMayRead(): LexicalWritableScope {
         if (lockLevel != WritableScope.LockLevel.READING && lockLevel != WritableScope.LockLevel.BOTH) {
@@ -101,15 +102,16 @@ class LexicalWritableScope(
         override val implicitReceiver: ReceiverParameterDescriptor?
             get() = this@LexicalWritableScope.implicitReceiver
 
-        override fun getDeclaredDescriptors() = this@LexicalWritableScope.addedDescriptors.subList(0, descriptorLimit)
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
+                = this@LexicalWritableScope.addedDescriptors.subList(0, descriptorLimit)
 
-        override fun getDeclaredClassifier(name: Name, location: LookupLocation)
+        override fun getContributedClassifier(name: Name, location: LookupLocation)
                 = this@LexicalWritableScope.getDeclaredClassifier(name, descriptorLimit)
 
-        override fun getDeclaredVariables(name: Name, location: LookupLocation)
+        override fun getContributedVariables(name: Name, location: LookupLocation)
                 = this@LexicalWritableScope.getDeclaredVariables(name, descriptorLimit)
 
-        override fun getDeclaredFunctions(name: Name, location: LookupLocation)
+        override fun getContributedFunctions(name: Name, location: LookupLocation)
                 = this@LexicalWritableScope.getDeclaredFunctions(name, descriptorLimit)
 
         override fun toString(): String = "Snapshot($descriptorLimit) for $debugName"

@@ -30,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_RECEIVER_FIELD;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isLocalFunction;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isLocalFunction;
 
 public interface LocalLookup {
     boolean lookupLocal(DeclarationDescriptor descriptor);

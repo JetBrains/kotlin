@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion.test
 
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
@@ -26,15 +27,17 @@ import java.io.File
 public abstract class JetFixtureCompletionBaseTestCase : JetLightCodeInsightFixtureTestCase() {
     public abstract fun getPlatform(): TargetPlatform
 
-    protected abstract fun complete(invocationCount: Int): Array<LookupElement>?
+    protected open fun complete(completionType: CompletionType, invocationCount: Int): Array<LookupElement>?
+            = myFixture.complete(completionType, invocationCount)
 
+    protected abstract fun defaultCompletionType(): CompletionType
     protected open fun defaultInvocationCount(): Int = 0
 
     public open fun doTest(testPath: String) {
         setUpFixture(testPath)
 
         val fileText = FileUtil.loadFile(File(testPath), true)
-        testCompletion(fileText, getPlatform(), { complete(it) }, defaultInvocationCount())
+        testCompletion(fileText, getPlatform(), { completionType, count -> complete(completionType, count) }, defaultCompletionType(), defaultInvocationCount())
     }
 
     protected open fun setUpFixture(testPath: String) {

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.MutableSlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
@@ -155,11 +155,11 @@ public class BindingContextUtils {
     }
 
     @Nullable
-    public static JetTypeInfo getRecordedTypeInfo(@NotNull KtExpression expression, @NotNull BindingContext context) {
+    public static KotlinTypeInfo getRecordedTypeInfo(@NotNull KtExpression expression, @NotNull BindingContext context) {
         // noinspection ConstantConditions
         if (!context.get(BindingContext.PROCESSED, expression)) return null;
         // NB: should never return null if expression is already processed
-        JetTypeInfo result = context.get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+        KotlinTypeInfo result = context.get(BindingContext.EXPRESSION_TYPE_INFO, expression);
         return result != null ? result : TypeInfoFactoryKt.noTypeInfo(DataFlowInfo.EMPTY);
     }
 

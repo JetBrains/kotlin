@@ -518,6 +518,8 @@ private class ConstantExpressionEvaluatorVisitor(
         if (resolvedCall != null) {
             val callableDescriptor = resolvedCall.getResultingDescriptor()
             if (callableDescriptor is VariableDescriptor) {
+                if (callableDescriptor is PropertyDescriptor && callableDescriptor.modality.isOverridable) return null
+
                 val variableInitializer = callableDescriptor.getCompileTimeInitializer() ?: return null
 
                 return createConstant(
@@ -843,7 +845,7 @@ private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType
     }
 }
 
-private class CompileTimeType<T>
+internal class CompileTimeType<T>
 
 internal val BYTE = CompileTimeType<Byte>()
 internal val SHORT = CompileTimeType<Short>()

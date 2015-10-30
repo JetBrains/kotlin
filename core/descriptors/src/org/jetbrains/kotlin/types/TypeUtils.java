@@ -28,14 +28,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.utils.DFS;
 
 import java.util.*;
 
 public class TypeUtils {
     public static final KotlinType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
-    public static final KotlinType PLACEHOLDER_FUNCTION_TYPE = ErrorUtils.createErrorTypeWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE");
-
     public static final KotlinType CANT_INFER_FUNCTION_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
 
     public static class SpecialType implements KotlinType {
@@ -331,10 +328,8 @@ public class TypeUtils {
         if (FlexibleTypesKt.isFlexible(type) && acceptsNullable(FlexibleTypesKt.flexibility(type).getUpperBound())) {
             return true;
         }
-        if (isTypeParameter(type)) {
-            return hasNullableLowerBound((TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor());
-        }
-        return false;
+        TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
+        return typeParameterDescriptor != null && hasNullableLowerBound(typeParameterDescriptor);
     }
 
     public static boolean hasNullableSuperType(@NotNull KotlinType type) {
@@ -447,32 +442,6 @@ public class TypeUtils {
         return new StarProjectionImpl(parameterDescriptor);
     }
 
-    @Nullable
-    public static KotlinType commonSupertypeForNumberTypes(@NotNull Collection<KotlinType> numberLowerBounds) {
-        if (numberLowerBounds.isEmpty()) return null;
-        Set<KotlinType> intersectionOfSupertypes = getIntersectionOfSupertypes(numberLowerBounds);
-        KotlinType primitiveNumberType = getDefaultPrimitiveNumberType(intersectionOfSupertypes);
-        if (primitiveNumberType != null) {
-            return primitiveNumberType;
-        }
-        return CommonSupertypes.commonSupertype(numberLowerBounds);
-    }
-
-    @NotNull
-    private static Set<KotlinType> getIntersectionOfSupertypes(@NotNull Collection<KotlinType> types) {
-        Set<KotlinType> upperBounds = new HashSet<KotlinType>();
-        for (KotlinType type : types) {
-            Collection<KotlinType> supertypes = type.getConstructor().getSupertypes();
-            if (upperBounds.isEmpty()) {
-                upperBounds.addAll(supertypes);
-            }
-            else {
-                upperBounds.retainAll(supertypes);
-            }
-        }
-        return upperBounds;
-    }
-
     @NotNull
     public static KotlinType getDefaultPrimitiveNumberType(@NotNull IntegerValueTypeConstructor numberValueTypeConstructor) {
         KotlinType type = getDefaultPrimitiveNumberType(numberValueTypeConstructor.getSupertypes());
@@ -482,7 +451,7 @@ public class TypeUtils {
     }
 
     @Nullable
-    private static KotlinType getDefaultPrimitiveNumberType(@NotNull Collection<KotlinType> supertypes) {
+    public static KotlinType getDefaultPrimitiveNumberType(@NotNull Collection<KotlinType> supertypes) {
         if (supertypes.isEmpty()) {
             return null;
         }
@@ -517,82 +486,6 @@ public class TypeUtils {
             }
         }
         return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
-    }
-
-    public static List<TypeConstructor> topologicallySortSuperclassesAndRecordAllInstances(
-            @NotNull KotlinType type,
-            @NotNull final Map<TypeConstructor, Set<KotlinType>> constructorToAllInstances,
-            @NotNull final Set<TypeConstructor> visited
-    ) {
-        return DFS.dfs(
-                Collections.singletonList(type),
-                new DFS.Neighbors<KotlinType>() {
-                    @NotNull
-                    @Override
-                    public Iterable<KotlinType> getNeighbors(KotlinType current) {
-                        TypeSubstitutor substitutor = TypeSubstitutor.create(current);
-                        Collection<KotlinType> supertypes = current.getConstructor().getSupertypes();
-                        List<KotlinType> result = new ArrayList<KotlinType>(supertypes.size());
-                        for (KotlinType supertype : supertypes) {
-                            if (visited.contains(supertype.getConstructor())) {
-                                continue;
-                            }
-                            result.add(substitutor.safeSubstitute(supertype, Variance.INVARIANT));
-                        }
-                        return result;
-                    }
-                },
-                new DFS.Visited<KotlinType>() {
-                    @Override
-                    public boolean checkAndMarkVisited(KotlinType current) {
-                        return visited.add(current.getConstructor());
-                    }
-                },
-                new DFS.NodeHandlerWithListResult<KotlinType, TypeConstructor>() {
-                    @Override
-                    public boolean beforeChildren(KotlinType current) {
-                        TypeConstructor constructor = current.getConstructor();
-
-                        Set<KotlinType> instances = constructorToAllInstances.get(constructor);
-                        if (instances == null) {
-                            instances = new HashSet<KotlinType>();
-                            constructorToAllInstances.put(constructor, instances);
-                        }
-                        instances.add(current);
-
-                        return true;
-                    }
-
-                    @Override
-                    public void afterChildren(KotlinType current) {
-                        result.addFirst(current.getConstructor());
-                    }
-                }
-        );
-    }
-
-    public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, KotlinType type) {
-        final Set<TypeConstructor> constructors = org.jetbrains.kotlin.utils.CollectionsKt
-                .newHashSetWithExpectedSize(typeParameterDescriptors.size());
-        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
-            constructors.add(typeParameterDescriptor.getTypeConstructor());
-        }
-        final TypeProjection projection = new TypeProjectionImpl(type);
-
-        return TypeSubstitutor.create(new TypeConstructorSubstitution() {
-            @Override
-            public TypeProjection get(@NotNull TypeConstructor key) {
-                if (constructors.contains(key)) {
-                    return projection;
-                }
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-        });
     }
 
     public static boolean isTypeParameter(@NotNull KotlinType type) {

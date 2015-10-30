@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 
@@ -44,7 +45,7 @@ public object PackagePartClassUtils {
     private @JvmStatic fun capitalizeAsJavaClassName(str: String): String =
             // NB use Locale.ENGLISH so that build is locale-independent.
             // See Javadoc on java.lang.String.toUpperCase() for more details.
-            if (Character.isJavaIdentifierStart(str.charAt(0)))
+            if (Character.isJavaIdentifierStart(str[0]))
                 str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1)
             else
                 "_$str"
@@ -81,7 +82,11 @@ public object PackagePartClassUtils {
 
     @JvmStatic
     public fun fileHasTopLevelCallables(file: KtFile): Boolean =
-            file.declarations.any { it is KtProperty || it is KtNamedFunction }
+            file.declarations.any {
+                it is KtProperty ||
+                it is KtNamedFunction ||
+                it is KtScript
+            }
 
     @JvmStatic
     public fun getFilePartShortName(fileName: String): String =

@@ -23,7 +23,7 @@ import java.lang.Deprecated
 import java.util.ArrayList
 import java.util.Collections
 
-class ParametersBuilder private constructor(){
+internal class ParametersBuilder private constructor(){
 
     private val valueAndHiddenParams = arrayListOf<ParameterInfo>()
     private val capturedParams = arrayListOf<CapturedParamInfo>()

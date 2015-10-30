@@ -194,7 +194,7 @@ fun specialJVM(): List<GenericFunction> {
     templates add f("filterIsInstance()") {
         doc { "Returns a list containing all elements that are instances of specified type parameter R." }
         typeParam("reified R")
-        returns("List<R>")
+        returns("List<@kotlin.internal.NoInfer R>")
         inline(true)
         receiverAsterisk(true)
         body {
@@ -205,7 +205,7 @@ fun specialJVM(): List<GenericFunction> {
         exclude(ArraysOfPrimitives, Strings)
 
         doc(Sequences) { "Returns a sequence containing all elements that are instances of specified type parameter R." }
-        returns(Sequences) { "Sequence<R>" }
+        returns(Sequences) { "Sequence<@kotlin.internal.NoInfer R>" }
         inline(true)
         receiverAsterisk(true)
         body(Sequences) {

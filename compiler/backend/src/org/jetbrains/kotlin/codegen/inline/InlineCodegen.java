@@ -65,7 +65,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 
 public class InlineCodegen extends CallGenerator {
     private final GenerationState state;
@@ -170,7 +170,7 @@ public class InlineCodegen extends CallGenerator {
 
         codegen.propagateChildReifiedTypeParametersUsages(result.getReifiedTypeParametersUsages());
 
-        state.getFactory().removeInlinedClasses(result.getClassesToRemove());
+        state.getFactory().removeClasses(result.getClassesToRemove());
 
         codegen.markLineNumberAfterInlineIfNeeded();
     }
@@ -353,6 +353,10 @@ public class InlineCodegen extends CallGenerator {
                 // Wrapping for preventing marking actual parent codegen as containing reifier markers
                 parentCodegen
         );
+
+        if (isLambda) {
+            codegen.propagateChildReifiedTypeParametersUsages(parentCodegen.getReifiedTypeParametersUsages());
+        }
 
         return createSMAPWithDefaultMapping(expression, parentCodegen.getOrCreateSourceMapper().getResultMappings());
     }

@@ -35,7 +35,7 @@ public class LockBasedLazyResolveStorageManager(private val storageManager: Stor
     override fun <K, V : Any> createSoftlyRetainedMemoizedFunctionWithNullableValues(compute: Function1<K, V>) =
         storageManager.createMemoizedFunctionWithNullableValues<K, V>(compute, ContainerUtil.createConcurrentSoftValueMap<K, Any>())
 
-    override fun createSafeTrace(originalTrace: BindingTrace) =
+    override fun createSafeTrace(originalTrace: BindingTrace): BindingTrace =
             LockProtectedTrace(storageManager, originalTrace)
 
     private class LockProtectedContext(private val storageManager: StorageManager, private val context: BindingContext) : BindingContext {

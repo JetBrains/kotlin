@@ -501,8 +501,10 @@ public class DefaultErrorMessages {
                     }
                 });
 
-        MAP.put(FINITE_BOUNDS_VIOLATION, "{0}", STRING);
-        MAP.put(EXPANSIVE_INHERITANCE, "{0}", STRING);
+        MAP.put(FINITE_BOUNDS_VIOLATION, "Type argument is not within its bounds (violation of Finite Bound Restriction)");
+        MAP.put(FINITE_BOUNDS_VIOLATION_IN_JAVA, "Violation of Finite Bound Restriction for {0}", STRING);
+        MAP.put(EXPANSIVE_INHERITANCE, "Type argument is not within its bounds (violation of Non-Expansive Inheritance Restriction)");
+        MAP.put(EXPANSIVE_INHERITANCE_IN_JAVA, "Violation of Non-Expansive Inheritance Restriction for {0}", STRING);
         MAP.put(REDUNDANT_PROJECTION, "Projection is redundant: the corresponding type parameter of {0} has the same variance", NAME);
         MAP.put(CONFLICTING_PROJECTION, "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''", NAME);
 
@@ -671,7 +673,7 @@ public class DefaultErrorMessages {
         MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "kotlin.Array class literal requires a type argument, please specify one in angle brackets");
 
         //Inline
-        MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Cannot access effectively non-public-API ''{0}'' member from effectively public-API ''{1}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(INVISIBLE_MEMBER_FROM_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "''{0}'' construction is not yet supported in inline functions", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(DECLARATION_CANT_BE_INLINED, "''inline'' modifier is not allowed on virtual members. Only private or final members can be inlined");
         MAP.put(NOTHING_TO_INLINE, "Expected performance impact of inlining ''{0}'' can be insignificant. Inlining works best for functions with lambda parameters", SHORT_NAMES_IN_TYPES);

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
  * It's desirable to create temporary var only if node can have side effect,
  * and precedes inline call (in JavaScript evaluation order).
  */
-class ExpressionDecomposer private constructor(
+internal class ExpressionDecomposer private constructor(
         private val scope: JsScope,
         private val containsExtractable: Set<JsNode>,
         private val containsNodeWithSideEffect: Set<JsNode>
@@ -337,7 +337,7 @@ class ExpressionDecomposer private constructor(
  *
  * For example, won't visit [JsBlock] statements, but will visit test expression of [JsWhile].
  */
-private open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
+internal open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
 
     override fun visit(x: JsBlock, ctx: JsContext<*>): Boolean = false
     override fun visit(x: JsTry, ctx: JsContext<*>): Boolean = false

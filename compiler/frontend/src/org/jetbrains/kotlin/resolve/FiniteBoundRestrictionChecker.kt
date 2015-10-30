@@ -51,15 +51,15 @@ public object FiniteBoundRestrictionChecker {
         for (typeParameter in typeConstructor.parameters) {
             if (typeParameter in problemNodes) {
                 val element = DescriptorToSourceUtils.descriptorToDeclaration(typeParameter) ?: declaration
-                diagnosticHolder.report(Errors.FINITE_BOUNDS_VIOLATION.on(element, "Type argument is not within its bounds (violation of Finite Bound Restriction)"))
+                diagnosticHolder.report(Errors.FINITE_BOUNDS_VIOLATION.on(element))
                 return
             }
         }
 
         if (problemNodes.any { it.source != SourceElement.NO_SOURCE }) return
 
-        val superTypeFqNames = problemNodes.map { it.containingDeclaration }.map { it.fqNameUnsafe.asString() }.toSortedSet()
-        diagnosticHolder.report(Errors.FINITE_BOUNDS_VIOLATION.on(declaration, "Violation of Finite Bound Restriction for supertypes: " + superTypeFqNames.joinToString(", ")))
+        val typeFqNames = problemNodes.map { it.containingDeclaration }.map { it.fqNameUnsafe.asString() }.toSortedSet()
+        diagnosticHolder.report(Errors.FINITE_BOUNDS_VIOLATION_IN_JAVA.on(declaration, typeFqNames.joinToString(", ")))
     }
 
     private class GraphBuilder(val typeConstructor: TypeConstructor) {

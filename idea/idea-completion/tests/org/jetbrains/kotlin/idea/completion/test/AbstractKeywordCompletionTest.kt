@@ -25,9 +25,11 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 public abstract class AbstractKeywordCompletionTest : JetFixtureCompletionBaseTestCase() {
     override fun getPlatform() = JvmPlatform
 
-    override fun complete(invocationCount: Int): Array<LookupElement>? {
-        val items = myFixture.complete(CompletionType.BASIC) ?: return null
-        return items.filter { it.getObject() is KeywordLookupObject }.toTypedArray()
+    override fun defaultCompletionType() = CompletionType.BASIC
+
+    override fun complete(completionType: CompletionType, invocationCount: Int): Array<LookupElement>? {
+        val items = myFixture.complete(completionType) ?: return null
+        return items.filter { it.`object` is KeywordLookupObject }.toTypedArray()
     }
 
     override fun getProjectDescriptor() = JetLightProjectDescriptor.INSTANCE

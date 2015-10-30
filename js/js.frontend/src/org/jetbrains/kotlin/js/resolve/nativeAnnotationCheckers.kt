@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-private abstract class AbstractNativeAnnotationsChecker(private val requiredAnnotation: PredefinedAnnotation) : DeclarationChecker {
+internal abstract class AbstractNativeAnnotationsChecker(private val requiredAnnotation: PredefinedAnnotation) : DeclarationChecker {
 
     open fun additionalCheck(declaration: KtNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {}
 
@@ -63,9 +63,9 @@ private abstract class AbstractNativeAnnotationsChecker(private val requiredAnno
     }
 }
 
-public class NativeInvokeChecker : AbstractNativeAnnotationsChecker(PredefinedAnnotation.NATIVE_INVOKE)
+internal class NativeInvokeChecker : AbstractNativeAnnotationsChecker(PredefinedAnnotation.NATIVE_INVOKE)
 
-private abstract class AbstractNativeIndexerChecker(
+internal abstract class AbstractNativeIndexerChecker(
         requiredAnnotation: PredefinedAnnotation,
         private val indexerKind: String,
         private val requiredParametersCount: Int
@@ -95,7 +95,7 @@ private abstract class AbstractNativeIndexerChecker(
     }
 }
 
-public class NativeGetterChecker : AbstractNativeIndexerChecker(PredefinedAnnotation.NATIVE_GETTER, "getter", requiredParametersCount = 1) {
+internal class NativeGetterChecker : AbstractNativeIndexerChecker(PredefinedAnnotation.NATIVE_GETTER, "getter", requiredParametersCount = 1) {
     override fun additionalCheck(declaration: KtNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
         super.additionalCheck(declaration, descriptor, diagnosticHolder)
 
@@ -106,7 +106,7 @@ public class NativeGetterChecker : AbstractNativeIndexerChecker(PredefinedAnnota
     }
 }
 
-public class NativeSetterChecker : AbstractNativeIndexerChecker(PredefinedAnnotation.NATIVE_SETTER, "setter", requiredParametersCount = 2) {
+internal class NativeSetterChecker : AbstractNativeIndexerChecker(PredefinedAnnotation.NATIVE_SETTER, "setter", requiredParametersCount = 2) {
     override fun additionalCheck(declaration: KtNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
         super.additionalCheck(declaration, descriptor, diagnosticHolder)
 

@@ -44,13 +44,13 @@ public class LexicalScopeImpl @JvmOverloads constructor(
         InitializeHandler(redeclarationHandler).initialize()
     }
 
-    override fun getDeclaredDescriptors() = addedDescriptors
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = addedDescriptors
 
-    override fun getDeclaredClassifier(name: Name, location: LookupLocation) = getDeclaredClassifier(name)
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = getDeclaredClassifier(name)
 
-    override fun getDeclaredVariables(name: Name, location: LookupLocation) = getDeclaredVariables(name)
+    override fun getContributedVariables(name: Name, location: LookupLocation) = getDeclaredVariables(name)
 
-    override fun getDeclaredFunctions(name: Name, location: LookupLocation) = getDeclaredFunctions(name)
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = getDeclaredFunctions(name)
 
     override fun toString(): String = debugName
 

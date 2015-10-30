@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.SerializerExtension;
 import org.jetbrains.kotlin.serialization.StringTable;
+import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
@@ -217,7 +217,7 @@ public class JvmSerializerExtension extends SerializerExtension {
             ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
             if (!(classifier instanceof ClassDescriptor)) return null;
             ClassId classId = classId((ClassDescriptor) classifier);
-            return classId == null ? null : JvmProtoBufUtil.mapClassIdDefault(classId);
+            return classId == null ? null : ClassMapperLite.mapClass(classId);
         }
 
         @Nullable

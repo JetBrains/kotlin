@@ -42,6 +42,17 @@ public class AsmTypes {
     public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
     public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
 
+    public static final Type[] PROPERTY_REFERENCE_IMPL = {
+            Type.getObjectType("kotlin/jvm/internal/PropertyReference0Impl"),
+            Type.getObjectType("kotlin/jvm/internal/PropertyReference1Impl"),
+            Type.getObjectType("kotlin/jvm/internal/PropertyReference2Impl")
+    };
+    public static final Type[] MUTABLE_PROPERTY_REFERENCE_IMPL = {
+            Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference0Impl"),
+            Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1Impl"),
+            Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2Impl")
+    };
+
     public static final Type K_CLASS_TYPE = reflect("KClass");
     public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
     public static final Type K_DECLARATION_CONTAINER_TYPE = reflect("KDeclarationContainer");

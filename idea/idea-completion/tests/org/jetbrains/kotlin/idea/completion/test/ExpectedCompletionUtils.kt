@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableList
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
@@ -113,6 +114,8 @@ public object ExpectedCompletionUtils {
 
     public val RUNTIME_TYPE: String = "RUNTIME_TYPE:"
 
+    private val COMPLETION_TYPE_PREFIX = "COMPLETION_TYPE:"
+
     public val KNOWN_PREFIXES: List<String> = ImmutableList.of(
             EXIST_LINE_PREFIX,
             ABSENT_LINE_PREFIX,
@@ -128,6 +131,7 @@ public object ExpectedCompletionUtils {
             AUTOCOMPLETE_SETTING_PREFIX,
             NOTHING_ELSE_PREFIX,
             RUNTIME_TYPE,
+            COMPLETION_TYPE_PREFIX,
             AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE)
 
     public fun itemsShouldExist(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
@@ -184,6 +188,16 @@ public object ExpectedCompletionUtils {
 
     public fun getInvocationCount(fileText: String): Int? {
         return InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX)
+    }
+
+    public fun getCompletionType(fileText: String): CompletionType? {
+        val completionTypeString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_TYPE_PREFIX)
+        return when (completionTypeString) {
+            "BASIC" -> CompletionType.BASIC
+            "SMART" -> CompletionType.SMART
+            null -> null
+            else -> error("Unknown completion type: $completionTypeString")
+        }
     }
 
     public fun getAutocompleteSetting(fileText: String): Boolean? {

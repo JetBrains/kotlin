@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
-import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -47,7 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -104,7 +101,7 @@ private fun performCallReplacement(
 
     if (receiver == null) {
         val receiverValue = if (descriptor.isExtension) resolvedCall.extensionReceiver else resolvedCall.dispatchReceiver
-        val resolutionScope = elementToBeReplaced.getResolutionScope(bindingContext, elementToBeReplaced.getResolutionFacade()).asJetScope()
+        val resolutionScope = elementToBeReplaced.getResolutionScope(bindingContext, elementToBeReplaced.getResolutionFacade())
         if (receiverValue is ThisReceiver) {
             receiver = receiverValue.asExpression(resolutionScope, psiFactory)
             receiverType = receiverValue.type
@@ -658,13 +655,13 @@ private class ConstructedExpressionWrapperWithIntroduceFeature(
         if (!safeCall) {
             val block = expressionToBeReplaced.parent as? KtBlockExpression
             if (block != null) {
-                val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expressionToBeReplaced]
+                val resolutionScope = expressionToBeReplaced.getResolutionScope(bindingContext, expressionToBeReplaced.getResolutionFacade())
 
                 if (usages.isNotEmpty()) {
                     var explicitType: KotlinType? = null
                     if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
                         val valueTypeWithoutExpectedType = value.computeTypeInContext(
-                                resolutionScope!!,
+                                resolutionScope,
                                 expressionToBeReplaced,
                                 dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
                         )
@@ -674,7 +671,7 @@ private class ConstructedExpressionWrapperWithIntroduceFeature(
                     }
 
                     val name = suggestName { name ->
-                        resolutionScope!!.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
+                        resolutionScope.findLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
                     }
 
                     var declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)

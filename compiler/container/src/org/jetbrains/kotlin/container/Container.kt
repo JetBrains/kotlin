@@ -91,7 +91,7 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Compone
         return componentStorage.resolveMultiple(request, context)
     }
 
-    public fun registerDescriptors(descriptors: List<ComponentDescriptor>): StorageComponentContainer {
+    internal fun registerDescriptors(descriptors: List<ComponentDescriptor>): StorageComponentContainer {
         componentStorage.registerDescriptors(unknownContext, descriptors)
         return this
     }

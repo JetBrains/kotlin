@@ -13,6 +13,12 @@ class A {
     // val prop4: 2
     val prop4 = A.a + 1
 
+    // val prop7: 0
+    open val prop7 = 0
+
+    // val prop8: null
+    val prop8 = prop7
+
     companion object {
         val a = 1
     }

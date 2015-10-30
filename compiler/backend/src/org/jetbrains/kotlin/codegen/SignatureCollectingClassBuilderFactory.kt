@@ -35,7 +35,7 @@ public abstract class SignatureCollectingClassBuilderFactory(
                                        classInternalName: String?,
                                        signatures: MultiMap<RawSignature, JvmDeclarationOrigin>)
 
-    override fun newClassBuilder(origin: JvmDeclarationOrigin): SignatureCollectingClassBuilder {
+    override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
         return SignatureCollectingClassBuilder(origin, delegate.newClassBuilder(origin))
     }
 

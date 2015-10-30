@@ -139,7 +139,7 @@ public class JvmCodegenUtil {
         if (JetTypeMapper.isAccessor(property)) return false;
 
         // Inline functions can't use direct access because a field may not be visible at the call site
-        if (context.isInlineFunction() && !Visibilities.isPrivate(property.getVisibility())) {
+        if (context.isInlineFunction()) {
             return false;
         }
 

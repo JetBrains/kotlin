@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ScriptReceiver
 import org.jetbrains.kotlin.utils.sure
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_FINAL
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SUPER
-import org.jetbrains.org.objectweb.asm.Opcodes.V1_6
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -74,24 +71,7 @@ public class PropertyReferenceCodegen(
     private val superAsmType = typeMapper.mapClass(classDescriptor.getSuperClassNotAny().sure { "No super class for $classDescriptor" })
 
     // e.g. mutableProperty0(Lkotlin/jvm/internal/MutablePropertyReference0;)Lkotlin/reflect/KMutableProperty0;
-    private val wrapperMethod: Method
-
-    init {
-        wrapperMethod = when (receiverCount) {
-            2 -> when {
-                target.isVar -> method("mutableProperty2", K_MUTABLE_PROPERTY2_TYPE, MUTABLE_PROPERTY_REFERENCE2)
-                else -> method("property2", K_PROPERTY2_TYPE, PROPERTY_REFERENCE2)
-            }
-            1 -> when {
-                target.isVar -> method("mutableProperty1", K_MUTABLE_PROPERTY1_TYPE, MUTABLE_PROPERTY_REFERENCE1)
-                else -> method("property1", K_PROPERTY1_TYPE, PROPERTY_REFERENCE1)
-            }
-            else -> when {
-                target.isVar -> method("mutableProperty0", K_MUTABLE_PROPERTY0_TYPE, MUTABLE_PROPERTY_REFERENCE0)
-                else -> method("property0", K_PROPERTY0_TYPE, PROPERTY_REFERENCE0)
-            }
-        }
-    }
+    private val wrapperMethod = getWrapperMethodForPropertyReference(target, receiverCount)
 
     override fun generateDeclaration() {
         v.defineClass(
@@ -127,16 +107,7 @@ public class PropertyReferenceCodegen(
         }
 
         generateMethod("property reference getSignature", ACC_PUBLIC, method("getSignature", JAVA_STRING_TYPE)) {
-            target as PropertyDescriptor
-
-            val getter = target.getGetter() ?: run {
-                val defaultGetter = DescriptorFactory.createDefaultGetter(target, Annotations.EMPTY)
-                defaultGetter.initialize(target.getType())
-                defaultGetter
-            }
-
-            val method = typeMapper.mapSignature(getter).getAsmMethod()
-            aconst(method.getName() + method.getDescriptor())
+            aconst(getPropertyReferenceSignature(target as PropertyDescriptor, state))
         }
 
         generateAccessors()
@@ -207,4 +178,35 @@ public class PropertyReferenceCodegen(
             StackValue.operation(wrapperMethod.getReturnType()) { iv ->
                 iv.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, wrapperMethod.getReturnType().getDescriptor())
             }
+
+    companion object {
+        @JvmStatic
+        fun getPropertyReferenceSignature(property: PropertyDescriptor, state: GenerationState): String {
+            val getter =
+                    property.getter ?: DescriptorFactory.createDefaultGetter(property, Annotations.EMPTY).apply {
+                        initialize(property.type)
+                    }
+
+            val method = state.typeMapper.mapSignature(getter).asmMethod
+            return method.name + method.descriptor
+        }
+
+        @JvmStatic
+        fun getWrapperMethodForPropertyReference(property: VariableDescriptor, receiverCount: Int): Method {
+            return when (receiverCount) {
+                2 -> when {
+                    property.isVar -> method("mutableProperty2", K_MUTABLE_PROPERTY2_TYPE, MUTABLE_PROPERTY_REFERENCE2)
+                    else -> method("property2", K_PROPERTY2_TYPE, PROPERTY_REFERENCE2)
+                }
+                1 -> when {
+                    property.isVar -> method("mutableProperty1", K_MUTABLE_PROPERTY1_TYPE, MUTABLE_PROPERTY_REFERENCE1)
+                    else -> method("property1", K_PROPERTY1_TYPE, PROPERTY_REFERENCE1)
+                }
+                else -> when {
+                    property.isVar -> method("mutableProperty0", K_MUTABLE_PROPERTY0_TYPE, MUTABLE_PROPERTY_REFERENCE0)
+                    else -> method("property0", K_PROPERTY0_TYPE, PROPERTY_REFERENCE0)
+                }
+            }
+        }
+    }
 }

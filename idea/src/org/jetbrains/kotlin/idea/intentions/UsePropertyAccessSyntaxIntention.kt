@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -48,9 +48,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -87,7 +85,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
 
         val function = resolvedCall.getResultingDescriptor() as? FunctionDescriptor ?: return null
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
-        val property = findSyntheticProperty(function, resolutionScope.asJetScope()) ?: return null
+        val property = findSyntheticProperty(function, resolutionScope) ?: return null
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(callee)
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
@@ -102,7 +100,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
             val newExpression = applyTo(callExpressionCopy, property.name)
             val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
             val newBindingContext = newExpression.analyzeInContext(
-                    resolutionScope.asJetScope(),
+                    resolutionScope,
                     contextExpression = callExpression,
                     trace = bindingTrace,
                     dataFlowInfo = dataFlowInfo,
@@ -143,7 +141,7 @@ class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntent
         return result.isSuccess && result.resultingDescriptor.original == property
     }
 
-    private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: KtScope): SyntheticJavaPropertyDescriptor? {
+    private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: LexicalScope): SyntheticJavaPropertyDescriptor? {
         SyntheticJavaPropertyDescriptor.findByGetterOrSetter(function, resolutionScope)?.let { return it }
 
         for (overridden in function.getOverriddenDescriptors()) {

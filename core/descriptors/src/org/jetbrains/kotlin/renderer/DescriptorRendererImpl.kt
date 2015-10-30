@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.name.FqNameBase
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -111,7 +111,7 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    override fun renderFqName(fqName: FqNameBase) = renderFqName(fqName.pathSegments())
+    override fun renderFqName(fqName: FqNameUnsafe) = renderFqName(fqName.pathSegments())
 
     private fun renderFqName(pathSegments: List<Name>) = escape(org.jetbrains.kotlin.renderer.renderFqName(pathSegments))
 
@@ -836,7 +836,7 @@ internal class DescriptorRendererImpl(
 
     private fun renderPackageView(packageView: PackageViewDescriptor, builder: StringBuilder) {
         builder.append(renderKeyword("package")).append(" ")
-        builder.append(renderFqName(packageView.fqName))
+        builder.append(renderFqName(packageView.fqName.toUnsafe()))
         if (debugMode) {
             builder.append(" in context of ")
             renderName(packageView.module, builder)
@@ -845,7 +845,7 @@ internal class DescriptorRendererImpl(
 
     private fun renderPackageFragment(fragment: PackageFragmentDescriptor, builder: StringBuilder) {
         builder.append(renderKeyword("package-fragment")).append(" ")
-        builder.append(renderFqName(fragment.fqName))
+        builder.append(renderFqName(fragment.fqName.toUnsafe()))
         if (debugMode) {
             builder.append(" in ")
             renderName(fragment.getContainingDeclaration(), builder)

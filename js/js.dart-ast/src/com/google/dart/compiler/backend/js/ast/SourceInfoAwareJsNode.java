@@ -1,6 +1,6 @@
 package com.google.dart.compiler.backend.js.ast;
 
-abstract class SourceInfoAwareJsNode extends AbstractNode {
+public abstract class SourceInfoAwareJsNode extends AbstractNode {
     private Object source;
 
     @Override

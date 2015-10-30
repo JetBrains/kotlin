@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -32,22 +33,22 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.utils.addImportScope
+import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.*
 
-public class ShadowedDeclarationsFilter private constructor(
+public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
-        private val context: KtExpression,
+        private val context: PsiElement,
         private val explicitReceiverValue: ReceiverValue
 ) {
     companion object {
         fun create(
                 bindingContext: BindingContext,
                 resolutionFacade: ResolutionFacade,
-                context: KtExpression,
+                context: PsiElement,
                 callTypeAndReceiver: CallTypeAndReceiver<*, *>
         ): ShadowedDeclarationsFilter? {
             val receiverExpression = when (callTypeAndReceiver) {
@@ -188,14 +189,14 @@ public class ShadowedDeclarationsFilter private constructor(
             override fun getCallType() = Call.CallType.DEFAULT
         }
 
-        var lexicalScope = bindingContext[BindingContext.LEXICAL_SCOPE, context] ?: return descriptors
+        var scope = context.getResolutionScope(bindingContext, resolutionFacade)
 
         if (descriptorsToImport.isNotEmpty()) {
-            lexicalScope = lexicalScope.addImportScope(ExplicitImportsScope(descriptorsToImport))
+            scope = scope.addImportingScope(ExplicitImportsScope(descriptorsToImport))
         }
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(context)
-        val context = BasicCallResolutionContext.create(bindingTrace, lexicalScope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
+        val context = BasicCallResolutionContext.create(bindingTrace, scope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                                                         CallChecker.DoNothing, false)
         val callResolver = resolutionFacade.frontendService<CallResolver>()

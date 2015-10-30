@@ -23,10 +23,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
-import org.jetbrains.kotlin.idea.core.getResolutionScope
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -39,10 +39,8 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
-import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
-import org.jetbrains.kotlin.resolve.scopes.utils.withNoFileScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.*
 import java.util.*
 
 public class KotlinImportOptimizer() : ImportOptimizer {
@@ -120,26 +118,26 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         private fun isAccessibleAsMember(target: DeclarationDescriptor, place: KtElement, bindingContext: BindingContext): Boolean {
             if (target.containingDeclaration !is ClassDescriptor) return false
 
-            fun isInScope(scope: KtScope): Boolean {
+            fun isInScope(scope: LexicalScope): Boolean {
                 return when (target) {
                     is FunctionDescriptor ->
-                        scope.getFunctions(target.name, NoLookupLocation.FROM_IDE).contains(target)
+                        scope.findFunction(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
 
                     is PropertyDescriptor ->
-                        scope.getProperties(target.name, NoLookupLocation.FROM_IDE).contains(target)
+                        scope.findVariable(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
 
                     is ClassDescriptor ->
-                        scope.getClassifier(target.name, NoLookupLocation.FROM_IDE) == target
+                        scope.findClassifier(target.name, NoLookupLocation.FROM_IDE) == target
 
                     else -> false
                 }
             }
 
             val resolutionScope = place.getResolutionScope(bindingContext, place.getResolutionFacade())
-            val noImportsScope = resolutionScope.withNoFileScope()
+            val noImportsScope = resolutionScope.replaceImportingScopes(null)
 
-            return isInScope(noImportsScope.asJetScope())
-                    || resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope) }
+            return isInScope(noImportsScope)
+                    || resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope.memberScopeAsImportingScope()) }
         }
     }
 
@@ -213,15 +211,15 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             }
 
             // now check that there are no conflicts and all classes are really imported
-            val fileWithImportsText = StringBuilder {
-                append("package ").append(file.packageFqName.render()).append("\n")
-                importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.pathStr }.joinTo(this, "\n")
-            }.toString()
+            val fileWithImportsText = buildString {
+                append("package ").append(file.packageFqName.toUnsafe().render()).append("\n")
+                importsToGenerate.filter { it.isAllUnder }.map { "import " + it.pathStr }.joinTo(this, "\n")
+            }
             val fileWithImports = KtPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)
-            val scope = fileWithImports.getResolutionFacade().getFileTopLevelScope(fileWithImports)
+            val scope = fileWithImports.getResolutionFacade().getFileResolutionScope(fileWithImports)
 
             for (fqName in classNamesToCheck) {
-                if (scope.getClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqName != fqName) {
+                if (scope.findClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)?.importableFqName != fqName) {
                     // add explicit import if failed to import with * (or from current package)
                     importsToGenerate.add(ImportPath(fqName, false))
 

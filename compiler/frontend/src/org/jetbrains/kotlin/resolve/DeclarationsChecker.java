@@ -852,17 +852,19 @@ public class DeclarationsChecker {
     private void checkEnumEntry(@NotNull KtEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
         if (DescriptorUtils.isEnumClass(declaration)) {
-            ClassDescriptor enumClass = (ClassDescriptor) declaration;
-
-            if (!enumEntry.hasInitializer() && !DescriptorUtils.hasDefaultConstructor(enumClass)) {
+            if (!enumEntry.hasInitializer() && !hasDefaultConstructor((ClassDescriptor) declaration)) {
                 trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry));
             }
         }
         else {
-            assert DescriptorUtils.isInterface(declaration) : "Enum entry should be declared in enum class: " +
-                                                              classDescriptor + " " +
-                                                              classDescriptor.getKind();
+            assert DescriptorUtils.isInterface(declaration) : "Enum entry should be declared in enum class: " + classDescriptor;
         }
     }
 
+    private static boolean hasDefaultConstructor(@NotNull ClassDescriptor classDescriptor) {
+        for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
+            if (constructor.getValueParameters().isEmpty()) return true;
+        }
+        return false;
+    }
 }

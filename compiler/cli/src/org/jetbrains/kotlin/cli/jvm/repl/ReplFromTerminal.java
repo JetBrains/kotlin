@@ -20,10 +20,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplErrorLogger;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemInWrapper;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplSystemOutWrapper;
-import org.jetbrains.kotlin.cli.jvm.repl.messages.UnescapeUtilsKt;
+import org.jetbrains.kotlin.cli.jvm.repl.messages.*;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ConsoleReplCommandReader;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.IdeReplCommandReader;
 import org.jetbrains.kotlin.cli.jvm.repl.reader.ReplCommandReader;
@@ -43,7 +40,7 @@ public class ReplFromTerminal {
 
     private final boolean ideMode;
     private ReplSystemInWrapper replReader;
-    private final ReplSystemOutWrapper replWriter;
+    private final ReplWriter replWriter;
     private final ReplErrorLogger replErrorLogger;
 
     private ReplCommandReader commandReader;
@@ -58,8 +55,14 @@ public class ReplFromTerminal {
         // wrapper for `out` is required to escape every input in [ideMode];
         // if [ideMode == false] then just redirects all input to [System.out]
         // if user calls [System.setOut(...)] then undefined behaviour
-        replWriter = new ReplSystemOutWrapper(ideMode, System.out);
-        System.setOut(replWriter);
+        if (ideMode) {
+            ReplSystemOutWrapperForIde soutWrapper = new ReplSystemOutWrapperForIde(System.out);
+            replWriter = soutWrapper;
+            System.setOut(soutWrapper);
+        }
+        else {
+            replWriter = new ReplConsoleWriter();
+        }
 
         // wrapper for `in` is required to give user possibility of calling
         // [readLine] from ide-console repl
@@ -121,9 +124,9 @@ public class ReplFromTerminal {
 
     private void doRun() {
         try {
-            replWriter.printlnInit("Welcome to Kotlin version " + KotlinVersion.VERSION +
-                               " (JRE " + System.getProperty("java.runtime.version") + ")");
-            replWriter.printlnInit("Type :help for help, :quit for quit");
+            replWriter.printlnWelcomeMessage("Welcome to Kotlin version " + KotlinVersion.VERSION +
+                                             " (JRE " + System.getProperty("java.runtime.version") + ")");
+            replWriter.printlnWelcomeMessage("Type :help for help, :quit for quit");
             WhatNextAfterOneLine next = WhatNextAfterOneLine.READ_LINE;
             while (true) {
                 next = one(next);
@@ -184,18 +187,19 @@ public class ReplFromTerminal {
     private ReplInterpreter.LineResultType eval(@NotNull String line) {
         ReplInterpreter.LineResult lineResult = getReplInterpreter().eval(line);
         if (lineResult.getType() == ReplInterpreter.LineResultType.SUCCESS) {
+            replWriter.notifyCommandSuccess();
             if (!lineResult.isUnit()) {
-                replWriter.printlnResult(lineResult.getValue());
+                replWriter.outputCommandResult(lineResult.getValue());
             }
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.INCOMPLETE) {
-            replWriter.printlnIncomplete();
+            replWriter.notifyIncomplete();
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.COMPILE_ERROR) {
-            replWriter.printlnCompileError(lineResult.getErrorText());
+            replWriter.outputCompileError(lineResult.getErrorText());
         }
         else if (lineResult.getType() == ReplInterpreter.LineResultType.RUNTIME_ERROR) {
-            replWriter.printlnRuntimeError(lineResult.getErrorText());
+            replWriter.outputRuntimeError(lineResult.getErrorText());
         }
         else {
             throw new IllegalStateException("unknown line result type: " + lineResult);
@@ -206,16 +210,16 @@ public class ReplFromTerminal {
     private boolean oneCommand(@NotNull String command) throws Exception {
         List<String> split = splitCommand(command);
         if (split.size() >= 1 && command.equals("help")) {
-            replWriter.printlnHelp("Available commands:\n" +
-                                   ":help                   show this help\n" +
-                                   ":quit                   exit the interpreter\n" +
-                                   ":dump bytecode          dump classes to terminal\n" +
-                                   ":load <file>            load script from specified file"
+            replWriter.printlnHelpMessage("Available commands:\n" +
+                                          ":help                   show this help\n" +
+                                          ":quit                   exit the interpreter\n" +
+                                          ":dump bytecode          dump classes to terminal\n" +
+                                          ":load <file>            load script from specified file"
             );
             return true;
         }
         else if (split.size() >= 2 && split.get(0).equals("dump") && split.get(1).equals("bytecode")) {
-            getReplInterpreter().dumpClasses(new PrintWriter(replWriter));
+            getReplInterpreter().dumpClasses(new PrintWriter(System.out));
             return true;
         }
         else if (split.size() >= 1 && split.get(0).equals("quit")) {
@@ -228,8 +232,8 @@ public class ReplFromTerminal {
             return true;
         }
         else {
-            replWriter.printlnHelp("Unknown command\n" +
-                                   "Type :help for help"
+            replWriter.printlnHelpMessage("Unknown command\n" +
+                                          "Type :help for help"
             );
             return true;
         }

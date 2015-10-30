@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -213,7 +212,7 @@ public class TypeUnifierTest extends JetLiteFixture {
 
         KtTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;
-        KotlinType type = typeResolver.resolveType(ScopeUtilsKt.asLexicalScope(withX), typeReference, JetTestUtils.DUMMY_TRACE, true);
+        KotlinType type = typeResolver.resolveType(TypeTestUtilsKt.asLexicalScope(withX), typeReference, JetTestUtils.DUMMY_TRACE, true);
 
         return new TypeProjectionImpl(getProjectionKind(typeStr, projection), type);
     }

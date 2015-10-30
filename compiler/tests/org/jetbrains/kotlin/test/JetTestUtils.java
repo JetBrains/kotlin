@@ -22,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.ShutDownTracker;
@@ -75,7 +76,7 @@ import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -184,7 +185,7 @@ public class JetTestUtils {
         @Nullable
         @Override
         public KotlinType getType(@NotNull KtExpression expression) {
-            JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+            KotlinTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
             return typeInfo != null ? typeInfo.getType() : null;
         }
 
@@ -481,6 +482,13 @@ public class JetTestUtils {
         LazyResolveTestUtil.resolve(environment.getProject(), jetFiles, environment);
     }
 
+    public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull Editor editor) {
+        String actualText = editor.getDocument().getText();
+        String afterText = new StringBuilder(actualText).insert(editor.getCaretModel().getOffset(), "<caret>").toString();
+
+        assertEqualsToFile(expectedFile, afterText);
+    }
+
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual) {
         assertEqualsToFile(expectedFile, actual, new Function1<String, String>() {
             @Override
@@ -752,26 +760,31 @@ public class JetTestUtils {
                     javaFileObjectsFromFiles);
 
             Boolean success = task.call(); // do NOT inline this variable, call() should complete before errorsToString()
-            String diagnosticString = errorsToString(diagnosticCollector);
             if (javaErrorFile == null || !javaErrorFile.exists()) {
-                Assert.assertTrue(diagnosticString, success);
+                Assert.assertTrue(errorsToString(diagnosticCollector, true), success);
             }
             else {
-                assertEqualsToFile(javaErrorFile, diagnosticString);
+                assertEqualsToFile(javaErrorFile, errorsToString(diagnosticCollector, false));
             }
         } finally {
             fileManager.close();
         }
     }
 
-    private static String errorsToString(DiagnosticCollector<JavaFileObject> diagnosticCollector) {
+    @NotNull
+    private static String errorsToString(@NotNull  DiagnosticCollector<JavaFileObject> diagnosticCollector, boolean humanReadable) {
         StringBuilder builder = new StringBuilder();
         for (javax.tools.Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
-            if (diagnostic.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
+            if (diagnostic.getKind() != javax.tools.Diagnostic.Kind.ERROR) continue;
+
+            if (humanReadable) {
+                builder.append(diagnostic).append("\n");
+            }
+            else {
                 builder.append(diagnostic.getSource().getName()).append(":")
-                       .append(diagnostic.getLineNumber()).append(":")
-                       .append(diagnostic.getColumnNumber()).append(":")
-                       .append(diagnostic.getCode()).append("\n");
+                        .append(diagnostic.getLineNumber()).append(":")
+                        .append(diagnostic.getColumnNumber()).append(":")
+                        .append(diagnostic.getCode()).append("\n");
             }
         }
         return builder.toString();

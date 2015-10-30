@@ -21,7 +21,7 @@ import java.io.InputStream
 
 public class ReplSystemInWrapper(
         private val stdin: InputStream,
-        private val replWriter: ReplSystemOutWrapper
+        private val replWriter: ReplWriter
 ) : InputStream() {
     private var isXmlIncomplete = true
     private var isLastByteProcessed = false
@@ -39,7 +39,7 @@ public class ReplSystemInWrapper(
         if (isLastByteProcessed) {
             if (isReplScriptExecuting) {
                 isReadLineStartSent = false
-                replWriter.printlnReadLineEnd()
+                replWriter.notifyReadLineEnd()
             }
 
             isLastByteProcessed = false
@@ -48,7 +48,7 @@ public class ReplSystemInWrapper(
 
         while (isXmlIncomplete) {
             if (!isReadLineStartSent && isReplScriptExecuting) {
-                replWriter.printlnReadLineStart()
+                replWriter.notifyReadLineStart()
                 isReadLineStartSent = true
             }
 

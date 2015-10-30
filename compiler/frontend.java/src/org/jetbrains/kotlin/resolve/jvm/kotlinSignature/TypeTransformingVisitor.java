@@ -150,7 +150,7 @@ public class TypeTransformingVisitor extends KtVisitor<KotlinType, Void> {
 
         KtScope memberScope;
         if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
-            memberScope = ((TypeParameterDescriptor) typeConstructorClassifier).getUpperBoundsAsType().getMemberScope();
+            memberScope = typeConstructorClassifier.getDefaultType().getMemberScope();
         }
         else if (typeConstructorClassifier instanceof ClassDescriptor) {
             memberScope = ((ClassDescriptor) typeConstructorClassifier).getMemberScope(altArguments);

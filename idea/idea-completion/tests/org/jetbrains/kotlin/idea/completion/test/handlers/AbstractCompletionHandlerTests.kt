@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion.test.handlers
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -31,7 +32,6 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
     private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"
     private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
     private val COMPLETION_CHAR_PREFIX = "CHAR:"
-    private val COMPLETION_TYPE_PREFIX = "COMPLETION_TYPE:"
     private val CODE_STYLE_SETTING_PREFIX = "CODE_STYLE_SETTING:"
 
     protected open fun doTest(testPath: String) {
@@ -54,13 +54,7 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
                 else -> completionCharString.singleOrNull() ?: error("Incorrect completion char: \"$completionCharString\"")
             }
 
-            val completionTypeString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_TYPE_PREFIX)
-            val completionType = when (completionTypeString) {
-                "BASIC" -> CompletionType.BASIC
-                "SMART" -> CompletionType.SMART
-                null -> defaultCompletionType
-                else -> error("Unknown completion type: $completionTypeString")
-            }
+            val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
             val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
             for (line in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, CODE_STYLE_SETTING_PREFIX)) {

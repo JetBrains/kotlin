@@ -19,38 +19,67 @@ package org.jetbrains.kotlin.cli.jvm.repl.di
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.frontend.java.di.configureJavaTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImportsFactory
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.TopLevelDescriptorProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.storage.StorageManager
 
-public fun createContainerForReplWithJava(
-        moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
-        moduleContentScope: GlobalSearchScope, additionalFileScopeProvider: FileScopeProvider.AdditionalScopes,
+interface ReplLastLineScopeProvider {
+    val lastLineScope: LexicalScope?
+}
+
+class ReplFileScopeProvider(
+        private val lastLineScopeProvider: ReplLastLineScopeProvider,
+        topLevelDescriptorProvider: TopLevelDescriptorProvider,
+        storageManager: StorageManager,
+        moduleDescriptor: ModuleDescriptor,
+        qualifiedExpressionResolver: QualifiedExpressionResolver,
+        bindingTrace: BindingTrace,
+        ktImportsFactory: KtImportsFactory,
+        additionalScopes: Iterable<FileScopeProvider.AdditionalScopes>
+) : FileScopeProviderImpl(topLevelDescriptorProvider, storageManager, moduleDescriptor, qualifiedExpressionResolver, bindingTrace, ktImportsFactory, additionalScopes) {
+
+    override fun getFileResolutionScope(file: KtFile): LexicalScope
+            = lastLineScopeProvider.lastLineScope ?: super.getFileResolutionScope(file)
+}
+
+fun createContainerForReplWithJava(
+        moduleContext: ModuleContext,
+        bindingTrace: BindingTrace,
+        declarationProviderFactory: DeclarationProviderFactory,
+        moduleContentScope: GlobalSearchScope,
+        lastLineScopeProvider: ReplLastLineScopeProvider,
         packagePartProvider: PackagePartProvider
 ): ContainerForReplWithJava = createContainer("ReplWithJava") {
     useInstance(packagePartProvider)
     configureModule(moduleContext, JvmPlatform, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, LookupTracker.DO_NOTHING)
 
-    useInstance(additionalFileScopeProvider)
+    useInstance(lastLineScopeProvider)
+    useImpl<ReplFileScopeProvider>()
     useInstance(declarationProviderFactory)
 
     CompilerEnvironment.configure(this)
 
-    useImpl<FileScopeProviderImpl>()
     useImpl<SingleModuleClassResolver>()
 }.let {
     it.get<JavaClassFinderImpl>().initialize()
@@ -58,7 +87,7 @@ public fun createContainerForReplWithJava(
     ContainerForReplWithJava(it)
 }
 
-public class ContainerForReplWithJava(container: StorageComponentContainer) {
+class ContainerForReplWithJava(container: StorageComponentContainer) {
     val resolveSession: ResolveSession by container
     val lazyTopDownAnalyzerForTopLevel: LazyTopDownAnalyzerForTopLevel by container
     val javaDescriptorResolver: JavaDescriptorResolver by container

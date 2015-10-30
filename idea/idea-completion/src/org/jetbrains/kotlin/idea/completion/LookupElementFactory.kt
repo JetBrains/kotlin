@@ -42,13 +42,14 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
+data /* we need copy() */
 class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<KotlinType>?,
         private val callType: CallType<*>?,
         private val isInStringTemplateAfterDollar: Boolean,
         public val insertHandlerProvider: InsertHandlerProvider,
-        contextVariablesProvider: () -> Collection<VariableDescriptor>
+        private val contextVariablesProvider: () -> Collection<VariableDescriptor>
 ) {
     private val basicFactory = BasicLookupElementFactory(resolutionFacade.project, insertHandlerProvider)
 

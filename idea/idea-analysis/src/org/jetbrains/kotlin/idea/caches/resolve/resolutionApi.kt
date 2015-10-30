@@ -23,19 +23,13 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
-import org.jetbrains.kotlin.resolve.lazy.LazyFileScope
 
 public fun KtElement.getResolutionFacade(): ResolutionFacade {
     return KotlinCacheService.getInstance(getProject()).getResolutionFacade(listOf(this))
@@ -89,19 +83,19 @@ public fun ResolutionFacade.resolveImportReference(
     val importDirective = KtPsiFactory(project).createImportDirective(ImportPath(fqName, false))
     val qualifiedExpressionResolver = this.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
     return qualifiedExpressionResolver.processImportReference(
-            importDirective, moduleDescriptor, BindingTraceContext(), packageFragmentForVisibilityCheck = null)?.getAllDescriptors() ?: emptyList()
+            importDirective, moduleDescriptor, BindingTraceContext(), packageFragmentForVisibilityCheck = null)?.getContributedDescriptors() ?: emptyList()
 }
 
 //NOTE: idea default API returns module search scope for file under module but not in source or production source (for example, test data )
 // this scope can't be used to search for kotlin declarations in index in order to resolve in that case
 // see com.intellij.psi.impl.file.impl.ResolveScopeManagerImpl.getInherentResolveScope
 public fun getResolveScope(file: KtFile): GlobalSearchScope {
+    if (file is KtCodeFragment) {
+        file.forcedResolveScope?.let { return it }
+    }
+
     return when (file.getModuleInfo()) {
-        is ModuleSourceInfo -> file.getResolveScope()
+        is ModuleSourceInfo -> file.resolveScope
         else -> GlobalSearchScope.EMPTY_SCOPE
     }
-}
-
-public fun ResolutionFacade.getFileTopLevelScope(file: KtFile): LazyFileScope {
-    return frontendService<FileScopeProvider>().getFileScope(file)
 }

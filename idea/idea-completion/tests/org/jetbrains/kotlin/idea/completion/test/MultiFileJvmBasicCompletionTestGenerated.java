@@ -311,6 +311,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("PreferMoreSpecificExtension3")
+    public void testPreferMoreSpecificExtension3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/PreferMoreSpecificExtension3/");
+        doTest(fileName);
+    }
+
     @TestMetadata("PropertyKeysEmptyString")
     public void testPropertyKeysEmptyString() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/PropertyKeysEmptyString/");

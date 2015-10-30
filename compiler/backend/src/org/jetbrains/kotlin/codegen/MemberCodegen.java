@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
+import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
@@ -65,9 +66,8 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isTopLevelDeclaration;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticDeclaration;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -389,7 +389,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         KtExpression initializer = property.getDelegateExpressionOrInitializer();
         assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
 
-        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, true, StackValue.LOCAL_0);
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, false, null, true, StackValue.LOCAL_0);
 
         propValue.store(codegen.gen(initializer), codegen.v);
     }
@@ -479,14 +479,6 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         return false;
     }
 
-    public static void generateModuleNameField(
-            @NotNull GenerationState state,
-            @NotNull ClassBuilder classBuilder
-    ) {
-        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.MODULE_NAME_FIELD,
-                              AsmTypes.JAVA_STRING_TYPE.getDescriptor(), null, state.getModuleName());
-    }
-
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {
         List<KtProperty> delegatedProperties = new ArrayList<KtProperty>();
         for (KtDeclaration declaration : ((KtDeclarationContainer) element).getDeclarations()) {
@@ -509,18 +501,41 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         iv.newarray(PROPERTY_METADATA_TYPE);
 
         for (int i = 0, size = delegatedProperties.size(); i < size; i++) {
-            VariableDescriptor property = BindingContextUtils.getNotNull(bindingContext, VARIABLE, delegatedProperties.get(i));
+            PropertyDescriptor property =
+                    (PropertyDescriptor) BindingContextUtils.getNotNull(bindingContext, VARIABLE, delegatedProperties.get(i));
 
             iv.dup();
             iv.iconst(i);
 
-            ReceiverParameterDescriptor dispatchReceiver = property.getDispatchReceiverParameter();
+            StackValue value;
+            // TODO: remove this option and always generate PropertyReferenceNImpl creation
+            if ("true".equalsIgnoreCase(System.getProperty("kotlin.jvm.optimize.delegated.properties"))) {
+                int receiverCount = (property.getDispatchReceiverParameter() != null ? 1 : 0) +
+                                    (property.getExtensionReceiverParameter() != null ? 1 : 0);
+                Type implType = property.isVar() ? MUTABLE_PROPERTY_REFERENCE_IMPL[receiverCount] : PROPERTY_REFERENCE_IMPL[receiverCount];
+                iv.anew(implType);
+                iv.dup();
+                // TODO: generate the container once and save to a local field instead
+                ClosureCodegen.generateCallableReferenceDeclarationContainer(iv, property, state);
+                iv.aconst(property.getName().asString());
+                iv.aconst(PropertyReferenceCodegen.getPropertyReferenceSignature(property, state));
+                iv.invokespecial(
+                        implType.getInternalName(), "<init>",
+                        Type.getMethodDescriptor(Type.VOID_TYPE, K_DECLARATION_CONTAINER_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE), false
+                );
+                value = StackValue.onStack(implType);
+                Method wrapper = PropertyReferenceCodegen.getWrapperMethodForPropertyReference(property, receiverCount);
+                iv.invokestatic(REFLECTION, wrapper.getName(), wrapper.getDescriptor(), false);
+            }
+            else {
+                ReceiverParameterDescriptor dispatchReceiver = property.getDispatchReceiverParameter();
 
-            //noinspection ConstantConditions
-            StackValue value = createOrGetClInitCodegen().generatePropertyReference(
-                    delegatedProperties.get(i).getDelegate(), property, property,
-                    dispatchReceiver != null ? new TransientReceiver(dispatchReceiver.getType()) : ReceiverValue.NO_RECEIVER
-            );
+                //noinspection ConstantConditions
+                value = createOrGetClInitCodegen().generatePropertyReference(
+                        delegatedProperties.get(i).getDelegate(), property, property,
+                        dispatchReceiver != null ? new TransientReceiver(dispatchReceiver.getType()) : ReceiverValue.NO_RECEIVER
+                );
+            }
 
             value.put(PROPERTY_METADATA_TYPE, iv);
 
@@ -613,10 +628,13 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
-                                         !isCompanionObject(accessor.getContainingDeclaration());
+                    boolean syntheticBackingField = accessor instanceof AccessorForPropertyBackingFieldFromLocal;
+                    boolean forceField = (AsmUtil.isPropertyWithBackingFieldInOuterClass(original) &&
+                                          !isCompanionObject(accessor.getContainingDeclaration())) ||
+                                         syntheticBackingField ||
+                                         original.getVisibility() == JavaVisibilities.PROTECTED_STATIC_VISIBILITY;
                     StackValue property = codegen.intermediateValueForProperty(
-                            original, forceField, accessor.getSuperCallExpression(), true, StackValue.none()
+                            original, forceField, syntheticBackingField, accessor.getSuperCallTarget(), true, StackValue.none()
                     );
 
                     InstructionAdapter iv = codegen.v;
@@ -642,13 +660,14 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 }
             }
 
-            PropertyGetterDescriptor getter = accessor.getGetter();
-            assert getter != null;
-            functionCodegen.generateMethod(Synthetic(null, original.getGetter() != null ? original.getGetter() : original),
-                                           getter, new PropertyAccessorStrategy(getter));
+            if (accessor.isWithSyntheticGetterAccessor()) {
+                PropertyGetterDescriptor getter = accessor.getGetter();
+                assert getter != null;
+                functionCodegen.generateMethod(Synthetic(null, original.getGetter() != null ? original.getGetter() : original),
+                                               getter, new PropertyAccessorStrategy(getter));
+            }
 
-
-            if (accessor.isVar()) {
+            if (accessor.isVar() && accessor.isWithSyntheticSetterAccessor()) {
                 PropertySetterDescriptor setter = accessor.getSetter();
                 assert setter != null;
 
@@ -669,18 +688,18 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(
                 functionDescriptor,
                 accessorDescriptor instanceof AccessorForCallableDescriptor &&
-                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallExpression() != null
+                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null
         );
 
-        boolean isTopLevelDeclaration = isTopLevelDeclaration(functionDescriptor);
-        int reg = isTopLevelDeclaration ? 0 : 1;
+        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor);
+        int reg = hasDispatchReceiver ? 1 : 0;
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
         if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
         }
-        else if (accessorIsConstructor || (accessorDescriptor != null && JetTypeMapper.isAccessor(accessorDescriptor) && !isTopLevelDeclaration)) {
+        else if (accessorIsConstructor || (accessorDescriptor != null && JetTypeMapper.isAccessor(accessorDescriptor) && hasDispatchReceiver)) {
             if (!AnnotationUtilKt.isPlatformStaticInObjectOrClass(functionDescriptor)) {
                 iv.load(0, OBJECT_TYPE);
             }

@@ -312,7 +312,7 @@ public class SingleAbstractMethodUtils {
     @Nullable
     public static JavaMethod getSamInterfaceMethod(@NotNull JavaClass javaClass) {
         FqName fqName = javaClass.getFqName();
-        if (fqName == null || fqName.firstSegmentIs(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) {
+        if (fqName == null || fqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) {
             return null;
         }
         if (!javaClass.isInterface() || javaClass.isAnnotationType()) {

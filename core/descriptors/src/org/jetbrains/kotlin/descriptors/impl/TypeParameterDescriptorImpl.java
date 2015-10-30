@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.types.Variance;
-import org.jetbrains.kotlin.utils.SmartSet;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
@@ -63,7 +63,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
         return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source);
     }
 
-    private final Set<KotlinType> upperBounds = SmartSet.create();
+    private final List<KotlinType> upperBounds = new ArrayList<KotlinType>(1);
     private boolean initialized = false;
 
     private TypeParameterDescriptorImpl(
@@ -132,7 +132,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
 
     @NotNull
     @Override
-    protected Set<KotlinType> resolveUpperBounds() {
+    protected List<KotlinType> resolveUpperBounds() {
         checkInitialized();
         return upperBounds;
     }

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.preprocessor
 interface Evaluator : (List<Conditional>) -> Boolean
 
 interface PlatformEvaluator : Evaluator {
-    override fun invoke(conditions: List<Conditional>): Boolean = evaluate(conditions.filterIsInstance())
+    override fun invoke(conditions: List<Conditional>): Boolean = evaluate(conditions.filterIsInstance<Conditional.PlatformVersion>())
 
     open fun evaluate(conditions: List<Conditional.PlatformVersion>): Boolean
             = conditions.isEmpty() || conditions.any { match(it) }

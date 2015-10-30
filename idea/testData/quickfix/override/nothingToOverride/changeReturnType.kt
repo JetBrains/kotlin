@@ -1,5 +1,5 @@
 // "Change function signature to 'fun f(a: Int): Int'" "true"
-// ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>kotlin.Int</td></tr><tr><td>Found:</td><td>kotlin.String</td></tr></table></html>
+// ERROR: Type mismatch: inferred type is kotlin.String but kotlin.Int was expected
 open class A {
     open fun f(a: Int): Int = 0
 }

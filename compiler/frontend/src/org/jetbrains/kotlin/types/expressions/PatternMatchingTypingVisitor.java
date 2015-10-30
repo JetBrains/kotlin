@@ -53,12 +53,12 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitIsExpression(@NotNull KtIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
+    public KotlinTypeInfo visitIsExpression(@NotNull KtIsExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = contextWithExpectedType
                                             .replaceExpectedType(NO_EXPECTED_TYPE)
                                             .replaceContextDependency(INDEPENDENT);
         KtExpression leftHandSide = expression.getLeftHandSide();
-        JetTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
+        KotlinTypeInfo typeInfo = facade.safeGetTypeInfo(leftHandSide, context.replaceScope(context.scope));
         KotlinType knownType = typeInfo.getType();
         if (expression.getTypeReference() != null) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context);
@@ -70,11 +70,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitWhenExpression(@NotNull KtWhenExpression expression, ExpressionTypingContext context) {
+    public KotlinTypeInfo visitWhenExpression(@NotNull KtWhenExpression expression, ExpressionTypingContext context) {
         return visitWhenExpression(expression, context, false);
     }
 
-    public JetTypeInfo visitWhenExpression(KtWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+    public KotlinTypeInfo visitWhenExpression(KtWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
         components.dataFlowAnalyzer.recordExpectedType(contextWithExpectedType.trace, expression, contextWithExpectedType.expectedType);
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
@@ -87,7 +87,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             subjectType = ErrorUtils.createErrorType("Unknown type");
         }
         else {
-            JetTypeInfo typeInfo = facade.safeGetTypeInfo(subjectExpression, context);
+            KotlinTypeInfo typeInfo = facade.safeGetTypeInfo(subjectExpression, context);
             loopBreakContinuePossible = typeInfo.getJumpOutPossible();
             subjectType = typeInfo.getType();
             assert subjectType != null;
@@ -117,7 +117,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 ExpressionTypingContext newContext = contextWithExpectedType
                         .replaceScope(scopeToExtend).replaceDataFlowInfo(infosForCondition.thenInfo).replaceContextDependency(INDEPENDENT);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-                JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+                KotlinTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                         scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext);
                 loopBreakContinuePossible |= typeInfo.getJumpOutPossible();
                 KotlinType type = typeInfo.getType();
@@ -200,8 +200,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     return;
                 }
                 ValueArgument argumentForSubject = CallMaker.makeExternalValueArgument(subjectExpression);
-                JetTypeInfo typeInfo = facade.checkInExpression(condition, condition.getOperationReference(),
-                                                                argumentForSubject, rangeExpression, context);
+                KotlinTypeInfo typeInfo = facade.checkInExpression(condition, condition.getOperationReference(),
+                                                                   argumentForSubject, rangeExpression, context);
                 DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
                 newDataFlowInfo.set(new DataFlowInfos(dataFlowInfo, dataFlowInfo));
                 KotlinType type = typeInfo.getType();
@@ -267,7 +267,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (expression == null) {
             return noChange(context);
         }
-        JetTypeInfo typeInfo = facade.getTypeInfo(expression, context);
+        KotlinTypeInfo typeInfo = facade.getTypeInfo(expression, context);
         KotlinType type = typeInfo.getType();
         if (type == null) {
             return noChange(context);

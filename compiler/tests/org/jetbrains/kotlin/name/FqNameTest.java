@@ -25,52 +25,6 @@ import java.util.List;
 
 public class FqNameTest {
     @Test
-    public void pathRoot() {
-        List<FqName> path = new FqName("").path();
-        Assert.assertEquals(1, path.size());
-        Assert.assertEquals("", path.get(0).asString());
-    }
-
-    @Test
-    public void pathLevel1() {
-        List<FqName> path = new FqName("org").path();
-        Assert.assertEquals(2, path.size());
-        Assert.assertEquals("", path.get(0).asString());
-        Assert.assertEquals("org", path.get(1).asString());
-        Assert.assertEquals("org", path.get(1).shortName().asString());
-        Assert.assertEquals("", path.get(1).parent().asString());
-    }
-
-    @Test
-    public void pathLevel2() {
-        List<FqName> path = new FqName("org.jetbrains").path();
-        Assert.assertEquals(3, path.size());
-        Assert.assertEquals("", path.get(0).asString());
-        Assert.assertEquals("org", path.get(1).asString());
-        Assert.assertEquals("org", path.get(1).shortName().asString());
-        Assert.assertEquals("", path.get(1).parent().asString());
-        Assert.assertEquals("org.jetbrains", path.get(2).asString());
-        Assert.assertEquals("jetbrains", path.get(2).shortName().asString());
-        Assert.assertEquals("org", path.get(2).parent().asString());
-    }
-
-    @Test
-    public void pathLevel3() {
-        List<FqName> path = new FqName("org.jetbrains.kotlin").path();
-        Assert.assertEquals(4, path.size());
-        Assert.assertEquals("", path.get(0).asString());
-        Assert.assertEquals("org", path.get(1).asString());
-        Assert.assertEquals("org", path.get(1).shortName().asString());
-        Assert.assertEquals("", path.get(1).parent().asString());
-        Assert.assertEquals("org.jetbrains", path.get(2).asString());
-        Assert.assertEquals("jetbrains", path.get(2).shortName().asString());
-        Assert.assertEquals("org", path.get(2).parent().asString());
-        Assert.assertEquals("org.jetbrains.kotlin", path.get(3).asString());
-        Assert.assertEquals("kotlin", path.get(3).shortName().asString());
-        Assert.assertEquals("org.jetbrains", path.get(3).parent().asString());
-    }
-
-    @Test
     public void pathSegments() {
         Assert.assertEquals(new ArrayList<Name>(), new FqName("").pathSegments());
 

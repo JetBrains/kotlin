@@ -99,9 +99,12 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
+import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> implements LocalLookup {
@@ -373,7 +376,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return labelTarget;
         }
         assert descriptor instanceof ClassDescriptor : "Don't know how to generate super-call to not a class";
-        return getParentContextSubclassOf((ClassDescriptor) descriptor, context).getThisDescriptor();
+        CodegenContext result = getParentContextSubclassOf((ClassDescriptor) descriptor, context);
+        assert result != null : "Can't find parent context for " + descriptor;
+        return result.getThisDescriptor();
     }
 
     @NotNull
@@ -2008,15 +2013,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
 
             boolean directToField = isSyntheticField && contextKind() != OwnerKind.DEFAULT_IMPLS;
-            KtSuperExpression superExpression =
-                    resolvedCall == null ? null : CallResolverUtilKt.getSuperCallExpression(resolvedCall.getCall());
-            propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);
+            ClassDescriptor superCallTarget = resolvedCall == null ? null : getSuperCallTarget(resolvedCall.getCall());
 
             if (directToField) {
                 receiver = StackValue.receiverWithoutReceiverArgument(receiver);
             }
 
-            return intermediateValueForProperty(propertyDescriptor, directToField, superExpression, receiver);
+            return intermediateValueForProperty(propertyDescriptor, directToField, directToField, superCallTarget, false, receiver);
         }
 
         if (descriptor instanceof ClassDescriptor) {
@@ -2025,10 +2028,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return StackValue.singleton(classDescriptor, typeMapper);
             }
             if (isEnumEntry(classDescriptor)) {
-                DeclarationDescriptor enumClass = classDescriptor.getContainingDeclaration();
-                assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
-                Type type = typeMapper.mapType((ClassDescriptor) enumClass);
-                return StackValue.field(type, type, descriptor.getName().asString(), true, StackValue.none(), classDescriptor);
+                return StackValue.enumEntry(classDescriptor, typeMapper);
             }
             ClassDescriptor companionObjectDescriptor = classDescriptor.getCompanionObjectDescriptor();
             if (companionObjectDescriptor != null) {
@@ -2057,6 +2057,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+    }
+
+    @Nullable
+    private ClassDescriptor getSuperCallTarget(@NotNull Call call) {
+        KtSuperExpression superExpression = CallResolverUtilKt.getSuperCallExpression(call);
+        return superExpression == null ? null : getSuperCallLabelTarget(context, superExpression);
     }
 
     @Nullable
@@ -2137,16 +2143,31 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
-            @Nullable KtSuperExpression superExpression,
+            @Nullable ClassDescriptor superCallTarget,
             @NotNull StackValue receiver
     ) {
-        return intermediateValueForProperty(propertyDescriptor, forceField, superExpression, false, receiver);
+        return intermediateValueForProperty(propertyDescriptor, forceField, false, superCallTarget, false, receiver);
+    }
+
+    private CodegenContext getBackingFieldContext(
+            @NotNull FieldAccessorKind accessorKind,
+            @NotNull DeclarationDescriptor containingDeclaration
+    ) {
+        switch (accessorKind) {
+            case NORMAL: return context.getParentContext();
+            // For companion object property, backing field lives in object containing class
+            // Otherwise, it lives in its containing declaration
+            case IN_CLASS_COMPANION: return context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
+            case FIELD_FROM_LOCAL: return context.findParentContextWithDescriptor(containingDeclaration);
+            default: throw new IllegalStateException();
+        }
     }
 
     public StackValue.Property intermediateValueForProperty(
             @NotNull PropertyDescriptor propertyDescriptor,
             boolean forceField,
-            @Nullable KtSuperExpression superExpression,
+            boolean syntheticBackingField,
+            @Nullable ClassDescriptor superCallTarget,
             boolean skipAccessorsForPrivateFieldInOuterClass,
             StackValue receiver
     ) {
@@ -2156,10 +2177,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
 
-        boolean isBackingFieldInAnotherClass = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        FieldAccessorKind fieldAccessorKind = FieldAccessorKind.NORMAL;
+        boolean isBackingFieldInClassCompanion = AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor);
+        if (isBackingFieldInClassCompanion && forceField) {
+            fieldAccessorKind = FieldAccessorKind.IN_CLASS_COMPANION;
+        }
+        else if (syntheticBackingField && context.getParentContext().getContextDescriptor() != containingDeclaration) {
+            fieldAccessorKind = FieldAccessorKind.FIELD_FROM_LOCAL;
+        }
         boolean isStaticBackingField = DescriptorUtils.isStaticDeclaration(propertyDescriptor) ||
                                        AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor);
-        boolean isSuper = superExpression != null;
+        boolean isSuper = superCallTarget != null;
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
 
         KotlinType delegateType = getPropertyDelegateType(propertyDescriptor, bindingContext);
@@ -2168,43 +2196,42 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         CallableMethod callableGetter = null;
         CallableMethod callableSetter = null;
 
-        CodegenContext backingFieldContext;
-        boolean changeOwnerOnTypeMapping;
+        CodegenContext backingFieldContext = getBackingFieldContext(fieldAccessorKind, containingDeclaration);
+        DeclarationDescriptor ownerDescriptor = containingDeclaration;
         boolean skipPropertyAccessors;
 
-        if (isBackingFieldInAnotherClass && forceField) {
-            backingFieldContext = context.findParentContextWithDescriptor(containingDeclaration.getContainingDeclaration());
+        PropertyDescriptor originalPropertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
+        if (fieldAccessorKind != FieldAccessorKind.NORMAL) {
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || skipAccessorsForPrivateFieldInOuterClass;
             if (!skipPropertyAccessors) {
                 //noinspection ConstantConditions
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(
-                        propertyDescriptor, true, delegateType, superExpression
+                        propertyDescriptor, fieldAccessorKind, delegateType, superCallTarget
                 );
-                changeOwnerOnTypeMapping = !(propertyDescriptor instanceof AccessorForPropertyBackingFieldInOuterClass);
-            }
-            else {
-                changeOwnerOnTypeMapping = true;
+                assert propertyDescriptor instanceof AccessorForPropertyBackingField :
+                        "Unexpected accessor descriptor: " + propertyDescriptor;
+                ownerDescriptor = propertyDescriptor;
             }
         }
         else {
-            backingFieldContext = context.getParentContext();
-            changeOwnerOnTypeMapping = isBackingFieldInAnotherClass;
+            if (!isBackingFieldInClassCompanion) {
+                ownerDescriptor = propertyDescriptor;
+            }
             skipPropertyAccessors = forceField;
         }
 
         if (!skipPropertyAccessors) {
             if (!couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context)) {
                 if (isSuper && !isJvmInterface(containingDeclaration)) {
-                    ClassDescriptor owner = getSuperCallLabelTarget(context, superExpression);
-                    CodegenContext c = context.findParentContextWithDescriptor(owner);
+                    CodegenContext c = context.findParentContextWithDescriptor(superCallTarget);
                     assert c != null : "Couldn't find a context for a super-call: " + propertyDescriptor;
                     if (c != context.getParentContext()) {
-                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor, superExpression);
+                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor, superCallTarget);
                     }
                 }
 
-                propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superExpression);
+                propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
                 if (getter != null && !hasJvmFieldAnnotation(propertyDescriptor)) {
@@ -2226,14 +2253,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
         }
 
-        Type backingFieldOwner =
-                typeMapper.mapOwner(changeOwnerOnTypeMapping ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor);
+        Type backingFieldOwner = typeMapper.mapOwner(ownerDescriptor);
 
         String fieldName;
         if (isExtensionProperty && !isDelegatedProperty) {
             fieldName = null;
         }
-        else if (propertyDescriptor.getContainingDeclaration() == backingFieldContext.getContextDescriptor()) {
+        else if (originalPropertyDescriptor.getContainingDeclaration() == backingFieldContext.getContextDescriptor()) {
             assert backingFieldContext instanceof FieldOwnerContext
                     : "Actual context is " + backingFieldContext + " but should be instance of FieldOwnerContext";
             fieldName = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
@@ -2338,7 +2364,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // $default method is not private, so you need no accessor to call it
         return usesDefaultArguments(resolvedCall)
                ? descriptor
-               : context.accessibleDescriptor(descriptor, CallResolverUtilKt.getSuperCallExpression(resolvedCall.getCall()));
+               : context.accessibleDescriptor(descriptor, getSuperCallTarget(resolvedCall.getCall()));
     }
 
     private static boolean usesDefaultArguments(@NotNull ResolvedCall<?> resolvedCall) {
@@ -2360,15 +2386,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
-        KtSuperExpression superCallExpression = CallResolverUtilKt.getSuperCallExpression(call);
-        boolean superCall = superCallExpression != null;
+        ClassDescriptor superCallTarget = getSuperCallTarget(call);
+        boolean superCall = superCallTarget != null;
 
         if (superCall && !isJvmInterface(fd.getContainingDeclaration())) {
-            ClassDescriptor owner = getSuperCallLabelTarget(context, superCallExpression);
-            CodegenContext c = context.findParentContextWithDescriptor(owner);
+            CodegenContext c = context.findParentContextWithDescriptor(superCallTarget);
             assert c != null : "Couldn't find a context for a super-call: " + fd;
             if (c != context.getParentContext()) {
-                fd = (FunctionDescriptor) c.getAccessor(fd, superCallExpression);
+                fd = (FunctionDescriptor) c.getAccessor(fd, superCallTarget);
             }
         }
 
@@ -2377,17 +2402,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return callable.invokeMethodWithArguments(resolvedCall, receiver, this);
     }
 
+    @Nullable
     // Find the first parent of the current context which corresponds to a subclass of a given class
-    @NotNull
-    private static CodegenContext getParentContextSubclassOf(ClassDescriptor descriptor, CodegenContext context) {
+    public static CodegenContext getParentContextSubclassOf(ClassDescriptor descriptor, CodegenContext context) {
         CodegenContext c = context;
-        while (true) {
+        while (c != null) {
             if (c instanceof ClassContext && DescriptorUtils.isSubclass(c.getThisDescriptor(), descriptor)) {
                 return c;
             }
             c = c.getParentContext();
-            assert c != null;
         }
+        return null;
     }
 
     @NotNull
@@ -2486,7 +2511,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
-        boolean isInline = (state.isInlineEnabled() || DescriptorUtils.containsReifiedTypeParameters(descriptor)) &&
+        boolean isInline = (state.isInlineEnabled() || InlineUtil.containsReifiedTypeParameters(descriptor)) &&
                            InlineUtil.isInline(descriptor);
 
         if (!isInline) return defaultCallGenerator;
@@ -2548,7 +2573,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
             }
             else {
-                return StackValue.thisOrOuter(this, receiverDescriptor, false, false);
+                return StackValue.thisOrOuter(this, receiverDescriptor, false, isEnumEntry(receiverDescriptor));
             }
         }
         else if (receiverValue instanceof ScriptReceiver) {
@@ -2617,6 +2642,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (calleeContainingClass.equals(context.getThisDescriptor()) &&
                 !AnnotationUtilKt.isPlatformStaticInObjectOrClass(context.getContextDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
+            }
+            else if (isEnumEntry(calleeContainingClass)) {
+                return StackValue.enumEntry(calleeContainingClass, typeMapper);
             }
             else {
                 return StackValue.singleton(calleeContainingClass, typeMapper);
@@ -2765,7 +2793,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert state.getReflectionTypes().getKClass().getTypeConstructor().equals(type.getConstructor())
                 : "::class expression should be type checked to a KClass: " + type;
 
-        return generateClassLiteralReference(typeMapper, CollectionsKt.single(type.getArguments()).getType());
+        return generateClassLiteralReference(typeMapper, CollectionsKt.single(type.getArguments()).getType(), this);
     }
 
     @Override
@@ -2811,7 +2839,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public static StackValue generateClassLiteralReference(@NotNull final JetTypeMapper typeMapper, @NotNull final KotlinType type) {
+    public static StackValue generateClassLiteralReference(@NotNull JetTypeMapper typeMapper, @NotNull KotlinType type) {
+        return generateClassLiteralReference(typeMapper, type, null);
+    }
+
+    @NotNull
+    private static StackValue generateClassLiteralReference(@NotNull final JetTypeMapper typeMapper, @NotNull final KotlinType type, @Nullable final ExpressionCodegen codegen) {
         return StackValue.operation(K_CLASS_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -2821,11 +2854,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
                     assert typeParameterDescriptor.isReified() :
                             "Non-reified type parameter under ::class should be rejected by type checker: " + typeParameterDescriptor;
-                    v.visitLdcInsn(typeParameterDescriptor.getName().asString());
-                    v.invokestatic(
-                            IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME,
-                            Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(String.class)), false
-                    );
+                    assert codegen != null :
+                            "Reference to member of reified type should be rejected by type checker " + typeParameterDescriptor;
+                    codegen.putReifierMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME);
                 }
 
                 putJavaLangClassInstance(v, classAsmType);

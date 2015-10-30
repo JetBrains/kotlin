@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.slicedMap.*;
 
@@ -132,13 +132,13 @@ public class BindingTraceContext implements BindingTrace {
     @Nullable
     @Override
     public KotlinType getType(@NotNull KtExpression expression) {
-        JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+        KotlinTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
         return typeInfo != null ? typeInfo.getType() : null;
     }
 
     @Override
     public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
-        JetTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
+        KotlinTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
         typeInfo = typeInfo != null ? typeInfo.replaceType(type) : TypeInfoFactoryKt.createTypeInfo(type);
         record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo);
     }

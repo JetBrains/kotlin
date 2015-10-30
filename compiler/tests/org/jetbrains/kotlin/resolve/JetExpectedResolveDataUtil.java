@@ -137,7 +137,7 @@ public class JetExpectedResolveDataUtil {
         emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE$);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                new BindingTraceContext(), ScopeUtilsKt.memberScopeAsFileScope(classDescriptor.getDefaultType().getMemberScope()),
+                new BindingTraceContext(), ScopeUtilsKt.memberScopeAsImportingScope(classDescriptor.getDefaultType().getMemberScope()),
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         OverloadResolutionResults<FunctionDescriptor> functions = container.getFakeCallResolver().resolveFakeCall(

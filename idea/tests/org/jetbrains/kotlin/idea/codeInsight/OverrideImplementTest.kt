@@ -184,6 +184,10 @@ public class OverrideImplementTest : AbstractOverrideImplementTest() {
         doMultiOverrideFileTest()
     }
 
+    public fun testNoAnyMembersInInterface() {
+        doMultiOverrideFileTest()
+    }
+
     public fun testLocalClass() {
         doImplementFileTest()
     }

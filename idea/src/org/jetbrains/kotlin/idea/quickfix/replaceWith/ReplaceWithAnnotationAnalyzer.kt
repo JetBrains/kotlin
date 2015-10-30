@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -141,7 +141,7 @@ object ReplaceWithAnnotationAnalyzer {
                     else
                         resolvedCall.dispatchReceiver
                     if (receiver is ThisReceiver) {
-                        val receiverExpression = receiver.asExpression(scope.asJetScope(), psiFactory)
+                        val receiverExpression = receiver.asExpression(scope, psiFactory)
                         if (receiverExpression != null) {
                             receiversToAdd.add(expression to receiverExpression)
                         }
@@ -237,7 +237,7 @@ object ReplaceWithAnnotationAnalyzer {
         return traceContext.bindingContext
     }
 
-    private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<KtScope>): LexicalScope? {
+    private fun getResolutionScope(descriptor: DeclarationDescriptor, ownerDescriptor: DeclarationDescriptor, additionalScopes: Collection<ImportingScope>): LexicalScope? {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
                 val moduleDescriptor = descriptor.containingDeclaration
@@ -245,7 +245,7 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             is PackageViewDescriptor ->
-                ChainedScope(ownerDescriptor, "ReplaceWith resolution scope", descriptor.memberScope, *additionalScopes.toTypedArray()).asLexicalScope()
+                chainImportingScopes(listOf(descriptor.memberScope.memberScopeAsImportingScope()) + additionalScopes)
 
             is ClassDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null

@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtObjectDeclaration;
-import org.jetbrains.kotlin.psi.KtSecondaryConstructor;
+import org.jetbrains.kotlin.psi.*;
 
 import java.util.Collection;
 import java.util.Map;
@@ -156,7 +153,7 @@ public class OverloadResolver {
     }
 
     @NotNull
-    private static Set<Pair<KtDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<? extends CallableMemberDescriptor> members) {
+    private Set<Pair<KtDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<? extends CallableMemberDescriptor> members) {
         Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newLinkedHashSet();
         for (CallableMemberDescriptor member : members) {
             for (CallableMemberDescriptor member2 : members) {
@@ -165,6 +162,10 @@ public class OverloadResolver {
                 }
 
                 if (!OverloadUtil.isOverloadable(member, member2) && member.getKind() != CallableMemberDescriptor.Kind.SYNTHESIZED) {
+                    if (isTopLevelMainInDifferentFiles(member, member2)) {
+                        continue;
+                    }
+
                     KtDeclaration ktDeclaration = (KtDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
                     if (ktDeclaration != null) {
                         redeclarations.add(Pair.create(ktDeclaration, member));
@@ -187,11 +188,19 @@ public class OverloadResolver {
                member.getContainingDeclaration().getContainingDeclaration().equals(member2.getContainingDeclaration().getContainingDeclaration());
     }
 
+    private boolean isTopLevelMainInDifferentFiles(@NotNull CallableMemberDescriptor member, @NotNull CallableMemberDescriptor member2) {
+        if (!DescriptorToSourceUtils.isTopLevelMainFunction(member, mainFunctionDetector) ||
+            !DescriptorToSourceUtils.isTopLevelMainFunction(member2, mainFunctionDetector)) {
+            return false;
+        }
+
+        return DescriptorToSourceUtils.getContainingFile(member) != DescriptorToSourceUtils.getContainingFile(member2);
+    }
+
     private void reportRedeclarations(@NotNull String functionContainer,
             @NotNull Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations) {
         for (Pair<KtDeclaration, CallableMemberDescriptor> redeclaration : redeclarations) {
             CallableMemberDescriptor memberDescriptor = redeclaration.getSecond();
-            if (DescriptorToSourceUtils.isTopLevelMainFunction(memberDescriptor, mainFunctionDetector)) return;
 
             KtDeclaration ktDeclaration = redeclaration.getFirst();
             if (memberDescriptor instanceof PropertyDescriptor) {

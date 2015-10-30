@@ -109,14 +109,10 @@ public abstract class LazyJavaScope(
             returnType: KotlinType,
             valueParameters: ResolvedValueParameters): MethodSignatureData
 
-    open fun resolveMethodToFunctionDescriptor(method: JavaMethod): JavaMethodDescriptor {
-        return resolveMethodToFunctionDescriptorWithName(method, method.name)
-    }
-
-    protected fun resolveMethodToFunctionDescriptorWithName(method: JavaMethod, name: Name): JavaMethodDescriptor {
+    fun resolveMethodToFunctionDescriptor(method: JavaMethod): JavaMethodDescriptor {
         val annotations = c.resolveAnnotations(method)
         val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
-                containingDeclaration, annotations, name, c.components.sourceElementFactory.source(method)
+                containingDeclaration, annotations, method.name, c.components.sourceElementFactory.source(method)
         )
 
         val c = c.child(functionDescriptorImpl, method)

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
-import org.jetbrains.kotlin.types.TypeUtils.makeConstantSubstitutor
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
@@ -324,4 +324,16 @@ fun getResolutionResultsCachedData(expression: KtExpression?, context: Resolutio
     val argumentCall = expression?.getCall(context.trace.getBindingContext()) ?: return null
 
     return context.resolutionResultsCache[argumentCall]
+}
+
+fun makeConstantSubstitutor(typeParameterDescriptors: Collection<TypeParameterDescriptor>, type: KotlinType): TypeSubstitutor {
+    val constructors = typeParameterDescriptors.map { it.typeConstructor }.toSet()
+    val projection = TypeProjectionImpl(type)
+
+    return TypeSubstitutor.create(object : TypeConstructorSubstitution() {
+        override operator fun get(key: TypeConstructor) =
+                if (key in constructors) projection else null
+
+        override fun isEmpty() = false
+    })
 }

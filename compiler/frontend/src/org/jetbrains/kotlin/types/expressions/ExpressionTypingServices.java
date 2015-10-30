@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -82,7 +81,7 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetTypeInfo getTypeInfo(
+    public KotlinTypeInfo getTypeInfo(
             @NotNull LexicalScope scope,
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
@@ -97,7 +96,7 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetTypeInfo getTypeInfo(@NotNull KtExpression expression, @NotNull ResolutionContext resolutionContext) {
+    public KotlinTypeInfo getTypeInfo(@NotNull KtExpression expression, @NotNull ResolutionContext resolutionContext) {
         return expressionTypingFacade.getTypeInfo(expression, ExpressionTypingContext.newContext(resolutionContext));
     }
 
@@ -148,12 +147,12 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetTypeInfo getBlockReturnedType(KtBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
+    public KotlinTypeInfo getBlockReturnedType(KtBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
         return getBlockReturnedType(expression, isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION, context);
     }
 
     @NotNull
-    public JetTypeInfo getBlockReturnedType(
+    public KotlinTypeInfo getBlockReturnedType(
             @NotNull KtBlockExpression expression,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
@@ -173,7 +172,7 @@ public class ExpressionTypingServices {
                                                               new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        JetTypeInfo r;
+        KotlinTypeInfo r;
         if (block.isEmpty()) {
             r = expressionTypingComponents.dataFlowAnalyzer
                     .createCheckedTypeInfo(expressionTypingComponents.builtIns.getUnitType(), context, expression);
@@ -185,7 +184,7 @@ public class ExpressionTypingServices {
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
         if (containingDescriptor instanceof ScriptDescriptor) {
-            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, ScopeUtilsKt.asJetScope(scope));
+            context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, scope);
         }
 
         return r;
@@ -206,7 +205,7 @@ public class ExpressionTypingServices {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE
         );
-        JetTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
+        KotlinTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
         KotlinType type = typeInfo.getType();
         if (type != null) {
@@ -222,7 +221,7 @@ public class ExpressionTypingServices {
      * Determines block returned type and data flow information at the end of the block AND
      * at the nearest jump point from the block beginning.
      */
-    /*package*/ JetTypeInfo getBlockReturnedTypeWithWritableScope(
+    /*package*/ KotlinTypeInfo getBlockReturnedTypeWithWritableScope(
             @NotNull LexicalWritableScope scope,
             @NotNull List<? extends KtElement> block,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
@@ -236,7 +235,7 @@ public class ExpressionTypingServices {
                 expressionTypingComponents, annotationChecker, scope);
         ExpressionTypingContext newContext = context.replaceScope(scope).replaceExpectedType(NO_EXPECTED_TYPE);
 
-        JetTypeInfo result = TypeInfoFactoryKt.noTypeInfo(context);
+        KotlinTypeInfo result = TypeInfoFactoryKt.noTypeInfo(context);
         // Jump point data flow info
         DataFlowInfo beforeJumpInfo = newContext.dataFlowInfo;
         boolean jumpOutPossible = false;
@@ -271,7 +270,7 @@ public class ExpressionTypingServices {
         return result.replaceJumpOutPossible(jumpOutPossible).replaceJumpFlowInfo(beforeJumpInfo);
     }
 
-    private JetTypeInfo getTypeOfLastExpressionInBlock(
+    private KotlinTypeInfo getTypeOfLastExpressionInBlock(
             @NotNull KtExpression statementExpression,
             @NotNull ExpressionTypingContext context,
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
@@ -289,7 +288,7 @@ public class ExpressionTypingServices {
 
             return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType), true);
         }
-        JetTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
+        KotlinTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
         if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {
             boolean mightBeUnit = false;
             if (statementExpression instanceof KtDeclaration) {

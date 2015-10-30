@@ -14,9 +14,10 @@ class ComplexMapJsTest : MapJsTest() {
         HashMap<K, Int>(3, 0.5f)
         val map = HashMap<K, Int>(createTestMap() as HashMap<K, Int>)
 
-        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
-        assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
+        assertEquals(KEYS.toNormalizedList(), map.keys.toNormalizedList() as List<Any>)
+        assertEquals(VALUES.toNormalizedList(), map.values.toNormalizedList())
     }
+
     @test override fun constructors() {
         doTest<String>()
     }
@@ -35,8 +36,8 @@ class PrimitiveMapJsTest : MapJsTest() {
 
         val map = HashMap<String, Int>(createTestMap())
 
-        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
-        assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
+        assertEquals(KEYS.toNormalizedList(), map.keys.toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), map.values.toNormalizedList())
     }
 
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.sorted()
@@ -62,8 +63,8 @@ class LinkedHashMapTest : MapJsTest() {
 
         val map = LinkedHashMap<String, Int>(createTestMap())
 
-        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
-        assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
+        assertEquals(KEYS.toNormalizedList(), map.keys.toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), map.values.toNormalizedList())
     }
 
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toList()

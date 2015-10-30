@@ -176,9 +176,10 @@ public class DescriptorKindFilter(
         public val ALL_KINDS_MASK: Int = 0x1F
         public val CLASSIFIERS_MASK: Int = NON_SINGLETON_CLASSIFIERS_MASK or SINGLETON_CLASSIFIERS_MASK
         public val VALUES_MASK: Int = SINGLETON_CLASSIFIERS_MASK or FUNCTIONS_MASK or VARIABLES_MASK
+        public val CALLABLES_MASK: Int = FUNCTIONS_MASK or VARIABLES_MASK
 
         public val ALL: DescriptorKindFilter = DescriptorKindFilter(ALL_KINDS_MASK)
-        public val CALLABLES: DescriptorKindFilter = DescriptorKindFilter(FUNCTIONS_MASK or VARIABLES_MASK)
+        public val CALLABLES: DescriptorKindFilter = DescriptorKindFilter(CALLABLES_MASK)
         public val NON_SINGLETON_CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(NON_SINGLETON_CLASSIFIERS_MASK)
         public val SINGLETON_CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(SINGLETON_CLASSIFIERS_MASK)
         public val CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(CLASSIFIERS_MASK)

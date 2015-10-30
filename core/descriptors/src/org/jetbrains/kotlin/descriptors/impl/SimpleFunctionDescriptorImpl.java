@@ -76,16 +76,18 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     protected FunctionDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         return new SimpleFunctionDescriptorImpl(
                 newOwner,
                 (SimpleFunctionDescriptor) original,
                 // TODO : safeSubstitute
                 getAnnotations(),
-                getName(),
+                newName != null ? newName : getName(),
                 kind,
-                SourceElement.NO_SOURCE
+                getSourceToUseForCopy(preserveSource, original)
         );
     }
 
@@ -103,5 +105,27 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
                 null, copyOverrides, kind
         );
+    }
+
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptor createRenamedCopy(@NotNull Name name) {
+        //noinspection ConstantConditions
+        return (SimpleFunctionDescriptorImpl) doSubstitute(
+                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
+                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                null, /* copyOverrides = */ true, getKind(), getValueParameters(), getExtensionReceiverParameterType(), getReturnType(), name,
+                /* preserveSource = */ true, /* signatureChange = */ true);
+    }
+
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptor createCopyWithNewValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
+        //noinspection ConstantConditions
+        return (SimpleFunctionDescriptorImpl) doSubstitute(
+                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
+                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                null, /* copyOverrides = */ true, getKind(), valueParameters, getExtensionReceiverParameterType(), getReturnType(), null,
+                /* preserveSource = */ true, /* signatureChange = */ true);
     }
 }

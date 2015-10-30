@@ -24,12 +24,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -491,10 +494,14 @@ public abstract class StackValue {
             @Nullable Callable callableMethod
     ) {
         ReceiverValue callDispatchReceiver = resolvedCall.getDispatchReceiver();
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+        if (descriptor instanceof SyntheticFieldDescriptor) {
+            callDispatchReceiver = ((SyntheticFieldDescriptor) descriptor).getDispatchReceiverForBackend();
+        }
+
         ReceiverValue callExtensionReceiver = resolvedCall.getExtensionReceiver();
         if (callDispatchReceiver.exists() || callExtensionReceiver.exists()
             || isLocalFunCall(callableMethod) || isCallToMemberObjectImportedByName(resolvedCall)) {
-            CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
             ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
 
@@ -511,7 +518,7 @@ public abstract class StackValue {
                     descriptor
             );
             StackValue extensionReceiver = genReceiver(receiver, codegen, resolvedCall, callableMethod, callExtensionReceiver, true);
-            Type type = CallReceiver.calcType(resolvedCall, dispatchReceiverParameter, extensionReceiverParameter, codegen.typeMapper, callableMethod);
+            Type type = CallReceiver.calcType(resolvedCall, dispatchReceiverParameter, extensionReceiverParameter, codegen.typeMapper, callableMethod, codegen.getState());
             assert type != null : "Could not map receiver type for " + resolvedCall;
             return new CallReceiver(dispatchReceiver, extensionReceiver, type);
         }
@@ -574,7 +581,16 @@ public abstract class StackValue {
         return receiverWithParameter;
     }
 
-    public static Field singleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
+    @NotNull
+    public static Field enumEntry(@NotNull ClassDescriptor descriptor, @NotNull JetTypeMapper typeMapper) {
+        DeclarationDescriptor enumClass = descriptor.getContainingDeclaration();
+        assert DescriptorUtils.isEnumClass(enumClass) : "Enum entry should be declared in enum class: " + descriptor;
+        Type type = typeMapper.mapType((ClassDescriptor) enumClass);
+        return field(type, type, descriptor.getName().asString(), true, none(), descriptor);
+    }
+
+    @NotNull
+    public static Field singleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
         return field(FieldInfo.createForSingleton(classDescriptor, typeMapper));
     }
 
@@ -1328,9 +1344,21 @@ public abstract class StackValue {
                 @Nullable ReceiverParameterDescriptor dispatchReceiver,
                 @Nullable ReceiverParameterDescriptor extensionReceiver,
                 @NotNull JetTypeMapper typeMapper,
-                @Nullable Callable callableMethod
+                @Nullable Callable callableMethod,
+                @NotNull GenerationState state
         ) {
             if (extensionReceiver != null) {
+                CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
+
+                if (descriptor instanceof PropertyDescriptor &&
+                    // hackaround: boxing changes behaviour of T.javaClass intrinsic
+                    !(state.getIntrinsics().getIntrinsic((PropertyDescriptor) descriptor) instanceof JavaClassProperty)
+                ) {
+                    ReceiverParameterDescriptor receiverCandidate = descriptor.getExtensionReceiverParameter();
+                    assert receiverCandidate != null;
+                    return typeMapper.mapType(receiverCandidate.getType());
+                }
+
                 return callableMethod != null ? callableMethod.getExtensionReceiverType() : typeMapper.mapType(extensionReceiver.getType());
             }
             else if (dispatchReceiver != null) {

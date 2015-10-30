@@ -5833,6 +5833,130 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/objectLiteralToLambda")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ObjectLiteralToLambda extends AbstractIntentionTest {
+        public void testAllFilesPresentInObjectLiteralToLambda() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/objectLiteralToLambda"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("EmptyBody.kt")
+        public void testEmptyBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/EmptyBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpressionBody.kt")
+        public void testExpressionBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ExpressionBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("HasData.kt")
+        public void testHasData() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/HasData.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MultipleBases.kt")
+        public void testMultipleBases() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/MultipleBases.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MultipleParameters.kt")
+        public void testMultipleParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/MultipleParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoSamAdapterNeeded.kt")
+        public void testNoSamAdapterNeeded() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/NoSamAdapterNeeded.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotInRange1.kt")
+        public void testNotInRange1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/NotInRange1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotInRange2.kt")
+        public void testNotInRange2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/NotInRange2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotJavaSAM.kt")
+        public void testNotJavaSAM() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/NotJavaSAM.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ParametersNotUsed.kt")
+        public void testParametersNotUsed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ParametersNotUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("QualifiedReturn.kt")
+        public void testQualifiedReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/QualifiedReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ReturnNoValue.kt")
+        public void testReturnNoValue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ReturnNoValue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ReturnNotLast.kt")
+        public void testReturnNotLast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ReturnNotLast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ReturnsInIf.kt")
+        public void testReturnsInIf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ReturnsInIf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ReturnsInWhen.kt")
+        public void testReturnsInWhen() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ReturnsInWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/Simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SingleReturn.kt")
+        public void testSingleReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/SingleReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StatementAndReturn.kt")
+        public void testStatementAndReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/StatementAndReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TwoFunctions.kt")
+        public void testTwoFunctions() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/TwoFunctions.kt");
+            doTest(fileName);
+        }
+
+    }
+
     @TestMetadata("idea/testData/intentions/operatorToFunction")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

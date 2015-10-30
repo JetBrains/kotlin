@@ -18,35 +18,31 @@ package org.jetbrains.kotlin.resolve.calls.tasks
 
 import com.google.common.collect.Lists
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getUnaryPlusOrMinusOperatorFunctionName
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
+import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.BOTH_RECEIVERS
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.EXTENSION_RECEIVER
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.filtered
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -74,7 +70,7 @@ public class TaskPrioritizer(
 
         if (explicitReceiver is QualifierReceiver) {
             val qualifierReceiver: QualifierReceiver = explicitReceiver
-            val receiverScope = qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsFileScope()
+            val receiverScope = qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsImportingScope()
             doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(receiverScope))
             computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
         }
@@ -205,7 +201,7 @@ public class TaskPrioritizer(
             //extensions
             c.result.addCandidates {
                 val extensions = callableDescriptorCollector.getExtensionsByName(
-                        c.scope.asJetScope(), c.name, explicitReceiver.types, createLookupLocation(c))
+                        c.scope.asKtScope(), c.name, explicitReceiver.types, createLookupLocation(c))
                 val filteredExtensions = if (filter == null) extensions else extensions.filter(filter)
 
                 convertWithImpliedThis(
@@ -326,8 +322,8 @@ public class TaskPrioritizer(
         //nonlocals
         c.callableDescriptorCollectors.forEach {
             c.result.addCandidates {
-                val descriptors = it.getNonExtensionsByName(c.scope.asJetScope(), c.name, lookupLocation)
-                        .filter { !ExpressionTypingUtils.isLocal(c.scope.ownerDescriptor, it) }
+                val descriptors = it.getNonExtensionsByName(c.scope.asKtScope(), c.name, lookupLocation)
+                        .filter { c.scope is ImportingScope || !ExpressionTypingUtils.isLocal(c.scope.ownerDescriptor, it) }
                 convertWithImpliedThisAndNoReceiver(c.scope, descriptors, c.context.call)
             }
         }
@@ -338,13 +334,7 @@ public class TaskPrioritizer(
         }
     }
 
-    private fun createLookupLocation(c: TaskPrioritizerContext<*, *>) = KotlinLookupLocation(c.context.call.run {
-        calleeExpression?.let {
-            // Can't use getContainingJetFile() because we can get from IDE an element with JavaDummyHolder as containing file
-            if ((it.containingFile as? KtFile)?.doNotAnalyze == null) it else null
-        }
-        ?: callElement
-    })
+    private fun createLookupLocation(c: TaskPrioritizerContext<*, *>) = c.context.call.createLookupLocation()
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForInvoke(explicitReceiver: ReceiverWithTypes, c: TaskPrioritizerContext<D, F>) {
         val implicitReceivers = c.scope.getImplicitReceiversHierarchy().map { it.value }

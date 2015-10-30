@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
+import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.references.KtMultiReference
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsFileScope
+import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 public class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
@@ -85,9 +85,8 @@ public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
 
     var result: Collection<DeclarationDescriptor> = listOf(fromDescriptor)
     qualifiedName.forEach { nameComponent ->
-        if (result.size() != 1) return listOf()
-        val scope = getResolutionScope(resolutionFacade, result.first()).asJetScope()
-        result = scope.getDescriptors().filter { it.getName().asString() == nameComponent }
+        val scope = getResolutionScope(resolutionFacade, result.singleOrNull() ?: return emptyList())
+        result = scope.collectDescriptorsFiltered(nameFilter = { it.asString() == nameComponent})
     }
 
     return result
@@ -96,9 +95,9 @@ public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
 private fun resolveInLocalScope(fromDescriptor: DeclarationDescriptor,
                                 name: String,
                                 resolutionFacade: ResolutionFacade): List<DeclarationDescriptor> {
-    val scope = getResolutionScope(resolutionFacade, fromDescriptor).asJetScope()
-    return scope.getDescriptors().filter {
-        it.getName().asString() == name && it.getContainingDeclaration() == fromDescriptor
+    val scope = getResolutionScope(resolutionFacade, fromDescriptor)
+    return scope.collectDescriptorsFiltered(nameFilter = { it.asString() == name }).filter {
+        it.containingDeclaration == fromDescriptor
     }
 }
 
@@ -149,10 +148,10 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
 public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
     return when (descriptor) {
         is PackageFragmentDescriptor ->
-            getPackageInnerScope(descriptor).memberScopeAsFileScope()
+            getPackageInnerScope(descriptor).memberScopeAsImportingScope()
 
         is PackageViewDescriptor ->
-            descriptor.memberScope.memberScopeAsFileScope()
+            descriptor.memberScope.memberScopeAsImportingScope()
 
         is ClassDescriptor ->
             getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)
@@ -178,7 +177,7 @@ private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutio
     if (parent is PackageFragmentDescriptor) {
         val containingFile = (descriptor.getSource() as? PsiSourceElement)?.psi?.getContainingFile() as? KtFile
         if (containingFile != null) {
-            return resolutionFacade.getFileTopLevelScope(containingFile)
+            return resolutionFacade.getFileResolutionScope(containingFile)
         }
     }
     return getResolutionScope(resolutionFacade, parent!!)

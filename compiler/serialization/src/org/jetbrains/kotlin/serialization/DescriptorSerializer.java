@@ -34,7 +34,10 @@ import org.jetbrains.kotlin.utils.Interner;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
@@ -414,7 +417,7 @@ public class DescriptorSerializer {
         }
         extension.serializeTypeParameter(typeParameter, builder);
 
-        Set<KotlinType> upperBounds = typeParameter.getUpperBounds();
+        List<KotlinType> upperBounds = typeParameter.getUpperBounds();
         if (upperBounds.size() == 1 && KotlinBuiltIns.isDefaultBound(CollectionsKt.single(upperBounds))) return builder;
 
         for (KotlinType upperBound : upperBounds) {
@@ -523,16 +526,10 @@ public class DescriptorSerializer {
     }
 
     @NotNull
-    public ProtoBuf.Package.Builder packageProtoWithoutDescriptors() {
-        ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
-
-        extension.serializePackage(Collections.<PackageFragmentDescriptor>emptyList(), builder);
-
-        return builder;
-    }
-
-    @NotNull
-    public ProtoBuf.Package.Builder packageProto(@NotNull Collection<PackageFragmentDescriptor> fragments, @Nullable Function1<DeclarationDescriptor, Boolean> skip) {
+    public ProtoBuf.Package.Builder packageProto(
+            @NotNull Collection<PackageFragmentDescriptor> fragments,
+            @Nullable Function1<DeclarationDescriptor, Boolean> skip
+    ) {
         ProtoBuf.Package.Builder builder = ProtoBuf.Package.newBuilder();
 
         Collection<DeclarationDescriptor> members = new ArrayList<DeclarationDescriptor>();

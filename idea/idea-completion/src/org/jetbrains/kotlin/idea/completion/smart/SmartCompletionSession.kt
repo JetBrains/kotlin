@@ -20,7 +20,6 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
@@ -34,21 +33,24 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 class SmartCompletionSession(configuration: CompletionSessionConfiguration, parameters: CompletionParameters, resultSet: CompletionResultSet)
 : CompletionSession(configuration, parameters, resultSet) {
 
-    // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
-    override val descriptorKindFilter: DescriptorKindFilter
-        get() {
-            var filter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
-            if (smartCompletion?.expectedInfos?.filterFunctionExpected()?.isNotEmpty() ?: false) {
-                // if function type is expected we need classes to obtain their constructors
-                filter = filter.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
-            }
-            return filter
+    override val descriptorKindFilter: DescriptorKindFilter by lazy {
+        // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
+        var filter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+
+        filter = filter exclude topLevelExtensionsExclude // handled via indices
+
+        if (smartCompletion?.expectedInfos?.filterFunctionExpected()?.isNotEmpty() ?: false) {
+            // if function type is expected we need classes to obtain their constructors
+            filter = filter.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
         }
+
+        filter
+    }
 
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
         expression?.let {
             SmartCompletion(it, resolutionFacade, bindingContext, moduleDescriptor, isVisibleFilter,
-                            prefixMatcher, originalSearchScope, toFromOriginalFileMapper, lookupElementFactory,
+                            prefixMatcher, originalSearchScope, toFromOriginalFileMapper,
                             callTypeAndReceiver, isJvmModule)
         }
     }
@@ -65,23 +67,32 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
         if (expression != null) {
             addFunctionLiteralArgumentCompletions()
 
-            val (additionalItems, inheritanceSearcher) = smartCompletion!!.additionalItems()
+            val (additionalItems, inheritanceSearcher) = smartCompletion!!.additionalItems(lookupElementFactory)
             collector.addElements(additionalItems)
 
             if (nameExpression != null) {
                 val filter = smartCompletion!!.descriptorFilter
                 if (filter != null) {
-                    referenceVariants.forEach { collector.addElements(filter(it)) }
+                    val (imported, notImported) = referenceVariants!!
+                    imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
+                    notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+
                     flushToResultSet()
 
-                    processNonImported { collector.addElements(filter(it), notImported = true) }
-                    flushToResultSet()
+                    if (shouldCompleteTopLevelCallablesFromIndex()) {
+                        getTopLevelCallables().forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+                        flushToResultSet()
+                    }
 
                     if (position.getContainingFile() is KtCodeFragment) {
-                        getRuntimeReceiverTypeReferenceVariants().forEach {
-                            collector.addElements(filter(it).map { it.withReceiverCast() })
+                        val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
+                        if (variantsAndFactory != null) {
+                            val variants = variantsAndFactory.first
+                            val lookupElementFactory = variantsAndFactory.second
+                            variants.imported.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }) }
+                            variants.notImportedExtensions.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }, notImported = true) }
+                            flushToResultSet()
                         }
-                        flushToResultSet()
                     }
                 }
 
@@ -120,16 +131,6 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                         .calculateForArgument(dummyCall, dummyArgument)
                 collector.addElements(LambdaItems.collect(expectedInfos))
             }
-        }
-    }
-
-    private fun processNonImported(processor: (DeclarationDescriptor) -> Unit) {
-        getTopLevelExtensions().forEach(processor)
-
-        flushToResultSet()
-
-        if (shouldRunTopLevelCompletion()) {
-            getTopLevelCallables().forEach(processor)
         }
     }
 

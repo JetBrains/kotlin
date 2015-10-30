@@ -23,7 +23,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
-abstract class BasicMap<K : Comparable<K>, V>(
+internal abstract class BasicMap<K : Comparable<K>, V>(
         storageFile: File,
         keyDescriptor: KeyDescriptor<K>,
         valueExternalizer: DataExternalizer<V>
@@ -64,7 +64,7 @@ abstract class BasicMap<K : Comparable<K>, V>(
     protected abstract fun dumpValue(value: V): String
 }
 
-public abstract class BasicStringMap<V>(
+internal abstract class BasicStringMap<V>(
         storageFile: File,
         keyDescriptor: KeyDescriptor<String>,
         valueExternalizer: DataExternalizer<V>

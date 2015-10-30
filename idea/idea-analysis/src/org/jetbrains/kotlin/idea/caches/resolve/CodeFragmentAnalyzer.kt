@@ -29,9 +29,8 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.addImportScope
+import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScopes
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
@@ -126,7 +125,7 @@ public class CodeFragmentAnalyzer(
                 dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
             }
             is KtFile -> {
-                scopeForContextElement = resolveSession.getFileScopeProvider().getFileScope(context)
+                scopeForContextElement = resolveSession.getFileScopeProvider().getFileResolutionScope(context)
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             else -> return null
@@ -136,18 +135,13 @@ public class CodeFragmentAnalyzer(
 
         val importList = codeFragment.importsAsImportList()
         if (importList == null || importList.imports.isEmpty()) {
-            return  scopeForContextElement to dataFlowInfo
+            return scopeForContextElement to dataFlowInfo
         }
 
         val importScopes = importList.imports.map {
             qualifierResolver.processImportReference(it, resolveSession.moduleDescriptor, resolveSession.trace, null)
         }.filterNotNull()
 
-        val chainedScope = ChainedScope(
-                scopeForContextElement.ownerDescriptor,
-                "Scope for resolve code fragment",
-                *importScopes.toTypedArray())
-
-        return scopeForContextElement.addImportScope(chainedScope) to dataFlowInfo
+        return scopeForContextElement.addImportingScopes(importScopes) to dataFlowInfo
     }
 }

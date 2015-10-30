@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.synthetic
 
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.storage.StorageManager
 
-class AdditionalScopesWithJavaSyntheticExtensions(storageManager: StorageManager) : FileScopeProvider.AdditionalScopes {
-    override val scopes = listOf(JavaSyntheticPropertiesScope(storageManager), SamAdapterFunctionsScope(storageManager))
+class AdditionalScopesWithJavaSyntheticExtensions(storageManager: StorageManager, lookupTracker: LookupTracker) : FileScopeProvider.AdditionalScopes {
+    override val scopes = listOf(JavaSyntheticPropertiesScope(storageManager, lookupTracker), SamAdapterFunctionsScope(storageManager))
 }

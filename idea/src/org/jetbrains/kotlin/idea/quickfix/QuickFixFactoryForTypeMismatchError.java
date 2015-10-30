@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.core.UtilsKt;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
+import org.jetbrains.kotlin.idea.util.ScopeUtils;
 import org.jetbrains.kotlin.idea.util.TypeUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -97,6 +97,13 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             actions.add(new CastExpressionFix(expression, expectedType));
         }
 
+        if (!expectedType.isMarkedNullable() && org.jetbrains.kotlin.types.TypeUtils.isNullableType(expressionType)) {
+            KotlinType nullableExpected = TypeUtilsKt.makeNullable(expectedType);
+            if (TypeUtilsKt.isSubtypeOf(expressionType, nullableExpected)) {
+                actions.add(new AddExclExclCallFix(expression));
+            }
+        }
+
         // Property initializer type mismatch property type:
         KtProperty property = PsiTreeUtil.getParentOfType(expression, KtProperty.class);
         if (property != null) {
@@ -104,7 +111,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
             KtExpression initializer = property.getInitializer();
             if (QuickFixUtil.canEvaluateTo(initializer, expression) ||
                 (getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(property.getGetter(), expression))) {
-                LexicalScope scope = UtilsKt.getResolutionScope(property, context, ResolutionUtils.getResolutionFacade(property));
+                LexicalScope scope = ScopeUtils.getResolutionScope(property, context, ResolutionUtils.getResolutionFacade(property));
                 KotlinType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
                 actions.add(new ChangeVariableTypeFix(property, typeToInsert));
             }
@@ -118,7 +125,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                ? BindingContextUtilsKt.getTargetFunction((KtReturnExpression) expressionParent, context)
                                : PsiTreeUtil.getParentOfType(expression, KtFunction.class, true);
         if (function instanceof KtFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, expression)) {
-            LexicalScope scope = UtilsKt.getResolutionScope(function, context, ResolutionUtils.getResolutionFacade(function));
+            LexicalScope scope = ScopeUtils.getResolutionScope(function, context, ResolutionUtils.getResolutionFacade(function));
             KotlinType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
             actions.add(new ChangeFunctionReturnTypeFix((KtFunction) function, typeToInsert));
         }
@@ -159,7 +166,7 @@ public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFact
                                             : context.getType(valueArgument.getArgumentExpression());
                 if (correspondingParameter != null && valueArgumentType != null) {
                     KtCallableDeclaration callable = PsiTreeUtil.getParentOfType(correspondingParameter, KtCallableDeclaration.class, true);
-                    LexicalScope scope = callable != null ? UtilsKt.getResolutionScope(callable, context, ResolutionUtils
+                    LexicalScope scope = callable != null ? ScopeUtils.getResolutionScope(callable, context, ResolutionUtils
                             .getResolutionFacade(callable)) : null;
                     KotlinType typeToInsert = TypeUtils.approximateWithResolvableType(valueArgumentType, scope, true);
                     actions.add(new ChangeParameterTypeFix(correspondingParameter, typeToInsert));

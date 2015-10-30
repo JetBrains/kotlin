@@ -20,6 +20,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
@@ -195,3 +196,11 @@ public fun Call.isSafeCall(): Boolean {
 }
 
 public fun Call.isExplicitSafeCall(): Boolean = getCallOperationNode()?.getElementType() == KtTokens.SAFE_ACCESS
+
+public fun Call.createLookupLocation() = KotlinLookupLocation(run {
+    calleeExpression?.let {
+        // Can't use getContainingJetFile() because we can get from IDE an element with JavaDummyHolder as containing file
+        if ((it.containingFile as? KtFile)?.doNotAnalyze == null) it else null
+    }
+    ?: callElement
+})

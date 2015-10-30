@@ -1,6 +1,6 @@
 // "Change 'A.x' type to '(Int) -> Int'" "false"
 // ACTION: Change 'C.x' type to '(String) -> Int'
-// ERROR: <html>Return type is '(kotlin.Int) &rarr; kotlin.Int', which is not a subtype of overridden<br/><b>public</b> <b>abstract</b> <b>val</b> x: (kotlin.String) &rarr; kotlin.Int <i>defined in</i> A</html>
+// ERROR: Return type of 'x' is not a subtype of the return type of the overridden member 'public abstract val x: (kotlin.String) -> kotlin.Int defined in A'
 interface A {
     val x: (String) -> Int
 }

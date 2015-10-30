@@ -870,6 +870,8 @@ public abstract class KotlinBuiltIns {
         List<TypeProjection> arguments = type.getArguments();
         int first = isExtensionFunctionType(type) ? 1 : 0;
         int last = arguments.size() - 2;
+        // TODO: fix bugs associated with this here and in neighboring methods, see KT-9820
+        assert first <= last + 1 : "Not an exact function type: " + type;
         List<TypeProjection> parameterTypes = new ArrayList<TypeProjection>(last - first + 1);
         for (int i = first; i <= last; i++) {
             parameterTypes.add(arguments.get(i));
@@ -984,6 +986,10 @@ public abstract class KotlinBuiltIns {
 
     public boolean isBooleanOrSubtype(@NotNull KotlinType type) {
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(type, getBooleanType());
+    }
+
+    public boolean isMemberOfAny(@NotNull DeclarationDescriptor descriptor) {
+        return descriptor.getContainingDeclaration() == getAny();
     }
 
     public static boolean isString(@Nullable KotlinType type) {

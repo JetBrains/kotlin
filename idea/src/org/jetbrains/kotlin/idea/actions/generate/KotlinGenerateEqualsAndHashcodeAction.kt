@@ -169,8 +169,6 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         }
     }
 
-    private fun FunctionDescriptor.isMemberOfAny() = containingDeclaration == builtIns.any
-
     private fun generateFunctionSkeleton(descriptor: FunctionDescriptor, project: Project): KtNamedFunction {
         return OverrideMemberChooserObject
                 .create(project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
@@ -196,7 +194,9 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             val bodyText = StringBuilder().apply {
                 append("if (this === $paramName) return true\n")
                 append("if ($isNotInstanceCondition) return false\n")
-                if (!superEquals.isMemberOfAny()) {
+
+                val builtIns = superEquals.builtIns
+                if (!builtIns.isMemberOfAny(superEquals)) {
                     append("if (!super.equals($paramName)) return false\n")
                 }
 
@@ -249,10 +249,11 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
 
             val superHashCode = classDescriptor.getSuperClassOrAny().findDeclaredHashCode(true)!!
             val hashCodeFun = generateFunctionSkeleton(superHashCode, project)
+            val builtins = superHashCode.builtIns
 
             val propertyIterator = variablesForHashCode.iterator()
             val initialValue = when {
-                !superHashCode.isMemberOfAny() -> "super.hashCode()"
+                !builtins.isMemberOfAny(superHashCode) -> "super.hashCode()"
                 propertyIterator.hasNext() -> propertyIterator.next().genVariableHashCode(false)
                 else -> "0"
             }

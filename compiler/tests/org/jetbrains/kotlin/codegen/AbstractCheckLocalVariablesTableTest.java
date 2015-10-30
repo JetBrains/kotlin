@@ -93,22 +93,17 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         assertNotNull("Couldn't find class file for pattern " + classFileRegex + " in: " + pathsString, outputFile);
 
         ClassReader cr = new ClassReader(outputFile.asByteArray());
-        List<LocalVariable> expectedLocalVariables = parseExpectations();
         List<LocalVariable> actualLocalVariables = readLocalVariable(cr, methodName);
 
-        assertEquals("Count of variables are different", expectedLocalVariables.size(), actualLocalVariables.size());
+        JetTestUtils.assertEqualsToFile(ktFile, text.substring(0, text.indexOf("// VARIABLE : ")) + getActualVariablesAsString(actualLocalVariables));
+    }
 
-        int index = 0;
-        for (LocalVariable expectedVariable : expectedLocalVariables) {
-            LocalVariable actualVariable = actualLocalVariables.get(index);
-            assertEquals("Names are different", expectedVariable.name, actualVariable.name);
-            assertTrue(
-                    String.format("Type doesn't match regex: name %s, regex %s, type %s", expectedVariable.name, expectedVariable.type, actualVariable.type),
-                    actualVariable.type.matches(expectedVariable.type)
-            );
-            assertEquals("Indexes are different", expectedVariable.index, actualVariable.index);
-            index++;
+    private static String getActualVariablesAsString(List<LocalVariable> list) {
+        StringBuilder builder = new StringBuilder();
+        for (LocalVariable variable : list) {
+            builder.append(variable.toString()).append("\n");
         }
+        return builder.toString();
     }
 
 
@@ -126,43 +121,15 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
             this.type = type;
             this.index = index;
         }
+
+        @Override
+        public String toString() {
+            return "// VARIABLE : NAME=" + name + " TYPE=" + type + " INDEX=" + index;
+        }
     }
 
     @NotNull
     private static final Pattern methodPattern = Pattern.compile("^// METHOD : *(.*)");
-
-    private static final Pattern namePattern = Pattern.compile("^// VARIABLE : NAME=*(.*) TYPE=.* INDEX=.*");
-    private static final Pattern typePattern = Pattern.compile("^// VARIABLE : NAME=.* TYPE=*(.*) INDEX=.*");
-    private static final Pattern indexPattern = Pattern.compile("^// VARIABLE : NAME=.* TYPE=.* INDEX=*(.*)");
-
-
-    private List<LocalVariable> parseExpectations() throws IOException {
-        List<String> lines = Files.readLines(ktFile, Charset.forName("utf-8"));
-        List<LocalVariable> expectedLocalVariables = new ArrayList<LocalVariable>();
-        for (int i = Math.max(lines.size() - 10, 0); i < lines.size(); ++i) {
-            Matcher nameMatcher = namePattern.matcher(lines.get(i));
-            if (nameMatcher.matches()) {
-                Matcher typeMatcher = typePattern.matcher(lines.get(i));
-                Matcher indexMatcher = indexPattern.matcher(lines.get(i));
-
-                if (!typeMatcher.matches()
-                    || !indexMatcher.matches()) {
-                    throw new AssertionError("Incorrect test instructions format");
-                }
-
-
-                expectedLocalVariables.add(new LocalVariable(nameMatcher.group(1),
-                                                             StringUtil.escapeToRegexp(typeMatcher.group(1)).replace("\\*", ".+"),
-                                                             Integer.parseInt(indexMatcher.group(1))));
-            }
-        }
-        if (expectedLocalVariables.size() == 0) {
-            throw new AssertionError("test instructions not found in " + ktFile);
-        }
-        else {
-            return expectedLocalVariables;
-        }
-    }
 
     @NotNull
     private String parseClassAndMethodSignature() throws IOException {

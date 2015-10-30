@@ -88,9 +88,9 @@ public fun CallableDescriptor.hasInferredReturnType(constraintSystem: Constraint
 
 public fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KotlinType {
     var receiverType = receiverParameterDescriptor.getType()
-    for (typeParameter in descriptor.getTypeParameters()) {
-        if (typeParameter.getTypeConstructor() == receiverType.getConstructor()) {
-            receiverType = typeParameter.getUpperBoundsAsType()
+    for (typeParameter in descriptor.typeParameters) {
+        if (typeParameter.typeConstructor == receiverType.constructor) {
+            receiverType = TypeIntersector.getUpperBoundsAsType(typeParameter)
         }
     }
     val fakeTypeArguments = ContainerUtil.newSmartList<TypeProjection>()

@@ -26,5 +26,8 @@ val String.wrongExtension: () -> Unit
 // EXIST: { itemText: "xfoo", tailText: "(local) for String in <root>", typeText: "Unit" }
 // EXIST: { itemText: "xfoo", tailText: "(global) for String in <root>", typeText: "Unit" }
 // EXIST: { itemText: "xfoo", tailText: "(publicVal) for String in <root>", typeText: "Unit" }
-// EXIST: { itemText: "xfoo", tailText: "(extension) for String in <root>", typeText: "Unit" }
+
+// excluded by performance reasons:
+// ABSENT: { itemText: "xfoo", tailText: "(extension) for String in <root>", typeText: "Unit" }
+
 // NOTHING_ELSE

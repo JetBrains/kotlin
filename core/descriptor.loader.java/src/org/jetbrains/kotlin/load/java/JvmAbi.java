@@ -47,13 +47,12 @@ public final class JvmAbi {
     private static final String SET_PREFIX = "set";
 
     public static final String DELEGATED_PROPERTY_NAME_SUFFIX = "$delegate";
-    public static final String DELEGATED_PROPERTIES_ARRAY_NAME = "$delegatedProperties";
+    public static final String DELEGATED_PROPERTIES_ARRAY_NAME = "$$delegatedProperties";
     public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
 
     public static final String INSTANCE_FIELD = "INSTANCE";
     public static final String DEPRECATED_INSTANCE_FIELD = "INSTANCE$";
 
-    public static final String MODULE_NAME_FIELD = "$moduleName";
     public static final String DEFAULT_MODULE_NAME = "main";
     public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
 

@@ -53,7 +53,7 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
         return "plugins/annotation-collector/testData/codegen/"
     }
 
-    fun createTestEnvironment(supportInheritedAnnotations: Boolean): AnnotationCollectorExtensionForTests {
+    private fun createTestEnvironment(supportInheritedAnnotations: Boolean): AnnotationCollectorExtensionForTests {
         val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
         val environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val project = environment.project

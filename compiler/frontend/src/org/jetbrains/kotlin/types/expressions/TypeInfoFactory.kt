@@ -21,21 +21,21 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
 /*
  * Functions in this file are intended to create type info instances in different circumstances
  */
 
-public fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo): JetTypeInfo = JetTypeInfo(type, dataFlowInfo)
+public fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo): KotlinTypeInfo = KotlinTypeInfo(type, dataFlowInfo)
 
-public fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): JetTypeInfo =
-        JetTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
+public fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): KotlinTypeInfo =
+        KotlinTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
 
-public fun createTypeInfo(type: KotlinType?): JetTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
+public fun createTypeInfo(type: KotlinType?): KotlinTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
 
-public fun createTypeInfo(type: KotlinType?, context: ResolutionContext<*>): JetTypeInfo = createTypeInfo(type, context.dataFlowInfo)
+public fun createTypeInfo(type: KotlinType?, context: ResolutionContext<*>): KotlinTypeInfo = createTypeInfo(type, context.dataFlowInfo)
 
-public fun noTypeInfo(dataFlowInfo: DataFlowInfo): JetTypeInfo = createTypeInfo(null, dataFlowInfo)
+public fun noTypeInfo(dataFlowInfo: DataFlowInfo): KotlinTypeInfo = createTypeInfo(null, dataFlowInfo)
 
-public fun noTypeInfo(context: ResolutionContext<*>): JetTypeInfo = noTypeInfo(context.dataFlowInfo)
+public fun noTypeInfo(context: ResolutionContext<*>): KotlinTypeInfo = noTypeInfo(context.dataFlowInfo)

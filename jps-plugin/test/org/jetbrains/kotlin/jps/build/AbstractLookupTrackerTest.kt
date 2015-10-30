@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.util.*
-import kotlin.test.fail
 
 private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "val", "var")
 
@@ -34,25 +33,24 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
     // ignore KDoc like comments which starts with `/**`, example: /** text */
     val COMMENT_WITH_LOOKUP_INFO = "/\\*[^*]+\\*/".toRegex()
 
-    override fun createLookupTracker() = TestLookupTracker()
+    override fun createLookupTracker(): LookupTracker = TestLookupTracker()
 
-    override fun checkLookups(lookupTracker: LookupTracker) {
+    override fun checkLookups(modifications: List<Modification>, lookupTracker: LookupTracker) {
         if (lookupTracker !is TestLookupTracker) throw AssertionError("Expected TestLookupTracker, but: ${lookupTracker.javaClass}")
 
         val fileToLookups = lookupTracker.lookups.groupBy { it.lookupContainingFile }
         val workSrcDir = File(workDir, "src")
 
-        for (file in workSrcDir.walkTopDown()) {
-            if (!file.isFile) continue
+        fun checkLookupsInFile(expectedFile: File, actualFile: File) {
 
-            val independentFilePath = FileUtil.toSystemIndependentName(file.path)
-            val lookupsFromFile = fileToLookups[independentFilePath] ?: continue
+            val independentFilePath = FileUtil.toSystemIndependentName(actualFile.path)
+            val lookupsFromFile = fileToLookups[independentFilePath] ?: return
 
-            val text = file.readText()
+            val text = actualFile.readText()
 
-            val matchResult = COMMENT_WITH_LOOKUP_INFO.match(text)
+            val matchResult = COMMENT_WITH_LOOKUP_INFO.find(text)
             if (matchResult != null) {
-                fail("File $file unexpectedly contains multiline comments. In range ${matchResult.range} found: ${matchResult.value} in $text")
+                fail("File $actualFile unexpectedly contains multiline comments. In range ${matchResult.range} found: ${matchResult.value} in $text")
             }
 
             val lines = text.lines().toArrayList()
@@ -61,7 +59,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
                 val columnToLookups = lookupsFromLine.groupBy { it.lookupColumn!! }.toList().sortedBy { it.first }
 
                 val lineContent = lines[line - 1]
-                val parts = ArrayList<CharSequence>(columnToLookups.size() * 2)
+                val parts = ArrayList<CharSequence>(columnToLookups.size * 2)
 
                 var start = 0
 
@@ -81,7 +79,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
                                     else -> "(" + it.name + ")"
                                 }
 
-                        it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName + name
+                        it.scopeKind.toString()[0].toLowerCase().toString() + ":" + it.scopeFqName.let { if (it.isNotEmpty()) it else "<root>" } + name
                     }
 
                     parts.add(lookups)
@@ -89,12 +87,33 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
                     start = end
                 }
 
-                lines[line - 1] = parts.join("") + lineContent.subSequence(start, lineContent.length())
+                lines[line - 1] = parts.join("") + lineContent.subSequence(start, lineContent.length)
             }
 
             val actual = lines.joinToString("\n")
 
-            JetTestUtils.assertEqualsToFile(File(testDataDir, independentFilePath.replace(".*/src/".toRegex(), "")), actual)
+            JetTestUtils.assertEqualsToFile(expectedFile, actual)
+        }
+
+        if (modifications.isNotEmpty()) {
+            for (modification in modifications) {
+                if (modification !is ModifyContent) continue
+
+                val expectedFile = modification.dataFile
+                val actualFile = File(workDir, modification.path)
+
+                checkLookupsInFile(expectedFile, actualFile)
+            }
+        }
+        else {
+            for (actualFile in workSrcDir.walkTopDown()) {
+                if (!actualFile.isFile) continue
+
+                val independentFilePath = FileUtil.toSystemIndependentName(actualFile.path)
+                val expectedFile = File(testDataDir, independentFilePath.replace(".*/src/".toRegex(), ""))
+
+                checkLookupsInFile(expectedFile, actualFile)
+            }
         }
     }
 
@@ -103,7 +122,13 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
     private fun dropBlockComments(workSrcDir: File) {
         for (file in workSrcDir.walkTopDown()) {
             if (!file.isFile) continue
-            file.writeText(file.readText().replace(COMMENT_WITH_LOOKUP_INFO, ""))
+
+            val original = file.readText()
+            val modified = original.replace(COMMENT_WITH_LOOKUP_INFO, "")
+
+            if (original != modified) {
+                file.writeText(modified)
+            }
         }
     }
 }

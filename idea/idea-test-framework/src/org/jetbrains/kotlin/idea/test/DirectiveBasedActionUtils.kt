@@ -20,8 +20,8 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
@@ -35,7 +35,7 @@ public object DirectiveBasedActionUtils {
 
         val actualErrors = file.analyzeFully().getDiagnostics()
                 .filter { it.getSeverity() == Severity.ERROR }
-                .map {  IdeErrorMessages.render(it) }
+                .map { DefaultErrorMessages.render(it).replace("\n", "<br>") }
                 .sorted()
 
         UsefulTestCase.assertOrderedEquals("All actual errors should be mentioned in test data with // ERROR: directive. But no unnecessary errors should be me mentioned",

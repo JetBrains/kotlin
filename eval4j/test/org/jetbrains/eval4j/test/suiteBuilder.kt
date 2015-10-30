@@ -57,9 +57,9 @@ fun buildTestSuite(
     return suite
 }
 
-fun buildTestCase(ownerClass: Class<TestData>,
-                  methodNode: MethodNode,
-                  create: (MethodNode, Class<out Any?>, InterpreterResult?) -> TestCase): TestCase? {
+private fun buildTestCase(ownerClass: Class<TestData>,
+                          methodNode: MethodNode,
+                          create: (MethodNode, Class<out Any?>, InterpreterResult?) -> TestCase): TestCase? {
     var expected: InterpreterResult? = null
     for (method in ownerClass.getDeclaredMethods()) {
         if (method.getName() == methodNode.name) {

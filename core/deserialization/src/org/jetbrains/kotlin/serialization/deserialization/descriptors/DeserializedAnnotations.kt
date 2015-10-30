@@ -44,7 +44,7 @@ open class DeserializedAnnotationsWithPossibleTargets(
         annotationWithTarget ->
         if (annotationWithTarget.target != null) return@firstOrNull false
         val descriptor = annotationWithTarget.annotation.type.constructor.declarationDescriptor
-        descriptor is ClassDescriptor && fqName.equalsTo(DescriptorUtils.getFqName(descriptor))
+        descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
     }?.annotation
 
     override fun findExternalAnnotation(fqName: FqName) = null

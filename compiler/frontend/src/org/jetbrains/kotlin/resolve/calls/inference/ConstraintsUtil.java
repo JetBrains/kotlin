@@ -77,7 +77,7 @@ public class ConstraintsUtil {
             return type;
         }
         //todo may be error type
-        return typeParameter.getUpperBoundsAsType();
+        return TypeIntersector.getUpperBoundsAsType(typeParameter);
     }
 
     public static boolean checkUpperBoundIsSatisfied(

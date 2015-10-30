@@ -57,7 +57,7 @@ class Converter private constructor(
 
     public val specialContext: PsiElement? = personalState.specialContext
 
-    public val referenceSearcher: CachingReferenceSearcher = CachingReferenceSearcher(services.referenceSearcher)
+    public val referenceSearcher: ReferenceSearcher = CachingReferenceSearcher(services.referenceSearcher)
 
     public val propertyDetectionCache = PropertyDetectionCache(this)
 

@@ -296,6 +296,12 @@ public class BuilderByPattern<TElement> {
         return this
     }
 
+    public fun appendChildRange(range: PsiChildRange): BuilderByPattern<TElement> {
+        patternBuilder.append("$" + arguments.size())
+        arguments.add(range)
+        return this
+    }
+
     public fun create(factory: (String, Array<out Any>) -> TElement): TElement {
         return factory(patternBuilder.toString(), arguments.toArray())
     }

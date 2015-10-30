@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 public interface ScriptDescriptor extends DeclarationDescriptorNonRoot {
     String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
@@ -35,9 +34,6 @@ public interface ScriptDescriptor extends DeclarationDescriptorNonRoot {
 
     @NotNull
     ClassDescriptor getClassDescriptor();
-
-    @NotNull
-    LexicalScope getScopeForBodyResolution();
 
     @NotNull
     PropertyDescriptor getScriptResultProperty();

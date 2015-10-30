@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import com.intellij.psi.PsiEnumConstantInitializer
 import com.intellij.psi.PsiEnumConstant
 
-public class KotlinLightClassForEnumEntry(
+internal class KotlinLightClassForEnumEntry(
         psiManager: PsiManager,
         fqName: FqName,
         enumEntry: KtEnumEntry,

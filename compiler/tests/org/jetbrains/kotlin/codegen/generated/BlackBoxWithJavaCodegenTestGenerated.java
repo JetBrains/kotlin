@@ -101,6 +101,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("protectedInInline")
+    public void testProtectedInInline() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/protectedInInline/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithJava/annotatedFileClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -206,6 +212,36 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("implementCollectionThroughKotlin")
         public void testImplementCollectionThroughKotlin() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/implementCollectionThroughKotlin/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("irrelevantImplCharSequence")
+        public void testIrrelevantImplCharSequence() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplCharSequence/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("irrelevantImplCharSequenceKotlin")
+        public void testIrrelevantImplCharSequenceKotlin() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplCharSequenceKotlin/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("irrelevantImplMutableList")
+        public void testIrrelevantImplMutableList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplMutableList/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("irrelevantImplMutableListKotlin")
+        public void testIrrelevantImplMutableListKotlin() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplMutableListKotlin/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("irrelevantImplMutableListSubstitution")
+        public void testIrrelevantImplMutableListSubstitution() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/irrelevantImplMutableListSubstitution/");
             doTestWithJava(fileName);
         }
 
@@ -624,6 +660,24 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("hidePrivateByPublic")
         public void testHidePrivateByPublic() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/hidePrivateByPublic/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("protectedSamConstructor")
+        public void testProtectedSamConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/protectedSamConstructor/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("protectedStatic")
+        public void testProtectedStatic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/protectedStatic/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("protectedStatic2")
+        public void testProtectedStatic2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/protectedStatic2/");
             doTestWithJava(fileName);
         }
 

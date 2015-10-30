@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
@@ -38,7 +40,9 @@ public class DeserializedConstructorDescriptor(
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             original: FunctionDescriptor?,
-            kind: CallableMemberDescriptor.Kind
+            kind: CallableMemberDescriptor.Kind,
+            newName: Name?,
+            preserveSource: Boolean
     ): DeserializedConstructorDescriptor {
         return DeserializedConstructorDescriptor(
                 newOwner as ClassDescriptor, original as ConstructorDescriptor?,

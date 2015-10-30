@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
@@ -442,7 +443,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                                   : typeMapper.mapType((VariableDescriptor) descriptor);
                 args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().asString()));
             }
-            else if (DescriptorUtils.isLocalFunction(descriptor)) {
+            else if (ExpressionTypingUtils.isLocalFunction(descriptor)) {
                 Type classType = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
                 args.add(FieldInfo.createForHiddenField(ownerType, classType, "$" + descriptor.getName().asString()));
             }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 
 class SyntheticFieldDescriptor private constructor(
@@ -34,7 +35,9 @@ class SyntheticFieldDescriptor private constructor(
     constructor(accessorDescriptor: PropertyAccessorDescriptor,
                 property: KtProperty): this(accessorDescriptor.correspondingProperty, accessorDescriptor, property)
 
-    override fun getDispatchReceiverParameter() = propertyDescriptor.dispatchReceiverParameter
+    override fun getDispatchReceiverParameter() = null
+
+    fun getDispatchReceiverForBackend() = propertyDescriptor.dispatchReceiverParameter?.value ?: ReceiverValue.NO_RECEIVER
 
     companion object {
         val NAME = Name.identifier("field")

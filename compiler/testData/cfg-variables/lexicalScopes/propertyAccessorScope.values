@@ -17,10 +17,9 @@ get() {
               return field
           }
 ---------------------
-                   <v0>: A     NEW: magic[IMPLICIT_RECEIVER](field) -> <v0>
-field              <v1>: Int   NEW: r(field|<v0>) -> <v1>
-return field       !<v2>: *
-{ return field }   !<v2>: *    COPY
+field              <v0>: Int   NEW: r(field) -> <v0>
+return field       !<v1>: *
+{ return field }   !<v1>: *    COPY
 =====================
 == set_a ==
 set(v: Int) {
@@ -28,8 +27,7 @@ set(v: Int) {
           }
 ---------------------
                 <v0>: Int   NEW: magic[FAKE_INITIALIZER](v: Int) -> <v0>
-                <v1>: A     NEW: magic[IMPLICIT_RECEIVER](field) -> <v1>
-v               <v2>: Int   NEW: r(v) -> <v2>
-field = v       !<v3>: *
-{ field = v }   !<v3>: *    COPY
+v               <v1>: Int   NEW: r(v) -> <v1>
+field = v       !<v2>: *
+{ field = v }   !<v2>: *    COPY
 =====================

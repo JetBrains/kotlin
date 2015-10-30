@@ -1,5 +1,5 @@
 // "Create member function 'foo'" "true"
-// ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>kotlin.Int</td></tr><tr><td>Found:</td><td>A&lt;kotlin.Int&gt;</td></tr></table></html>
+// ERROR: Type mismatch: inferred type is A<kotlin.Int> but kotlin.Int was expected
 
 class A<T>(val n: T) {
     fun foo(s: String, t: T): Any {

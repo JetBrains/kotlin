@@ -60,7 +60,7 @@ public class BoundsSubstitutor {
 
         // todo assert: no loops
         for (TypeParameterDescriptor descriptor : topologicallySortTypeParameters(typeParameters)) {
-            KotlinType upperBoundsAsType = descriptor.getUpperBoundsAsType();
+            KotlinType upperBoundsAsType = TypeIntersector.getUpperBoundsAsType(descriptor);
             KotlinType substitutedUpperBoundsAsType = substitutor.substitute(upperBoundsAsType, Variance.INVARIANT);
             mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substitutedUpperBoundsAsType));
         }

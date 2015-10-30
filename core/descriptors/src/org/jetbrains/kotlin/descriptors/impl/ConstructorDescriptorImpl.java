@@ -114,7 +114,9 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     protected ConstructorDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         if (kind != Kind.DECLARATION && kind != Kind.SYNTHESIZED) {
             throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
@@ -123,13 +125,14 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
                                             "kind: " + kind);
         }
         assert original != null : "Attempt to create copy of constructor without preserving original: " + this;
+        assert newName == null : "Attempt to rename constructor: " + this;
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
                 this,
                 getAnnotations(),
                 isPrimary,
                 Kind.DECLARATION,
-                SourceElement.NO_SOURCE
+                getSourceToUseForCopy(preserveSource, original)
         );
     }
 

@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-// ERROR: <html>None of the following functions can be called with the arguments supplied. <ul><li>foo(String, Boolean, <font color=red><b>Char</b></font>) <i>defined in</i> root package</li><li>foo(String, Boolean, <font color=red><b>Int</b></font>) <i>defined in</i> root package</li></ul></html>
+// ERROR: None of the following functions can be called with the arguments supplied: <br>public fun foo(s: kotlin.String, b: kotlin.Boolean, c: kotlin.Char): kotlin.Unit defined in root package<br>public fun foo(s: kotlin.String, b: kotlin.Boolean, p: kotlin.Int): kotlin.Unit defined in root package
 fun foo(s: String, b: Boolean, p: Int){}
 fun foo(s: String, b: Boolean, c: Char){}
 

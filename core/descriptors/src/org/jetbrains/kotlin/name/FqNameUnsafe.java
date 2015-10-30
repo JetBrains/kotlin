@@ -16,17 +16,18 @@
 
 package org.jetbrains.kotlin.name;
 
+import kotlin.ArraysKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.StringsKt;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Like {@link FqName} but allows '<' and '>' characters in name.
  */
-public final class FqNameUnsafe extends FqNameBase {
+public final class FqNameUnsafe {
 
     public static final Name ROOT_NAME = Name.special("<root>");
 
@@ -70,19 +71,13 @@ public final class FqNameUnsafe extends FqNameBase {
         }
     }
 
-
-
-    @Override
     @NotNull
     public String asString() {
         return fqName;
     }
 
     public boolean isSafe() {
-        if (safe != null) {
-            return true;
-        }
-        return FqName.isValidAfterUnsafeCheck(asString());
+        return safe != null || asString().indexOf('<') < 0;
     }
 
     @NotNull
@@ -140,7 +135,6 @@ public final class FqNameUnsafe extends FqNameBase {
         return shortName;
     }
 
-    @Override
     @NotNull
     public Name shortNameOrSpecial() {
         if (isRoot()) {
@@ -151,107 +145,25 @@ public final class FqNameUnsafe extends FqNameBase {
         }
     }
 
-    interface WalkCallback {
-        void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName);
-    }
-
-    @NotNull
-    public List<FqNameUnsafe> path() {
-        final List<FqNameUnsafe> path = new ArrayList<FqNameUnsafe>();
-        path.add(FqName.ROOT.toUnsafe());
-        walk(new WalkCallback() {
-            @Override
-            public void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName) {
-                path.add(fqName);
-            }
-        });
-        return path;
-    }
-
-    @Override
     @NotNull
     public List<Name> pathSegments() {
-        final List<Name> path = new ArrayList<Name>();
-        walk(new WalkCallback() {
-            @Override
-            public void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName) {
-                path.add(shortName);
-            }
-        });
-        return path;
+        return isRoot() ? Collections.<Name>emptyList() :
+               ArraysKt.map(fqName.split("\\."), new Function1<String, Name>() {
+                   @Override
+                   public Name invoke(String name) {
+                       return Name.guess(name);
+                   }
+               });
     }
 
-
-    void walk(@NotNull WalkCallback callback) {
-        if (isRoot()) {
-            return;
-        }
-
-        int pos = fqName.indexOf('.');
-
-        if (pos < 0) {
-            if (this.parent == null) {
-                this.parent = FqName.ROOT.toUnsafe();
-            }
-            if (this.shortName == null) {
-                this.shortName = Name.guess(fqName);
-            }
-            callback.segment(shortName, this);
-            return;
-        }
-
-        Name firstSegment = Name.guess(fqName.substring(0, pos));
-        FqNameUnsafe last = new FqNameUnsafe(firstSegment.asString(), FqName.ROOT.toUnsafe(), firstSegment);
-        callback.segment(firstSegment, last);
-
-        while (true) {
-            int next = fqName.indexOf('.', pos + 1);
-            if (next < 0) {
-                if (this.parent == null) {
-                    this.parent = last;
-                }
-                Name shortName = Name.guess(fqName.substring(pos + 1));
-                if (this.shortName == null) {
-                    this.shortName = shortName;
-                }
-                callback.segment(shortName, this);
-                return;
-            }
-
-            Name shortName = Name.guess(fqName.substring(pos + 1, next));
-            last = new FqNameUnsafe(fqName.substring(0, next), last, shortName);
-            callback.segment(shortName, last);
-
-            pos = next;
-        }
+    public boolean startsWith(@NotNull Name segment) {
+        return !isRoot() && pathSegments().get(0).equals(segment);
     }
-
-    public boolean firstSegmentIs(@NotNull Name segment) {
-        if (isRoot()) {
-            return false;
-        }
-        List<Name> pathSegments = pathSegments();
-        return pathSegments.get(0).equals(segment);
-    }
-
-    public boolean lastSegmentIs(@NotNull Name segment) {
-        if (isRoot()) {
-            return false;
-        }
-        return shortName().equals(segment);
-    }
-
-    @NotNull
-    public static FqNameUnsafe fromSegments(@NotNull List<?> names) {
-        return new FqNameUnsafe(StringsKt.join(names, "."));
-    }
-
 
     @NotNull
     public static FqNameUnsafe topLevel(@NotNull Name shortName) {
         return new FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe(), shortName);
     }
-
 
     @Override
     @NotNull

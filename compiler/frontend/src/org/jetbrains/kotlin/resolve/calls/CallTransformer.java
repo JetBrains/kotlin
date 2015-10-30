@@ -97,6 +97,47 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
     public static CallTransformer<VariableDescriptor, VariableDescriptor> VARIABLE_CALL_TRANSFORMER = new CallTransformer<VariableDescriptor, VariableDescriptor>();
 
+    public static Call stripCallArguments(@NotNull Call call) {
+        return new DelegatingCall(call) {
+            @Override
+            public KtValueArgumentList getValueArgumentList() {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public List<? extends ValueArgument> getValueArguments() {
+                return Collections.emptyList();
+            }
+
+            @NotNull
+            @Override
+            public List<FunctionLiteralArgument> getFunctionLiteralArguments() {
+                return Collections.emptyList();
+            }
+
+            @NotNull
+            @Override
+            public List<KtTypeProjection> getTypeArguments() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public KtTypeArgumentList getTypeArgumentList() {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public KtElement getCallElement() {
+                KtExpression calleeExpression = getCalleeExpression();
+                assert calleeExpression != null : "No callee expression: " + getCallElement().getText();
+
+                return calleeExpression;
+            }
+        };
+    }
+
     public static CallTransformer<CallableDescriptor, FunctionDescriptor> FUNCTION_CALL_TRANSFORMER = new CallTransformer<CallableDescriptor, FunctionDescriptor>() {
         @NotNull
         @Override
@@ -153,47 +194,6 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             ResolvedCallImpl<CallableDescriptor> resolvedCall = ResolvedCallImpl.create(candidate, chainedTrace, task.tracing, task.dataFlowInfoForArguments);
             return CallCandidateResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call, receiverValue,
                                                          candidateResolveMode);
-        }
-
-        private Call stripCallArguments(@NotNull Call call) {
-            return new DelegatingCall(call) {
-                @Override
-                public KtValueArgumentList getValueArgumentList() {
-                    return null;
-                }
-
-                @NotNull
-                @Override
-                public List<? extends ValueArgument> getValueArguments() {
-                    return Collections.emptyList();
-                }
-
-                @NotNull
-                @Override
-                public List<FunctionLiteralArgument> getFunctionLiteralArguments() {
-                    return Collections.emptyList();
-                }
-
-                @NotNull
-                @Override
-                public List<KtTypeProjection> getTypeArguments() {
-                    return Collections.emptyList();
-                }
-
-                @Override
-                public KtTypeArgumentList getTypeArgumentList() {
-                    return null;
-                }
-
-                @NotNull
-                @Override
-                public KtElement getCallElement() {
-                    KtExpression calleeExpression = getCalleeExpression();
-                    assert calleeExpression != null : "No callee expression: " + getCallElement().getText();
-
-                    return calleeExpression;
-                }
-            };
         }
 
         private Call stripReceiver(@NotNull Call variableCall) {

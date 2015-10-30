@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.getAllAccessibleFunctions
 import org.jetbrains.kotlin.idea.util.getAllAccessibleVariables
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -32,11 +33,10 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.Collections
-import java.util.HashSet
+import java.util.*
 
 public class CollectingNameValidator @JvmOverloads constructor(
         existingNames: Collection<String> = Collections.emptySet(),
@@ -80,7 +80,7 @@ public class NewDeclarationNameValidator(
         if (visibleDeclarationsContext != null) {
             val bindingContext = visibleDeclarationsContext.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
             val resolutionScope = visibleDeclarationsContext.getResolutionScope(bindingContext, visibleDeclarationsContext.getResolutionFacade())
-            if (resolutionScope.asJetScope().hasConflict(identifier)) return false
+            if (resolutionScope.hasConflict(identifier)) return false
         }
 
         return checkDeclarationsIn.none {
@@ -88,12 +88,10 @@ public class NewDeclarationNameValidator(
         }
     }
 
-    private fun KtScope.hasConflict(name: Name): Boolean {
-        val inDeclaration = getContainingDeclaration()
-
+    private fun LexicalScope.hasConflict(name: Name): Boolean {
         fun DeclarationDescriptor.isVisible(): Boolean {
             return when (this) {
-                is DeclarationDescriptorWithVisibility -> isVisible(inDeclaration)
+                is DeclarationDescriptorWithVisibility -> isVisible(ownerDescriptor)
                 else -> true
             }
         }
@@ -103,7 +101,7 @@ public class NewDeclarationNameValidator(
                 getAllAccessibleVariables(name).any { !it.isExtension && it.isVisible() }
             Target.FUNCTIONS_AND_CLASSES ->
                 getAllAccessibleFunctions(name).any { !it.isExtension && it.isVisible() } ||
-                getClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() } ?: false
+                findClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() } ?: false
         }
     }
 

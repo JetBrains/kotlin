@@ -1032,7 +1032,7 @@ public fun <T> Sequence<T>.asSequence(): Sequence<T> {
  * Returns a sequence containing all elements that are instances of specified type parameter R.
  */
 @kotlin.jvm.JvmVersion
-public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<R> {
+public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.internal.NoInfer R> {
     return filter { it is R } as Sequence<R>
 }
 

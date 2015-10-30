@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.DebuggerInvocationUtil
-import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.actions.SmartStepTarget
@@ -26,6 +25,7 @@ import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.settings.DebuggerSettings
+import com.intellij.debugger.ui.breakpoints.Breakpoint
 import com.intellij.debugger.ui.breakpoints.BreakpointManager
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.execution.process.ProcessOutputTypes
@@ -33,22 +33,25 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerUtil
-import com.intellij.xdebugger.breakpoints.XBreakpoint
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import com.intellij.xdebugger.breakpoints.XBreakpointType
-import com.intellij.xdebugger.breakpoints.XLineBreakpointType
+import com.intellij.xdebugger.breakpoints.*
+import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties
+import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties
+import org.jetbrains.kotlin.idea.core.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
+import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinLineBreakpointType
 import org.jetbrains.kotlin.idea.debugger.stepping.*
 import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import java.io.File
@@ -60,8 +63,8 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     private var oldDisableKotlinInternalClasses = false
     private var oldRenderDelegatedProperties = false
 
-    protected var evaluationContext: EvaluationContextImpl? = null
-    protected var debuggerContext: DebuggerContextImpl? = null
+    protected lateinit var evaluationContext: EvaluationContextImpl
+    protected lateinit var debuggerContext: DebuggerContextImpl
 
     override fun initApplication() {
         super.initApplication()
@@ -71,9 +74,6 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     override fun tearDown() {
         super.tearDown()
         restoreDefaultSettings()
-
-        evaluationContext = null
-        debuggerContext = null
     }
 
     protected fun configureSettings(fileText: String) {
@@ -119,9 +119,18 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     public fun doOnBreakpoint(action: SuspendContextImpl.() -> Unit) {
         super.onBreakpoint(SuspendContextRunnable {
-            initContexts(it)
-            it.printContext()
-            it.action()
+            try {
+                initContexts(it)
+                it.printContext()
+                it.action()
+            }
+            catch(e: AssertionError) {
+                throw e
+            }
+            catch(e: Throwable) {
+                e.printStackTrace()
+                resume(it)
+            }
         })
     }
 
@@ -163,6 +172,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         }
 
         when {
+            !line.startsWith("//") -> return
             line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { doStepInto(false, null) }
             line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { doStepOut() }
             line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { doSmartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
@@ -183,19 +193,22 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             }
         }
         else {
-            dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList)))
+            try {
+                dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList - 1)))
+            }
+            catch(e: IndexOutOfBoundsException) {
+                throw AssertionError("Couldn't find smart step into command at: \n" +
+                                     runReadAction { debuggerContext.sourcePosition.elementAt.getElementTextWithContext() })
+            }
         }
     }
 
     private fun createSmartStepIntoFilters(): List<MethodFilter> {
-        val breakpointManager = DebuggerManagerEx.getInstanceEx(getProject())?.getBreakpointManager()
-        val breakpoint = breakpointManager?.getBreakpoints()?.first { it is LineBreakpoint }
-
-        val line = (breakpoint as LineBreakpoint).getLineIndex()
+        val contextElement = ContextUtil.getContextElement(evaluationContext)!!
+        val line = runReadAction { contextElement.getLineNumber() }
 
         return runReadAction {
-            val containingFile = breakpoint.getPsiFile()
-            if (containingFile == null) throw AssertionError("Couldn't find file for breakpoint at the line $line")
+            val containingFile = contextElement.containingFile
 
             val position = MockSourcePosition(_file = containingFile, _line = line)
 
@@ -204,7 +217,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             stepTargets.filterIsInstance<SmartStepTarget>().map {
                 stepTarget ->
                 when (stepTarget) {
-                    is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!)
+                    is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline)
                     is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
                     is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
                     else -> null
@@ -250,49 +263,48 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     override fun createBreakpoints(file: PsiFile?) {
-        super.createBreakpoints(file)
-
         if (file == null) return
 
-        val document = PsiDocumentManager.getInstance(myProject).getDocument(file) ?: return
+        val document = runReadAction { PsiDocumentManager.getInstance(myProject).getDocument(file) } ?: return
         val breakpointManager = XDebuggerManager.getInstance(myProject).getBreakpointManager()
-        val breakpointType = javaClass<KotlinFieldBreakpointType>() as Class<out XBreakpointType<XBreakpoint<XBreakpointProperties<*>>, XBreakpointProperties<*>>>
-        val type = XDebuggerUtil.getInstance().findBreakpointType<XBreakpoint<XBreakpointProperties<*>>>(breakpointType) as KotlinFieldBreakpointType
+        val kotlinFieldBreakpointType = findBreakpointType(KotlinFieldBreakpointType::class.java)
         val virtualFile = file.getVirtualFile()
 
         val runnable = {
             var offset = -1;
             while (true) {
                 val fileText = document.getText()
-                offset = fileText.indexOf("FieldWatchpoint!", offset + 1)
+                offset = fileText.indexOf("point!", offset + 1)
                 if (offset == -1) break
 
                 val commentLine = document.getLineNumber(offset)
 
-                val comment = fileText.substring(document.getLineStartOffset(commentLine), document.getLineEndOffset(commentLine))
+                val comment = fileText.substring(document.getLineStartOffset(commentLine), document.getLineEndOffset(commentLine)).trim()
 
                 val lineIndex = commentLine + 1
-                val fieldName = comment.substringAfter("//FieldWatchpoint! (").substringBefore(")")
 
-                if (!type.canPutAt(virtualFile, lineIndex, myProject)) continue
-
-                val xBreakpoint = runWriteAction {
-                    breakpointManager.addLineBreakpoint(
-                            type as XLineBreakpointType<XBreakpointProperties<*>>,
-                            virtualFile.getUrl(),
+                if (comment.startsWith("//FieldWatchpoint!")) {
+                    val javaBreakpoint = createBreakpointOfType(
+                            breakpointManager,
+                            kotlinFieldBreakpointType as XLineBreakpointType<XBreakpointProperties<*>>,
                             lineIndex,
-                            type.createBreakpointProperties(virtualFile, lineIndex)
-                    )
+                            virtualFile)
+                    if (javaBreakpoint is KotlinFieldBreakpoint) {
+                        val fieldName = comment.substringAfter("//FieldWatchpoint! (").substringBefore(")")
+                        javaBreakpoint.setFieldName(fieldName)
+                        javaBreakpoint.setWatchAccess(fileText.getValueForSetting("WATCH_FIELD_ACCESS", true))
+                        javaBreakpoint.setWatchModification(fileText.getValueForSetting("WATCH_FIELD_MODIFICATION", true))
+                        javaBreakpoint.setWatchInitialization(fileText.getValueForSetting("WATCH_FIELD_INITIALISATION", false))
+                        BreakpointManager.addBreakpoint(javaBreakpoint)
+                        println("KotlinFieldBreakpoint created at ${file.virtualFile.name}:${lineIndex + 1}", ProcessOutputTypes.SYSTEM)
+                    }
                 }
-
-                val javaBreakpoint = BreakpointManager.getJavaBreakpoint(xBreakpoint)
-                if (javaBreakpoint is KotlinFieldBreakpoint) {
-                    javaBreakpoint.setFieldName(fieldName)
-                    javaBreakpoint.setWatchAccess(fileText.getValueForSetting("WATCH_FIELD_ACCESS", true))
-                    javaBreakpoint.setWatchModification(fileText.getValueForSetting("WATCH_FIELD_MODIFICATION", true))
-                    javaBreakpoint.setWatchInitialization(fileText.getValueForSetting("WATCH_FIELD_INITIALISATION", false))
-                    BreakpointManager.addBreakpoint(javaBreakpoint)
-                    println("KotlinFieldBreakpoint created at ${file.getVirtualFile().getName()}:$lineIndex", ProcessOutputTypes.SYSTEM)
+                else if (comment.startsWith("//Breakpoint!")) {
+                    val ordinal = if (comment.contains(" (")) comment.substringAfter("//Breakpoint! (").substringBefore(")").toInt() else null
+                    createLineBreakpoint(breakpointManager, file, lineIndex, ordinal)
+                }
+                else {
+                    throw AssertionError("Cannot create breakpoint at line ${lineIndex + 1}")
                 }
             }
         }
@@ -305,16 +317,73 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         }
     }
 
+    private fun createLineBreakpoint(
+            breakpointManager: XBreakpointManager,
+            file: PsiFile,
+            lineIndex: Int,
+            lambdaOrdinal: Int?
+    ) {
+        val kotlinLineBreakpointType = findBreakpointType(KotlinLineBreakpointType::class.java)
+        val javaBreakpoint = createBreakpointOfType(
+                breakpointManager,
+                kotlinLineBreakpointType  as XLineBreakpointType<XBreakpointProperties<*>>,
+                lineIndex,
+                file.virtualFile)
+        if (javaBreakpoint is LineBreakpoint<*>) {
+            if (lambdaOrdinal != null) {
+                val properties = javaBreakpoint.xBreakpoint.properties as? JavaLineBreakpointProperties ?: return
+                properties.lambdaOrdinal = lambdaOrdinal
+
+                BreakpointManager.addBreakpoint(javaBreakpoint)
+                println("LineBreakpoint created at ${file.virtualFile.name}:${lineIndex + 1} lambdaOrdinal = $lambdaOrdinal", ProcessOutputTypes.SYSTEM)
+            }
+            else {
+                BreakpointManager.addBreakpoint(javaBreakpoint)
+                println("LineBreakpoint created at ${file.virtualFile.name}:${lineIndex + 1}", ProcessOutputTypes.SYSTEM)
+            }
+        }
+    }
+
+    private fun createBreakpointOfType(
+            breakpointManager: XBreakpointManager,
+            breakpointType: XLineBreakpointType<XBreakpointProperties<*>>,
+            lineIndex: Int,
+            virtualFile: VirtualFile
+    ): Breakpoint<out JavaBreakpointProperties<*>>? {
+        if (!breakpointType.canPutAt(virtualFile, lineIndex, myProject)) return null
+        val xBreakpoint = runWriteAction {
+            breakpointManager.addLineBreakpoint(
+                    breakpointType,
+                    virtualFile.url,
+                    lineIndex,
+                    breakpointType.createBreakpointProperties(virtualFile, lineIndex)
+            )
+        }
+        return BreakpointManager.getJavaBreakpoint(xBreakpoint)
+    }
+
+    private inline fun <reified T> findBreakpointType(javaClass: Class<T>): T {
+        val kotlinFieldBreakpointTypeClass = javaClass as Class<out XBreakpointType<XBreakpoint<XBreakpointProperties<*>>, XBreakpointProperties<*>>>
+        return XDebuggerUtil.getInstance().findBreakpointType<XBreakpoint<XBreakpointProperties<*>>>(kotlinFieldBreakpointTypeClass) as T
+    }
+
     protected fun createAdditionalBreakpoints(fileText: String) {
         val breakpoints = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// ADDITIONAL_BREAKPOINT: ")
         for (breakpoint in breakpoints) {
             val position = breakpoint.split(".kt:")
-            assert(position.size() == 2) { "Couldn't parse position from test directive: directive = $breakpoint" }
-            createBreakpoint(position[0], position[1])
+            assert(position.size == 2) { "Couldn't parse position from test directive: directive = $breakpoint" }
+            var lineMarker = position[1]
+            var ordinal: Int? = null
+            if (lineMarker.contains(":(") && lineMarker.endsWith(")")) {
+                val lineMarkerAndOrdinal = lineMarker.split(":(")
+                lineMarker = lineMarkerAndOrdinal[0]
+                ordinal = lineMarkerAndOrdinal[1].substringBefore(")").toInt()
+            }
+            createBreakpoint(position[0], lineMarker, ordinal)
         }
     }
 
-    private fun createBreakpoint(fileName: String, lineMarker: String) {
+    private fun createBreakpoint(fileName: String, lineMarker: String, ordinal: Int?) {
         val project = getProject()!!
         val sourceFiles = runReadAction {
             FilenameIndex.getAllFilesByExt(project, "kt").filter {
@@ -328,16 +397,13 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         val runnable = Runnable() {
             val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!
 
-            val breakpointManager = DebuggerManagerEx.getInstanceEx(project)?.getBreakpointManager()!!
+            val breakpointManager = XDebuggerManager.getInstance(myProject).getBreakpointManager()
             val document = PsiDocumentManager.getInstance(project).getDocument(psiSourceFile)!!
 
             val index = psiSourceFile.getText()!!.indexOf(lineMarker)
-            val lineNumber = document.getLineNumber(index) + 1
+            val lineNumber = document.getLineNumber(index) + 1 // lineMarker is for previous line
 
-            val breakpoint = breakpointManager.addLineBreakpoint(document, lineNumber)
-            if (breakpoint != null) {
-                println("LineBreakpoint created at " + psiSourceFile.getName() + ":" + lineNumber, ProcessOutputTypes.SYSTEM);
-            }
+            createLineBreakpoint(breakpointManager, psiSourceFile, lineNumber, ordinal)
         }
 
         DebuggerInvocationUtil.invokeAndWait(project, runnable, ModalityState.defaultModalityState())

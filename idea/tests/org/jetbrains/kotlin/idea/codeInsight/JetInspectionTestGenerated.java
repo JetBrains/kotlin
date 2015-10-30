@@ -67,6 +67,12 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("objectLiteralToLambda/inspectionData/inspections.test")
+        public void testObjectLiteralToLambda_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeExplicitSuperQualifier/inspectionData/inspections.test")
         public void testRemoveExplicitSuperQualifier_inspectionData_Inspections_test() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitSuperQualifier/inspectionData/inspections.test");

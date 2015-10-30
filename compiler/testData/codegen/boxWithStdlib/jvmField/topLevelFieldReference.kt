@@ -20,5 +20,5 @@ fun box(): String {
 }
 
 public fun <T, R> checkAccessor(prop: KProperty0<T>, value: R) {
-    assertEquals(prop.get(), value, "Property ${prop} has wrong value")
+    assertEquals<Any?>(prop.get(), value, "Property ${prop} has wrong value")
 }

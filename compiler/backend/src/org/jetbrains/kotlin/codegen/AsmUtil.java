@@ -754,9 +754,10 @@ public class AsmUtil {
             return false;
         }
 
-        return isNonCompanionObject(propertyDescriptor.getContainingDeclaration()) ||
+        DeclarationDescriptor container = propertyDescriptor.getContainingDeclaration();
+        return isNonCompanionObject(container) ||
                isPropertyWithBackingFieldInOuterClass(propertyDescriptor) ||
-               isInterfaceCompanionObject(propertyDescriptor.getContainingDeclaration());
+               (isCompanionObject(container) && isInterface(container.getContainingDeclaration()));
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {

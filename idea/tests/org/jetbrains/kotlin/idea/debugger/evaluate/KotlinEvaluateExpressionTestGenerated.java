@@ -682,9 +682,21 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("isInsideInlineLambda.kt")
+        public void testIsInsideInlineLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/isInsideInlineLambda.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("localFun.kt")
         public void testLocalFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/localFun.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
+        @TestMetadata("multipleBreakpointsAtLine.kt")
+        public void testMultipleBreakpointsAtLine() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/multipleBreakpointsAtLine.kt");
             doMultipleBreakpointsTest(fileName);
         }
 
@@ -703,6 +715,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("withoutBodyProperties.kt")
         public void testWithoutBodyProperties() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/withoutBodyProperties.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
+        @TestMetadata("withoutBodyProperties2.kt")
+        public void testWithoutBodyProperties2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/withoutBodyProperties2.kt");
             doMultipleBreakpointsTest(fileName);
         }
 

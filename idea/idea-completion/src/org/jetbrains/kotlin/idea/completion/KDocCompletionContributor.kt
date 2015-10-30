@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
 class KDocCompletionContributor(): CompletionContributor() {
@@ -107,7 +107,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
             return true
         }
 
-        scope.getDescriptorsFiltered(nameFilter = descriptorNameFilter).filter(::isApplicable).forEach {
+        scope.collectDescriptorsFiltered(nameFilter = descriptorNameFilter).filter(::isApplicable).forEach {
             val element = lookupElementFactory.createLookupElement(it, useReceiverTypes = false, parametersAndTypeGrayed = true)
             collector.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {

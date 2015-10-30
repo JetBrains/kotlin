@@ -66,7 +66,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         val file = sortedFiles.first()
         val resolveSession = file.getResolutionFacade().getFrontendService(ResolveSession::class.java)
         forceResolvePackageDeclarations(files, resolveSession)
-        return LightClassConstructionContext(resolveSession.bindingContext, resolveSession.getModuleDescriptor())
+        return LightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor)
     }
 
     override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {

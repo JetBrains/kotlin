@@ -1,5 +1,5 @@
 // "class org.jetbrains.kotlin.idea.quickfix.AddGenericUpperBoundFix" "false"
-// ERROR: <html>Type argument is not within its bounds.<table><tr><td>Expected:</td><td>kotlin.Any</td></tr><tr><td>Found:</td><td>E</td></tr></table></html>
+// ERROR: Type argument is not within its bounds: should be subtype of 'kotlin.Any'
 
 fun <T : Any> foo() = 1
 

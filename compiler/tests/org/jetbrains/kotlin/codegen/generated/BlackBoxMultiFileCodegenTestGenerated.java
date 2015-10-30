@@ -89,6 +89,18 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestMultiFile(fileName);
     }
 
+    @TestMetadata("kt9717")
+    public void testKt9717() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt9717/");
+        doTestMultiFile(fileName);
+    }
+
+    @TestMetadata("kt9717DifferentPackages")
+    public void testKt9717DifferentPackages() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt9717DifferentPackages/");
+        doTestMultiFile(fileName);
+    }
+
     @TestMetadata("mainInFiles")
     public void testMainInFiles() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/mainInFiles/");

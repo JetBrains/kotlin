@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.Name;
+
+import java.util.List;
 
 /**
  * Simple functions are the ones with 'fun' keyword and function literals
@@ -25,6 +28,12 @@ public interface SimpleFunctionDescriptor extends FunctionDescriptor {
     @NotNull
     @Override
     SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
+
+    @NotNull
+    SimpleFunctionDescriptor createRenamedCopy(@NotNull Name name);
+
+    @NotNull
+    SimpleFunctionDescriptor createCopyWithNewValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters);
 
     @NotNull
     @Override

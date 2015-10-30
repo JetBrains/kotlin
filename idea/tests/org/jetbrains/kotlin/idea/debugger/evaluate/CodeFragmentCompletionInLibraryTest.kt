@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
@@ -68,9 +68,7 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
     private fun testCompletionInLibraryCodeFragment(fragmentText: String, vararg completionDirectives: String) {
         setupFixtureByCodeFragment(fragmentText)
         val directives = completionDirectives.map { "//$it" }.joinToString(separator = "\n")
-        testCompletion(directives, JvmPlatform, {
-            myFixture.complete(CompletionType.BASIC)
-        })
+        testCompletion(directives, JvmPlatform, { completionType, count -> myFixture.complete(completionType, count) })
     }
 
     private fun setupFixtureByCodeFragment(fragmentText: String) {
@@ -81,6 +79,7 @@ public class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTes
                 fragmentText,
                 KotlinCodeFragmentFactory.getContextElement(fooFunctionFromLibrary.getBodyExpression())
         )
+        codeFragment.forceResolveScope(GlobalSearchScope.allScope(project))
         myFixture.configureFromExistingVirtualFile(codeFragment.getVirtualFile())
     }
 

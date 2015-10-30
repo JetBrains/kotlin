@@ -34,17 +34,16 @@ get() {
           }
 ---------------------
 L3:
-  3 <START>                                    INIT: in: {} out: {}
-  4 mark({ return field })
-    magic[IMPLICIT_RECEIVER](field) -> <v0>                            USE: in: {field=READ} out: {field=READ}
-    r(field|<v0>) -> <v1>                                              USE: in: {} out: {field=READ}
-    ret(*|<v1>) L4
+  3 <START>                   INIT: in: {} out: {}
+  4 mark({ return field })                            USE: in: {field=READ} out: {field=READ}
+    r(field) -> <v0>                                  USE: in: {} out: {field=READ}
+    ret(*|<v0>) L4
 L4:
   3 <END>
 error:
     <ERROR>
 sink:
-    <SINK>                                                             USE: in: {} out: {}
+    <SINK>                                            USE: in: {} out: {}
 =====================
 == set_a ==
 set(v: Int) {
@@ -56,10 +55,9 @@ L6:
     v(v: Int)                                  INIT: in: {} out: {v=D}
     magic[FAKE_INITIALIZER](v: Int) -> <v0>    INIT: in: {v=D} out: {v=D}
     w(v|<v0>)                                  INIT: in: {v=D} out: {v=ID}
-  4 mark({ field = v })                        INIT: in: {v=ID} out: {v=ID}
-    magic[IMPLICIT_RECEIVER](field) -> <v1>                                                      USE: in: {field=ONLY_WRITTEN_NEVER_READ, v=READ} out: {field=ONLY_WRITTEN_NEVER_READ, v=READ}
-    r(v) -> <v2>                                                                                 USE: in: {field=ONLY_WRITTEN_NEVER_READ} out: {field=ONLY_WRITTEN_NEVER_READ, v=READ}
-    w(field|<v1>, <v2>)                        INIT: in: {v=ID} out: {field=I, v=ID}             USE: in: {} out: {field=ONLY_WRITTEN_NEVER_READ}
+  4 mark({ field = v })                        INIT: in: {v=ID} out: {v=ID}                      USE: in: {field=ONLY_WRITTEN_NEVER_READ, v=READ} out: {field=ONLY_WRITTEN_NEVER_READ, v=READ}
+    r(v) -> <v1>                                                                                 USE: in: {field=ONLY_WRITTEN_NEVER_READ} out: {field=ONLY_WRITTEN_NEVER_READ, v=READ}
+    w(field|<v1>)                              INIT: in: {v=ID} out: {field=I, v=ID}             USE: in: {} out: {field=ONLY_WRITTEN_NEVER_READ}
 L7:
   3 <END>                                      INIT: in: {field=I, v=ID} out: {field=I, v=ID}
 error:

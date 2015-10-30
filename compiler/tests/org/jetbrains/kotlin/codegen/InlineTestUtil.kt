@@ -65,7 +65,6 @@ public object InlineTestUtil {
             val cr = ClassReader(bytes)
 
             val inlineFunctions = inlineFunctionsJvmNames(bytes)
-            if (inlineFunctions.isEmpty()) continue
 
             val classVisitor = object : ClassVisitorWithName() {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor {

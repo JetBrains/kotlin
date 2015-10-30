@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.psi.KtExpression;
 
 public interface ExpressionTypingFacade {
     @NotNull
-    JetTypeInfo safeGetTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context);
+    KotlinTypeInfo safeGetTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context);
 
     @NotNull
-    JetTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context);
+    KotlinTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context);
     
     @NotNull
-    JetTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context, boolean isStatement);
+    KotlinTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context, boolean isStatement);
 }

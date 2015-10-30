@@ -33,13 +33,13 @@ public enum class ComponentStorageState {
     Disposed
 }
 
-class InvalidCardinalityException(message: String, val descriptors: Collection<ComponentDescriptor>) : Exception(message)
+internal class InvalidCardinalityException(message: String, val descriptors: Collection<ComponentDescriptor>) : Exception(message)
 
 public class ComponentStorage(val myId: String) : ValueResolver {
     var state = ComponentStorageState.Initial
-    val registry = ComponentRegistry()
-    val descriptors = LinkedHashSet<ComponentDescriptor>()
-    val dependencies = MultiMap.createLinkedSet<ComponentDescriptor, Type>()
+    private val registry = ComponentRegistry()
+    private val descriptors = LinkedHashSet<ComponentDescriptor>()
+    private val dependencies = MultiMap.createLinkedSet<ComponentDescriptor, Type>()
 
     override fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor? {
         if (state == ComponentStorageState.Initial)
@@ -93,7 +93,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         return registry.tryGetEntry(request)
     }
 
-    public fun registerDescriptors(context: ComponentResolveContext, items: List<ComponentDescriptor>) {
+    internal fun registerDescriptors(context: ComponentResolveContext, items: List<ComponentDescriptor>) {
         if (state == ComponentStorageState.Disposed) {
             throw ContainerConsistencyException("Cannot register descriptors in $state state")
         }
@@ -192,7 +192,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         state = ComponentStorageState.Disposed
     }
 
-    fun getDescriptorsInDisposeOrder(): List<ComponentDescriptor> {
+    private fun getDescriptorsInDisposeOrder(): List<ComponentDescriptor> {
         return topologicalSort(descriptors) {
             val dependent = ArrayList<ComponentDescriptor>()
             for (interfaceType in dependencies[it]) {
@@ -204,7 +204,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         }
     }
 
-    fun disposeDescriptor(descriptor: ComponentDescriptor) {
+    private fun disposeDescriptor(descriptor: ComponentDescriptor) {
         if (descriptor is Closeable)
             descriptor.close()
     }

@@ -300,7 +300,7 @@ public class ControlStructureTypingUtils {
         final KtVisitor<Boolean, CheckTypeContext> checkTypeVisitor = new KtVisitor<Boolean, CheckTypeContext>() {
 
             private boolean checkExpressionType(@NotNull KtExpression expression, CheckTypeContext c) {
-                JetTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
+                KotlinTypeInfo typeInfo = BindingContextUtils.getRecordedTypeInfo(expression, c.trace.getBindingContext());
                 if (typeInfo == null) return false;
 
                 Ref<Boolean> hasError = Ref.create();

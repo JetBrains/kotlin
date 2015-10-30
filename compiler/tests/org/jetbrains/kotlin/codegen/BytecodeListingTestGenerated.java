@@ -35,6 +35,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("defaultImpls.kt")
+    public void testDefaultImpls() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeListing/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

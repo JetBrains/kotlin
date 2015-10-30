@@ -23,6 +23,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -93,9 +96,9 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static KotlinType safeGetType(@NotNull JetTypeInfo typeInfo) {
+    public static KotlinType safeGetType(@NotNull KotlinTypeInfo typeInfo) {
         KotlinType type = typeInfo.getType();
-        assert type != null : "safeGetType should be invoked on safe JetTypeInfo; safeGetTypeInfo should return @NotNull type";
+        assert type != null : "safeGetType should be invoked on safe KotlinTypeInfo; safeGetTypeInfo should return @NotNull type";
         return type;
     }
 
@@ -156,7 +159,7 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static JetTypeInfo getTypeInfoOrNullType(
+    public static KotlinTypeInfo getTypeInfoOrNullType(
             @Nullable KtExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull ExpressionTypingInternals facade
@@ -241,4 +244,18 @@ public class ExpressionTypingUtils {
     private ExpressionTypingUtils() {
     }
 
+    public static boolean isFunctionLiteral(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof AnonymousFunctionDescriptor;
+    }
+
+    public static boolean isLocalFunction(@Nullable DeclarationDescriptor descriptor) {
+        if (descriptor != null && descriptor.getClass() == SimpleFunctionDescriptorImpl.class) {
+            return ((SimpleFunctionDescriptorImpl) descriptor).getVisibility() == Visibilities.LOCAL;
+        }
+        return false;
+    }
+
+    public static boolean isFunctionExpression(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof FunctionExpressionDescriptor;
+    }
 }

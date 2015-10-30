@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -324,7 +325,7 @@ public object Renderers {
         }
 
         val explanation: String
-        val upperBound = typeParameterWithCapturedConstraint.getUpperBoundsAsType()
+        val upperBound = TypeIntersector.getUpperBoundsAsType(typeParameterWithCapturedConstraint)
         if (!KotlinBuiltIns.isNullableAny(upperBound) && capturedTypeConstructor.typeProjection.getProjectionKind() == Variance.IN_VARIANCE) {
             explanation = "Type parameter has an upper bound '" + result.getTypeRenderer().render(upperBound) + "'" +
                           " that cannot be satisfied capturing 'in' projection"

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
@@ -51,12 +51,12 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(
-        scope: KtScope,
+        scope: LexicalScope,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo
 ): Collection<CallableDescriptor> {
     val receiverValues = scope.getImplicitReceiversWithInstance().map { it.getValue() }
-    return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.DEFAULT, scope.getContainingDeclaration())
+    return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.DEFAULT, scope.ownerDescriptor)
 }
 
 public fun CallableDescriptor.substituteExtensionIfCallable(

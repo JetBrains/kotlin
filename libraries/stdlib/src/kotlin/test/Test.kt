@@ -31,12 +31,12 @@ public fun assertFalse(actual: Boolean, message: String? = null) {
 }
 
 /** Asserts that the [expected] value is equal to the [actual] value, with an optional [message]. */
-public fun assertEquals(expected: Any?, actual: Any?, message: String? = null) {
+public fun <@kotlin.internal.OnlyInputTypes T> assertEquals(expected: T, actual: T, message: String? = null) {
     asserter.assertEquals(message, expected, actual)
 }
 
 /** Asserts that the [actual] value is not equal to the illegal value, with an optional [message]. */
-public fun assertNotEquals(illegal: Any?, actual: Any?, message: String? = null) {
+public fun <@kotlin.internal.OnlyInputTypes T> assertNotEquals(illegal: T, actual: T, message: String? = null) {
     asserter.assertNotEquals(message, illegal, actual)
 }
 
@@ -65,12 +65,12 @@ public fun fail(message: String? = null) {
 }
 
 /** Asserts that given function [block] returns the given [expected] value. */
-public fun <T> expect(expected: T, block: () -> T) {
+public fun <@kotlin.internal.OnlyInputTypes T> expect(expected: T, block: () -> T) {
     assertEquals(expected, block())
 }
 
 /** Asserts that given function [block] returns the given [expected] value and use the given [message] if it fails. */
-public fun <T> expect(expected: T, message: String?, block: () -> T) {
+public fun <@kotlin.internal.OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
     assertEquals(expected, block(), message)
 }
 

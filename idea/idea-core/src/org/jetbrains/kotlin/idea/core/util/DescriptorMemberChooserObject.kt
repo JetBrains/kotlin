@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import javax.swing.Icon
 
 public open class DescriptorMemberChooserObject(
@@ -75,7 +75,7 @@ public open class DescriptorMemberChooserObject(
 
         public fun getText(descriptor: DeclarationDescriptor): String {
             return if (descriptor is ClassDescriptor)
-                descriptor.fqNameSafe.render()
+                descriptor.fqNameUnsafe.render()
             else
                 MEMBER_RENDERER.render(descriptor)
         }

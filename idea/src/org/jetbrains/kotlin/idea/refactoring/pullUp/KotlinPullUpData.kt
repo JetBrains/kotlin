@@ -21,20 +21,17 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getClassDescriptorIfAny
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.utils.getDescriptorsFiltered
-import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitution
 import org.jetbrains.kotlin.utils.keysToMap
-import java.util.LinkedHashMap
+import java.util.*
 
 class KotlinPullUpData(val sourceClass: KtClassOrObject,
                        val targetClass: PsiNamedElement,
@@ -50,8 +47,9 @@ class KotlinPullUpData(val sourceClass: KtClassOrObject,
     val targetClassDescriptor = targetClass.getClassDescriptorIfAny(resolutionFacade)!!
 
     val typeParametersInSourceClassContext by lazy {
-        sourceClassDescriptor.typeConstructor.parameters + sourceClass.getResolutionScope(sourceClassContext, resolutionFacade)
-                .getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
+        sourceClassDescriptor.typeConstructor.parameters +
+        sourceClass.getResolutionScope(sourceClassContext, resolutionFacade)
+                .collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
                 .filterIsInstance<TypeParameterDescriptor>()
     }
 
@@ -59,7 +57,7 @@ class KotlinPullUpData(val sourceClass: KtClassOrObject,
         val substitution = LinkedHashMap<TypeConstructor, TypeProjection>()
 
         typeParametersInSourceClassContext.forEach {
-            substitution[it.typeConstructor] = TypeProjectionImpl(it.upperBoundsAsType)
+            substitution[it.typeConstructor] = TypeProjectionImpl(TypeIntersector.getUpperBoundsAsType(it))
         }
 
         val superClassSubstitution = getTypeSubstitution(targetClassDescriptor.defaultType, sourceClassDescriptor.defaultType)

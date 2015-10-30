@@ -41,6 +41,6 @@ public interface Primitives {
 
     double getDouble();
 
-    static final class DefaultImpls {
+    final class DefaultImpls {
     }
 }

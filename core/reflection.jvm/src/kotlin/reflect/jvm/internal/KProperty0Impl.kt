@@ -17,8 +17,6 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import kotlin.jvm.internal.MutablePropertyReference0
-import kotlin.jvm.internal.PropertyReference0
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty0
 
@@ -47,35 +45,5 @@ internal open class KMutableProperty0Impl<R> : KProperty0Impl<R>, KMutableProper
 
     class Setter<R>(override val property: KMutableProperty0Impl<R>) : KMutablePropertyImpl.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)
-    }
-}
-
-
-internal class KProperty0FromReferenceImpl(
-        val reference: PropertyReference0
-) : KProperty0Impl<Any?>(
-        reference.owner as KDeclarationContainerImpl,
-        reference.name,
-        reference.signature
-) {
-    override val name: String get() = reference.name
-
-    override fun get(): Any? = reference.get()
-}
-
-
-internal class KMutableProperty0FromReferenceImpl(
-        val reference: MutablePropertyReference0
-) : KMutableProperty0Impl<Any?>(
-        reference.owner as KDeclarationContainerImpl,
-        reference.name,
-        reference.signature
-) {
-    override val name: String get() = reference.name
-
-    override fun get(): Any? = reference.get()
-
-    override fun set(value: Any?) {
-        reference.set(value)
     }
 }

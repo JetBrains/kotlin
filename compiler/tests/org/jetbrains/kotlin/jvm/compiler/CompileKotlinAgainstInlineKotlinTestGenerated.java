@@ -115,6 +115,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("kt6552.1.kt")
+        public void testKt6552() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt6552.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("kt8133.1.kt")
         public void testKt8133() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt8133.1.kt");
@@ -1084,9 +1090,33 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("kt6990.1.kt")
+        public void testKt6990() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt6990.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("kt7017.1.kt")
         public void testKt7017() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt7017.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("kt8047.1.kt")
+        public void testKt8047() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt8047.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("kt9637.1.kt")
+        public void testKt9637() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt9637.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("kt9637_2.1.kt")
+        public void testKt9637_2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt9637_2.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
 

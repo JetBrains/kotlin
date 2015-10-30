@@ -50,6 +50,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
     private final FunctionDescriptor original;
     private final Kind kind;
+    @Nullable
+    private FunctionDescriptor initialSignatureDescriptor = null;
 
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -269,9 +271,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull Kind kind
     ) {
         return doSubstitute(originalSubstitutor,
-                newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec, original, copyOverrides, kind,
-                getValueParameters(), getExtensionReceiverParameterType(), getReturnType()
-        );
+                            newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec, original, copyOverrides, kind,
+                            getValueParameters(), getExtensionReceiverParameterType(), getReturnType(),
+                            null, /* preserveSource = */ false, /* signatureChange */ false);
     }
 
     @Nullable
@@ -282,7 +284,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
 
     @Nullable
-    protected FunctionDescriptor doSubstitute(@NotNull TypeSubstitutor originalSubstitutor,
+    protected FunctionDescriptor doSubstitute(
+            @NotNull TypeSubstitutor originalSubstitutor,
             @NotNull DeclarationDescriptor newOwner,
             @NotNull Modality newModality,
             @NotNull Visibility newVisibility,
@@ -296,9 +299,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @NotNull Kind kind,
             @NotNull List<ValueParameterDescriptor> newValueParameterDescriptors,
             @Nullable KotlinType newExtensionReceiverParameterType,
-            @NotNull KotlinType newReturnType
+            @NotNull KotlinType newReturnType,
+            @Nullable Name name,
+            boolean preserveSource,
+            boolean signatureChange
     ) {
-        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind);
+        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, original, kind, name, preserveSource);
 
         List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
         List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
@@ -359,6 +365,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
 
+        if (signatureChange || getInitialSignatureDescriptor() != null) {
+            FunctionDescriptor initialSignature = (getInitialSignatureDescriptor() != null ? getInitialSignatureDescriptor() : this);
+            FunctionDescriptor initialSignatureSubstituted = initialSignature.substitute(substitutor);
+            substitutedDescriptor.setInitialSignatureDescriptor(initialSignatureSubstituted);
+        }
+
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                 substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
@@ -372,8 +384,17 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     protected abstract FunctionDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName,
+            boolean preserveSource
     );
+
+    @NotNull
+    protected SourceElement getSourceToUseForCopy(boolean preserveSource, @Nullable FunctionDescriptor original) {
+        return preserveSource
+               ? (original != null ? original.getSource() : getOriginal().getSource())
+               : SourceElement.NO_SOURCE;
+    }
 
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
@@ -411,5 +432,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             );
         }
         return result;
+    }
+
+    @Override
+    @Nullable
+    public FunctionDescriptor getInitialSignatureDescriptor() {
+        return initialSignatureDescriptor;
+    }
+
+    public void setInitialSignatureDescriptor(@Nullable FunctionDescriptor initialSignatureDescriptor) {
+        this.initialSignatureDescriptor = initialSignatureDescriptor;
     }
 }

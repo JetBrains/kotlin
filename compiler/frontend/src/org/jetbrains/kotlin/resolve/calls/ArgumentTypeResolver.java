@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.Collections;
@@ -194,7 +194,7 @@ public class ArgumentTypeResolver {
     }
 
     @NotNull
-    public JetTypeInfo getArgumentTypeInfo(
+    public KotlinTypeInfo getArgumentTypeInfo(
             @Nullable KtExpression expression,
             @NotNull CallResolutionContext<?> context,
             @NotNull ResolveArgumentsMode resolveArgumentsMode
@@ -213,7 +213,7 @@ public class ArgumentTypeResolver {
             return getCallableReferenceTypeInfo(expression, callableReferenceExpression, context, resolveArgumentsMode);
         }
 
-        JetTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
+        KotlinTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
         }
@@ -224,7 +224,7 @@ public class ArgumentTypeResolver {
     }
 
     @NotNull
-    public JetTypeInfo getCallableReferenceTypeInfo(
+    public KotlinTypeInfo getCallableReferenceTypeInfo(
             @NotNull KtExpression expression,
             @NotNull KtCallableReferenceExpression callableReferenceExpression,
             @NotNull CallResolutionContext<?> context,
@@ -255,7 +255,7 @@ public class ArgumentTypeResolver {
     }
 
     @NotNull
-    public JetTypeInfo getFunctionLiteralTypeInfo(
+    public KotlinTypeInfo getFunctionLiteralTypeInfo(
             @NotNull KtExpression expression,
             @NotNull KtFunction functionLiteral,
             @NotNull CallResolutionContext<?> context,
@@ -341,7 +341,7 @@ public class ArgumentTypeResolver {
 
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
             // Here we go inside arguments and determine additional data flow information for them
-            JetTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SHAPE_FUNCTION_ARGUMENTS);
+            KotlinTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, SHAPE_FUNCTION_ARGUMENTS);
             infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
         }
     }

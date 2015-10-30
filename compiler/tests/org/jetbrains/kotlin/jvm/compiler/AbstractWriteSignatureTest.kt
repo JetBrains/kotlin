@@ -179,7 +179,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
         }
     }
 
-    fun parseExpectations(ktFile: File): PackageExpectationsSuite {
+    private fun parseExpectations(ktFile: File): PackageExpectationsSuite {
         val expectations = PackageExpectationsSuite()
 
         val lines = Files.readLines(ktFile, Charset.forName("utf-8"))

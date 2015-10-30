@@ -113,15 +113,17 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     protected JavaMethodDescriptor createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
-            @NotNull Kind kind
+            @NotNull Kind kind,
+            @Nullable Name newName,
+            boolean preserveSource
     ) {
         JavaMethodDescriptor result = new JavaMethodDescriptor(
                 newOwner,
                 (SimpleFunctionDescriptor) original,
                 getAnnotations(),
-                getName(),
+                newName != null ? newName : getName(),
                 kind,
-                original != null ? original.getSource() : SourceElement.NO_SOURCE
+                getSourceToUseForCopy(preserveSource, original)
         );
         result.setParameterNamesStatus(hasStableParameterNames(), hasSynthesizedParameterNames());
         return result;
@@ -144,8 +146,8 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), getOriginal(),
                 /* copyOverrides = */ true, getKind(),
-                enhancedValueParameters, enhancedReceiverType, enhancedReturnType
-        );
+                enhancedValueParameters, enhancedReceiverType, enhancedReturnType,
+                null, /* preserveSource */false, /* signatureChange = */ false);
 
         assert enhancedMethod != null : "null after substitution while enhancing " + toString();
         return enhancedMethod;

@@ -26,11 +26,12 @@ import org.jetbrains.kotlin.resolve.LibrarySourceHacks
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
-import org.jetbrains.kotlin.resolve.scopes.utils.getLocalVariable
+import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -83,7 +84,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
     override fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return lexicalScope.collectAllFromMeAndParent {
             if (it is LexicalChainedScope && it.isStaticScope) {
-                it.getDeclaredFunctions(name, location).filter { it.extensionReceiverParameter == null }
+                it.getContributedFunctions(name, location).filter { it.extensionReceiverParameter == null }
             }
             else {
                 emptyList()
@@ -93,9 +94,9 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
     override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return lexicalScope.collectAllFromMeAndParent {
-            if (it.ownerDescriptor is FunctionDescriptor) {
-                it.getDeclaredFunctions(name, location).filter { it.extensionReceiverParameter == null } +
-                    getConstructors(it.getDeclaredClassifier(name, location))
+            if (it !is ImportingScope && it.ownerDescriptor is FunctionDescriptor) {
+                it.getContributedFunctions(name, location).filter { it.extensionReceiverParameter == null } +
+                    getConstructors(it.getContributedClassifier(name, location))
             }
             else {
                 emptyList()
@@ -168,13 +169,13 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
 private object VariableCollector : CallableDescriptorCollector<VariableDescriptor> {
     override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
-        return listOfNotNull(lexicalScope.getLocalVariable(name))
+        return listOfNotNull(lexicalScope.findLocalVariable(name))
     }
 
     override fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         return lexicalScope.collectAllFromMeAndParent {
             if (it is LexicalChainedScope && it.isStaticScope) {
-                it.getDeclaredVariables(name, location)
+                it.getContributedVariables(name, location)
             }
             else {
                 emptyList()

@@ -482,7 +482,7 @@ public class BodyResolver {
                 trace.report(SUPERTYPE_APPEARS_TWICE.on(typeReference));
             }
 
-            if (DescriptorUtils.isSingleton(classDescriptor)) {
+            if (classDescriptor != null && classDescriptor.getKind().isSingleton()) {
                 trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
             }
             else if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {

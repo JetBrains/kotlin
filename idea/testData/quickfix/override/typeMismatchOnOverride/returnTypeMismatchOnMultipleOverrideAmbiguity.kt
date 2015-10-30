@@ -1,7 +1,7 @@
 // "Change 'B.foo' function return type to 'Int'" "false"
 // "Change 'B.foo' function return type to 'Long'" "false"
 // "Remove explicitly specified return type" "false"
-// ERROR: <html>Return type is 'kotlin.String', which is not a subtype of overridden<br/><b>public</b> <b>abstract</b> <b>fun</b> foo(): kotlin.Int <i>defined in</i> A</html>
+// ERROR: Return type of 'foo' is not a subtype of the return type of the overridden member 'public abstract fun foo(): kotlin.Int defined in A'
 abstract class A {
     abstract fun foo() : Int;
 }

@@ -33,16 +33,18 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.actions.*
+import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
+import org.jetbrains.kotlin.idea.actions.createGroupedImportsAction
+import org.jetbrains.kotlin.idea.actions.createSingleImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
@@ -57,7 +59,7 @@ import java.util.*
 /**
  * Check possibility and perform fix for unresolved references.
  */
-abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics: Collection<Diagnostic>) :
+internal abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics: Collection<Diagnostic>) :
         KotlinQuickFixAction<T>(expression), HighPriorityAction, HintAction {
 
     protected constructor(expression: T, diagnostic: Diagnostic? = null) : this(expression, diagnostic.singletonOrEmptyList())
@@ -166,7 +168,7 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
             }
         }
 
-        result.addAll(indicesHelper.getCallableTopLevelExtensions({ it == nameStr }, callTypeAndReceiver, element, bindingContext))
+        result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, element, bindingContext) { it == nameStr })
 
         return if (result.size > 1)
             reduceCandidatesBasedOnDependencyRuleViolation(result, file)
@@ -185,7 +187,7 @@ abstract class AutoImportFixBase<T: KtExpression>(expression: T, val diagnostics
     }
 }
 
-class AutoImportFix(expression: KtSimpleNameExpression, diagnostic: Diagnostic? = null) :
+internal class AutoImportFix(expression: KtSimpleNameExpression, diagnostic: Diagnostic? = null) :
         AutoImportFixBase<KtSimpleNameExpression>(expression, diagnostic) {
     override fun getCallTypeAndReceiver() = CallTypeAndReceiver.detect(element)
 
@@ -226,7 +228,7 @@ class AutoImportFix(expression: KtSimpleNameExpression, diagnostic: Diagnostic? 
     }
 }
 
-class MissingInvokeAutoImportFix(expression: KtExpression, diagnostic: Diagnostic) :
+internal class MissingInvokeAutoImportFix(expression: KtExpression, diagnostic: Diagnostic) :
         AutoImportFixBase<KtExpression>(expression, diagnostic) {
     override fun getImportNames() = OperatorNameConventions.INVOKE.singletonList()
 
@@ -242,7 +244,7 @@ class MissingInvokeAutoImportFix(expression: KtExpression, diagnostic: Diagnosti
     }
 }
 
-class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpression, diagnostic: Diagnostic) :
+internal class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpression, diagnostic: Diagnostic) :
         AutoImportFixBase<KtArrayAccessExpression>(element, diagnostic) {
     override fun getImportNames(): Collection<Name> {
         val name = if (diagnostics.first().factory == Errors.NO_GET_METHOD) {
@@ -275,7 +277,7 @@ class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpression, diagno
     }
 }
 
-class MissingDelegateAccessorsAutoImportFix(element: KtExpression, diagnostics: Collection<Diagnostic>) :
+internal class MissingDelegateAccessorsAutoImportFix(element: KtExpression, diagnostics: Collection<Diagnostic>) :
         AutoImportFixBase<KtExpression>(element, diagnostics) {
     override fun getImportNames(): Collection<Name> {
         return diagnostics.map {
@@ -314,7 +316,7 @@ class MissingDelegateAccessorsAutoImportFix(element: KtExpression, diagnostics: 
     }
 }
 
-class MissingComponentsAutoImportFix(element: KtExpression, diagnostics: Collection<Diagnostic>) :
+internal class MissingComponentsAutoImportFix(element: KtExpression, diagnostics: Collection<Diagnostic>) :
         AutoImportFixBase<KtExpression>(element, diagnostics) {
     override fun getImportNames() = diagnostics.map { Name.identifier(Errors.COMPONENT_FUNCTION_MISSING.cast(it).a.identifier) }
 

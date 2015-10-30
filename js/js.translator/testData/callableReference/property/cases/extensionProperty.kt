@@ -1,5 +1,6 @@
 package foo
 
+import kotlin.reflect.KMutableProperty1
 
 open class A(var msg:String) {
 }
@@ -21,7 +22,7 @@ fun box(): String {
     val a = A("Test")
 
     var refAExt = A::ext
-    var refBExt = B::ext
+    var refBExt: KMutableProperty1<B, String> = B::ext
 
     assertEquals("ext", refAExt.name)
     assertEquals("ext", refBExt.name)

@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.refactoring.BaseRefactoringProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
@@ -28,10 +29,7 @@ import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ParameterUpdate
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -53,10 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import java.util.ArrayList
-import java.util.Collections
-import java.util.HashMap
-import java.util.LinkedHashMap
+import java.util.*
 
 fun ExtractionGeneratorConfiguration.getDeclarationText(
         withBody: Boolean = true,
@@ -66,7 +61,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
 ): String {
     val extractionTarget = generatorOptions.target
     if (!extractionTarget.isAvailable(descriptor)) {
-        throw IllegalArgumentException("Can't generate ${extractionTarget.targetName}: ${descriptor.extractionData.codeFragmentText}")
+        throw BaseRefactoringProcessor.ConflictsInTestsException(listOf("Can't generate ${extractionTarget.targetName}: ${descriptor.extractionData.codeFragmentText}"))
     }
 
     val builderTarget = when (extractionTarget) {

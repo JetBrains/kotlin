@@ -154,8 +154,10 @@ public class CheckPartialBodyResolveAction : AnAction() {
             e.getPresentation().setVisible(false)
             e.getPresentation().setEnabled(false)
         }
-        e.getPresentation().setVisible(true)
-        e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
+        else {
+            e.getPresentation().setVisible(true)
+            e.getPresentation().setEnabled(selectedKotlinFiles(e).any())
+        }
     }
 
     private fun selectedKotlinFiles(e: AnActionEvent): Sequence<KtFile> {

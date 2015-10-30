@@ -16,7 +16,7 @@ class MyClass {
     }
 
     fun inClass() {
-        //Breakpoint!
+        //Breakpoint! (-1)
         f1 { test() }.f2 {
             test()
         }
@@ -25,4 +25,4 @@ class MyClass {
 
 fun test() {}
 
-// SMART_STEP_INTO_BY_INDEX: 3
+// SMART_STEP_INTO_BY_INDEX: 4

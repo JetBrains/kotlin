@@ -56,6 +56,10 @@ public final class MiscTest extends AbstractExpressionTest {
         checkOutput("KT-1052.kt", "true\n");
     }
 
+    public void testKt9443() throws Exception {
+        checkFooBoxIsOk("kt9443.kt");
+    }
+
     public void testKt740_1() throws Exception {
         checkFooBoxIsTrue("KT-740.kt");
     }

@@ -1,12 +1,16 @@
-@kotlin.jvm.internal.KotlinClass A {
+@kotlin.jvm.internal.KotlinClass
+public final class A {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method f(@Ann p0: java.lang.String): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getP(@Ann p0: java.lang.String): java.lang.String
 }
 
-@java.lang.annotation.Retention @kotlin.jvm.internal.KotlinClass Ann
+@java.lang.annotation.Retention
+@kotlin.jvm.internal.KotlinClass
+public abstract class Ann
 
-@kotlin.jvm.internal.KotlinFileFacade OnReceiverKt {
-    public final @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
-    public final @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
+@kotlin.jvm.internal.KotlinFileFacade
+public final class OnReceiverKt {
+    public final static @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method topLevelF(@Ann p0: java.lang.String): java.lang.String
 }

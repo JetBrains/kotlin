@@ -80,7 +80,7 @@ public class LibraryDependenciesCache(private val project: Project) {
         return Pair(libraries.toList(), sdks.toList())
     }
 
-    public fun getLibraryUsageIndex(): LibraryUsageIndex {
+    private fun getLibraryUsageIndex(): LibraryUsageIndex {
         return CachedValuesManager.getManager(project).getCachedValue(project) {
             CachedValueProvider.Result(LibraryUsageIndex(), ProjectRootModificationTracker.getInstance(project))
         }!!

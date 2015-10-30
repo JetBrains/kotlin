@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
-import java.util.ArrayList
+import java.util.*
 
 public class JvmPlatformParameters(
         public val moduleByJavaClass: (JavaClass) -> ModuleInfo
@@ -63,9 +63,20 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
-            val moduleInfo = platformParameters.moduleByJavaClass(javaClass)
-            resolverForProject.resolverForModule(moduleInfo as M).componentProvider.get<JavaDescriptorResolver>()
+            val referencedClassModule = platformParameters.moduleByJavaClass(javaClass)
+            // We don't have full control over idea resolve api so we allow for a situation which should not happen in Kotlin.
+            // For example, type in a java library can reference a class declared in a source root (is valid but rare case)
+            // Providing a fallback strategy in this case can hide future problems, so we should at least log to be able to diagnose those
+            val resolverForReferencedModule = resolverForProject.tryGetResolverForModule(referencedClassModule as M)
+            val resolverForModule = resolverForReferencedModule ?: run {
+                LOG.warn("Java referenced $referencedClassModule from $moduleInfo\nReferenced class was: $javaClass\n")
+                // in case referenced class lies outside of our resolver, resolve the class as if it is inside our module
+                // this leads to java class being resolved several times
+                resolverForProject.resolverForModule(moduleInfo)
+            }
+            resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
+
         val container = createContainerForLazyResolveWithJava(
                 moduleContext,
                 CodeAnalyzerInitializer.getInstance(project).createTrace(),
@@ -93,4 +104,6 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
 
     override val targetPlatform: TargetPlatform
         get() = JvmPlatform
+
+    private val LOG = Logger.getInstance(JvmAnalyzerFacade::class.java)
 }

@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-fun createSingleImportAction(project: Project,
+internal fun createSingleImportAction(project: Project,
                              editor: Editor,
                              element: KtElement,
                              descriptors: Collection<DeclarationDescriptor>): KotlinAddImportAction {
@@ -70,7 +70,7 @@ fun createSingleImportAction(project: Project,
     return KotlinAddImportAction(project, editor, element, variants)
 }
 
-fun createGroupedImportsAction(project: Project,
+internal fun createGroupedImportsAction(project: Project,
                                editor: Editor,
                                element: KtElement,
                                autoImportDescription: String,

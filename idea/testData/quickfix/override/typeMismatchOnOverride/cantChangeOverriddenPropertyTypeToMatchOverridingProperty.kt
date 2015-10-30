@@ -1,5 +1,5 @@
 // "class org.jetbrains.kotlin.idea.quickfix.ChangeVariableTypeFix" "false"
-// ERROR: <html>Var-property type is 'kotlin.String', which is not a type of overridden<br/><b>public</b> <b>abstract</b> <b>var</b> x: kotlin.Int <i>defined in</i> A</html>
+// ERROR: Type of 'x' doesn't match the type of the overridden var-property 'public abstract var x: kotlin.Int defined in A'
 interface A {
     var x: Int
 }

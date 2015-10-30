@@ -208,8 +208,10 @@ public final class StaticContext {
         JsNameRef result = null;
         JsNameRef qualifier = null;
 
-        for (FqName pathElement : ContainerUtil.reverse(packageFqName.path())) {
-            JsNameRef ref = getNameForPackage(pathElement).makeRef();
+        FqName fqName = packageFqName;
+
+        while (true) {
+            JsNameRef ref = getNameForPackage(fqName).makeRef();
 
             if (qualifier == null) {
                 result = ref;
@@ -219,9 +221,11 @@ public final class StaticContext {
             }
 
             qualifier = ref;
+
+            if (fqName.isRoot()) break;
+            fqName = fqName.parent();
         }
 
-        assert result != null : "didn't iterate: " + packageFqName;
         return result;
     }
 

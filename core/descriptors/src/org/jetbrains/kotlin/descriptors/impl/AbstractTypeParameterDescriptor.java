@@ -25,33 +25,36 @@ import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public abstract class AbstractTypeParameterDescriptor extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
+    public static final List<KotlinType> FALLBACK_UPPER_BOUNDS_ON_RECURSION =
+            Collections.singletonList(ErrorUtils.createErrorType("Recursion while calculating upper bounds"));
+
     private final Variance variance;
     private final boolean reified;
     private final int index;
 
     private final NotNullLazyValue<TypeConstructor> typeConstructor;
     private final NotNullLazyValue<KotlinType> defaultType;
-    private final NotNullLazyValue<Set<KotlinType>> upperBounds;
-    private final NotNullLazyValue<KotlinType> upperBoundsAsType;
+    private final NotNullLazyValue<List<KotlinType>> upperBounds;
 
     protected AbstractTypeParameterDescriptor(
             @NotNull final StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
-            @NotNull Name name,
+            @NotNull final Name name,
             @NotNull Variance variance,
             boolean isReified,
             int index,
@@ -71,34 +74,38 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         this.defaultType = storageManager.createLazyValue(new Function0<KotlinType>() {
             @Override
             public KotlinType invoke() {
-                return KotlinTypeImpl.create(Annotations.Companion.getEMPTY(), getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
-                                             new LazyScopeAdapter(storageManager.createLazyValue(
-                                               new Function0<KtScope>() {
-                                                   @Override
-                                                   public KtScope invoke() {
-                                                       return getUpperBoundsAsType().getMemberScope();
-                                                   }
-                                               }
-                                       )));
+                return KotlinTypeImpl.create(
+                        Annotations.Companion.getEMPTY(),
+                        getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
+                        new LazyScopeAdapter(storageManager.createLazyValue(
+                                new Function0<KtScope>() {
+                                    @Override
+                                    public KtScope invoke() {
+                                        List<KtScope> scopes = new ArrayList<KtScope>();
+                                        for (KotlinType bound : getUpperBounds()) {
+                                            scopes.add(bound.getMemberScope());
+                                        }
+                                        return new ChainedScope(
+                                                AbstractTypeParameterDescriptor.this,
+                                                "Scope for type parameter " + name.asString(),
+                                                scopes.toArray(new KtScope[scopes.size()])
+                                        );
+                                    }
+                                }
+                        ))
+                );
             }
         });
-        this.upperBounds = storageManager.createRecursionTolerantLazyValue(new Function0<Set<KotlinType>>() {
+        this.upperBounds = storageManager.createRecursionTolerantLazyValue(new Function0<List<KotlinType>>() {
             @Override
-            public Set<KotlinType> invoke() {
+            public List<KotlinType> invoke() {
                 return resolveUpperBounds();
             }
-        }, Collections.singleton(ErrorUtils.createErrorType("Recursion while calculating upper bounds")));
-        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<KotlinType>() {
-            @Override
-            public KotlinType invoke() {
-                return computeUpperBoundsAsType();
-            }
-        });
+        }, FALLBACK_UPPER_BOUNDS_ON_RECURSION);
     }
 
     @NotNull
-    @ReadOnly
-    protected abstract Set<KotlinType> resolveUpperBounds();
+    protected abstract List<KotlinType> resolveUpperBounds();
 
     @NotNull
     protected abstract TypeConstructor createTypeConstructor();
@@ -121,22 +128,8 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
-    public Set<KotlinType> getUpperBounds() {
+    public List<KotlinType> getUpperBounds() {
         return upperBounds.invoke();
-    }
-
-    @NotNull
-    @Override
-    public KotlinType getUpperBoundsAsType() {
-        return upperBoundsAsType.invoke();
-    }
-
-    @NotNull
-    private KotlinType computeUpperBoundsAsType() {
-        Set<KotlinType> upperBounds = getUpperBounds();
-        assert !upperBounds.isEmpty() : "Upper bound list is empty in " + getName();
-        KotlinType upperBoundsAsType = TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
-        return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(this).getNothingType();
     }
 
     @NotNull
@@ -153,8 +146,8 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
 
     @NotNull
     @Override
-    public Set<KotlinType> getLowerBounds() {
-        return Collections.singleton(getBuiltIns(this).getNothingType());
+    public List<KotlinType> getLowerBounds() {
+        return Collections.singletonList(getBuiltIns(this).getNothingType());
     }
 
     @NotNull

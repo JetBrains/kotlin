@@ -36,5 +36,6 @@ public enum class NoLookupLocation : LookupLocation {
     WHEN_GET_ALL_DESCRIPTORS,
     WHEN_TYPING,
     WHEN_GET_SUPER_MEMBERS,
-    FOR_NON_TRACKED_SCOPE
+    FOR_NON_TRACKED_SCOPE,
+    FROM_SYNTHETIC_SCOPE
 }

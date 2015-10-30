@@ -17,11 +17,7 @@
 package org.jetbrains.kotlin.serialization.jvm
 
 import com.google.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -122,28 +118,6 @@ public object JvmProtoBufUtil {
     data class PropertySignature(val name: String, val desc: String)
 
     private fun mapTypeDefault(type: ProtoBuf.Type, nameResolver: NameResolver): String? {
-        return if (type.hasClassName()) mapClassIdDefault(nameResolver.getClassId(type.className)) else null
-    }
-
-    @JvmStatic
-    fun mapClassIdDefault(classId: ClassId): String {
-        val internalName = classId.asString().replace('.', '$')
-        val simpleName = internalName.removePrefix("kotlin/")
-        if (simpleName != internalName) {
-            for (jvmPrimitive in JvmPrimitiveType.values()) {
-                val primitiveType = jvmPrimitive.primitiveType
-                if (simpleName == primitiveType.typeName.asString()) return jvmPrimitive.desc
-                if (simpleName == primitiveType.arrayTypeName.asString()) return "[" + jvmPrimitive.desc
-            }
-
-            if (simpleName == KotlinBuiltIns.FQ_NAMES.unit.shortName().asString()) return "V"
-        }
-
-        val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
-        if (javaClassId != null) {
-            return "L" + javaClassId.asString().replace('.', '$') + ";"
-        }
-
-        return "L$internalName;"
+        return if (type.hasClassName()) ClassMapperLite.mapClass(nameResolver.getClassId(type.className)) else null
     }
 }

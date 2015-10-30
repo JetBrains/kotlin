@@ -270,8 +270,8 @@ public class ResolveElementCache(
             is KtInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as KtEnumEntry, file)
 
             is KtImportList -> {
-                val scope = resolveSession.getFileScopeProvider().getFileScope(resolveElement.getContainingJetFile())
-                scope.forceResolveAllImports()
+                val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingJetFile())
+                resolver.forceResolveAllImports()
                 resolveSession.trace
             }
 
@@ -308,15 +308,10 @@ public class ResolveElementCache(
         if (ktElement is KtSimpleNameExpression) {
             val header = ktElement.getParentOfType<KtPackageDirective>(true)!!
 
-            if (trace.getBindingContext()[BindingContext.RESOLUTION_SCOPE, ktElement] == null) {
-                val scope = resolveSession.getModuleDescriptor().getPackage(header.getFqName(ktElement).parent()).memberScope
-                trace.record(BindingContext.RESOLUTION_SCOPE, ktElement, scope)
-            }
-
             if (Name.isValidIdentifier(ktElement.getReferencedName())) {
                 if (trace.getBindingContext()[BindingContext.REFERENCE_TARGET, ktElement] == null) {
                     val fqName = header.getFqName(ktElement)
-                    val packageDescriptor = resolveSession.getModuleDescriptor().getPackage(fqName)
+                    val packageDescriptor = resolveSession.moduleDescriptor.getPackage(fqName)
                     trace.record(BindingContext.REFERENCE_TARGET, ktElement, packageDescriptor)
                 }
             }
@@ -414,7 +409,7 @@ public class ResolveElementCache(
 
     private fun propertyAdditionalResolve(resolveSession: ResolveSession, property: KtProperty, file: KtFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(property)
-        val propertyResolutionScope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(property)
+        val propertyResolutionScope = resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(property)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         val descriptor = resolveSession.resolveToDescriptor(property) as PropertyDescriptor
@@ -432,7 +427,7 @@ public class ResolveElementCache(
 
         val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, { declaration ->
             assert(declaration.getParent() == property) { "Must be called only for property accessors, but called for $declaration" }
-            resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(declaration)
+            resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(declaration)
         })
 
         bodyResolver.resolvePropertyAccessors(bodyResolveContext, property, descriptor)
@@ -449,7 +444,7 @@ public class ResolveElementCache(
     private fun functionAdditionalResolve(resolveSession: ResolveSession, namedFunction: KtNamedFunction, file: KtFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(namedFunction)
 
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(namedFunction)
+        val scope = resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(namedFunction)
         val functionDescriptor = resolveSession.resolveToDescriptor(namedFunction) as FunctionDescriptor
         ForceResolveUtil.forceResolveAllContents(functionDescriptor)
 
@@ -464,7 +459,7 @@ public class ResolveElementCache(
     private fun secondaryConstructorAdditionalResolve(resolveSession: ResolveSession, constructor: KtSecondaryConstructor, file: KtFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(constructor)
 
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(constructor)
+        val scope = resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(constructor)
         val constructorDescriptor = resolveSession.resolveToDescriptor(constructor) as ConstructorDescriptor
         ForceResolveUtil.forceResolveAllContents(constructorDescriptor)
 
@@ -478,7 +473,7 @@ public class ResolveElementCache(
 
     private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: KtClass, file: KtFile): BindingTrace {
         val trace = createDelegatingTrace(klass)
-        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(klass)
+        val scope = resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(klass)
 
         val classDescriptor = resolveSession.resolveToDescriptor(klass) as ClassDescriptor
         val constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor()
@@ -519,7 +514,7 @@ public class ResolveElementCache(
             statementFilter: StatementFilter
     ): BodyResolver {
         val globalContext = SimpleGlobalContext(resolveSession.storageManager, resolveSession.getExceptionTracker())
-        val module = resolveSession.getModuleDescriptor()
+        val module = resolveSession.moduleDescriptor
         return createContainerForBodyResolve(
                 globalContext.withProject(file.getProject()).withModule(module),
                 trace,

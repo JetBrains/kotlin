@@ -20,6 +20,10 @@ import com.intellij.debugger.MultiRequestPositionManager
 import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcess
+import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.PositionManagerEx
+import com.intellij.debugger.engine.evaluation.EvaluationContext
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.libraries.LibraryUtil
@@ -29,6 +33,8 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.*
+import com.intellij.util.ThreeState
+import com.intellij.xdebugger.frame.XStackFrame
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Location
 import com.sun.jdi.ReferenceType
@@ -48,26 +54,34 @@ import org.jetbrains.kotlin.fileClasses.getInternalName
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class PositionedElement(val className: String?, val element: PsiElement?)
 
-public class JetPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
+public class JetPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
 
     private val myTypeMappers = WeakHashMap<String, CachedValue<JetTypeMapper>>()
+
+    override fun evaluateCondition(context: EvaluationContext, frame: StackFrameProxyImpl, location: Location, expression: String): ThreeState? {
+        return null
+    }
+
+    override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
+         return KotlinStackFrame(frame)
+    }
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) {
@@ -123,10 +137,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         val end = CodeInsightUtils.getEndLineOffset(file, lineNumber)
         if (start == null || end == null) return null
 
-        val literalsOrFunctions = CodeInsightUtils.
-                findElementsOfClassInRange(file, start, end, KtFunctionLiteral::class.java, KtNamedFunction::class.java).
-                filter { KtPsiUtil.getParentCallIfPresent(it as KtExpression) != null }
-
+        val literalsOrFunctions = getLambdasAtLineIfAny(file, lineNumber)
         if (literalsOrFunctions.isEmpty()) return null;
 
         val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
@@ -137,14 +148,16 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).internalName
         for (literal in literalsOrFunctions) {
-            val functionLiteral = literal as KtFunction
-            if (isInlinedLambda(functionLiteral, typeMapper.bindingContext)) {
+            if (isInlinedLambda(literal, typeMapper.bindingContext)) {
+                if (isInsideInlineArgument(literal, location, myDebugProcess as DebugProcessImpl)) {
+                    return literal
+                }
                 continue
             }
 
             val internalClassName = getInternalClassNameForElement(literal.firstChild, typeMapper, file, isInLibrary).className
             if (internalClassName == currentLocationClassName) {
-                return functionLiteral
+                return literal
             }
         }
 
@@ -217,7 +230,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
     }
 
     private fun classNameForPositionAndInlinedOnes(sourcePosition: SourcePosition): List<String> {
-        val result = arrayListOf<String>()
+        val result = hashSetOf<String>()
         val name = classNameForPosition(sourcePosition)
         if (name != null) {
             result.add(name)
@@ -225,7 +238,22 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         val list = findInlinedCalls(sourcePosition.elementAt, sourcePosition.file)
         result.addAll(list)
 
-        return result;
+        val lambdas = findLambdas(sourcePosition)
+        result.addAll(lambdas)
+
+        return result.toReadOnlyList();
+    }
+
+    private fun findLambdas(sourcePosition: SourcePosition): List<String> {
+        return runReadAction {
+            val lambdas = getLambdasAtLineIfAny(sourcePosition)
+            val file = sourcePosition.file.containingFile as KtFile
+            val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
+            lambdas.map {
+                val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(it, file)
+                getInternalClassNameForElement(it, typeMapper, file, isInLibrary).className
+            }.filterNotNull()
+        }
     }
 
     public fun classNameForPosition(sourcePosition: SourcePosition): String? {

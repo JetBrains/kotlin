@@ -31,7 +31,7 @@ public final class PackageClassUtils {
 
     // ex. <root> -> _DefaultPackage, a -> APackage, a.b -> BPackage
     @NotNull
-    private static String getPackageClassName(@NotNull FqName packageFQN) {
+    public static String getPackageClassName(@NotNull FqName packageFQN) {
         if (packageFQN.isRoot()) {
             return DEFAULT_PACKAGE_CLASS_NAME;
         }

@@ -16,7 +16,7 @@
 
 package kotlin.jvm.internal
 
-private abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
+public abstract class PrimitiveSpreadBuilder<T : Any>(private val size: Int) {
     abstract protected fun T.getSize(): Int
 
     protected var position: Int = 0

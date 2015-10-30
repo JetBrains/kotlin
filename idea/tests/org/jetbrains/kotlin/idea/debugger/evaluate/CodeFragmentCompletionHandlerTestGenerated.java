@@ -64,4 +64,10 @@ public class CodeFragmentCompletionHandlerTestGenerated extends AbstractCodeFrag
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/InsertImport.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("NotImportedExtension.kt")
+    public void testNotImportedExtension() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/NotImportedExtension.kt");
+        doTest(fileName);
+    }
 }

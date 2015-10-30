@@ -31,7 +31,6 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getFileTopLevelScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -49,14 +49,15 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
-import org.jetbrains.kotlin.resolve.scopes.FileScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         val file = session.file as? KtFile ?: return PsiElementVisitor.EMPTY_VISITOR
-        val fileScope = file.getResolutionFacade().getFileTopLevelScope(file)
+        val fileScope = file.getResolutionFacade().getFileResolutionScope(file)
 
         return object : KtVisitorVoid() {
             override fun visitProperty(property: KtProperty) {
@@ -86,11 +87,10 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
         }
     }
 
-    private fun conflictingSyntheticExtension(descriptor: PropertyDescriptor, fileScope: FileScope): SyntheticJavaPropertyDescriptor? {
+    private fun conflictingSyntheticExtension(descriptor: PropertyDescriptor, scope: LexicalScope): SyntheticJavaPropertyDescriptor? {
         val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
-        return fileScope
-                .getSyntheticExtensionProperties(listOf(extensionReceiverType), descriptor.name, NoLookupLocation.FROM_IDE)
-                .firstIsInstanceOrNull()
+        return scope.collectSyntheticExtensionProperties(listOf(extensionReceiverType), descriptor.name, NoLookupLocation.FROM_IDE)
+                .firstIsInstanceOrNull<SyntheticJavaPropertyDescriptor>()
     }
 
     private fun isSameAsSynthetic(declaration: KtProperty, syntheticProperty: SyntheticJavaPropertyDescriptor): Boolean {

@@ -31,7 +31,7 @@ public abstract class ClassNameCollectionClassBuilderFactory(
 
     protected abstract fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin)
 
-    override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassNameCollectionClassBuilder {
+    override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder {
         return ClassNameCollectionClassBuilder(origin, delegate.newClassBuilder(origin))
     }
 

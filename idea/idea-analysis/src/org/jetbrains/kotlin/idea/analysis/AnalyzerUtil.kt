@@ -23,31 +23,30 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.expressions.JetTypeInfo
+import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
 @JvmOverloads
 public fun KtExpression.computeTypeInfoInContext(
-        scope: KtScope,
+        scope: LexicalScope,
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
         expectedType: KotlinType = TypeUtils.NO_EXPECTED_TYPE,
         isStatement: Boolean = false
-): JetTypeInfo {
+): KotlinTypeInfo {
     PreliminaryDeclarationVisitor.createForExpression(this, trace)
     return contextExpression.getResolutionFacade().frontendService<ExpressionTypingServices>()
-            .getTypeInfo(scope.asLexicalScope(), this, expectedType, dataFlowInfo, trace, isStatement)
+            .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
 }
 
 @JvmOverloads
 public fun KtExpression.analyzeInContext(
-        scope: KtScope,
+        scope: LexicalScope,
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
@@ -60,7 +59,7 @@ public fun KtExpression.analyzeInContext(
 
 @JvmOverloads
 public fun KtExpression.computeTypeInContext(
-        scope: KtScope,
+        scope: LexicalScope,
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),
         dataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,

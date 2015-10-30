@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.fileClasses
 
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 
 

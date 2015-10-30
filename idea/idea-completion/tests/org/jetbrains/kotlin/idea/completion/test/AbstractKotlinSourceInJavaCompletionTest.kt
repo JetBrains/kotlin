@@ -43,6 +43,5 @@ public abstract class AbstractKotlinSourceInJavaCompletionTest : JetFixtureCompl
     }
 
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
-
-    override fun complete(invocationCount: Int) = myFixture.complete(CompletionType.BASIC, invocationCount)
+    override fun defaultCompletionType() = CompletionType.BASIC
 }

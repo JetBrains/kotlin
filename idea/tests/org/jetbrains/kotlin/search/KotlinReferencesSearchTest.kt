@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.search
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.references.KtMultiDeclarationReference
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFunction
@@ -48,9 +49,12 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
         Assert.assertTrue(refs[2] is KtMultiDeclarationReference)
     }
 
+    // workaround for KT-9788 AssertionError from backand when we read field from inline function
+    private val myFixtureProxy: JavaCodeInsightTestFixture get() = myFixture
+
     private inline fun doTest<reified T: PsiElement>(): List<PsiReference> {
-        myFixture.configureByFile(getFileName())
-        val func = myFixture.getElementAtCaret().getParentOfType<T>(false)!!
+        myFixtureProxy.configureByFile(getFileName())
+        val func = myFixtureProxy.getElementAtCaret().getParentOfType<T>(false)!!
         return ReferencesSearch.search(func).findAll().sortedBy { it.getElement().getTextRange().getStartOffset() }
     }
 }

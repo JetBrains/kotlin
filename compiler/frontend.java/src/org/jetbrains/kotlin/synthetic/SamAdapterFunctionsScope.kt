@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.synthetic
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
@@ -26,10 +27,11 @@ import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -37,7 +39,7 @@ interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor {
     val sourceFunction: FunctionDescriptor
 }
 
-class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtScope.Empty {
+class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingScope(null) {
     private val extensionForFunction = storageManager.createMemoizedFunctionWithNullableValues<FunctionDescriptor, FunctionDescriptor> { function ->
         extensionForFunctionNotCached(function)
     }
@@ -52,7 +54,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
         return MyFunctionDescriptor.create(enhancedFunction)
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         var result: SmartList<FunctionDescriptor>? = null
         for (type in receiverTypes) {
             for (function in type.memberScope.getFunctions(name, location)) {
@@ -72,13 +74,17 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
         }
     }
 
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
+    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
         return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
             type.memberScope.getDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filterIsInstance<FunctionDescriptor>()
                     .map { extensionForFunction(it.original) }
                     .filterNotNull()
         }
+    }
+
+    override fun printStructure(p: Printer) {
+        p.println(javaClass.simpleName)
     }
 
     private class MyFunctionDescriptor(
@@ -102,7 +108,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
                                                       sourceFunction.annotations,
                                                       sourceFunction.name,
                                                       CallableMemberDescriptor.Kind.SYNTHESIZED,
-                                                      sourceFunction.source)
+                                                      sourceFunction.original.source)
                 descriptor.sourceFunction = sourceFunction
 
                 val sourceTypeParams = (sourceFunction.typeParameters).toArrayList()
@@ -136,8 +142,16 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
         override fun hasStableParameterNames() = sourceFunction.hasStableParameterNames()
         override fun hasSynthesizedParameterNames() = sourceFunction.hasSynthesizedParameterNames()
 
-        override fun createSubstitutedCopy(newOwner: DeclarationDescriptor, original: FunctionDescriptor?, kind: CallableMemberDescriptor.Kind): MyFunctionDescriptor {
-            return MyFunctionDescriptor(containingDeclaration, original as SimpleFunctionDescriptor?, annotations, name, kind, source).apply {
+        override fun createSubstitutedCopy(
+                newOwner: DeclarationDescriptor,
+                original: FunctionDescriptor?,
+                kind: CallableMemberDescriptor.Kind,
+                newName: Name?,
+                preserveSource: Boolean
+        ): MyFunctionDescriptor {
+            return MyFunctionDescriptor(
+                    containingDeclaration, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind, source
+            ).apply {
                 sourceFunction = this@MyFunctionDescriptor.sourceFunction
             }
         }
@@ -157,13 +171,17 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : KtScope by KtSc
                 kind: CallableMemberDescriptor.Kind,
                 newValueParameterDescriptors: MutableList<ValueParameterDescriptor>,
                 newExtensionReceiverParameterType: KotlinType?,
-                newReturnType: KotlinType
+                newReturnType: KotlinType,
+                name: Name?,
+                preserveSource: Boolean,
+                signatureChange: Boolean
         ): FunctionDescriptor? {
-            val descriptor = super<SimpleFunctionDescriptorImpl>.doSubstitute(
+            val descriptor = super.doSubstitute(
                     originalSubstitutor, newOwner, newModality, newVisibility,
                     newIsOperator, newIsInfix, newIsExternal, newIsInline, newIsTailrec, original,
-                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType)
-                as MyFunctionDescriptor? ?: return null
+                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name,
+                    preserveSource, signatureChange)
+                    as MyFunctionDescriptor? ?: return null
 
             if (original == null) {
                 throw UnsupportedOperationException("doSubstitute with no original should not be called for synthetic extension")

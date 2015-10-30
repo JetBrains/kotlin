@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
 
-    override fun visitNamedFunction(function: KtNamedFunction, data: ExpressionTypingContext): JetTypeInfo {
+    override fun visitNamedFunction(function: KtNamedFunction, data: ExpressionTypingContext): KotlinTypeInfo {
         return visitNamedFunction(function, data, false, null)
     }
 
@@ -52,7 +52,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             context: ExpressionTypingContext,
             isStatement: Boolean,
             statementScope: LexicalWritableScope? // must be not null if isStatement
-    ): JetTypeInfo {
+    ): KotlinTypeInfo {
         if (!isStatement) {
             // function expression
             if (!function.getTypeParameters().isEmpty()) {
@@ -129,7 +129,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         return components.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameters, returnType)
     }
 
-    override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression, context: ExpressionTypingContext): JetTypeInfo? {
+    override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
         if (!expression.getFunctionLiteral().hasBody()) return null
 
         val expectedType = context.expectedType

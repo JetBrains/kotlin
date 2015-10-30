@@ -47,7 +47,7 @@ public class MappingClassesForWhenByEnumCodegen {
         cb.defineClass(
                 srcFile,
                 V1_6,
-                ACC_FINAL | ACC_SYNTHETIC,
+                ACC_FINAL | ACC_SYNTHETIC | ACC_PUBLIC,
                 mappingsClass.getInternalName(),
                 null,
                 OBJECT_TYPE.getInternalName(),

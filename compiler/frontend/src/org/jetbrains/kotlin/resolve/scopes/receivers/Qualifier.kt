@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asJetScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
@@ -128,7 +128,7 @@ fun createQualifier(
         context: ExpressionTypingContext
 ): QualifierReceiver? {
     val receiverScope = when {
-        !receiver.exists() -> context.scope.asJetScope()
+        !receiver.exists() -> context.scope.asKtScope()
         receiver is QualifierReceiver -> receiver.scope
         else -> receiver.getType().getMemberScope()
     }
