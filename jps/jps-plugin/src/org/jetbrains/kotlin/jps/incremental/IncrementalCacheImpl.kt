@@ -110,7 +110,7 @@ public class IncrementalCacheImpl(
 
     @TestOnly
     public fun dump(): String {
-        return maps.map { it.dump() }.join("\n\n")
+        return maps.joinToString("\n\n") { it.dump() }
     }
 
     public fun markOutputClassesDirty(removedAndCompiledSources: List<File>) {
@@ -769,7 +769,7 @@ private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): St
 
 @TestOnly
 public fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =
-        "[${sorted().map(Any::toString).join(", ")}]"
+        "[${sorted().joinToString(", ", transform = Any::toString)}]"
 
 private class PathFunctionPair(
         public val path: String,

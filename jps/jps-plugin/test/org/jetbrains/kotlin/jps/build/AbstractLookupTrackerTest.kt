@@ -88,7 +88,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
                     start = end
                 }
 
-                lines[line - 1] = parts.join("") + lineContent.subSequence(start, lineContent.length)
+                lines[line - 1] = parts.joinToString("") + lineContent.subSequence(start, lineContent.length)
             }
 
             val actual = lines.joinToString("\n")

@@ -138,7 +138,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val dataManager = projectDescriptor.dataManager
 
         if (chunk.targets.any { dataManager.dataPaths.getKotlinCacheVersion(it).isIncompatible() }) {
-            LOG.info("Clearing caches for " + chunk.targets.map { it.presentableName }.join())
+            LOG.info("Clearing caches for " + chunk.targets.joinToString { it.presentableName })
             chunk.targets.forEach { dataManager.getKotlinCache(it).clean() }
             return CHUNK_REBUILD_REQUIRED
         }
@@ -278,7 +278,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): OutputItemsCollectorImpl? {
 
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            LOG.debug("Compiling to JS ${filesToCompile.values().size()} files in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
+            LOG.debug("Compiling to JS ${filesToCompile.values().size()} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
             return compileToJs(chunk, commonArguments, environment, null, messageCollector, project)
         }
 
@@ -563,7 +563,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk, filesToCompile, totalRemovedFiles != 0)
         if (moduleFile == null) {
-            KotlinBuilder.LOG.debug("Not compiling, because no files affected: " + filesToCompile.keySet().map { it.getPresentableName() }.join())
+            KotlinBuilder.LOG.debug("Not compiling, because no files affected: " + filesToCompile.keySet().joinToString { it.presentableName })
             // No Kotlin sources found
             return null
         }
@@ -574,7 +574,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size()} files"
                                 + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
-                                + " in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
+                                + " in " + filesToCompile.keySet().joinToString { it.presentableName })
 
         KotlinCompilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
         moduleFile.delete()
