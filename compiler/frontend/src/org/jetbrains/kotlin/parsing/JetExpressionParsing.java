@@ -34,7 +34,6 @@ import java.util.Set;
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.DEFAULT;
-import static org.jetbrains.kotlin.parsing.JetParsing.DeclarationParsingMode.LOCAL;
 
 public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
@@ -1240,7 +1239,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         IElementType keywordToken = tt();
         IElementType declType = null;
         if (keywordToken == CLASS_KEYWORD ||  keywordToken == INTERFACE_KEYWORD) {
-            declType = myJetParsing.parseClass(isEnum, LOCAL);
+            declType = myJetParsing.parseClass(isEnum);
         }
         else if (keywordToken == FUN_KEYWORD) {
             declType = myJetParsing.parseFunction();
@@ -1264,7 +1263,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 return null;
             }
 
-            myJetParsing.parseObject(NameParsingMode.REQUIRED, true, LOCAL);
+            myJetParsing.parseObject(NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
         return declType;
@@ -1756,7 +1755,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     public void parseObjectLiteral() {
         PsiBuilder.Marker literal = mark();
         PsiBuilder.Marker declaration = mark();
-        myJetParsing.parseObject(NameParsingMode.PROHIBITED, false, LOCAL); // Body is not optional because of foo(object : A, B)
+        myJetParsing.parseObject(NameParsingMode.PROHIBITED, false); // Body is not optional because of foo(object : A, B)
         declaration.done(OBJECT_DECLARATION);
         literal.done(OBJECT_LITERAL);
     }

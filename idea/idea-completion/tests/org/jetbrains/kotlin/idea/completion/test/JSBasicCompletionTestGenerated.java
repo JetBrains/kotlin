@@ -745,6 +745,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("TopLevelClassName6.kt")
+        public void testTopLevelClassName6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelClassName6.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TopLevelClassName-3.kt")
         public void testTopLevelClassName_3() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelClassName-3.kt");

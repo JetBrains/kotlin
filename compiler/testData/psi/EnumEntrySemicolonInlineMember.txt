@@ -15,8 +15,7 @@ JetFile: EnumEntrySemicolonInlineMember.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('FIRST')
+        PsiElement(IDENTIFIER)('FIRST')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       FUN

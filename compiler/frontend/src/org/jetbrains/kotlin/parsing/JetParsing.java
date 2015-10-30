@@ -32,7 +32,6 @@ import java.util.Map;
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.*;
-import static org.jetbrains.kotlin.parsing.JetParsing.DeclarationParsingMode.*;
 
 public class JetParsing extends AbstractJetParsing {
     private static final Logger LOG = Logger.getInstance(JetParsing.class);
@@ -400,7 +399,7 @@ public class JetParsing extends AbstractJetParsing {
 //        }
 //        else
         if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            declType = parseClass(detector.isEnumDetected(), TOP_LEVEL);
+            declType = parseClass(detector.isEnumDetected());
         }
         else if (keywordToken == FUN_KEYWORD) {
             declType = parseFunction();
@@ -412,7 +411,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(NameParsingMode.REQUIRED, true, TOP_LEVEL);
+            parseObject(NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
         else if (at(LBRACE)) {
@@ -768,8 +767,7 @@ public class JetParsing extends AbstractJetParsing {
             boolean object,
             NameParsingMode nameParsingMode,
             boolean optionalBody,
-            boolean enumClass,
-            DeclarationParsingMode declarationParsingMode
+            boolean enumClass
     ) {
         if (object) {
             assert _at(OBJECT_KEYWORD);
@@ -780,9 +778,7 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // CLASS_KEYWORD, INTERFACE_KEYWORD or OBJECT_KEYWORD
 
         if (nameParsingMode == NameParsingMode.REQUIRED) {
-            OptionalMarker marker = new OptionalMarker(object);
             expect(IDENTIFIER, "Name expected", CLASS_NAME_RECOVERY_SET);
-            marker.done(OBJECT_DECLARATION_NAME);
         }
         else {
             assert object : "Must be an object to be nameless";
@@ -792,9 +788,7 @@ public class JetParsing extends AbstractJetParsing {
                 }
                 else {
                     assert nameParsingMode == NameParsingMode.ALLOWED;
-                    PsiBuilder.Marker marker = mark();
                     advance();
-                    marker.done(OBJECT_DECLARATION_NAME);
                 }
             }
         }
@@ -868,12 +862,12 @@ public class JetParsing extends AbstractJetParsing {
         return object ? OBJECT_DECLARATION : CLASS;
     }
 
-    IElementType parseClass(boolean enumClass, DeclarationParsingMode declarationParsingMode) {
-        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, declarationParsingMode);
+    IElementType parseClass(boolean enumClass) {
+        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass);
     }
 
-    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody, DeclarationParsingMode declarationParsingMode) {
-        parseClassOrObject(true, nameParsingMode, optionalBody, false, declarationParsingMode);
+    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody) {
+        parseClassOrObject(true, nameParsingMode, optionalBody, false);
     }
 
     /*
@@ -947,9 +941,7 @@ public class JetParsing extends AbstractJetParsing {
         parseModifierList(DEFAULT, TokenSet.create(COMMA, SEMICOLON, RBRACE));
 
         if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
-            PsiBuilder.Marker nameAsDeclaration = mark();
             advance(); // IDENTIFIER
-            nameAsDeclaration.done(OBJECT_DECLARATION_NAME);
 
             if (at(LPAR)) {
                 // Arguments should be parsed here
@@ -1068,7 +1060,7 @@ public class JetParsing extends AbstractJetParsing {
         IElementType keywordToken = tt();
         IElementType declType = null;
         if (keywordToken == CLASS_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            declType = parseClass(isEnum, CLASS_MEMBER);
+            declType = parseClass(isEnum);
         }
         else if (keywordToken == FUN_KEYWORD) {
                 declType = parseFunction();
@@ -1080,7 +1072,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(isDefault ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED, true, CLASS_MEMBER);
+            parseObject(isDefault ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
         else if (at(INIT_KEYWORD)) {

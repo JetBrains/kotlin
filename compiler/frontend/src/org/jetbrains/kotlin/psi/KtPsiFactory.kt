@@ -201,10 +201,6 @@ public class KtPsiFactory(private val project: Project) {
         return (createExpression("0 $name 0") as KtBinaryExpression).getOperationReference()
     }
 
-    public fun createObjectDeclarationName(name: String): KtObjectDeclarationName {
-        return createDeclaration<KtObjectDeclaration>("object $name").getNameAsDeclaration()!!
-    }
-
     public fun createIdentifier(name: String): PsiElement {
         return createSimpleName(name).getIdentifier()!!
     }

@@ -6,8 +6,7 @@ JetFile: Where.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     PsiErrorElement:Where clause is not allowed for objects
       PsiErrorElement:Type constraints are not allowed when no type parameters declared
@@ -28,8 +27,7 @@ JetFile: Where.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
@@ -59,8 +57,7 @@ JetFile: Where.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PRIMARY_CONSTRUCTOR
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
@@ -85,8 +82,7 @@ JetFile: Where.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PRIMARY_CONSTRUCTOR
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
@@ -120,8 +116,7 @@ JetFile: Where.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PRIMARY_CONSTRUCTOR
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')

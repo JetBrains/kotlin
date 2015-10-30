@@ -6,8 +6,7 @@ JetFile: Everything.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PsiErrorElement:Type parameters are not allowed for objects
       TYPE_PARAMETER_LIST
         PsiElement(LT)('<')

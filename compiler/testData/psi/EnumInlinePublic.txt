@@ -18,16 +18,14 @@ JetFile: EnumInlinePublic.kt
         MODIFIER_LIST
           PsiElement(inline)('inline')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('public')
+        PsiElement(IDENTIFIER)('public')
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         MODIFIER_LIST
           PsiElement(inner)('inner')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('private')
+        PsiElement(IDENTIFIER)('private')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION

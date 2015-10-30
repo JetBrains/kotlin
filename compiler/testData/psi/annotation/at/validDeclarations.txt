@@ -471,9 +471,8 @@ JetFile: validDeclarations.kt
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace('\n\n    ')
-        OBJECT_DECLARATION_NAME
-          PsiErrorElement:Name expected
-            PsiElement(AT)('@')
+        PsiErrorElement:Name expected
+          PsiElement(AT)('@')
       OBJECT_DECLARATION
         MODIFIER_LIST
           PsiElement(companion)('companion')
@@ -488,8 +487,7 @@ JetFile: validDeclarations.kt
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('B')
+        PsiElement(IDENTIFIER)('B')
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       SECONDARY_CONSTRUCTOR

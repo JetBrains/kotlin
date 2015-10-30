@@ -30,8 +30,7 @@ JetFile: EnumShortWithOverload.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('RED')
+        PsiElement(IDENTIFIER)('RED')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
@@ -81,8 +80,7 @@ JetFile: EnumShortWithOverload.kt
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('GREEN')
+        PsiElement(IDENTIFIER)('GREEN')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
@@ -132,8 +130,7 @@ JetFile: EnumShortWithOverload.kt
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('BLUE')
+        PsiElement(IDENTIFIER)('BLUE')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE

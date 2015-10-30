@@ -72,8 +72,7 @@ JetFile: DefaultKeyword.kt
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('A')
+        PsiElement(IDENTIFIER)('A')
         PsiWhiteSpace(' ')
         CLASS_BODY
           PsiElement(LBRACE)('{')
@@ -96,8 +95,7 @@ JetFile: DefaultKeyword.kt
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('A')
+        PsiElement(IDENTIFIER)('A')
         PsiWhiteSpace(' ')
         CLASS_BODY
           PsiElement(LBRACE)('{')
@@ -123,8 +121,7 @@ JetFile: DefaultKeyword.kt
     PsiWhiteSpace(' ')
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('B')
+    PsiElement(IDENTIFIER)('B')
   PsiWhiteSpace('\n')
   OBJECT_DECLARATION
     PsiComment(EOL_COMMENT)('//should be error')
@@ -133,10 +130,9 @@ JetFile: DefaultKeyword.kt
       PsiElement(companion)('companion')
     PsiWhiteSpace(' ')
     PsiElement(object)('object')
+    PsiErrorElement:Name expected
+      <empty list>
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiErrorElement:Name expected
-        <empty list>
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n')
@@ -145,8 +141,7 @@ JetFile: DefaultKeyword.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('A')
+    PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')
     CLASS_BODY
       PsiElement(LBRACE)('{')
@@ -187,8 +182,7 @@ JetFile: DefaultKeyword.kt
             PsiWhiteSpace(' ')
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
-            OBJECT_DECLARATION_NAME
-              PsiElement(IDENTIFIER)('C')
+            PsiElement(IDENTIFIER)('C')
             PsiWhiteSpace(' ')
             CLASS_BODY
               PsiElement(LBRACE)('{')
@@ -217,13 +211,11 @@ JetFile: DefaultKeyword.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('A')
+        PsiElement(IDENTIFIER)('A')
         PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('B')
+        PsiElement(IDENTIFIER)('B')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
@@ -251,10 +243,9 @@ JetFile: DefaultKeyword.kt
       PsiWhiteSpace(' ')
       OBJECT_DECLARATION
         PsiElement(object)('object')
-        PsiWhiteSpace('\n')
-        OBJECT_DECLARATION_NAME
-          PsiErrorElement:Name expected
-            <empty list>
+        PsiErrorElement:Name expected
+          <empty list>
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   CLASS
@@ -326,13 +317,11 @@ JetFile: DefaultKeyword.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('A')
+        PsiElement(IDENTIFIER)('A')
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('B')
+        PsiElement(IDENTIFIER)('B')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
@@ -355,13 +344,11 @@ JetFile: DefaultKeyword.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('A')
+        PsiElement(IDENTIFIER)('A')
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('B')
+        PsiElement(IDENTIFIER)('B')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION

@@ -401,10 +401,6 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitObjectDeclaration(declaration, null);
     }
 
-    public void visitObjectDeclarationName(@NotNull KtObjectDeclarationName declarationName) {
-        super.visitObjectDeclarationName(declarationName, null);
-    }
-
     public void visitStringTemplateEntry(@NotNull KtStringTemplateEntry entry) {
         super.visitStringTemplateEntry(entry, null);
     }
@@ -1003,12 +999,6 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, Void data) {
         visitObjectDeclaration(declaration);
-        return null;
-    }
-
-    @Override
-    public final Void visitObjectDeclarationName(@NotNull KtObjectDeclarationName declarationName, Void data) {
-        visitObjectDeclarationName(declarationName);
         return null;
     }
 

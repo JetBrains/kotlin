@@ -137,13 +137,11 @@ JetFile: AnonymousObjects.kt
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n  ')
           ENUM_ENTRY
-            OBJECT_DECLARATION_NAME
-              PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
+            PsiElement(IDENTIFIER)('TOO_MANY_CLICKS')
             PsiElement(COMMA)(',')
           PsiWhiteSpace('\n  ')
           ENUM_ENTRY
-            OBJECT_DECLARATION_NAME
-              PsiElement(IDENTIFIER)('ONE_MORE_MESSAGE')
+            PsiElement(IDENTIFIER)('ONE_MORE_MESSAGE')
           PsiWhiteSpace('\n')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n')

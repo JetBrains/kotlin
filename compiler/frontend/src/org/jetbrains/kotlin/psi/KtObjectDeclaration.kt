@@ -32,29 +32,26 @@ public class KtObjectDeclaration : KtClassOrObject {
         get() = stub as? KotlinObjectStub
 
     override fun getName(): String? {
-        _stub?.name?.let { return it }
+        super.getName()?.let { return it }
 
-        val nameAsDeclaration = getNameAsDeclaration()
-        if (nameAsDeclaration == null && isCompanion()) {
+        if (isCompanion() && !isTopLevel()) {
             //NOTE: a hack in PSI that simplifies writing frontend code
             return SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.toString()
         }
-        return nameAsDeclaration?.name
+
+        return null
     }
 
-    override fun getNameIdentifier(): PsiElement? = getNameAsDeclaration()?.nameIdentifier
-
     override fun setName(@NonNls name: String): PsiElement {
-        val declarationName = getNameAsDeclaration()
-        if (declarationName == null) {
+        if (nameIdentifier == null) {
             val psiFactory = KtPsiFactory(project)
-            val result = addAfter(psiFactory.createObjectDeclarationName(name), getObjectKeyword())
+            val result = addAfter(psiFactory.createIdentifier(name), getObjectKeyword())
             addAfter(psiFactory.createWhiteSpace(), getObjectKeyword())
 
             return result
         }
         else {
-            return declarationName.setName(name)
+            return super.setName(name)
         }
     }
 

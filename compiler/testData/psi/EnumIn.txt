@@ -15,7 +15,6 @@ JetFile: EnumIn.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('`in`')
+        PsiElement(IDENTIFIER)('`in`')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

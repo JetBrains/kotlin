@@ -33,7 +33,6 @@ public interface KtNodeTypes {
 
     KtNodeType TYPEDEF    = new KtNodeType("TYPEDEF", KtTypedef.class);
     IElementType OBJECT_DECLARATION = KtStubElementTypes.OBJECT_DECLARATION;
-    KtNodeType OBJECT_DECLARATION_NAME = new KtNodeType("OBJECT_DECLARATION_NAME", KtObjectDeclarationName.class);
 
     IElementType ENUM_ENTRY            = KtStubElementTypes.ENUM_ENTRY;
     IElementType ANONYMOUS_INITIALIZER = KtStubElementTypes.ANONYMOUS_INITIALIZER;

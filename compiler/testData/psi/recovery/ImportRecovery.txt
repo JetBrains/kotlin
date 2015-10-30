@@ -22,8 +22,7 @@ JetFile: ImportRecovery.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('StyleSheetOrigin')
+    PsiElement(IDENTIFIER)('StyleSheetOrigin')
     PsiWhiteSpace(' ')
     CLASS_BODY
       PsiElement(LBRACE)('{')

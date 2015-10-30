@@ -414,10 +414,6 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitJetElement(condition, data);
     }
 
-    public R visitObjectDeclarationName(@NotNull KtObjectDeclarationName declarationName, D data) {
-        return visitExpression(declarationName, data);
-    }
-
     public R visitStringTemplateEntry(@NotNull KtStringTemplateEntry entry, D data) {
         return visitJetElement(entry, data);
     }

@@ -350,8 +350,7 @@ JetFile: CommentsBinding.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('A')
+        PsiElement(IDENTIFIER)('A')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
         PsiComment(EOL_COMMENT)('// this is A')
@@ -363,15 +362,13 @@ JetFile: CommentsBinding.kt
             PsiElement(KDOC_TEXT)(' This is B ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('B')
+        PsiElement(IDENTIFIER)('B')
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
         PsiComment(BLOCK_COMMENT)('/* And this is C */')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('C')
+        PsiElement(IDENTIFIER)('C')
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
@@ -381,8 +378,7 @@ JetFile: CommentsBinding.kt
             PsiElement(KDOC_TEXT)(' This is X ')
           PsiElement(KDOC_END)('*/')
         PsiWhiteSpace('\n    ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('X')
+        PsiElement(IDENTIFIER)('X')
         PsiWhiteSpace(' ')
         CLASS_BODY
           PsiElement(LBRACE)('{')

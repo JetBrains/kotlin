@@ -22,8 +22,7 @@ JetFile: SimpleClassMembers.kt
           OBJECT_DECLARATION
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
-            OBJECT_DECLARATION_NAME
-              PsiElement(IDENTIFIER)('foo')
+            PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             CLASS_BODY
               PsiElement(LBRACE)('{')
@@ -82,8 +81,7 @@ JetFile: SimpleClassMembers.kt
           OBJECT_DECLARATION
             PsiElement(object)('object')
             PsiWhiteSpace(' ')
-            OBJECT_DECLARATION_NAME
-              PsiElement(IDENTIFIER)('foo')
+            PsiElement(IDENTIFIER)('foo')
             PsiWhiteSpace(' ')
             CLASS_BODY
               PsiElement(LBRACE)('{')

@@ -40,29 +40,6 @@ public class KtEnumEntry extends KtClass {
         super(stub);
     }
 
-    @Override
-    public String getName() {
-        KotlinClassOrObjectStub<? extends KtClassOrObject> classStub = getStub();
-        if (classStub != null) {
-            return classStub.getName();
-        }
-
-        KtObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
-        return nameAsDeclaration == null ? "<Anonymous>" : nameAsDeclaration.getName();
-    }
-
-    @Override
-    public PsiElement getNameIdentifier() {
-        KtObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
-        return nameAsDeclaration == null ? null : nameAsDeclaration.getNameIdentifier();
-    }
-
-    @Override
-    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        KtObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
-        return nameAsDeclaration == null ? null : nameAsDeclaration.setName(name);
-    }
-
     @NotNull
     @Override
     public List<KtDelegationSpecifier> getDelegationSpecifiers() {
