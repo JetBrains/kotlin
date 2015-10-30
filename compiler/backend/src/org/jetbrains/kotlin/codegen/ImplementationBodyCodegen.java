@@ -1435,11 +1435,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         String.format("Non-outer parameter incorrectly mapped to outer for %s: %s vs %s",
                                       constructorDescriptor, parameters, superParameters);
                 // Super constructor requires OUTER parameter, but our OUTER instance may be different from what is expected by the super
-                // constructor. We need to traverse our outer classes from the bottom up, to find the needed class
-                // TODO: isSuper should be "true" but this makes some tests on inner classes extending outer fail
-                // See innerExtendsOuter.kt, semantics of inner classes extending their outer should be changed to be as in Java
+                // constructor. We need to traverse our outer classes from the bottom up, to find the needed class. See innerExtendsOuter.kt
                 ClassDescriptor outerForSuper = (ClassDescriptor) superConstructor.getContainingDeclaration().getContainingDeclaration();
-                StackValue outer = codegen.generateThisOrOuter(outerForSuper, false);
+                StackValue outer = codegen.generateThisOrOuter(outerForSuper, true, true);
                 outer.put(outer.type, codegen.v);
                 superIndex++;
             }

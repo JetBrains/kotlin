@@ -2635,8 +2635,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         throw new UnsupportedOperationException();
     }
 
+
     @NotNull
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
+        return generateThisOrOuter(calleeContainingClass, isSuper, false);
+    }
+
+    @NotNull
+    public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper, boolean forceOuter) {
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
             if (calleeContainingClass.equals(context.getThisDescriptor()) &&
@@ -2662,9 +2668,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return result;
             }
 
-            if (isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
+            if (!forceOuter && isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
                 return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
             }
+
+            forceOuter = false;
 
             //for constructor super call we should access to outer instance through parameter in locals, in other cases through field for captured outer
             if (inStartConstructorContext) {
@@ -3441,10 +3449,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 if (dispatchReceiver != null) {
                     Type receiverType = typeMapper.mapType(dispatchReceiver.getType());
                     ReceiverValue receiver = resolvedCall.getDispatchReceiver();
-                    boolean callSuper = containingDeclaration.isInner() &&
-                                        receiver instanceof ClassReceiver &&
-                                        ((ClassReceiver) receiver).getDeclarationDescriptor().getOriginal() !=
-                                        containingDeclaration.getOriginal();
+                    boolean callSuper = containingDeclaration.isInner() && receiver instanceof ClassReceiver;
                     generateReceiverValue(receiver, callSuper).put(receiverType, v);
                 }
 

@@ -1710,9 +1710,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt6708.kt")
+            public void testKt6708() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/inner/kt6708.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("properOuter.kt")
             public void testProperOuter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/inner/properOuter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("properSuperLinking.kt")
+            public void testProperSuperLinking() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/classes/inner/properSuperLinking.kt");
                 doTest(fileName);
             }
         }
