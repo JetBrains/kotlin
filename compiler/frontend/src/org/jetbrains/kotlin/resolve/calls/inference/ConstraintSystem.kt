@@ -54,11 +54,6 @@ interface ConstraintSystem {
      */
     val currentSubstitutor: TypeSubstitutor
 
-    /**
-     * Returns the substitution only for type parameters that have result values, otherwise returns the type parameter itself.
-     */
-    val partialSubstitutor: TypeSubstitutor
-
     fun getNestedTypeVariables(type: KotlinType): List<TypeParameterDescriptor>
 
     fun toBuilder(filterConstraintPosition: (ConstraintPosition) -> Boolean = { true }): Builder

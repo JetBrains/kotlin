@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
-import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -84,27 +82,23 @@ class ConstraintSystemImpl(
 
     private fun getParameterToInferredValueMap(
             typeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>,
-            getDefaultTypeProjection: (TypeParameterDescriptor) -> TypeProjection,
+            getDefaultType: (TypeParameterDescriptor) -> KotlinType,
             substituteOriginal: Boolean
     ): Map<TypeParameterDescriptor, TypeProjection> {
         val substitutionContext = HashMap<TypeParameterDescriptor, TypeProjection>()
         for ((variable, typeBounds) in typeParameterBounds) {
-            val typeProjection: TypeProjection
             val value = typeBounds.value
             val typeParameter = if (substituteOriginal) variablesToOriginal[variable]!! else variable
-            if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) {
-                typeProjection = TypeProjectionImpl(value)
-            }
-            else {
-                typeProjection = getDefaultTypeProjection(typeParameter)
-            }
-            substitutionContext.put(typeParameter, typeProjection)
+            val type =
+                    if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) value
+                    else getDefaultType(typeParameter)
+            substitutionContext.put(typeParameter, TypeProjectionImpl(type))
         }
         return substitutionContext
     }
 
     private fun replaceUninferredBy(
-            getDefaultValue: (TypeParameterDescriptor) -> TypeProjection,
+            getDefaultValue: (TypeParameterDescriptor) -> KotlinType,
             substituteOriginal: Boolean
     ): TypeSubstitutor {
         val parameterToInferredValueMap = getParameterToInferredValueMap(allTypeParameterBounds, getDefaultValue, substituteOriginal)
@@ -131,22 +125,17 @@ class ConstraintSystemImpl(
     }
 
     override val resultingSubstitutor: TypeSubstitutor
-        get() = getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
+        get() = getSubstitutor(substituteOriginal = true) { ErrorUtils.createUninferredParameterType(it) }
 
     override val currentSubstitutor: TypeSubstitutor
-        get() = getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(TypeUtils.DONT_CARE) }
+        get() = getSubstitutor(substituteOriginal = true) { TypeUtils.DONT_CARE }
 
-    override val partialSubstitutor: TypeSubstitutor
-        get() = getSubstitutor(substituteOriginal = true) {
-            TypeProjectionImpl(KotlinTypeImpl.create(Annotations.EMPTY, it.typeConstructor, false, listOf(), KtScope.Empty))
-        }
-
-    private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeParameterDescriptor) -> TypeProjection) =
+    private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeParameterDescriptor) -> KotlinType) =
             replaceUninferredBy(getDefaultValue, substituteOriginal).setApproximateCapturedTypes()
 
     private fun satisfyInitialConstraints(): Boolean {
         fun KotlinType.substitute(): KotlinType? {
-            val substitutor = getSubstitutor(substituteOriginal = false) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
+            val substitutor = getSubstitutor(substituteOriginal = false) { ErrorUtils.createUninferredParameterType(it) }
             return substitutor.substitute(this, Variance.INVARIANT) ?: return null
         }
         return initialConstraints.all {

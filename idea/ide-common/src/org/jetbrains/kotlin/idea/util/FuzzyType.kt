@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
@@ -138,6 +136,14 @@ class FuzzyType(
         if (substitutedType.isError) return null
         val otherSubstitutedType = substitutor.substitute(otherType.type, Variance.INVARIANT) ?: return null
         if (otherSubstitutedType.isError) return null
-        return if (substitutedType.checkInheritance(otherSubstitutedType)) constraintSystem.partialSubstitutor else null
+        if (!substitutedType.checkInheritance(otherSubstitutedType)) return null
+
+        val substitution = constraintSystem.typeVariables.toMap({ it.typeConstructor }) {
+            val type = it.defaultType
+            val solution = substitutor.substitute(type, Variance.INVARIANT)
+            TypeProjectionImpl(if (solution != null && !ErrorUtils.containsUninferredParameter(solution)) solution else type)
+        }
+
+        return TypeSubstitutor.create(TypeConstructorSubstitution.createByConstructorsMap(substitution))
     }
 }
