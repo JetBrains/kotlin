@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -49,7 +50,7 @@ public interface ResolvedCall<D extends CallableDescriptor> {
 
     /** If the target was an extension function or property, this is the value for its receiver parameter */
     @NotNull
-    ReceiverValue getExtensionReceiver();
+    Receiver getExtensionReceiver();
 
     /** If the target was a member of a class, this is the object of that class to call it on */
     @NotNull

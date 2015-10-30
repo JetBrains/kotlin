@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -91,8 +92,8 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
 
         if (resolvedCall.getCandidateDescriptor().getOriginal() != enclosingFunctionDescriptor) return false
 
-        fun isDifferentReceiver(receiver: ReceiverValue): Boolean {
-            if (receiver == ReceiverValue.NO_RECEIVER) return false
+        fun isDifferentReceiver(receiver: Receiver): Boolean {
+            if (receiver == ReceiverValue.NO_RECEIVER || receiver !is ReceiverValue) return false
 
             val receiverOwner = receiver.getThisReceiverOwner(bindingContext) ?: return true
 

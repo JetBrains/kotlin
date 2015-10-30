@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -115,7 +116,7 @@ public final class TopLevelFIF extends CompositeFIF {
         @Nullable
         @Override
         protected ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall) {
-            ReceiverValue result = resolvedCall.getExtensionReceiver();
+            Receiver result = resolvedCall.getExtensionReceiver();
             return result instanceof ExpressionReceiver ? (ExpressionReceiver) result : null;
         }
 

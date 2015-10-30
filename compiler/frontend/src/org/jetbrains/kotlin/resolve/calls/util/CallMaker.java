@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.Call.CallType;
 import org.jetbrains.kotlin.psi.debugText.DebugTextUtilKt;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.ArrayList;
@@ -102,17 +103,17 @@ public class CallMaker {
     private static class CallImpl implements Call {
 
         private final KtElement callElement;
-        private final ReceiverValue explicitReceiver;
+        private final Receiver explicitReceiver;
         private final ASTNode callOperationNode;
         private final KtExpression calleeExpression;
         private final List<? extends ValueArgument> valueArguments;
         private final Call.CallType callType;
 
-        protected CallImpl(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @Nullable KtExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
+        protected CallImpl(@NotNull KtElement callElement, @NotNull Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @Nullable KtExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
             this(callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments, CallType.DEFAULT);
         }
 
-        protected CallImpl(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
+        protected CallImpl(@NotNull KtElement callElement, @NotNull Receiver explicitReceiver, @Nullable ASTNode callOperationNode,
                 @Nullable KtExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
             this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
@@ -129,7 +130,7 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public ReceiverValue getExplicitReceiver() {
+        public Receiver getExplicitReceiver() {
             return explicitReceiver;
         }
 
@@ -190,14 +191,14 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver,
+    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @NotNull Receiver explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
                                                @NotNull List<KtExpression> argumentExpressions) {
         return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, CallType.DEFAULT);
     }
 
     @NotNull
-    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @NotNull ReceiverValue explicitReceiver,
+    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @NotNull Receiver explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
                                                @NotNull List<KtExpression> argumentExpressions, @NotNull CallType callType) {
         List<ValueArgument> arguments = new ArrayList<ValueArgument>(argumentExpressions.size());
@@ -208,13 +209,13 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makeCall(KtElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, KtExpression calleeExpression, List<? extends ValueArgument> arguments) {
+    public static Call makeCall(KtElement callElement, Receiver explicitReceiver, @Nullable ASTNode callOperationNode, KtExpression calleeExpression, List<? extends ValueArgument> arguments) {
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, CallType.DEFAULT);
     }
 
     @NotNull
     public static Call makeCall(
-            KtElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
+            KtElement callElement, Receiver explicitReceiver, @Nullable ASTNode callOperationNode,
             KtExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType) {
         return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
@@ -259,12 +260,12 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makePropertyCall(@NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtSimpleNameExpression nameExpression) {
+    public static Call makePropertyCall(@NotNull Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtSimpleNameExpression nameExpression) {
         return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<KtExpression>emptyList());
     }
 
     @NotNull
-    public static Call makeCall(@NotNull final ReceiverValue explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final KtCallElement callElement) {
+    public static Call makeCall(@NotNull final Receiver explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final KtCallElement callElement) {
         return new Call() {
             @Override
             public ASTNode getCallOperationNode() {
@@ -273,7 +274,7 @@ public class CallMaker {
 
             @NotNull
             @Override
-            public ReceiverValue getExplicitReceiver() {
+            public Receiver getExplicitReceiver() {
                 return explicitReceiver;
             }
 

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class DelegatingCall implements Call {
 
     @Override
     @NotNull
-    public ReceiverValue getExplicitReceiver() {
+    public Receiver getExplicitReceiver() {
         return delegate.getExplicitReceiver();
     }
 

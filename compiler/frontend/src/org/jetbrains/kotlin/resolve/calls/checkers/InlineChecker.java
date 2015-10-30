@@ -83,7 +83,7 @@ class InlineChecker implements CallChecker {
         //checking that only invoke or inlinable extension called on function parameter
         CallableDescriptor targetDescriptor = resolvedCall.getResultingDescriptor();
         checkCallWithReceiver(context, targetDescriptor, resolvedCall.getDispatchReceiver(), expression);
-        checkCallWithReceiver(context, targetDescriptor, resolvedCall.getExtensionReceiver(), expression);
+        checkCallWithReceiver(context, targetDescriptor, (ReceiverValue) resolvedCall.getExtensionReceiver(), expression);
 
         if (inlinableParameters.contains(targetDescriptor)) {
             if (!isInsideCall(expression)) {

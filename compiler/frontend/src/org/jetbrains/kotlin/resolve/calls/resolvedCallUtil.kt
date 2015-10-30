@@ -70,16 +70,16 @@ private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
 
 public fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue {
     return when (getExplicitReceiverKind()) {
-        ExplicitReceiverKind.DISPATCH_RECEIVER -> getDispatchReceiver()
-        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> getExtensionReceiver()
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiver
+        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> extensionReceiver as ReceiverValue
         else -> ReceiverValue.NO_RECEIVER
     }
 }
 
 public fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue {
     return when (getExplicitReceiverKind()) {
-        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> if (extensionReceiver.exists()) extensionReceiver else dispatchReceiver
-        ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver
+        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> if (extensionReceiver.exists()) extensionReceiver as ReceiverValue else dispatchReceiver
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver as ReceiverValue
         ExplicitReceiverKind.EXTENSION_RECEIVER -> dispatchReceiver
         else -> ReceiverValue.NO_RECEIVER
     }

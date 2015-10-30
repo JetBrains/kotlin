@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.properties.Delegates
 
-public interface Qualifier: ReceiverValue {
+public interface Qualifier: Receiver {
 
     public val expression: KtExpression
 
@@ -74,8 +74,6 @@ abstract class QualifierReceiver(
     abstract val companionObjectReceiver: ReceiverValue?
 
     abstract fun getNestedClassesAndPackageMembersScope(): MemberScope
-
-    override fun getType(): KotlinType = throw IllegalStateException("No type corresponds to QualifierReceiver '$this'")
 
     override fun exists() = true
 }
@@ -159,7 +157,7 @@ fun createClassifierQualifier(
 
 fun createQualifier(
         expression: KtSimpleNameExpression,
-        receiver: ReceiverValue,
+        receiver: Receiver,
         context: ExpressionTypingContext
 ): QualifierReceiver? {
     val receiverScope = when {

@@ -61,7 +61,7 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
 
                         if (resolvedCall.getDispatchReceiver().getThisReceiverOwner(bindingContext) == callable ||
-                            resolvedCall.getExtensionReceiver().getThisReceiverOwner(bindingContext) == callable) {
+                            (resolvedCall.extensionReceiver as ReceiverValue).getThisReceiverOwner(bindingContext) == callable) {
                             used = true
                         }
                         else if ((resolvedCall.getCandidateDescriptor() as? ReceiverParameterDescriptor)?.getContainingDeclaration() == callable) {

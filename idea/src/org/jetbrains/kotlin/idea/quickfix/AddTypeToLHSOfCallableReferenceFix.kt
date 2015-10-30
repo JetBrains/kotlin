@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 class AddTypeToLHSOfCallableReferenceFix(
         expression: KtCallableReferenceExpression
@@ -39,7 +40,7 @@ class AddTypeToLHSOfCallableReferenceFix(
         val resolvedCall = element.callableReference.getResolvedCall(element.analyze(BodyResolveMode.PARTIAL)) ?: return
         val receiver = with(resolvedCall) {
             if (dispatchReceiver.exists()) dispatchReceiver
-            else if (extensionReceiver.exists()) extensionReceiver
+            else if (extensionReceiver.exists()) extensionReceiver as ReceiverValue
             else return
         }
         val type = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(receiver.type))

@@ -128,7 +128,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
         return when (receiverKind) {
             EXTENSION_RECEIVER -> explicitReceivers.extensionOrDispatchReceiver
             BOTH_RECEIVERS -> explicitReceivers.extensionReceiver
-            else -> this.getDispatchReceiver(receiverValue)
+            else -> this.getDispatchReceiver(receiverValue as ReceiverValue)
         }
     }
 

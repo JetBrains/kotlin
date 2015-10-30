@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.FunctionPlaceholders;
 import org.jetbrains.kotlin.types.FunctionPlaceholdersKt;
@@ -319,11 +320,11 @@ public class ArgumentTypeResolver {
     ) {
         MutableDataFlowInfoForArguments infoForArguments = context.dataFlowInfoForArguments;
         Call call = context.call;
-        ReceiverValue receiver = call.getExplicitReceiver();
+        Receiver receiver = call.getExplicitReceiver();
         DataFlowInfo initialDataFlowInfo = context.dataFlowInfo;
         // QualifierReceiver is a thing like Collections. which has no type or value
-        if (receiver.exists() && !(receiver instanceof QualifierReceiver)) {
-            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
+        if (receiver.exists() && receiver instanceof ReceiverValue) {
+            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
             // Additional "receiver != null" information for KT-5840
             // Should be applied if we consider a safe call
             // For an unsafe call, we should not do it,

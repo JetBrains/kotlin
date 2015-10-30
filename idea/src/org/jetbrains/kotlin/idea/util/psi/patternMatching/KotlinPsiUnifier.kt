@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -128,7 +129,7 @@ public class KotlinPsiUnifier(
             return false
         }
 
-        private fun matchReceivers(rv1: ReceiverValue, rv2: ReceiverValue): Boolean {
+        private fun matchReceivers(rv1: Receiver, rv2: Receiver): Boolean {
             return when {
                 rv1 is ExpressionReceiver && rv2 is ExpressionReceiver ->
                     doUnify(rv1.expression, rv2.expression) == MATCHED

@@ -1530,7 +1530,7 @@ public class JetControlFlowProcessor {
                         break;
                     case EXTENSION_RECEIVER:
                     case BOTH_RECEIVERS:
-                        explicitReceiver = resolvedCall.getExtensionReceiver();
+                        explicitReceiver = (ReceiverValue) resolvedCall.getExtensionReceiver();
                         break;
                 }
             }
@@ -1541,7 +1541,7 @@ public class JetControlFlowProcessor {
             }
             KtElement callElement = resolvedCall.getCall().getCallElement();
             receiverValues = getReceiverValues(callElement, resolvedCall.getDispatchReceiver(), receiverValues);
-            receiverValues = getReceiverValues(callElement, resolvedCall.getExtensionReceiver(), receiverValues);
+            receiverValues = getReceiverValues(callElement, (ReceiverValue) resolvedCall.getExtensionReceiver(), receiverValues);
             return receiverValues;
         }
 

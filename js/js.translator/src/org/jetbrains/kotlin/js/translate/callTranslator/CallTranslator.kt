@@ -148,7 +148,7 @@ fun computeExplicitReceiversForInvoke(
     return when (Pair(dispatchReceiver.exists(), extensionReceiver.exists())) {
         Pair(true, true)  -> ExplicitReceivers(dispatchReceiverExpression, explicitReceivers.extensionOrDispatchReceiver)
         Pair(true, false) -> ExplicitReceivers(dispatchReceiverExpression)
-        Pair(false, true) -> ExplicitReceivers(translateReceiverAsExpression(extensionReceiver))
+        Pair(false, true) -> ExplicitReceivers(translateReceiverAsExpression(extensionReceiver as ReceiverValue))
         else -> throw AssertionError("'Invoke' resolved call without receivers: $callElement")
     }
 }

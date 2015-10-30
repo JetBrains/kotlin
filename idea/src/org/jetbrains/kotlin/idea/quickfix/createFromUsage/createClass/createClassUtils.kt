@@ -73,7 +73,8 @@ internal fun getTargetParentByCall(call: Call, file: KtFile): PsiElement? {
     return when (receiver) {
         ReceiverValue.NO_RECEIVER -> getTargetParentByQualifier(file, false, null)
         is Qualifier -> getTargetParentByQualifier(file, true, receiver.resultingDescriptor)
-        else -> getTargetParentByQualifier(file, true, receiver.getType().getConstructor().getDeclarationDescriptor())
+        is ReceiverValue -> getTargetParentByQualifier(file, true, receiver.getType().getConstructor().getDeclarationDescriptor())
+        else -> throw AssertionError("Unexpected receiver: $receiver")
     }
 }
 

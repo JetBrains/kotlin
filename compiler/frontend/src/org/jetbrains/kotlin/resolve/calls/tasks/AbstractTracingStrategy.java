@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
@@ -189,7 +190,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type) {
         ASTNode callOperationNode = call.getCallOperationNode();
         assert callOperationNode != null;
-        ReceiverValue explicitReceiver = call.getExplicitReceiver();
+        Receiver explicitReceiver = call.getExplicitReceiver();
         if (explicitReceiver instanceof ExpressionReceiver && ((ExpressionReceiver)explicitReceiver).getExpression() instanceof KtSuperExpression) {
             trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.getPsi()));
         }

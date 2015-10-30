@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -837,8 +838,8 @@ fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int
 
 private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType? {
     return when (resolvedCall.getExplicitReceiverKind()) {
-        ExplicitReceiverKind.DISPATCH_RECEIVER -> resolvedCall.getDispatchReceiver().getType()
-        ExplicitReceiverKind.EXTENSION_RECEIVER -> resolvedCall.getExtensionReceiver().getType()
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> resolvedCall.dispatchReceiver.type
+        ExplicitReceiverKind.EXTENSION_RECEIVER -> (resolvedCall.extensionReceiver as ReceiverValue).type
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> null
         ExplicitReceiverKind.BOTH_RECEIVERS -> null
         else -> null

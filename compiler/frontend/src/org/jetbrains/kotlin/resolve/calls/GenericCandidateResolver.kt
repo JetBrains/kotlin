@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TY
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -94,10 +95,12 @@ class GenericCandidateResolver(
         val receiverArgument = candidateCall.getExtensionReceiver()
         val receiverParameter = candidate.getExtensionReceiverParameter()
         if (receiverArgument.exists() && receiverParameter != null) {
+            assert(receiverArgument is ReceiverValue)
+            val receiverArgumentType = (receiverArgument as ReceiverValue).type
             var receiverType: KotlinType? = if (context.candidateCall.isSafeCall())
-                TypeUtils.makeNotNullable(receiverArgument.getType())
+                TypeUtils.makeNotNullable(receiverArgumentType)
             else
-                receiverArgument.getType()
+                receiverArgumentType
             if (receiverArgument is ExpressionReceiver) {
                 receiverType = updateResultTypeForSmartCasts(receiverType, receiverArgument.expression, context)
             }

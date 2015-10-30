@@ -110,7 +110,7 @@ private fun ResolvedCall<*>.renderToText(): String {
 
         appendln("Explicit receiver kind = ${getExplicitReceiverKind()}")
         appendln("Dispatch receiver = ${getDispatchReceiver().getText()}")
-        appendln("Extension receiver = ${getExtensionReceiver().getText()}")
+        appendln("Extension receiver = ${(getExtensionReceiver() as ReceiverValue).getText()}")
 
         val valueArguments = getCall().getValueArguments()
         if (!valueArguments.isEmpty()) {

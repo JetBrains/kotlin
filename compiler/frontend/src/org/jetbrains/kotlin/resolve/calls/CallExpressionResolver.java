@@ -112,7 +112,7 @@ public class CallExpressionResolver {
 
     @Nullable
     private KotlinType getVariableType(
-            @NotNull KtSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
+            @NotNull KtSimpleNameExpression nameExpression, @NotNull Receiver receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result
     ) {
         TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
@@ -150,7 +150,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public KotlinTypeInfo getSimpleNameExpressionTypeInfo(
-            @NotNull KtSimpleNameExpression nameExpression, @NotNull ReceiverValue receiver,
+            @NotNull KtSimpleNameExpression nameExpression, @NotNull Receiver receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         boolean[] result = new boolean[1];
@@ -163,8 +163,8 @@ public class CallExpressionResolver {
         // It would be better to do it in getSelectorTypeInfo, but it breaks call expression analysis
         // (all safe calls become unnecessary after it)
         // QualifierReceiver is a thing like Collections. which has no type or value
-        if (receiver.exists() && !(receiver instanceof QualifierReceiver)) {
-            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
+        if (receiver.exists() && receiver instanceof ReceiverValue) {
+            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
             if (callOperationNode != null && callOperationNode.getElementType() == KtTokens.SAFE_ACCESS) {
                 context = context.replaceDataFlowInfo(context.dataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns)));
             }
@@ -212,7 +212,7 @@ public class CallExpressionResolver {
      */
     @NotNull
     public KotlinTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
-            @NotNull KtCallExpression callExpression, @NotNull ReceiverValue receiver,
+            @NotNull KtCallExpression callExpression, @NotNull Receiver receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         boolean[] result = new boolean[1];
@@ -304,7 +304,7 @@ public class CallExpressionResolver {
 
     @NotNull
     private KotlinTypeInfo getSelectorReturnTypeInfo(
-            @NotNull ReceiverValue receiver,
+            @NotNull Receiver receiver,
             @Nullable ASTNode callOperationNode,
             @Nullable KtExpression selectorExpression,
             @NotNull ExpressionTypingContext context
@@ -348,9 +348,9 @@ public class CallExpressionResolver {
             }
             QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, element.getReceiver());
 
-            ReceiverValue receiver = qualifierReceiver == null ?
-                                     ExpressionReceiver.Companion.create(element.getReceiver(), receiverType, context.trace.getBindingContext()) :
-                                     qualifierReceiver;
+            Receiver receiver = qualifierReceiver == null
+                                ? ExpressionReceiver.Companion.create(element.getReceiver(), receiverType, context.trace.getBindingContext())
+                                : qualifierReceiver;
 
             boolean lastStage = element.getQualified() == expression;
             assert lastStage == (element == elementChain.getLast());
@@ -360,8 +360,8 @@ public class CallExpressionResolver {
             currentContext = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
 
             KtExpression selectorExpression = element.getSelector();
-            KotlinTypeInfo selectorReturnTypeInfo =
-                    getSelectorReturnTypeInfo(receiver, element.getNode(), selectorExpression, currentContext);
+            KotlinTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
+                    receiver, element.getNode(), selectorExpression, currentContext);
             KotlinType selectorReturnType = selectorReturnTypeInfo.getType();
 
             resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.getQualified(), currentContext);

@@ -190,8 +190,12 @@ class KotlinFunctionCallUsage(
             }
             else {
                 addReceiver = descriptor !is ReceiverParameterDescriptor
-                argumentExpression = getReceiverExpressionIfMatched(resolvedCall.extensionReceiver, descriptor, psiFactory)
-                                     ?: getReceiverExpressionIfMatched(resolvedCall.dispatchReceiver, descriptor, psiFactory)
+                val extensionReceiver = resolvedCall.extensionReceiver
+                argumentExpression =
+                        (if (extensionReceiver is ReceiverValue)
+                            getReceiverExpressionIfMatched(extensionReceiver, descriptor, psiFactory)
+                        else null)
+                        ?: getReceiverExpressionIfMatched(resolvedCall.dispatchReceiver, descriptor, psiFactory)
             }
             if (argumentExpression == null) continue
 
@@ -314,7 +318,7 @@ class KotlinFunctionCallUsage(
             val oldIndex = param.oldIndex
             val resolvedArgument = if (oldIndex >= 0) getResolvedValueArgument(oldIndex) else null
             val receiverValue = if (param == originalReceiverInfo) extensionReceiver else null
-            ArgumentInfo(param, index, resolvedArgument, receiverValue)
+            ArgumentInfo(param, index, resolvedArgument, receiverValue as? ReceiverValue)
         }
 
         val lastParameterIndex = newParameters.lastIndex
