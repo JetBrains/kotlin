@@ -4,5 +4,5 @@ fun main() {
 
 // MULTIRESOLVE
 // REF: (in kotlin.IntIterator).next()
-// REF: (in kotlin.IntRange).iterator()
+// REF: (in kotlin.IntProgression).iterator()
 // REF: (in kotlin.Iterator).hasNext()
