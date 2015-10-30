@@ -6,18 +6,28 @@ import templates.DocExtensions.collection
 fun ordering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-//    templates add f("reverse()") {
-//        deprecate("reverse will change its behavior soon. Use reversed() instead.")
-//        deprecateReplacement("reversed()")
-//        doc { "Returns a list with elements in reversed order." }
-//        returns { "List<T>" }
-//        body { """return reversed()""" }
-//
-//        include(Strings)
-//        returns(Strings) { "SELF" }
-//
-//        exclude(Sequences)
-//    }
+    templates add f("reverse()") {
+        doc { f -> "Reverses elements in the ${f.collection} in-place." }
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+        customReceiver(Lists) { "MutableList<T>" }
+        returns { "Unit" }
+        body { f ->
+            val _this = if (f == ArraysOfObjects) "_this" else "this"
+            """
+            val midPoint = (size / 2) - 1
+            if (midPoint < 0) return
+            ${if (f == ArraysOfObjects) "val _this = this as Array<T>" else "" }
+            var reverseIndex = lastIndex
+            for (index in 0..midPoint) {
+                val tmp = $_this[index]
+                $_this[index] = $_this[reverseIndex]
+                $_this[reverseIndex] = tmp
+                reverseIndex--
+            }
+            """
+        }
+        body(Lists) { """java.util.Collections.reverse(this)""" }
+    }
 
     templates add f("reversed()") {
         doc { "Returns a list with elements in reversed order." }

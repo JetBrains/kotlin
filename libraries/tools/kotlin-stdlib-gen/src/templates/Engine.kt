@@ -106,6 +106,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val buildPrimitives = LinkedHashSet(defaultPrimitives)
     val buildFamilyPrimitives = FamilyProperty<Set<PrimitiveType>>()
 
+    val customReceiver = FamilyProperty<String>()
     val customSignature = FamilyProperty<String>()
     val deprecate = DeprecationProperty()
     val doc = FamilyProperty<String>()
@@ -293,7 +294,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         }
 
         val isAsteriskOrT = if (receiverAsterisk[f] == true) "*" else "T"
-        val receiver = when (f) {
+        val receiver = (customReceiver[f] ?: when (f) {
             Iterables -> "Iterable<$isAsteriskOrT>"
             Collections -> "Collection<$isAsteriskOrT>"
             Lists -> "List<$isAsteriskOrT>"
@@ -310,7 +311,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             ProgressionsOfPrimitives -> primitive?.let { it.name + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
             Primitives -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
             Generic -> "T"
-        }.let { renderType(it, it) }
+        }).let { renderType(it, it) }
 
         fun String.renderType(): String = renderType(this, receiver)
 

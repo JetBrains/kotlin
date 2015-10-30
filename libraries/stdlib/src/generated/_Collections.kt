@@ -790,6 +790,13 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
+ * Reverses elements in the collection in-place.
+ */
+public fun <T> MutableList<T>.reverse(): Unit {
+    java.util.Collections.reverse(this)
+}
+
+/**
  * Returns a list with elements in reversed order.
  */
 public fun <T> Iterable<T>.reversed(): List<T> {

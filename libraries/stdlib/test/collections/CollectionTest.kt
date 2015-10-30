@@ -310,22 +310,29 @@ class CollectionTest {
         }
     }
 
-    @test fun reverse() {
+    @test fun reverseInPlace() {
+        val data = arrayListOf<String>()
+        data.reverse()
+        assertTrue(data.isEmpty())
+
+        data.add("foo")
+        data.reverse()
+        assertEquals(listOf("foo"), data)
+
+        data.add("bar")
+        data.reverse()
+        assertEquals(listOf("bar", "foo"), data)
+
+        data.add("zoo")
+        data.reverse()
+        assertEquals(listOf("zoo", "foo", "bar"), data)
+    }
+
+    @test fun reversed() {
         val data = listOf("foo", "bar")
         val rev = data.reversed()
         assertEquals(listOf("bar", "foo"), rev)
-    }
-
-    @test fun reverseFunctionShouldReturnReversedCopyForList() {
-        val list: List<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 3, 2)) { list.reversed() }
-        expect(listOf(2, 3, 1)) { list }
-    }
-
-    @test fun reverseFunctionShouldReturnReversedCopyForIterable() {
-        val iterable: Iterable<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 3, 2)) { iterable.reversed() }
-        expect(listOf(2, 3, 1)) { iterable }
+        assertNotEquals(data, rev)
     }
 
 

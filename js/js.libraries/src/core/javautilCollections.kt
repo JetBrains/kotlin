@@ -10,6 +10,7 @@ public object Collections {
 
     public fun <T> sort(list: MutableList<T>, comparator: java.util.Comparator<in T>): Unit = java.util.sort(list, comparator)
 
+    @Deprecated("Use list.reverse() instead.", ReplaceWith("list.reverse()"))
     public fun <T> reverse(list: MutableList<T>): Unit {
         val size = list.size()
         for (i in 0..(size / 2) - 1) {

@@ -546,6 +546,17 @@ class ArraysTest {
         } is UnsupportedOperationException)
     }
 
+    @test fun reverseInPlace() {
+        assertArrayNotSameButEquals(intArrayOf(3, 2, 1), intArrayOf(1, 2, 3).apply { reverse() })
+        assertArrayNotSameButEquals(byteArrayOf(3, 2, 1), byteArrayOf(1, 2, 3).apply { reverse() })
+        assertArrayNotSameButEquals(shortArrayOf(3, 2, 1), shortArrayOf(1, 2, 3).apply { reverse() })
+        assertArrayNotSameButEquals(longArrayOf(3, 2, 1), longArrayOf(1, 2, 3).apply { reverse() })
+        assertArrayNotSameButEquals(floatArrayOf(3F, 2F, 1F), floatArrayOf(1F, 2F, 3F).apply { reverse() })
+        assertArrayNotSameButEquals(doubleArrayOf(3.0, 2.0, 1.0), doubleArrayOf(1.0, 2.0, 3.0).apply { reverse() })
+        assertArrayNotSameButEquals(charArrayOf('3', '2', '1'), charArrayOf('1', '2', '3').apply { reverse() })
+        assertArrayNotSameButEquals(booleanArrayOf(false, false, true), booleanArrayOf(true, false, false).apply { reverse() })
+    }
+
     @test fun reversed() {
         expect(listOf(3, 2, 1)) { intArrayOf(1, 2, 3).reversed() }
         expect(listOf<Byte>(3, 2, 1)) { byteArrayOf(1, 2, 3).reversed() }
