@@ -11,9 +11,12 @@ import bar.*
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/B()./*c:foo.A.B*/a
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/B./*c:foo.A.B c:foo.A.B.CO*/bar(1)
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/B./*c:foo.A.B*/CO./*c:foo.A.B.CO*/bar(1)
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion*/a
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion*/baz()
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/Companion
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/Companion./*c:foo.A.Companion*/baz()
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/O
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/O./*c:foo.A.O*/v = "OK"
     i./*c:foo.I*/a = 2
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/Obj./*c:foo.Obj*/a
