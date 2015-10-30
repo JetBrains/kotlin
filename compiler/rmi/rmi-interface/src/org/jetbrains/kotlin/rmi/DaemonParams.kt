@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.rmi
 
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import java.io.File
 import java.io.Serializable
 import java.lang.management.ManagementFactory
@@ -139,14 +140,14 @@ fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, 
 
         when {
             propMapper != null -> {
-                val optionLength = prefix.length() + matchingOption!!.length()
+                val optionLength = prefix.length + matchingOption!!.length
                 when {
                     propMapper is BoolPropMapper<*, *> -> {
-                        if (param.length() > optionLength)
+                        if (param.length > optionLength)
                             throw IllegalArgumentException("Invalid switch option '$param', expecting $prefix$matchingOption without arguments")
                         propMapper.apply("")
                     }
-                    param.length() > optionLength ->
+                    param.length > optionLength ->
                         if (param[optionLength] != '=') {
                             if (propMapper.mergeDelimiter == null)
                                 throw IllegalArgumentException("Invalid option syntax '$param', expecting $prefix$matchingOption[= ]<arg>")
@@ -265,7 +266,7 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
 
     System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"" ) }
     opts.jvmParams.addAll(additionalParams)
-    System.getProperty("kotlin.environment.keepalive")?.let { opts.jvmParams.add("Dkotlin.environment.keepalive=true") }
+    System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { opts.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY") }
     return opts
 }
 
