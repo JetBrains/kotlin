@@ -3,6 +3,20 @@ package
 
 package a {
 
+    public final class a {
+        public constructor a()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
     public final class b {
         public constructor b()
         public final fun a_b(): kotlin.Unit
@@ -18,6 +32,10 @@ package
 
 package a {
 
+    public final class a {
+        // -- Module: <m1> --
+    }
+
     public final class b {
         // -- Module: <m1> --
     }
@@ -32,6 +50,25 @@ package test {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
+}
+
+
+// -- Module: <m3> --
+package
+
+package a {
+
+    public final class a {
+        // -- Module: <m1> --
+    }
+
+    public final class b {
+        // -- Module: <m1> --
+    }
+}
+
+package test {
+    public fun foo(/*0*/ i: a.a): kotlin.Unit
 }
 
 
