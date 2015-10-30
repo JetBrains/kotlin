@@ -84,7 +84,7 @@ public fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
 
             it is MemberScopeToImportingScopeAdapter -> it.memberScope.getLocalVariable(name) /* todo remove hack*/
 
-            it !is ImportingScope && it !is LexicalChainedScope -> it.getContributedVariables(name, NoLookupLocation.UNSORTED).singleOrNull() /* todo check this*/
+            it !is ImportingScope && it !is LexicalChainedScope -> it.getContributedVariables(name, NoLookupLocation.WHEN_GET_LOCAL_VARIABLE).singleOrNull() /* todo check this*/
 
             else -> null
         }

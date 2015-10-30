@@ -794,9 +794,9 @@ public class OverrideResolver {
     ) {
         for (KotlinType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
             Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
-            all.addAll(supertype.getMemberScope().getFunctions(declared.getName(), NoLookupLocation.UNSORTED));
+            all.addAll(supertype.getMemberScope().getFunctions(declared.getName(), NoLookupLocation.WHEN_CHECK_OVERRIDES));
             //noinspection unchecked
-            all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName(), NoLookupLocation.UNSORTED));
+            all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName(), NoLookupLocation.WHEN_CHECK_OVERRIDES));
             for (CallableMemberDescriptor fromSuper : all) {
                 if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
                     if (Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSuper, declared)) {

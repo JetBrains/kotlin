@@ -17,17 +17,13 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND
-import org.jetbrains.kotlin.diagnostics.Errors.NO_COMPANION_OBJECT
-import org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
-import org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETER_ON_LHS_OF_DOT
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
-import org.jetbrains.kotlin.resolve.BindingContext.QUALIFIER
-import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
-import org.jetbrains.kotlin.resolve.BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT
+import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
@@ -158,7 +154,7 @@ fun createQualifier(
 
     val name = expression.getReferencedNameAsName()
     val packageViewDescriptor = receiverScope.getPackage(name)
-    val classifierDescriptor = receiverScope.getClassifier(name)
+    val classifierDescriptor = receiverScope.getClassifier(name, NoLookupLocation.WHEN_TYPING)
 
     if (packageViewDescriptor == null && classifierDescriptor == null) return null
 
