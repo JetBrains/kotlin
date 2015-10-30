@@ -162,7 +162,7 @@ public class CallCompleter(
             updateSystemIfNeeded { builder ->
                 constraintSystemCompleter.completeConstraintSystem(builder, this)
                 val system = builder.build()
-                val status = system.filterConstraintsOut(TYPE_BOUND_POSITION).getStatus()
+                val status = system.filterConstraintsOut(TYPE_BOUND_POSITION).status
                 if (status.hasOnlyErrorsDerivedFrom(FROM_COMPLETER)) null else system
             }
         }
@@ -171,7 +171,7 @@ public class CallCompleter(
             updateSystemIfNeeded { builder ->
                 builder.addSupertypeConstraint(builtIns.getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
                 val system = builder.build()
-                if (system.getStatus().isSuccessful()) system else null
+                if (system.status.isSuccessful()) system else null
             }
         }
 
@@ -181,7 +181,7 @@ public class CallCompleter(
         val system = builder.build()
         setConstraintSystem(system)
 
-        setResultingSubstitutor(system.getResultingSubstitutor())
+        setResultingSubstitutor(system.resultingSubstitutor)
     }
 
     private fun <D : CallableDescriptor> MutableResolvedCall<D>.updateResolutionStatusFromConstraintSystem(
@@ -192,7 +192,7 @@ public class CallCompleter(
         val valueArgumentsCheckingResult = candidateResolver.checkAllValueArguments(contextWithResolvedCall, RESOLVE_FUNCTION_ARGUMENTS)
 
         val status = getStatus()
-        if (getConstraintSystem()!!.getStatus().isSuccessful()) {
+        if (getConstraintSystem()!!.status.isSuccessful()) {
             if (status == ResolutionStatus.UNKNOWN_STATUS || status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
                 setStatusToSuccess()
             }

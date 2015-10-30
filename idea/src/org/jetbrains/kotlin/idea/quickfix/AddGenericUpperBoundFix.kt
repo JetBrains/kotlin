@@ -79,9 +79,9 @@ public class AddGenericUpperBoundFix(
         private fun createActionsByInferenceData(inferenceData: InferenceErrorData): List<IntentionAction> {
             val successfulConstraintSystem = inferenceData.constraintSystem.filterConstraintsOut(ConstraintPositionKind.TYPE_BOUND_POSITION)
 
-            if (!successfulConstraintSystem.getStatus().isSuccessful()) return emptyList()
+            if (!successfulConstraintSystem.status.isSuccessful()) return emptyList()
 
-            val resultingSubstitutor = successfulConstraintSystem.getResultingSubstitutor()
+            val resultingSubstitutor = successfulConstraintSystem.resultingSubstitutor
 
             return inferenceData.descriptor.typeParameters.map factory@{
                 typeParameterDescriptor ->

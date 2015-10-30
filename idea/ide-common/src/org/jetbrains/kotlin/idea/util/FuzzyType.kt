@@ -129,15 +129,15 @@ class FuzzyType(
 
         val constraintSystem = builder.build()
 
-        if (constraintSystem.getStatus().hasContradiction()) return null
+        if (constraintSystem.status.hasContradiction()) return null
 
         // currently ConstraintSystem return successful status in case there are problems with nullability
         // that's why we have to check subtyping manually
-        val substitutor = constraintSystem.getResultingSubstitutor()
+        val substitutor = constraintSystem.resultingSubstitutor
         val substitutedType = substitutor.substitute(type, Variance.INVARIANT) ?: return null
         if (substitutedType.isError) return null
         val otherSubstitutedType = substitutor.substitute(otherType.type, Variance.INVARIANT) ?: return null
         if (otherSubstitutedType.isError) return null
-        return if (substitutedType.checkInheritance(otherSubstitutedType)) constraintSystem.getPartialSubstitutor() else null
+        return if (substitutedType.checkInheritance(otherSubstitutedType)) constraintSystem.partialSubstitutor else null
     }
 }

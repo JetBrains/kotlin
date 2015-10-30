@@ -78,7 +78,7 @@ public fun CallableDescriptor.hasInferredReturnType(constraintSystem: Constraint
     if (hasReturnTypeDependentOnUninferredParams(constraintSystem)) return false
 
     // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
-    if (constraintSystem.getStatus().hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) return false
+    if (constraintSystem.status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) return false
     return true
 }
 

@@ -101,18 +101,6 @@ public class ConstraintsUtil {
         return true;
     }
 
-    public static boolean checkBoundsAreSatisfied(
-            @NotNull ConstraintSystem constraintSystem,
-            boolean substituteOtherTypeParametersInBounds
-    ) {
-        for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
-            if (!checkUpperBoundIsSatisfied(constraintSystem, typeVariable, substituteOtherTypeParametersInBounds)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
     public static String getDebugMessageForStatus(@NotNull ConstraintSystemStatus status) {
         StringBuilder sb = new StringBuilder();
         List<Method> interestingMethods = Lists.newArrayList();

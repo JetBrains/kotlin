@@ -27,9 +27,9 @@ interface ConstraintSystem {
     /**
      * Returns a set of all non-external registered type variables.
      */
-    fun getTypeVariables(): Set<TypeParameterDescriptor>
+    val typeVariables: Set<TypeParameterDescriptor>
 
-    fun getStatus(): ConstraintSystemStatus
+    val status: ConstraintSystemStatus
 
     /**
      * Returns the resulting type constraints of solving the constraint system for specific type variable.
@@ -46,18 +46,18 @@ interface ConstraintSystem {
      * If the addition of the 'expected type' constraint made the system fail,
      * this constraint is not included in the resulting substitution.
      */
-    fun getResultingSubstitutor(): TypeSubstitutor
+    val resultingSubstitutor: TypeSubstitutor
 
     /**
      * Returns the current result of solving the constraint system (mapping from the type variable to the resulting type projection).
      * If there is no information for type parameter, returns type projection for DONT_CARE type.
      */
-    fun getCurrentSubstitutor(): TypeSubstitutor
+    val currentSubstitutor: TypeSubstitutor
 
     /**
      * Returns the substitution only for type parameters that have result values, otherwise returns the type parameter itself.
      */
-    fun getPartialSubstitutor(): TypeSubstitutor
+    val partialSubstitutor: TypeSubstitutor
 
     fun getNestedTypeVariables(type: KotlinType): List<TypeParameterDescriptor>
 

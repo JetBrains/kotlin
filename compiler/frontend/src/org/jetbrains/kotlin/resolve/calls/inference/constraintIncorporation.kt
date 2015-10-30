@@ -75,8 +75,8 @@ private fun ConstraintSystemBuilderImpl.addConstraintFromBounds(old: Bound, new:
     val context = ConstraintContext(CompoundConstraintPosition(old.position, new.position), old.derivedFrom + new.derivedFrom)
 
     when {
-        old.kind.ordinal() < new.kind.ordinal() -> addConstraint(SUB_TYPE, oldType, newType, context)
-        old.kind.ordinal() > new.kind.ordinal() -> addConstraint(SUB_TYPE, newType, oldType, context)
+        old.kind.ordinal < new.kind.ordinal -> addConstraint(SUB_TYPE, oldType, newType, context)
+        old.kind.ordinal > new.kind.ordinal -> addConstraint(SUB_TYPE, newType, oldType, context)
         old.kind == new.kind && old.kind == EXACT_BOUND -> addConstraint(EQUAL, oldType, newType, context)
     }
 }
@@ -93,7 +93,7 @@ private fun ConstraintSystemBuilderImpl.generateNewBound(bound: Bound, substitut
     }
 
     val newTypeProjection = TypeProjectionImpl(substitutedType)
-    val substitutor = TypeSubstitutor.create(mapOf(substitution.typeVariable.getTypeConstructor() to newTypeProjection))
+    val substitutor = TypeSubstitutor.create(mapOf(substitution.typeVariable.typeConstructor to newTypeProjection))
     val type = substitutor.substitute(bound.constrainingType, INVARIANT) ?: return
 
     val position = CompoundConstraintPosition(bound.position, substitution.position)
@@ -120,7 +120,7 @@ private fun ConstraintSystemBuilderImpl.generateNewBound(bound: Bound, substitut
     // if we allow non-trivial type projections, we bump into errors like
     // "Empty intersection for types [MutableCollection<in ('Int'..'Int?')>, MutableCollection<out Any?>, MutableCollection<in Int>]"
     fun KotlinType.containsConstrainingTypeWithoutProjection() = this.getNestedArguments().any {
-        it.getType().getConstructor() == substitution.constrainingType.getConstructor() && it.getProjectionKind() == Variance.INVARIANT
+        it.type.constructor == substitution.constrainingType.constructor && it.projectionKind == Variance.INVARIANT
     }
     if (approximationBounds.upper.containsConstrainingTypeWithoutProjection() && bound.kind != LOWER_BOUND) {
         addNewBound(approximationBounds.upper, UPPER_BOUND)

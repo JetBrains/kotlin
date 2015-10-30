@@ -46,7 +46,7 @@ class ConstraintSystemImpl(
         get() = if (externalTypeParameters.isEmpty()) allTypeParameterBounds
         else allTypeParameterBounds.filter { !externalTypeParameters.contains(it.key) }
 
-    private val constraintSystemStatus = object : ConstraintSystemStatus {
+    override val status = object : ConstraintSystemStatus {
         // for debug ConstraintsUtil.getDebugMessageForStatus might be used
 
         override fun isSuccessful() = !hasContradiction() && !hasUnknownParameters()
@@ -54,7 +54,7 @@ class ConstraintSystemImpl(
         override fun hasContradiction() = hasParameterConstraintError() || hasConflictingConstraints()
                                           || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
 
-        override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().isSuccessful()
+        override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).status.isSuccessful()
 
         override fun hasConflictingConstraints() = localTypeParameterBounds.values.any { it.values.size > 1 }
 
@@ -65,7 +65,7 @@ class ConstraintSystemImpl(
 
         override fun hasOnlyErrorsDerivedFrom(kind: ConstraintPositionKind): Boolean {
             if (isSuccessful()) return false
-            if (filterConstraintsOut(kind).getStatus().isSuccessful()) return true
+            if (filterConstraintsOut(kind).status.isSuccessful()) return true
             return errors.isNotEmpty() && errors.all { it.constraintPosition.derivedFrom(kind) }
         }
 
@@ -112,15 +112,14 @@ class ConstraintSystemImpl(
         return SubstitutionFilteringInternalResolveAnnotations(substitution).buildSubstitutor()
     }
 
-    override fun getStatus(): ConstraintSystemStatus = constraintSystemStatus
-
     override fun getNestedTypeVariables(type: KotlinType): List<TypeParameterDescriptor> {
         return type.getNestedArguments().map { typeProjection ->
             typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
-        }.filterNotNull().filter { it in getTypeVariables() }
+        }.filterNotNull().filter { it in typeVariables }
     }
 
-    override fun getTypeVariables() = originalToVariables.keys
+    override val typeVariables: Set<TypeParameterDescriptor>
+        get() = originalToVariables.keys
 
     override fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBoundsImpl {
         val variableForOriginal = originalToVariables[typeVariable]
@@ -131,16 +130,16 @@ class ConstraintSystemImpl(
                throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $typeVariable")
     }
 
-    override fun getResultingSubstitutor() =
-            getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
+    override val resultingSubstitutor: TypeSubstitutor
+        get() = getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
 
-    override fun getCurrentSubstitutor() =
-            getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(TypeUtils.DONT_CARE) }
+    override val currentSubstitutor: TypeSubstitutor
+        get() = getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(TypeUtils.DONT_CARE) }
 
-    override fun getPartialSubstitutor() =
-            getSubstitutor(substituteOriginal = true) {
-                TypeProjectionImpl(KotlinTypeImpl.create(Annotations.EMPTY, it.typeConstructor, false, listOf(), KtScope.Empty))
-            }
+    override val partialSubstitutor: TypeSubstitutor
+        get() = getSubstitutor(substituteOriginal = true) {
+            TypeProjectionImpl(KotlinTypeImpl.create(Annotations.EMPTY, it.typeConstructor, false, listOf(), KtScope.Empty))
+        }
 
     private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeParameterDescriptor) -> TypeProjection) =
             replaceUninferredBy(getDefaultValue, substituteOriginal).setApproximateCapturedTypes()

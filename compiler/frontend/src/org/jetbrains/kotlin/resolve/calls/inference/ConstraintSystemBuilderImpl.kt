@@ -79,9 +79,9 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
             variablesToOriginal[typeVariable] = original
         }
         for ((typeVariable, typeBounds) in allTypeParameterBounds) {
-            for (declaredUpperBound in typeVariable.getUpperBounds()) {
+            for (declaredUpperBound in typeVariable.upperBounds) {
                 if (declaredUpperBound.isDefaultBound()) continue //todo remove this line (?)
-                val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.getIndex()))
+                val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.index))
                 addBound(typeVariable, declaredUpperBound, UPPER_BOUND, context)
             }
         }
@@ -89,11 +89,11 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
 
     val TypeParameterDescriptor.correspondingType: KotlinType
         get() = cachedTypeForVariable.getOrPut(this) {
-            KotlinTypeImpl.create(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), MemberScope.Empty)
+            KotlinTypeImpl.create(Annotations.EMPTY, typeConstructor, false, listOf(), MemberScope.Empty)
         }
 
     fun KotlinType.isProper() = !TypeUtils.containsSpecialType(this) {
-        type -> type.getConstructor().getDeclarationDescriptor() in getAllTypeVariables()
+        type -> type.constructor.declarationDescriptor.let { it is TypeParameterDescriptor && it in getAllTypeVariables() }
     }
 
     fun getNestedTypeVariables(type: KotlinType, original: Boolean): List<TypeParameterDescriptor> {
@@ -147,7 +147,7 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
             }
 
             override fun capture(typeVariable: KotlinType, typeProjection: TypeProjection): Boolean {
-                if (isMyTypeVariable(typeProjection.getType())) return false
+                if (isMyTypeVariable(typeProjection.type)) return false
                 val myTypeVariable = getMyTypeVariable(typeVariable)
 
                 if (myTypeVariable != null && constraintPosition.isParameter()) {
@@ -173,7 +173,7 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
             return true
         }
 
-        if (type == null || (type.isError() && !type.isFunctionPlaceholder)) {
+        if (type == null || (type.isError && !type.isFunctionPlaceholder)) {
             errors.add(ErrorInConstrainingType(constraintPosition))
             return true
         }
@@ -195,9 +195,7 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
             return doAddConstraint(EQUAL, subType, superType, constraintContext, typeCheckingProcedure)
         }
 
-        assert(!superType.isFunctionPlaceholder) {
-            "The type for " + constraintPosition + " shouldn't be a placeholder for function type"
-        }
+        assert(!superType.isFunctionPlaceholder) { "The type for $constraintPosition shouldn't be a placeholder for function type" }
 
         // function literal { x -> ... } goes without declaring receiver type
         // and can be considered as extension function if one is expected
@@ -290,7 +288,7 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
             }
         }
 
-        if (!parameterType.isMarkedNullable() || !TypeUtils.isNullableType(newConstrainingType)) {
+        if (!parameterType.isMarkedNullable || !TypeUtils.isNullableType(newConstrainingType)) {
             addBound(typeVariable, newConstrainingType, boundKind, constraintContext)
             return
         }
@@ -329,7 +327,7 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         addBound(typeVariable, capturedType, EXACT_BOUND, constraintContext)
     }
 
-    fun getAllTypeVariables() = allTypeParameterBounds.keySet()
+    fun getAllTypeVariables() = allTypeParameterBounds.keys
 
     fun getBoundsUsedIn(typeVariable: TypeParameterDescriptor): List<Bound> = usedInBounds[typeVariable] ?: emptyList()
 
@@ -349,7 +347,7 @@ public class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     fun isMyTypeVariable(type: KotlinType): Boolean = getMyTypeVariable(type) != null
 
     fun getMyTypeVariable(type: KotlinType): TypeParameterDescriptor? {
-        val typeParameterDescriptor = type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
+        val typeParameterDescriptor = type.constructor.declarationDescriptor as? TypeParameterDescriptor
         return if (typeParameterDescriptor != null && isMyTypeVariable(typeParameterDescriptor)) typeParameterDescriptor else null
     }
 
@@ -389,11 +387,11 @@ fun createTypeForFunctionPlaceholder(
 ): KotlinType {
     if (!functionPlaceholder.isFunctionPlaceholder) return functionPlaceholder
 
-    val functionPlaceholderTypeConstructor = functionPlaceholder.getConstructor() as FunctionPlaceholderTypeConstructor
+    val functionPlaceholderTypeConstructor = functionPlaceholder.constructor as FunctionPlaceholderTypeConstructor
 
     val isExtension = KotlinBuiltIns.isExtensionFunctionType(expectedType)
     val newArgumentTypes = if (!functionPlaceholderTypeConstructor.hasDeclaredArguments) {
-        val typeParamSize = expectedType.getConstructor().getParameters().size()
+        val typeParamSize = expectedType.constructor.parameters.size
         // the first parameter is receiver (if present), the last one is return type,
         // the remaining are function arguments
         val functionArgumentsSize = if (isExtension) typeParamSize - 2 else typeParamSize - 1
@@ -409,7 +407,7 @@ fun createTypeForFunctionPlaceholder(
 }
 
 internal fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {
-    return TypeSubstitutor.create(SubstitutionWithCapturedTypeApproximation(getSubstitution()))
+    return TypeSubstitutor.create(SubstitutionWithCapturedTypeApproximation(substitution))
 }
 
 private class SubstitutionWithCapturedTypeApproximation(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
@@ -426,11 +424,11 @@ class SubstitutionFilteringInternalResolveAnnotations(substitution: TypeSubstitu
 public fun createTypeSubstitutor(conversion: (TypeParameterDescriptor) -> TypeParameterDescriptor?): TypeSubstitutor {
     return TypeSubstitutor.create(object : TypeConstructorSubstitution() {
         override fun get(key: TypeConstructor): TypeProjection? {
-            val descriptor = key.getDeclarationDescriptor()
+            val descriptor = key.declarationDescriptor
             if (descriptor !is TypeParameterDescriptor) return null
             val typeParameterDescriptor = conversion(descriptor) ?: return null
 
-            val type = KotlinTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), MemberScope.Empty)
+            val type = KotlinTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.typeConstructor, false, listOf(), MemberScope.Empty)
             return TypeProjectionImpl(type)
         }
     })

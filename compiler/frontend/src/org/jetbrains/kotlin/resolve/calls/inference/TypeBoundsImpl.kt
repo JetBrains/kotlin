@@ -43,7 +43,7 @@ public class TypeBoundsImpl(override val typeVariable: TypeParameterDescriptor) 
     public fun addBound(bound: Bound) {
         resultValues = null
         assert(bound.typeVariable == typeVariable) {
-            "$bound is added for incorrect type variable ${bound.typeVariable.getName()}. Expected: ${typeVariable.getName()}"
+            "$bound is added for incorrect type variable ${bound.typeVariable.name}. Expected: ${typeVariable.name}"
         }
         bounds.add(bound)
     }

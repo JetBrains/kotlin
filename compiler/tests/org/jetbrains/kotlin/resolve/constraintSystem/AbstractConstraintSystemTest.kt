@@ -106,7 +106,7 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
 
         val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM_SHORT.render(system)
 
-        val resultingSubstitutor = system.getResultingSubstitutor()
+        val resultingSubstitutor = system.resultingSubstitutor
         val result = typeParameterDescriptors.map {
             val parameterType = testDeclarations.getType(it.getName().asString())
             val resultType = resultingSubstitutor.substitute(parameterType, Variance.INVARIANT)
