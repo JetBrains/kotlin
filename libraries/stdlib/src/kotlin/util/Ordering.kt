@@ -75,7 +75,7 @@ public fun <T : Comparable<*>> compareValues(a: T?, b: T?): Int {
     if (a == null) return -1
     if (b == null) return 1
 
-    return (a as Comparable<Any?>).compareTo(b)
+    return (a as Comparable<Any>).compareTo(b)
 }
 
 /**
@@ -293,13 +293,33 @@ public fun <T: Comparable<T>> nullsLast(): Comparator<T?> {
     }
 }
 
+/**
+ * Returns a comparator that compares [Comparable] objects in natural order.
+ */
+public fun <T: Comparable<T>> naturalOrder(): Comparator<T> = NaturalOrderComparator as Comparator<T>
+
+/**
+ * Returns a comparator that compares [Comparable] objects in reversed natural order.
+ */
+public fun <T: Comparable<T>> reverseOrder(): Comparator<T> = ReverseOrderComparator as Comparator<T>
+
 /** Returns a comparator that imposes the reverse ordering of this comparator. */
 public fun <T> Comparator<T>.reversed(): Comparator<T> = when (this) {
     is ReversedComparator -> this.comparator
+    NaturalOrderComparator -> ReverseOrderComparator as Comparator<T>
+    ReverseOrderComparator -> NaturalOrderComparator as Comparator<T>
     else -> ReversedComparator(this)
 }
 
 
 private class ReversedComparator<T>(public val comparator: Comparator<T>): Comparator<T> {
     override fun compare(a: T, b: T): Int = comparator.compare(b, a)
+}
+
+private object NaturalOrderComparator : Comparator<Comparable<Any>> {
+    override fun compare(c1: Comparable<Any>, c2: Comparable<Any>): Int = c1.compareTo(c2)
+}
+
+private object ReverseOrderComparator: Comparator<Comparable<Any>> {
+    override fun compare(c1: Comparable<Any>, c2: Comparable<Any>): Int = c2.compareTo(c1)
 }
