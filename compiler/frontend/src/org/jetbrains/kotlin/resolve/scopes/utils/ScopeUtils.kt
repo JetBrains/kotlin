@@ -131,6 +131,7 @@ public fun LexicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collec
 
 public fun LexicalScope.takeSnapshot(): LexicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
+@Deprecated("Will be removed soon")
 public fun LexicalScope.asKtScope(): KtScope {
     if (this is KtScope) return this
     if (this is MemberScopeToImportingScopeAdapter) return this.memberScope
