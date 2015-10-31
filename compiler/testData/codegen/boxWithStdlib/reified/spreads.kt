@@ -14,11 +14,11 @@ fun box(): String {
 
     var i = 0
     val a: Array<String> = bar(arrayOf("1", "2")) { i++; i.toString() }
-    assertEquals("1234", a.join(""))
+    assertEquals("1234", a.joinToString(""))
 
     i = 0
     val b: Array<Int> = bar(arrayOf(0, 1)) { i++ }
-    assertEquals("0123", b.map { it.toString() }.join(""))
+    assertEquals("0123", b.map { it.toString() }.joinToString(""))
 
     return "OK"
 }

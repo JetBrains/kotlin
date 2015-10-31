@@ -13,11 +13,11 @@ inline fun <reified T> empty() = arrayOf<T>()
 fun box(): String {
     var i = 0
     val a: Array<String> = bar() { i++; i.toString() }
-    assertEquals("345", a.join(""))
+    assertEquals("345", a.joinToString(""))
 
     i = 0
     val b: Array<Int> = bar() { i++ }
-    assertEquals("234", b.map { it.toString() }.join(""))
+    assertEquals("234", b.map { it.toString() }.joinToString(""))
 
     val c: Array<String> = empty()
     assertEquals(0, c.size())
