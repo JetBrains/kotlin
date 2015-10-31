@@ -12,36 +12,7 @@ public object Delegates {
      * object construction time but at a later time. Trying to read the property before the initial value has been
      * assigned results in an exception.
      */
-    public fun notNull<T: Any>(): ReadWriteProperty<Any?, T> = NotNullVar()
-
-    /**
-     * Returns a property delegate for a read-only property that is initialized on first access by calling the
-     * specified block of code. Supports lazy initialization semantics for properties.
-     * @param initializer the function that returns the value of the property.
-     */
-    @Deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(LazyThreadSafetyMode.NONE, initializer)"))
-    public fun lazy<T>(initializer: () -> T): ReadOnlyProperty<Any?, T> = LazyVal(initializer)
-
-    /**
-     * Returns a property delegate for a read-only property that is initialized on first access by calling the
-     * specified block of code under a specified lock. Supports lazy initialization semantics for properties and
-     * concurrent access.
-     * @param lock the object the monitor of which is locked before calling the initializer block. If not specified,
-     *             the property delegate object itself is used as a lock.
-     * @param initializer the function that returns the value of the property.
-     */
-    @Deprecated("Use lazy(lock) {} instead in kotlin package", ReplaceWith("lazy(lock, initializer)"))
-    public fun blockingLazy<T>(lock: Any?, initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(lock, initializer)
-
-    /**
-     * Returns a property delegate for a read-only property that is initialized on first access by calling the
-     * specified block of code under a specified lock. Supports lazy initialization semantics for properties and
-     * concurrent access.
-     * The property delegate object itself is used as a lock.
-     * @param initializer the function that returns the value of the property.
-     */
-    @Deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(initializer)"))
-    public fun blockingLazy<T>(initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(null, initializer)
+    public fun <T: Any> notNull(): ReadWriteProperty<Any?, T> = NotNullVar()
 
     /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed.
@@ -49,7 +20,7 @@ public object Delegates {
      * @param onChange the callback which is called after the change of the property is made. The value of the property
      *  has already been changed when this callback is invoked.
      */
-    public inline fun observable<T>(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Unit):
+    public inline fun <T> observable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Unit):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
             override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange(property, oldValue, newValue)
         }
@@ -63,7 +34,7 @@ public object Delegates {
      *  If the callback returns `true` the value of the property is being set to the new value,
      *  and if the callback returns `false` the new value is discarded and the property remains its old value.
      */
-    public inline fun vetoable<T>(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean):
+    public inline fun <T> vetoable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean):
         ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
             override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
         }
@@ -74,7 +45,7 @@ public object Delegates {
      * @param map the map where the property values are stored.
      */
     @Deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map", "kotlin.properties.get", "kotlin.properties.set"))
-    public fun mapVar<T>(map: MutableMap<in String, Any?>): ReadWriteProperty<Any?, T> {
+    public fun <T> mapVar(map: MutableMap<in String, Any?>): ReadWriteProperty<Any?, T> {
         return FixedMapVar<Any?, String, T>(map, propertyNameSelector, throwKeyNotFound)
     }
 
@@ -84,8 +55,8 @@ public object Delegates {
      * @param map the map where the property values are stored.
      * @param default the function returning the value of the property for a given object if it's missing from the given map.
      */
-    public fun mapVar<T>(map: MutableMap<in String, Any?>,
-                         default: (thisRef: Any?, desc: String) -> T): ReadWriteProperty<Any?, T> {
+    public fun <T> mapVar(map: MutableMap<in String, Any?>,
+                          default: (thisRef: Any?, desc: String) -> T): ReadWriteProperty<Any?, T> {
         return FixedMapVar<Any?, String, T>(map, propertyNameSelector, default)
     }
 
@@ -95,7 +66,7 @@ public object Delegates {
      * @param map the map where the property values are stored.
      */
     @Deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map", "kotlin.properties.get"))
-    public fun mapVal<T>(map: Map<in String, Any?>): ReadOnlyProperty<Any?, T> {
+    public fun <T> mapVal(map: Map<in String, Any?>): ReadOnlyProperty<Any?, T> {
         return FixedMapVal<Any?, String, T>(map, propertyNameSelector, throwKeyNotFound)
     }
 
@@ -105,8 +76,8 @@ public object Delegates {
      * @param map the map where the property values are stored.
      * @param default the function returning the value of the property for a given object if it's missing from the given map.
      */
-    public fun mapVal<T>(map: Map<in String, Any?>,
-                         default: (thisRef: Any?, desc: String) -> T): ReadOnlyProperty<Any?, T> {
+    public fun <T> mapVal(map: Map<in String, Any?>,
+                          default: (thisRef: Any?, desc: String) -> T): ReadOnlyProperty<Any?, T> {
         return FixedMapVal<Any?, String, T>(map, propertyNameSelector, default)
     }
 }
@@ -123,13 +94,6 @@ private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
         this.value = value
     }
 }
-
-
-@Deprecated("Use Delegates.vetoable() instead or construct implementation of abstract ObservableProperty", ReplaceWith("Delegates.vetoable(initialValue, onChange)"))
-public fun ObservableProperty<T>(initialValue: T, onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean): ObservableProperty<T> =
-    object : ObservableProperty<T>(initialValue) {
-        override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
-    }
 
 /**
  * Implements the core logic of a property delegate for a read/write property that calls callback functions when changed.
@@ -163,51 +127,6 @@ public abstract class ObservableProperty<T>(initialValue: T) : ReadWriteProperty
         }
         this.value = value
         afterChange(property, oldValue, value)
-    }
-}
-
-private object NULL_VALUE {}
-
-private fun escape(value: Any?): Any {
-    return value ?: NULL_VALUE
-}
-
-private fun unescape(value: Any?): Any? {
-    return if (value === NULL_VALUE) null else value
-}
-
-private class LazyVal<T>(private val initializer: () -> T) : ReadOnlyProperty<Any?, T> {
-    private var value: Any? = null
-
-    public override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        if (value == null) {
-            value = escape(initializer())
-        }
-        return unescape(value) as T
-    }
-}
-
-private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) : ReadOnlyProperty<Any?, T> {
-    private val lock = lock ?: this
-    @Volatile private var value: Any? = null
-
-    public override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        val _v1 = value
-        if (_v1 != null) {
-            return unescape(_v1) as T
-        }
-
-        return synchronized(lock) {
-            val _v2 = value
-            if (_v2 != null) {
-                unescape(_v2) as T
-            }
-            else {
-                val typedValue = initializer()
-                value = escape(typedValue)
-                typedValue
-            }
-        }
     }
 }
 
@@ -309,8 +228,8 @@ public open class FixedMapVar<T, K, V>(
         return map
     }
 
-    protected override fun key(desc: KProperty<*>): K {
-        return (key)(desc)
+    protected override fun key(property: KProperty<*>): K {
+        return (key)(property)
     }
 
     protected override fun default(ref: T, property: KProperty<*>): V {
