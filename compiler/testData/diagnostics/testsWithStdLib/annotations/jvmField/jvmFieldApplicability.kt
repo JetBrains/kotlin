@@ -19,7 +19,7 @@ abstract class C : I{
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> abstract val c: Int
 
-    <!INAPPLICABLE_JVM_FIELD, INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val customGetter: String = ""
         get() = field
 
@@ -29,7 +29,7 @@ abstract class C : I{
             field = s
         }
 
-    <!INAPPLICABLE_JVM_FIELD, INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val noBackingField: String
         get() = "a"
 
@@ -42,7 +42,7 @@ abstract class C : I{
 
 interface I {
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> val ai: Int
-    <!INAPPLICABLE_JVM_FIELD, INAPPLICABLE_JVM_FIELD!>@JvmField<!> val bi: Int
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> val bi: Int
         get() = 5
 }
 
