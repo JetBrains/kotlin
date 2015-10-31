@@ -22,18 +22,17 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.scopes.*;
 
 public class MutablePackageFragmentDescriptor extends PackageFragmentDescriptorImpl {
-    private final WritableScope scope;
+    private final KtScope scope;
 
     public MutablePackageFragmentDescriptor(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
         super(module, fqName);
 
-        scope = new WritableScopeImpl(KtScope.Empty.INSTANCE$, this, RedeclarationHandler.DO_NOTHING, "Members of " + fqName + " in " + module);
-        scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
+        scope = new SimpleKtScope(this, "Members of " + fqName + " in " + module);
     }
 
     @NotNull
     @Override
-    public WritableScope getMemberScope() {
+    public KtScope getMemberScope() {
         return scope;
     }
 }

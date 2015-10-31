@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
-public abstract class KtScopeImpl : KtScope {
+abstract class KtScopeImpl : KtScope {
     override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
     override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
@@ -50,4 +50,12 @@ public abstract class KtScopeImpl : KtScope {
 
     // This method should not be implemented here by default: every scope class has its unique structure pattern
     abstract override fun printScopeStructure(p: Printer)
+}
+
+class SimpleKtScope(val ownerDescriptor: DeclarationDescriptor, val debugName: String): KtScopeImpl() {
+    override fun printScopeStructure(p: Printer) {
+        p.println(javaClass.getSimpleName(), ": ", debugName, " for ", ownerDescriptor, " {")
+    }
+
+    override fun getContainingDeclaration() = ownerDescriptor
 }
