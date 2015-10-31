@@ -348,24 +348,14 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             assert (receiverClassDescriptor is JavaClassDescriptor) { "Unexpected receiver class: $receiverClassDescriptor" }
 
-            val typeParamScope = with(
-                    WritableScopeImpl(
-                            KtScope.Empty,
-                            receiverClassDescriptor,
-                            RedeclarationHandler.DO_NOTHING,
-                            "Scope with type parameters for ${receiverClassDescriptor.getName()}"
-                    )
-            ) {
-                receiverClassDescriptor.getTypeConstructor().getParameters().forEach { addClassifierDescriptor(it) }
-                changeLockLevel(LexicalWritableScope.LockLevel.READING)
-                this
-            }
-
             val projections = receiverClassDescriptor.getTypeConstructor().getParameters()
                     .map { TypeProjectionImpl(it.getDefaultType()) }
             val memberScope = receiverClassDescriptor.getMemberScope(projections)
 
-            return typeParamScope.memberScopeAsImportingScope(memberScope.memberScopeAsImportingScope())
+            return LexicalScopeImpl(memberScope.memberScopeAsImportingScope(), receiverClassDescriptor, false, null,
+                                    "Scope with type parameters for ${receiverClassDescriptor.getName()}") {
+                receiverClassDescriptor.typeConstructor.parameters.forEach { addClassifierDescriptor(it) }
+            }
         }
 
         private fun collectSubstitutionsForReceiverTypeParameters(
