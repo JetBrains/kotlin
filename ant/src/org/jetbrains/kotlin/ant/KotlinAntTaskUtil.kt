@@ -24,7 +24,7 @@ import java.io.File
 import java.lang.ref.SoftReference
 import java.net.JarURLConnection
 
-object KotlinAntTaskUtil {
+internal object KotlinAntTaskUtil {
     private var classLoaderRef = SoftReference<ClassLoader?>(null)
 
     private val libPath: File by lazy {
@@ -37,19 +37,16 @@ object KotlinAntTaskUtil {
         antTaskJarPath.parentFile
     }
 
-    val compilerJar: File by lazy {
-        File(libPath, "kotlin-compiler.jar").assertExists()
-    }
+    val compilerJar: File by jar("kotlin-compiler.jar")
+    val runtimeJar: File by jar("kotlin-runtime.jar")
+    val reflectJar: File by jar("kotlin-reflect.jar")
 
-    val runtimeJar: File by lazy {
-        File(libPath, "kotlin-runtime.jar").assertExists()
-    }
-
-    private fun File.assertExists(): File {
-        if (!this.exists()) {
-            throw IllegalStateException("${name} is not found in the directory of Kotlin Ant task")
+    private fun jar(name: String) = lazy {
+        File(libPath, name).apply {
+            if (!exists()) {
+                throw IllegalStateException("File is not found in the directory of Kotlin Ant task: $name")
+            }
         }
-        return this
     }
 
     @Synchronized
@@ -65,8 +62,7 @@ object KotlinAntTaskUtil {
 
         return classLoader
     }
-
 }
 
-val Task.defaultModuleName: String?
+internal val Task.defaultModuleName: String?
     get() = owningTarget?.name ?: project?.name
