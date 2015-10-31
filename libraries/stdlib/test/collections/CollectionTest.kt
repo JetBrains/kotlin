@@ -564,8 +564,9 @@ class CollectionTest {
     }
 
     @test fun sorted() {
-        assertEquals(listOf(1, 3, 7), listOf(3, 7, 1).sorted())
-        assertEquals(listOf(7, 3, 1), listOf(3, 7, 1).sortedDescending())
+        val data = listOf(11, 3, 7)
+        assertEquals(listOf(3, 7, 11), data.sorted())
+        assertEquals(listOf(11, 7, 3), data.sortedDescending())
     }
 
     @test fun sortedBy() {
