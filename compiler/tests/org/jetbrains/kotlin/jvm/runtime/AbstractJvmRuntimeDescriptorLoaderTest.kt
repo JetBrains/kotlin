@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.net.URLClassLoader
+import java.util.*
 import java.util.regex.Pattern
 
 public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
@@ -187,10 +190,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         private val scope: KtScope
 
         init {
-            val writableScope = WritableScopeImpl(KtScope.Empty, this, RedeclarationHandler.THROW_EXCEPTION, "runtime descriptor loader test")
-            classes.forEach { writableScope.addClassifierDescriptor(it) }
-            writableScope.changeLockLevel(LexicalWritableScope.LockLevel.READING)
-            scope = ChainedScope(this, "synthetic package view for test", writableScope, *packageScopes.toTypedArray())
+            scope = ChainedScope(this, "synthetic package view for test", ScopeWithClassifiers(classes, this), *packageScopes.toTypedArray())
         }
 
         override val fqName: FqName
@@ -209,4 +209,25 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         override val fragments: Nothing
             get() = throw UnsupportedOperationException()
     }
+
+    private class ScopeWithClassifiers(classifiers: List<ClassifierDescriptor>, ownerDescriptor: DeclarationDescriptor)
+        : SimpleKtScope(ownerDescriptor, "runtime descriptor loader test") {
+
+        private val classifierMap = HashMap<Name, ClassifierDescriptor>()
+        val redeclarationHandler = RedeclarationHandler.THROW_EXCEPTION
+
+        init {
+            for (classifier in classifiers) {
+                classifierMap.put(classifier.name, classifier)?.let {
+                    redeclarationHandler.handleRedeclaration(it, classifier)
+                }
+            }
+        }
+
+        override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classifierMap[name]
+
+        override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = classifierMap.values
+        override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = classifierMap.values
+    }
+
 }

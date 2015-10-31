@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.types;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -198,18 +201,23 @@ public class TypeUnifierTest extends KotlinLiteFixture {
     }
 
     private TypeProjection makeTypeProjection(KtScope scope, String typeStr) {
-        WritableScopeImpl withX =
-                new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "With X");
-        withX.addClassifierDescriptor(x);
-        withX.addClassifierDescriptor(y);
-        withX.changeLockLevel(LexicalWritableScope.LockLevel.READING);
+        LexicalScope withX = new LexicalScopeImpl(ScopeUtilsKt.memberScopeAsImportingScope(scope), scope.getContainingDeclaration(),
+                                                  false, null, "With X", RedeclarationHandler.DO_NOTHING,
+                                                  new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                                                      @Override
+                                                      public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                                                          handler.addClassifierDescriptor(x);
+                                                          handler.addClassifierDescriptor(y);
+                                                          return Unit.INSTANCE;
+                                                      }
+                                                  });
 
         KtTypeProjection projection = KtPsiFactoryKt
                 .KtPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);
 
         KtTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;
-        KotlinType type = typeResolver.resolveType(TypeTestUtilsKt.asLexicalScope(withX), typeReference, KotlinTestUtils.DUMMY_TRACE, true);
+        KotlinType type = typeResolver.resolveType(withX, typeReference, KotlinTestUtils.DUMMY_TRACE, true);
 
         return new TypeProjectionImpl(getProjectionKind(typeStr, projection), type);
     }

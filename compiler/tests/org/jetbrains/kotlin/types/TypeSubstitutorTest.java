@@ -21,8 +21,11 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
@@ -38,11 +41,13 @@ import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
@@ -55,7 +60,7 @@ import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
-    private KtScope scope;
+    private LexicalScope scope;
     private ContainerForTests container;
 
     @Override
@@ -78,26 +83,32 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         super.tearDown();
     }
 
-    private KtScope getContextScope() throws IOException {
+    private LexicalScope getContextScope() throws IOException {
         // todo comments
         String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"), true);
         KtFile jetFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile(text);
-        ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
-        KtScope topLevelDeclarations = module.getPackage(FqName.ROOT).getMemberScope();
-        ClassifierDescriptor contextClass = topLevelDeclarations.getClassifier(Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
+        BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
+        ModuleDescriptor module = LazyResolveTestUtil.resolve(getProject(), trace, Collections.singletonList(jetFile), getEnvironment());
+
+        LexicalScope topLevelScope = trace.get(BindingContext.LEXICAL_SCOPE, jetFile);
+        final ClassifierDescriptor contextClass = ScopeUtilsKt.findClassifier(topLevelScope, Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
         assert contextClass instanceof ClassDescriptor;
-        WritableScopeImpl typeParameters = new WritableScopeImpl(KtScope.Empty.INSTANCE$, module, RedeclarationHandler.THROW_EXCEPTION,
-                                                                 "Type parameter scope");
-        for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
-            typeParameters.addClassifierDescriptor(parameterDescriptor);
-        }
-        typeParameters.changeLockLevel(LexicalWritableScope.LockLevel.READING);
-        return new ChainedScope(module,
-                                "TypeSubstitutorTest::getContextScope()",
-                                topLevelDeclarations,
-                                typeParameters,
-                                contextClass.getDefaultType().getMemberScope(),
-                                module.getBuiltIns().getBuiltInsPackageScope());
+        LexicalScope typeParameters = new LexicalScopeImpl(topLevelScope, module, false, null, "Type parameter scope",
+                                                           RedeclarationHandler.THROW_EXCEPTION,
+                                                           new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                                                               @Override
+                                                               public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                                                                   for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
+                                                                       handler.addClassifierDescriptor(parameterDescriptor);
+                                                                   }
+                                                                   return Unit.INSTANCE;
+                                                               }
+                                                           });
+        return new LexicalChainedScope(typeParameters, module, false, null, "TypeSubstitutorTest::getContextScope()",
+                                new KtScope[] {
+                                        contextClass.getDefaultType().getMemberScope(),
+                                        module.getBuiltIns().getBuiltInsPackageScope()
+                                });
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {
@@ -123,7 +134,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
             String typeParameterName = pair.first;
             String replacementProjectionString = pair.second;
 
-            ClassifierDescriptor classifier = scope.getClassifier(Name.identifier(typeParameterName), NoLookupLocation.FROM_TEST);
+            ClassifierDescriptor classifier = ScopeUtilsKt.findClassifier(scope, Name.identifier(typeParameterName), NoLookupLocation.FROM_TEST);
             assertNotNull("No type parameter named " + typeParameterName, classifier);
             assertTrue(typeParameterName + " is not a type parameter: " + classifier, classifier instanceof TypeParameterDescriptor);
 
@@ -140,7 +151,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         KtTypeReference jetTypeReference = KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr);
         AnalyzingUtils.checkForSyntacticErrors(jetTypeReference);
         BindingTrace trace = new BindingTraceContext();
-        KotlinType type = container.getTypeResolver().resolveType(TypeTestUtilsKt.asLexicalScope(scope), jetTypeReference, trace, true);
+        KotlinType type = container.getTypeResolver().resolveType(scope, jetTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
             fail("Errors:\n" + StringUtil.join(
                     trace.getBindingContext().getDiagnostics(),

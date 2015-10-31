@@ -52,7 +52,7 @@ abstract class KtScopeImpl : KtScope {
     abstract override fun printScopeStructure(p: Printer)
 }
 
-class SimpleKtScope(val ownerDescriptor: DeclarationDescriptor, val debugName: String): KtScopeImpl() {
+open class SimpleKtScope(val ownerDescriptor: DeclarationDescriptor, val debugName: String): KtScopeImpl() {
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), ": ", debugName, " for ", ownerDescriptor, " {")
     }
