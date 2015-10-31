@@ -16,29 +16,26 @@
 
 package org.jetbrains.kotlin.types;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
@@ -55,7 +52,7 @@ import java.util.*;
 public class KotlinTypeCheckerTest extends KotlinLiteFixture {
 
     private KotlinBuiltIns builtIns;
-    private KtScope scopeWithImports;
+    private LexicalScope scopeWithImports;
     private TypeResolver typeResolver;
     private ExpressionTypingServices expressionTypingServices;
 
@@ -546,35 +543,26 @@ public class KotlinTypeCheckerTest extends KotlinLiteFixture {
     private void assertType(String expression, KotlinType expectedType) {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KotlinType type = expressionTypingServices.getType(TypeTestUtilsKt.asLexicalScope(scopeWithImports), ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, KotlinTestUtils.DUMMY_TRACE);
+        KotlinType type = expressionTypingServices.getType(scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, KotlinTestUtils.DUMMY_TRACE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KotlinType type = expressionTypingServices.safeGetType(TypeTestUtilsKt.asLexicalScope(scopeWithImports), ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, KotlinTestUtils.DUMMY_TRACE);
+        KotlinType type = expressionTypingServices.safeGetType(scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, KotlinTestUtils.DUMMY_TRACE);
         assertTrue("Error type expected but " + type + " returned", type.isError());
     }
 
-    private void assertType(String contextType, final String expression, String expectedType) {
-        final KotlinType thisType = makeType(contextType);
-        KtScope scope = new AbstractScopeAdapter() {
-            @NotNull
-            @Override
-            protected KtScope getWorkerScope() {
-                return scopeWithImports;
-            }
+    private void assertType(String contextType, String expression, String expectedType) {
+        KotlinType thisType = makeType(contextType);
+        ReceiverParameterDescriptorImpl receiverParameterDescriptor = new ReceiverParameterDescriptorImpl(
+                scopeWithImports.getOwnerDescriptor(),
+                new ExpressionReceiver(KtPsiFactoryKt.KtPsiFactory(getProject()).createExpression(expression), thisType)
+        );
 
-            @NotNull
-            @Override
-            public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
-                return Lists.<ReceiverParameterDescriptor>newArrayList(new ReceiverParameterDescriptorImpl(
-                        getContainingDeclaration(),
-                        new ExpressionReceiver(KtPsiFactoryKt.KtPsiFactory(getProject()).createExpression(expression), thisType)
-                ));
-            }
-        };
+        LexicalScope scope = new LexicalScopeImpl(scopeWithImports, scopeWithImports.getOwnerDescriptor(), false,
+                                                  receiverParameterDescriptor, "Scope with receiver: " + thisType);
         assertType(scope, expression, expectedType);
     }
 
@@ -582,58 +570,33 @@ public class KotlinTypeCheckerTest extends KotlinLiteFixture {
         assertType(scopeWithImports, expression, expectedTypeStr);
     }
 
-    private void assertType(KtScope scope, String expression, String expectedTypeStr) {
+    private void assertType(LexicalScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         KtExpression ktExpression = KtPsiFactoryKt.KtPsiFactory(project).createExpression(expression);
-        KotlinType type = expressionTypingServices.getType(
-                TypeTestUtilsKt.asLexicalScope(scope), ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, new BindingTraceContext());
+        KotlinType type = expressionTypingServices.getType(scope, ktExpression, TypeUtils.NO_EXPECTED_TYPE, DataFlowInfo.EMPTY, new BindingTraceContext());
         KotlinType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
 
-    private KtScope getDeclarationsScope(String path) throws IOException {
-        ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolve(
+    @NotNull
+    private LexicalScope getDeclarationsScope(String path) throws IOException {
+        KtFile ktFile = KotlinTestUtils.loadJetFile(getProject(), new File(path));
+        BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
+        LazyResolveTestUtil.resolve(
                 getProject(),
-                Collections.singletonList(KotlinTestUtils.loadJetFile(getProject(), new File(path))),
+                trace,
+                Collections.singletonList(ktFile),
                 getEnvironment()
         );
 
-        FqName fqName = new FqName("testData");
-        PackageViewDescriptor packageView = moduleDescriptor.getPackage(fqName);
-        assertNotNull("Package " + fqName + " not found", packageView);
-        return addImports(packageView.getMemberScope());
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private KtScope addImports(KtScope scope) {
-        WritableScopeImpl writableScope = new WritableScopeImpl(
-                scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports"
-        );
-        List<KtScope> scopeChain = new ArrayList<KtScope>();
-        scopeChain.add(writableScope);
-
-        ModuleDescriptor module = LazyResolveTestUtil.resolveProject(getProject(), getEnvironment());
-        for (ImportPath defaultImport : module.getDefaultImports()) {
-            FqName fqName = defaultImport.fqnPart();
-            if (defaultImport.isAllUnder()) {
-                scopeChain.add(module.getPackage(fqName).getMemberScope());
-            }
-            else {
-                Name shortName = fqName.shortName();
-                assert shortName.equals(defaultImport.getImportedName());
-                writableScope.addClassifierDescriptor(module.getPackage(fqName.parent()).getMemberScope().getClassifier(shortName, NoLookupLocation.FROM_TEST));
-            }
-        }
-        scopeChain.add(module.getPackage(FqName.ROOT).getMemberScope());
-        writableScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
-        return new ChainedScope(scope.getContainingDeclaration(), "JetTypeCheckerTest.addImports scope with imports", scopeChain.toArray(new KtScope[scopeChain.size()]));
+        return trace.get(BindingContext.LEXICAL_SCOPE, ktFile);
     }
 
     private KotlinType makeType(String typeStr) {
         return makeType(scopeWithImports, typeStr);
     }
 
-    private KotlinType makeType(KtScope scope, String typeStr) {
-        return typeResolver.resolveType(TypeTestUtilsKt.asLexicalScope(scope), KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr), KotlinTestUtils.DUMMY_TRACE, true);
+    private KotlinType makeType(LexicalScope scope, String typeStr) {
+        return typeResolver.resolveType(scope, KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr), KotlinTestUtils.DUMMY_TRACE, true);
     }
 }
