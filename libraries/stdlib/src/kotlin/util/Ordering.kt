@@ -252,16 +252,7 @@ public fun <T: Any> nullsFirst(comparator: Comparator<in T>): Comparator<T?> {
  * Provides a comparator of nullable [Comparable] values
  * considering `null` value less than any other value.
  */
-public fun <T: Comparable<T>> nullsFirst(): Comparator<T?> {
-    return object: Comparator<T?> {
-        override fun compare(a: T?, b: T?): Int {
-            if (a === b) return 0
-            if (a == null) return -1
-            if (b == null) return 1
-            return a.compareTo(b)
-        }
-    }
-}
+public fun <T: Comparable<T>> nullsFirst(): Comparator<T?> = nullsFirst(naturalOrder())
 
 /**
  * Extends the given [comparator] of non-nullable values to a comparator of nullable values
@@ -282,16 +273,7 @@ public fun <T: Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> {
  * Provides a comparator of nullable [Comparable] values
  * considering `null` value greater than any other value.
  */
-public fun <T: Comparable<T>> nullsLast(): Comparator<T?> {
-    return object: Comparator<T?> {
-        override fun compare(a: T?, b: T?): Int {
-            if (a === b) return 0
-            if (a == null) return 1
-            if (b == null) return -1
-            return a.compareTo(b)
-        }
-    }
-}
+public fun <T: Comparable<T>> nullsLast(): Comparator<T?> = nullsLast(naturalOrder())
 
 /**
  * Returns a comparator that compares [Comparable] objects in natural order.
