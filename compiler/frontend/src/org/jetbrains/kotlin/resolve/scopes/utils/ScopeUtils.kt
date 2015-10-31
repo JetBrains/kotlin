@@ -35,29 +35,12 @@ public val LexicalScope.parents: Sequence<LexicalScope>
 /**
  * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
  */
-public fun LexicalScope.getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-    // todo remove hack
-    var jetScopeRefactoringHack: KtScope? = null
-    val receivers = collectFromMeAndParent {
-        if (it is MemberScopeToImportingScopeAdapter) {
-            jetScopeRefactoringHack = it.memberScope
-        }
-        it.implicitReceiver
-    }
-
-    return if (jetScopeRefactoringHack != null) {
-        receivers + jetScopeRefactoringHack!!.getImplicitReceiversHierarchy()
-    }
-    else {
-        receivers
-    }
+public fun LexicalScope.getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = collectFromMeAndParent {
+    it.implicitReceiver
 }
 
 public fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = collectAllFromMeAndParent {
-    if(it is MemberScopeToImportingScopeAdapter) { // todo remove this hack
-        it.memberScope.getDeclarationsByLabel(labelName)
-    }
-    else if (it.isOwnerDescriptorAccessibleByLabel && it.ownerDescriptor.name == labelName) {
+    if (it.isOwnerDescriptorAccessibleByLabel && it.ownerDescriptor.name == labelName) {
         listOf(it.ownerDescriptor)
     }
     else {
@@ -136,16 +119,16 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)
 
     override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = memberScope.getSyntheticExtensionProperties(receiverTypes, name, location)
+            = emptyList<PropertyDescriptor>()
 
     override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = memberScope.getSyntheticExtensionFunctions(receiverTypes, name, location)
+            = emptyList<FunctionDescriptor>()
 
     override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-            = memberScope.getSyntheticExtensionProperties(receiverTypes)
+            = emptyList<PropertyDescriptor>()
 
     override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-            = memberScope.getSyntheticExtensionFunctions(receiverTypes)
+            = emptyList<FunctionDescriptor>()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = memberScope.getDescriptors(kindFilter, nameFilter)
