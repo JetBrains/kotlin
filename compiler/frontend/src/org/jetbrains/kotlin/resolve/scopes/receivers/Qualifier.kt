@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.BindingContext.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
@@ -133,7 +133,7 @@ class ClassifierQualifier(
         scopes.add(classifier.staticScope)
 
         if (classifier.kind != ClassKind.ENUM_ENTRY) {
-            scopes.add(DescriptorUtils.getStaticNestedClassesScope(classifier))
+            scopes.add(JetScopeUtils.getStaticNestedClassesScope(classifier))
         }
 
         return ChainedScope(descriptor, "Static scope for $name as class or object", *scopes.toTypedArray())
