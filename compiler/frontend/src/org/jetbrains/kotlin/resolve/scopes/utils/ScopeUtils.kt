@@ -82,8 +82,6 @@ public fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
         when {
             it is LexicalScopeWrapper -> it.delegate.findLocalVariable(name)
 
-            it is MemberScopeToImportingScopeAdapter -> it.memberScope.getLocalVariable(name) /* todo remove hack*/
-
             it !is ImportingScope && it !is LexicalChainedScope -> it.getContributedVariables(name, NoLookupLocation.WHEN_GET_LOCAL_VARIABLE).singleOrNull() /* todo check this*/
 
             else -> null
@@ -131,71 +129,8 @@ public fun LexicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collec
 
 public fun LexicalScope.takeSnapshot(): LexicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
-@Deprecated("Will be removed soon")
-public fun LexicalScope.asKtScope(): KtScope {
-    if (this is KtScope) return this
-    if (this is MemberScopeToImportingScopeAdapter) return this.memberScope
-    return LexicalToKtScopeAdapter(this)
-}
-
 @JvmOverloads
 public fun KtScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
-
-private class LexicalToKtScopeAdapter(lexicalScope: LexicalScope): KtScope {
-    val lexicalScope = lexicalScope.takeSnapshot()
-
-    override fun getClassifier(name: Name, location: LookupLocation) = lexicalScope.findClassifier(name, location)
-
-    override fun getPackage(name: Name) = lexicalScope.findPackage(name)
-
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
-        return lexicalScope.collectAllFromImportingScopes { it.getContributedVariables(name, location) }
-    }
-
-    override fun getFunctions(name: Name, location: LookupLocation)
-            = lexicalScope.collectFunctions(name, location)
-
-    override fun getLocalVariable(name: Name) = lexicalScope.findLocalVariable(name)
-
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = lexicalScope.collectSyntheticExtensionProperties(receiverTypes, name, location)
-
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = lexicalScope.collectSyntheticExtensionFunctions(receiverTypes, name, location)
-
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-            = lexicalScope.collectSyntheticExtensionProperties(receiverTypes)
-
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-            = lexicalScope.collectSyntheticExtensionFunctions(receiverTypes)
-
-    override fun getContainingDeclaration() = lexicalScope.ownerDescriptor
-
-    override fun getDeclarationsByLabel(labelName: Name) = lexicalScope.getDeclarationsByLabel(labelName)
-
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        return lexicalScope.collectAllFromMeAndParent { it.getContributedDescriptors(kindFilter, nameFilter) }
-    }
-
-    override fun getImplicitReceiversHierarchy() = lexicalScope.getImplicitReceiversHierarchy()
-    override fun getOwnDeclaredDescriptors() = lexicalScope.getContributedDescriptors()
-
-    override fun equals(other: Any?) = other is LexicalToKtScopeAdapter && other.lexicalScope == this.lexicalScope
-
-    override fun hashCode() = lexicalScope.hashCode()
-
-    override fun toString() = "LexicalToKtScopeAdapter for $lexicalScope"
-
-    override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName)
-        p.pushIndent()
-
-        lexicalScope.printStructure(p)
-
-        p.popIndent()
-        p.println("}")
-    }
-}
 
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: KtScope) : ImportingScope {
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)
