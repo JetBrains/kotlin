@@ -26,6 +26,7 @@ import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -72,7 +73,8 @@ public class CliBaseTest {
         String normalizedOutputWithoutExitCode = pureOutput
                 .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
                 .replace("expected ABI version is " + JvmAbi.VERSION, "expected ABI version is $ABI_VERSION$")
-                .replace("\\", "/");
+                .replace("\\", "/")
+                .replace(KotlinVersion.VERSION, "$VERSION$");
 
         return removePerfOutput(normalizedOutputWithoutExitCode) + exitCode;
     }

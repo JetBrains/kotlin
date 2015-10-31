@@ -223,6 +223,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("version.args")
+        public void testVersion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/version.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("warningsInDummy.args")
         public void testWarningsInDummy() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/warningsInDummy.args");
@@ -361,6 +367,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("suppressAllWarningsJS.args")
         public void testSuppressAllWarningsJS() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/suppressAllWarningsJS.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("version.args")
+        public void testVersion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/version.args");
             doJsTest(fileName);
         }
 
