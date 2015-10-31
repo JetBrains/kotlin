@@ -65,7 +65,7 @@ private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>,
             }
         }.joinTo(this, ", ", "(", ")")
 
-private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.map { it.replaceKeywords() }.join(", ")})"
+private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.joinToString(", ") { it.replaceKeywords() }})"
 
 private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: Boolean, commented: Boolean, level: Int = 1) {
     indent(commented, level)
