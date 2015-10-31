@@ -201,9 +201,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        @SuppressWarnings("unchecked")
-        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
-            return (Collection) properties.invoke(name);
+        public Collection<PropertyDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
+            return properties.invoke(name);
         }
 
         @NotNull

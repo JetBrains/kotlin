@@ -186,11 +186,11 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
     protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name, boolean failOnMissing) {
         Name propertyName = Name.identifier(name);
         KtScope memberScope = packageView.getMemberScope();
-        Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
+        Collection<PropertyDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
         if (properties.isEmpty()) {
             for (DeclarationDescriptor descriptor : memberScope.getAllDescriptors()) {
                 if (descriptor instanceof ClassDescriptor) {
-                    Collection<VariableDescriptor> classProperties =
+                    Collection<PropertyDescriptor> classProperties =
                             ((ClassDescriptor) descriptor).getMemberScope(Collections.<TypeProjection>emptyList())
                                     .getProperties(propertyName, NoLookupLocation.FROM_TEST);
                     if (!classProperties.isEmpty()) {
@@ -206,16 +206,16 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
         else if (properties.size() != 1) {
             return null;
         }
-        return (PropertyDescriptor) properties.iterator().next();
+        return properties.iterator().next();
     }
 
     @NotNull
     private static PropertyDescriptor getPropertyDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
         KtScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-        Collection<VariableDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
+        Collection<PropertyDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
         assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + classDescriptor.getName();
-        return (PropertyDescriptor) properties.iterator().next();
+        return properties.iterator().next();
     }
 
     @NotNull

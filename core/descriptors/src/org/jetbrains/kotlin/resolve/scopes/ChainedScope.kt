@@ -36,7 +36,7 @@ public open class ChainedScope(
     override fun getPackage(name: Name): PackageViewDescriptor?
             = getFirstMatch(scopeChain) { it.getPackage(name) }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
             = getFromAllScopes(scopeChain) { it.getProperties(name, location) }
 
     override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>

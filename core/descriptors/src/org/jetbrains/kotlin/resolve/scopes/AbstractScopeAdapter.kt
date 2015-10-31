@@ -45,7 +45,7 @@ public abstract class AbstractScopeAdapter : KtScope {
         return workerScope.getClassifier(name, location)
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         return workerScope.getProperties(name, location)
     }
 

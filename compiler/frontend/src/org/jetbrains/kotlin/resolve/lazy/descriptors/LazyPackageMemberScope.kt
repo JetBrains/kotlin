@@ -43,7 +43,7 @@ public class LazyPackageMemberScope(
         // No extra functions
     }
 
-    override fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>) {
+    override fun getNonDeclaredProperties(name: Name, result: MutableSet<PropertyDescriptor>) {
         // No extra properties
     }
 

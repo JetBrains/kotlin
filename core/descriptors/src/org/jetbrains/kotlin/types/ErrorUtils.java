@@ -175,8 +175,8 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<VariableDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
-            return ERROR_VARIABLE_GROUP;
+        public Set<PropertyDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
+            return ERROR_PROPERTY_GROUP;
         }
 
         @Override
@@ -248,7 +248,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
+        public Collection<PropertyDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 
@@ -361,7 +361,7 @@ public class ErrorUtils {
     private static final KotlinType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
     private static final PropertyDescriptor ERROR_PROPERTY = createErrorProperty();
 
-    private static final Set<VariableDescriptor> ERROR_VARIABLE_GROUP = Collections.<VariableDescriptor>singleton(ERROR_PROPERTY);
+    private static final Set<PropertyDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
 
     @NotNull
     private static PropertyDescriptorImpl createErrorProperty() {

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.Printer
 abstract class KtScopeImpl : KtScope {
     override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
+    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 

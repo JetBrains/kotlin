@@ -122,7 +122,7 @@ public class LazyJavaStaticClassScope(
 
             if (staticScope !is LazyJavaStaticClassScope) return getStaticPropertiesFromJavaSupertypes(name, superTypeDescriptor)
 
-            return staticScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as PropertyDescriptor }
+            return staticScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it }
         }
 
         return descriptor.typeConstructor.supertypes.flatMap(::getStaticProperties).toSet()

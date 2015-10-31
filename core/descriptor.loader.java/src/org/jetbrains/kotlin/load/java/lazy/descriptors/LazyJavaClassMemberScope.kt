@@ -414,7 +414,7 @@ public class LazyJavaClassMemberScope(
 
     private fun getPropertiesFromSupertypes(name: Name): Set<PropertyDescriptor> {
         return getContainingDeclaration().typeConstructor.supertypes.flatMap {
-            it.memberScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { p -> p as PropertyDescriptor }
+            it.memberScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { p -> p }
         }.toSet()
     }
 

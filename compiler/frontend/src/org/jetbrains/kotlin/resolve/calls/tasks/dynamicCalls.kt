@@ -78,7 +78,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             return false
         }
 
-        override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+        override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
             return if (call.getValueArgumentList() == null && call.getValueArguments().isEmpty()) {
                 listOf(createDynamicProperty(owner, name, call))
             }

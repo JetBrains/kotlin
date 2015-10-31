@@ -50,7 +50,7 @@ public abstract class DeserializedMemberScope protected constructor(
     private val functions =
             c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties =
-            c.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
+            c.storageManager.createMemoizedFunction<Name, Collection<PropertyDescriptor>> { computeProperties(it) }
 
     protected open fun filteredFunctionProtos(protos: Collection<ProtoBuf.Function>): Collection<ProtoBuf.Function> = protos
 
@@ -87,7 +87,7 @@ public abstract class DeserializedMemberScope protected constructor(
         return functions(name)
     }
 
-    private fun computeProperties(name: Name): Collection<VariableDescriptor> {
+    private fun computeProperties(name: Name): Collection<PropertyDescriptor> {
         val protos = propertyProtos()[ProtoKey(name, isExtension = false)].orEmpty() +
                      propertyProtos()[ProtoKey(name, isExtension = true)].orEmpty()
 
@@ -102,7 +102,7 @@ public abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         recordLookup(name, location)
         return properties.invoke(name)
     }

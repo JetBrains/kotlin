@@ -50,7 +50,7 @@ public class LazyScriptClassMemberScope protected constructor(
 
     private fun getPropertiesForScriptParameters() = getPrimaryConstructor()!!.valueParameters.flatMap { getProperties(it.name, NoLookupLocation.FOR_SCRIPT) }
 
-    override fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>) {
+    override fun getNonDeclaredProperties(name: Name, result: MutableSet<PropertyDescriptor>) {
         super.getNonDeclaredProperties(name, result)
 
         if (name.asString() == ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME) {
@@ -60,7 +60,7 @@ public class LazyScriptClassMemberScope protected constructor(
 
     public fun getScriptResultProperty(): PropertyDescriptor = scriptResultProperty()
 
-    override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<VariableDescriptor>) {
+    override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {
         val scriptInfo = declarationProvider.getOwnerInfo() as JetScriptInfo
 
         // From primary constructor parameters

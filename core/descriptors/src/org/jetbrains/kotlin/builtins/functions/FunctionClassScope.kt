@@ -52,7 +52,7 @@ class FunctionClassScope(
         return allDescriptors().filterIsInstance<FunctionDescriptor>().filter { it.getName() == name }
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         return allDescriptors().filterIsInstance<PropertyDescriptor>().filter { it.getName() == name }
     }
 

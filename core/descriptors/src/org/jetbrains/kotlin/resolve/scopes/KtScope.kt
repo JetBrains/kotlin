@@ -30,7 +30,7 @@ public interface KtScope {
     @Deprecated("Should be removed soon")
     public fun getPackage(name: Name): PackageViewDescriptor?
 
-    public fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+    public fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
 
     public fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 

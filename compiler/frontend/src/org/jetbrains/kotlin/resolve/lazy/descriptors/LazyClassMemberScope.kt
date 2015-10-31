@@ -152,7 +152,7 @@ public open class LazyClassMemberScope(
                 val properties = getProperties(parameter.name, location)
                 if (properties.isEmpty()) continue
 
-                val property = properties.iterator().next() as PropertyDescriptor
+                val property = properties.iterator().next()
 
                 ++componentIndex
 
@@ -175,7 +175,7 @@ public open class LazyClassMemberScope(
         }
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         // TODO: this should be handled by lazy property descriptors
         val properties = super.getProperties(name, location)
         resolveUnknownVisibilitiesForMembers(properties as Collection<CallableMemberDescriptor>)
@@ -191,20 +191,19 @@ public open class LazyClassMemberScope(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    protected override fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>) {
+    protected override fun getNonDeclaredProperties(name: Name, result: MutableSet<PropertyDescriptor>) {
         createPropertiesFromPrimaryConstructorParameters(name, result)
 
         // Members from supertypes
         val fromSupertypes = ArrayList<PropertyDescriptor>()
         for (supertype in thisDescriptor.typeConstructor.supertypes) {
-            fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>)
+            fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_PROPERTIES, result))
-        generateFakeOverrides(name, fromSupertypes, result as MutableCollection<PropertyDescriptor>, javaClass<PropertyDescriptor>())
+        generateFakeOverrides(name, fromSupertypes, result, javaClass<PropertyDescriptor>())
     }
 
-    protected open fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<VariableDescriptor>) {
+    protected open fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {
         val classInfo = declarationProvider.getOwnerInfo()
 
         // From primary constructor parameters
@@ -322,8 +321,7 @@ public open class LazyClassMemberScope(
 
         private val EXTRACT_PROPERTIES: MemberExtractor<PropertyDescriptor> = object : MemberExtractor<PropertyDescriptor> {
             override fun extract(extractFrom: KotlinType, name: Name): Collection<PropertyDescriptor> {
-                @Suppress("UNCHECKED_CAST")
-                return extractFrom.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED) as Collection<PropertyDescriptor>
+                return extractFrom.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             }
         }
     }

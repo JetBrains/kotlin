@@ -106,10 +106,11 @@ public class LazyJavaPackageScope(
         return classes(name)
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         recordLookup(name, location)
         return deserializedPackageScope().getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED)
     }
+
     override fun getFunctions(name: Name, location: LookupLocation): List<FunctionDescriptor> {
         recordLookup(name, location)
         return deserializedPackageScope().getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
