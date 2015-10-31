@@ -21,15 +21,9 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
 public interface WritableScope : KtScope {
-    public enum class LockLevel {
-        WRITING,
-        BOTH,
-        READING
-    }
-
     public fun takeSnapshot(): KtScope
 
-    public fun changeLockLevel(lockLevel: LockLevel)
+    public fun changeLockLevel(lockLevel: LexicalWritableScope.LockLevel)
 
     public fun addVariableDescriptor(variableDescriptor: VariableDescriptor)
 

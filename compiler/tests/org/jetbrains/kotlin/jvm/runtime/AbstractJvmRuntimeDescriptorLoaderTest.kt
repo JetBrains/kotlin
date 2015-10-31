@@ -189,7 +189,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         init {
             val writableScope = WritableScopeImpl(KtScope.Empty, this, RedeclarationHandler.THROW_EXCEPTION, "runtime descriptor loader test")
             classes.forEach { writableScope.addClassifierDescriptor(it) }
-            writableScope.changeLockLevel(WritableScope.LockLevel.READING)
+            writableScope.changeLockLevel(LexicalWritableScope.LockLevel.READING)
             scope = ChainedScope(this, "synthetic package view for test", writableScope, *packageScopes.toTypedArray())
         }
 

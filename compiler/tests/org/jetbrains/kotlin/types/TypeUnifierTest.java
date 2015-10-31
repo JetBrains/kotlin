@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.TypeResolver;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -205,7 +202,7 @@ public class TypeUnifierTest extends KotlinLiteFixture {
                 new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "With X");
         withX.addClassifierDescriptor(x);
         withX.addClassifierDescriptor(y);
-        withX.changeLockLevel(WritableScope.LockLevel.READING);
+        withX.changeLockLevel(LexicalWritableScope.LockLevel.READING);
 
         KtTypeProjection projection = KtPsiFactoryKt
                 .KtPsiFactory(getProject()).createTypeArguments("<" + typeStr + ">").getArguments().get(0);

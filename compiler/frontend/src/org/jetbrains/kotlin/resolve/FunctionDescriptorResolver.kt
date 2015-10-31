@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
-import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DeferredType
@@ -147,7 +146,7 @@ class FunctionDescriptorResolver(
 
         val typeParameterDescriptors = descriptorResolver.
                 resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.getTypeParameters(), trace)
-        innerScope.changeLockLevel(WritableScope.LockLevel.BOTH)
+        innerScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH)
         descriptorResolver.resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace)
 
         val receiverTypeRef = function.getReceiverTypeReference()
@@ -160,7 +159,7 @@ class FunctionDescriptorResolver(
 
         val valueParameterDescriptors = createValueParameterDescriptors(function, functionDescriptor, innerScope, trace, expectedFunctionType)
 
-        innerScope.changeLockLevel(WritableScope.LockLevel.READING)
+        innerScope.changeLockLevel(LexicalWritableScope.LockLevel.READING)
 
         val returnType = function.getTypeReference()?.let { typeResolver.resolveType(innerScope, it, trace, true) }
 
@@ -290,7 +289,7 @@ class FunctionDescriptorResolver(
                 TraceBasedRedeclarationHandler(trace),
                 "Scope with value parameters of a constructor"
         )
-        parameterScope.changeLockLevel(WritableScope.LockLevel.BOTH)
+        parameterScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH)
         val constructor = constructorDescriptor.initialize(
                 typeParameters,
                 resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace, null),

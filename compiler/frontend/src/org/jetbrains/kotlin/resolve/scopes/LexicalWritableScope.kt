@@ -31,16 +31,22 @@ class LexicalWritableScope(
         override val redeclarationHandler: RedeclarationHandler,
         private val debugName: String
 ) : LexicalScope, WritableScopeStorage {
+    public enum class LockLevel {
+        WRITING,
+        BOTH,
+        READING
+    }
+
     override val parent = parent.takeSnapshot()
     override val addedDescriptors: MutableList<DeclarationDescriptor> = SmartList()
 
     override var functionsByName: MutableMap<Name, WritableScopeStorage.IntList>? = null
     override var variablesAndClassifiersByName: MutableMap<Name, WritableScopeStorage.IntList>? = null
 
-    private var lockLevel: WritableScope.LockLevel = WritableScope.LockLevel.WRITING
+    private var lockLevel: LockLevel = LockLevel.WRITING
     private var lastSnapshot: Snapshot? = null
 
-    public fun changeLockLevel(lockLevel: WritableScope.LockLevel) {
+    public fun changeLockLevel(lockLevel: LockLevel) {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
             throw IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + toString())
         }
@@ -80,14 +86,14 @@ class LexicalWritableScope(
     override fun getContributedFunctions(name: Name, location: LookupLocation) = checkMayRead().getDeclaredFunctions(name)
 
     private fun checkMayRead(): LexicalWritableScope {
-        if (lockLevel != WritableScope.LockLevel.READING && lockLevel != WritableScope.LockLevel.BOTH) {
+        if (lockLevel != LockLevel.READING && lockLevel != LockLevel.BOTH) {
             throw IllegalStateException("cannot read with lock level " + lockLevel + " at " + toString())
         }
         return this
     }
 
     private fun checkMayWrite() {
-        if (lockLevel != WritableScope.LockLevel.WRITING && lockLevel != WritableScope.LockLevel.BOTH) {
+        if (lockLevel != LockLevel.WRITING && lockLevel != LockLevel.BOTH) {
             throw IllegalStateException("cannot write with lock level " + lockLevel + " at " + toString())
         }
     }

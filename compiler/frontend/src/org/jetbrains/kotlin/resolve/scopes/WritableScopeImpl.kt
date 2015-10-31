@@ -55,9 +55,9 @@ public class WritableScopeImpl @JvmOverloads constructor(
 
     override fun getContainingDeclaration() = ownerDeclarationDescriptor
 
-    private var lockLevel: WritableScope.LockLevel = WritableScope.LockLevel.WRITING
+    private var lockLevel: LexicalWritableScope.LockLevel = LexicalWritableScope.LockLevel.WRITING
 
-    override fun changeLockLevel(lockLevel: WritableScope.LockLevel) {
+    override fun changeLockLevel(lockLevel: LexicalWritableScope.LockLevel) {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
             throw IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + toString())
         }
@@ -65,13 +65,13 @@ public class WritableScopeImpl @JvmOverloads constructor(
     }
 
     private fun checkMayRead() {
-        if (lockLevel != WritableScope.LockLevel.READING && lockLevel != WritableScope.LockLevel.BOTH) {
+        if (lockLevel != LexicalWritableScope.LockLevel.READING && lockLevel != LexicalWritableScope.LockLevel.BOTH) {
             throw IllegalStateException("cannot read with lock level " + lockLevel + " at " + toString())
         }
     }
 
     private fun checkMayWrite() {
-        if (lockLevel != WritableScope.LockLevel.WRITING && lockLevel != WritableScope.LockLevel.BOTH) {
+        if (lockLevel != LexicalWritableScope.LockLevel.WRITING && lockLevel != LexicalWritableScope.LockLevel.BOTH) {
             throw IllegalStateException("cannot write with lock level " + lockLevel + " at " + toString())
         }
     }
@@ -87,7 +87,7 @@ public class WritableScopeImpl @JvmOverloads constructor(
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         checkMayRead()
-        changeLockLevel(WritableScope.LockLevel.READING)
+        changeLockLevel(LexicalWritableScope.LockLevel.READING)
 
         val result = ArrayList<DeclarationDescriptor>()
         result.addAll(addedDescriptors)
@@ -168,7 +168,7 @@ public class WritableScopeImpl @JvmOverloads constructor(
     private inner class Snapshot(val descriptorLimit: Int) : KtScope by this@WritableScopeImpl {
         override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
             checkMayRead()
-            changeLockLevel(WritableScope.LockLevel.READING)
+            changeLockLevel(LexicalWritableScope.LockLevel.READING)
 
             val workerResult = workerScope.getDescriptors(kindFilter, nameFilter)
 

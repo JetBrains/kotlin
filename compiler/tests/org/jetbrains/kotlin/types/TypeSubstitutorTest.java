@@ -91,7 +91,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
             typeParameters.addClassifierDescriptor(parameterDescriptor);
         }
-        typeParameters.changeLockLevel(WritableScope.LockLevel.READING);
+        typeParameters.changeLockLevel(LexicalWritableScope.LockLevel.READING);
         return new ChainedScope(module,
                                 "TypeSubstitutorTest::getContextScope()",
                                 topLevelDeclarations,

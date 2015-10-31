@@ -357,7 +357,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     )
             ) {
                 receiverClassDescriptor.getTypeConstructor().getParameters().forEach { addClassifierDescriptor(it) }
-                changeLockLevel(WritableScope.LockLevel.READING)
+                changeLockLevel(LexicalWritableScope.LockLevel.READING)
                 this
             }
 

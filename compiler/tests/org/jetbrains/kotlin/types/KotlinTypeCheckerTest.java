@@ -625,7 +625,7 @@ public class KotlinTypeCheckerTest extends KotlinLiteFixture {
             }
         }
         scopeChain.add(module.getPackage(FqName.ROOT).getMemberScope());
-        writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        writableScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
         return new ChainedScope(scope.getContainingDeclaration(), "JetTypeCheckerTest.addImports scope with imports", scopeChain.toArray(new KtScope[scopeChain.size()]));
     }
 
