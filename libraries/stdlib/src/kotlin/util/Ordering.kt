@@ -314,12 +314,18 @@ public fun <T> Comparator<T>.reversed(): Comparator<T> = when (this) {
 
 private class ReversedComparator<T>(public val comparator: Comparator<T>): Comparator<T> {
     override fun compare(a: T, b: T): Int = comparator.compare(b, a)
+    @Suppress("VIRTUAL_MEMBER_HIDDEN")
+    fun reversed(): Comparator<T> = comparator
 }
 
 private object NaturalOrderComparator : Comparator<Comparable<Any>> {
     override fun compare(c1: Comparable<Any>, c2: Comparable<Any>): Int = c1.compareTo(c2)
+    @Suppress("VIRTUAL_MEMBER_HIDDEN")
+    fun reversed(): Comparator<Comparable<Any>> = ReverseOrderComparator
 }
 
 private object ReverseOrderComparator: Comparator<Comparable<Any>> {
     override fun compare(c1: Comparable<Any>, c2: Comparable<Any>): Int = c2.compareTo(c1)
+    @Suppress("VIRTUAL_MEMBER_HIDDEN")
+    fun reversed(): Comparator<Comparable<Any>> = NaturalOrderComparator
 }
