@@ -41,6 +41,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "no-stdlib", description = "Don't include Kotlin runtime into classpath")
     public boolean noStdlib;
 
+    @Argument(value = "no-reflect", description = "Don't include Kotlin reflection implementation into classpath")
+    public boolean noReflect;
+
     @Argument(value = "module", description = "Path to the module file to compile")
     @ValueDescription("<path>")
     public String module;

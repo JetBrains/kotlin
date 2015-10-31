@@ -301,10 +301,15 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         private fun getClasspath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {
             val classpath = arrayListOf<File>()
             if (arguments.classpath != null) {
-                classpath.addAll(arguments.classpath.split(File.pathSeparatorChar).map { File(it) })
+                classpath.addAll(arguments.classpath.split(File.pathSeparatorChar).map(::File))
             }
             if (!arguments.noStdlib) {
                 classpath.add(paths.runtimePath)
+            }
+            // "-no-stdlib" implies "-no-reflect": otherwise we would be able to transitively read stdlib classes through kotlin-reflect,
+            // which is likely not what user wants since s/he manually provided "-no-stdlib"
+            if (!arguments.noReflect && !arguments.noStdlib) {
+                classpath.add(paths.reflectPath)
             }
             return classpath
         }

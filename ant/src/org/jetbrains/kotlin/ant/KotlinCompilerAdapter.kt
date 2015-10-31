@@ -31,6 +31,7 @@ class KotlinCompilerAdapter : Javac13() {
 
     var additionalArguments: MutableList<Commandline.Argument> = ArrayList(0)
 
+    @Suppress("unused") // Used via reflection by Ant
     fun createCompilerArg(): Commandline.Argument {
         val argument = Commandline.Argument()
         additionalArguments.add(argument)
@@ -94,15 +95,22 @@ class KotlinCompilerAdapter : Javac13() {
     }
 
     private fun addRuntimeToJavacClasspath(kotlinc: Kotlin2JvmTask) {
-        for (arg in kotlinc.args) {
-            // If "-no-stdlib" was specified explicitly, probably the user also wanted the javac classpath to not have it
-            if ("-no-stdlib" == arg) return
-        }
+        // If "-no-stdlib" (or "-no-reflect") was specified explicitly, probably the user also wanted the javac classpath to not have it
+        val addStdlib = "-no-stdlib" !in kotlinc.args
+        val addReflect = "-no-reflect" !in kotlinc.args
+
+        if (!addStdlib && !addReflect) return
 
         if (compileClasspath == null) {
             compileClasspath = Path(getProject())
         }
-        compileClasspath.add(Path(getProject(), KotlinAntTaskUtil.runtimeJar.absolutePath))
+        if (addStdlib) {
+            compileClasspath.add(Path(getProject(), KotlinAntTaskUtil.runtimeJar.absolutePath))
+        }
+        // "-no-stdlib" implies "-no-reflect", see K2JVMCompiler.Companion.getClasspath
+        if (addReflect && addStdlib) {
+            compileClasspath.add(Path(getProject(), KotlinAntTaskUtil.reflectJar.absolutePath))
+        }
     }
 
     private fun checkAntVersion() {

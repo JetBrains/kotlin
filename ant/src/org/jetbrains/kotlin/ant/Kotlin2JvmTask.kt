@@ -26,6 +26,8 @@ class Kotlin2JvmTask : KotlinCompilerBaseTask() {
     var includeRuntime: Boolean = true
     var moduleName: String? = null
 
+    var noReflect: Boolean = false
+
     private var compileClasspath: Path? = null
 
     fun setClasspath(classpath: Path) {
@@ -68,6 +70,7 @@ class Kotlin2JvmTask : KotlinCompilerBaseTask() {
         }
 
         if (noStdlib) args.add("-no-stdlib")
+        if (noReflect) args.add("-no-reflect")
         if (includeRuntime) args.add("-include-runtime")
     }
 }
