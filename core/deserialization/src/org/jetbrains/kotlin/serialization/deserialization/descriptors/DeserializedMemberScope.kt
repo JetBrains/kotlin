@@ -175,13 +175,6 @@ public abstract class DeserializedMemberScope protected constructor(
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-        val receiver = getImplicitReceiver()
-        return if (receiver != null) listOf(receiver) else listOf()
-    }
-
-    protected abstract fun getImplicitReceiver(): ReceiverParameterDescriptor?
-
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
 
     override fun printScopeStructure(p: Printer) {

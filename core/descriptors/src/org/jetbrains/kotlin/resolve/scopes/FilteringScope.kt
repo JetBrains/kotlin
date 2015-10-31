@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
 public class FilteringScope(private val workerScope: KtScope, private val predicate: (DeclarationDescriptor) -> Boolean) : KtScope {
@@ -39,26 +36,8 @@ public class FilteringScope(private val workerScope: KtScope, private val predic
 
     override fun getProperties(name: Name, location: LookupLocation) = workerScope.getProperties(name, location).filter(predicate)
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-            = workerScope.getSyntheticExtensionProperties(receiverTypes, name, location).filter(predicate)
-
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
-            = workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location).filter(predicate)
-
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
-            = workerScope.getSyntheticExtensionProperties(receiverTypes).filter(predicate)
-
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
-            = workerScope.getSyntheticExtensionFunctions(receiverTypes).filter(predicate)
-
-    override fun getLocalVariable(name: Name) = filterDescriptor(workerScope.getLocalVariable(name))
-
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = workerScope.getDescriptors(kindFilter, nameFilter).filter(predicate)
-
-    override fun getImplicitReceiversHierarchy() = workerScope.getImplicitReceiversHierarchy()
-
-    override fun getDeclarationsByLabel(labelName: Name) = workerScope.getDeclarationsByLabel(labelName).filter(predicate)
 
     override fun getOwnDeclaredDescriptors() = workerScope.getOwnDeclaredDescriptors().filter(predicate)
 

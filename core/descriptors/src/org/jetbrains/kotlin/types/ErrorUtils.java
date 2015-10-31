@@ -179,52 +179,9 @@ public class ErrorUtils {
             return ERROR_VARIABLE_GROUP;
         }
 
-        @NotNull
-        @Override
-        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
-                @NotNull Collection<? extends KotlinType> receiverTypes, @NotNull Name name,
-                @NotNull LookupLocation location
-        ) {
-            return ERROR_PROPERTY_GROUP;
-        }
-
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends KotlinType> receiverTypes, @NotNull Name name,
-                @NotNull LookupLocation location
-        ) {
-            return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
-        }
-
-        @NotNull
-        @Override
-        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull Collection<? extends KotlinType> receiverTypes) {
-            return ERROR_PROPERTY_GROUP;
-        }
-
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends KotlinType> receiverTypes
-        ) {
-            return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
-        }
-
-        @Override
-        public VariableDescriptor getLocalVariable(@NotNull Name name) {
-            return ERROR_PROPERTY;
-        }
-
         @Override
         public PackageViewDescriptor getPackage(@NotNull Name name) {
             return null;
-        }
-
-        @NotNull
-        @Override
-        public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
-            return Collections.emptyList();
         }
 
         @NotNull
@@ -237,12 +194,6 @@ public class ErrorUtils {
         @Override
         public DeclarationDescriptor getContainingDeclaration() {
             return ERROR_MODULE;
-        }
-
-        @NotNull
-        @Override
-        public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName) {
-            return Collections.emptyList();
         }
 
         @NotNull
@@ -301,12 +252,6 @@ public class ErrorUtils {
             throw new IllegalStateException();
         }
 
-        @Nullable
-        @Override
-        public VariableDescriptor getLocalVariable(@NotNull Name name) {
-            throw new IllegalStateException();
-        }
-
         @NotNull
         @Override
         public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull LookupLocation location) {
@@ -315,46 +260,8 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(
-                @NotNull Collection<? extends KotlinType> receiverTypes, @NotNull Name name,
-                @NotNull LookupLocation location
-        ) {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends KotlinType> receiverTypes, @NotNull Name name,
-                @NotNull LookupLocation location
-        ) {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public Collection<PropertyDescriptor> getSyntheticExtensionProperties(@NotNull Collection<? extends KotlinType> receiverTypes) {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public Collection<FunctionDescriptor> getSyntheticExtensionFunctions(
-                @NotNull Collection<? extends KotlinType> receiverTypes
-        ) {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
         public DeclarationDescriptor getContainingDeclaration() {
             return ERROR_MODULE;
-        }
-
-        @NotNull
-        @Override
-        public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName) {
-            throw new IllegalStateException();
         }
 
         @NotNull
@@ -368,12 +275,6 @@ public class ErrorUtils {
         @NotNull
         @Override
         public Collection<DeclarationDescriptor> getAllDescriptors() {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
             throw new IllegalStateException();
         }
 
@@ -461,7 +362,6 @@ public class ErrorUtils {
     private static final PropertyDescriptor ERROR_PROPERTY = createErrorProperty();
 
     private static final Set<VariableDescriptor> ERROR_VARIABLE_GROUP = Collections.<VariableDescriptor>singleton(ERROR_PROPERTY);
-    private static final Set<PropertyDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
 
     @NotNull
     private static PropertyDescriptorImpl createErrorProperty() {

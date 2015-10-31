@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Modifier
@@ -28,23 +27,14 @@ public interface KtScope {
 
     public fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
 
+    @Deprecated("Should be removed soon")
     public fun getPackage(name: Name): PackageViewDescriptor?
 
     public fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor>
 
-    public fun getLocalVariable(name: Name): VariableDescriptor?
-
     public fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
-    public fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
-
-    public fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
-    public fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
-
     public fun getContainingDeclaration(): DeclarationDescriptor
-
-    public fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor>
 
     /**
      * All visible descriptors from current scope.
@@ -62,11 +52,7 @@ public interface KtScope {
             nameFilter: (Name) -> Boolean = ALL_NAME_FILTER
     ): Collection<DeclarationDescriptor>
 
-    /**
-     * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
-     */
-    public fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor>
-
+    // todo merge with getAllDescriptors()
     public fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor>
 
     /**

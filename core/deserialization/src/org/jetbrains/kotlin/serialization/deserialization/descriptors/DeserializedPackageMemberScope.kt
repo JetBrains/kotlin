@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
@@ -69,6 +68,4 @@ public open class DeserializedPackageMemberScope(
     override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         // Do nothing
     }
-
-    override fun getImplicitReceiver(): ReceiverParameterDescriptor? = null
 }

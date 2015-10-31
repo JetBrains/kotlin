@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
 abstract class KtScopeImpl : KtScope {
@@ -27,24 +26,12 @@ abstract class KtScopeImpl : KtScope {
 
     override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
 
-    override fun getLocalVariable(name: Name): VariableDescriptor? = null
-
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
     override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
-
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> = emptyList()
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> = emptyList()
-
-    override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = emptyList()
-
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = emptyList()
-
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = emptyList()
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = emptyList()
 

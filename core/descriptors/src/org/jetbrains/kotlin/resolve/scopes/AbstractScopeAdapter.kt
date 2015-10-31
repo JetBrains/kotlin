@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
 /**
@@ -33,10 +32,6 @@ public abstract class AbstractScopeAdapter : KtScope {
                 (workerScope as AbstractScopeAdapter).getActualScope()
             else
                 workerScope
-
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-        return workerScope.getImplicitReceiversHierarchy()
-    }
 
     override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return workerScope.getFunctions(name, location)
@@ -54,32 +49,8 @@ public abstract class AbstractScopeAdapter : KtScope {
         return workerScope.getProperties(name, location)
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        return workerScope.getSyntheticExtensionProperties(receiverTypes, name, location)
-    }
-
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        return workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location)
-    }
-
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
-        return workerScope.getSyntheticExtensionProperties(receiverTypes)
-    }
-
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
-        return workerScope.getSyntheticExtensionFunctions(receiverTypes)
-    }
-
-    override fun getLocalVariable(name: Name): VariableDescriptor? {
-        return workerScope.getLocalVariable(name)
-    }
-
     override fun getContainingDeclaration(): DeclarationDescriptor {
         return workerScope.getContainingDeclaration()
-    }
-
-    override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> {
-        return workerScope.getDeclarationsByLabel(labelName)
     }
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter,

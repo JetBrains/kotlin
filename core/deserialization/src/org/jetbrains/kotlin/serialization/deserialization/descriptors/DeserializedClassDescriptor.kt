@@ -242,8 +242,6 @@ public class DeserializedClassDescriptor(
             }
         }
 
-        override fun getImplicitReceiver() = classDescriptor.getThisAsReceiverParameter()
-
         override fun getClassDescriptor(name: Name): ClassifierDescriptor? =
                 classDescriptor.enumEntries.findEnumEntry(name) ?: classDescriptor.nestedClasses.findNestedClass(name)
 

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
@@ -36,8 +35,6 @@ public abstract class LazyJavaStaticScope(
     // Package fragments are not nested
     override fun getPackage(name: Name) = null
     abstract fun getSubPackages(): Collection<FqName>
-
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
 
     override fun resolveMethodSignature(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
