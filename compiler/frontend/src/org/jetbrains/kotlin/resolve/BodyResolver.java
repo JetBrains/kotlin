@@ -798,7 +798,7 @@ public class BodyResolver {
                                               RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                 @Override
                 public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                    handler.addVariableOrClassDescriptor(fieldDescriptor);
+                    handler.addVariableDescriptor(fieldDescriptor);
                     return Unit.INSTANCE$;
                 }
             });

@@ -16,26 +16,22 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
-public interface WritableScopeStorage {
+abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandler) {
 
-    // must be protected, but KT-3029 Protected does not work in traits: IllegalAccessError
-    val addedDescriptors: MutableList<DeclarationDescriptor>
-    val redeclarationHandler: RedeclarationHandler
+    protected val addedDescriptors: MutableList<DeclarationDescriptor> = SmartList()
 
-    var functionsByName: MutableMap<Name, IntList>? // = null
-    var variablesAndClassifiersByName: MutableMap<Name, IntList>? // = null
+    private var functionsByName: MutableMap<Name, IntList>? = null
+    private var variablesAndClassifiersByName: MutableMap<Name, IntList>? = null
 
-    // Effectively protected: not to be used outside subclasses
-    fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
+    protected fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
         val name = descriptor.getName()
 
         val originalDescriptor = variableOrClassDescriptorByName(name)
@@ -53,8 +49,7 @@ public interface WritableScopeStorage {
 
     }
 
-    // Effectively protected: not to be used outside subclasses
-    fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor) {
+    protected fun addFunctionDescriptorInternal(functionDescriptor: FunctionDescriptor) {
         val descriptorIndex = addDescriptor(functionDescriptor)
 
         if (functionsByName == null) {
@@ -65,8 +60,7 @@ public interface WritableScopeStorage {
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
     }
 
-    // Effectively protected: not to be used outside subclasses
-    fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): DeclarationDescriptor? {
+    protected fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): DeclarationDescriptor? {
         if (descriptorLimit == 0) return null
 
         var list = variablesAndClassifiersByName?.get(name)
@@ -80,8 +74,7 @@ public interface WritableScopeStorage {
         return null
     }
 
-    // Effectively protected: not to be used outside subclasses
-    fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): List<FunctionDescriptor>? {
+    protected fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size()): List<FunctionDescriptor>? {
         if (descriptorLimit == 0) return null
 
         var list = functionsByName?.get(name)
@@ -99,8 +92,7 @@ public interface WritableScopeStorage {
         return addedDescriptors.size() - 1
     }
 
-    // Effectively protected: not to be used outside subclasses
-    class IntList(val last: Int, val prev: IntList?)
+    private class IntList(val last: Int, val prev: IntList?)
 
     private fun Int.descriptorByIndex() = addedDescriptors[this]
 
@@ -116,13 +108,13 @@ public interface WritableScopeStorage {
         return result
     }
 
-    fun getDeclaredClassifier(name: Name, descriptorLimit: Int = addedDescriptors.size())
+    protected fun getClassifier(name: Name, descriptorLimit: Int = addedDescriptors.size())
             = variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
 
-    fun getDeclaredVariables(name: Name, descriptorLimit: Int = addedDescriptors.size()): Collection<VariableDescriptor>
+    protected fun getVariables(name: Name, descriptorLimit: Int = addedDescriptors.size()): Collection<VariableDescriptor>
             = listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? VariableDescriptor)
 
-    fun getDeclaredFunctions(name: Name, descriptorLimit: Int = addedDescriptors.size()): Collection<FunctionDescriptor>
+    protected fun getFunctions(name: Name, descriptorLimit: Int = addedDescriptors.size()): Collection<FunctionDescriptor>
             = functionsByName(name, descriptorLimit) ?: emptyList()
 
 }
