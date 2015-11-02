@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -243,7 +245,7 @@ public class OverrideResolver {
 
     private static List<CallableMemberDescriptor> getCallableMembersFromType(KotlinType type) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
-        for (DeclarationDescriptor decl : type.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor decl : type.getMemberScope().getDescriptors(DescriptorKindFilter.CALLABLES, KtScope.Companion.getALL_NAME_FILTER())) {
             if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
                 r.add((CallableMemberDescriptor) decl);
             }
@@ -305,7 +307,8 @@ public class OverrideResolver {
             @NotNull Set<CallableMemberDescriptor> abstractInBaseClassNoImpl,
             @NotNull Set<CallableMemberDescriptor> conflictingInterfaceOverrides
     ) {
-        for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope()
+                .getDescriptors(DescriptorKindFilter.CALLABLES, KtScope.Companion.getALL_NAME_FILTER())) {
             if (member instanceof CallableMemberDescriptor) {
                 collectMissingImplementations((CallableMemberDescriptor) member,
                                               abstractNoImpl, manyImpl,
@@ -812,7 +815,8 @@ public class OverrideResolver {
 
     private void checkParameterOverridesForAllClasses(@NotNull TopDownAnalysisContext c) {
         for (ClassDescriptorWithResolutionScopes classDescriptor : c.getDeclaredClasses().values()) {
-            for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope()
+                    .getDescriptors(DescriptorKindFilter.CALLABLES, KtScope.Companion.getALL_NAME_FILTER())) {
                 if (member instanceof CallableMemberDescriptor) {
                     checkOverridesForParameters((CallableMemberDescriptor) member);
                 }

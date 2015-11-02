@@ -41,6 +41,7 @@ public interface KtScope {
      *
      * @return All visible descriptors from current scope.
      */
+    @Deprecated("Removed in progress", ReplaceWith("getDescriptors()"))
     public fun getAllDescriptors(): Collection<DeclarationDescriptor> = getDescriptors()
 
     /**
@@ -159,15 +160,15 @@ public class DescriptorKindFilter(
         public val VALUES_MASK: Int = SINGLETON_CLASSIFIERS_MASK or FUNCTIONS_MASK or VARIABLES_MASK
         public val CALLABLES_MASK: Int = FUNCTIONS_MASK or VARIABLES_MASK
 
-        public val ALL: DescriptorKindFilter = DescriptorKindFilter(ALL_KINDS_MASK)
-        public val CALLABLES: DescriptorKindFilter = DescriptorKindFilter(CALLABLES_MASK)
-        public val NON_SINGLETON_CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(NON_SINGLETON_CLASSIFIERS_MASK)
-        public val SINGLETON_CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(SINGLETON_CLASSIFIERS_MASK)
-        public val CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(CLASSIFIERS_MASK)
-        public val PACKAGES: DescriptorKindFilter = DescriptorKindFilter(PACKAGES_MASK)
-        public val FUNCTIONS: DescriptorKindFilter = DescriptorKindFilter(FUNCTIONS_MASK)
-        public val VARIABLES: DescriptorKindFilter = DescriptorKindFilter(VARIABLES_MASK)
-        public val VALUES: DescriptorKindFilter = DescriptorKindFilter(VALUES_MASK)
+        @JvmField public val ALL: DescriptorKindFilter = DescriptorKindFilter(ALL_KINDS_MASK)
+        @JvmField public val CALLABLES: DescriptorKindFilter = DescriptorKindFilter(CALLABLES_MASK)
+        @JvmField public val NON_SINGLETON_CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(NON_SINGLETON_CLASSIFIERS_MASK)
+        @JvmField public val SINGLETON_CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(SINGLETON_CLASSIFIERS_MASK)
+        @JvmField public val CLASSIFIERS: DescriptorKindFilter = DescriptorKindFilter(CLASSIFIERS_MASK)
+        @JvmField public val PACKAGES: DescriptorKindFilter = DescriptorKindFilter(PACKAGES_MASK)
+        @JvmField public val FUNCTIONS: DescriptorKindFilter = DescriptorKindFilter(FUNCTIONS_MASK)
+        @JvmField public val VARIABLES: DescriptorKindFilter = DescriptorKindFilter(VARIABLES_MASK)
+        @JvmField public val VALUES: DescriptorKindFilter = DescriptorKindFilter(VALUES_MASK)
 
         private class MaskToName(val mask: Int, val name: String)
 

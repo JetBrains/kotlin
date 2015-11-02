@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -214,7 +215,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }
-                    clazz.getDefaultType().getMemberScope().getAllDescriptors();
+                    DescriptorUtils.getAllDescriptors(clazz.getDefaultType().getMemberScope());
                 }
                 catch (Exception e) {
                     System.err.println("failed to resolve " + className);

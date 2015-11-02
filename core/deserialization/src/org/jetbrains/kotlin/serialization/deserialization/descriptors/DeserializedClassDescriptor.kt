@@ -229,7 +229,7 @@ public class DeserializedClassDescriptor(
 
         override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
             for (supertype in classDescriptor.getTypeConstructor().supertypes) {
-                for (descriptor in supertype.memberScope.getAllDescriptors()) {
+                for (descriptor in supertype.memberScope.getDescriptors()) {
                     if (descriptor is FunctionDescriptor) {
                         result.addAll(getFunctions(descriptor.name, location))
                     }
@@ -312,7 +312,7 @@ public class DeserializedClassDescriptor(
             val result = HashSet<Name>()
 
             for (supertype in getTypeConstructor().getSupertypes()) {
-                for (descriptor in supertype.getMemberScope().getAllDescriptors()) {
+                for (descriptor in supertype.getMemberScope().getDescriptors()) {
                     if (descriptor is SimpleFunctionDescriptor || descriptor is PropertyDescriptor) {
                         result.add(descriptor.getName())
                     }

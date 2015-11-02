@@ -156,7 +156,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
         }
 
         private Void visitDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull KtScope memberScope) {
-            for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+            for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(memberScope)) {
                 member.acceptVoid(this);
             }
             return visitDeclaration(descriptor);

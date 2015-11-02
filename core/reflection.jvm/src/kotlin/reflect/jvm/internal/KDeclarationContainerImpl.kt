@@ -78,7 +78,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             }
         }
 
-        return scope.getAllDescriptors().asSequence()
+        return scope.getDescriptors().asSequence()
                 .filter { descriptor ->
                     descriptor !is MemberDescriptor || descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
                 }

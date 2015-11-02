@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
@@ -107,7 +108,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     @NotNull
     private Collection<DeclarationDescriptor> analyzeAndGetAllDescriptors(@NotNull File... extraClassPath) throws IOException {
-        return analyzeFileToPackageView(extraClassPath).getMemberScope().getAllDescriptors();
+        return DescriptorUtils.getAllDescriptors(analyzeFileToPackageView(extraClassPath).getMemberScope());
     }
 
     @NotNull

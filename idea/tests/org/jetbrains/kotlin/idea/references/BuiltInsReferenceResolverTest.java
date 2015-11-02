@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBo
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,12 +94,12 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
 
         PackageFragmentDescriptor builtinsPackageFragment = DefaultBuiltIns.getInstance().getBuiltInsPackageFragment();
 
-        for (DeclarationDescriptor packageMember : builtinsPackageFragment.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor packageMember : DescriptorUtils.getAllDescriptors(builtinsPackageFragment.getMemberScope())) {
             packageMember.acceptVoid(new DeclarationDescriptorVisitorEmptyBodies<Void, Void>() {
                 @Override
                 public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
                     descriptors.add(descriptor);
-                    for (DeclarationDescriptor classMember : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+                    for (DeclarationDescriptor classMember : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
                         classMember.acceptVoid(this);
                     }
                     return null;

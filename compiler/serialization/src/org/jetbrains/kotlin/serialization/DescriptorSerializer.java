@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
@@ -156,7 +157,7 @@ public class DescriptorSerializer {
             builder.addConstructor(constructorProto(descriptor));
         }
 
-        for (DeclarationDescriptor descriptor : sort(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
+        for (DeclarationDescriptor descriptor : sort(DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope()))) {
             if (descriptor instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor member = (CallableMemberDescriptor) descriptor;
                 if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue;
@@ -170,7 +171,7 @@ public class DescriptorSerializer {
             }
         }
 
-        for (DeclarationDescriptor descriptor : sort(classDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors())) {
+        for (DeclarationDescriptor descriptor : sort(DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedInnerClassesScope()))) {
             int name = getSimpleNameIndex(descriptor.getName());
             if (isEnumEntry(descriptor)) {
                 builder.addEnumEntry(name);
@@ -534,7 +535,7 @@ public class DescriptorSerializer {
 
         Collection<DeclarationDescriptor> members = new ArrayList<DeclarationDescriptor>();
         for (PackageFragmentDescriptor fragment : fragments) {
-            members.addAll(fragment.getMemberScope().getAllDescriptors());
+            members.addAll(DescriptorUtils.getAllDescriptors(fragment.getMemberScope()));
         }
 
         for (DeclarationDescriptor declaration : sort(members)) {

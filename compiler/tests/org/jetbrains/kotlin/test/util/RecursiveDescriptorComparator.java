@@ -129,7 +129,7 @@ public class RecursiveDescriptorComparator {
                 appendSubDescriptors(descriptor, module,
                                      klass.getDefaultType().getMemberScope(), klass.getConstructors(), printer);
                 KtScope staticScope = klass.getStaticScope();
-                if (!staticScope.getAllDescriptors().isEmpty()) {
+                if (!DescriptorUtils.getAllDescriptors(staticScope).isEmpty()) {
                     printer.println();
                     printer.println("// Static members");
                     appendSubDescriptors(descriptor, module, staticScope, Collections.<DeclarationDescriptor>emptyList(), printer);
@@ -196,7 +196,7 @@ public class RecursiveDescriptorComparator {
 
         List<DeclarationDescriptor> subDescriptors = Lists.newArrayList();
 
-        subDescriptors.addAll(memberScope.getAllDescriptors());
+        subDescriptors.addAll(DescriptorUtils.getAllDescriptors(memberScope));
         subDescriptors.addAll(extraSubDescriptors);
 
         Collections.sort(subDescriptors, MemberComparator.INSTANCE);

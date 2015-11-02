@@ -37,7 +37,7 @@ class DeserializedScopeValidationVisitor : ValidationVisitor() {
 private fun validateDeserializedScope(scope: KtScope) {
     val isPackageViewScope = scope.safeGetContainingDeclaration() is PackageViewDescriptor
     if (scope is DeserializedMemberScope || isPackageViewScope) {
-        val relevantDescriptors = scope.getAllDescriptors().filter { member ->
+        val relevantDescriptors = scope.getDescriptors().filter { member ->
             member is CallableMemberDescriptor && member.getKind().isReal() || (!isPackageViewScope && member is ClassDescriptor)
         }
         checkSorted(relevantDescriptors, scope.getContainingDeclaration())

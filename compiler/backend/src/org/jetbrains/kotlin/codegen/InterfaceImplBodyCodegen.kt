@@ -74,7 +74,7 @@ public class InterfaceImplBodyCodegen(
     }
 
     override fun generateSyntheticParts() {
-        for (memberDescriptor in descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+        for (memberDescriptor in descriptor.getDefaultType().getMemberScope().getDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
 
             if (memberDescriptor.getKind().isReal()) continue

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 
@@ -96,7 +97,7 @@ public class ExpectedLoadErrorsUtil {
             }
 
             private Void visitDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull KtScope memberScope) {
-                for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+                for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(memberScope)) {
                     member.acceptVoid(this);
                 }
 

@@ -120,7 +120,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 tmpdir, getTestRootDisposable(), TestJdkKind.MOCK_JDK, configurationKind, true
         ).first;
 
-        for (DeclarationDescriptor descriptor : packageFromBinary.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(packageFromBinary.getMemberScope())) {
             if (descriptor instanceof ClassDescriptor) {
                 assert descriptor instanceof DeserializedClassDescriptor : DescriptorUtils.getFqName(descriptor) + " is loaded as " + descriptor.getClass();
             }

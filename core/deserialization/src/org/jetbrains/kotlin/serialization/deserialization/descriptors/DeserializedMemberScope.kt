@@ -175,7 +175,7 @@ public abstract class DeserializedMemberScope protected constructor(
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
-    override fun getOwnDeclaredDescriptors() = getAllDescriptors()
+    override fun getOwnDeclaredDescriptors() = getDescriptors()
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.simpleName, " {")

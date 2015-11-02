@@ -26,7 +26,7 @@ import java.util.*
 public class OverrideMembersHandler : OverrideImplementMembersHandler() {
     override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         val result = ArrayList<OverrideMemberChooserObject>()
-        for (member in descriptor.unsubstitutedMemberScope.getAllDescriptors()) {
+        for (member in descriptor.unsubstitutedMemberScope.getDescriptors()) {
             if (member is CallableMemberDescriptor
                 && (member.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE || member.kind == CallableMemberDescriptor.Kind.DELEGATION)) {
                 val overridden = member.overriddenDescriptors

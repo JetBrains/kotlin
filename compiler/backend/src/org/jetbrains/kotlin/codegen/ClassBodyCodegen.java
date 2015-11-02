@@ -67,7 +67,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
         }
 
         if (!DescriptorUtils.isInterface(descriptor)) {
-            for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            for (DeclarationDescriptor memberDescriptor : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
                 if (memberDescriptor instanceof CallableMemberDescriptor) {
                     CallableMemberDescriptor member = (CallableMemberDescriptor) memberDescriptor;
                     if (!member.getKind().isReal() && ImplKt.findTraitImplementation(member) == null) {

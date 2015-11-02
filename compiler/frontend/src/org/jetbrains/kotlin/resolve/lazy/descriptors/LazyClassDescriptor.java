@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.JetObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
@@ -287,7 +288,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     public Collection<CallableMemberDescriptor> getDeclaredCallableMembers() {
         //noinspection unchecked
         return (Collection) CollectionsKt.filter(
-                unsubstitutedMemberScope.getAllDescriptors(),
+                DescriptorUtils.getAllDescriptors(unsubstitutedMemberScope),
                 new Function1<DeclarationDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(DeclarationDescriptor descriptor) {
@@ -474,7 +475,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         getOriginal();
         getScopeForClassHeaderResolution();
         getScopeForMemberDeclarationResolution();
-        getUnsubstitutedMemberScope().getAllDescriptors();
+        getUnsubstitutedMemberScope().getDescriptors(DescriptorKindFilter.ALL, KtScope.Companion.getALL_NAME_FILTER());
         getScopeForInitializerResolution();
         getUnsubstitutedInnerClassesScope();
         getTypeConstructor().getSupertypes();

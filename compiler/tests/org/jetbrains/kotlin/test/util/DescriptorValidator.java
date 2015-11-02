@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.junit.Assert;
@@ -84,7 +85,7 @@ public class DescriptorValidator {
         }
 
         protected void validateScope(@NotNull KtScope scope, @NotNull DiagnosticCollector collector) {
-            for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
+            for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(scope)) {
                 if (recursiveFilter.apply(descriptor)) {
                     descriptor.accept(new ScopeValidatorVisitor(collector), scope);
                 }

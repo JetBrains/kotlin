@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -188,7 +189,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
         KtScope memberScope = packageView.getMemberScope();
         Collection<PropertyDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
         if (properties.isEmpty()) {
-            for (DeclarationDescriptor descriptor : memberScope.getAllDescriptors()) {
+            for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(memberScope)) {
                 if (descriptor instanceof ClassDescriptor) {
                     Collection<PropertyDescriptor> classProperties =
                             ((ClassDescriptor) descriptor).getMemberScope(Collections.<TypeProjection>emptyList())

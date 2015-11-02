@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Collection;
 
@@ -68,13 +69,13 @@ public class RecursiveDescriptorProcessor {
         @Override
         public Boolean visitPackageFragmentDescriptor(PackageFragmentDescriptor descriptor, D data) {
             return applyWorker(descriptor, data)
-                   && visitChildren(descriptor.getMemberScope().getAllDescriptors(), data);
+                   && visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getMemberScope()), data);
         }
 
         @Override
         public Boolean visitPackageViewDescriptor(PackageViewDescriptor descriptor, D data) {
             return applyWorker(descriptor, data)
-                   && visitChildren(descriptor.getMemberScope().getAllDescriptors(), data);
+                   && visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getMemberScope()), data);
         }
 
         @Override
@@ -105,7 +106,7 @@ public class RecursiveDescriptorProcessor {
                    && visitChildren(descriptor.getThisAsReceiverParameter(), data)
                    && visitChildren(descriptor.getConstructors(), data)
                    && visitChildren(descriptor.getTypeConstructor().getParameters(), data)
-                   && visitChildren(descriptor.getDefaultType().getMemberScope().getAllDescriptors(), data);
+                   && visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope()), data);
         }
 
         @Override

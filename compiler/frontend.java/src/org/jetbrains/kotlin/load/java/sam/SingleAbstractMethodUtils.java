@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -45,7 +47,7 @@ public class SingleAbstractMethodUtils {
     @NotNull
     public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull KotlinType type) {
         List<CallableMemberDescriptor> abstractMembers = new ArrayList<CallableMemberDescriptor>();
-        for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor member : type.getMemberScope().getDescriptors(DescriptorKindFilter.CALLABLES, KtScope.Companion.getALL_NAME_FILTER())) {
             if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
                 abstractMembers.add((CallableMemberDescriptor) member);
             }

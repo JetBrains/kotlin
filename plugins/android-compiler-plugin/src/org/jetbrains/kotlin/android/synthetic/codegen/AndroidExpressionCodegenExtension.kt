@@ -248,7 +248,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         context.generateClearCacheFunction()
 
         if (androidClassType.fragment) {
-            val classMembers = descriptor.unsubstitutedMemberScope.getAllDescriptors()
+            val classMembers = descriptor.unsubstitutedMemberScope.getDescriptors()
             val onDestroy = classMembers.firstOrNull { it is FunctionDescriptor && it.isOnDestroyFunction() }
             if (onDestroy == null) {
                 context.generateOnDestroyFunctionForFragment()

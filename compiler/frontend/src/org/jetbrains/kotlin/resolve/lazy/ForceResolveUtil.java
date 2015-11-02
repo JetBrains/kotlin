@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.types.*;
 
@@ -38,7 +39,7 @@ public class ForceResolveUtil {
     }
 
     public static void forceResolveAllContents(@NotNull KtScope scope) {
-        forceResolveAllContents(scope.getAllDescriptors());
+        forceResolveAllContents(DescriptorUtils.getAllDescriptors(scope));
     }
 
     public static void forceResolveAllContents(@NotNull Iterable<? extends DeclarationDescriptor> descriptors) {

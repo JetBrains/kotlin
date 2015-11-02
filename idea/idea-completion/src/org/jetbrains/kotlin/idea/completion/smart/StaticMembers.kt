@@ -90,16 +90,16 @@ class StaticMembers(
             }
         }
 
-        classDescriptor.getStaticScope().getAllDescriptors().forEach(::processMember)
+        classDescriptor.getStaticScope().getDescriptors().forEach(::processMember)
 
         val companionObject = classDescriptor.getCompanionObjectDescriptor()
         if (companionObject != null) {
-            companionObject.getDefaultType().getMemberScope().getAllDescriptors()
+            companionObject.getDefaultType().getMemberScope().getDescriptors()
                     .filter { !it.isExtension }
                     .forEach(::processMember)
         }
 
-        var members = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
+        var members = classDescriptor.getDefaultType().getMemberScope().getDescriptors()
         if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
             members = members.filter { DescriptorUtils.isNonCompanionObject(it) }
         }

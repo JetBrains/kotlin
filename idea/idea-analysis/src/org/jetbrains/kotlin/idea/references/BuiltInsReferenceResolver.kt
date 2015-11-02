@@ -108,7 +108,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
             containingDeclaration.getConstructors()
         }
         else {
-            memberScope.getAllDescriptors()
+            memberScope.getDescriptors()
         }
 
         return descriptors.firstOrNull { renderedOriginal == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }
