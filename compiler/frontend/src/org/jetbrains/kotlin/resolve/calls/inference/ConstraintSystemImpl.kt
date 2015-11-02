@@ -41,8 +41,8 @@ internal class ConstraintSystemImpl(
         private val usedInBounds: Map<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>,
         private val errors: List<ConstraintError>,
         private val initialConstraints: List<ConstraintSystemBuilderImpl.Constraint>,
-        private val originalToVariables: Map<TypeParameterDescriptor, TypeParameterDescriptor>,
-        private val variablesToOriginal: Map<TypeParameterDescriptor, TypeParameterDescriptor>
+        private val descriptorToVariable: Map<TypeParameterDescriptor, TypeParameterDescriptor>,
+        private val variableToDescriptor: Map<TypeParameterDescriptor, TypeParameterDescriptor>
 ) : ConstraintSystem {
     private val localTypeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>
         get() = if (externalTypeParameters.isEmpty()) allTypeParameterBounds
@@ -92,7 +92,7 @@ internal class ConstraintSystemImpl(
         val substitutionContext = HashMap<TypeParameterDescriptor, TypeProjection>()
         for ((variable, typeBounds) in typeParameterBounds) {
             val value = typeBounds.value
-            val typeParameter = if (substituteOriginal) variablesToOriginal[variable]!! else variable
+            val typeParameter = if (substituteOriginal) variableToDescriptor[variable]!! else variable
             val type =
                     if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) value
                     else getDefaultType(typeParameter)
@@ -113,19 +113,22 @@ internal class ConstraintSystemImpl(
     override fun getNestedTypeVariables(type: KotlinType): List<TypeParameterDescriptor> {
         return type.getNestedArguments().map { typeProjection ->
             typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
-        }.filterNotNull().filter { it in typeVariables }
+        }.filterNotNull().filter { it in typeParameterDescriptors }
     }
 
-    override val typeVariables: Set<TypeParameterDescriptor>
-        get() = originalToVariables.keys
+    override val typeParameterDescriptors: Set<TypeParameterDescriptor>
+        get() = descriptorToVariable.keys
 
-    override fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBoundsImpl {
-        val variableForOriginal = originalToVariables[typeVariable]
-        if (variableForOriginal != null && variableForOriginal != typeVariable) {
-            return getTypeBounds(variableForOriginal)
+    override val typeVariables: Set<TypeParameterDescriptor>
+        get() = variableToDescriptor.keys
+
+    override fun getTypeBounds(descriptor: TypeParameterDescriptor): TypeBoundsImpl {
+        val variable = descriptorToVariable[descriptor]
+        if (variable != null && variable != descriptor) {
+            return getTypeBounds(variable)
         }
-        return allTypeParameterBounds[typeVariable] ?:
-               throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $typeVariable")
+        return allTypeParameterBounds[descriptor] ?:
+               throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $descriptor")
     }
 
     override val resultingSubstitutor: TypeSubstitutor
@@ -176,8 +179,8 @@ internal class ConstraintSystemImpl(
         result.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) })
 
         result.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) })
-        result.originalToVariables.putAll(originalToVariables)
-        result.variablesToOriginal.putAll(variablesToOriginal)
+        result.descriptorToVariable.putAll(descriptorToVariable)
+        result.variableToDescriptor.putAll(variableToDescriptor)
 
         return result
     }

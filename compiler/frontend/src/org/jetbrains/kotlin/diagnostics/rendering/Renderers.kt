@@ -225,7 +225,7 @@ public object Renderers {
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
         var firstUnknownParameter: TypeParameterDescriptor? = null
-        for (typeParameter in inferenceErrorData.constraintSystem.typeVariables) {
+        for (typeParameter in inferenceErrorData.constraintSystem.typeParameterDescriptors) {
             if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).values.isEmpty()) {
                 firstUnknownParameter = typeParameter
                 break
@@ -362,7 +362,7 @@ public object Renderers {
     public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<KotlinType>> = Renderer { renderTypes(it) }
 
     private fun renderConstraintSystem(constraintSystem: ConstraintSystem, renderTypeBounds: Renderer<TypeBounds>): String {
-        val typeVariables = constraintSystem.typeVariables
+        val typeVariables = constraintSystem.typeParameterDescriptors
         val typeBounds = linkedSetOf<TypeBounds>()
         for (variable in typeVariables) {
             typeBounds.add(constraintSystem.getTypeBounds(variable))

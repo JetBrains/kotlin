@@ -54,15 +54,15 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     internal val usedInBounds = HashMap<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>()
     internal val errors = ArrayList<ConstraintError>()
     internal val initialConstraints = ArrayList<Constraint>()
-    internal val originalToVariables = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
-    internal val variablesToOriginal = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
+    internal val descriptorToVariable = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
+    internal val variableToDescriptor = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
 
-    private val originalToVariablesSubstitutor: TypeSubstitutor by lazy {
+    private val descriptorToVariableSubstitutor: TypeSubstitutor by lazy {
         TypeSubstitutor.create(object : TypeConstructorSubstitution() {
             override fun get(key: TypeConstructor): TypeProjection? {
                 val descriptor = key.declarationDescriptor
                 if (descriptor !is TypeParameterDescriptor) return null
-                val typeParameterDescriptor = originalToVariables[descriptor] ?: return null
+                val typeParameterDescriptor = descriptorToVariable[descriptor] ?: return null
                 return TypeProjectionImpl(typeParameterDescriptor.defaultType)
             }
         })
@@ -70,16 +70,16 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
 
     override fun registerTypeVariables(
             typeVariables: Collection<TypeParameterDescriptor>,
-            mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor,
+            mapToDescriptor: (TypeParameterDescriptor) -> TypeParameterDescriptor,
             external: Boolean
     ) {
         if (external) externalTypeParameters.addAll(typeVariables)
 
         for (typeVariable in typeVariables) {
             allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable))
-            val original = mapToOriginal(typeVariable)
-            originalToVariables[original] = typeVariable
-            variablesToOriginal[typeVariable] = original
+            val descriptor = mapToDescriptor(typeVariable)
+            descriptorToVariable[descriptor] = typeVariable
+            variableToDescriptor[typeVariable] = descriptor
         }
         for ((typeVariable, typeBounds) in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.upperBounds) {
@@ -102,18 +102,18 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     internal fun getNestedTypeVariables(type: KotlinType, original: Boolean): List<TypeParameterDescriptor> {
         return type.getNestedArguments().map { typeProjection ->
             typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
-        }.filterNotNull().filter { if (original) it in originalToVariables.keys else isMyTypeVariable(it) }
+        }.filterNotNull().filter { if (original) it in descriptorToVariable.keys else isMyTypeVariable(it) }
     }
 
     override fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
         if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return
 
-        val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
+        val newSubjectType = descriptorToVariableSubstitutor.substitute(subjectType, Variance.INVARIANT)
         addConstraint(SUB_TYPE, newSubjectType, constrainingType, ConstraintContext(constraintPosition, initial = true))
     }
 
     override fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
-        val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
+        val newSubjectType = descriptorToVariableSubstitutor.substitute(subjectType, Variance.INVARIANT)
         addConstraint(SUB_TYPE, constrainingType, newSubjectType, ConstraintContext(constraintPosition, initial = true))
     }
 
@@ -332,15 +332,13 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
 
     internal fun getBoundsUsedIn(typeVariable: TypeParameterDescriptor): List<Bound> = usedInBounds[typeVariable] ?: emptyList()
 
-    internal fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBoundsImpl {
-        val variableForOriginal = originalToVariables[typeVariable]
-        if (variableForOriginal != null && variableForOriginal != typeVariable) {
-            return getTypeBounds(variableForOriginal)
+    internal fun getTypeBounds(descriptor: TypeParameterDescriptor): TypeBoundsImpl {
+        val variable = descriptorToVariable[descriptor]
+        if (variable != null && variable != descriptor) {
+            return getTypeBounds(variable)
         }
-        if (!isMyTypeVariable(typeVariable)) {
-            throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $typeVariable")
-        }
-        return allTypeParameterBounds[typeVariable]!!
+        return allTypeParameterBounds[descriptor] ?:
+               throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $descriptor")
     }
 
     private fun isMyTypeVariable(typeVariable: TypeParameterDescriptor) = allTypeParameterBounds.contains(typeVariable)
@@ -378,7 +376,7 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
 
     override fun build(): ConstraintSystem {
         return ConstraintSystemImpl(allTypeParameterBounds, externalTypeParameters, usedInBounds, errors, initialConstraints,
-                                    originalToVariables, variablesToOriginal)
+                                    descriptorToVariable, variableToDescriptor)
     }
 }
 

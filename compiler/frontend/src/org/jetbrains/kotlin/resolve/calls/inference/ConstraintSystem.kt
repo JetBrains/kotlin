@@ -24,18 +24,23 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 interface ConstraintSystem {
-    /**
-     * Returns a set of all non-external registered type variables.
-     */
-    val typeVariables: Set<TypeParameterDescriptor>
-
     val status: ConstraintSystemStatus
 
     /**
-     * Returns the resulting type constraints of solving the constraint system for specific type variable.
-     * Throws IllegalArgumentException if the type variable was not registered.
+     * Returns a set of all non-external type parameter descriptors.
      */
-    fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBounds
+    val typeParameterDescriptors: Set<TypeParameterDescriptor>
+
+    /**
+     * Returns a set of all registered type variables.
+     */
+    val typeVariables: Set<TypeParameterDescriptor>
+
+    /**
+     * Returns the resulting type constraints of solving the constraint system for specific type parameter descriptor.
+     * Throws IllegalArgumentException if the type parameter descriptor is not known to the system.
+     */
+    fun getTypeBounds(descriptor: TypeParameterDescriptor): TypeBounds
 
     /**
      * Returns the result of solving the constraint system (mapping from the type variable to the resulting type projection).
@@ -65,7 +70,7 @@ interface ConstraintSystem {
          */
         fun registerTypeVariables(
                 typeVariables: Collection<TypeParameterDescriptor>,
-                mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor = { it },
+                mapToDescriptor: (TypeParameterDescriptor) -> TypeParameterDescriptor = { it },
                 external: Boolean = false
         )
 
