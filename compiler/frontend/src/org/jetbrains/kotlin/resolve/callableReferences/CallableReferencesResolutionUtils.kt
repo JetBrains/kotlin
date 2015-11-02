@@ -38,16 +38,18 @@ import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsLexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.FunctionPlaceholders
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.ThrowingList
 
 public fun resolveCallableReferenceReceiverType(
@@ -100,8 +102,22 @@ public fun resolvePossiblyAmbiguousCallableReference(
     val reference = callableReferenceExpression.getCallableReference()
 
     fun resolveInScope(traceTitle: String, staticScope: KtScope): OverloadResolutionResults<CallableDescriptor> {
+
+        // todo: drop this class when new resolve will be finished
+        class StaticScopeAsLexicalScope(val staticScope: KtScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), staticScope.getContainingDeclaration()) {
+            override fun printStructure(p: Printer) {
+                p.println(toString())
+            }
+
+            override fun toString(): String = "${javaClass.canonicalName} for $staticScope"
+
+            // this method is needed for correct rewrite LEXICAL_SCOPE in trace
+            override fun equals(other: Any?) = other is StaticScopeAsLexicalScope && other.staticScope == staticScope
+            override fun hashCode() = staticScope.hashCode()
+        }
+
         val temporaryTraceAndCache = TemporaryTraceAndCache.create(context, traceTitle, reference)
-        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(staticScope.memberScopeAsLexicalScope())
+        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(StaticScopeAsLexicalScope(staticScope))
         val results = resolvePossiblyAmbiguousCallableReference(reference, ReceiverValue.NO_RECEIVER, newContext, resolutionMode, callResolver)
         resolutionMode.acceptResolution(results, temporaryTraceAndCache)
         return results
