@@ -43,13 +43,13 @@ fun getFunctionForExtractedFragment(
 
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: KtFile): String {
         if (KotlinInternalMode.enabled) {
-            logger.error("Couldn't extract function for debugger:\n" +
-                                 "FILE NAME: ${breakpointFile.name}\n" +
-                                 "BREAKPOINT LINE: $breakpointLine\n" +
-                                 "CODE FRAGMENT:\n${codeFragment.text}\n" +
-                                 "ERRORS:\n${analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")}\n" +
-                                 "TMPFILE_TEXT:\n${tmpFile.text}\n" +
-                                 "FILE TEXT: \n${breakpointFile.text}\n")
+            LOG.error("Couldn't extract function for debugger:\n" +
+                      "FILE NAME: ${breakpointFile.name}\n" +
+                      "BREAKPOINT LINE: $breakpointLine\n" +
+                      "CODE FRAGMENT:\n${codeFragment.text}\n" +
+                      "ERRORS:\n${analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")}\n" +
+                      "TMPFILE_TEXT:\n${tmpFile.text}\n" +
+                      "FILE TEXT: \n${breakpointFile.text}\n")
         }
         return analysisResult.messages.map { errorMessage ->
             val message = when(errorMessage) {
@@ -74,6 +74,10 @@ fun getFunctionForExtractedFragment(
         val newDebugExpressions = addDebugExpressionIntoTmpFileForExtractFunction(originalFile, codeFragment, breakpointLine)
         if (newDebugExpressions.isEmpty()) return null
         val tmpFile = newDebugExpressions.first().getContainingKtFile()
+
+        if (LOG.isDebugEnabled) {
+            LOG.debug("TMP_FILE:\n${runReadAction { tmpFile.text }}")
+        }
 
         val targetSibling = tmpFile.declarations.firstOrNull() ?: return null
 
@@ -262,7 +266,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
             is KtExpression -> {
                 val newDebugExpression = parent.addBefore(expr, elementBefore)
                 if (newDebugExpression == null) {
-                    logger.error("Couldn't insert debug expression ${expr.text} to context file before ${elementBefore.text}")
+                    LOG.error("Couldn't insert debug expression ${expr.text} to context file before ${elementBefore.text}")
                     return emptyList()
                 }
                 parent.addBefore(psiFactory.createNewLine(), elementBefore)
