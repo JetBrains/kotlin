@@ -58,10 +58,6 @@ public abstract class AbstractScopeAdapter : KtScope {
         return workerScope.getDescriptors(kindFilter, nameFilter)
     }
 
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
-        return workerScope.getOwnDeclaredDescriptors()
-    }
-
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()

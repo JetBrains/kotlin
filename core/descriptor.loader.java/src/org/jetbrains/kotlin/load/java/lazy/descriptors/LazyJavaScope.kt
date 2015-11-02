@@ -303,8 +303,6 @@ public abstract class LazyJavaScope(
         return properties(name)
     }
 
-    override fun getOwnDeclaredDescriptors() = getDescriptors()
-
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = allDescriptors()
 

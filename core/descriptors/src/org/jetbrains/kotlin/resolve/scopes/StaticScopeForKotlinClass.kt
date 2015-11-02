@@ -51,8 +51,6 @@ public class StaticScopeForKotlinClass(
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = functions + properties
 
-    override fun getOwnDeclaredDescriptors() = functions + properties
-
     override fun getProperties(name: Name, location: LookupLocation) = properties.filterTo(ArrayList(1)) { it.name == name }
 
     override fun getFunctions(name: Name, location: LookupLocation) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }

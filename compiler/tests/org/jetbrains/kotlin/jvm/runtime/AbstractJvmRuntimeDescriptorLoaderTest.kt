@@ -227,7 +227,6 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classifierMap[name]
 
         override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = classifierMap.values
-        override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = classifierMap.values
     }
 
 }

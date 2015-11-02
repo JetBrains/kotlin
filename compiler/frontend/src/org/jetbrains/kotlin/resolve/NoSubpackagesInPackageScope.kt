@@ -34,7 +34,4 @@ class NoSubpackagesInPackageScope(packageDescriptor: PackageViewDescriptor) : Ab
         return workerScope.getDescriptors(modifiedFilter, nameFilter).filter { it !is PackageViewDescriptor }
     }
 
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
-        return workerScope.getOwnDeclaredDescriptors().filter { it !is PackageViewDescriptor }
-    }
 }

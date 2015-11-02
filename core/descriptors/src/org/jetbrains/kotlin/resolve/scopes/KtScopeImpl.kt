@@ -33,8 +33,6 @@ abstract class KtScopeImpl : KtScope {
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = emptyList()
 
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = emptyList()
-
     // This method should not be implemented here by default: every scope class has its unique structure pattern
     abstract override fun printScopeStructure(p: Printer)
 }

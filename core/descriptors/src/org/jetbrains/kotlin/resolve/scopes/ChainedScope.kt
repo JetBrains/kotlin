@@ -47,10 +47,6 @@ public open class ChainedScope(
     override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = getFromAllScopes(scopeChain) { it.getDescriptors(kindFilter, nameFilter) }
 
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
-        throw UnsupportedOperationException()
-    }
-
     override fun toString() = debugName
 
     override fun printScopeStructure(p: Printer) {

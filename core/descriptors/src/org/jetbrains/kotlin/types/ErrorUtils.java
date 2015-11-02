@@ -204,18 +204,6 @@ public class ErrorUtils {
             return Collections.emptyList();
         }
 
-        @NotNull
-        @Override
-        public Collection<DeclarationDescriptor> getAllDescriptors() {
-            return Collections.emptyList();
-        }
-
-        @NotNull
-        @Override
-        public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
-            return Collections.emptyList();
-        }
-
         @Override
         public String toString() {
             return "ErrorScope{" + debugMessage + '}';
@@ -269,18 +257,6 @@ public class ErrorUtils {
         public Collection<DeclarationDescriptor> getDescriptors(
                 @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public Collection<DeclarationDescriptor> getAllDescriptors() {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public Collection<DeclarationDescriptor> getOwnDeclaredDescriptors() {
             throw new IllegalStateException();
         }
 

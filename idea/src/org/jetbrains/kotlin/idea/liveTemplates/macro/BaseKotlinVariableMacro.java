@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.util.ScopeUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
@@ -110,7 +111,7 @@ public abstract class BaseKotlinVariableMacro extends Macro {
         Collection<DeclarationDescriptor> result = ContainerUtil.newArrayList();
         result.addAll(ScopeUtilsKt.collectDescriptorsFiltered(scope, DescriptorKindFilter.VARIABLES, KtScope.Companion.getALL_NAME_FILTER()));
         for (ReceiverParameterDescriptor implicitReceiver : ScopeUtilsKt.getImplicitReceiversHierarchy(scope)) {
-            result.addAll(implicitReceiver.getType().getMemberScope().getDescriptors(DescriptorKindFilter.VARIABLES, KtScope.Companion.getALL_NAME_FILTER()));
+            result.addAll(DescriptorUtils.getAllDescriptors(implicitReceiver.getType().getMemberScope()));
         }
         return result;
     }

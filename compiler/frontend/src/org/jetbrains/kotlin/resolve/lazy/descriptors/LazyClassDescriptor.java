@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.JetObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
@@ -60,7 +59,10 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static kotlin.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.diagnostics.Errors.CYCLIC_INHERITANCE_HIERARCHY;
@@ -475,7 +477,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         getOriginal();
         getScopeForClassHeaderResolution();
         getScopeForMemberDeclarationResolution();
-        getUnsubstitutedMemberScope().getDescriptors(DescriptorKindFilter.ALL, KtScope.Companion.getALL_NAME_FILTER());
+        DescriptorUtils.getAllDescriptors(getUnsubstitutedMemberScope());
         getScopeForInitializerResolution();
         getUnsubstitutedInnerClassesScope();
         getTypeConstructor().getSupertypes();

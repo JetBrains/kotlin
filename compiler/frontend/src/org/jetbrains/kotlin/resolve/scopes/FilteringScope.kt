@@ -39,8 +39,6 @@ public class FilteringScope(private val workerScope: KtScope, private val predic
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = workerScope.getDescriptors(kindFilter, nameFilter).filter(predicate)
 
-    override fun getOwnDeclaredDescriptors() = workerScope.getOwnDeclaredDescriptors().filter(predicate)
-
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()

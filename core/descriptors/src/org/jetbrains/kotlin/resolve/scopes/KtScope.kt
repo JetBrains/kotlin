@@ -37,14 +37,6 @@ public interface KtScope {
     public fun getContainingDeclaration(): DeclarationDescriptor
 
     /**
-     * All visible descriptors from current scope.
-     *
-     * @return All visible descriptors from current scope.
-     */
-    @Deprecated("Removed in progress", ReplaceWith("getDescriptors()"))
-    public fun getAllDescriptors(): Collection<DeclarationDescriptor> = getDescriptors()
-
-    /**
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
@@ -52,9 +44,6 @@ public interface KtScope {
             kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
             nameFilter: (Name) -> Boolean = ALL_NAME_FILTER
     ): Collection<DeclarationDescriptor>
-
-    // todo merge with getAllDescriptors()
-    public fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor>
 
     /**
      * Is supposed to be used in tests and debug only

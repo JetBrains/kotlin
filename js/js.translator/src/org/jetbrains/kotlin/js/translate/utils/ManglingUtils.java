@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
 
 import java.util.*;
@@ -175,7 +174,7 @@ public class ManglingUtils {
         if (jetScope != null) {
             final String finalNameToCompare = nameToCompare;
 
-            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, KtScope.Companion.getALL_NAME_FILTER());
+            Collection<DeclarationDescriptor> declarations = DescriptorUtils.getAllDescriptors(jetScope);
             List<CallableDescriptor> overloadedFunctions =
                     CollectionsKt.flatMap(declarations, new Function1<DeclarationDescriptor, Iterable<? extends CallableDescriptor>>() {
                 @Override

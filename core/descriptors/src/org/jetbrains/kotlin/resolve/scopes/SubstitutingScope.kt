@@ -72,8 +72,6 @@ public class SubstitutingScope(private val workerScope: KtScope, private val sub
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
                                 nameFilter: (Name) -> Boolean) = _allDescriptors
 
-    override fun getOwnDeclaredDescriptors() = substitute(workerScope.getOwnDeclaredDescriptors())
-
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
