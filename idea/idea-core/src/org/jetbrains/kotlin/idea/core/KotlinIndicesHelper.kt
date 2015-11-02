@@ -17,10 +17,16 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.codeInsight.CodeInsightSettings
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
+import com.intellij.util.Processor
+import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaFieldDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -29,14 +35,16 @@ import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.receiverTypes
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
@@ -46,7 +54,8 @@ public class KotlinIndicesHelper(
         private val resolutionFacade: ResolutionFacade,
         private val scope: GlobalSearchScope,
         visibilityFilter: (DeclarationDescriptor) -> Boolean,
-        applyExcludeSettings: Boolean
+        applyExcludeSettings: Boolean = true,
+        private val visibilityFilterMayIncludeAccessible: Boolean = false
 ) {
 
     private val moduleDescriptor = resolutionFacade.moduleDescriptor
@@ -60,20 +69,15 @@ public class KotlinIndicesHelper(
     }
 
     public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
-        val declarations = HashSet<KtNamedDeclaration>()
+        val declarations = HashSet<KtCallableDeclaration>()
         declarations.addTopLevelNonExtensionCallablesByName(KotlinFunctionShortNameIndex.getInstance(), name)
         declarations.addTopLevelNonExtensionCallablesByName(KotlinPropertyShortNameIndex.getInstance(), name)
-        return declarations.flatMap {
-            if (it.getContainingJetFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
-                resolutionFacade.resolveImportReference(moduleDescriptor, it.getFqName()!!).filterIsInstance<CallableDescriptor>()
-            }
-            else {
-                (resolutionFacade.resolveToDescriptor(it) as? CallableDescriptor).singletonOrEmptyList()
-            }
-        }.filter { it.getExtensionReceiverParameter() == null && descriptorFilter(it) }
+        return declarations
+                .flatMap { it.resolveToDescriptorsWithHack() }
+                .filter { it.extensionReceiverParameter == null && descriptorFilter(it) }
     }
 
-    private fun MutableSet<KtNamedDeclaration>.addTopLevelNonExtensionCallablesByName(
+    private fun MutableSet<KtCallableDeclaration>.addTopLevelNonExtensionCallablesByName(
             index: StringStubIndexExtension<out KtCallableDeclaration>,
             name: String
     ) {
@@ -84,7 +88,10 @@ public class KotlinIndicesHelper(
         return (KotlinTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).asSequence() +
                 KotlinTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).asSequence())
                 .map { FqName(it) }
-                .filter { nameFilter(it.shortName().asString()) }
+                .filter {
+                    ProgressManager.checkCanceled()
+                    nameFilter(it.shortName().asString())
+                }
                 .toSet()
                 .flatMap { findTopLevelCallables(it).filter(descriptorFilter) }
     }
@@ -115,8 +122,9 @@ public class KotlinIndicesHelper(
         val declarations = index.getAllKeys(project)
                 .asSequence()
                 .filter {
+                    ProgressManager.checkCanceled()
                     KotlinTopLevelExtensionsByReceiverTypeIndex.receiverTypeNameFromKey(it) in receiverTypeNames
-                    && nameFilter(KotlinTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))
+                        && nameFilter(KotlinTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))
                 }
                 .flatMap { index.get(it, project, scope).asSequence() }
 
@@ -140,24 +148,12 @@ public class KotlinIndicesHelper(
         val result = LinkedHashSet<CallableDescriptor>()
 
         fun processDescriptor(descriptor: CallableDescriptor) {
-            if (descriptorFilter(descriptor)) {
+            if (descriptor.extensionReceiverParameter != null && descriptorFilter(descriptor)) {
                 result.addAll(descriptor.substituteExtensionIfCallable(receiverTypes, callType))
             }
         }
 
-        for (declaration in declarations) {
-            if (declaration.getContainingJetFile().isCompiled()) {
-                //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
-                for (descriptor in resolutionFacade.resolveImportReference(moduleDescriptor, declaration.getFqName()!!)) {
-                    if (descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null) {
-                        processDescriptor(descriptor)
-                    }
-                }
-            }
-            else {
-                processDescriptor(resolutionFacade.resolveToDescriptor(declaration) as CallableDescriptor)
-            }
-        }
+        declarations.forEach { it.resolveToDescriptorsWithHack().forEach(::processDescriptor) }
 
         return result
     }
@@ -172,7 +168,10 @@ public class KotlinIndicesHelper(
     public fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
         return KotlinFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
                 .map { FqName(it) }
-                .filter { nameFilter(it.shortName().asString()) }
+                .filter {
+                    ProgressManager.checkCanceled()
+                    nameFilter(it.shortName().asString())
+                }
                 .toList()
                 .flatMap { getClassDescriptorsByFQName(it, kindFilter) }
     }
@@ -190,6 +189,73 @@ public class KotlinIndicesHelper(
                 .filter(descriptorFilter)
     }
 
+    public fun getObjectMembers(descriptorKindFilter: DescriptorKindFilter, nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
+        val result = LinkedHashSet<CallableDescriptor>()
+
+        fun addFromIndex(index: StringStubIndexExtension<out KtCallableDeclaration>) {
+            for (name in index.getAllKeys(project)) {
+                ProgressManager.checkCanceled()
+                if (!nameFilter(name)) continue
+
+                for (declaration in index.get(name, project, scope)) {
+                    if (declaration.parent.parent !is KtObjectDeclaration) continue
+                    if (!visibilityFilterMayIncludeAccessible && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
+                    declaration.resolveToDescriptorsWithHack().filterTo(result) { descriptorKindFilter.accepts(it) && descriptorFilter(it) }
+                }
+            }
+        }
+
+        if (descriptorKindFilter.kindMask.and(DescriptorKindFilter.FUNCTIONS_MASK) != 0) {
+            addFromIndex(KotlinFunctionShortNameIndex.getInstance())
+        }
+        if (descriptorKindFilter.kindMask.and(DescriptorKindFilter.VARIABLES_MASK) != 0) {
+            addFromIndex(KotlinPropertyShortNameIndex.getInstance())
+        }
+
+        return result
+    }
+
+    public fun getJavaStaticMembers(descriptorKindFilter: DescriptorKindFilter, nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
+        val result = LinkedHashSet<CallableDescriptor>()
+
+        val idFilter = IdFilter.getProjectIdFilter(resolutionFacade.project, false)
+        val shortNamesCache = PsiShortNamesCache.getInstance(project)
+
+        val methodNamesProcessor = Processor<String> { name ->
+            ProgressManager.checkCanceled()
+            if (!nameFilter(name)) return@Processor true
+
+            for (method in shortNamesCache.getMethodsByName(name, scope)) {
+                if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
+                if (!visibilityFilterMayIncludeAccessible && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
+                val descriptor = method.getJavaMethodDescriptor() ?: continue
+                if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
+                    result.add(descriptor)
+                }
+            }
+            true
+        }
+        shortNamesCache.processAllMethodNames(methodNamesProcessor, scope, idFilter)
+
+        val fieldNamesProcessor = Processor<String> { name ->
+            ProgressManager.checkCanceled()
+            if (!nameFilter(name)) return@Processor true
+
+            for (field in shortNamesCache.getFieldsByName(name, scope)) {
+                if (!field.hasModifierProperty(PsiModifier.STATIC)) continue
+                if (!visibilityFilterMayIncludeAccessible && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
+                val descriptor = field.getJavaFieldDescriptor() ?: continue
+                if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
+                    result.add(descriptor)
+                }
+            }
+            true
+        }
+        shortNamesCache.processAllFieldNames(fieldNamesProcessor, scope, idFilter)
+
+        return result
+    }
+
     private fun findTopLevelCallables(fqName: FqName): Collection<CallableDescriptor> {
         return resolutionFacade.resolveImportReference(moduleDescriptor, fqName)
                 .filterIsInstance<CallableDescriptor>()
@@ -201,6 +267,15 @@ public class KotlinIndicesHelper(
 
         return CodeInsightSettings.getInstance().EXCLUDED_PACKAGES
                 .any { excluded -> fqName == excluded || (fqName.startsWith(excluded) && fqName[excluded.length()] == '.') }
+    }
+
+    private fun KtCallableDeclaration.resolveToDescriptorsWithHack(): Collection<CallableDescriptor> {
+        if (getContainingJetFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
+            return resolutionFacade.resolveImportReference(moduleDescriptor, fqName!!).filterIsInstance<CallableDescriptor>()
+        }
+        else {
+            return (resolutionFacade.resolveToDescriptor(this) as? CallableDescriptor).singletonOrEmptyList()
+        }
     }
 }
 

@@ -16,24 +16,17 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
-import com.intellij.codeInsight.completion.CompletionInitializationContext
-import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.LookupElementFactory
+import org.jetbrains.kotlin.idea.completion.decorateAsStaticMember
 import org.jetbrains.kotlin.idea.completion.fuzzyType
-import org.jetbrains.kotlin.idea.completion.shortenReferences
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -107,45 +100,10 @@ class StaticMembers(
     }
 
     private fun createLookupElements(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): Collection<LookupElement> {
-        val lookupElements = lookupElementFactory.createLookupElementsInSmartCompletion(memberDescriptor, bindingContext, useReceiverTypes = false)
-        val qualifierPresentation = classDescriptor.getName().asString()
-        val qualifierText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
-
-        return lookupElements.map {
-            object: LookupElementDecorator<LookupElement>(it) {
-                override fun getAllLookupStrings() = setOf(delegate.lookupString, qualifierPresentation)
-
-                override fun renderElement(presentation: LookupElementPresentation) {
-                    getDelegate().renderElement(presentation)
-
-                    presentation.setItemText(qualifierPresentation + "." + presentation.getItemText())
-
-                    val tailText = " (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")"
-                    if (memberDescriptor is FunctionDescriptor) {
-                        presentation.appendTailText(tailText, true)
-                    }
-                    else {
-                        presentation.setTailText(tailText, true)
-                    }
-
-                    if (presentation.getTypeText().isNullOrEmpty()) {
-                        presentation.setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(classDescriptor.getDefaultType()))
-                    }
+        return lookupElementFactory.createLookupElementsInSmartCompletion(memberDescriptor, bindingContext, useReceiverTypes = false)
+                .map {
+                    it.decorateAsStaticMember(memberDescriptor, classDescriptor, classNameAsLookupString = true)
+                            .assignSmartCompletionPriority(SmartCompletionItemPriority.STATIC_MEMBER)
                 }
-
-                override fun handleInsert(context: InsertionContext) {
-                    val prefix = qualifierText + "."
-
-                    val offset = context.startOffset
-                    context.document.insertString(offset, prefix)
-                    context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, offset + prefix.length)
-
-                    shortenReferences(context, offset, offset + prefix.length)
-                    PsiDocumentManager.getInstance(context.project).doPostponedOperationsAndUnblockDocument(context.document)
-
-                    super.handleInsert(context)
-                }
-            }.assignSmartCompletionPriority(SmartCompletionItemPriority.STATIC_MEMBER)
-        }
     }
 }

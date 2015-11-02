@@ -57,19 +57,23 @@ class CompletionSessionConfiguration(
         val completeNonImportedDeclarations: Boolean,
         val completeNonAccessibleDeclarations: Boolean,
         val filterOutJavaGettersAndSetters: Boolean,
-        val completeJavaClassesNotToBeUsed: Boolean
+        val completeJavaClassesNotToBeUsed: Boolean,
+        val completeStaticMembers: Boolean
 )
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
         completeNonImportedDeclarations = parameters.invocationCount >= 2,
         completeNonAccessibleDeclarations = parameters.invocationCount >= 2,
         filterOutJavaGettersAndSetters = parameters.invocationCount < 2,
-        completeJavaClassesNotToBeUsed = parameters.invocationCount >= 2
+        completeJavaClassesNotToBeUsed = parameters.invocationCount >= 2,
+        completeStaticMembers = parameters.invocationCount >= 2
 )
 
-abstract class CompletionSession(protected val configuration: CompletionSessionConfiguration,
-                                     protected val parameters: CompletionParameters,
-                                     resultSet: CompletionResultSet) {
+abstract class CompletionSession(
+        protected val configuration: CompletionSessionConfiguration,
+        protected val parameters: CompletionParameters,
+        resultSet: CompletionResultSet
+) {
     protected val position = parameters.getPosition()
     private val file = position.getContainingFile() as KtFile
     protected val resolutionFacade = file.getResolutionFacade()
@@ -124,7 +128,8 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     private fun ((Name) -> Boolean).or(otherFilter: (Name) -> Boolean): (Name) -> Boolean
             = { this(it) || otherFilter(it) }
 
-    protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it) }
+    protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = configuration.completeNonAccessibleDeclarations) }
+    protected val isVisibleFilterCheckAlways: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = false) }
 
     protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, moduleDescriptor, isVisibleFilter)
 
@@ -151,8 +156,10 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.getOriginalFile().getVirtualFile()
     }
 
-    protected val indicesHelper: KotlinIndicesHelper
-        get() = KotlinIndicesHelper(resolutionFacade, searchScope, isVisibleFilter, true)
+    protected fun indicesHelper(mayIncludeInaccessible: Boolean): KotlinIndicesHelper {
+        val filter = if (mayIncludeInaccessible) isVisibleFilter else isVisibleFilterCheckAlways
+        return KotlinIndicesHelper(resolutionFacade, searchScope, filter, visibilityFilterMayIncludeAccessible = mayIncludeInaccessible)
+    }
 
     protected val toFromOriginalFileMapper: ToFromOriginalFileMapper
             = ToFromOriginalFileMapper(parameters.originalFile as KtFile, position.containingFile as KtFile, parameters.offset)
@@ -178,7 +185,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             get() = 0
     }
 
-    private fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
+    private fun isVisibleDescriptor(descriptor: DeclarationDescriptor, completeNonAccessible: Boolean): Boolean {
         if (!configuration.completeJavaClassesNotToBeUsed && descriptor is ClassDescriptor) {
             val classification = descriptor.importableFqName?.let { importableFqNameClassifier.classify(it, isPackage = false) }
             if (classification == ImportableFqNameClassifier.Classification.notToBeUsedInKotlin) return false
@@ -189,7 +196,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         if (descriptor is DeclarationDescriptorWithVisibility) {
             val visible = descriptor.isVisible(inDescriptor, bindingContext, nameExpression)
             if (visible) return true
-            return configuration.completeNonAccessibleDeclarations && !descriptor.isFromLibrary()
+            return completeNonAccessible && !descriptor.isFromLibrary()
         }
 
         return true
@@ -309,6 +316,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
         var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
         if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
             val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
+            val indicesHelper = indicesHelper(true)
             val extensions = if (runtimeReceiver != null)
                 indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(runtimeReceiver.type), nameFilter)
             else
@@ -384,7 +392,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected fun getTopLevelCallables(): Collection<DeclarationDescriptor> {
-        return indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
+        return indicesHelper(true).getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
                 .filterShadowedNonImported()
     }
 
@@ -399,7 +407,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
     }
 
     protected fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean) {
-        AllClassesCompletion(parameters, indicesHelper, prefixMatcher, resolutionFacade, kindFilter)
+        AllClassesCompletion(parameters, indicesHelper(true), prefixMatcher, resolutionFacade, kindFilter)
                 .collect(
                         { descriptor -> collector.addElement(basicLookupElementFactory.createLookupElement(descriptor), notImported = true) },
                         { javaClass -> collector.addElement(basicLookupElementFactory.createLookupElementForJavaClass(javaClass), notImported = true) }

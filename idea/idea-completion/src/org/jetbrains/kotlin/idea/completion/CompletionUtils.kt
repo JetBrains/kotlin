@@ -27,8 +27,7 @@ import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
@@ -69,7 +69,8 @@ enum class ItemPriority {
     DEFAULT,
     IMPLEMENT,
     OVERRIDE,
-    NAMED_PARAMETER
+    NAMED_PARAMETER,
+    STATIC_MEMBER
 }
 
 val ITEM_PRIORITY_KEY = Key<ItemPriority>("ITEM_PRIORITY_KEY")
@@ -152,7 +153,7 @@ fun InsertionContext.isAfterDot(): Boolean {
     val chars = getDocument().getCharsSequence()
     while (offset > 0) {
         offset--
-        val c = chars.charAt(offset)
+        val c = chars[offset]
         if (!Character.isWhitespace(c)) {
             return c == '.'
         }
@@ -335,7 +336,7 @@ private open class BaseTypeLookupElement(type: KotlinType, baseLookupElement: Lo
 
     override fun handleInsert(context: InsertionContext) {
         context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), fullText)
-        context.setTailOffset(context.getStartOffset() + fullText.length())
+        context.setTailOffset(context.getStartOffset() + fullText.length)
         shortenReferences(context, context.getStartOffset(), context.getTailOffset())
     }
 }
@@ -350,3 +351,49 @@ fun <T> ElementPattern<T>.andNot(rhs: ElementPattern<T>) = StandardPatterns.and(
 fun <T> ElementPattern<T>.or(rhs: ElementPattern<T>) = StandardPatterns.or(this, rhs)
 
 fun singleCharPattern(char: Char) = StandardPatterns.character().equalTo(char)
+
+fun LookupElement.decorateAsStaticMember(
+        memberDescriptor: DeclarationDescriptor,
+        classDescriptor: ClassDescriptor,
+        classNameAsLookupString: Boolean
+): LookupElement {
+    val qualifierPresentation = classDescriptor.getName().asString()
+    val qualifierText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
+
+    return object: LookupElementDecorator<LookupElement>(this) {
+        override fun getAllLookupStrings(): Set<String> {
+            return if (classNameAsLookupString) setOf(delegate.lookupString, qualifierPresentation) else super.getAllLookupStrings()
+        }
+
+        override fun renderElement(presentation: LookupElementPresentation) {
+            delegate.renderElement(presentation)
+
+            presentation.itemText = qualifierPresentation + "." + presentation.itemText
+
+            val tailText = " (" + DescriptorUtils.getFqName(classDescriptor.containingDeclaration) + ")"
+            if (memberDescriptor is FunctionDescriptor) {
+                presentation.appendTailText(tailText, true)
+            }
+            else {
+                presentation.setTailText(tailText, true)
+            }
+
+            if (presentation.typeText.isNullOrEmpty()) {
+                presentation.typeText = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(classDescriptor.defaultType)
+            }
+        }
+
+        override fun handleInsert(context: InsertionContext) {
+            val prefix = qualifierText + "."
+
+            val offset = context.startOffset
+            context.document.insertString(offset, prefix)
+            context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, offset + prefix.length)
+
+            shortenReferences(context, offset, offset + prefix.length)
+            PsiDocumentManager.getInstance(context.project).doPostponedOperationsAndUnblockDocument(context.document)
+
+            super.handleInsert(context)
+        }
+    }
+}

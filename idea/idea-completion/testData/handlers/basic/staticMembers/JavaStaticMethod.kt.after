@@ -1,0 +1,8 @@
+import javax.swing.SwingUtilities
+
+fun foo() {
+    SwingUtilities.invokeLater(<caret>)
+}
+
+// INVOCATION_COUNT: 2
+// ELEMENT_TEXT: "SwingUtilities.invokeLater"

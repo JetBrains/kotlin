@@ -149,7 +149,7 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T) :
 
         val result = ArrayList<DeclarationDescriptor>()
 
-        val indicesHelper = KotlinIndicesHelper(element.getResolutionFacade(), searchScope, ::isVisible, true)
+        val indicesHelper = KotlinIndicesHelper(element.getResolutionFacade(), searchScope, ::isVisible)
 
         val expression = element
         if (expression is KtSimpleNameExpression) {

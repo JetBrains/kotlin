@@ -196,7 +196,7 @@ class BasicCompletionSession(
 
                 packageNames.forEach { collector.addElement(basicLookupElementFactory.createLookupElementForPackage(it)) }
             }
-
+            
             flushToResultSet()
 
             NamedArgumentCompletion.complete(collector, expectedInfos)
@@ -226,6 +226,10 @@ class BasicCompletionSession(
                         collector.addDescriptorElements(variants.notImportedExtensions, lookupElementFactory, withReceiverCast = true, notImported = true)
                         flushToResultSet()
                     }
+                }
+
+                if (configuration.completeStaticMembers && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT && prefix.isNotEmpty()) {
+                    StaticMembersCompletion(collector, prefixMatcher, indicesHelper(false), lookupElementFactory).complete()
                 }
             }
         }
@@ -410,13 +414,13 @@ class BasicCompletionSession(
                     lookupElement
                 }
 
-                parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilter)
+                parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
                 flushToResultSet()
 
-                parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilter)
+                parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilterCheckAlways)
                 flushToResultSet()
 
-                parameterNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper)
+                parameterNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper(false))
             }
         }
 

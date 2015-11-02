@@ -29,9 +29,9 @@ import java.util.*
 class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDeclarationContainer {
     constructor(node: ASTNode) : super(node)
 
-    override fun getParent() = parentByStub
-
     constructor(stub: KotlinPlaceHolderStub<KtClassBody>) : super(stub, CLASS_BODY)
+
+    override fun getParent() = parentByStub
 
     override fun getDeclarations() = Arrays.asList(*getStubOrPsiChildren(DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY))
 
