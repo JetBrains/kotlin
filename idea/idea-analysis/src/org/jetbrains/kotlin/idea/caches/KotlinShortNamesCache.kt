@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
@@ -103,10 +102,9 @@ public class KotlinShortNamesCache(private val project: Project) : PsiShortNames
             = ContainerUtil.process(getMethodsByName(name, scope), processor)
 
     override fun getAllMethodNames(): Array<String>
-            = KotlinFunctionShortNameIndex.getInstance().getAllKeys(project).toTypedArray()
+            = emptyArray()
 
     override fun getAllMethodNames(set: HashSet<String>) {
-        set.addAll(KotlinFunctionShortNameIndex.getInstance().getAllKeys(project))
     }
 
     override fun getFieldsByName(name: String, scope: GlobalSearchScope): Array<PsiField>
