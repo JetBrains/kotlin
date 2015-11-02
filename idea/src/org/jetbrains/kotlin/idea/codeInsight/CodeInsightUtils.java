@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -78,8 +79,11 @@ public class CodeInsightUtils {
 
         Qualifier qualifier = context.get(BindingContext.QUALIFIER, expression);
         if (qualifier != null) {
-            ClassifierDescriptor classifier = qualifier.getClassifier();
-            if (!(classifier instanceof ClassDescriptor) || ((ClassDescriptor) classifier).getKind() != ClassKind.OBJECT) return null;
+            if (!(qualifier instanceof ClassQualifier)) return null;
+            ClassifierDescriptor classifier = ((ClassQualifier) qualifier).getClassifier();
+            if (!(classifier instanceof ClassDescriptor) || ((ClassDescriptor) classifier).getKind() != ClassKind.OBJECT) {
+                return null;
+            }
         }
 
         return expression;
