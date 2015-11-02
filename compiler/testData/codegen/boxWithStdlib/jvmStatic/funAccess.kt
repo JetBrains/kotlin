@@ -1,5 +1,3 @@
-import kotlin.platform.platformStatic
-
 var holder = ""
 
 fun getA(): A {
@@ -8,7 +6,7 @@ fun getA(): A {
 }
 
 object A {
-    @platformStatic fun a(): String {
+    @JvmStatic fun a(): String {
         return holder
     }
 }

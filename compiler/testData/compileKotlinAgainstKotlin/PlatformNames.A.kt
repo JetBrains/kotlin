@@ -1,12 +1,10 @@
 package lib
 
-import kotlin.platform.*
-
-@platformName("bar")
+@JvmName("bar")
 fun foo() = "foo"
 
 var v: Int = 1
-    @platformName("vget")
+    @JvmName("vget")
     get
-    @platformName("vset")
+    @JvmName("vset")
     set

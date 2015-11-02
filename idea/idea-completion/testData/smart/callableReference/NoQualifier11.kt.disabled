@@ -1,5 +1,3 @@
-import kotlin.platform.platformName
-
 class C(i: Int){
     class Nested
     inner class Inner
@@ -9,10 +7,10 @@ class C(i: Int){
     }
 }
 
-platformName("foo1")
+@JvmName("foo1")
 fun foo(p: () -> C.Nested){}
 
-platformName("foo2")
+@JvmName("foo2")
 fun foo(p: () -> C.Inner){}
 
 // EXIST: ::Nested

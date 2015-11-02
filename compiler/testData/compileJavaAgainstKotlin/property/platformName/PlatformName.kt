@@ -1,9 +1,7 @@
 package test
 
-import kotlin.platform.*
-
 var v: Int = 1
-    @platformName("vget")
+    @JvmName("vget")
     get
-    @platformName("vset")
+    @JvmName("vset")
     set

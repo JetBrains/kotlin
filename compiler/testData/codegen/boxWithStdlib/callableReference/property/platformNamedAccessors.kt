@@ -1,10 +1,9 @@
-import kotlin.platform.platformName
 import kotlin.reflect.jvm.*
 
 var state: String = "value"
-    @platformName("getter")
+    @JvmName("getter")
     get
-    @platformName("setter")
+    @JvmName("setter")
     set
 
 fun box(): String {

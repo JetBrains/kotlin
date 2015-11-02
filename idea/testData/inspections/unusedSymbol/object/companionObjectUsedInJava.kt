@@ -1,7 +1,5 @@
 package companionObjectUsedInJava
 
-import kotlin.platform.platformStatic
-
 class A {
     companion object {
         val CONST = 42
@@ -10,7 +8,7 @@ class A {
 
 class B {
     companion object {
-        platformStatic fun foo() {
+        @JvmStatic fun foo() {
         }
     }
 }
@@ -23,7 +21,7 @@ class C {
 
 class D {
     companion object Named {
-        platformStatic fun foo() {
+        @JvmStatic fun foo() {
         }
     }
 }

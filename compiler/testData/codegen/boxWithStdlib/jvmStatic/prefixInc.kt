@@ -1,14 +1,12 @@
-import kotlin.platform.platformStatic
-
 object A {
 
-    @platformStatic var a: Int = 1
+    @JvmStatic var a: Int = 1
 
     var b: Int = 1
-        @platformStatic get
+        @JvmStatic get
 
     var c: Int = 1
-        @platformStatic set
+        @JvmStatic set
 
 }
 

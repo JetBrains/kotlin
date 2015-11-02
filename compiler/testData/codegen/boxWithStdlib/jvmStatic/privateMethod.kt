@@ -1,8 +1,6 @@
-import kotlin.platform.platformStatic
-
 object A {
 
-    private @platformStatic fun a(): String {
+    private @JvmStatic fun a(): String {
         return "OK"
     }
 

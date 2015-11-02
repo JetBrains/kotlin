@@ -1,13 +1,11 @@
 package test
 
-import kotlin.platform.platformStatic
-
 object A {
-    @platformStatic val b: String = "OK"
+    @JvmStatic val b: String = "OK"
 
     var A.c: String
-        @platformStatic get() = "OK"
-        @platformStatic set(t: String) {}
+        @JvmStatic get() = "OK"
+        @JvmStatic set(t: String) {}
 
 }
 

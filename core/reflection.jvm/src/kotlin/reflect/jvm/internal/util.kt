@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.name.FqName
 import kotlin.reflect.IllegalCallableAccessException
 
-internal val PLATFORM_STATIC = FqName("kotlin.platform.platformStatic")
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
 // TODO: wrap other exceptions

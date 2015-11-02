@@ -1,20 +1,18 @@
 package test
 
-import kotlin.platform.platformStatic
-
 class A {
 
     companion object {
         val b: String = "OK"
 
-        @platformStatic fun test1() {
+        @JvmStatic fun test1() {
             b
             test2()
             test3()
             "".test4()
         }
 
-        @platformStatic fun test2() {
+        @JvmStatic fun test2() {
             b
         }
 
@@ -22,7 +20,7 @@ class A {
 
         }
 
-        @platformStatic fun String.test4() {
+        @JvmStatic fun String.test4() {
             b
         }
     }

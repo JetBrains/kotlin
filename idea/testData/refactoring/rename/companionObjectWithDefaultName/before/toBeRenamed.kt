@@ -3,7 +3,7 @@ class Foo {
         fun f() {
         }
 
-        platformStatic fun s() {
+        @JvmStatic fun s() {
         }
 
         val CONST = 42

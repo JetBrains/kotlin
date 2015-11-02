@@ -1,18 +1,16 @@
 package test
 
-import kotlin.platform.*
-
 annotation class A(val s: String)
 
-@platformName("bar")
 @A("1")
+@JvmName("bar")
 fun foo() = "foo"
 
 @field:A("2")
 var v: Int = 1
-    @platformName("vget")
     @A("3")
+    @JvmName("vget")
     get
-    @platformName("vset")
     @A("4")
+    @JvmName("vset")
     set

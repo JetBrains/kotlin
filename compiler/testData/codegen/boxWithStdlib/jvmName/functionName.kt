@@ -1,6 +1,4 @@
-import kotlin.platform.*
-
-@platformName("bar")
+@JvmName("bar")
 fun foo() = "foo"
 
 fun box(): String {
