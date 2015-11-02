@@ -15344,6 +15344,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("assignmentConversion.kt")
+                public void testAssignmentConversion() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/variables/assignmentConversion.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("doWhileWithMiddleBreak.kt")
                 public void testDoWhileWithMiddleBreak() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/variables/doWhileWithMiddleBreak.kt");

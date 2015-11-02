@@ -175,7 +175,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         putNullability(nullability, a, nullabilityOfB);
 
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        Set<KotlinType> typesForB = collectTypesFromMeAndParents(b);
+        Set<KotlinType> typesForB = getPossibleTypes(b);
         // Own type of B must be recorded separately, e.g. for a constant
         // But if its type is the same as A or it's null, there is no reason to do it
         // because usually null type or own type are not saved in this set
