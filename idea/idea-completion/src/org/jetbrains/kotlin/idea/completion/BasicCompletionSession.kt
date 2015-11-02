@@ -214,7 +214,8 @@ class BasicCompletionSession(
                     collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
                 }
 
-                val staticMembersCompletion = StaticMembersCompletion(collector, prefixMatcher, resolutionFacade, lookupElementFactory, referenceVariants!!.imported)
+                val staticMembersCompletion = StaticMembersCompletion(
+                        collector, prefixMatcher, resolutionFacade, lookupElementFactory, referenceVariants!!.imported, isJvmModule)
                 if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
                     staticMembersCompletion.completeFromImports(position.containingFile as KtFile)
                 }

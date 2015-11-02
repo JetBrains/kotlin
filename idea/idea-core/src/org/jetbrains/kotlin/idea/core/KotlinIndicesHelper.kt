@@ -35,7 +35,9 @@ import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.receiverTypes
 import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
@@ -229,8 +231,14 @@ public class KotlinIndicesHelper(
                 if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (!visibilityFilterMayIncludeAccessible && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
                 val descriptor = method.getJavaMethodDescriptor() ?: continue
+                val container = descriptor.containingDeclaration as? ClassDescriptor ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     result.add(descriptor)
+
+                    val samAdapter = container.staticScope.getContributedFunctions(descriptor.name, NoLookupLocation.FROM_IDE)
+                            .filterIsInstance<SamAdapterDescriptor<*>>()
+                            .firstOrNull { it.originForSam.original == descriptor.original }
+                    result.addIfNotNull(samAdapter)
                 }
             }
             true

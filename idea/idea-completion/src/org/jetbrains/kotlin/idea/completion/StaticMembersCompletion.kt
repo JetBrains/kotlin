@@ -37,7 +37,8 @@ class StaticMembersCompletion(
         private val prefixMatcher: PrefixMatcher,
         private val resolutionFacade: ResolutionFacade,
         private val lookupElementFactory: LookupElementFactory,
-        alreadyAdded: Collection<DeclarationDescriptor>
+        alreadyAdded: Collection<DeclarationDescriptor>,
+        private val isJvmModule: Boolean
 ) {
     private val alreadyAdded = alreadyAdded.mapTo(HashSet()) {
         if (it is ImportedFromObjectCallableDescriptor<*>) it.callableFromObject else it
@@ -64,10 +65,8 @@ class StaticMembersCompletion(
         }
     }
 
-    //TODO: SAM-adapters
     //TODO: filter out those that are accessible from SmartCompletion.additionalItems
     //TODO: what about enum members?
-    //TODO: filter out Kotlin functions from file facades
     //TODO: better presentation for lookup elements from imports too
     //TODO: better sorting
     //TODO: from the same file
@@ -75,13 +74,15 @@ class StaticMembersCompletion(
         val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
         val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
 
-        indicesHelper.getJavaStaticMembers(descriptorKindFilter, nameFilter).forEach { addFromDescriptor(it, ItemPriority.STATIC_MEMBER) }
+        if (isJvmModule) {
+            indicesHelper.getJavaStaticMembers(descriptorKindFilter, nameFilter).forEach { addFromDescriptor(it, ItemPriority.STATIC_MEMBER) }
+        }
 
         indicesHelper.getObjectMembers(descriptorKindFilter, nameFilter).forEach { addFromDescriptor(it, ItemPriority.STATIC_MEMBER) }
     }
 
     private fun addFromDescriptor(member: CallableDescriptor, itemPriority: ItemPriority) {
-        if (member !in alreadyAdded) {
+        if (member !in alreadyAdded) { //TODO: substitution
             collector.addElement(createLookupElement(member, itemPriority) ?: return)
         }
     }
