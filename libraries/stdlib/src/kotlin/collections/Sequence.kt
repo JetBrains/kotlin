@@ -1,4 +1,4 @@
-package kotlin
+package kotlin.sequences
 
 /**
  * A sequence that returns values through its iterator. The values are evaluated lazily, and the sequence

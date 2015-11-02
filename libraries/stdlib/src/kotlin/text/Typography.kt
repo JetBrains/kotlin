@@ -1,4 +1,4 @@
-package kotlin
+package kotlin.text
 
 /**
  * Defines names for Unicode symbols used in proper Typography.

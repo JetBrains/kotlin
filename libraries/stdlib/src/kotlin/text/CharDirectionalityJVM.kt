@@ -1,4 +1,4 @@
-package kotlin
+package kotlin.text
 
 /**
  * Represents the Unicode directionality of a character.
