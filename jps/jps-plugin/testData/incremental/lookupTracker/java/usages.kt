@@ -33,3 +33,13 @@ import baz.*
     /*p:foo p:baz p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:baz.E*/F./*c:baz.E*/field
     /*p:foo p:baz p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:baz.E*/S./*c:baz.E*/func()
 }
+
+/*p:foo*/fun classifiers(
+    c: C,
+    b: C./*c:bar.C*/B,
+    s: C./*c:bar.C*/S,
+    cis: C./*c:bar.C*/IS,
+    i: /*p:foo*/I,
+    iis: /*p:foo*/I./*c:foo.I*/IS,
+    e: /*p:foo p:baz*/E
+) {}
