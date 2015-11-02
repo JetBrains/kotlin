@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -148,10 +149,10 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
 public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
     return when (descriptor) {
         is PackageFragmentDescriptor ->
-            getPackageInnerScope(descriptor).memberScopeAsImportingScope()
+            getPackageInnerScope(descriptor).memberScopeAsImportingScope().asLexicalScope(descriptor)
 
         is PackageViewDescriptor ->
-            descriptor.memberScope.memberScopeAsImportingScope()
+            descriptor.memberScope.memberScopeAsImportingScope().asLexicalScope(descriptor)
 
         is ClassDescriptor ->
             getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)

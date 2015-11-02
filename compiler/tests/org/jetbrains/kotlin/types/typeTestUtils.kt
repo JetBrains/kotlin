@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.KtScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -25,11 +24,9 @@ import org.jetbrains.kotlin.utils.Printer
 
 public fun KtScope.asLexicalScope(): LexicalScope {
     val importingScope = memberScopeAsImportingScope()
-    return object : BaseLexicalScope(importingScope) {
-        override val ownerDescriptor: DeclarationDescriptor
-            get() = importingScope.ownerDescriptor
-
+    return object : BaseLexicalScope(importingScope, getContainingDeclaration()) {
         override fun printStructure(p: Printer) {
+            p.println("Util scope for tests")
         }
     }
 }

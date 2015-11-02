@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.LibrarySourceHacks
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
@@ -89,7 +89,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
     override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return lexicalScope.collectAllFromMeAndParent {
-            if (it !is ImportingScope && it.ownerDescriptor is FunctionDescriptor) {
+            if (it is LexicalScope && it.ownerDescriptor is FunctionDescriptor) {
                 it.getContributedFunctions(name, location).filter { it.extensionReceiverParameter == null } +
                     getConstructors(it.getContributedClassifier(name, location))
             }
@@ -139,7 +139,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
     }
 
     private fun getConstructors(
-            scope: LexicalScope,
+            scope: HierarchicalScope,
             name: Name,
             location: LookupLocation,
             filterClassPredicate: (ClassDescriptor) -> Boolean = { true }
@@ -179,7 +179,7 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         }
     }
 
-    private fun getFakeDescriptorForObject(scope: LexicalScope, name: Name, location: LookupLocation): VariableDescriptor? {
+    private fun getFakeDescriptorForObject(scope: HierarchicalScope, name: Name, location: LookupLocation): VariableDescriptor? {
         val classifier = scope.findClassifier(name, location)
         if (classifier !is ClassDescriptor || !classifier.hasClassObjectType) return null
 

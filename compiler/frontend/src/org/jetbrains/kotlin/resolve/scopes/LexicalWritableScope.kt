@@ -94,7 +94,7 @@ class LexicalWritableScope(
     }
 
     private inner class Snapshot(val descriptorLimit: Int) : LexicalScope {
-        override val parent: LexicalScope?
+        override val parent: LexicalScope
             get() = this@LexicalWritableScope.parent
         override val ownerDescriptor: DeclarationDescriptor
             get() = this@LexicalWritableScope.ownerDescriptor

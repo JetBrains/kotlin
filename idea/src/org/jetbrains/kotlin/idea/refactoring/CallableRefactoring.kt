@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import java.util.*
 
@@ -194,7 +195,7 @@ fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
         val containingDescriptor = getContainingDeclaration() ?: return null
         return when (containingDescriptor) {
             is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution()
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().memberScopeAsImportingScope()
+            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().memberScopeAsImportingScope().asLexicalScope(this)
             else -> null
         }
     }

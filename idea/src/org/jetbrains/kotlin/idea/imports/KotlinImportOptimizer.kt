@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
 import java.util.*
 
@@ -118,7 +118,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         private fun isAccessibleAsMember(target: DeclarationDescriptor, place: KtElement, bindingContext: BindingContext): Boolean {
             if (target.containingDeclaration !is ClassDescriptor) return false
 
-            fun isInScope(scope: LexicalScope): Boolean {
+            fun isInScope(scope: HierarchicalScope): Boolean {
                 return when (target) {
                     is FunctionDescriptor ->
                         scope.findFunction(target.name, NoLookupLocation.FROM_IDE) { it == target } != null

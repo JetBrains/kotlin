@@ -164,7 +164,6 @@ class LazyImportResolver(
 
 class LazyImportScope(
         override val parent: ImportingScope?,
-        override val ownerDescriptor: DeclarationDescriptor,
         private val importResolver: LazyImportResolver,
         private val filteringKind: LazyImportScope.FilteringKind,
         private val debugName: String
@@ -257,8 +256,6 @@ class LazyImportScope(
     override fun printStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), ": ", debugName, " {")
         p.pushIndent()
-
-        p.println("ownerDescriptor = ", ownerDescriptor)
 
         p.popIndent()
         p.println("}")

@@ -92,7 +92,7 @@ public class DefaultModalityModifiersTest extends KotlinLiteFixture {
             assert aClass instanceof KtClass;
             AnalysisResult bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(file);
             final DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
-            return new LexicalScopeImpl(ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, null,
+            return new LexicalScopeImpl(TypeTestUtilsKt.asLexicalScope(libraryScope), root, false, null,
                                         "JetDefaultModalityModifiersTest", RedeclarationHandler.DO_NOTHING,
                                         new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                             @Override

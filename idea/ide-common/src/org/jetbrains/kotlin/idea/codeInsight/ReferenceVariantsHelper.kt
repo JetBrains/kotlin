@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionFunctions
@@ -299,7 +296,7 @@ class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addNonExtensionCallablesAndConstructors(
-            scope: LexicalScope,
+            scope: HierarchicalScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             constructorFilter: (ClassDescriptor) -> Boolean

@@ -138,7 +138,7 @@ public class ExpectedResolveDataUtil {
         emptyModule.setDependencies(emptyModule);
         emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE$);
 
-        LexicalScopeImpl lexicalScope = new LexicalScopeImpl(ImportingScope.Empty.INSTANCE, classDescriptor, false,
+        LexicalScopeImpl lexicalScope = new LexicalScopeImpl(ScopeUtilsKt.asLexicalScope(ImportingScope.Empty.INSTANCE, emptyModule), classDescriptor, false,
                                                              classDescriptor.getThisAsReceiverParameter(),
                                                              "Scope with implicit this for class: " + classDescriptor);
 

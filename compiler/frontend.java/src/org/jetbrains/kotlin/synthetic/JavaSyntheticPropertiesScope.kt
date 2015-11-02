@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -49,7 +47,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val setMethod: FunctionDescriptor?
 
     companion object {
-        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: LexicalScope): SyntheticJavaPropertyDescriptor? {
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: HierarchicalScope): SyntheticJavaPropertyDescriptor? {
             val name = getterOrSetter.getName()
             if (name.isSpecial()) return null
             val identifier = name.getIdentifier()
