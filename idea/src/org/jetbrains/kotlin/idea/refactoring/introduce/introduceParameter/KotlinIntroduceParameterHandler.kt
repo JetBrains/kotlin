@@ -51,8 +51,8 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -66,7 +66,7 @@ import java.util.*
 import kotlin.test.fail
 
 public data class IntroduceParameterDescriptor(
-        val originalRange: JetPsiRange,
+        val originalRange: KotlinPsiRange,
         val callable: KtNamedDeclaration,
         val callableDescriptor: FunctionDescriptor,
         val newParameterName: String,
@@ -74,11 +74,11 @@ public data class IntroduceParameterDescriptor(
         val newArgumentValue: KtExpression,
         val withDefaultValue: Boolean,
         val parametersUsages: MultiMap<KtElement, KtElement>,
-        val occurrencesToReplace: List<JetPsiRange>,
+        val occurrencesToReplace: List<KotlinPsiRange>,
         val parametersToRemove: List<KtElement> = getParametersToRemove(withDefaultValue, parametersUsages, occurrencesToReplace),
-        val occurrenceReplacer: IntroduceParameterDescriptor.(JetPsiRange) -> Unit = {}
+        val occurrenceReplacer: IntroduceParameterDescriptor.(KotlinPsiRange) -> Unit = {}
 ) {
-    val originalOccurrence: JetPsiRange
+    val originalOccurrence: KotlinPsiRange
         get() = occurrencesToReplace.first { it.getTextRange().intersects(originalRange.getTextRange()) }
     val valVar: JetValVar
 
@@ -107,7 +107,7 @@ public data class IntroduceParameterDescriptor(
 fun getParametersToRemove(
         withDefaultValue: Boolean,
         parametersUsages: MultiMap<KtElement, KtElement>,
-        occurrencesToReplace: List<JetPsiRange>
+        occurrencesToReplace: List<KotlinPsiRange>
 ): List<KtElement> {
     if (withDefaultValue) return Collections.emptyList()
 
@@ -244,7 +244,7 @@ public open class KotlinIntroduceParameterHandler(
                     Collections.emptyList()
                 }
         val occurrencesToReplace = expression.toRange()
-                .match(body, JetPsiUnifier.DEFAULT)
+                .match(body, KotlinPsiUnifier.DEFAULT)
                 .filterNot {
                     val textRange = it.range.getTextRange()
                     forbiddenRanges.any { it.intersects(textRange) }

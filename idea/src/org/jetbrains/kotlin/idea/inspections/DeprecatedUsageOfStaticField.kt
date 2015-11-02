@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
-import org.jetbrains.kotlin.asJava.KotlinLightClass
-import org.jetbrains.kotlin.asJava.KotlinLightField
+import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.KtLightField
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierIntention
 import org.jetbrains.kotlin.idea.quickfix.replaceReferencesToGetterByReferenceToField
@@ -39,12 +39,12 @@ class DeprecatedUsageOfStaticFieldInspection : LocalInspectionTool(), CleanupLoc
                 val resolvedTo = expression.reference?.resolve() as? PsiField ?: return
                 if (!resolvedTo.hasModifierProperty(PsiModifier.STATIC) || !resolvedTo.isDeprecated) return
 
-                val kotlinProperty = (resolvedTo as? KotlinLightField)?.getOrigin() as? KtProperty
+                val kotlinProperty = (resolvedTo as? KtLightField)?.getOrigin() as? KtProperty
 
                 // NOTE: this is hack to avoid test failing with "action is still available" error
                 if (kotlinProperty?.hasJvmFieldAnnotationOrConstModifier() ?: false) return
 
-                val kotlinClassOrObject = (resolvedTo.containingClass as? KotlinLightClass)?.getOrigin() ?: return
+                val kotlinClassOrObject = (resolvedTo.containingClass as? KtLightClass)?.getOrigin() ?: return
 
                 val containingObject = when (kotlinClassOrObject) {
                     is KtObjectDeclaration -> kotlinClassOrObject as KtObjectDeclaration // KT-9578
@@ -88,7 +88,7 @@ class DeprecatedUsageOfStaticFieldInspection : LocalInspectionTool(), CleanupLoc
 abstract class StaticFieldUsageFix: LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val deprecatedField = descriptor.psiElement.reference?.resolve() as? PsiField ?: return
-        val kotlinProperty = (deprecatedField as? KotlinLightField)?.getOrigin() as? KtProperty
+        val kotlinProperty = (deprecatedField as? KtLightField)?.getOrigin() as? KtProperty
 
         if (kotlinProperty != null && kotlinProperty.hasJvmFieldAnnotationOrConstModifier()) return
 
@@ -123,7 +123,7 @@ class ReplaceWithGetterInvocationFix : StaticFieldUsageFix() {
     override fun getFamilyName(): String = name
 
     override fun doFix(deprecatedField: PsiField, property: KtProperty?, problemDescriptor: ProblemDescriptor) {
-        val lightClass = deprecatedField.containingClass as? KotlinLightClass ?: return
+        val lightClass = deprecatedField.containingClass as? KtLightClass ?: return
 
         fun replaceWithGetterInvocation(objectField: PsiField) {
             val factory = PsiElementFactory.SERVICE.getInstance(deprecatedField.project)

@@ -27,7 +27,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -71,13 +71,13 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnota
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("make.class.annotation.class", annotationClass.getName());
+        return KotlinBundle.message("make.class.annotation.class", annotationClass.getName());
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("make.class.annotation.class.family");
+        return KotlinBundle.message("make.class.annotation.class.family");
     }
 
     @Override
@@ -97,8 +97,8 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnota
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

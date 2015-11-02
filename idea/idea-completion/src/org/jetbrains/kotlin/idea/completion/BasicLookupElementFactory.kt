@@ -20,9 +20,9 @@ import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.handlers.BaseDeclarationInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinClassifierInsertHandler
@@ -113,7 +113,7 @@ class BasicLookupElementFactory(
     ): LookupElement {
         if (descriptor is ClassifierDescriptor &&
             declaration is PsiClass &&
-            declaration !is KotlinLightClass) {
+            declaration !is KtLightClass) {
             // for java classes we create special lookup elements
             // because they must be equal to ones created in TypesCompletion
             // otherwise we may have duplicates
@@ -141,7 +141,7 @@ class BasicLookupElementFactory(
         val name = nameAndIconDescriptor.getName().asString()
 
         val lookupObject = object : DeclarationLookupObjectImpl(descriptor, declaration) {
-            override fun getIcon(flags: Int) = JetDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, flags)
+            override fun getIcon(flags: Int) = KotlinDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, flags)
         }
         var element = LookupElementBuilder.create(lookupObject, name)
 

@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode;
-import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex;
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
@@ -1114,7 +1114,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         changeInfo.addParameter(newParameter2);
 
         KtClassOrObject classA =
-                JetFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
+                KotlinFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
                         .iterator().next();
         KtDeclaration functionBar = CollectionsKt.first(
                 classA.getDeclarations(),
@@ -1126,7 +1126,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                 }
         );
         KtNamedFunction functionTest =
-                JetTopLevelFunctionFqnNameIndex.getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
+                KotlinTopLevelFunctionFqnNameIndex.getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
                         .iterator().next();
 
         changeInfo.setPrimaryPropagationTargets(Arrays.asList(functionBar, functionTest));
@@ -1172,7 +1172,8 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                                 }
                         );
                         KtNamedFunction functionTest =
-                                JetTopLevelFunctionFqnNameIndex.getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
+                                KotlinTopLevelFunctionFqnNameIndex
+                                        .getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
                                         .iterator().next();
 
                         return SetsKt.setOf(methodBar, LightClassUtilsKt.getRepresentativeLightMethod(functionTest));
@@ -1190,7 +1191,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         changeInfo.addParameter(newParameter);
 
         KtNamedFunction functionBar =
-                JetTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
+                KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
                         .iterator().next();
 
         changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
@@ -1207,7 +1208,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         changeInfo.addParameter(newParameter);
 
         KtNamedFunction functionBar =
-                JetTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
+                KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
                         .iterator().next();
 
         changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
@@ -1224,7 +1225,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         changeInfo.addParameter(newParameter);
 
         KtClassOrObject classA =
-                JetFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
+                KotlinFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
                         .iterator().next();
         KtDeclaration functionBar = CollectionsKt.first(
                 classA.getDeclarations(),
@@ -1249,7 +1250,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         changeInfo.addParameter(newParameter);
 
         KtNamedFunction functionBar =
-                JetTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
+                KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
                         .iterator().next();
 
         changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));

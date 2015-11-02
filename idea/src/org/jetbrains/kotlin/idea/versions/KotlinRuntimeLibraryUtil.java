@@ -38,7 +38,7 @@ import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetPluginUtil;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator;
@@ -219,7 +219,7 @@ public class KotlinRuntimeLibraryUtil {
 
     @NotNull
     public static String bundledRuntimeVersion() {
-        return bundledRuntimeVersion(JetPluginUtil.getPluginVersion());
+        return bundledRuntimeVersion(KotlinPluginUtil.getPluginVersion());
     }
 
     @NotNull

@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
+import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -78,7 +78,7 @@ data class ResolvedReferenceInfo(
 
 data class ExtractionData(
         val originalFile: KtFile,
-        val originalRange: JetPsiRange,
+        val originalRange: KotlinPsiRange,
         val targetSibling: PsiElement,
         val duplicateContainer: PsiElement? = null,
         val options: ExtractionOptions = ExtractionOptions.DEFAULT
@@ -192,7 +192,7 @@ data class ExtractionData(
         val startOffset = body.getBlockContentOffset()
 
         val referencesInfo = ArrayList<ResolvedReferenceInfo>()
-        val refToContextMap = JetFileReferencesResolver.resolve(body)
+        val refToContextMap = KotlinFileReferencesResolver.resolve(body)
         for ((ref, context) in refToContextMap) {
             if (ref !is KtSimpleNameExpression) continue
 

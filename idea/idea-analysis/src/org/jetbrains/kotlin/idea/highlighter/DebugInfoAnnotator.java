@@ -53,20 +53,20 @@ public class DebugInfoAnnotator implements Annotator {
                     @Override
                     public void reportElementWithErrorType(@NotNull KtReferenceExpression expression) {
                         holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element")
-                                .setTextAttributes(JetHighlightingColors.RESOLVED_TO_ERROR);
+                                .setTextAttributes(KotlinHighlightingColors.RESOLVED_TO_ERROR);
                     }
 
                     @Override
                     public void reportMissingUnresolved(@NotNull KtReferenceExpression expression) {
                         holder.createErrorAnnotation(expression,
                                                      "[DEBUG] Reference is not resolved to anything, but is not marked unresolved")
-                                .setTextAttributes(JetHighlightingColors.DEBUG_INFO);
+                                .setTextAttributes(KotlinHighlightingColors.DEBUG_INFO);
                     }
 
                     @Override
                     public void reportUnresolvedWithTarget(@NotNull KtReferenceExpression expression, @NotNull String target) {
                         holder.createErrorAnnotation(expression, "[DEBUG] Reference marked as unresolved is actually resolved to " + target)
-                                .setTextAttributes(JetHighlightingColors.DEBUG_INFO);
+                                .setTextAttributes(KotlinHighlightingColors.DEBUG_INFO);
                     }
                 });
             }

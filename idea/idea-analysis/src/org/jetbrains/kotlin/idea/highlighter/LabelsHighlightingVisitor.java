@@ -33,7 +33,7 @@ class LabelsHighlightingVisitor extends KtVisitorVoid {
     public void visitExpressionWithLabel(@NotNull KtExpressionWithLabel expression) {
         KtSimpleNameExpression targetLabel = expression.getTargetLabel();
         if (targetLabel != null) {
-            NameHighlighter.highlightName(holder, targetLabel, JetHighlightingColors.LABEL);
+            NameHighlighter.highlightName(holder, targetLabel, KotlinHighlightingColors.LABEL);
         }
     }
 }

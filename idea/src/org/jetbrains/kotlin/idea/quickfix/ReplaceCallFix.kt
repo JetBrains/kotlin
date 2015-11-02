@@ -23,7 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 
 public abstract class ReplaceCallFix protected constructor(val psiElement: PsiElement) : IntentionAction {
@@ -64,18 +64,18 @@ public class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiE
     override val operation: String get() = "?."
     override val classToReplace: Class<out KtQualifiedExpression> get() = javaClass<KtDotQualifiedExpression>()
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
                 = ReplaceWithSafeCallFix(diagnostic.getPsiElement())
     }
 }
 
 public class ReplaceWithDotCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement), CleanupFix {
-    override fun getText(): String = JetBundle.message("replace.with.dot.call")
+    override fun getText(): String = KotlinBundle.message("replace.with.dot.call")
     override val operation: String get() = "."
     override val classToReplace: Class<out KtQualifiedExpression> get() = javaClass<KtSafeQualifiedExpression>()
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
                 = ReplaceWithDotCallFix(diagnostic.getPsiElement())
     }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 
 public class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<KtPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
 
-public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingRangeIntention<KtPrefixExpression>(javaClass(), "Simplify negated binary expression") {
+public class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntention<KtPrefixExpression>(javaClass(), "Simplify negated binary expression") {
 
     private fun IElementType.negate(): KtSingleValueToken? = when (this) {
         KtTokens.IN_KEYWORD -> KtTokens.NOT_IN

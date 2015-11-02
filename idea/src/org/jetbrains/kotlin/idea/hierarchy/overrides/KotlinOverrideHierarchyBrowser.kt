@@ -22,7 +22,7 @@ import javax.swing.JPanel
 import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import com.intellij.psi.PsiMethod
@@ -37,9 +37,9 @@ class KotlinOverrideHierarchyBrowser(
 ) : MethodHierarchyBrowser(project, baseElement.getRepresentativeLightMethod()) {
     override fun createLegendPanel(): JPanel? =
             MethodHierarchyBrowserBase.createStandardLegendPanel(
-                    JetBundle.message("hierarchy.legend.member.is.defined.in.class"),
-                    JetBundle.message("hierarchy.legend.member.defined.in.superclass"),
-                    JetBundle.message("hierarchy.legend.member.should.be.defined")
+                    KotlinBundle.message("hierarchy.legend.member.is.defined.in.class"),
+                    KotlinBundle.message("hierarchy.legend.member.defined.in.superclass"),
+                    KotlinBundle.message("hierarchy.legend.member.should.be.defined")
             )
 
     override fun isApplicableElement(psiElement: PsiElement): Boolean =

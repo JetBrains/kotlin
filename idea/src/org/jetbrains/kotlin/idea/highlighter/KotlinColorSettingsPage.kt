@@ -22,7 +22,7 @@ import com.intellij.openapi.options.OptionsBundle
 import com.intellij.openapi.options.colors.AttributesDescriptor
 import com.intellij.openapi.options.colors.ColorDescriptor
 import com.intellij.openapi.options.colors.ColorSettingsPage
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
@@ -33,7 +33,7 @@ import java.util.HashMap
 
 public class KotlinColorSettingsPage : ColorSettingsPage {
     override fun getIcon() = KotlinIcons.SMALL_LOGO
-    override fun getHighlighter(): SyntaxHighlighter = JetHighlighter()
+    override fun getHighlighter(): SyntaxHighlighter = KotlinHighlighter()
 
     override fun getDemoText(): String {
         return """/* Block comment */
@@ -80,7 +80,7 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
 
     override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String, TextAttributesKey> {
         val map = HashMap<String, TextAttributesKey>()
-        for (field in javaClass<JetHighlightingColors>().getFields()) {
+        for (field in javaClass<KotlinHighlightingColors>().getFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
                 try {
                     map.put(field.getName(), field.get(null) as TextAttributesKey)
@@ -97,56 +97,56 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
     override fun getAttributeDescriptors(): Array<AttributesDescriptor> {
         infix fun String.to(key: TextAttributesKey) = AttributesDescriptor(this, key)
         
-        return arrayOf(OptionsBundle.message("options.java.attribute.descriptor.keyword") to JetHighlightingColors.KEYWORD, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.builtin.annotation") to JetHighlightingColors.BUILTIN_ANNOTATION, 
-                       OptionsBundle.message("options.java.attribute.descriptor.number") to JetHighlightingColors.NUMBER,
-                       OptionsBundle.message("options.java.attribute.descriptor.string") to JetHighlightingColors.STRING, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.string.escape") to JetHighlightingColors.STRING_ESCAPE, 
-                       OptionsBundle.message("options.java.attribute.descriptor.invalid.escape.in.string") to JetHighlightingColors.INVALID_STRING_ESCAPE,
-                       OptionsBundle.message("options.java.attribute.descriptor.operator.sign") to JetHighlightingColors.OPERATOR_SIGN, 
-                       OptionsBundle.message("options.java.attribute.descriptor.parentheses") to JetHighlightingColors.PARENTHESIS, 
-                       OptionsBundle.message("options.java.attribute.descriptor.braces") to JetHighlightingColors.BRACES, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.closure.braces") to JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.arrow") to JetHighlightingColors.ARROW, 
-                       OptionsBundle.message("options.java.attribute.descriptor.brackets") to JetHighlightingColors.BRACKETS, 
-                       OptionsBundle.message("options.java.attribute.descriptor.comma") to JetHighlightingColors.COMMA, 
-                       OptionsBundle.message("options.java.attribute.descriptor.semicolon") to JetHighlightingColors.SEMICOLON, 
-                       OptionsBundle.message("options.java.attribute.descriptor.dot") to JetHighlightingColors.DOT, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.safe.access") to JetHighlightingColors.SAFE_ACCESS,
-                       OptionsBundle.message("options.java.attribute.descriptor.line.comment") to JetHighlightingColors.LINE_COMMENT, 
-                       OptionsBundle.message("options.java.attribute.descriptor.block.comment") to JetHighlightingColors.BLOCK_COMMENT,
-                       JetBundle.message("options.kotlin.attribute.descriptor.kdoc.comment") to JetHighlightingColors.DOC_COMMENT, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.kdoc.tag") to JetHighlightingColors.KDOC_TAG, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.kdoc.value") to JetHighlightingColors.KDOC_LINK,
-                       OptionsBundle.message("options.java.attribute.descriptor.class") to JetHighlightingColors.CLASS, 
-                       OptionsBundle.message("options.java.attribute.descriptor.type.parameter") to JetHighlightingColors.TYPE_PARAMETER, 
-                       OptionsBundle.message("options.java.attribute.descriptor.abstract.class") to JetHighlightingColors.ABSTRACT_CLASS, 
-                       "Interface" to JetHighlightingColors.TRAIT, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.annotation") to JetHighlightingColors.ANNOTATION, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.object") to JetHighlightingColors.OBJECT, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.enumEntry") to JetHighlightingColors.ENUM_ENTRY,
-                       JetBundle.message("options.kotlin.attribute.descriptor.var") to JetHighlightingColors.MUTABLE_VARIABLE,
-                       JetBundle.message("options.kotlin.attribute.descriptor.local.variable") to JetHighlightingColors.LOCAL_VARIABLE, 
-                       OptionsBundle.message("options.java.attribute.descriptor.parameter") to JetHighlightingColors.PARAMETER, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.captured.variable") to JetHighlightingColors.WRAPPED_INTO_REF,
-                       JetBundle.message("options.kotlin.attribute.descriptor.instance.property") to JetHighlightingColors.INSTANCE_PROPERTY, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.package.property") to JetHighlightingColors.PACKAGE_PROPERTY, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.property.with.backing") to JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD,
-                       JetBundle.message("options.kotlin.attribute.descriptor.field") to JetHighlightingColors.BACKING_FIELD_VARIABLE,
-                       JetBundle.message("options.kotlin.attribute.descriptor.extension.property") to JetHighlightingColors.EXTENSION_PROPERTY,
-                       JetBundle.message("options.kotlin.attribute.descriptor.dynamic.property") to JetHighlightingColors.DYNAMIC_PROPERTY_CALL,
-                       JetBundle.message("options.kotlin.attribute.descriptor.it") to JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER,
-                       JetBundle.message("options.kotlin.attribute.descriptor.fun") to JetHighlightingColors.FUNCTION_DECLARATION, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.fun.call") to JetHighlightingColors.FUNCTION_CALL, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.dynamic.fun.call") to JetHighlightingColors.DYNAMIC_FUNCTION_CALL, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.package.fun.call") to JetHighlightingColors.PACKAGE_FUNCTION_CALL, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.extension.fun.call") to JetHighlightingColors.EXTENSION_FUNCTION_CALL, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.constructor.call") to JetHighlightingColors.CONSTRUCTOR_CALL, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.variable.as.function.call") to JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL, 
-                       JetBundle.message("options.kotlin.attribute.descriptor.variable.as.function.like.call") to JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL,
-                       OptionsBundle.message("options.java.attribute.descriptor.bad.character") to JetHighlightingColors.BAD_CHARACTER,
-                       JetBundle.message("options.kotlin.attribute.descriptor.smart.cast") to JetHighlightingColors.SMART_CAST_VALUE,
-                       JetBundle.message("options.kotlin.attribute.descriptor.label") to JetHighlightingColors.LABEL)
+        return arrayOf(OptionsBundle.message("options.java.attribute.descriptor.keyword") to KotlinHighlightingColors.KEYWORD,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.builtin.annotation") to KotlinHighlightingColors.BUILTIN_ANNOTATION,
+                       OptionsBundle.message("options.java.attribute.descriptor.number") to KotlinHighlightingColors.NUMBER,
+                       OptionsBundle.message("options.java.attribute.descriptor.string") to KotlinHighlightingColors.STRING,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.string.escape") to KotlinHighlightingColors.STRING_ESCAPE,
+                       OptionsBundle.message("options.java.attribute.descriptor.invalid.escape.in.string") to KotlinHighlightingColors.INVALID_STRING_ESCAPE,
+                       OptionsBundle.message("options.java.attribute.descriptor.operator.sign") to KotlinHighlightingColors.OPERATOR_SIGN,
+                       OptionsBundle.message("options.java.attribute.descriptor.parentheses") to KotlinHighlightingColors.PARENTHESIS,
+                       OptionsBundle.message("options.java.attribute.descriptor.braces") to KotlinHighlightingColors.BRACES,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.closure.braces") to KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.arrow") to KotlinHighlightingColors.ARROW,
+                       OptionsBundle.message("options.java.attribute.descriptor.brackets") to KotlinHighlightingColors.BRACKETS,
+                       OptionsBundle.message("options.java.attribute.descriptor.comma") to KotlinHighlightingColors.COMMA,
+                       OptionsBundle.message("options.java.attribute.descriptor.semicolon") to KotlinHighlightingColors.SEMICOLON,
+                       OptionsBundle.message("options.java.attribute.descriptor.dot") to KotlinHighlightingColors.DOT,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.safe.access") to KotlinHighlightingColors.SAFE_ACCESS,
+                       OptionsBundle.message("options.java.attribute.descriptor.line.comment") to KotlinHighlightingColors.LINE_COMMENT,
+                       OptionsBundle.message("options.java.attribute.descriptor.block.comment") to KotlinHighlightingColors.BLOCK_COMMENT,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.kdoc.comment") to KotlinHighlightingColors.DOC_COMMENT,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.kdoc.tag") to KotlinHighlightingColors.KDOC_TAG,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.kdoc.value") to KotlinHighlightingColors.KDOC_LINK,
+                       OptionsBundle.message("options.java.attribute.descriptor.class") to KotlinHighlightingColors.CLASS,
+                       OptionsBundle.message("options.java.attribute.descriptor.type.parameter") to KotlinHighlightingColors.TYPE_PARAMETER,
+                       OptionsBundle.message("options.java.attribute.descriptor.abstract.class") to KotlinHighlightingColors.ABSTRACT_CLASS,
+                       "Interface" to KotlinHighlightingColors.TRAIT,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.annotation") to KotlinHighlightingColors.ANNOTATION,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.object") to KotlinHighlightingColors.OBJECT,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.enumEntry") to KotlinHighlightingColors.ENUM_ENTRY,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.var") to KotlinHighlightingColors.MUTABLE_VARIABLE,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.local.variable") to KotlinHighlightingColors.LOCAL_VARIABLE,
+                       OptionsBundle.message("options.java.attribute.descriptor.parameter") to KotlinHighlightingColors.PARAMETER,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.captured.variable") to KotlinHighlightingColors.WRAPPED_INTO_REF,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.instance.property") to KotlinHighlightingColors.INSTANCE_PROPERTY,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.package.property") to KotlinHighlightingColors.PACKAGE_PROPERTY,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.property.with.backing") to KotlinHighlightingColors.PROPERTY_WITH_BACKING_FIELD,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.field") to KotlinHighlightingColors.BACKING_FIELD_VARIABLE,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.extension.property") to KotlinHighlightingColors.EXTENSION_PROPERTY,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.dynamic.property") to KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.it") to KotlinHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.fun") to KotlinHighlightingColors.FUNCTION_DECLARATION,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.fun.call") to KotlinHighlightingColors.FUNCTION_CALL,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.dynamic.fun.call") to KotlinHighlightingColors.DYNAMIC_FUNCTION_CALL,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.package.fun.call") to KotlinHighlightingColors.PACKAGE_FUNCTION_CALL,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.extension.fun.call") to KotlinHighlightingColors.EXTENSION_FUNCTION_CALL,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.constructor.call") to KotlinHighlightingColors.CONSTRUCTOR_CALL,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.variable.as.function.call") to KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.variable.as.function.like.call") to KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL,
+                       OptionsBundle.message("options.java.attribute.descriptor.bad.character") to KotlinHighlightingColors.BAD_CHARACTER,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast") to KotlinHighlightingColors.SMART_CAST_VALUE,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.label") to KotlinHighlightingColors.LABEL)
     }
 
     override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY

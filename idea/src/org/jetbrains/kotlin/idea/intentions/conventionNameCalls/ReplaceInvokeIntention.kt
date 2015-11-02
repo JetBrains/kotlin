@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class ReplaceInvokeIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call"), HighPriorityAction {
+public class ReplaceInvokeIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call"), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorNameConventions.INVOKE.asString()) return null
         return element.callExpression!!.getCalleeExpression()!!.getTextRange()

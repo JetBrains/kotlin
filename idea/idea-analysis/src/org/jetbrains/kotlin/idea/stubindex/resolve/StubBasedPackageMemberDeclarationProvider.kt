@@ -22,19 +22,19 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
 import com.intellij.psi.stubs.StringStubIndexExtension
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyByPackageIndex
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -50,31 +50,31 @@ public class StubBasedPackageMemberDeclarationProvider(
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            addFromIndex(JetTopLevelClassByPackageIndex.getInstance())
+            addFromIndex(KotlinTopLevelClassByPackageIndex.getInstance())
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            addFromIndex(JetTopLevelFunctionByPackageIndex.getInstance())
+            addFromIndex(KotlinTopLevelFunctionByPackageIndex.getInstance())
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            addFromIndex(JetTopLevelPropertyByPackageIndex.getInstance())
+            addFromIndex(KotlinTopLevelPropertyByPackageIndex.getInstance())
         }
 
         return result
     }
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo> {
-        return JetFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
+        return KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
                 .map { JetClassInfoUtil.createClassLikeInfo(it) }
     }
 
     override fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction> {
-        return JetTopLevelFunctionFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        return KotlinTopLevelFunctionFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
     override fun getPropertyDeclarations(name: Name): Collection<KtProperty> {
-        return JetTopLevelPropertyFqnNameIndex.getInstance().get(childName(name), project, searchScope)
+        return KotlinTopLevelPropertyFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
     override fun getAllDeclaredSubPackages(nameFilter: (Name) -> Boolean): Collection<FqName> {

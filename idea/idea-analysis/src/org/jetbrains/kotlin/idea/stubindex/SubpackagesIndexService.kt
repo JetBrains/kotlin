@@ -32,7 +32,7 @@ public class SubpackagesIndexService(private val project: Project) {
     private val cachedValue = CachedValuesManager.getManager(project).createCachedValue(
             {
                 CachedValueProvider.Result(
-                        SubpackagesIndex(JetExactPackagesIndex.getInstance().getAllKeys(project)),
+                        SubpackagesIndex(KotlinExactPackagesIndex.getInstance().getAllKeys(project)),
                         PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
             },
             false

@@ -51,7 +51,7 @@ class MoveTypeParameterConstraintFix(element: KtTypeParameter) : KotlinQuickFixA
         colon?.psi?.delete()
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val typeParameter = diagnostic.psiElement as? KtTypeParameter ?: return null
             return MoveTypeParameterConstraintFix(typeParameter)

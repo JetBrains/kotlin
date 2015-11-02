@@ -48,9 +48,9 @@ object LightClassTestCommon {
         if (lightClass == null) {
             return "<not generated>"
         }
-        TestCase.assertTrue("Not a light class: $lightClass ($fqName)", lightClass is KotlinLightClass)
+        TestCase.assertTrue("Not a light class: $lightClass ($fqName)", lightClass is KtLightClass)
 
-        val delegate = (lightClass as KotlinLightClass).getDelegate()
+        val delegate = (lightClass as KtLightClass).getDelegate()
         TestCase.assertTrue("Not a CLS element: $delegate", delegate is ClsElementImpl)
 
         val buffer = StringBuilder()

@@ -65,12 +65,12 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
         switch (c) {
             case '<':
                 jetLTTyped = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET &&
-                             JetLtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
+                             LtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
                 return Result.CONTINUE;
 
             case '>':
                 if (CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
-                    if (JetLtGtTypingUtils.handleJetGTInsert(editor)) {
+                    if (LtGtTypingUtils.handleJetGTInsert(editor)) {
                         return Result.STOP;
                     }
                 }
@@ -209,7 +209,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
         if (jetLTTyped) {
             jetLTTyped = false;
-            JetLtGtTypingUtils.handleJetAutoCloseLT(editor);
+            LtGtTypingUtils.handleJetAutoCloseLT(editor);
             return Result.STOP;
         }
 

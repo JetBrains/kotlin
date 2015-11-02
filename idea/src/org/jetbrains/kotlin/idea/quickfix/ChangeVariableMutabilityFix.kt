@@ -45,7 +45,7 @@ public class ChangeVariableMutabilityFix(element: KtProperty, private val makeVa
     }
 
     companion object {
-        public val VAL_WITH_SETTER_FACTORY: JetSingleIntentionActionFactory = object: JetSingleIntentionActionFactory() {
+        public val VAL_WITH_SETTER_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val accessor = diagnostic.getPsiElement() as KtPropertyAccessor
                 val property = accessor.getParent() as KtProperty
@@ -53,7 +53,7 @@ public class ChangeVariableMutabilityFix(element: KtProperty, private val makeVa
             }
         }
 
-        public val VAL_REASSIGNMENT_FACTORY: JetSingleIntentionActionFactory = object: JetSingleIntentionActionFactory() {
+        public val VAL_REASSIGNMENT_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val propertyDescriptor = Errors.VAL_REASSIGNMENT.cast(diagnostic).getA()
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtProperty ?: return null
@@ -61,7 +61,7 @@ public class ChangeVariableMutabilityFix(element: KtProperty, private val makeVa
             }
         }
 
-        public val VAR_OVERRIDDEN_BY_VAL_FACTORY: JetSingleIntentionActionFactory = object: JetSingleIntentionActionFactory() {
+        public val VAR_OVERRIDDEN_BY_VAL_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 return ChangeVariableMutabilityFix(diagnostic.getPsiElement() as KtProperty, true)
             }

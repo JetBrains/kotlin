@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddForLoopIndicesIntention : JetSelfTargetingRangeIntention<KtForExpression>(javaClass(), "Add indices to 'for' loop"), LowPriorityAction {
+public class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(javaClass(), "Add indices to 'for' loop"), LowPriorityAction {
     private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
 
     override fun applicabilityRange(element: KtForExpression): TextRange? {

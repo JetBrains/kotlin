@@ -31,8 +31,8 @@ fun indexTopLevelExtension<TDeclaration : KtCallableDeclaration>(stub: KotlinCal
 private fun KtTypeElement.index<TDeclaration : KtCallableDeclaration>(declaration: TDeclaration, sink: IndexSink) {
     fun occurrence(typeName: String) {
         val name = declaration.getName() ?: return
-        sink.occurrence(JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE.getKey(),
-                        JetTopLevelExtensionsByReceiverTypeIndex.buildKey(typeName, name))
+        sink.occurrence(KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE.getKey(),
+                        KotlinTopLevelExtensionsByReceiverTypeIndex.buildKey(typeName, name))
     }
 
     when (this) {

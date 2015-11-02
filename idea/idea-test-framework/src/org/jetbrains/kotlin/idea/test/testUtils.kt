@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.idea.decompiler.JetClassFileViewProvider
-import org.jetbrains.kotlin.idea.decompiler.JetClsFile
+import org.jetbrains.kotlin.idea.decompiler.KotlinClassFileViewProvider
+import org.jetbrains.kotlin.idea.decompiler.KtClsFile
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.psi.KtFile
@@ -89,10 +89,10 @@ public fun closeAndDeleteProject(): Unit =
 public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithException) {
     val builtInsSources = BuiltInsReferenceResolver.getInstance(project).builtInsSources!!
 
-    val stdLibViewProviders = HashSet<JetClassFileViewProvider>()
+    val stdLibViewProviders = HashSet<KotlinClassFileViewProvider>()
     val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
     for ((file, viewProvider) in vFileToViewProviderMap) {
-        if (file.isStdLibFile && viewProvider is JetClassFileViewProvider) {
+        if (file.isStdLibFile && viewProvider is KotlinClassFileViewProvider) {
             stdLibViewProviders.add(viewProvider)
         }
     }
@@ -108,7 +108,7 @@ public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWit
 
     builtInsSources.forEach { unInvalidateFile(it) }
     stdLibViewProviders.forEach {
-        it.allFiles.forEach { unInvalidateFile(it as JetClsFile) }
+        it.allFiles.forEach { unInvalidateFile(it as KtClsFile) }
         vFileToViewProviderMap.set(it.virtualFile, it)
     }
 }

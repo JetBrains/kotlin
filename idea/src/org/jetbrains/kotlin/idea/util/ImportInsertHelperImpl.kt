@@ -23,7 +23,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -51,8 +51,8 @@ import java.util.*
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
 
-    private val codeStyleSettings: JetCodeStyleSettings
-        get() = JetCodeStyleSettings.getInstance(project)
+    private val codeStyleSettings: KotlinCodeStyleSettings
+        get() = KotlinCodeStyleSettings.getInstance(project)
 
     override val importSortComparator: Comparator<ImportPath>
         get() = ImportPathComparator

@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class InfixCallToOrdinaryIntention : JetSelfTargetingIntention<KtBinaryExpression>(javaClass(), "Replace infix call with ordinary call") {
+public class InfixCallToOrdinaryIntention : SelfTargetingIntention<KtBinaryExpression>(javaClass(), "Replace infix call with ordinary call") {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         if (element.getOperationToken() != KtTokens.IDENTIFIER || element.getLeft() == null || element.getRight() == null) return false
         return element.getOperationReference().getTextRange().containsOffset(caretOffset)

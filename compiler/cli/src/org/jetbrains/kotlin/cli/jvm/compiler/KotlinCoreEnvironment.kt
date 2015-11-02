@@ -50,7 +50,7 @@ import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.JavaElementFinder
-import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
@@ -370,7 +370,7 @@ public class KotlinCoreEnvironment private constructor(
             with (projectEnvironment.getProject()) {
                 registerService(javaClass<JetScriptDefinitionProvider>(), JetScriptDefinitionProvider())
                 registerService(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(this))
-                registerService(javaClass<KotlinLightClassForFacade.FacadeStubCache>(), KotlinLightClassForFacade.FacadeStubCache(this))
+                registerService(javaClass<KtLightClassForFacade.FacadeStubCache>(), KtLightClassForFacade.FacadeStubCache(this))
             }
         }
 

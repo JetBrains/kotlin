@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider;
 import org.jetbrains.kotlin.psi.*;
@@ -44,13 +44,13 @@ public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("add.override.to.equals.hashCode.toString");
+        return KotlinBundle.message("add.override.to.equals.hashCode.toString");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("add.override.to.equals.hashCode.toString");
+        return KotlinBundle.message("add.override.to.equals.hashCode.toString");
     }
 
     @Override
@@ -95,8 +95,8 @@ public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public AddOverrideToEqualsHashCodeToStringFix createAction(@NotNull Diagnostic diagnostic) {

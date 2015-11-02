@@ -25,13 +25,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
-public class ChangePackageIntention: JetSelfTargetingOffsetIndependentIntention<KtPackageDirective>(javaClass(), "Change package") {
+public class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageDirective>(javaClass(), "Change package") {
     companion object {
         private val PACKAGE_NAME_VAR = "PACKAGE_NAME"
     }

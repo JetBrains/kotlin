@@ -20,13 +20,13 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
 
 public class KotlinSurrounderUtils {
-    public static String SURROUND_WITH = JetBundle.message("surround.with");
-    public static String SURROUND_WITH_ERROR = JetBundle.message("surround.with.cannot.perform.action");
+    public static String SURROUND_WITH = KotlinBundle.message("surround.with");
+    public static String SURROUND_WITH_ERROR = KotlinBundle.message("surround.with.cannot.perform.action");
 
     private KotlinSurrounderUtils() {
     }

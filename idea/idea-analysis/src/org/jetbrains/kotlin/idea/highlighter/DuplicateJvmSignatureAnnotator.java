@@ -47,6 +47,6 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
         Diagnostics diagnostics = DuplicateJvmSignatureUtilKt.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
 
         if (diagnostics == null) return;
-        new JetPsiChecker().annotateElement(element, holder, diagnostics);
+        new KotlinPsiChecker().annotateElement(element, holder, diagnostics);
     }
 }

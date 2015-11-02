@@ -33,7 +33,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
-import org.jetbrains.kotlin.idea.editor.JetEditorOptions
+import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -71,7 +71,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
     public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
         if (DumbService.getInstance(project).isDumb()) return
-        val jetEditorOptions = JetEditorOptions.getInstance()
+        val jetEditorOptions = KotlinEditorOptions.getInstance()
         if (!jetEditorOptions.isEnableJavaToKotlinConversion()) return
 
         val data = values.single()

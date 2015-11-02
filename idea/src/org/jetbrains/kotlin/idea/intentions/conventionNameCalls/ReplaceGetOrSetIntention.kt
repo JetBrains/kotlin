@@ -22,7 +22,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
@@ -55,7 +55,7 @@ private fun FunctionDescriptor.isExplicitOperator(): Boolean {
         overriddenDescriptors.any { it.isExplicitOperator() }
 }
 
-class ReplaceGetOrSetIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(
+class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
         KtDotQualifiedExpression::class.java,
         "Replace 'get' or 'set' call with indexing operator"
 ), HighPriorityAction {

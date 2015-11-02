@@ -25,8 +25,8 @@ import com.intellij.util.Function
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
-import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
+import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -139,7 +139,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     }
 
     override fun getPsiClass(classOrObject: KtClassOrObject): PsiClass? {
-        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject)
+        return KtLightClassForExplicitDeclaration.create(psiManager, classOrObject)
     }
 
     override fun resolveClassToDescriptor(classOrObject: KtClassOrObject): ClassDescriptor? {
@@ -151,7 +151,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
         if (filesForFacade.isEmpty()) return emptyList()
 
         return emptyOrSingletonList<PsiClass>(
-                KotlinLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade))
+                KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade))
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
@@ -216,7 +216,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(packageFqName, scope)).groupBy {
             JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName
-        }.map { KotlinLightClassForFacade.createForFacade(psiManager, it.key, scope, it.value) }.filterNotNull()
+        }.map { KtLightClassForFacade.createForFacade(psiManager, it.key, scope, it.value) }.filterNotNull()
     }
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {

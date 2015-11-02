@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
-public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependentIntention<KtDeclarationWithBody>(
+public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention<KtDeclarationWithBody>(
         javaClass(), "Convert to expression body"
 ) {
     override fun isApplicableTo(element: KtDeclarationWithBody): Boolean {

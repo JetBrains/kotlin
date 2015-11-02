@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.psi.KtBlockExpression;
 import org.jetbrains.kotlin.psi.KtElement;
@@ -44,7 +44,7 @@ public abstract class KotlinUnwrapRemoveBase extends AbstractUnwrapper<KotlinUnw
     @Override
     public String getDescription(PsiElement e) {
         assert e instanceof KtElement;
-        return JetBundle.message(key, JetRefactoringUtil.getExpressionShortText((KtElement) e));
+        return KotlinBundle.message(key, JetRefactoringUtil.getExpressionShortText((KtElement) e));
     }
 
     protected boolean canExtractExpression(@NotNull KtExpression expression, @NotNull KtElement parent) {

@@ -21,11 +21,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.codeInspection.SuppressIntentionAction
-import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
+import org.jetbrains.kotlin.idea.util.PsiPrecedences
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class KotlinSuppressIntentionAction(
@@ -34,8 +34,8 @@ public class KotlinSuppressIntentionAction(
         private val kind: AnnotationHostKind
 ) : SuppressIntentionAction() {
 
-    override fun getFamilyName() = JetBundle.message("suppress.warnings.family")
-    override fun getText() = JetBundle.message("suppress.warning.for", diagnosticFactory.getName(), kind.kind, kind.name)
+    override fun getFamilyName() = KotlinBundle.message("suppress.warnings.family")
+    override fun getText() = KotlinBundle.message("suppress.warning.for", diagnosticFactory.getName(), kind.kind, kind.name)
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid()
 
@@ -93,7 +93,7 @@ public class KotlinSuppressIntentionAction(
         val suppressAt = caretBox.expression
         assert(suppressAt !is KtDeclaration) { "Declarations should have been checked for above" }
 
-        val parentheses = JetPsiPrecedences.getPrecedence(suppressAt) > JetPsiPrecedences.PRECEDENCE_OF_PREFIX_EXPRESSION
+        val parentheses = PsiPrecedences.getPrecedence(suppressAt) > PsiPrecedences.PRECEDENCE_OF_PREFIX_EXPRESSION
         val placeholderText = "PLACEHOLDER_ID"
         val inner = if (parentheses) "($placeholderText)" else placeholderText
         val annotatedExpression = KtPsiFactory(suppressAt).createExpression(suppressAnnotationText(id) + "\n" + inner)

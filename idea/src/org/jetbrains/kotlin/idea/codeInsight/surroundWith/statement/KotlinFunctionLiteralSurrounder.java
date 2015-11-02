@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.KotlinSurrounderUtils;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.MoveDeclarationsOutHelper;
 import org.jetbrains.kotlin.psi.*;
@@ -62,6 +62,6 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
 
     @Override
     public String getTemplateDescription() {
-        return JetBundle.message("surround.with.function.template");
+        return KotlinBundle.message("surround.with.function.template");
     }
 }

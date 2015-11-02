@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldAssignmentToIfIntention : JetSelfTargetingRangeIntention<KtBinaryExpression>(javaClass(), "Replace assignment with 'if' expression"), LowPriorityAction {
+public class UnfoldAssignmentToIfIntention : SelfTargetingRangeIntention<KtBinaryExpression>(javaClass(), "Replace assignment with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
         if (element.getOperationToken() !in KtTokens.ALL_ASSIGNMENTS) return null
         if (element.getLeft() == null) return null

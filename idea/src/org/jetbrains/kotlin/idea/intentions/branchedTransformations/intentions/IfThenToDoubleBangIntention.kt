@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
+public class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val condition = element.getCondition() as? KtBinaryExpression ?: return null
         val thenClause = element.getThen() ?: return null

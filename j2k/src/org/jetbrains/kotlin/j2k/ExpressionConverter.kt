@@ -24,8 +24,8 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.asJava.KotlinLightField
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightField
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.name.FqName
@@ -253,7 +253,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val isNullable = if (target is PsiMethod) typeConverter.methodNullability(target).isNullable(codeConverter.settings) else false
         val typeArguments = convertTypeArguments(expression)
 
-        if (target is KotlinLightMethod) {
+        if (target is KtLightMethod) {
             val origin = target.getOrigin()
             val isTopLevel = origin?.getStrictParentOfType<KtClassOrObject>() == null
             if (origin is KtProperty || origin is KtPropertyAccessor || origin is KtParameter) {
@@ -422,7 +422,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             identifier = Identifier("size()", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
-            if (target is KotlinLightField && target.getOrigin() is KtObjectDeclaration) {
+            if (target is KtLightField && target.getOrigin() is KtObjectDeclaration) {
                 result = codeConverter.convertExpression(qualifier)
                 return
             }

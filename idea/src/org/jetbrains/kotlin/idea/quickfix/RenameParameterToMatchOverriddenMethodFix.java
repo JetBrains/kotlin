@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -69,13 +69,13 @@ public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAct
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("rename.parameter.to.match.overridden.method");
+        return KotlinBundle.message("rename.parameter.to.match.overridden.method");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("rename.family");
+        return KotlinBundle.message("rename.family");
     }
 
     @Override
@@ -84,8 +84,8 @@ public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAct
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {

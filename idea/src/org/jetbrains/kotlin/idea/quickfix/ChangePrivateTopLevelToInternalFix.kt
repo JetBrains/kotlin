@@ -38,7 +38,7 @@ public class ChangePrivateTopLevelToInternalFix(element: KtModifierListOwner, pr
         element.addModifier(KtTokens.INTERNAL_KEYWORD)
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             @Suppress("UNCHECKED_CAST")
             val factory = diagnostic.factory as DiagnosticFactory3<*, DeclarationDescriptor, *, DeclarationDescriptor>

@@ -32,14 +32,14 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.testIntegration.createTest.CreateTestAction
 import com.intellij.testIntegration.createTest.TestGenerators
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.core.refactoring.toPsiDirectory
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
-class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Create test") {
+class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Create test") {
     override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (element.isLocal()) return null
         if (element is KtEnumEntry) return null
@@ -110,7 +110,7 @@ class KotlinCreateTestIntention : JetSelfTargetingRangeIntention<KtClassOrObject
                 val dialog = KotlinCreateTestDialog(project, text, srcClass, srcPackage, srcModule)
                 if (!dialog.showAndGet()) return
 
-                val existingClass = (findTestClass(dialog.targetDirectory, dialog.className) as? KotlinLightClass)?.getOrigin()
+                val existingClass = (findTestClass(dialog.targetDirectory, dialog.className) as? KtLightClass)?.getOrigin()
                 if (existingClass != null) {
                     // TODO: Override dialog method when it becomes protected
                     val answer = Messages.showYesNoDialog(

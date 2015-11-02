@@ -51,7 +51,7 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
     }
 
     override fun tearDown() {
-        JetSourceNavigationHelper.setForceResolve(false)
+        SourceNavigationHelper.setForceResolve(false)
         super.tearDown()
     }
 
@@ -59,7 +59,7 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
             JetTestUtils.getHomeDirectory() + File.separator
 
     private fun checkAnnotatedLibraryCode(forceResolve: Boolean) {
-        JetSourceNavigationHelper.setForceResolve(forceResolve)
+        SourceNavigationHelper.setForceResolve(forceResolve)
         val actualCode = NavigationTestUtils.getNavigateElementsText(getProject(), collectInterestingNavigationElements())
         val expectedCode = getExpectedAnnotatedLibraryCode()
         UsefulTestCase.assertSameLines(expectedCode, actualCode)

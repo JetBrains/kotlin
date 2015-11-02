@@ -126,9 +126,9 @@ private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: Searc
 }
 
 private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
-    if (this is KotlinLightElement<*, *>) return true
+    if (this is KtLightElement<*, *>) return true
     // TODO: Temporary hack to avoid NPE while KotlinNoOriginLightMethod is around
-    if (this is KotlinLightMethod && this.getOrigin() == null) return true
+    if (this is KtLightMethod && this.getOrigin() == null) return true
     if (!(this is PsiMethod && isConstructor())) return true
     val klass = getContainingClass() ?: return true
     val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return true

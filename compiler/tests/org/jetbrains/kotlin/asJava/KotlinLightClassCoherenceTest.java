@@ -49,7 +49,7 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
 
     @NotNull
     protected PsiClass doTest(String qualifiedName) {
-        KotlinLightClass psiClass = (KotlinLightClass) finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject()));
+        KtLightClass psiClass = (KtLightClass) finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject()));
         assertNotNull("Class not found: " + qualifiedName, psiClass);
 
         Asserter asserter = new Asserter();
@@ -76,7 +76,7 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
             }
         }
 
-        public void assertModifiersCoherent(KotlinLightClass lightClass) {
+        public void assertModifiersCoherent(KtLightClass lightClass) {
             PsiClass delegate = lightClass.getDelegate();
             for (String modifier : PsiModifier.MODIFIERS) {
                 assertEquals("Incoherent modifier: " + modifier,
@@ -85,7 +85,7 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
             }
         }
 
-        public void assertPropertyCoherent(KotlinLightClass lightClass, String methodName) {
+        public void assertPropertyCoherent(KtLightClass lightClass, String methodName) {
             Class<?> reflect = PsiClass.class;
             try {
                 Method method = reflect.getMethod(methodName);

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<KtWhenExpression>(javaClass(), "Eliminate argument of 'when'"), LowPriorityAction {
+public class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpression>(javaClass(), "Eliminate argument of 'when'"), LowPriorityAction {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
         if (element.getSubjectExpression() !is KtNameReferenceExpression) return false
         val lBrace = element.getOpenBrace() ?: return false

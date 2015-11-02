@@ -30,7 +30,7 @@ import com.intellij.util.QueryExecutor
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -95,7 +95,7 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
             return runReadAction(fun(): Collection<PsiElement> {
                 if (useScope is GlobalSearchScope) {
                     val name = annClass.getName() ?: return emptyList()
-                    return JetAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
+                    return KotlinAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
                 }
 
                 return (useScope as LocalSearchScope).scope.flatMap { it.collectDescendantsOfType<KtAnnotationEntry>() }

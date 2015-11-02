@@ -39,11 +39,11 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
 import gnu.trove.THashMap
 import gnu.trove.TObjectHashingStrategy
-import org.jetbrains.kotlin.asJava.KotlinLightElement
+import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
+import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.core.getPackage
@@ -186,7 +186,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
 
             val declarationToReferenceTargets = HashMap<KtNamedDeclaration, MutableSet<PsiElement>>()
             for (declaration in elementsToMove) {
-                val referenceToContext = JetFileReferencesResolver.resolve(element = declaration, resolveQualifiers = false)
+                val referenceToContext = KotlinFileReferencesResolver.resolve(element = declaration, resolveQualifiers = false)
                 for ((refExpr, bindingContext) in referenceToContext) {
                     val refTarget = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.let { descriptor ->
                         DescriptorToSourceUtilsIde.getAnyDeclaration(declaration.getProject(), descriptor)
@@ -274,7 +274,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                         override fun equals(e1: PsiElement?, e2: PsiElement?): Boolean {
                             if (e1 === e2) return true
                             // Name should be enough to distinguish different light elements based on the same original declaration
-                            if (e1 is KotlinLightElement<*, *> && e2 is KotlinLightElement<*, *>) {
+                            if (e1 is KtLightElement<*, *> && e2 is KtLightElement<*, *>) {
                                 return e1.getOrigin() == e2.getOrigin() && e1.name == e2.name
                             }
                             return e1 == e2
@@ -283,7 +283,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                         override fun computeHashCode(e: PsiElement?): Int {
                             return when (e) {
                                 null -> 0
-                                is KotlinLightElement<*, *> -> e.getOrigin().hashCode()*31 + (e.name?.hashCode() ?: 0)
+                                is KtLightElement<*, *> -> e.getOrigin().hashCode() * 31 + (e.name?.hashCode() ?: 0)
                                 else -> e.hashCode()
                             }
                         }

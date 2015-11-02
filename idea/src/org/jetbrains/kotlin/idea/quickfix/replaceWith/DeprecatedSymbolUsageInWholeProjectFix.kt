@@ -29,10 +29,10 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.targetDescriptors
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -67,7 +67,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                 object : Task.Modal(project, "Applying '$text'", true) {
                     override fun run(indicator: ProgressIndicator) {
                         val usages = runReadAction {
-                            val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
+                            val searchScope = KotlinSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
                             ReferencesSearch.search(psiElement, searchScope)
                                     .filterIsInstance<KtSimpleNameReference>()
                                     .map { ref -> ref.expression }
@@ -118,7 +118,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
         }
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         //TODO: better rendering needed
         private val RENDERER = DescriptorRenderer.withOptions {
             modifiers = emptySet()

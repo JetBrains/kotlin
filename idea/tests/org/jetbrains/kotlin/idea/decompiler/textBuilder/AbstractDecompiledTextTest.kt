@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.decompiler.JetClsFile
+import org.jetbrains.kotlin.idea.decompiler.KtClsFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import kotlin.test.assertTrue
 
@@ -27,7 +27,7 @@ public abstract class AbstractDecompiledTextTest(baseDirectory: String) : Abstra
         NavigateToDecompiledLibraryTest.getClassFile(TEST_PACKAGE, getTestName(false), myModule!!)
 
     protected override fun checkPsiFile(psiFile: PsiFile) =
-            assertTrue(psiFile is JetClsFile, "Expecting decompiled kotlin file, was: " + psiFile.javaClass)
+            assertTrue(psiFile is KtClsFile, "Expecting decompiled kotlin file, was: " + psiFile.javaClass)
 }
 
 public abstract class AbstractCommonDecompiledTextTest : AbstractDecompiledTextTest("/decompiler/decompiledText")

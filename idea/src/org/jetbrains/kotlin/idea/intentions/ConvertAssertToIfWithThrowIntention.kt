@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<KtCallExpression>(javaClass(), "Replace 'assert' with 'if' statement"), LowPriorityAction {
+public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpression>(javaClass(), "Replace 'assert' with 'if' statement"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
         val callee = element.getCalleeExpression() ?: return false
         if (!callee.getTextRange().containsOffset(caretOffset)) return false

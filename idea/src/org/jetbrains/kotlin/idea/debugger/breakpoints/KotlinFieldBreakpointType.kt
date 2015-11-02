@@ -35,12 +35,12 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
-import org.jetbrains.kotlin.asJava.KotlinLightClass
-import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
-import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
+import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.breakpoints.dialog.AddFieldBreakpointDialog
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import javax.swing.JComponent
 
 public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointProperties>, XLineBreakpointType<KotlinPropertyBreakpointProperties>(
-        "kotlin-field", JetBundle.message("debugger.field.watchpoints.tab.title")
+        "kotlin-field", KotlinBundle.message("debugger.field.watchpoints.tab.title")
 ) {
     override fun createJavaBreakpoint(project: Project, breakpoint: XBreakpoint<KotlinPropertyBreakpointProperties>): Breakpoint<KotlinPropertyBreakpointProperties> {
         return KotlinFieldBreakpoint(project, breakpoint)
@@ -78,7 +78,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
                 }
 
                 val psiClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project))
-                if (psiClass !is KotlinLightClass) {
+                if (psiClass !is KtLightClass) {
                     reportError(project, "Couldn't find '$className' class")
                     return false
                 }
@@ -90,10 +90,10 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
                 }
 
                 result = when (psiClass) {
-                    is KotlinLightClassForFacade -> {
+                    is KtLightClassForFacade -> {
                         psiClass.files.asSequence().map { createBreakpointIfPropertyExists(it, it, className, fieldName) }.filterNotNull().firstOrNull()
                     }
-                    is KotlinLightClassForExplicitDeclaration -> {
+                    is KtLightClassForExplicitDeclaration -> {
                         val jetClass = psiClass.getOrigin()
                         createBreakpointIfPropertyExists(jetClass, jetClass.getContainingJetFile(), className, fieldName)
                     }

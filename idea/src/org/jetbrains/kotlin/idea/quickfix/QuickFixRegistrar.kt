@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.POSITIONED_VALUE_A
 
 public class QuickFixRegistrar : QuickFixContributor {
     public override fun registerQuickFixes(quickFixes: QuickFixes) {
-        fun DiagnosticFactory<*>.registerFactory(vararg factory: JetIntentionActionsFactory) {
+        fun DiagnosticFactory<*>.registerFactory(vararg factory: KotlinIntentionActionsFactory) {
             quickFixes.register(this, *factory)
         }
 

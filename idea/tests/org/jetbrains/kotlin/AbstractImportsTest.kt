@@ -18,7 +18,7 @@ package org.jetbrains.kotlin
 
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.PackageEntry
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -36,7 +36,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
         val tempSettings = settingManager.getCurrentSettings().clone()
         settingManager.setTemporarySettings(tempSettings)
 
-        val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
+        val codeStyleSettings = KotlinCodeStyleSettings.getInstance(getProject())
 
         try {
             val fixture = myFixture

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
+import org.jetbrains.kotlin.idea.util.PsiPrecedences
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<KtBinaryExpression>(javaClass(), "Flip binary expression"), LowPriorityAction {
+public class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(javaClass(), "Flip binary expression"), LowPriorityAction {
     companion object {
         private val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
 
@@ -73,17 +73,17 @@ public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<KtBinaryE
     }
 
     private fun leftSubject(element: KtBinaryExpression): KtExpression? {
-        return firstDescendantOfTighterPrecedence(element.getLeft(), JetPsiPrecedences.getPrecedence(element), KtBinaryExpression::getRight)
+        return firstDescendantOfTighterPrecedence(element.getLeft(), PsiPrecedences.getPrecedence(element), KtBinaryExpression::getRight)
     }
 
     private fun rightSubject(element: KtBinaryExpression): KtExpression? {
-        return firstDescendantOfTighterPrecedence(element.getRight(), JetPsiPrecedences.getPrecedence(element), KtBinaryExpression::getLeft)
+        return firstDescendantOfTighterPrecedence(element.getRight(), PsiPrecedences.getPrecedence(element), KtBinaryExpression::getLeft)
     }
 
     private fun firstDescendantOfTighterPrecedence(expression: KtExpression?, precedence: Int, getChild: KtBinaryExpression.() -> KtExpression?): KtExpression? {
         if (expression is KtBinaryExpression) {
-            val expressionPrecedence = JetPsiPrecedences.getPrecedence(expression)
-            if (!JetPsiPrecedences.isTighter(expressionPrecedence, precedence)) {
+            val expressionPrecedence = PsiPrecedences.getPrecedence(expression)
+            if (!PsiPrecedences.isTighter(expressionPrecedence, precedence)) {
                 return firstDescendantOfTighterPrecedence(expression.getChild(), precedence, getChild)
             }
         }

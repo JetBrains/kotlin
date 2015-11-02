@@ -20,7 +20,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
@@ -32,7 +32,7 @@ public class DeprecatedObjectInstanceFieldReferenceInspection : LocalInspectionT
                 if (!(resolvedTo is PsiField && resolvedTo.name == JvmAbi.DEPRECATED_INSTANCE_FIELD)) return
 
                 val containingClass = resolvedTo.containingClass
-                if (containingClass !is KotlinLightClass || containingClass.getOrigin() !is KtObjectDeclaration) return
+                if (containingClass !is KtLightClass || containingClass.getOrigin() !is KtObjectDeclaration) return
 
                 holder.registerProblem(
                         expression, "Use of deprecated '${JvmAbi.DEPRECATED_INSTANCE_FIELD}' field",
@@ -52,7 +52,7 @@ public class DeprecatedObjectInstanceFieldReferenceFix : LocalQuickFix {
         val reference = descriptor.psiElement.reference ?: return
         val deprecatedField = reference.resolve() as? PsiField ?: return
 
-        val lightClassForObject = deprecatedField.containingClass as? KotlinLightClass ?: return
+        val lightClassForObject = deprecatedField.containingClass as? KtLightClass ?: return
         val correctField = lightClassForObject.findFieldByName(JvmAbi.INSTANCE_FIELD, false) ?: return
 
         val newReference = reference.bindToElement(correctField)

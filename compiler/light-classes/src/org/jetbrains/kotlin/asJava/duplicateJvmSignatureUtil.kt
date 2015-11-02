@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForFileFacade(file: KtFile): Diagnostics? {
         val project = file.project
-        val cache = KotlinLightClassForFacade.FacadeStubCache.getInstance(project)
+        val cache = KtLightClassForFacade.FacadeStubCache.getInstance(project)
         val facadeFqName = NoResolveFileClassesProvider.getFileClassInfo(file).facadeClassFqName
         return cache[facadeFqName, moduleScope].getValue()?.extraDiagnostics
     }
 
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {
-        return KotlinLightClassForExplicitDeclaration.getLightClassData(ktClassOrObject).extraDiagnostics
+        return KtLightClassForExplicitDeclaration.getLightClassData(ktClassOrObject).extraDiagnostics
     }
 
     fun doGetDiagnostics(): Diagnostics? {

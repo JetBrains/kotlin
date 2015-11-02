@@ -27,7 +27,7 @@ public class KotlinBackspaceHandler extends BackspaceHandlerDelegate {
     @Override
     public void beforeCharDeleted(char c, PsiFile file, Editor editor) {
         int offset = editor.getCaretModel().getOffset() - 1;
-        deleteGt = c =='<' && file instanceof KtFile && JetLtGtTypingUtils.shouldAutoCloseAngleBracket(offset, editor);
+        deleteGt = c =='<' && file instanceof KtFile && LtGtTypingUtils.shouldAutoCloseAngleBracket(offset, editor);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class KotlinBackspaceHandler extends BackspaceHandlerDelegate {
         char c1 = chars.charAt(offset);
         if (c == '<' && deleteGt) {
             if (c1 == '>') {
-                JetLtGtTypingUtils.handleJetLTDeletion(editor, offset);
+                LtGtTypingUtils.handleJetLTDeletion(editor, offset);
             }
             return true;
         }

@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
-public class FoldWhenToReturnIntention : JetSelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Replace 'when' expression with return") {
+public class FoldWhenToReturnIntention : SelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Replace 'when' expression with return") {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
 

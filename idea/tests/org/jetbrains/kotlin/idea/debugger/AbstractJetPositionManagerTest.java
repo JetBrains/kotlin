@@ -83,12 +83,12 @@ public abstract class AbstractJetPositionManagerTest extends JetLightCodeInsight
     }
 
     @NotNull
-    private static JetPositionManager createPositionManager(
+    private static KotlinPositionManager createPositionManager(
             @NotNull DebugProcess process,
             @NotNull List<KtFile> files,
             @NotNull GenerationState state
     ) {
-        JetPositionManager positionManager = (JetPositionManager) new JetPositionManagerFactory().createPositionManager(process);
+        KotlinPositionManager positionManager = (KotlinPositionManager) new KotlinPositionManagerFactory().createPositionManager(process);
         assertNotNull(positionManager);
 
         for (KtFile file : files) {

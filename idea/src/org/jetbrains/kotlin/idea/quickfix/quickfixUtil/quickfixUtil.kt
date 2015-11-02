@@ -20,7 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -32,7 +32,7 @@ inline fun <reified T : PsiElement> Diagnostic.createIntentionForFirstParentOfTy
 
 fun createIntentionFactory(
     factory: (Diagnostic) -> IntentionAction?
-) = object : JetSingleIntentionActionFactory() {
+) = object : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic) = factory(diagnostic)
 }
 

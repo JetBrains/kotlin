@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(javaClass(), "Convert template to concatenated string"), LowPriorityAction {
+public class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(javaClass(), "Convert template to concatenated string"), LowPriorityAction {
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
         if (element.getLastChild().getNode().getElementType() != KtTokens.CLOSING_QUOTE) return false // not available for unclosed literal
         return element.getEntries().any { it is KtStringTemplateEntryWithExpression }

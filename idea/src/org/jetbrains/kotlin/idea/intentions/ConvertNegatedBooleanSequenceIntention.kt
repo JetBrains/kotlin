@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import java.util.LinkedList
 
 
-public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
+public class ConvertNegatedBooleanSequenceIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
         javaClass(), "Replace negated sequence with DeMorgan equivalent") {
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {

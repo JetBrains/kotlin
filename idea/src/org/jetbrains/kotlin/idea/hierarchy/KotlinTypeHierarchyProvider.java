@@ -32,8 +32,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper;
-import org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex;
+import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper;
+import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
@@ -63,7 +63,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
             }
 
             if (target instanceof KtClassOrObject) {
-                return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((KtClassOrObject) target);
+                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((KtClassOrObject) target);
             }
             // Factory methods
             else if (target instanceof KtNamedFunction) {
@@ -77,10 +77,10 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
                         String returnTypeText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
                         if (returnTypeText.equals(functionName)) {
                             Collection<KtClassOrObject> classOrObjects =
-                                    JetClassShortNameIndex.getInstance().get(functionName, project, GlobalSearchScope.allScope(project));
+                                    KotlinClassShortNameIndex.getInstance().get(functionName, project, GlobalSearchScope.allScope(project));
                             if (classOrObjects.size() == 1) {
                                 KtClassOrObject classOrObject = classOrObjects.iterator().next();
-                                return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);
+                                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);
                             }
                         }
                     }
@@ -93,13 +93,13 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
 
             KtClassOrObject classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject.class);
             if (classOrObject != null) {
-                return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);
+                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(classOrObject);
             }
         }
         else {
             PsiElement element = LangDataKeys.PSI_ELEMENT.getData(dataContext);
             if (element instanceof KtClassOrObject) {
-                return JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((KtClassOrObject) element);
+                return SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass((KtClassOrObject) element);
             }
         }
 

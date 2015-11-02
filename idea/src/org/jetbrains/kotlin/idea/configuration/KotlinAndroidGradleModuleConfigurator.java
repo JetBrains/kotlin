@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetPluginUtil;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
@@ -49,7 +49,7 @@ public class KotlinAndroidGradleModuleConfigurator extends KotlinWithGradleConfi
 
     @Override
     public boolean isApplicable(@NotNull Module module) {
-        return JetPluginUtil.isAndroidGradleModule(module);
+        return KotlinPluginUtil.isAndroidGradleModule(module);
     }
 
     @Override

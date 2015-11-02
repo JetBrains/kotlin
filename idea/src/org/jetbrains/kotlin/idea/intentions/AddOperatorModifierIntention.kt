@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.util.OperatorChecks
 
-class AddOperatorModifierIntention : JetSelfTargetingRangeIntention<KtNamedFunction>(KtNamedFunction::class.java, "Add 'operator' modifier") {
+class AddOperatorModifierIntention : SelfTargetingRangeIntention<KtNamedFunction>(KtNamedFunction::class.java, "Add 'operator' modifier") {
     override fun applicabilityRange(element: KtNamedFunction): TextRange? {
         val nameIdentifier = element.nameIdentifier ?: return null
         val functionDescriptor = element.resolveToDescriptor() as? FunctionDescriptor ?: return null

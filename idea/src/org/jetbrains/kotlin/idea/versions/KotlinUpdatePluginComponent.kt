@@ -25,7 +25,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.util.indexing.FileBasedIndex
-import org.jetbrains.kotlin.idea.JetPluginUtil
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex
@@ -46,7 +46,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
 
         val installedKotlinVersion = PropertiesComponent.getInstance()?.getValue(INSTALLED_KOTLIN_VERSION)
 
-        if (installedKotlinVersion == null || JetPluginUtil.getPluginVersion() != installedKotlinVersion) {
+        if (installedKotlinVersion == null || KotlinPluginUtil.getPluginVersion() != installedKotlinVersion) {
             val ideaPluginPaths = PathUtil.getKotlinPathsForIdeaPlugin()
 
             // Force refresh jar handlers
@@ -68,7 +68,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             fileBasedIndex.requestRebuild(KotlinJavaScriptMetaFileIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinModuleMappingIndex.KEY)
 
-            PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, JetPluginUtil.getPluginVersion())
+            PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, KotlinPluginUtil.getPluginVersion())
         }
     }
 

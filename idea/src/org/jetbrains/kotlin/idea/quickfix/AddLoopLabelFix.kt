@@ -73,7 +73,7 @@ public class AddLoopLabelFix(loop: KtLoopExpression, val jumpExpression: KtEleme
         return result
     }
 
-    companion object: JetSingleIntentionActionFactory() {
+    companion object: KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.getPsiElement() as? KtElement
             assert(element is KtBreakExpression || element is KtContinueExpression)

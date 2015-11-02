@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpression>(UsePropertyAccessSyntaxIntention()), CleanupLocalInspectionTool
 
-class UsePropertyAccessSyntaxIntention : JetSelfTargetingOffsetIndependentIntention<KtCallExpression>(javaClass(), "Use property access syntax") {
+class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(javaClass(), "Use property access syntax") {
     override fun isApplicableTo(element: KtCallExpression): Boolean {
         return detectPropertyNameToUse(element) != null
     }

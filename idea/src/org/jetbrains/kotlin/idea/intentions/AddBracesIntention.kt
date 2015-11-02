@@ -21,7 +21,7 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class AddBracesIntention : JetSelfTargetingIntention<KtExpression>(javaClass(), "Add braces") {
+public class AddBracesIntention : SelfTargetingIntention<KtExpression>(javaClass(), "Add braces") {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
         val expression = element.getTargetExpression(caretOffset) ?: return false
         if (expression is KtBlockExpression) return false

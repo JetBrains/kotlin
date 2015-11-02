@@ -20,10 +20,10 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
-public class ChangePackageToMatchDirectoryIntention : JetSelfTargetingOffsetIndependentIntention<KtPackageDirective>(
+public class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
         KtPackageDirective::class.java, "", "Change file's package to match directory"
 ) {
     override fun isApplicableTo(element: KtPackageDirective): Boolean {

@@ -20,10 +20,10 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
+object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtSimpleNameExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
@@ -49,7 +49,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
                 .firstOrNull() as? KtElement ?: return null
 
         return object: CreateFromUsageFixBase<KtSimpleNameExpression>(refExpr) {
-            override fun getText(): String = JetBundle.message("create.local.variable.from.usage", propertyName)
+            override fun getText(): String = KotlinBundle.message("create.local.variable.from.usage", propertyName)
 
             override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                 val assignment = refExpr.getAssignmentByLHS()

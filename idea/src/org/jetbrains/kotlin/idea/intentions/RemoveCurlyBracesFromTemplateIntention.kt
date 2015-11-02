@@ -27,7 +27,7 @@ import java.util.regex.Pattern
 
 public class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
 
-public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
+public class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
     override fun isApplicableTo(element: KtBlockStringTemplateEntry): Boolean {
         if (element.getExpression() !is KtNameReferenceExpression) return false
         val nextSiblingText = element.getNextSibling()?.getText()

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.KotlinAddImportAction
 import org.jetbrains.kotlin.idea.actions.createGroupedImportsAction
 import org.jetbrains.kotlin.idea.actions.createSingleImportAction
@@ -85,9 +85,9 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T, val di
         return createAction(element.project, editor).showHint()
     }
 
-    override fun getText() = JetBundle.message("import.fix")
+    override fun getText() = KotlinBundle.message("import.fix")
 
-    override fun getFamilyName() = JetBundle.message("import.fix")
+    override fun getFamilyName() = KotlinBundle.message("import.fix")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile)
             = super.isAvailable(project, editor, file) && suggestionCount > 0
@@ -218,7 +218,7 @@ internal class AutoImportFix(expression: KtSimpleNameExpression, diagnostic: Dia
 
     override fun getSupportedErrors() = ERRORS
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.getPsiElement() as? KtSimpleNameExpression)?.let { AutoImportFix(it, diagnostic) }
 
@@ -236,7 +236,7 @@ internal class MissingInvokeAutoImportFix(expression: KtExpression, diagnostic: 
 
     override fun getSupportedErrors() = ERRORS
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) =
                 (diagnostic.psiElement as? KtExpression)?.let { MissingInvokeAutoImportFix(it, diagnostic) }
 
@@ -261,7 +261,7 @@ internal class MissingArrayAccessorAutoImportFix(element: KtArrayAccessExpressio
 
     override fun getSupportedErrors() = ERRORS
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtArrayAccessExpression>? {
             assert(diagnostic.factory == Errors.NO_GET_METHOD || diagnostic.factory == Errors.NO_SET_METHOD)
 
@@ -301,7 +301,7 @@ internal class MissingDelegateAccessorsAutoImportFix(element: KtExpression, diag
 
     override fun getSupportedErrors() = ERRORS
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             assert(diagnostic.factory == Errors.DELEGATE_SPECIAL_FUNCTION_MISSING)
             return (diagnostic.psiElement as? KtExpression)?.let { MissingDelegateAccessorsAutoImportFix(it, listOf(diagnostic)) }
@@ -332,7 +332,7 @@ internal class MissingComponentsAutoImportFix(element: KtExpression, diagnostics
 
     override fun getSupportedErrors() = ERRORS
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             assert(diagnostic.factory == Errors.COMPONENT_FUNCTION_MISSING)
             return (diagnostic.psiElement as? KtExpression)?.let { MissingComponentsAutoImportFix(it, listOf(diagnostic)) }

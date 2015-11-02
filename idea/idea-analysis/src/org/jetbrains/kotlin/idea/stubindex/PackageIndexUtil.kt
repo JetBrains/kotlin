@@ -45,7 +45,7 @@ public object PackageIndexUtil {
             searchScope: GlobalSearchScope,
             project: Project
     ): Collection<KtFile> {
-        return JetExactPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope)
+        return KotlinExactPackagesIndex.getInstance().get(packageFqName.asString(), project, searchScope)
     }
 
     @JvmStatic
@@ -66,7 +66,7 @@ public object PackageIndexUtil {
     ): Boolean {
         var result = false
         StubIndex.getInstance().processElements<String, KtFile>(
-                JetExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, javaClass<KtFile>()
+                KotlinExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, javaClass<KtFile>()
         ) {
             result = true
             false
@@ -82,7 +82,7 @@ public object PackageIndexUtil {
     }
 
     private fun computeAllPossiblePackageClasses(project: Project): MultiMap<String, FqName> {
-        val packageFqNames = JetExactPackagesIndex.getInstance().getAllKeys(project)
+        val packageFqNames = KotlinExactPackagesIndex.getInstance().getAllKeys(project)
         val result = MultiMap<String, FqName>()
         for (packageFqName in packageFqNames) {
             val packageClassFqName = PackageClassUtils.getPackageClassFqName(FqName(packageFqName))

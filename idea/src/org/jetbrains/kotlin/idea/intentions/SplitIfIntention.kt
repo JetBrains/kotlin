@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class SplitIfIntention : JetSelfTargetingIntention<KtExpression>(javaClass(), "Split if into 2 if's") {
+public class SplitIfIntention : SelfTargetingIntention<KtExpression>(javaClass(), "Split if into 2 if's") {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
         return when (element) {
             is KtOperationReferenceExpression -> isOperatorValid(element)

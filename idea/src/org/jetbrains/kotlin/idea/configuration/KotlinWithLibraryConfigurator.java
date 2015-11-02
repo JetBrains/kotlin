@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.configuration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -36,7 +35,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetPluginUtil;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
@@ -70,9 +69,9 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     @Override
     public boolean isApplicable(@NotNull Module module) {
-        return !JetPluginUtil.isAndroidGradleModule(module) &&
-               !JetPluginUtil.isMavenModule(module) &&
-               !JetPluginUtil.isGradleModule(module);
+        return !KotlinPluginUtil.isAndroidGradleModule(module) &&
+               !KotlinPluginUtil.isMavenModule(module) &&
+               !KotlinPluginUtil.isGradleModule(module);
     }
 
     @Override

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTargetingOffsetIndependentIntention<KtNameReferenceExpression> (
+public class ReplaceItWithExplicitFunctionLiteralParamIntention() : SelfTargetingOffsetIndependentIntention<KtNameReferenceExpression> (
         javaClass(), "Replace 'it' with explicit parameter"
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtNameReferenceExpression)

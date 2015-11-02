@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange.Match
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange.Match
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
@@ -147,7 +147,7 @@ fun createNameCounterpartMap(from: KtElement, to: KtElement): Map<KtSimpleNameEx
 }
 
 class DuplicateInfo(
-        val range: JetPsiRange,
+        val range: KotlinPsiRange,
         val controlFlow: ControlFlow,
         val arguments: List<String>
 )
@@ -202,7 +202,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
 
     val unifierParameters = parameters.map { UnifierParameter(it.originalDescriptor, it.getParameterType(extractionData.options.allowSpecialClassNames)) }
 
-    val unifier = JetPsiUnifier(unifierParameters, true)
+    val unifier = KotlinPsiUnifier(unifierParameters, true)
 
     val scopeElement = getOccurrenceContainer() ?: return Collections.emptyList()
     val originalTextRange = extractionData.originalRange.getTextRange()
@@ -227,7 +227,7 @@ private fun makeCall(
         extractableDescriptor: ExtractableCodeDescriptor,
         declaration: KtNamedDeclaration,
         controlFlow: ControlFlow,
-        rangeToReplace: JetPsiRange,
+        rangeToReplace: KotlinPsiRange,
         arguments: List<String>) {
     fun insertCall(anchor: PsiElement, wrappedCall: KtExpression) {
         val firstExpression = rangeToReplace.elements.firstOrNull { it is KtExpression } as? KtExpression
@@ -253,7 +253,7 @@ private fun makeCall(
         anchor.replace(wrappedCall)
     }
 
-    if (rangeToReplace !is JetPsiRange.ListRange) return
+    if (rangeToReplace !is KotlinPsiRange.ListRange) return
 
     val anchor = rangeToReplace.startElement
     val anchorParent = anchor.getParent()!!

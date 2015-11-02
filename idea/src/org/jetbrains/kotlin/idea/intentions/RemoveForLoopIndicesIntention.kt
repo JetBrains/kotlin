@@ -40,7 +40,7 @@ public class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpr
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-public class RemoveForLoopIndicesIntention : JetSelfTargetingRangeIntention<KtForExpression>(javaClass(), "Remove indices in 'for' loop") {
+public class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(javaClass(), "Remove indices in 'for' loop") {
     private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
 
     override fun applicabilityRange(element: KtForExpression): TextRange? {

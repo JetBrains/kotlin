@@ -20,10 +20,10 @@ import com.intellij.psi.PsiClass;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KotlinLightClass;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.KtLightClass;
+import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration;
+import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
@@ -40,9 +40,9 @@ public class LightClassEqualsTest extends JetLightCodeInsightFixtureTestCase {
 
         PsiClass theClass = myFixture.getJavaFacade().findClass("A");
         assertNotNull(theClass);
-        assertInstanceOf(theClass, KotlinLightClassForExplicitDeclaration.class);
+        assertInstanceOf(theClass, KtLightClassForExplicitDeclaration.class);
 
-        doTestEquals(((KotlinLightClass) theClass).getOrigin());
+        doTestEquals(((KtLightClass) theClass).getOrigin());
     }
 
     public void testEqualsForDecompiledClass() throws Exception {
@@ -50,9 +50,9 @@ public class LightClassEqualsTest extends JetLightCodeInsightFixtureTestCase {
 
         PsiClass theClass = myFixture.getJavaFacade().findClass("kotlin.Unit");
         assertNotNull(theClass);
-        assertInstanceOf(theClass, KotlinLightClassForDecompiledDeclaration.class);
+        assertInstanceOf(theClass, KtLightClassForDecompiledDeclaration.class);
 
-        doTestEquals(((KotlinLightClass) theClass).getOrigin());
+        doTestEquals(((KtLightClass) theClass).getOrigin());
     }
 
     private static void doTestEquals(@Nullable KtClassOrObject origin) {

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
-public class ElvisToIfThenIntention : JetSelfTargetingRangeIntention<KtBinaryExpression>(javaClass(), "Replace elvis expression with 'if' expression"), LowPriorityAction {
+public class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(javaClass(), "Replace elvis expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
         return if (element.getOperationToken() == KtTokens.ELVIS && element.getLeft() != null && element.getRight() != null)
             element.getOperationReference().getTextRange()

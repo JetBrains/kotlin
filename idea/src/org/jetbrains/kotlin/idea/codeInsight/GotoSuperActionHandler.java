@@ -34,7 +34,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -78,7 +78,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
             JBPopup popup = descriptor instanceof ClassDescriptor
                             ? NavigationUtil.getPsiElementPopup(superDeclarationsArray, message)
                             : NavigationUtil.getPsiElementPopup(superDeclarationsArray,
-                                                                new JetFunctionPsiElementCellRenderer(), message);
+                                                                new KtFunctionPsiElementCellRenderer(), message);
             popup.showInBestPositionFor(editor);
         }
     }
@@ -86,15 +86,15 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
     @Nullable
     private static String getTitle(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
-            return JetBundle.message("goto.super.class.chooser.title");
+            return KotlinBundle.message("goto.super.class.chooser.title");
         }
 
         if (descriptor instanceof PropertyDescriptor) {
-            return JetBundle.message("goto.super.property.chooser.title");
+            return KotlinBundle.message("goto.super.property.chooser.title");
         }
 
         if (descriptor instanceof SimpleFunctionDescriptor) {
-            return JetBundle.message("goto.super.function.chooser.title");
+            return KotlinBundle.message("goto.super.function.chooser.title");
         }
 
         return null;

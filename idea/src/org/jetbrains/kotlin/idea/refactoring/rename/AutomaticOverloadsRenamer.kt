@@ -26,8 +26,8 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionByPackageIndex
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -54,7 +54,7 @@ private fun KtNamedFunction.getOverloads(): Collection<KtNamedFunction> {
                 val searchScope = GlobalSearchScope.moduleScope(module)
                 val fqName = getFqName()
                 if (fqName != null) {
-                    return JetTopLevelFunctionFqnNameIndex.getInstance().get(fqName.asString(), getProject(), searchScope)
+                    return KotlinTopLevelFunctionFqnNameIndex.getInstance().get(fqName.asString(), getProject(), searchScope)
                 }
             }
         }

@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -30,7 +30,7 @@ public fun ResolutionFacade.psiClassToDescriptor(
         psiClass: PsiClass,
         declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
 ): ClassifierDescriptor? {
-    return if (psiClass is KotlinLightClass && psiClass !is KotlinLightClassForDecompiledDeclaration) {
+    return if (psiClass is KtLightClass && psiClass !is KtLightClassForDecompiledDeclaration) {
         val origin = psiClass.getOrigin () ?: return null
         val declaration = declarationTranslator(origin) ?: return null
         resolveToDescriptor(declaration)

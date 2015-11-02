@@ -38,14 +38,14 @@ import com.intellij.psi.util.PsiUtil
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 import gnu.trove.THashSet
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.isTraitFakeOverride
 import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.JComponent
 
 private fun PsiMethod.isMethodWithDeclarationInOtherClass(): Boolean {
-    return this is KotlinLightMethod && this.isTraitFakeOverride()
+    return this is KtLightMethod && this.isTraitFakeOverride()
 }
 
 internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {

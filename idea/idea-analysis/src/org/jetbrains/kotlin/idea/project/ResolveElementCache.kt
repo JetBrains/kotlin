@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
-import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -105,8 +105,8 @@ public class ResolveElementCache(
 
     private fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
         return object : ProbablyNothingCallableNames {
-            override fun functionNames() = JetProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project)
-            override fun propertyNames() = JetProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project)
+            override fun functionNames() = KotlinProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project)
+            override fun propertyNames() = KotlinProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project)
         }
     }
 

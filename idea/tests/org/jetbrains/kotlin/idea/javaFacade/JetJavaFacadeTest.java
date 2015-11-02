@@ -21,8 +21,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.KotlinLightClass;
-import org.jetbrains.kotlin.asJava.KotlinLightMethod;
+import org.jetbrains.kotlin.asJava.KtLightClass;
+import org.jetbrains.kotlin.asJava.KtLightMethod;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
@@ -276,8 +276,8 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
     private static void checkDeclarationMethodWrapped(boolean shouldBeWrapped, KtDeclaration declaration, PsiMethod psiMethod) {
         if (shouldBeWrapped) {
             assertNotNull(String.format("Failed to wrap declaration '%s' to method", declaration.getText()), psiMethod);
-            assertInstanceOf(psiMethod, KotlinLightMethod.class);
-            assertEquals("Invalid original element for generated method", ((KotlinLightMethod) psiMethod).getOrigin(), declaration);
+            assertInstanceOf(psiMethod, KtLightMethod.class);
+            assertEquals("Invalid original element for generated method", ((KtLightMethod) psiMethod).getOrigin(), declaration);
         }
         else {
             assertNull("There should be no wrapper for given method", psiMethod);
@@ -296,7 +296,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         assertNotNull("Caret should be placed to class definition", ktClass);
 
         // Should not fail!
-        KotlinLightClass lightClass = (KotlinLightClass) LightClassUtil.INSTANCE$.getPsiClass(ktClass);
+        KtLightClass lightClass = (KtLightClass) LightClassUtil.INSTANCE$.getPsiClass(ktClass);
 
         assertNotNull(String.format("Failed to wrap jetClass '%s' to class", ktClass.getText()), lightClass);
 

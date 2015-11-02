@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.idea.intentions.splitPropertyDeclaration
 import org.jetbrains.kotlin.psi.KtIfExpression
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldPropertyToIfIntention : JetSelfTargetingRangeIntention<KtProperty>(javaClass(), "Replace property initializer with 'if' expression"), LowPriorityAction {
+public class UnfoldPropertyToIfIntention : SelfTargetingRangeIntention<KtProperty>(javaClass(), "Replace property initializer with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (!element.isLocal()) return null
         val initializer = element.getInitializer() as? KtIfExpression ?: return null

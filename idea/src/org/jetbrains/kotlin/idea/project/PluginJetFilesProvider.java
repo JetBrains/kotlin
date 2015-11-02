@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.project;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.stubindex.JetExactPackagesIndex;
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
+import org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex;
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope;
 import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.ArrayList;
@@ -31,9 +31,9 @@ public class PluginJetFilesProvider  {
     @NotNull
     public static Collection<KtFile> allFilesInProject(@NotNull Project project) {
         Collection<KtFile> result = new ArrayList<KtFile>();
-        GlobalSearchScope scope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project), project);
-        for (String packageWithFiles : JetExactPackagesIndex.getInstance().getAllKeys(project)) {
-            result.addAll(JetExactPackagesIndex.getInstance().get(packageWithFiles, project, scope));
+        GlobalSearchScope scope = KotlinSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project), project);
+        for (String packageWithFiles : KotlinExactPackagesIndex.getInstance().getAllKeys(project)) {
+            result.addAll(KotlinExactPackagesIndex.getInstance().get(packageWithFiles, project, scope));
         }
         return result;
     }

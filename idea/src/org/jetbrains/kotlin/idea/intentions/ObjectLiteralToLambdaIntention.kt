@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention())
 
-class ObjectLiteralToLambdaIntention : JetSelfTargetingRangeIntention<KtObjectLiteralExpression>(
+class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
         KtObjectLiteralExpression::class.java,
         "Convert to lambda",
         "Convert object literal to lambda"

@@ -46,7 +46,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 //TODO: should use change signature to deal with cases of multiple overridden descriptors
-public class QuickFixFactoryForTypeMismatchError extends JetIntentionActionsFactory {
+public class QuickFixFactoryForTypeMismatchError extends KotlinIntentionActionsFactory {
     private final static Logger LOG = Logger.getInstance(QuickFixFactoryForTypeMismatchError.class);
 
     @NotNull

@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
@@ -36,13 +36,13 @@ public class ChangeToStarProjectionFix extends KotlinQuickFixAction<KtTypeElemen
     @Override
     public String getText() {
         String stars = TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", getElement().getTypeArgumentsAsTypes().size());
-        return JetBundle.message("change.to.star.projection", stars);
+        return KotlinBundle.message("change.to.star.projection", stars);
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.to.star.projection.family");
+        return KotlinBundle.message("change.to.star.projection.family");
     }
 
     @Override
@@ -54,8 +54,8 @@ public class ChangeToStarProjectionFix extends KotlinQuickFixAction<KtTypeElemen
         }
     }
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 KtBinaryExpressionWithTypeRHS expression = QuickFixUtil

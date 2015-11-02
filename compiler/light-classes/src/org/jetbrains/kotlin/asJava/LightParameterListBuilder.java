@@ -27,10 +27,10 @@ import java.util.List;
 // Copy of com.intellij.psi.impl.light.LightParameterListBuilder
 public class LightParameterListBuilder extends LightElement implements PsiParameterList {
     private final List<PsiParameter> myParameters = new ArrayList<PsiParameter>();
-    private final KotlinLightMethod parent;
+    private final KtLightMethod parent;
     private PsiParameter[] myCachedParameters;
 
-    public LightParameterListBuilder(PsiManager manager, Language language, KotlinLightMethod parent) {
+    public LightParameterListBuilder(PsiManager manager, Language language, KtLightMethod parent) {
         super(manager, language);
         this.parent = parent;
     }
@@ -41,7 +41,7 @@ public class LightParameterListBuilder extends LightElement implements PsiParame
     }
 
     @Override
-    public KotlinLightMethod getParent() {
+    public KtLightMethod getParent() {
         return parent;
     }
 

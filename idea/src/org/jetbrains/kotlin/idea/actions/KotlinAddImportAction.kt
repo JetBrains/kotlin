@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -131,7 +131,7 @@ internal class KotlinAddImportAction(
     }
 
     private fun getVariantSelectionPopup(): BaseListPopupStep<AutoImportVariant> {
-        return object : BaseListPopupStep<AutoImportVariant>(JetBundle.message("imports.chooser.title"), variants) {
+        return object : BaseListPopupStep<AutoImportVariant>(KotlinBundle.message("imports.chooser.title"), variants) {
             override fun isAutoSelectionEnabled() = false
 
             override fun onChosen(selectedValue: AutoImportVariant?, finalChoice: Boolean): PopupStep<String>? {
@@ -250,7 +250,7 @@ internal interface AutoImportVariant {
     val hint: String
     val excludeFqNameCheck: FqName
 
-    fun icon(project: Project) = JetDescriptorIconProvider.getIcon(descriptorsToImport.first(), declarationToImport(project), 0)
+    fun icon(project: Project) = KotlinDescriptorIconProvider.getIcon(descriptorsToImport.first(), declarationToImport(project), 0)
 
     fun declarationToImport(project: Project): PsiElement? =
             DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptorsToImport.first())

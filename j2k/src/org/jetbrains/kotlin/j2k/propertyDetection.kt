@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignatureUtil
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -368,7 +368,7 @@ private class PropertyDetector(
             val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
             return if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name) else SuperInfo.Function
         }
-        else if (superMethod is KotlinLightMethod) {
+        else if (superMethod is KtLightMethod) {
             val origin = superMethod.getOrigin()
             return if (origin is KtProperty) SuperInfo.Property(origin.isVar, origin.name ?: "") else SuperInfo.Function
         }

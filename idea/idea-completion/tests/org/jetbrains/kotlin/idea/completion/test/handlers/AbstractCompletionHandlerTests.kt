@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
@@ -56,7 +56,7 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
 
             val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
-            val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
+            val codeStyleSettings = KotlinCodeStyleSettings.getInstance(getProject())
             for (line in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, CODE_STYLE_SETTING_PREFIX)) {
                 val index = line.indexOfOrNull('=') ?: error("Invalid code style setting '$line': '=' expected")
                 val settingName = line.substring(0, index).trim()

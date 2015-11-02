@@ -29,7 +29,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.util.ProgressWindowWithNotification
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinRuntimeTypeEvaluator
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -65,7 +65,7 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
     }
 
     override fun getTemplateDescription(): String {
-        return JetBundle.message("surround.with.runtime.type.cast.template")
+        return KotlinBundle.message("surround.with.runtime.type.cast.template")
     }
 
     private inner class SurroundWithCastWorker(

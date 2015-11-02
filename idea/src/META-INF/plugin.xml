@@ -20,7 +20,7 @@
 
   <project-components>
     <component>
-      <implementation-class>org.jetbrains.kotlin.idea.compiler.JetCompilerManager</implementation-class>
+      <implementation-class>org.jetbrains.kotlin.idea.compiler.KotlinCompilerManager</implementation-class>
     </component>
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification</implementation-class>
@@ -188,8 +188,8 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"
                         serviceImplementation="org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.configuration.JetModuleTypeManager"
-                        serviceImplementation="org.jetbrains.kotlin.idea.JetModuleTypeManagerImpl"/>
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.configuration.KotlinModuleTypeManager"
+                        serviceImplementation="org.jetbrains.kotlin.idea.KotlinModuleTypeManagerImpl"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.quickfix.QuickFixes"
                         serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
@@ -246,8 +246,8 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.versions.SuppressNotificationState"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$FacadeStubCache"
-                    serviceImplementation="org.jetbrains.kotlin.asJava.KotlinLightClassForFacade$FacadeStubCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KtLightClassForFacade$FacadeStubCache"
+                    serviceImplementation="org.jetbrains.kotlin.asJava.KtLightClassForFacade$FacadeStubCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluateExpressionCache"/>
@@ -283,12 +283,12 @@
     <internalFileTemplate name="Kotlin Enum"/>
     <internalFileTemplate name="Kotlin Interface"/>
 
-    <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.caches.JetGotoSymbolContributor"/>
-    <gotoClassContributor implementation="org.jetbrains.kotlin.idea.caches.JetGotoClassContributor"/>
+    <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.caches.KotlinGotoSymbolContributor"/>
+    <gotoClassContributor implementation="org.jetbrains.kotlin.idea.caches.KotlinGotoClassContributor"/>
     <lang.importOptimizer language="kotlin" implementationClass="org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer"/>
     <lang.namesValidator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.KotlinNamesValidator"/>
 
-    <fileTypeFactory implementation="org.jetbrains.kotlin.idea.JetFileFactory"/>
+    <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinFileTypeFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinJavaScriptMetaFileTypeFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinModuleFileFactory"/>
 
@@ -296,21 +296,21 @@
     <compiler.task execute="BEFORE" implementation="org.jetbrains.kotlin.idea.internal.makeBackup.MakeBackupCompileTask"/>
     <buildProcess.parametersProvider implementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinBuildProcessParametersProvider"/>
 
-    <lang.syntaxHighlighterFactory key="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.JetSyntaxHighlighterFactory"/>
-    <lang.braceMatcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.JetPairMatcher"/>
+    <lang.syntaxHighlighterFactory key="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinSyntaxHighlighterFactory"/>
+    <lang.braceMatcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinPairMatcher"/>
     <lang.parserDefinition language="kotlin" implementationClass="org.jetbrains.kotlin.parsing.JetParserDefinition"/>
-    <lang.commenter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.JetCommenter"/>
-    <lang.psiStructureViewFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.structureView.JetStructureViewFactory"/>
-    <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.kotlin.idea.structureView.JetClsStructureViewBuilderProvider"/>
+    <lang.commenter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinCommenter"/>
+    <lang.psiStructureViewFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.structureView.KotlinStructureViewFactory"/>
+    <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.kotlin.idea.structureView.KtClsStructureViewBuilderProvider"/>
 
     <lang.foldingBuilder language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinFoldingBuilder"/>
-    <lang.formatter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.formatter.JetFormattingModelBuilder"/>
+    <lang.formatter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.formatter.KotlinFormattingModelBuilder"/>
     <preFormatProcessor implementation="org.jetbrains.kotlin.idea.formatter.KotlinPreFormatProcessor"/>
-    <lang.findUsagesProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.findUsages.JetFindUsagesProvider"/>
+    <lang.findUsagesProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesProvider"/>
     <lang.elementManipulator forClass="org.jetbrains.kotlin.psi.KtStringTemplateExpression"
                              implementationClass="org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator"/>
     <fileStructureGroupRuleProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinDeclarationGroupRuleProvider"/>
-    <importFilteringRule implementation="org.jetbrains.kotlin.idea.findUsages.JetImportFilteringRule"/>
+    <importFilteringRule implementation="org.jetbrains.kotlin.idea.findUsages.KotlinImportFilteringRule"/>
     <lang.refactoringSupport language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider"/>
     <lang.surroundDescriptor language="kotlin"
                              implementationClass="org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.KotlinExpressionSurroundDescriptor"/>
@@ -341,15 +341,15 @@
     <refactoring.introduceParameterMethodUsagesProcessor
         implementation="org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterMethodUsageProcessor"/>
     <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler"/>
-    <treeStructureProvider implementation="org.jetbrains.kotlin.idea.projectView.JetProjectViewProvider" order="last" />
+    <treeStructureProvider implementation="org.jetbrains.kotlin.idea.projectView.KotlinProjectViewProvider" order="last" />
     <treeStructureProvider implementation="org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryContentsTreeStructureProvider" order="last"/>
 
     <colorSettingsPage implementation="org.jetbrains.kotlin.idea.highlighter.KotlinColorSettingsPage"/>
     <additionalTextAttributes scheme="Default" file="colorScheme/Default_Kotlin.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorScheme/Darcula_Kotlin.xml"/>
 
-    <codeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.JetCodeStyleSettingsProvider"/>
-    <langCodeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.JetLanguageCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinCodeStyleSettingsProvider"/>
+    <langCodeStyleSettingsProvider implementation="org.jetbrains.kotlin.idea.formatter.KotlinLanguageCodeStyleSettingsProvider"/>
 
     <projectConfigurable instance="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab"
                          id="project.kotlinCompiler"
@@ -362,7 +362,7 @@
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinArrayAccessParameterInfoHandler"/>
 
     <codeInsight.gotoSuper language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.GotoSuperActionHandler"/>
-    <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.JetTypeDeclarationProvider"/>
+    <typeDeclarationProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinTypeDeclarationProvider"/>
 
     <completion.contributor language="kotlin"
                             id="KotlinCompletionContributor"
@@ -412,22 +412,22 @@
 
     <spellchecker.support implementationClass="org.jetbrains.kotlin.idea.KotlinSpellcheckingStrategy" language="kotlin"/>
 
-    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType$Generic"/>
-    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType$TopLevel"/>
-    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType$Statement"/>
-    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType$Class"/>
-    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType$Expression"/>
-    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.JetTemplateContextType$Comment"/>
-    <defaultLiveTemplatesProvider implementation="org.jetbrains.kotlin.idea.liveTemplates.JetLiveTemplatesProvider"/>
-    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.JetAnyVariableMacro"/>
-    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.JetFunctionParametersMacro"/>
-    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.JetAnonymousSuperMacro"/>
-    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.JetIterableVariableMacro"/>
-    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.JetSuggestVariableNameMacro"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Generic"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$TopLevel"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Statement"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Class"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Expression"/>
+    <liveTemplateContext implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType$Comment"/>
+    <defaultLiveTemplatesProvider implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinLiveTemplatesProvider"/>
+    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.AnyVariableMacro"/>
+    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.FunctionParametersMacro"/>
+    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.AnonymousSuperMacro"/>
+    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.IterableVariableMacro"/>
+    <liveTemplateMacro implementation="org.jetbrains.kotlin.idea.liveTemplates.macro.SuggestVariableNameMacro"/>
     <liveTemplateOptionalProcessor implementation="org.jetbrains.kotlin.idea.liveTemplates.KotlinShortenFQNamesProcessor"/>
 
-    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.JetPsiCheckerAndHighlightingUpdater"/>
-    <highlightRangeExtension implementation="org.jetbrains.kotlin.idea.highlighter.JetPsiChecker"/>
+    <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater"/>
+    <highlightRangeExtension implementation="org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker"/>
 
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DebugInfoAnnotator"/>
     <annotator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureAnnotator"/>
@@ -463,23 +463,23 @@
     <runLineMarkerContributor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinRunLineMarkerContributor"/>
     <runLineMarkerContributor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor"/>
 
-    <iconProvider implementation="org.jetbrains.kotlin.idea.JetIconProvider"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetFunctionPresenter"
+    <iconProvider implementation="org.jetbrains.kotlin.idea.KotlinIconProvider"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtFunctionPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtFunction"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetClassPresenter"
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtClassPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtClass"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetObjectPresenter"
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtObjectPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtObjectDeclaration"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetPropertyPresenter"
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtPropertyPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtProperty"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetParameterPresenter"
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtParameterPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtParameter"/>
-    <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.kotlin.idea.JetGotoTargetRenderProvider"
+    <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.kotlin.idea.KotlinGotoTargetRenderProvider"
                                 order="first"/>
-    <elementDescriptionProvider implementation="org.jetbrains.kotlin.idea.findUsages.JetElementDescriptionProvider" order="first"/>
+    <elementDescriptionProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinElementDescriptionProvider" order="first"/>
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
-    <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.JetUsageTypeProvider"/>
+    <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinUsageTypeProvider"/>
     <useScopeEnlarger implementation="org.jetbrains.kotlin.idea.findUsages.BuiltInsUseScopeEnlarger"/>
 
     <refactoring.safeDeleteProcessor
@@ -491,7 +491,7 @@
         language="kotlin"
         implementationClass="org.jetbrains.kotlin.idea.refactoring.safeDelete.KotlinJavaSafeDeleteDelegate"/>
     <debugger.jvmSmartStepIntoHandler implementation="org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler"/>
-    <debugger.positionManagerFactory implementation="org.jetbrains.kotlin.idea.debugger.JetPositionManagerFactory"/>
+    <debugger.positionManagerFactory implementation="org.jetbrains.kotlin.idea.debugger.KotlinPositionManagerFactory"/>
     <debugger.codeFragmentFactory implementation="org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory"/>
     <debuggerEditorTextProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider"/>
     <debuggerClassFilterProvider implementation="org.jetbrains.kotlin.idea.debugger.filter.KotlinDebuggerInternalClassesFilterProvider"/>
@@ -531,31 +531,31 @@
         implementationClass="org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
 
     <java.elementFinder implementation="org.jetbrains.kotlin.asJava.JavaElementFinder"/>
-    <java.shortNamesCache implementation="org.jetbrains.kotlin.idea.caches.JetShortNamesCache"/>
+    <java.shortNamesCache implementation="org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache"/>
 
     <stubElementTypeHolder class="org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetExactPackagesIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelClassByPackageIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionByPackageIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyByPackageIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetPropertyShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFunctionShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetSuperClassIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyFqnNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetTopLevelExtensionsByReceiverTypeIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFileFacadeFqNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFilePartClassIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFileFacadeClassByPackageIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetFileFacadeShortNameIndex"/>
-    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetMultifileClassPartIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinSuperClassIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelExtensionsByReceiverTypeIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingPropertyShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeFqNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFilePartClassIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeClassByPackageIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeShortNameIndex"/>
+    <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.KotlinMultifileClassPartIndex"/>
 
-    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.JetClassFileDecompiler"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.KotlinClassFileDecompiler"/>
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.KotlinJavaScriptMetaFileDecompiler"/>
 
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.versions.KotlinAbiVersionIndex"/>
@@ -586,18 +586,18 @@
 
     <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
 
-    <exceptionFilter implementation="org.jetbrains.kotlin.idea.filters.JetExceptionFilterFactory" order="first"/>
+    <exceptionFilter implementation="org.jetbrains.kotlin.idea.filters.KotlinExceptionFilterFactory" order="first"/>
 
-    <applicationService serviceInterface="org.jetbrains.kotlin.idea.editor.JetEditorOptions"
-                        serviceImplementation="org.jetbrains.kotlin.idea.editor.JetEditorOptions"/>
-    <editorAppearanceConfigurable instance="org.jetbrains.kotlin.idea.editor.JetSettingEditorConfigurable"/>
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"
+                        serviceImplementation="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"/>
+    <editorAppearanceConfigurable instance="org.jetbrains.kotlin.idea.editor.KotlinEditorOptionsConfigurable"/>
 
     <statementUpDownMover id="jetExpression"
-                          implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.JetExpressionMover"
+                          implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover"
                           order="before declaration" />
 
     <statementUpDownMover id="jetDeclaration"
-                          implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.JetDeclarationMover"
+                          implementation="org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover"
                           order="before jetExpression" />
 
     <joinLinesHandler implementation="org.jetbrains.kotlin.idea.joinLines.JoinDeclarationAndAssignmentHandler"/>
@@ -605,7 +605,7 @@
 
     <targetElementEvaluator
         language="kotlin"
-        implementationClass="org.jetbrains.kotlin.idea.search.ideaExtensions.JetTargetElementEvaluator" />
+        implementationClass="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTargetElementEvaluator" />
 
     <refactoring.pullUpHelperFactory
         language="kotlin"

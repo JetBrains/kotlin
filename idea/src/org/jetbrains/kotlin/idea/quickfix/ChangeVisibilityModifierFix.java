@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
@@ -46,13 +46,13 @@ public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<KtDeclarat
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("change.visibility.modifier");
+        return KotlinBundle.message("change.visibility.modifier");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.visibility.modifier");
+        return KotlinBundle.message("change.visibility.modifier");
     }
 
     @Override
@@ -107,8 +107,8 @@ public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<KtDeclarat
         return DescriptorUtilsKt.toKeywordToken(maxVisibility);
     }
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtDeclaration> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();

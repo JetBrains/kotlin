@@ -115,7 +115,7 @@ public class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAct
         }
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val argument = diagnostic.psiElement.getParentOfType<KtValueArgument>(false) ?: return null
             return AddNameToArgumentFix(argument)

@@ -21,7 +21,7 @@ import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.settings.DebuggerSettings
 import com.sun.jdi.Location
 import com.sun.jdi.request.StepRequest
-import org.jetbrains.kotlin.idea.debugger.JetPositionManager
+import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
@@ -32,7 +32,7 @@ public class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFil
         }
 
         val debugProcess = context.getDebugProcess()
-        val positionManager = JetPositionManager(debugProcess!!)
+        val positionManager = KotlinPositionManager(debugProcess!!)
         val location = context.getFrameProxy()!!.location()
         return runReadAction {
             shouldFilter(positionManager, location)
@@ -40,7 +40,7 @@ public class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFil
     }
 
 
-    private fun shouldFilter(positionManager: JetPositionManager, location: Location): Boolean {
+    private fun shouldFilter(positionManager: KotlinPositionManager, location: Location): Boolean {
         val defaultStrata = location.declaringType().defaultStratum()
         if ("Kotlin" != defaultStrata) {
             return false;

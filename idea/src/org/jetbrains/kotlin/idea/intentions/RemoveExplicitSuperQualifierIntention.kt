@@ -44,7 +44,7 @@ public class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<K
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-public class RemoveExplicitSuperQualifierIntention : JetSelfTargetingRangeIntention<KtSuperExpression>(javaClass(), "Remove explicit supertype qualification") {
+public class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSuperExpression>(javaClass(), "Remove explicit supertype qualification") {
     override fun applicabilityRange(element: KtSuperExpression): TextRange? {
         if (element.superTypeQualifier == null) return null
 
