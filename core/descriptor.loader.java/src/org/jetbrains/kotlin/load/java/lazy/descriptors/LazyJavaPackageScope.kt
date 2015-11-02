@@ -107,11 +107,13 @@ public class LazyJavaPackageScope(
     }
 
     override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
         recordLookup(name, location)
         return deserializedPackageScope().getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED)
     }
 
     override fun getFunctions(name: Name, location: LookupLocation): List<FunctionDescriptor> {
+        // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
         recordLookup(name, location)
         return deserializedPackageScope().getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
     }

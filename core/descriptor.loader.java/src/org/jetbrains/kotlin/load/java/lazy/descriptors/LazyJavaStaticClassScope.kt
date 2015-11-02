@@ -63,7 +63,10 @@ public class LazyJavaStaticClassScope(
             memberIndex().getAllFieldNames() + (if (jClass.isEnum) listOf(DescriptorUtils.ENUM_VALUES) else emptyList())
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        // We don't need to track lookups here because we find nested/inner classes in LazyJavaClassMemberScope
+        return null
+    }
 
     override fun getSubPackages(): Collection<FqName> = listOf()
 

@@ -16,15 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesProperty
+import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.utils.Printer
-import java.util.ArrayList
+import java.util.*
 
+// We don't need to track lookups here since this scope used only for introduce special Enum class members
 public class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
 ) : KtScopeImpl() {
