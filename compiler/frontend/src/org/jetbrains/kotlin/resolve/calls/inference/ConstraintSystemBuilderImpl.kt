@@ -149,15 +149,15 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
                 return true
             }
 
-            override fun capture(typeVariable: KotlinType, typeProjection: TypeProjection): Boolean {
+            override fun capture(type: KotlinType, typeProjection: TypeProjection): Boolean {
                 if (isMyTypeVariable(typeProjection.type)) return false
-                val myTypeVariable = getMyTypeVariable(typeVariable)
+                val myTypeVariable = getMyTypeVariable(type)
 
                 if (myTypeVariable != null && constraintPosition.isParameter()) {
                     if (depth > 0) {
                         errors.add(CannotCapture(constraintPosition, myTypeVariable))
                     }
-                    generateTypeParameterCaptureConstraint(typeVariable, typeProjection, newConstraintContext)
+                    generateTypeParameterCaptureConstraint(myTypeVariable, typeProjection, newConstraintContext, type.isMarkedNullable)
                     return true
                 }
                 return false
@@ -311,16 +311,16 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     }
 
     private fun generateTypeParameterCaptureConstraint(
-            parameterType: KotlinType,
+            typeVariable: TypeParameterDescriptor,
             constrainingTypeProjection: TypeProjection,
-            constraintContext: ConstraintContext
+            constraintContext: ConstraintContext,
+            isTypeMarkedNullable: Boolean
     ) {
-        val typeVariable = getMyTypeVariable(parameterType)!!
         if (!typeVariable.upperBounds.let { it.size == 1 && it.single().isDefaultBound() } &&
                 constrainingTypeProjection.projectionKind == Variance.IN_VARIANCE) {
             errors.add(CannotCapture(constraintContext.position, typeVariable))
         }
-        val typeProjection = if (parameterType.isMarkedNullable) {
+        val typeProjection = if (isTypeMarkedNullable) {
             TypeProjectionImpl(constrainingTypeProjection.projectionKind, TypeUtils.makeNotNullable(constrainingTypeProjection.type))
         }
         else {

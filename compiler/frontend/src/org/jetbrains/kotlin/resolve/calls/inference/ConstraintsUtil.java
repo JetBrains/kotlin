@@ -30,11 +30,11 @@ import java.util.*;
 
 public class ConstraintsUtil {
     @Nullable
-    public static TypeParameterDescriptor getFirstConflictingParameter(@NotNull ConstraintSystem constraintSystem) {
-        for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeParameterDescriptors()) {
-            TypeBounds constraints = constraintSystem.getTypeBounds(typeParameter);
+    public static TypeParameterDescriptor getFirstConflictingVariable(@NotNull ConstraintSystem constraintSystem) {
+        for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
+            TypeBounds constraints = constraintSystem.getTypeBounds(typeVariable);
             if (constraints.getValues().size() > 1) {
-                return typeParameter;
+                return typeVariable;
             }
         }
         return null;
@@ -42,10 +42,11 @@ public class ConstraintsUtil {
 
     @NotNull
     public static Collection<TypeSubstitutor> getSubstitutorsForConflictingParameters(@NotNull ConstraintSystem constraintSystem) {
-        TypeParameterDescriptor firstConflictingParameter = getFirstConflictingParameter(constraintSystem);
-        if (firstConflictingParameter == null) return Collections.emptyList();
+        TypeParameterDescriptor firstConflictingVariable = getFirstConflictingVariable(constraintSystem);
+        if (firstConflictingVariable == null) return Collections.emptyList();
+        TypeParameterDescriptor firstConflictingParameter = constraintSystem.variableToDescriptor(firstConflictingVariable);
 
-        Collection<KotlinType> conflictingTypes = constraintSystem.getTypeBounds(firstConflictingParameter).getValues();
+        Collection<KotlinType> conflictingTypes = constraintSystem.getTypeBounds(firstConflictingVariable).getValues();
 
         List<Map<TypeConstructor, TypeProjection>> substitutionContexts = Lists.newArrayList();
         for (KotlinType type : conflictingTypes) {
@@ -54,16 +55,16 @@ public class ConstraintsUtil {
             substitutionContexts.add(context);
         }
 
-        for (TypeParameterDescriptor typeParameter : constraintSystem.getTypeParameterDescriptors()) {
-            if (typeParameter == firstConflictingParameter) continue;
+        for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
+            if (typeVariable == firstConflictingVariable) continue;
 
-            KotlinType safeType = getSafeValue(constraintSystem, typeParameter);
+            KotlinType safeType = getSafeValue(constraintSystem, typeVariable);
             for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
                 TypeProjection typeProjection = new TypeProjectionImpl(safeType);
-                context.put(typeParameter.getTypeConstructor(), typeProjection);
+                context.put(constraintSystem.variableToDescriptor(typeVariable).getTypeConstructor(), typeProjection);
             }
         }
-        Collection<TypeSubstitutor> typeSubstitutors = Lists.newArrayList();
+        Collection<TypeSubstitutor> typeSubstitutors = new ArrayList<TypeSubstitutor>(substitutionContexts.size());
         for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
             typeSubstitutors.add(TypeSubstitutor.create(context));
         }
@@ -71,13 +72,13 @@ public class ConstraintsUtil {
     }
 
     @NotNull
-    public static KotlinType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeParameterDescriptor typeParameter) {
-        KotlinType type = constraintSystem.getTypeBounds(typeParameter).getValue();
+    private static KotlinType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeParameterDescriptor typeVariable) {
+        KotlinType type = constraintSystem.getTypeBounds(typeVariable).getValue();
         if (type != null) {
             return type;
         }
         //todo may be error type
-        return TypeIntersector.getUpperBoundsAsType(typeParameter);
+        return TypeIntersector.getUpperBoundsAsType(constraintSystem.variableToDescriptor(typeVariable));
     }
 
     public static boolean checkUpperBoundIsSatisfied(
@@ -85,7 +86,7 @@ public class ConstraintsUtil {
             @NotNull TypeParameterDescriptor typeParameter,
             boolean substituteOtherTypeParametersInBound
     ) {
-        KotlinType type = constraintSystem.getTypeBounds(typeParameter).getValue();
+        KotlinType type = constraintSystem.getTypeBounds(constraintSystem.descriptorToVariable(typeParameter)).getValue();
         if (type == null) return true;
         for (KotlinType upperBound : typeParameter.getUpperBounds()) {
             if (!substituteOtherTypeParametersInBound &&

@@ -36,11 +36,15 @@ interface ConstraintSystem {
      */
     val typeVariables: Set<TypeParameterDescriptor>
 
+    fun descriptorToVariable(descriptor: TypeParameterDescriptor): TypeParameterDescriptor
+
+    fun variableToDescriptor(typeVariable: TypeParameterDescriptor): TypeParameterDescriptor
+
     /**
      * Returns the resulting type constraints of solving the constraint system for specific type parameter descriptor.
      * Throws IllegalArgumentException if the type parameter descriptor is not known to the system.
      */
-    fun getTypeBounds(descriptor: TypeParameterDescriptor): TypeBounds
+    fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBounds
 
     /**
      * Returns the result of solving the constraint system (mapping from the type variable to the resulting type projection).

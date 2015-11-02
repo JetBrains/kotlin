@@ -112,8 +112,9 @@ internal class ConstraintSystemImpl(
 
     override fun getNestedTypeVariables(type: KotlinType): List<TypeParameterDescriptor> {
         return type.getNestedArguments().map { typeProjection ->
-            typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
-        }.filterNotNull().filter { it in typeParameterDescriptors }
+            val descriptor = typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
+            descriptor?.let { descriptorToVariable[it] }
+        }.filterNotNull()
     }
 
     override val typeParameterDescriptors: Set<TypeParameterDescriptor>
@@ -122,13 +123,15 @@ internal class ConstraintSystemImpl(
     override val typeVariables: Set<TypeParameterDescriptor>
         get() = variableToDescriptor.keys
 
-    override fun getTypeBounds(descriptor: TypeParameterDescriptor): TypeBoundsImpl {
-        val variable = descriptorToVariable[descriptor]
-        if (variable != null && variable != descriptor) {
-            return getTypeBounds(variable)
-        }
-        return allTypeParameterBounds[descriptor] ?:
-               throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $descriptor")
+    override fun descriptorToVariable(descriptor: TypeParameterDescriptor): TypeParameterDescriptor =
+            descriptorToVariable[descriptor] ?: throw IllegalArgumentException("Unknown descriptor: $descriptor")
+
+    override fun variableToDescriptor(typeVariable: TypeParameterDescriptor): TypeParameterDescriptor =
+            variableToDescriptor[typeVariable] ?: throw IllegalArgumentException("Unknown type variable: $typeVariable")
+
+    override fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBoundsImpl {
+        return allTypeParameterBounds[typeVariable] ?:
+               throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $typeVariable")
     }
 
     override val resultingSubstitutor: TypeSubstitutor
