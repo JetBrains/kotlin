@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -216,6 +218,15 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
         newTypeInfo.putAll(a, collectTypesFromMeAndParents(b));
         newTypeInfo.putAll(b, collectTypesFromMeAndParents(a));
+        if (!a.getType().equals(b.getType())) {
+            // To avoid smart casts to Nothing or Nothing? and recording base types of own type
+            if (!KotlinBuiltIns.isNothingOrNullableNothing(b.getType()) && !TypeUtilsKt.isSubtypeOf(a.getType(), b.getType())) {
+                newTypeInfo.put(a, b.getType());
+            }
+            if (!KotlinBuiltIns.isNothingOrNullableNothing(a.getType()) && !TypeUtilsKt.isSubtypeOf(b.getType(), a.getType())) {
+                newTypeInfo.put(b, a.getType());
+            }
+        }
         changed |= !newTypeInfo.isEmpty();
 
         return !changed
