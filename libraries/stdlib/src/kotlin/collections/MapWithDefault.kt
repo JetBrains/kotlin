@@ -1,7 +1,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MapsKt")
 
-package kotlin
+package kotlin.collections
 
 import java.util.*
 

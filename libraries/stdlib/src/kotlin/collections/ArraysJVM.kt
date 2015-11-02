@@ -1,7 +1,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("ArraysKt")
 
-package kotlin
+package kotlin.collections
 
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin;
+package kotlin.collections;
 
 import java.util.Arrays;
 import java.util.List;

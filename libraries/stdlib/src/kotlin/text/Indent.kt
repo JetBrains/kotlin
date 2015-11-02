@@ -1,7 +1,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
-package kotlin
+package kotlin.text
 
 /**
  * Trims leading whitespace characters followed by [marginPrefix] from every line of a source string and removes

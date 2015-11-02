@@ -2,7 +2,7 @@
 @file:kotlin.jvm.JvmName("StringsKt")
 
 
-package kotlin
+package kotlin.text
 
 import java.util.NoSuchElementException
 import kotlin.text.MatchResult
