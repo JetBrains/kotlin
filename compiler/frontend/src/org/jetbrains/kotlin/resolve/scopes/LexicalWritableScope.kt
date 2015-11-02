@@ -93,16 +93,7 @@ class LexicalWritableScope(
         }
     }
 
-    private inner class Snapshot(val descriptorLimit: Int) : LexicalScope {
-        override val parent: LexicalScope
-            get() = this@LexicalWritableScope.parent
-        override val ownerDescriptor: DeclarationDescriptor
-            get() = this@LexicalWritableScope.ownerDescriptor
-        override val isOwnerDescriptorAccessibleByLabel: Boolean
-            get() = this@LexicalWritableScope.isOwnerDescriptorAccessibleByLabel
-        override val implicitReceiver: ReceiverParameterDescriptor?
-            get() = this@LexicalWritableScope.implicitReceiver
-
+    private inner class Snapshot(val descriptorLimit: Int) : LexicalScope by this {
         override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
                 = this@LexicalWritableScope.addedDescriptors.subList(0, descriptorLimit)
 
