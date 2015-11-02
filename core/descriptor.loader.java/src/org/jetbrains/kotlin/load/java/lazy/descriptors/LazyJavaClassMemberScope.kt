@@ -615,7 +615,10 @@ public class LazyJavaClassMemberScope(
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? =
             DescriptorUtils.getDispatchReceiverParameterIfNeeded(getContainingDeclaration())
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = nestedClasses(name)
+    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        recordLookup(name, location)
+        return nestedClasses(name)
+    }
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
             = nestedClassIndex().keySet() + enumEntryIndex().keySet()

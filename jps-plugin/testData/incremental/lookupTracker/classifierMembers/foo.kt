@@ -31,6 +31,8 @@ import bar.*
         }
     }
 
+    inner class C
+
     companion object {
         val a = 1
         fun baz() {}
@@ -44,6 +46,8 @@ import bar.*
 /*p:foo*/interface I {
     var a: /*c:foo.I p:foo*/Int
     fun foo()
+
+    class NI
 }
 
 /*p:foo*/object Obj : /*p:foo*/I {

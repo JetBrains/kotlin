@@ -31,3 +31,16 @@ import bar.*
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/X./*c:foo.E*/a
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/Y./*c:foo.E*/foo()
 }
+
+/*p:foo*/fun classifiers(
+        a: /*p:foo*/A,
+        ab: /*p:foo*/A./*c:foo.A*/B,
+        ac: /*p:foo*/A./*c:foo.A*/C,
+        abCo: /*p:foo*/A./*c:foo.A*/B./*c:foo.A.B*/CO,
+        aCompanion: /*p:foo*/A./*c:foo.A*/Companion,
+        aO: /*p:foo*/A./*c:foo.A*/O,
+        i: /*p:foo*/I,
+        ni: /*p:foo*/I./*c:foo.I*/NI,
+        obj: /*p:foo*/Obj,
+        e: /*p:foo*/E
+) {}
