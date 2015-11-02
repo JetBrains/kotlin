@@ -255,16 +255,16 @@ public open class JetChangeInfo(
                && getMethod() == DescriptorToSourceUtils.descriptorToDeclaration(inheritedCallableDescriptor)
     }
 
-    public fun getNewParametersSignature(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
+    public fun getNewParametersSignature(inheritedCallable: JetCallableDefinitionUsage<*>): String {
         return "(" + getNewParametersSignatureWithoutParentheses(inheritedCallable) + ")"
     }
 
     public fun getNewParametersSignatureWithoutParentheses(
-            inheritedCallable: JetCallableDefinitionUsage<PsiElement>
+            inheritedCallable: JetCallableDefinitionUsage<*>
     ): String {
         val signatureParameters = getNonReceiverParameters()
 
-        val isLambda = inheritedCallable.getDeclaration() is KtFunctionLiteral
+        val isLambda = inheritedCallable.declaration is KtFunctionLiteral
         if (isLambda && signatureParameters.size() == 1 && !signatureParameters.get(0).requiresExplicitType(inheritedCallable)) {
             return signatureParameters.get(0).getDeclarationSignature(0, inheritedCallable)
         }
@@ -274,16 +274,16 @@ public open class JetChangeInfo(
                 .joinToString(separator = ", ")
     }
 
-    public fun renderReceiverType(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String? {
+    public fun renderReceiverType(inheritedCallable: JetCallableDefinitionUsage<*>): String? {
         val receiverTypeText = receiverParameterInfo?.currentTypeText ?: return null
-        val typeSubstitutor = inheritedCallable.getOrCreateTypeSubstitutor() ?: return receiverTypeText
-        val currentBaseFunction = inheritedCallable.getBaseFunction().getCurrentCallableDescriptor() ?: return receiverTypeText
-        return currentBaseFunction.getExtensionReceiverParameter()!!.getType().renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
+        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return receiverTypeText
+        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return receiverTypeText
+        return currentBaseFunction.extensionReceiverParameter!!.type.renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
     }
 
-    public fun renderReturnType(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
-        val typeSubstitutor = inheritedCallable.getOrCreateTypeSubstitutor() ?: return newReturnTypeText
-        val currentBaseFunction = inheritedCallable.getBaseFunction().getCurrentCallableDescriptor() ?: return newReturnTypeText
+    public fun renderReturnType(inheritedCallable: JetCallableDefinitionUsage<*>): String {
+        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return newReturnTypeText
+        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return newReturnTypeText
         return currentBaseFunction.getReturnType()!!.renderTypeWithSubstitution(typeSubstitutor, newReturnTypeText, false)
     }
 

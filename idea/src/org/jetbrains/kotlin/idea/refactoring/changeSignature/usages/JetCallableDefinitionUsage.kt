@@ -14,380 +14,279 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.usageView.UsageInfo;
-import kotlin.CollectionsKt;
-import kotlin.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.JavaResolutionUtils;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenWaitingSetKt;
-import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
-import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignatureUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
-import org.jetbrains.kotlin.types.substitutions.SubstitutionUtilsKt;
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbsent
+import org.jetbrains.kotlin.idea.core.setVisibility
+import org.jetbrains.kotlin.idea.core.toKeywordToken
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.getCallableSubstitutor
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
+import org.jetbrains.kotlin.utils.sure
 
-import java.util.List;
+class JetCallableDefinitionUsage<T : PsiElement>(
+        function: T,
+        val originalCallableDescriptor: CallableDescriptor,
+        baseFunction: JetCallableDefinitionUsage<PsiElement>?,
+        private val samCallType: KotlinType?
+) : JetUsageInfo<T>(function) {
+    val baseFunction: JetCallableDefinitionUsage<*> = baseFunction ?: this
 
-import static org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt.createPrimaryConstructorIfAbsent;
+    val hasExpectedType: Boolean = checkIfHasExpectedType(originalCallableDescriptor, isInherited)
 
-public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageInfo<T> {
-    @NotNull
-    private final CallableDescriptor originalCallableDescriptor;
-
-    private CallableDescriptor currentCallableDescriptor;
-
-    @NotNull
-    private final JetCallableDefinitionUsage<? extends PsiElement> baseFunction;
-
-    private final boolean hasExpectedType;
-
-    @Nullable
-    private final KotlinType samCallType;
-
-    @Nullable
-    private TypeSubstitutor typeSubstitutor;
-
-    public JetCallableDefinitionUsage(
-            @NotNull T function,
-            @NotNull CallableDescriptor originalCallableDescriptor,
-            @Nullable JetCallableDefinitionUsage<PsiElement> baseFunction,
-            @Nullable KotlinType samCallType
-    ) {
-        super(function);
-        this.originalCallableDescriptor = originalCallableDescriptor;
-        this.baseFunction = baseFunction != null ? baseFunction : this;
-        this.hasExpectedType = checkIfHasExpectedType(originalCallableDescriptor, isInherited());
-        this.samCallType = samCallType;
-    }
-
-    private static boolean checkIfHasExpectedType(@NotNull CallableDescriptor callableDescriptor, boolean isInherited) {
-        if (!(callableDescriptor instanceof AnonymousFunctionDescriptor && isInherited)) return false;
-
-        KtFunctionLiteral functionLiteral =
-                (KtFunctionLiteral) DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor);
-        assert functionLiteral != null : "No declaration found for " + callableDescriptor;
-
-        PsiElement parent = functionLiteral.getParent();
-        if (!(parent instanceof KtFunctionLiteralExpression)) return false;
-
-        KtFunctionLiteralExpression expression = (KtFunctionLiteralExpression) parent;
-        return ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL).get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression) != null;
-    }
-
-    @NotNull
-    public JetCallableDefinitionUsage<?> getBaseFunction() {
-        return baseFunction;
-    }
-
-    @NotNull
-    public PsiElement getDeclaration() {
-        //noinspection ConstantConditions
-        return getElement();
-    }
-
-    @Nullable
-    public TypeSubstitutor getOrCreateTypeSubstitutor() {
-        if (!isInherited()) return null;
-
-        if (typeSubstitutor == null) {
-            if (samCallType == null) {
-                typeSubstitutor = ChangeSignatureUtilsKt.getCallableSubstitutor(baseFunction, this);
-            }
-            else {
-                DeclarationDescriptor currentBaseDescriptor = baseFunction.getCurrentCallableDescriptor();
-                DeclarationDescriptor classDescriptor = currentBaseDescriptor != null
-                                                        ? currentBaseDescriptor.getContainingDeclaration()
-                                                        : null;
-
-                if (!(classDescriptor instanceof ClassDescriptor)) return null;
-
-                typeSubstitutor = SubstitutionUtilsKt.getTypeSubstitutor(
-                        ((ClassDescriptor) classDescriptor).getDefaultType(),
-                        samCallType
-                );
-            }
+    val currentCallableDescriptor: CallableDescriptor? by lazy {
+        val element = declaration
+        when (element) {
+            is KtFunction, is KtProperty, is KtParameter -> (element as KtDeclaration).resolveToDescriptor() as CallableDescriptor
+            is KtClass -> (element.resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor
+            is PsiMethod -> element.getJavaMethodDescriptor()
+            else -> null
         }
-        return typeSubstitutor;
     }
 
-    public final boolean isInherited() {
-        return baseFunction != this;
-    }
+    val typeSubstitutor: TypeSubstitutor? by lazy {
+        if (!isInherited) return@lazy null
 
-    public boolean hasExpectedType() {
-        return hasExpectedType;
-    }
-
-    @NotNull
-    public final CallableDescriptor getOriginalCallableDescriptor() {
-        return originalCallableDescriptor;
-    }
-
-    @Nullable
-    public final CallableDescriptor getCurrentCallableDescriptor() {
-        if (currentCallableDescriptor == null) {
-            PsiElement element = getDeclaration();
-
-            if (element instanceof KtFunction || element instanceof KtProperty || element instanceof KtParameter) {
-                currentCallableDescriptor = (CallableDescriptor) ResolutionUtils.resolveToDescriptor((KtDeclaration) element);
-            }
-            else if (element instanceof KtClass) {
-                currentCallableDescriptor = ((ClassDescriptor) ResolutionUtils.resolveToDescriptor((KtClass) element)).getUnsubstitutedPrimaryConstructor();
-            }
-            else if (element instanceof PsiMethod) {
-                currentCallableDescriptor = JavaResolutionUtils.getJavaMethodDescriptor((PsiMethod) element);
-            }
-        }
-        return currentCallableDescriptor;
-    }
-
-    @Override
-    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull T element, @NotNull UsageInfo[] allUsages) {
-        if (!(element instanceof KtNamedDeclaration)) return true;
-
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(element.getProject());
-
-        if (changeInfo.isNameChanged()) {
-            PsiElement identifier = ((KtCallableDeclaration) element).getNameIdentifier();
-
-            if (identifier != null) {
-                identifier.replace(psiFactory.createIdentifier(changeInfo.getNewName()));
-            }
-        }
-
-        changeReturnTypeIfNeeded(changeInfo, element);
-
-        KtParameterList parameterList = KtPsiUtilKt.getValueParameterList((KtNamedDeclaration) element);
-
-        if (changeInfo.isParameterSetOrOrderChanged()) {
-            processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory);
-        }
-        else if (parameterList != null) {
-            int paramIndex = originalCallableDescriptor.getExtensionReceiverParameter() != null ? 1 : 0;
-
-            for (KtParameter parameter : parameterList.getParameters()) {
-                JetParameterInfo parameterInfo = changeInfo.getNewParameters()[paramIndex];
-                changeParameter(paramIndex, parameter, parameterInfo);
-                paramIndex++;
-            }
-
-            ShortenWaitingSetKt.addToShorteningWaitSet(parameterList, Options.DEFAULT);
-        }
-
-        if (element instanceof KtCallableDeclaration && changeInfo.isReceiverTypeChanged()) {
-            //noinspection unchecked
-            String receiverTypeText = changeInfo.renderReceiverType((JetCallableDefinitionUsage<PsiElement>) this);
-            KtTypeReference receiverTypeRef = receiverTypeText != null ? psiFactory.createType(receiverTypeText) : null;
-            KtTypeReference newReceiverTypeRef = TypeRefHelpersKt
-                    .setReceiverTypeReference((KtCallableDeclaration) element, receiverTypeRef);
-            if (newReceiverTypeRef != null) {
-                ShortenWaitingSetKt.addToShorteningWaitSet(newReceiverTypeRef, ShortenReferences.Options.DEFAULT);
-            }
-        }
-
-        if (changeInfo.isVisibilityChanged() && !KtPsiUtil.isLocal((KtDeclaration) element)) {
-            changeVisibility(changeInfo, element);
-        }
-
-        return true;
-    }
-
-    protected void changeReturnTypeIfNeeded(JetChangeInfo changeInfo, PsiElement element) {
-        if (!(element instanceof KtCallableDeclaration)) return;
-        if (element instanceof KtConstructor) return;
-
-        KtCallableDeclaration callable = (KtCallableDeclaration) element;
-
-        boolean returnTypeIsNeeded;
-        if (element instanceof KtFunction) {
-            returnTypeIsNeeded = !(callable instanceof KtFunctionLiteral)
-                                 && (changeInfo.isRefactoringTarget(originalCallableDescriptor) || callable.getTypeReference() != null);
+        if (samCallType == null) {
+            getCallableSubstitutor(this.baseFunction, this)
         }
         else {
-            returnTypeIsNeeded = element instanceof KtProperty || element instanceof KtParameter;
+            val currentBaseDescriptor = this.baseFunction.currentCallableDescriptor
+            val classDescriptor = currentBaseDescriptor?.containingDeclaration as? ClassDescriptor ?: return@lazy null
+            getTypeSubstitutor(classDescriptor.defaultType, samCallType)
+        }
+    }
+
+    private fun checkIfHasExpectedType(callableDescriptor: CallableDescriptor, isInherited: Boolean): Boolean {
+        if (!(callableDescriptor is AnonymousFunctionDescriptor && isInherited)) return false
+
+        val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor) as KtFunctionLiteral?
+        assert(functionLiteral != null) { "No declaration found for " + callableDescriptor }
+
+        val parent = functionLiteral!!.parent as? KtFunctionLiteralExpression ?: return false
+
+        return parent.analyze(BodyResolveMode.PARTIAL)[BindingContext.EXPECTED_EXPRESSION_TYPE, parent] != null
+    }
+
+    val declaration: PsiElement
+        get() = element!!
+
+    val isInherited: Boolean
+        get() = baseFunction !== this
+
+    override fun processUsage(changeInfo: JetChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
+        if (element !is KtNamedDeclaration) return true
+
+        val psiFactory = KtPsiFactory(element.project)
+
+        if (changeInfo.isNameChanged) {
+            val identifier = (element as KtCallableDeclaration).nameIdentifier
+
+            identifier?.replace(psiFactory.createIdentifier(changeInfo.newName))
         }
 
-        if (changeInfo.isReturnTypeChanged() && returnTypeIsNeeded) {
-            callable.setTypeReference(null);
-            String returnTypeText = changeInfo.renderReturnType((JetCallableDefinitionUsage<PsiElement>) this);
+        changeReturnTypeIfNeeded(changeInfo, element)
+
+        val parameterList = element.getValueParameterList()
+
+        if (changeInfo.isParameterSetOrOrderChanged) {
+            processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory)
+        }
+        else if (parameterList != null) {
+            var paramIndex = if (originalCallableDescriptor.extensionReceiverParameter != null) 1 else 0
+
+            for (parameter in parameterList.parameters) {
+                val parameterInfo = changeInfo.newParameters[paramIndex]
+                changeParameter(paramIndex, parameter, parameterInfo)
+                paramIndex++
+            }
+
+            parameterList.addToShorteningWaitSet(Options.DEFAULT)
+        }
+
+        if (element is KtCallableDeclaration && changeInfo.isReceiverTypeChanged()) {
+            val receiverTypeText = changeInfo.renderReceiverType(this)
+            val receiverTypeRef = if (receiverTypeText != null) psiFactory.createType(receiverTypeText) else null
+            val newReceiverTypeRef = element.setReceiverTypeReference(receiverTypeRef)
+            newReceiverTypeRef?.addToShorteningWaitSet(ShortenReferences.Options.DEFAULT)
+        }
+
+        if (changeInfo.isVisibilityChanged() && !KtPsiUtil.isLocal(element as KtDeclaration)) {
+            changeVisibility(changeInfo, element)
+        }
+
+        return true
+    }
+
+    protected fun changeReturnTypeIfNeeded(changeInfo: JetChangeInfo, element: PsiElement) {
+        if (element !is KtCallableDeclaration) return
+        if (element is KtConstructor<*>) return
+
+        val returnTypeIsNeeded = if (element is KtFunction) {
+            element !is KtFunctionLiteral && (changeInfo.isRefactoringTarget(originalCallableDescriptor) || element.typeReference != null)
+        }
+        else {
+            element is KtProperty || element is KtParameter
+        }
+
+        if (changeInfo.isReturnTypeChanged && returnTypeIsNeeded) {
+            element.setTypeReference(null)
+            val returnTypeText = changeInfo.renderReturnType(this)
 
             //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
-            if (!(returnTypeText.equals("Unit") || returnTypeText.equals("kotlin.Unit"))) {
-                ShortenWaitingSetKt.addToShorteningWaitSet(
-                        callable.setTypeReference(KtPsiFactoryKt.KtPsiFactory(callable).createType(returnTypeText)),
-                        Options.DEFAULT
-                );
+            if (!(returnTypeText == "Unit" || returnTypeText == "kotlin.Unit")) {
+                element.setTypeReference(KtPsiFactory(element).createType(returnTypeText))!!.addToShorteningWaitSet(
+                        Options.DEFAULT)
             }
         }
     }
 
-    private void processParameterListWithStructuralChanges(
-            JetChangeInfo changeInfo,
-            PsiElement element,
-            KtParameterList parameterList,
-            KtPsiFactory psiFactory
-    ) {
-        int parametersCount = changeInfo.getNonReceiverParametersCount();
-        boolean isLambda = element instanceof KtFunctionLiteral;
-        boolean canReplaceEntireList = false;
+    private fun processParameterListWithStructuralChanges(
+            changeInfo: JetChangeInfo,
+            element: PsiElement,
+            originalParameterList: KtParameterList?,
+            psiFactory: KtPsiFactory) {
+        var parameterList = originalParameterList
+        val parametersCount = changeInfo.getNonReceiverParametersCount()
+        val isLambda = element is KtFunctionLiteral
+        var canReplaceEntireList = false
 
-        KtParameterList newParameterList = null;
+        var newParameterList: KtParameterList? = null
         if (isLambda) {
             if (parametersCount == 0) {
                 if (parameterList != null) {
-                    parameterList.delete();
-                    PsiElement arrow = ((KtFunctionLiteral)element).getArrow();
-                    if (arrow != null) {
-                        arrow.delete();
-                    }
-                    parameterList = null;
+                    parameterList.delete()
+                    val arrow = (element as KtFunctionLiteral).arrow
+                    arrow?.delete()
+                    parameterList = null
                 }
             }
             else {
-                newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignatureWithoutParentheses(
-                        (JetCallableDefinitionUsage<PsiElement>) this)
-                );
-                canReplaceEntireList = true;
+                newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignatureWithoutParentheses(this))
+                canReplaceEntireList = true
             }
         }
-        else if (!(element instanceof KtProperty || element instanceof KtParameter)) {
-            newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(
-                    (JetCallableDefinitionUsage<PsiElement>) this)
-            );
+        else if (!(element is KtProperty || element is KtParameter)) {
+            newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(this))
         }
 
-        if (newParameterList == null) return;
+        if (newParameterList == null) return
 
         if (parameterList != null) {
             if (canReplaceEntireList) {
-                newParameterList = (KtParameterList) parameterList.replace(newParameterList);
+                newParameterList = parameterList.replace(newParameterList) as KtParameterList
             }
             else {
-                newParameterList = replaceParameterListAndKeepDelimiters(parameterList, newParameterList);
+                newParameterList = replaceParameterListAndKeepDelimiters(parameterList, newParameterList)
             }
         }
         else {
-            if (element instanceof KtClass) {
-                KtPrimaryConstructor constructor = createPrimaryConstructorIfAbsent((KtClass) element);
-                KtParameterList oldParameterList = constructor.getValueParameterList();
-                assert oldParameterList != null : "primary constructor from factory has parameter list";
-                newParameterList = (KtParameterList) oldParameterList.replace(newParameterList);
+            if (element is KtClass) {
+                val constructor = element.createPrimaryConstructorIfAbsent()
+                val oldParameterList = constructor.valueParameterList.sure { "primary constructor from factory has parameter list" }
+                newParameterList = oldParameterList.replace(newParameterList) as KtParameterList
             }
             else if (isLambda) {
-                //noinspection ConstantConditions
-                KtFunctionLiteral functionLiteral = (KtFunctionLiteral) element;
-                PsiElement anchor = functionLiteral.getLBrace();
-                newParameterList = (KtParameterList) element.addAfter(newParameterList, anchor);
-                if (functionLiteral.getArrow() == null) {
-                    Pair<PsiElement, PsiElement> whitespaceAndArrow = psiFactory.createWhitespaceAndArrow();
-                    element.addRangeAfter(whitespaceAndArrow.getFirst(), whitespaceAndArrow.getSecond(), newParameterList);
+                val functionLiteral = element as KtFunctionLiteral
+                val anchor = functionLiteral.lBrace
+                newParameterList = element.addAfter(newParameterList, anchor) as KtParameterList
+                if (functionLiteral.arrow == null) {
+                    val whitespaceAndArrow = psiFactory.createWhitespaceAndArrow()
+                    element.addRangeAfter(whitespaceAndArrow.first, whitespaceAndArrow.second, newParameterList)
                 }
             }
         }
 
-        if (newParameterList != null) {
-            ShortenWaitingSetKt.addToShorteningWaitSet(newParameterList, Options.DEFAULT);
-        }
+        newParameterList.addToShorteningWaitSet(Options.DEFAULT)
     }
 
-    private static KtParameterList replaceParameterListAndKeepDelimiters(KtParameterList parameterList, KtParameterList newParameterList) {
-        List<KtParameter> oldParameters = parameterList.getParameters();
-        List<KtParameter> newParameters = newParameterList.getParameters();
-        int oldCount = oldParameters.size();
-        int newCount = newParameters.size();
+    private fun replaceParameterListAndKeepDelimiters(parameterList: KtParameterList, newParameterList: KtParameterList): KtParameterList {
+        val oldParameters = parameterList.parameters
+        val newParameters = newParameterList.parameters
+        val oldCount = oldParameters.size
+        val newCount = newParameters.size
 
-        int commonCount = Math.min(oldCount, newCount);
-        for (int i = 0; i < commonCount; i++) {
-            oldParameters.set(i, (KtParameter) oldParameters.get(i).replace(newParameters.get(i)));
+        val commonCount = Math.min(oldCount, newCount)
+        for (i in 0..commonCount - 1) {
+            oldParameters[i] = oldParameters[i].replace(newParameters[i]) as KtParameter
         }
 
-        if (commonCount == 0) return (KtParameterList) parameterList.replace(newParameterList);
+        if (commonCount == 0) return parameterList.replace(newParameterList) as KtParameterList
 
         if (oldCount > commonCount) {
-            parameterList.deleteChildRange(oldParameters.get(commonCount - 1).getNextSibling(),
-                                           CollectionsKt.last(oldParameters));
+            parameterList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, oldParameters.last())
         }
         else if (newCount > commonCount) {
-            parameterList.addRangeAfter(newParameters.get(commonCount - 1).getNextSibling(),
-                                        newParameterList.getLastChild().getPrevSibling(),
-                                        PsiTreeUtil.skipSiblingsBackward(parameterList.getLastChild(),
-                                                                         PsiWhiteSpace.class, PsiComment.class));
+            parameterList.addRangeAfter(newParameters[commonCount - 1].nextSibling,
+                                        newParameterList.lastChild.prevSibling,
+                                        PsiTreeUtil.skipSiblingsBackward(parameterList.lastChild,
+                                                                         PsiWhiteSpace::class.java, PsiComment::class.java))
         }
 
-        return parameterList;
+        return parameterList
     }
 
-    private static void changeVisibility(JetChangeInfo changeInfo, PsiElement element) {
-        KtModifierKeywordToken newVisibilityToken = DescriptorUtilsKt.toKeywordToken(changeInfo.getNewVisibility());
-
-        if (element instanceof KtCallableDeclaration) {
-            PsiModificationUtilsKt.setVisibility((KtCallableDeclaration)element, newVisibilityToken);
+    private fun changeVisibility(changeInfo: JetChangeInfo, element: PsiElement) {
+        val newVisibilityToken = changeInfo.newVisibility.toKeywordToken()
+        when (element) {
+            is KtCallableDeclaration -> element.setVisibility(newVisibilityToken)
+            is KtClass -> element.createPrimaryConstructorIfAbsent().setVisibility(newVisibilityToken)
+            else -> throw AssertionError("Invalid element: " + element.getElementTextWithContext())
         }
-        else if (element instanceof KtClass) {
-            PsiModificationUtilsKt.setVisibility(createPrimaryConstructorIfAbsent((KtClass) element), newVisibilityToken);
-        }
-        else throw new AssertionError("Invalid element: " + PsiUtilsKt.getElementTextWithContext(element));
     }
 
-    private void changeParameter(int parameterIndex, KtParameter parameter, JetParameterInfo parameterInfo) {
-        PsiElement valOrVarKeyword = parameter.getValOrVarKeyword();
-        JetValVar valOrVar = parameterInfo.getValOrVar();
+    private fun changeParameter(parameterIndex: Int, parameter: KtParameter, parameterInfo: JetParameterInfo) {
+        val valOrVarKeyword = parameter.valOrVarKeyword
+        val valOrVar = parameterInfo.valOrVar
 
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(getProject());
+        val psiFactory = KtPsiFactory(project)
+        val newKeyword = valOrVar.createKeyword(psiFactory)
         if (valOrVarKeyword != null) {
-            PsiElement newKeyword = valOrVar.createKeyword(psiFactory);
             if (newKeyword != null) {
-                valOrVarKeyword.replace(newKeyword);
+                valOrVarKeyword.replace(newKeyword)
             }
             else {
-                valOrVarKeyword.delete();
+                valOrVarKeyword.delete()
             }
         }
-        else if (valOrVar != JetValVar.None) {
-            PsiElement firstChild = parameter.getFirstChild();
-            //noinspection ConstantConditions
-            parameter.addBefore(valOrVar.createKeyword(psiFactory), firstChild);
-            parameter.addBefore(psiFactory.createWhiteSpace(), firstChild);
+        else if (valOrVar != JetValVar.None && newKeyword != null) {
+            val firstChild = parameter.firstChild
+            parameter.addBefore(newKeyword, firstChild)
+            parameter.addBefore(psiFactory.createWhiteSpace(), firstChild)
         }
 
-        if (parameterInfo.isTypeChanged() && parameter.getTypeReference() != null) {
-            String renderedType = parameterInfo.renderType(parameterIndex, this);
-            parameter.setTypeReference(psiFactory.createType(renderedType));
+        if (parameterInfo.isTypeChanged && parameter.typeReference != null) {
+            val renderedType = parameterInfo.renderType(parameterIndex, this)
+            parameter.setTypeReference(psiFactory.createType(renderedType))
         }
 
-        PsiElement identifier = parameter.getNameIdentifier();
-
-        if (identifier != null) {
-            //noinspection unchecked
-            String newName = parameterInfo.getInheritedName(this);
-            identifier.replace(psiFactory.createIdentifier(newName));
-        }
+        val newIdentifier = psiFactory.createIdentifier(parameterInfo.getInheritedName(this))
+        parameter.nameIdentifier?.replace(newIdentifier)
     }
 }

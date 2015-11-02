@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.changeSignature.ParameterInfo
 import org.jetbrains.kotlin.descriptors.*
@@ -152,19 +151,19 @@ public class JetParameterInfo @JvmOverloads constructor (
     }
 
     public fun renderType(parameterIndex: Int, inheritedCallable: JetCallableDefinitionUsage<*>): String {
-        val typeSubstitutor = inheritedCallable.getOrCreateTypeSubstitutor() ?: return currentTypeText
-        val currentBaseFunction = inheritedCallable.getBaseFunction().getCurrentCallableDescriptor() ?: return currentTypeText
+        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return currentTypeText
+        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return currentTypeText
         val parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType()
         return parameterType.renderTypeWithSubstitution(typeSubstitutor, currentTypeText, true)
     }
 
     public fun getInheritedName(inheritedCallable: JetCallableDefinitionUsage<*>): String {
-        if (!inheritedCallable.isInherited()) return name
+        if (!inheritedCallable.isInherited) return name
 
-        val baseFunction = inheritedCallable.getBaseFunction()
-        val baseFunctionDescriptor = baseFunction.getOriginalCallableDescriptor()
+        val baseFunction = inheritedCallable.baseFunction
+        val baseFunctionDescriptor = baseFunction.originalCallableDescriptor
 
-        val inheritedFunctionDescriptor = inheritedCallable.getOriginalCallableDescriptor()
+        val inheritedFunctionDescriptor = inheritedCallable.originalCallableDescriptor
         val inheritedParameterDescriptors = inheritedFunctionDescriptor.getValueParameters()
         if (originalIndex < 0
             || originalIndex >= baseFunctionDescriptor.getValueParameters().size()
@@ -179,18 +178,18 @@ public class JetParameterInfo @JvmOverloads constructor (
         }
     }
 
-    public fun requiresExplicitType(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): Boolean {
-        val inheritedFunctionDescriptor = inheritedCallable.getOriginalCallableDescriptor()
+    public fun requiresExplicitType(inheritedCallable: JetCallableDefinitionUsage<*>): Boolean {
+        val inheritedFunctionDescriptor = inheritedCallable.originalCallableDescriptor
         if (inheritedFunctionDescriptor !is AnonymousFunctionDescriptor) return true
 
-        if (originalIndex < 0) return !inheritedCallable.hasExpectedType()
+        if (originalIndex < 0) return !inheritedCallable.hasExpectedType
 
         val inheritedParameterDescriptor = inheritedFunctionDescriptor.getValueParameters().get(originalIndex)
         val parameter = DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor) as? KtParameter ?: return false
         return parameter.getTypeReference() != null
     }
 
-    public fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
+    public fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: JetCallableDefinitionUsage<*>): String {
         val buffer = StringBuilder()
 
         if (modifierList != null) {
@@ -207,7 +206,7 @@ public class JetParameterInfo @JvmOverloads constructor (
             buffer.append(": ").append(renderType(parameterIndex, inheritedCallable))
         }
 
-        if (!inheritedCallable.isInherited()) {
+        if (!inheritedCallable.isInherited) {
             defaultValueForParameter?.let { buffer.append(" = ").append(it.getText()) }
         }
 

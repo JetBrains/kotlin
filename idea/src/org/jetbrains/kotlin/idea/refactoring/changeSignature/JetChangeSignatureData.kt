@@ -101,12 +101,12 @@ public class JetChangeSignatureData(
     }
 
     override val originalPrimaryCallable: JetCallableDefinitionUsage<PsiElement> by lazy {
-        primaryCallables.first { it.getDeclaration() == baseDeclaration }
+        primaryCallables.first { it.declaration == baseDeclaration }
     }
 
     override val affectedCallables: Collection<UsageInfo> by lazy {
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
-            val primaryDeclaration = primaryFunction.getDeclaration() as? KtCallableDeclaration
+            val primaryDeclaration = primaryFunction.declaration as? KtCallableDeclaration
             val lightMethods = primaryDeclaration?.toLightMethods() ?: Collections.emptyList()
             lightMethods.flatMap { baseMethod ->
                 OverridingMethodsSearch

@@ -68,8 +68,8 @@ fun getCallableSubstitutor(
         baseFunction: JetCallableDefinitionUsage<*>,
         derivedCallable: JetCallableDefinitionUsage<*>
 ): TypeSubstitutor? {
-    val currentBaseFunction = baseFunction.getCurrentCallableDescriptor() ?: return null
-    val currentDerivedFunction = derivedCallable.getCurrentCallableDescriptor() ?: return null
+    val currentBaseFunction = baseFunction.currentCallableDescriptor ?: return null
+    val currentDerivedFunction = derivedCallable.currentCallableDescriptor ?: return null
     return getCallableSubstitutor(currentBaseFunction, currentDerivedFunction)
 }
 
