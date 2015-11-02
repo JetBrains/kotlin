@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
+import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
@@ -139,7 +139,7 @@ public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNam
         }
     }
 
-    val referenceToContext = JetFileReferencesResolver.resolve(file = file, elements = listOf(this))
+    val referenceToContext = KotlinFileReferencesResolver.resolve(file = file, elements = listOf(this))
 
     val usages = ArrayList<UsageInfo>()
     for ((refExpr, bindingContext) in referenceToContext) {

@@ -22,7 +22,7 @@ import com.intellij.psi.PsiImportList
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import com.intellij.psi.PsiJavaCodeReferenceElement
-import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 
 class Import(val name: String) : Element() {
     override fun generateCode(builder: CodeBuilder) {
@@ -71,7 +71,7 @@ private fun Converter.filterImport(name: String, ref: PsiJavaCodeReferenceElemen
     if (!JavaToKotlinClassMap.INSTANCE.mapPlatformClass(FqName(name)).isEmpty()) return null
 
     val target = ref.resolve()
-    if (target is KotlinLightClassForFacade) {
+    if (target is KtLightClassForFacade) {
         return quoteKeywords(target.getFqName().parent().toString()) + ".*"
     }
 

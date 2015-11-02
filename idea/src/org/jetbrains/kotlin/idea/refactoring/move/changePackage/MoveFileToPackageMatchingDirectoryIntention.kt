@@ -25,11 +25,11 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackages
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.RefactoringMessageUtil
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 
-public class MoveFileToPackageMatchingDirectoryIntention : JetSelfTargetingOffsetIndependentIntention<KtPackageDirective>(
+public class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
         javaClass(), "", "Move file to package-matching directory"
 ) {
     override fun isApplicableTo(element: KtPackageDirective): Boolean {

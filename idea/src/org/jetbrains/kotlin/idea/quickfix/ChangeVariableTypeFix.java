@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -64,13 +64,14 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclar
         FqName fqName = getElement().getFqName();
         if (fqName != null) propertyName = fqName.asString();
 
-        return JetBundle.message("change.element.type", propertyName, IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
+        return KotlinBundle
+                .message("change.element.type", propertyName, IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.type.family");
+        return KotlinBundle.message("change.type.family");
     }
 
     @Override
@@ -108,8 +109,8 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclar
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
@@ -128,8 +129,8 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclar
     }
 
     @NotNull
-    public static JetIntentionActionsFactory createFactoryForPropertyOrReturnTypeMismatchOnOverride() {
-        return new JetIntentionActionsFactory() {
+    public static KotlinIntentionActionsFactory createFactoryForPropertyOrReturnTypeMismatchOnOverride() {
+        return new KotlinIntentionActionsFactory() {
             @NotNull
             @Override
             protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {

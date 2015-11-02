@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
@@ -153,7 +153,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 descriptorsToImport: Collection<DeclarationDescriptor>
         ): List<ImportPath>? {
             val importInsertHelper = ImportInsertHelper.getInstance(file.project)
-            val codeStyleSettings = JetCodeStyleSettings.getInstance(file.project)
+            val codeStyleSettings = KotlinCodeStyleSettings.getInstance(file.project)
             val aliasImports = buildAliasImportMap(file)
 
             val importsToGenerate = HashSet<ImportPath>()

@@ -35,7 +35,7 @@ import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.HashSet
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
+import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.core.refactoring.isTrueJavaMethod
@@ -507,7 +507,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         // Delete OverriderUsageInfo and CallerUsageInfo for Kotlin declarations since they can't be processed correctly
         // TODO (OverriderUsageInfo only): Drop when OverriderUsageInfo.getElement() gets deleted
         val usageInfos = refUsages.get()
-        val adjustedUsages = usageInfos.filterNot { getOverriderOrCaller(it) is KotlinLightMethod }
+        val adjustedUsages = usageInfos.filterNot { getOverriderOrCaller(it) is KtLightMethod }
         if (adjustedUsages.size < usageInfos.size) {
             refUsages.set(adjustedUsages.toTypedArray())
         }
@@ -680,7 +680,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             callable: PsiElement,
             newReceiverInfo: JetParameterInfo?) {
         if (newReceiverInfo != null && (callable is KtNamedFunction) && callable.bodyExpression != null) {
-            val noReceiverRefToContext = JetFileReferencesResolver.resolve(callable, true, true).filter {
+            val noReceiverRefToContext = KotlinFileReferencesResolver.resolve(callable, true, true).filter {
                 val resolvedCall = it.key.getResolvedCall(it.value)
                 resolvedCall != null && !resolvedCall.dispatchReceiver.exists() && !resolvedCall.extensionReceiver.exists()
             }
@@ -818,7 +818,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                     }
                     if (usage is OverriderUsageInfo && usage.isOriginalOverrider) {
                         val overridingMethod = usage.overridingMethod
-                        if (overridingMethod != null && overridingMethod !is KotlinLightMethod) {
+                        if (overridingMethod != null && overridingMethod !is KtLightMethod) {
                             nullabilityPropagator.processMethod(overridingMethod)
                         }
                     }

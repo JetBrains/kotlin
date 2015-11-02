@@ -22,7 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 
 
 public class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecondaryConstructor) : KotlinQuickFixAction<KtSecondaryConstructor>(element) {
-    override fun getText() = JetBundle.message("insert.delegation.call", keywordToUse)
+    override fun getText() = KotlinBundle.message("insert.delegation.call", keywordToUse)
     override fun getFamilyName() = "Insert explicit delegation call"
 
     private val keywordToUse = if (isThis) "this" else "super"
@@ -60,7 +60,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecond
         return super.isAvailable(project, editor, file) && element.hasImplicitDelegationCall()
     }
 
-    object InsertThisDelegationCallFactory : JetSingleIntentionActionFactory() {
+    object InsertThisDelegationCallFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType<KtSecondaryConstructor> {
             secondaryConstructor ->
             if (secondaryConstructor.getContainingClassOrObject().getConstructorsCount() <= 1 ||
@@ -72,7 +72,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: KtSecond
         private fun KtClassOrObject.getConstructorsCount() = (descriptor as ClassDescriptor).getConstructors().size()
     }
 
-    object InsertSuperDelegationCallFactory : JetSingleIntentionActionFactory() {
+    object InsertSuperDelegationCallFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val secondaryConstructor = diagnostic.getPsiElement().getNonStrictParentOfType<KtSecondaryConstructor>() ?: return null
             if (!secondaryConstructor.hasImplicitDelegationCall()) return null

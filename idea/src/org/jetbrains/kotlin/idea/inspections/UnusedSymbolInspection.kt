@@ -41,7 +41,7 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
@@ -185,7 +185,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 val problemDescriptor = holder.getManager().createProblemDescriptor(
                         inspectionTarget,
                         textRange,
-                        JetBundle.message(messageKey, declaration.getName()),
+                        KotlinBundle.message(messageKey, declaration.getName()),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         true,
                         createQuickFix(declaration)

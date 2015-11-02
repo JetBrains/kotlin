@@ -52,7 +52,7 @@ public class LightClassAnnotationsTest extends KotlinAsJavaTestBase {
 
     private void doTest(@NotNull String fqName) {
         PsiClass psiClass = finder.findClass(fqName, GlobalSearchScope.allScope(getProject()));
-        if (!(psiClass instanceof KotlinLightClass)) {
+        if (!(psiClass instanceof KtLightClass)) {
             throw new IllegalStateException("Not a light class: " + psiClass + " (" + fqName + ")");
         }
 

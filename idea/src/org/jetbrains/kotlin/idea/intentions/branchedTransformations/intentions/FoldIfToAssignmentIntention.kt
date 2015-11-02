@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class FoldIfToAssignmentIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with assignment") {
+public class FoldIfToAssignmentIntention : SelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with assignment") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getThen()) ?: return null
         val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getElse()) ?: return null

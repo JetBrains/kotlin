@@ -27,7 +27,7 @@ import com.intellij.testIntegration.JavaTestFinder
 import com.intellij.testIntegration.TestFinderHelper
 import com.intellij.util.CommonProcessors
 import com.intellij.util.containers.HashSet
-import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -63,7 +63,7 @@ class KotlinTestFinder : JavaTestFinder() {
         for (candidateNameWithWeight in TestFinderHelper.collectPossibleClassNamesWithWeights(klass.name)) {
             for (eachClass in cache.getClassesByName(candidateNameWithWeight.first, scope)) {
                 if (eachClass.isAnnotationType || frameworks.isTestClass(eachClass)) continue
-                if (!eachClass.isPhysical && eachClass !is KotlinLightClassForExplicitDeclaration) continue
+                if (!eachClass.isPhysical && eachClass !is KtLightClassForExplicitDeclaration) continue
 
                 classesWithWeights.add(Pair.create(eachClass, candidateNameWithWeight.second))
             }
@@ -92,7 +92,7 @@ class KotlinTestFinder : JavaTestFinder() {
             if (!pattern.matcher(candidateName).matches()) continue
             for (candidateClass in cache.getClassesByName(candidateName, scope)) {
                 if (!(frameworks.isTestClass(candidateClass) || frameworks.isPotentialTestClass(candidateClass))) continue
-                if (!candidateClass.isPhysical && candidateClass !is KotlinLightClassForExplicitDeclaration) continue
+                if (!candidateClass.isPhysical && candidateClass !is KtLightClassForExplicitDeclaration) continue
                 processor.process(Pair.create(candidateClass, TestFinderHelper.calcTestNameProximity(klassName, candidateName)))
             }
         }

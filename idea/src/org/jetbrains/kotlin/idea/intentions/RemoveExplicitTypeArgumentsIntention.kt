@@ -39,7 +39,7 @@ public class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<Kt
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(javaClass(), "Remove explicit type arguments") {
+public class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(javaClass(), "Remove explicit type arguments") {
     companion object {
         public fun isApplicableTo(element: KtTypeArgumentList, approximateFlexible: Boolean): Boolean {
             val callExpression = element.getParent() as? KtCallExpression ?: return false

@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.idea.highlighter.JetHighlightingColors
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 
 class KDocHighlightingVisitor(private val holder: AnnotationHolder): PsiElementVisitor() {
     override fun visitElement(element: PsiElement) {
         if (element is KDocLink) {
-            holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.KDOC_LINK)
+            holder.createInfoAnnotation(element, null).setTextAttributes(KotlinHighlightingColors.KDOC_LINK)
         }
     }
 }

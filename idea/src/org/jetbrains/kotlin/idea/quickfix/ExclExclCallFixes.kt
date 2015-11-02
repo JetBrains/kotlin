@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -51,7 +51,7 @@ public abstract class ExclExclCallFix : IntentionAction {
 }
 
 public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix(), CleanupFix {
-    override fun getText(): String = JetBundle.message("remove.unnecessary.non.null.assertion")
+    override fun getText(): String = KotlinBundle.message("remove.unnecessary.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
         = super.isAvailable(project, editor, file) && getExclExclPostfixExpression() != null
@@ -72,14 +72,14 @@ public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix
         return null
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
             = RemoveExclExclCallFix(diagnostic.getPsiElement())
     }
 }
 
 public class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
-    override fun getText() = JetBundle.message("introduce.non.null.assertion")
+    override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
             = super.isAvailable(project, editor, file) &&
@@ -105,13 +105,13 @@ public class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() 
         return null
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
                 = AddExclExclCallFix(diagnostic.getPsiElement())
     }
 }
 
-object MissingIteratorExclExclFixFactory : JetSingleIntentionActionFactory() {
+object MissingIteratorExclExclFixFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val element = diagnostic.psiElement
         if (element !is KtExpression) return null

@@ -25,7 +25,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class MoveDeclarationToSeparateFileIntention :
-        JetSelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Move declaration to separate file"),
+        SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Move declaration to separate file"),
         LowPriorityAction {
     override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (element.name == null) return null

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -78,10 +78,10 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
         val superString = superCallables.map {
             it.getContainingDeclaration().getName().asString()
         }.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
-        val message = JetBundle.message("x.overrides.y.in.class.list",
-                                        DescriptorRenderer.COMPACT.render(callableFromEditor),
-                                        callableFromEditor.getContainingDeclaration().getName().asString(), superString,
-                                        "refactor")
+        val message = KotlinBundle.message("x.overrides.y.in.class.list",
+                                           DescriptorRenderer.COMPACT.render(callableFromEditor),
+                                           callableFromEditor.getContainingDeclaration().getName().asString(), superString,
+                                           "refactor")
         val title = IdeBundle.message("title.warning")!!
         val icon = Messages.getQuestionIcon()
         return Messages.showDialog(message, title, options.toTypedArray(), 0, icon)

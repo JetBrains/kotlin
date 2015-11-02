@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
-abstract class KotlinClassFileViewProvider(
+abstract class KotlinClassFileViewProviderBase(
         manager: PsiManager,
         file: VirtualFile,
         physical: Boolean) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
@@ -50,11 +50,11 @@ abstract class KotlinClassFileViewProvider(
     override fun getContents() = content.get()
 }
 
-public class JetClassFileViewProvider(
+public class KotlinClassFileViewProvider(
         manager: PsiManager,
         file: VirtualFile,
         physical: Boolean,
-        val isInternal: Boolean) : KotlinClassFileViewProvider(manager, file, physical) {
+        val isInternal: Boolean) : KotlinClassFileViewProviderBase(manager, file, physical) {
 
     override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? {
         val fileIndex = ServiceManager.getService(project, javaClass<FileIndexFacade>())
@@ -64,17 +64,17 @@ public class JetClassFileViewProvider(
 
         if (isInternal) return null
 
-        return JetClsFile(this)
+        return KtClsFile(this)
     }
 
-    override fun createCopy(copy: VirtualFile) = JetClassFileViewProvider(getManager(), copy, false, isInternal)
+    override fun createCopy(copy: VirtualFile) = KotlinClassFileViewProvider(getManager(), copy, false, isInternal)
 }
 
 public class KotlinJavascriptMetaFileViewProvider (
         manager: PsiManager,
         val file: VirtualFile,
         physical: Boolean,
-        val isInternal: Boolean) : KotlinClassFileViewProvider(manager, file, physical) {
+        val isInternal: Boolean) : KotlinClassFileViewProviderBase(manager, file, physical) {
 
     //TODO: check index that file is library file, as in ClassFileViewProvider
     override fun createFile(project: Project, file: VirtualFile, fileType: FileType) =

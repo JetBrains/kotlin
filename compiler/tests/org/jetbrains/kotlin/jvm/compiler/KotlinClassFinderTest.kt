@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -58,7 +58,7 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
         val className = "test.A.B.C"
         val psiClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project))
         assertNotNull(psiClass, "Psi class not found for $className")
-        assertTrue(psiClass !is KotlinLightClass, "Kotlin light classes are not not expected");
+        assertTrue(psiClass !is KtLightClass, "Kotlin light classes are not not expected");
 
         val binaryClass = JvmVirtualFileFinder.SERVICE.getInstance(project).findKotlinClass(JavaClassImpl(psiClass!!))
         assertNotNull(binaryClass, "No binary class for $className")

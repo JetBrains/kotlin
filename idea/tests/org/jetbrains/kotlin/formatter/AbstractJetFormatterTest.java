@@ -141,14 +141,14 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         String testFileName = expectedFileNameWithExtension.substring(0, expectedFileNameWithExtension.indexOf("."));
         String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
         String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
-        CodeStyleSettings codeStyleSettings = JetFormatSettingsUtil.getSettings();
+        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings();
 
         Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
         if (rightMargin != null) {
             codeStyleSettings.setRightMargin(KotlinLanguage.INSTANCE, rightMargin);
         }
 
-        SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);
+        SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);
         if (!inverted) {
             configurator.configureSettings();
         }

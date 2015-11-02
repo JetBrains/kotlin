@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
-public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<KtDeclarationWithBody>(
+public class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
         javaClass(), "Convert to block body"
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtDeclarationWithBody, caretOffset: Int): Boolean {

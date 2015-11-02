@@ -26,7 +26,7 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
@@ -78,13 +78,13 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         KotlinPropertyFindUsagesOptions options = getFindUsagesOptions();
 
         cbReaders = addCheckboxToPanel(
-                JetBundle.message("find.what.property.readers.checkbox"),
+                KotlinBundle.message("find.what.property.readers.checkbox"),
                 options.isReadAccess,
                 findWhatPanel,
                 true
         );
         cbWriters = addCheckboxToPanel(
-                JetBundle.message("find.what.property.writers.checkbox"),
+                KotlinBundle.message("find.what.property.writers.checkbox"),
                 options.isWriteAccess,
                 findWhatPanel,
                 true
@@ -109,8 +109,8 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         if (isOpen || isAbstract) {
             cbOverrides = addCheckboxToPanel(
                     isAbstract
-                    ? JetBundle.message("find.what.implementing.properties.checkbox")
-                    : JetBundle.message("find.what.overriding.properties.checkbox"),
+                    ? KotlinBundle.message("find.what.implementing.properties.checkbox")
+                    : KotlinBundle.message("find.what.overriding.properties.checkbox"),
                     FindSettings.getInstance().isSearchOverloadedMethods(),
                     optionsPanel,
                     false

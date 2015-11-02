@@ -40,14 +40,14 @@ class SoftKeywordsHighlightingVisitor extends KtVisitorVoid {
         if (element instanceof LeafPsiElement) {
             IElementType elementType = ((LeafPsiElement)element).getElementType();
             if (KtTokens.SOFT_KEYWORDS.contains(elementType)) {
-                TextAttributesKey attributes = JetHighlightingColors.KEYWORD;
+                TextAttributesKey attributes = KotlinHighlightingColors.KEYWORD;
                 if (KtTokens.MODIFIER_KEYWORDS.contains(elementType)) {
-                    attributes = JetHighlightingColors.BUILTIN_ANNOTATION;
+                    attributes = KotlinHighlightingColors.BUILTIN_ANNOTATION;
                 }
                 holder.createInfoAnnotation(element, null).setTextAttributes(attributes);
             }
             if (KtTokens.SAFE_ACCESS.equals(elementType)) {
-                holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.SAFE_ACCESS);
+                holder.createInfoAnnotation(element, null).setTextAttributes(KotlinHighlightingColors.SAFE_ACCESS);
             }
         }
     }
@@ -56,14 +56,14 @@ class SoftKeywordsHighlightingVisitor extends KtVisitorVoid {
     public void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression) {
         if (ApplicationManager.getApplication().isUnitTestMode()) return;
         KtFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-        holder.createInfoAnnotation(functionLiteral.getLBrace(), null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
+        holder.createInfoAnnotation(functionLiteral.getLBrace(), null).setTextAttributes(KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
         PsiElement closingBrace = functionLiteral.getRBrace();
         if (closingBrace != null) {
-            holder.createInfoAnnotation(closingBrace, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
+            holder.createInfoAnnotation(closingBrace, null).setTextAttributes(KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
         }
         PsiElement arrow = functionLiteral.getArrow();
         if (arrow != null) {
-            holder.createInfoAnnotation(arrow, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
+            holder.createInfoAnnotation(arrow, null).setTextAttributes(KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
         }
     }
 }

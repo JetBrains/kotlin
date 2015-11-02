@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.AllClassesGetter
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
@@ -70,7 +70,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
 
     private fun addAdaptedJavaCompletion(collector: (PsiClass) -> Unit) {
         AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
-            if (psiClass!! !is KotlinLightClass) { // Kotlin class should have already been added as kotlin element before
+            if (psiClass!! !is KtLightClass) { // Kotlin class should have already been added as kotlin element before
                 if (psiClass.isSyntheticKotlinClass()) return@processJavaClasses // filter out synthetic classes produced by Kotlin compiler
 
                 val kind = when {

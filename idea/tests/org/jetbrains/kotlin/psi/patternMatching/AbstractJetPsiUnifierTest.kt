@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import java.io.File
 import org.jetbrains.kotlin.test.JetTestUtils
@@ -53,7 +53,7 @@ public abstract class AbstractJetPsiUnifierTest: JetLightCodeInsightFixtureTestC
         val actualText =
                 findPattern(file)
                         .toRange()
-                        .match(file, JetPsiUnifier.DEFAULT)
+                        .match(file, KotlinPsiUnifier.DEFAULT)
                         .map { it.range.getTextRange().substring(file.getText()!!) }
                         .joinToString("\n\n")
         JetTestUtils.assertEqualsToFile(File("$filePath.match"), actualText)

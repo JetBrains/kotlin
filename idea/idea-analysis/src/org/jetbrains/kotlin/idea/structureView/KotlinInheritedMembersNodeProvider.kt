@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
     override fun provideNodes(node: TreeElement): Collection<TreeElement> {
-        if (node !is JetStructureViewElement) return listOf()
+        if (node !is KotlinStructureViewElement) return listOf()
 
         val element = node.getElement()
         if (element !is KtClassOrObject) return listOf()
@@ -53,7 +53,7 @@ public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<Tr
                 CallableMemberDescriptor.Kind.DELEGATION -> {
                     val superTypeMember = DescriptorToSourceUtilsIde.getAnyDeclaration(project, memberDescriptor)
                     if (superTypeMember is NavigatablePsiElement) {
-                        children.add(JetStructureViewElement(superTypeMember, memberDescriptor, true))
+                        children.add(KotlinStructureViewElement(superTypeMember, memberDescriptor, true))
                     }
                 }
             }

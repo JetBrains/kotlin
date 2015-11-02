@@ -23,7 +23,7 @@ import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.execution.testframework.TestIconMapper
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -60,7 +60,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
 
             is KtNamedFunction -> {
                 val lightMethod = declaration.toLightMethods().firstOrNull() ?: return null
-                val lightClass = lightMethod.containingClass as? KotlinLightClass ?: return null
+                val lightClass = lightMethod.containingClass as? KtLightClass ?: return null
                 val framework = TestFrameworks.detectFramework(lightClass) ?: return null
                 if (!framework.isTestMethod(lightMethod)) return null
 

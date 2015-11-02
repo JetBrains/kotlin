@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNullableType;
@@ -43,18 +43,18 @@ public class RemoveNullableFix extends KotlinQuickFixAction<KtNullableType> {
     public String getText() {
         switch (typeOfError) {
             case REDUNDANT:
-                return JetBundle.message("remove.redundant.nullable");
+                return KotlinBundle.message("remove.redundant.nullable");
             case SUPERTYPE:
-                return JetBundle.message("remove.supertype.nullable");
+                return KotlinBundle.message("remove.supertype.nullable");
             default:
-                return JetBundle.message("remove.useless.nullable");
+                return KotlinBundle.message("remove.useless.nullable");
         }
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("remove.nullable.family");
+        return KotlinBundle.message("remove.nullable.family");
     }
 
     @Override
@@ -64,8 +64,8 @@ public class RemoveNullableFix extends KotlinQuickFixAction<KtNullableType> {
         super.getElement().replace(type);
     }
 
-    public static JetSingleIntentionActionFactory createFactory(final NullableKind typeOfError) {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory(final NullableKind typeOfError) {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtNullableType> createAction(Diagnostic diagnostic) {
                 KtNullableType nullType = QuickFixUtil.getParentElementOfType(diagnostic, KtNullableType.class);

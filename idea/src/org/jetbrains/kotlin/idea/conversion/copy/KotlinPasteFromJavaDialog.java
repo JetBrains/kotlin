@@ -20,7 +20,7 @@ import com.intellij.CommonBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.editor.JetEditorOptions;
+import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,7 +63,7 @@ public class KotlinPasteFromJavaDialog extends DialogWrapper {
     @Override
     protected void doOKAction() {
         if (donTShowThisCheckBox.isSelected()) {
-            JetEditorOptions.getInstance().setDonTShowConversionDialog(true);
+            KotlinEditorOptions.getInstance().setDonTShowConversionDialog(true);
         }
         super.doOKAction();
     }

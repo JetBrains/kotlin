@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import java.util.*
 
-public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<KtProperty>(javaClass(), "Convert property to function"), LowPriorityAction {
+public class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(javaClass(), "Convert property to function"), LowPriorityAction {
     private inner class Converter(
             project: Project,
             descriptor: CallableDescriptor

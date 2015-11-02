@@ -144,7 +144,7 @@ public object LightClassUtil {
         val outerPsiClass = getWrappingClass(companionObject, true)
         if (outerPsiClass != null) {
             for (fieldOfParent in outerPsiClass.fields) {
-                if ((fieldOfParent is KotlinLightElement<*, *>) && fieldOfParent.getOrigin() === companionObject) {
+                if ((fieldOfParent is KtLightElement<*, *>) && fieldOfParent.getOrigin() === companionObject) {
                     return fieldOfParent
                 }
             }
@@ -165,7 +165,7 @@ public object LightClassUtil {
     private fun getLightClassBackingField(declaration: KtDeclaration): PsiField? {
         var psiClass: PsiClass = getWrappingClass(declaration, true) ?: return null
 
-        if (psiClass is KotlinLightClass) {
+        if (psiClass is KtLightClass) {
             val origin = psiClass.getOrigin()
             if (origin is KtObjectDeclaration && origin.isCompanion()) {
                 val containingClass = PsiTreeUtil.getParentOfType(origin, KtClass::class.java)
@@ -179,7 +179,7 @@ public object LightClassUtil {
         }
 
         for (field in psiClass.fields) {
-            if (field is KotlinLightField && field.getOrigin() === declaration) {
+            if (field is KtLightField && field.getOrigin() === declaration) {
                 return field
             }
         }
@@ -208,7 +208,7 @@ public object LightClassUtil {
         val methods = SmartList<PsiMethod>()
         for (method in psiClasses.flatMap { it.methods.asList() }) {
             try {
-                if (method is KotlinLightMethod && method.getOrigin() === declaration) {
+                if (method is KtLightMethod && method.getOrigin() === declaration) {
                     methods.add(method)
                     if (!collectAll) {
                         return methods
@@ -332,7 +332,7 @@ public object LightClassUtil {
                 val jetTypeParameter = parameters.get(i)
                 val name = jetTypeParameter.name
                 val safeName = name ?: "__no_name__"
-                builder.addParameter(KotlinLightTypeParameter(owner, i, safeName))
+                builder.addParameter(KtLightTypeParameter(owner, i, safeName))
             }
         }
         return builder

@@ -20,13 +20,13 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<KtReturnExpression>(javaClass(), "Replace return with 'when' expression"), LowPriorityAction {
+public class UnfoldReturnToWhenIntention : SelfTargetingRangeIntention<KtReturnExpression>(javaClass(), "Replace return with 'when' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtReturnExpression): TextRange? {
         val whenExpr = element.getReturnedExpression() as? KtWhenExpression ?: return null
         if (!KtPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null

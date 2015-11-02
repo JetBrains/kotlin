@@ -37,7 +37,7 @@ import com.intellij.util.Function;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.JetPluginUtil;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil;
@@ -78,7 +78,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
         StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
-                final String pluginVersion = JetPluginUtil.getPluginVersion();
+                final String pluginVersion = KotlinPluginUtil.getPluginVersion();
                 if ("@snapshot@".equals(pluginVersion)) return; // plugin is run from sources, can't compare versions
 
                 // user already clicked suppress

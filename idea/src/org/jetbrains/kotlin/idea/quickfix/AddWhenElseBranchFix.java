@@ -27,7 +27,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.psi.*;
 
 public class AddWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression> {
@@ -41,13 +41,13 @@ public class AddWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression>
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("add.when.else.branch.action");
+        return KotlinBundle.message("add.when.else.branch.action");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("add.when.else.branch.action.family.name");
+        return KotlinBundle.message("add.when.else.branch.action.family.name");
     }
 
     @Override
@@ -73,8 +73,8 @@ public class AddWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression>
         editor.getCaretModel().moveToOffset(textRange.getStartOffset() + indexOfOpenBrace + 1);
     }
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {

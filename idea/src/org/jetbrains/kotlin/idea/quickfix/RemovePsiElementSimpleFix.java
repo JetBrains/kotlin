@@ -23,7 +23,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -49,7 +49,7 @@ public class RemovePsiElementSimpleFix extends KotlinQuickFixAction<PsiElement> 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("remove.psi.element.family");
+        return KotlinBundle.message("remove.psi.element.family");
     }
 
     @Override
@@ -57,8 +57,8 @@ public class RemovePsiElementSimpleFix extends KotlinQuickFixAction<PsiElement> 
         element.delete();
     }
 
-    public static JetSingleIntentionActionFactory createRemoveImportFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createRemoveImportFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<PsiElement> createAction(Diagnostic diagnostic) {
                 KtImportDirective directive = QuickFixUtil.getParentElementOfType(diagnostic, KtImportDirective.class);
@@ -67,48 +67,48 @@ public class RemovePsiElementSimpleFix extends KotlinQuickFixAction<PsiElement> 
                     KtExpression exp = directive.getImportedReference();
                     if (exp != null) {
                         return new RemovePsiElementSimpleFix(directive,
-                                                             JetBundle.message("remove.conflicting.import", exp.getText()));
+                                                             KotlinBundle.message("remove.conflicting.import", exp.getText()));
                     }
                     return new RemovePsiElementSimpleFix(directive,
-                                                         JetBundle.message("remove.conflicting.import",""));
+                                                         KotlinBundle.message("remove.conflicting.import", ""));
                 }
             }
         };
     }
 
-    public static JetSingleIntentionActionFactory createRemoveSpreadFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createRemoveSpreadFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<PsiElement> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 if ((element instanceof LeafPsiElement) && ((LeafPsiElement) element).getElementType() == KtTokens.MUL) {
-                    return new RemovePsiElementSimpleFix(element, JetBundle.message("remove.spread.sign"));
+                    return new RemovePsiElementSimpleFix(element, KotlinBundle.message("remove.spread.sign"));
                 }
                 else return null;
             }
         };
     }
 
-    public static JetSingleIntentionActionFactory createRemoveTypeArgumentsFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createRemoveTypeArgumentsFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<PsiElement> createAction(Diagnostic diagnostic) {
                 KtTypeArgumentList element = QuickFixUtil.getParentElementOfType(diagnostic, KtTypeArgumentList.class);
                 if (element == null) return null;
                 return new RemovePsiElementSimpleFix(element,
-                                                     JetBundle.message("remove.type.arguments"));
+                                                     KotlinBundle.message("remove.type.arguments"));
             }
         };
     }
 
-    public static JetSingleIntentionActionFactory createRemoveVariableFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createRemoveVariableFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<PsiElement> createAction(Diagnostic diagnostic) {
                 final KtProperty expression = QuickFixUtil.getParentElementOfType(diagnostic, KtProperty.class);
                 if (expression == null) return null;
                 return new RemovePsiElementSimpleFix(expression,
-                                                     JetBundle.message("remove.variable.action", (expression.getName()))) {
+                                                     KotlinBundle.message("remove.variable.action", (expression.getName()))) {
                     @Override
                     public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
                         KtExpression initializer = expression.getInitializer();

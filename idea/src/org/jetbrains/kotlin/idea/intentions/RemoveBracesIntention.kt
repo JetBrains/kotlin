@@ -22,7 +22,7 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-public class RemoveBracesIntention : JetSelfTargetingIntention<KtBlockExpression>(javaClass(), "Remove braces") {
+public class RemoveBracesIntention : SelfTargetingIntention<KtBlockExpression>(javaClass(), "Remove braces") {
     override fun isApplicableTo(element: KtBlockExpression, caretOffset: Int): Boolean {
         if (element.getStatements().size() != 1) return false
 

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -422,7 +422,7 @@ data class ExtractionGeneratorConfiguration(
 data class ExtractionResult(
         val config: ExtractionGeneratorConfiguration,
         val declaration: KtNamedDeclaration,
-        val duplicateReplacers: Map<JetPsiRange, () -> Unit>,
+        val duplicateReplacers: Map<KotlinPsiRange, () -> Unit>,
         val nameByOffset: Map<Int, KtElement>
 )
 

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
-public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndependentIntention<KtTypeReference>(javaClass(), "Replace by reconstructed type"), LowPriorityAction {
+public class ReconstructTypeInCastOrIsIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(javaClass(), "Replace by reconstructed type"), LowPriorityAction {
     override fun isApplicableTo(element: KtTypeReference): Boolean {
         // Only user types (like Foo) are interesting
         val typeElement = element.typeElement as? KtUserType ?: return false

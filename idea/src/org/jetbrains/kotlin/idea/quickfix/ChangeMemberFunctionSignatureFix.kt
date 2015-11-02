@@ -78,7 +78,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
         }
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = diagnostic.psiElement as? KtNamedFunction ?: return null
             val signatures = computePossibleSignatures(function)

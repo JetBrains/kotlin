@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
@@ -73,7 +73,7 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 if (!used) {
                     holder.registerProblem(
                             receiverTypeReference,
-                            JetBundle.message("unused.receiver.parameter"),
+                            KotlinBundle.message("unused.receiver.parameter"),
                             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                             MyQuickFix(callableDeclaration)
                     )
@@ -92,7 +92,7 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
     private class MyQuickFix(val declaration: KtCallableDeclaration): LocalQuickFix {
         override fun getName(): String {
-            return JetBundle.message("unused.receiver.parameter.remove")
+            return KotlinBundle.message("unused.receiver.parameter.remove")
         }
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

@@ -23,7 +23,7 @@ import com.intellij.openapi.project.DumbService
 
 public class KotlinDeclarationNavigationPolicyImpl : KotlinDeclarationNavigationPolicy {
     override fun getOriginalElement(declaration: KtDeclaration) =
-            JetSourceNavigationHelper.getOriginalElement(declaration)
+            SourceNavigationHelper.getOriginalElement(declaration)
     override fun getNavigationElement(declaration: KtDeclaration) =
-            JetSourceNavigationHelper.getNavigationElement(declaration)
+            SourceNavigationHelper.getNavigationElement(declaration)
 }

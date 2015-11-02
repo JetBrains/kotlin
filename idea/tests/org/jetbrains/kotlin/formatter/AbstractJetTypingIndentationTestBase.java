@@ -45,7 +45,7 @@ public abstract class AbstractJetTypingIndentationTestBase extends LightCodeInsi
         String originalFileText = FileUtil.loadFile(new File(originFilePath), true);
 
         try {
-            SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText);
+            SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText);
             if (!inverted) {
                 configurator.configureSettings();
             }

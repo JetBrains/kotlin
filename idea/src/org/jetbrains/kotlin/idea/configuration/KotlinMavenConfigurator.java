@@ -44,7 +44,7 @@ import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.idea.JetPluginUtil;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
 
 import java.util.List;
@@ -81,7 +81,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
 
     @Override
     public boolean isApplicable(@NotNull Module module) {
-        return JetPluginUtil.isMavenModule(module);
+        return KotlinPluginUtil.isMavenModule(module);
     }
 
     @NotNull

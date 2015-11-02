@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class RemoveArgumentNameIntention
-  : JetSelfTargetingRangeIntention<KtValueArgument>(javaClass(), "Remove argument name") {
+  : SelfTargetingRangeIntention<KtValueArgument>(javaClass(), "Remove argument name") {
 
     override fun applicabilityRange(element: KtValueArgument): TextRange? {
         if (!element.isNamed()) return null

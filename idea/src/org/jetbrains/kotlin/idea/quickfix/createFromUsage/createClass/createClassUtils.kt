@@ -23,7 +23,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.DelegatingIntentionAction
@@ -125,7 +125,7 @@ internal fun KtSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent
     val javaFix = CreateClassOrPackageFix.createFix(fullName, getResolveScope(), this, basePackage, null, null, null) ?: return null
 
     return object: DelegatingIntentionAction(javaFix) {
-        override fun getFamilyName(): String = JetBundle.message("create.from.usage.family")
+        override fun getFamilyName(): String = KotlinBundle.message("create.from.usage.family")
 
         override fun getText(): String = "Create package '${fullName}'"
     }

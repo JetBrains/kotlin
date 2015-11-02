@@ -32,7 +32,7 @@ public class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBina
         { ConvertToStringTemplateIntention().shouldSuggestToConvert(it) }
 )
 
-public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Convert concatenation to template") {
+public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Convert concatenation to template") {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (!isApplicableToNoParentCheck(element)) return false
 

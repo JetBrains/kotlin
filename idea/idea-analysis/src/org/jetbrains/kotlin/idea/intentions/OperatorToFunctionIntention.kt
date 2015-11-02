@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class OperatorToFunctionIntention : JetSelfTargetingIntention<KtExpression>(javaClass(), "Replace overloaded operator with function call") {
+public class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(javaClass(), "Replace overloaded operator with function call") {
     companion object {
         private fun isApplicablePrefix(element: KtPrefixExpression, caretOffset: Int): Boolean {
             val opRef = element.getOperationReference()

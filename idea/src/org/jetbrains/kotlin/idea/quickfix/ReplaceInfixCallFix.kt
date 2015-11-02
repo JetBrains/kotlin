@@ -40,7 +40,7 @@ public class ReplaceInfixCallFix(element: KtBinaryExpression) : KotlinQuickFixAc
 
     override fun startInWriteAction() = true
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val expression = diagnostic.psiElement.getNonStrictParentOfType<KtBinaryExpression>()!!
             if (expression.left == null || expression.right == null) return null

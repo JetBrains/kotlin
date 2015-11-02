@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
@@ -44,7 +44,7 @@ public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<KtUserT
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("add.star.projections", TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", argumentCount));
+        return KotlinBundle.message("add.star.projections", TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", argumentCount));
     }
 
     @NotNull
@@ -69,8 +69,8 @@ public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<KtUserT
         return true;
     }
 
-    public static JetSingleIntentionActionFactory createFactoryForIsExpression() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForIsExpression() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 DiagnosticWithParameters2<KtTypeReference, Integer, String> diagnosticWithParameters =
@@ -86,8 +86,8 @@ public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<KtUserT
         };
     }
 
-    public static JetSingleIntentionActionFactory createFactoryForJavaClass() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForJavaClass() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 DiagnosticWithParameters1<KtElement, Integer> diagnosticWithParameters = Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.cast(diagnostic);

@@ -101,7 +101,7 @@ object J2KPostProcessingRegistrar {
         )
     }
 
-    private inline fun <reified TElement : KtElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+    private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
             crossinline apply: TIntention.(TElement) -> Unit
     ) {
@@ -109,7 +109,7 @@ object J2KPostProcessingRegistrar {
         return registerIntentionBasedProcessing<TElement, TIntention>(intention, { true }, apply)
     }
 
-    private inline fun <reified TElement : KtElement, TIntention: JetSelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
+    private inline fun <reified TElement : KtElement, TIntention: SelfTargetingRangeIntention<TElement>> registerIntentionBasedProcessing(
             intention: TIntention,
             noinline additionalChecker: (TElement) -> Boolean,
             crossinline apply: TIntention.(TElement) -> Unit

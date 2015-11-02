@@ -26,7 +26,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -42,13 +42,13 @@ public class RemoveFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("remove.function.body");
+        return KotlinBundle.message("remove.function.body");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("remove.function.body");
+        return KotlinBundle.message("remove.function.body");
     }
 
     @Override
@@ -88,8 +88,8 @@ public class RemoveFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
         return false;
     }
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtFunction> createAction(Diagnostic diagnostic) {
                 KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);

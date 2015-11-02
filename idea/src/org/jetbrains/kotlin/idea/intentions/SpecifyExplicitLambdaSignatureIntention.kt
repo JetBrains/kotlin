@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class SpecifyExplicitLambdaSignatureIntention : JetSelfTargetingIntention<KtFunctionLiteralExpression>(javaClass(), "Specify explicit lambda signature"), LowPriorityAction {
+public class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtFunctionLiteralExpression>(javaClass(), "Specify explicit lambda signature"), LowPriorityAction {
 
     override fun isApplicableTo(element: KtFunctionLiteralExpression, caretOffset: Int): Boolean {
         val arrow = element.getFunctionLiteral().getArrow()

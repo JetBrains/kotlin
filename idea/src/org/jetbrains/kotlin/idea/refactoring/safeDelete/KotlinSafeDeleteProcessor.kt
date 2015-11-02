@@ -35,7 +35,7 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
@@ -234,7 +234,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                     .asSequence()
                     .filter { overridenDescriptor -> overridenDescriptor.getModality() == Modality.ABSTRACT }
                     .mapTo(ArrayList<String>()) { overridenDescriptor ->
-                        JetBundle.message(
+                        KotlinBundle.message(
                                 "x.implements.y",
                                 JetRefactoringUtil.formatFunction(declarationDescriptor, true),
                                 JetRefactoringUtil.formatClass(declarationDescriptor.getContainingDeclaration(), true),

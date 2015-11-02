@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.JetFunctionPsiElementCellRenderer
+import org.jetbrains.kotlin.idea.codeInsight.KtFunctionPsiElementCellRenderer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
@@ -97,9 +97,9 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
             PsiElementListNavigator.openTargets(
                     e,
                     superDeclarations.toTypedArray(),
-                    JetBundle.message("navigation.title.super.declaration", elementName),
-                    JetBundle.message("navigation.findUsages.title.super.declaration", elementName),
-                    JetFunctionPsiElementCellRenderer())
+                    KotlinBundle.message("navigation.title.super.declaration", elementName),
+                    KotlinBundle.message("navigation.findUsages.title.super.declaration", elementName),
+                    KtFunctionPsiElementCellRenderer())
         }
         else {
             // Only store elements for retrieve in test

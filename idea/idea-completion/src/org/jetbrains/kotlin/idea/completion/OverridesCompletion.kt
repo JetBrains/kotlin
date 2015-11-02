@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.handlers.indexOfSkippingSpace
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -85,7 +85,7 @@ class OverridesCompletion(
             val icon = RowIcon(baseIcon, additionalIcon)
 
             val baseClassDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(position.project, baseClass)
-            val baseClassIcon = JetDescriptorIconProvider.getIcon(baseClass, baseClassDeclaration, 0)
+            val baseClassIcon = KotlinDescriptorIconProvider.getIcon(baseClass, baseClassDeclaration, 0)
 
             lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = "override"

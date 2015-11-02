@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -116,13 +116,14 @@ public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtF
         if (appropriateQuickFix != null) {
             return appropriateQuickFix.getText();
         }
-        return JetBundle.message("change.function.literal.return.type", IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
+        return KotlinBundle
+                .message("change.function.literal.return.type", IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.type.family");
+        return KotlinBundle.message("change.type.family");
     }
 
     @Override
@@ -144,8 +145,8 @@ public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtF
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForExpectedOrAssignmentTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForExpectedOrAssignmentTypeMismatch() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {

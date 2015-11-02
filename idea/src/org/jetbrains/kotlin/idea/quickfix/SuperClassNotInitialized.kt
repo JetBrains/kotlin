@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-public object SuperClassNotInitialized : JetIntentionActionsFactory() {
+public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
     private val DISPLAY_MAX_PARAMS = 5
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {

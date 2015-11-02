@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.idea.decompiler.JetClsFile;
+import org.jetbrains.kotlin.idea.decompiler.KtClsFile;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 
@@ -100,9 +100,9 @@ public class NavigateToDecompiledLibraryTest extends LightCodeInsightFixtureTest
         classFile = getClassFile(PACKAGE, getTestName(false), myModule);
         PsiFile decompiledPsiFile = PsiManager.getInstance(getProject()).findFile(classFile);
         assertNotNull(decompiledPsiFile);
-        assertTrue("Expecting kotlin class file, was: " + decompiledPsiFile.getClass(), decompiledPsiFile instanceof JetClsFile);
+        assertTrue("Expecting kotlin class file, was: " + decompiledPsiFile.getClass(), decompiledPsiFile instanceof KtClsFile);
         Map<String, KtDeclaration> map = getRenderedDescriptorToKotlinPsiMap(
-                (KtFile) decompiledPsiFile, ((JetClsFile) decompiledPsiFile).getRenderedDescriptorsToRange()
+                (KtFile) decompiledPsiFile, ((KtClsFile) decompiledPsiFile).getRenderedDescriptorsToRange()
         );
         String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
 

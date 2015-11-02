@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 public class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<KtBinaryExpression>(ReplaceWithOperatorAssignmentIntention())
 
-public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Replace with operator-assignment") {
+public class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Replace with operator-assignment") {
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (element.getOperationToken() != KtTokens.EQ) return false

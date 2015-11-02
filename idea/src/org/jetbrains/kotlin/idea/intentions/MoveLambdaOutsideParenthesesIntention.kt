@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.unpackFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<KtCallExpression>(javaClass(), "Move lambda argument out of parentheses") {
+public class MoveLambdaOutsideParenthesesIntention : SelfTargetingIntention<KtCallExpression>(javaClass(), "Move lambda argument out of parentheses") {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
         if (element.getFunctionLiteralArguments().isNotEmpty()) return false
         val argument = element.getValueArguments().lastOrNull() ?: return false

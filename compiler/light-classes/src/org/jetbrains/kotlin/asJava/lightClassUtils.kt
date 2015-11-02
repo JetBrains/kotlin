@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-public fun KtClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
+public fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassUtil.getPsiClass(this) as KtLightClass?
 
 public fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {
@@ -97,7 +97,7 @@ public fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
 public val PsiElement.unwrapped: PsiElement?
-    get() = if (this is KotlinLightElement<*, *>) getOrigin() else this
+    get() = if (this is KtLightElement<*, *>) getOrigin() else this
 
 public val PsiElement.namedUnwrappedElement: PsiNamedElement?
     get() = unwrapped?.getNonStrictParentOfType<PsiNamedElement>()

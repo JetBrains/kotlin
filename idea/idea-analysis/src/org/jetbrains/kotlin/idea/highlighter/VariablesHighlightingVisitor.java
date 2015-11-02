@@ -47,7 +47,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             ValueParameterDescriptor parameterDescriptor = (ValueParameterDescriptor) target;
             if (Boolean.TRUE.equals(bindingContext.get(AUTO_CREATED_IT, parameterDescriptor))) {
                 holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").setTextAttributes(
-                    JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER);
+                        KotlinHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER);
             }
         }
 
@@ -72,7 +72,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         KotlinType smartCast = bindingContext.get(SMARTCAST, expression);
         if (smartCast != null) {
             holder.createInfoAnnotation(expression, "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)).setTextAttributes(
-                JetHighlightingColors.SMART_CAST_VALUE);
+                    KotlinHighlightingColors.SMART_CAST_VALUE);
         }
         super.visitExpression(expression);
     }
@@ -90,27 +90,27 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
 
             if (DynamicCallsKt.isDynamic(variableDescriptor)) {
-                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
+                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL);
                 return;
             }
 
             if (variableDescriptor.isVar()) {
-                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
+                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.MUTABLE_VARIABLE);
             }
 
             if (bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) == CaptureKind.NOT_INLINE) {
                 String msg = ((VariableDescriptor) descriptor).isVar()
                              ? "Wrapped into a reference object to be modified when captured in a closure"
                              : "Value captured in a closure";
-                holder.createInfoAnnotation(elementToHighlight, msg).setTextAttributes(JetHighlightingColors.WRAPPED_INTO_REF);
+                holder.createInfoAnnotation(elementToHighlight, msg).setTextAttributes(KotlinHighlightingColors.WRAPPED_INTO_REF);
             }
 
             if (descriptor instanceof LocalVariableDescriptor) {
-                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.LOCAL_VARIABLE);
+                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.LOCAL_VARIABLE);
             }
 
             if (descriptor instanceof ValueParameterDescriptor) {
-                NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.PARAMETER);
+                NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.PARAMETER);
             }
         }
     }

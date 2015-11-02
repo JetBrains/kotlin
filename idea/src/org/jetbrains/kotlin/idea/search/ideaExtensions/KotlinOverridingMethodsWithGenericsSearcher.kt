@@ -22,8 +22,8 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
-import org.jetbrains.kotlin.asJava.KotlinLightClass
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.OverrideResolver
 public class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, OverridingMethodsSearch.SearchParameters> {
     override fun execute(p: OverridingMethodsSearch.SearchParameters, consumer: Processor<PsiMethod>): Boolean {
         val method = p.method
-        if (method !is KotlinLightMethod) return true
+        if (method !is KtLightMethod) return true
 
         val declaration = method.getOrigin() as? KtCallableDeclaration
         if (declaration == null) return true
@@ -61,13 +61,13 @@ public class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMeth
 
     private fun findOverridingMethod(inheritor: PsiClass, callableDeclaration: KtCallableDeclaration): PsiMethod? {
         // Leave Java classes search to JavaOverridingMethodsSearcher
-        if (inheritor !is KotlinLightClass) return null
+        if (inheritor !is KtLightClass) return null
 
         val name = callableDeclaration.name
         val methodsByName = inheritor.findMethodsByName(name, false)
 
         for (lightMethodCandidate in methodsByName) {
-            val candidateDescriptor = (lightMethodCandidate as? KotlinLightMethod)?.getOrigin()?.resolveToDescriptor() ?: continue
+            val candidateDescriptor = (lightMethodCandidate as? KtLightMethod)?.getOrigin()?.resolveToDescriptor() ?: continue
             if (candidateDescriptor !is CallableMemberDescriptor) continue
 
             val overriddenDescriptors = OverrideResolver.getDirectlyOverriddenDeclarations(candidateDescriptor)

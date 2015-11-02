@@ -40,8 +40,8 @@ import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntimeAndSdk
@@ -154,7 +154,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
 
-        val obj = JetFullClassNameIndex.getInstance().get("renameTest.Foo", getTestProject(), getTestProject().allScope()).single()
+        val obj = KotlinFullClassNameIndex.getInstance().get("renameTest.Foo", getTestProject(), getTestProject().allScope()).single()
         val rename = RefactoringFactory.getInstance(getTestProject()).createRename(obj, "Bar")
         rename.run()
 
@@ -214,13 +214,13 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     }
 
     private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
-        val mainFunction = JetTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
+        val mainFunction = KotlinTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
 
         return createConfigurationFromElement(mainFunction)
     }
 
     private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): JetRunConfiguration {
-        val obj = JetFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
+        val obj = KotlinFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
         val mainFunction = obj.getDeclarations().single { it is KtFunction && it.getName() == "main" }
         return createConfigurationFromElement(mainFunction, save)
     }

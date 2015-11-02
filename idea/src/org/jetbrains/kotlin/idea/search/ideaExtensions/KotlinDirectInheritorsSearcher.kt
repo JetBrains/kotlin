@@ -22,10 +22,10 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
-import org.jetbrains.kotlin.idea.stubindex.JetSuperClassIndex
+import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
+import org.jetbrains.kotlin.idea.stubindex.KotlinSuperClassIndex
 import org.jetbrains.kotlin.idea.search.fileScope
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
@@ -45,9 +45,9 @@ public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass,
         if (scope == null) return
 
         runReadAction {
-            val noLibrarySourceScope = JetSourceFilterScope.kotlinSourceAndClassFiles(scope, baseClass.getProject())
-            JetSuperClassIndex.getInstance().get(name, baseClass.getProject(), noLibrarySourceScope).asSequence()
-                    .map { candidate -> JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate)}
+            val noLibrarySourceScope = KotlinSourceFilterScope.kotlinSourceAndClassFiles(scope, baseClass.getProject())
+            KotlinSuperClassIndex.getInstance().get(name, baseClass.getProject(), noLibrarySourceScope).asSequence()
+                    .map { candidate -> SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate)}
                     .filterNotNull()
                     .filter { candidate -> candidate.isInheritor(baseClass, false) }
                     .forEach { candidate -> consumer.process(candidate) }

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
@@ -193,7 +193,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                         object : Task.Modal(project, "Searching for imports to delete", true) {
                             override fun run(indicator: ProgressIndicator) {
                                 val importsToDelete = runReadAction {
-                                    val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
+                                    val searchScope = KotlinSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
                                     ReferencesSearch.search(declaration, searchScope)
                                             .filterIsInstance<KtSimpleNameReference>()
                                             .map { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }

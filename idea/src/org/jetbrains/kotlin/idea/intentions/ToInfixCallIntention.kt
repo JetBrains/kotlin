@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ToInfixCallIntention : JetSelfTargetingIntention<KtCallExpression>(javaClass(), "Replace with infix function call") {
+public class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(javaClass(), "Replace with infix function call") {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
         val calleeExpr = element.getCalleeExpression() as? KtNameReferenceExpression ?: return false
         if (!calleeExpr.getTextRange().containsOffset(caretOffset)) return false

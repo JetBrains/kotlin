@@ -37,7 +37,7 @@ import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
 import com.sun.jdi.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -204,7 +204,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 return getContextElement(elementAt.context?.context)
             }
 
-            if (elementAt is KotlinLightClass) {
+            if (elementAt is KtLightClass) {
                 return getContextElement(elementAt.getOrigin())
             }
 

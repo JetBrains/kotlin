@@ -22,7 +22,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.name.FqName;
@@ -53,14 +53,15 @@ public class ChangeParameterTypeFix extends KotlinQuickFixAction<KtParameter> {
     public String getText() {
         String renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         return isPrimaryConstructorParameter ?
-            JetBundle.message("change.primary.constructor.parameter.type", getElement().getName(), containingDeclarationName, renderedType) :
-            JetBundle.message("change.function.parameter.type", getElement().getName(), containingDeclarationName, renderedType);
+               KotlinBundle
+                       .message("change.primary.constructor.parameter.type", getElement().getName(), containingDeclarationName, renderedType) :
+               KotlinBundle.message("change.function.parameter.type", getElement().getName(), containingDeclarationName, renderedType);
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.type.family");
+        return KotlinBundle.message("change.type.family");
     }
 
     @Override

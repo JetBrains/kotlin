@@ -35,7 +35,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQ
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) = replaceWithLabel(element)
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val annotationEntry = diagnostic.getPsiElement().getNonStrictParentOfType<KtAnnotationEntry>() ?: return null
 
@@ -44,7 +44,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQ
             return ReplaceObsoleteLabelSyntaxFix(annotationEntry)
         }
 
-        public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory factory@ {
+        public fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory factory@ {
             diagnostic ->
 
             if (!(diagnostic.getPsiElement().getNonStrictParentOfType<KtAnnotationEntry>()?.looksLikeObsoleteLabelWithReferencesInCode()

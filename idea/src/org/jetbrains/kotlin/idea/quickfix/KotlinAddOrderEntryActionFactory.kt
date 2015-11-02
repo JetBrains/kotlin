@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public object KotlinAddOrderEntryActionFactory : JetIntentionActionsFactory() {
+public object KotlinAddOrderEntryActionFactory : KotlinIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val simpleExpression = diagnostic.psiElement as? KtSimpleNameExpression ?: return emptyList()
         val refElement = simpleExpression.getQualifiedElement()

@@ -86,7 +86,7 @@ public class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQui
         }
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
 
         private fun getAllDeclaredNonOverridableOverriddenDescriptors(
                 callableMemberDescriptor: CallableMemberDescriptor): Collection<CallableMemberDescriptor> {

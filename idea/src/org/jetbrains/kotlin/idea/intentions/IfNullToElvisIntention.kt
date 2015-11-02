@@ -36,7 +36,7 @@ import java.util.*
 
 public class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention())
 
-public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
+public class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val data = calcData(element) ?: return null
 

@@ -25,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.idea.decompiler.KotlinClsFileBase;
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
+import org.jetbrains.kotlin.idea.decompiler.KtClsFileBase;
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope;
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory;
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory;
@@ -62,11 +62,11 @@ public final class DecompiledNavigationUtils {
         if (virtualFile == null) return null;
 
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-        if (!(psiFile instanceof KotlinClsFileBase)) {
+        if (!(psiFile instanceof KtClsFileBase)) {
             return null;
         }
 
-        return ((KotlinClsFileBase) psiFile).getDeclarationForDescriptor(referencedDescriptor);
+        return ((KtClsFileBase) psiFile).getDeclarationForDescriptor(referencedDescriptor);
     }
 
     private static boolean isLocal(DeclarationDescriptor descriptor) {
@@ -91,7 +91,7 @@ public final class DecompiledNavigationUtils {
         ClassId containerClassId = getContainerClassId(project, referencedDescriptor);
         if (containerClassId == null) return null;
 
-        GlobalSearchScope scopeToSearchIn = JetSourceFilterScope.kotlinSourceAndClassFiles(GlobalSearchScope.allScope(project), project);
+        GlobalSearchScope scopeToSearchIn = KotlinSourceFilterScope.kotlinSourceAndClassFiles(GlobalSearchScope.allScope(project), project);
 
         VirtualFileFinderFactory virtualFileFinderFactory;
         if (isFromKotlinJavasriptMetadata(referencedDescriptor)) {

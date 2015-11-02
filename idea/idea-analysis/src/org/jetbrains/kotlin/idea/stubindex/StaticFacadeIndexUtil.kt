@@ -33,12 +33,12 @@ public object StaticFacadeIndexUtil {
             project: Project
     ) : Collection<KtFile> =
             PackagePartClassUtils.getFilesWithCallables(
-                    JetFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
+                    KotlinFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
 
     @JvmStatic public fun getMultifileClassForPart(
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
     ): Collection<KtFile> =
-            JetMultifileClassPartIndex.INSTANCE.get(partFqName.asString(), project, searchScope)
+            KotlinMultifileClassPartIndex.INSTANCE.get(partFqName.asString(), project, searchScope)
 }

@@ -44,7 +44,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
             if (referenceTarget instanceof ClassDescriptor) {
                 TextAttributesKey textAttributesKey = textAttributesKeyForClass((ClassDescriptor) referenceTarget);
-                if (textAttributesKey == JetHighlightingColors.ANNOTATION) {
+                if (textAttributesKey == KotlinHighlightingColors.ANNOTATION) {
                     highlightAnnotation(expression);
                 }
                 else {
@@ -52,21 +52,21 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
                 }
             }
             else if (referenceTarget instanceof TypeParameterDescriptor) {
-                highlightName(expression, JetHighlightingColors.TYPE_PARAMETER);
+                highlightName(expression, KotlinHighlightingColors.TYPE_PARAMETER);
             }
         }
     }
 
     private void highlightAnnotation(@NotNull KtSimpleNameExpression expression) {
         TextRange toHighlight = JetPsiUtilKt.getCalleeHighlightingRange(expression);
-        NameHighlighter.highlightName(holder, toHighlight, JetHighlightingColors.ANNOTATION);
+        NameHighlighter.highlightName(holder, toHighlight, KotlinHighlightingColors.ANNOTATION);
     }
 
     @Override
     public void visitTypeParameter(@NotNull KtTypeParameter parameter) {
         PsiElement identifier = parameter.getNameIdentifier();
         if (identifier != null) {
-            highlightName(identifier, JetHighlightingColors.TYPE_PARAMETER);
+            highlightName(identifier, KotlinHighlightingColors.TYPE_PARAMETER);
         }
         super.visitTypeParameter(parameter);
     }
@@ -94,17 +94,17 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     private static TextAttributesKey textAttributesKeyForClass(@NotNull ClassDescriptor descriptor) {
         switch (descriptor.getKind()) {
             case INTERFACE:
-                return JetHighlightingColors.TRAIT;
+                return KotlinHighlightingColors.TRAIT;
             case ANNOTATION_CLASS:
-                return JetHighlightingColors.ANNOTATION;
+                return KotlinHighlightingColors.ANNOTATION;
             case OBJECT:
-                return JetHighlightingColors.OBJECT;
+                return KotlinHighlightingColors.OBJECT;
             case ENUM_ENTRY:
-                return JetHighlightingColors.ENUM_ENTRY;
+                return KotlinHighlightingColors.ENUM_ENTRY;
             default:
                 return descriptor.getModality() == Modality.ABSTRACT
-                       ? JetHighlightingColors.ABSTRACT_CLASS
-                       : JetHighlightingColors.CLASS;
+                       ? KotlinHighlightingColors.ABSTRACT_CLASS
+                       : KotlinHighlightingColors.CLASS;
         }
     }
 }

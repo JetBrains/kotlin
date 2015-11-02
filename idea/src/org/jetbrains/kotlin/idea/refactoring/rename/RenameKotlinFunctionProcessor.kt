@@ -23,7 +23,7 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameJavaMethodProcessor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -36,7 +36,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
-        return element is KtNamedFunction || (element is KotlinLightMethod && element.getOrigin() is KtNamedFunction)
+        return element is KtNamedFunction || (element is KtLightMethod && element.getOrigin() is KtNamedFunction)
     }
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
@@ -49,7 +49,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         val substitutedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
 
         return when (substitutedJavaElement) {
-            is KotlinLightMethod -> substitutedJavaElement.getOrigin() as? KtNamedFunction
+            is KtLightMethod -> substitutedJavaElement.getOrigin() as? KtNamedFunction
             else -> substitutedJavaElement
         }
     }
@@ -68,7 +68,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     }
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {
-        is KotlinLightMethod -> element
+        is KtLightMethod -> element
         is KtNamedFunction, is KtSecondaryConstructor -> runReadAction {
             LightClassUtil.getLightClassMethod(element as KtFunction)
         }

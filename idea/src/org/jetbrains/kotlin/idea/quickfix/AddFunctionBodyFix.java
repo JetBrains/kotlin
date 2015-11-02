@@ -26,7 +26,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
 import org.jetbrains.kotlin.psi.KtPsiFactory;
@@ -40,13 +40,13 @@ public class AddFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("add.function.body");
+        return KotlinBundle.message("add.function.body");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("add.function.body");
+        return KotlinBundle.message("add.function.body");
     }
 
     @Override
@@ -67,8 +67,8 @@ public class AddFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
         getElement().replace(newElement);
     }
     
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public KotlinQuickFixAction createAction(Diagnostic diagnostic) {

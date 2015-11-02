@@ -61,8 +61,8 @@ public class KotlinIndicesHelper(
 
     public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
         val declarations = HashSet<KtNamedDeclaration>()
-        declarations.addTopLevelNonExtensionCallablesByName(JetFunctionShortNameIndex.getInstance(), name)
-        declarations.addTopLevelNonExtensionCallablesByName(JetPropertyShortNameIndex.getInstance(), name)
+        declarations.addTopLevelNonExtensionCallablesByName(KotlinFunctionShortNameIndex.getInstance(), name)
+        declarations.addTopLevelNonExtensionCallablesByName(KotlinPropertyShortNameIndex.getInstance(), name)
         return declarations.flatMap {
             if (it.getContainingJetFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
                 resolutionFacade.resolveImportReference(moduleDescriptor, it.getFqName()!!).filterIsInstance<CallableDescriptor>()
@@ -81,8 +81,8 @@ public class KotlinIndicesHelper(
     }
 
     public fun getTopLevelCallables(nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
-        return (JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).asSequence() +
-                    JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).asSequence())
+        return (KotlinTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).asSequence() +
+                KotlinTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).asSequence())
                 .map { FqName(it) }
                 .filter { nameFilter(it.shortName().asString()) }
                 .toSet()
@@ -110,13 +110,13 @@ public class KotlinIndicesHelper(
         val receiverTypeNames = HashSet<String>()
         receiverTypes.forEach { receiverTypeNames.addTypeNames(it) }
 
-        val index = JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE
+        val index = KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE
 
         val declarations = index.getAllKeys(project)
                 .asSequence()
                 .filter {
-                    JetTopLevelExtensionsByReceiverTypeIndex.receiverTypeNameFromKey(it) in receiverTypeNames
-                    && nameFilter(JetTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))
+                    KotlinTopLevelExtensionsByReceiverTypeIndex.receiverTypeNameFromKey(it) in receiverTypeNames
+                    && nameFilter(KotlinTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))
                 }
                 .flatMap { index.get(it, project, scope).asSequence() }
 
@@ -170,7 +170,7 @@ public class KotlinIndicesHelper(
             .toSet()
 
     public fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
-        return JetFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
+        return KotlinFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
                 .map { FqName(it) }
                 .filter { nameFilter(it.shortName().asString()) }
                 .toList()
@@ -178,7 +178,7 @@ public class KotlinIndicesHelper(
     }
 
     private fun getClassDescriptorsByFQName(classFQName: FqName, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
-        val declarations = JetFullClassNameIndex.getInstance()[classFQName.asString(), project, scope]
+        val declarations = KotlinFullClassNameIndex.getInstance()[classFQName.asString(), project, scope]
 
         if (declarations.isEmpty()) {
             // This fqn is absent in caches, dead or not in scope

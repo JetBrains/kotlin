@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 
-public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingIntention<KtParenthesizedExpression>(javaClass(), "Remove unnecessary parentheses") {
+public class RemoveUnnecessaryParenthesesIntention : SelfTargetingIntention<KtParenthesizedExpression>(javaClass(), "Remove unnecessary parentheses") {
     override fun isApplicableTo(element: KtParenthesizedExpression, caretOffset: Int): Boolean {
         val expression = element.getExpression() ?: return false
         if (!KtPsiUtil.areParenthesesUseless(element)) return false

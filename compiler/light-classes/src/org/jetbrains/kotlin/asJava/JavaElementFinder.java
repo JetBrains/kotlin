@@ -189,7 +189,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         // allScope() because the contract says that the whole project
         GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
         if (lightClassGenerationSupport.packageExists(fqName, allScope)) {
-            return new KotlinLightPackage(psiManager, fqName, allScope);
+            return new KtLightPackage(psiManager, fqName, allScope);
         }
 
         return null;
@@ -205,7 +205,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         Collection<PsiPackage> answer = Collections2.transform(subpackages, new Function<FqName, PsiPackage>() {
             @Override
             public PsiPackage apply(@Nullable FqName input) {
-                return new KotlinLightPackage(psiManager, input, scope);
+                return new KtLightPackage(psiManager, input, scope);
             }
         });
 

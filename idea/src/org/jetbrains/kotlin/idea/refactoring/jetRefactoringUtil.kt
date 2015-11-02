@@ -56,7 +56,7 @@ import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.ui.components.JBList
 import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -424,7 +424,7 @@ public fun chooseContainerElementIfNecessary<T>(
     }
 }
 
-public fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KotlinLightMethod
+public fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KtLightMethod
 
 public fun PsiElement.canRefactor(): Boolean {
     return when {

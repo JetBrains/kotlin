@@ -47,7 +47,7 @@ class AddTypeToLHSOfCallableReferenceFix(
         ShortenReferences.DEFAULT.process(element)
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             return AddTypeToLHSOfCallableReferenceFix(diagnostic.psiElement.parent as KtCallableReferenceExpression)
         }

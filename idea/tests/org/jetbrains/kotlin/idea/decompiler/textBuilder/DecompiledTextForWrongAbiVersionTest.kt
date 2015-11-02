@@ -20,7 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.decompiler.AbstractInternalCompiledClassesTest
-import org.jetbrains.kotlin.idea.decompiler.JetClsFile
+import org.jetbrains.kotlin.idea.decompiler.KtClsFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.findClassFileByName
 import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
@@ -47,7 +47,7 @@ public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClas
 
     private fun checkFileWithWrongAbiVersion(file: VirtualFile) {
         val psiFile = PsiManager.getInstance(getProject()!!).findFile(file)
-        Assert.assertTrue(psiFile is JetClsFile)
+        Assert.assertTrue(psiFile is KtClsFile)
         val decompiledText = psiFile!!.getText()!!
         Assert.assertTrue(decompiledText.contains(INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT))
     }

@@ -44,7 +44,7 @@ import java.util.*
 
 public class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<KtCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
 
-public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIntention<KtCallableDeclaration>(
+public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
         javaClass(), "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'Deprecated' annotation"
 ) {
     private class ReplaceWith(val expression: String, vararg val imports: String)

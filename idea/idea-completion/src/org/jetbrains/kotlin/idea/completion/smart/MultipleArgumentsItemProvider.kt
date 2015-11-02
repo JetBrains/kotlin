@@ -22,7 +22,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.ui.LayeredIcon
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.completion.ArgumentPositionData
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
@@ -82,8 +82,8 @@ class MultipleArgumentsItemProvider(
 
     private fun createParametersLookupElement(variables: List<VariableDescriptor>, tail: Tail): LookupElement {
         val compoundIcon = LayeredIcon(2)
-        val firstIcon = JetDescriptorIconProvider.getIcon(variables.first(), null, 0)
-        val lastIcon = JetDescriptorIconProvider.getIcon(variables.last(), null, 0)
+        val firstIcon = KotlinDescriptorIconProvider.getIcon(variables.first(), null, 0)
+        val lastIcon = KotlinDescriptorIconProvider.getIcon(variables.last(), null, 0)
         compoundIcon.setIcon(lastIcon, 0, 2 * firstIcon.getIconWidth() / 5, 0)
         compoundIcon.setIcon(firstIcon, 1, 0, 0)
 

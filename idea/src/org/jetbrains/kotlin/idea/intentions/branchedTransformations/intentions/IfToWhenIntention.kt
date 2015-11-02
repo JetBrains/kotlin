@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class IfToWhenIntention : JetSelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' with 'when'") {
+public class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' with 'when'") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         if (element.getThen() == null) return null
         return element.getIfKeyword().getTextRange()
