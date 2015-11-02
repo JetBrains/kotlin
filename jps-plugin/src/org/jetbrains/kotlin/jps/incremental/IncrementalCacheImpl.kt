@@ -26,7 +26,6 @@ import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
-import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
 import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.load.kotlin.header.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName.byInternalName
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.org.objectweb.asm.*
 import java.io.DataInput
@@ -56,9 +54,9 @@ public fun getCacheDirectoryName(): String =
 public class IncrementalCacheImpl(
         targetDataRoot: File,
         private val target: ModuleBuildTarget
-) : StorageOwner, IncrementalCache {
+) : BasicMapsOwner(), IncrementalCache {
     companion object {
-        val CACHE_EXTENSION = "tab"
+        val CACHE_EXTENSION = ".tab"
 
         val PROTO_MAP = "proto"
         val CONSTANTS_MAP = "constants"
@@ -75,15 +73,9 @@ public class IncrementalCacheImpl(
     }
 
     private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
-    private val maps = arrayListOf<BasicMap<*, *>>()
 
     private val String.storageFile: File
-        get() = File(baseDir, this + "." + CACHE_EXTENSION)
-
-    private fun <K, V, M : BasicMap<K, V>> registerMap(map: M): M {
-        maps.add(map)
-        return map
-    }
+        get() = File(baseDir, this + CACHE_EXTENSION)
 
     private val protoMap = registerMap(ProtoMap(PROTO_MAP.storageFile))
     private val constantsMap = registerMap(ConstantsMap(CONSTANTS_MAP.storageFile))
@@ -106,11 +98,6 @@ public class IncrementalCacheImpl(
 
     public fun addDependentCache(cache: IncrementalCacheImpl) {
         dependents.add(cache)
-    }
-
-    @TestOnly
-    public fun dump(): String {
-        return maps.joinToString("\n\n") { it.dump() }
     }
 
     public fun markOutputClassesDirty(removedAndCompiledSources: List<File>) {
@@ -278,17 +265,9 @@ public class IncrementalCacheImpl(
         return protoMap[JvmClassName.byInternalName(MODULE_MAPPING_FILE_NAME)]?.bytes
     }
 
-    override fun flush(memoryCachesOnly: Boolean) {
-        maps.forEach { it.flush(memoryCachesOnly) }
-    }
-
     public override fun clean() {
-        maps.forEach { it.clean() }
+        super.clean()
         cacheFormatVersion.clean()
-    }
-
-    public override fun close() {
-        maps.forEach { it.close () }
     }
 
     private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
