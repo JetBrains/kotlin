@@ -207,10 +207,7 @@ public class DataFlowValueFactory {
             return selectorInfo;
         }
         return createInfo(Pair.create(receiverInfo.id, selectorInfo.id),
-                          receiverInfo.kind.isStable() && selectorInfo.kind.isStable()
-                          ? STABLE_VALUE
-                          // x.y can never be a local variable
-                          : OTHER);
+                          receiverInfo.kind.isStable() ? selectorInfo.kind : OTHER);
     }
 
     @NotNull
@@ -379,16 +376,31 @@ public class DataFlowValueFactory {
         return true;
     }
 
+    private static Kind propertyKind(@NotNull PropertyDescriptor propertyDescriptor, @Nullable ModuleDescriptor usageModule) {
+        if (propertyDescriptor.isVar()) return MEMBER_VARIABLE;
+        if (!isFinal(propertyDescriptor)) return MEMBER_VALUE_WITH_GETTER;
+        if (!hasDefaultGetter(propertyDescriptor)) return MEMBER_VALUE_WITH_GETTER;
+        if (!invisibleFromOtherModules(propertyDescriptor)) {
+            ModuleDescriptor declarationModule = DescriptorUtils.getContainingModule(propertyDescriptor);
+            if (usageModule == null || !usageModule.equals(declarationModule)) {
+                return ALIEN_PUBLIC_VALUE;
+            }
+        }
+        return STABLE_VALUE;
+    }
+
     private static Kind variableKind(
             @NotNull VariableDescriptor variableDescriptor,
             @Nullable ModuleDescriptor usageModule,
             @NotNull BindingContext bindingContext,
             @NotNull KtElement accessElement
     ) {
-        if (isStableValue(variableDescriptor, usageModule)) return STABLE_VALUE;
-        boolean isLocalVar = variableDescriptor.isVar() && variableDescriptor instanceof LocalVariableDescriptor;
-        if (!isLocalVar) return OTHER;
-        if (variableDescriptor instanceof SyntheticFieldDescriptor) return OTHER;
+        if (variableDescriptor instanceof PropertyDescriptor) {
+            return propertyKind((PropertyDescriptor) variableDescriptor, usageModule);
+        }
+        if (!(variableDescriptor instanceof LocalVariableDescriptor) && !(variableDescriptor instanceof ParameterDescriptor)) return OTHER;
+        if (!variableDescriptor.isVar()) return STABLE_VALUE;
+        if (variableDescriptor instanceof SyntheticFieldDescriptor) return MEMBER_VARIABLE;
 
         // Local variable classification: PREDICTABLE or UNPREDICTABLE
         PreliminaryDeclarationVisitor preliminaryVisitor =
@@ -430,15 +442,7 @@ public class DataFlowValueFactory {
     ) {
         if (variableDescriptor.isVar()) return false;
         if (variableDescriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            if (!isFinal(propertyDescriptor)) return false;
-            if (!hasDefaultGetter(propertyDescriptor)) return false;
-            if (!invisibleFromOtherModules(propertyDescriptor)) {
-                ModuleDescriptor declarationModule = DescriptorUtils.getContainingModule(propertyDescriptor);
-                if (usageModule == null || !usageModule.equals(declarationModule)) {
-                    return false;
-                }
-            }
+            return propertyKind((PropertyDescriptor) variableDescriptor, usageModule) == STABLE_VALUE;
         }
         return true;
     }

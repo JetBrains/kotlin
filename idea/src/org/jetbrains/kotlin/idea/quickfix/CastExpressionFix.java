@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
@@ -104,7 +105,7 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters2<KtExpression, KotlinType, String> diagnosticWithParameters =
+                DiagnosticWithParameters3<KtExpression, KotlinType, String, String> diagnosticWithParameters =
                         Errors.SMARTCAST_IMPOSSIBLE.cast(diagnostic);
                 return new CastExpressionFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
             }

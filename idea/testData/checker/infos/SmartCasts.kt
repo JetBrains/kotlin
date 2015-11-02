@@ -216,9 +216,37 @@ fun f(): String {
             <info>a</info> = 42
             <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is kotlin.Any but kotlin.String was expected">a</error>
         }
-        return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' could have changed since the is-check">a</error>
+        return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'a' is a local variable that is captured by a changing closure">a</error>
     }
     return ""
+}
+
+class Mutable(var <info descr="This property has a backing field">x</info>: String?) {
+
+    val xx: String?
+        <info descr="null">get</info>() = x
+
+    fun foo(): String {
+        if (x is String) {
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'x' is a member variable that can be changed from another thread">x</error>
+        }
+        if (x != null) {
+            // It would be better to have smart cast impossible also here
+            return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is kotlin.String? but kotlin.String was expected">x</error>
+        }
+        if (xx is String) {
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'xx' is a member value that has open or custom getter">xx</error>
+        }
+        return ""
+    }
+
+    fun bar(other: Mutable): String {
+        var y = other
+        if (y.x is String) {
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'y.x' is a complex expression">y.x</error>
+        }
+        return ""
+    }
 }
 
 fun foo(aa: Any): Int {

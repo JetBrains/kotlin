@@ -453,7 +453,7 @@ public class CandidateResolver(
             val expression = (receiverArgument as? ExpressionReceiver)?.expression
             val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
 
-            val smartCastResult = smartCastManager.checkAndRecordPossibleCast(
+            val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, expectedReceiverParameterType, expression, this, /*recordType =*/ true
             )
 

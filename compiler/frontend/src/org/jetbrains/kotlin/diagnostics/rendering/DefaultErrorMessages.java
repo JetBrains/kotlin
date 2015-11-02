@@ -477,7 +477,7 @@ public class DefaultErrorMessages {
             }
         }, DECLARATION_NAME);
         MAP.put(SMARTCAST_IMPOSSIBLE,
-                "Smart cast to ''{0}'' is impossible, because ''{1}'' could have changed since the is-check", RENDER_TYPE, STRING);
+                "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}", RENDER_TYPE, STRING, STRING);
 
         MAP.put(MISSING_CONSTRUCTOR_KEYWORD, "Use 'constructor' keyword after modifiers of primary constructor");
 

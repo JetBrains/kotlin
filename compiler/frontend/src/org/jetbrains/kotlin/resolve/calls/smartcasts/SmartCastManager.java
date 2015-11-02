@@ -150,10 +150,10 @@ public class SmartCastManager {
             @NotNull KtExpression expression,
             @NotNull KotlinType type,
             @NotNull BindingTrace trace,
-            boolean canBeCast,
+            @NotNull DataFlowValue dataFlowValue,
             boolean recordExpressionType
     ) {
-        if (canBeCast) {
+        if (dataFlowValue.isPredictable()) {
             trace.record(SMARTCAST, expression, type);
             if (recordExpressionType) {
                 //TODO
@@ -162,12 +162,12 @@ public class SmartCastManager {
             }
         }
         else {
-            trace.report(SMARTCAST_IMPOSSIBLE.on(expression, type, expression.getText()));
+            trace.report(SMARTCAST_IMPOSSIBLE.on(expression, type, expression.getText(), dataFlowValue.getKind().getDescription()));
         }
     }
 
     @Nullable
-    public SmartCastResult checkAndRecordPossibleCast(
+    public static SmartCastResult checkAndRecordPossibleCast(
             @NotNull DataFlowValue dataFlowValue,
             @NotNull KotlinType expectedType,
             @Nullable KtExpression expression,
@@ -177,7 +177,7 @@ public class SmartCastManager {
         for (KotlinType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, expectedType)) {
                 if (expression != null) {
-                    recordCastOrError(expression, possibleType, c.trace, dataFlowValue.isPredictable(), recordExpressionType);
+                    recordCastOrError(expression, possibleType, c.trace, dataFlowValue, recordExpressionType);
                 }
                 return new SmartCastResult(possibleType, dataFlowValue.isPredictable());
             }
@@ -203,8 +203,7 @@ public class SmartCastManager {
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(dataFlowValue.getType(), nullableExpectedType)) {
                 if (!immanentlyNotNull) {
                     if (expression != null) {
-                        recordCastOrError(expression, dataFlowValue.getType(), c.trace, dataFlowValue.isPredictable(),
-                                          recordExpressionType);
+                        recordCastOrError(expression, dataFlowValue.getType(), c.trace, dataFlowValue, recordExpressionType);
                     }
                 }
 

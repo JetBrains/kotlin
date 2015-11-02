@@ -26,14 +26,29 @@ import org.jetbrains.kotlin.types.KotlinType
  */
 class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.Kind, val immanentNullability: Nullability) {
 
-    enum class Kind(private val str: String) {
+    enum class Kind(private val str: String, val description: String = str) {
+        // Local value, or parameter, or private / internal member value without open / custom getter,
+        // or protected / public member value from the same module without open / custom getter
         // Smart casts are completely safe
         STABLE_VALUE("stable"),
-        // Smart casts are safe but possible changes in loops / closures ahead must be taken into account
-        PREDICTABLE_VARIABLE("predictable"),
+        // Member value with open / custom getter
         // Smart casts are not safe
-        UNPREDICTABLE_VARIABLE("unpredictable"),
-        OTHER("other");
+        MEMBER_VALUE_WITH_GETTER("custom getter", "member value that has open or custom getter"),
+        // Protected / public member value from another module
+        // Smart casts are not safe
+        ALIEN_PUBLIC_VALUE("alien public", "public API member value declared in different module"),
+        // Local variable not yet captured by a changing closure
+        // Smart casts are safe but possible changes in loops / closures ahead must be taken into account
+        PREDICTABLE_VARIABLE("predictable", "local variable that can be changed since the check in a loop"),
+        // Local variable already captured by a changing closure
+        // Smart casts are not safe
+        UNPREDICTABLE_VARIABLE("unpredictable", "local variable that is captured by a changing closure"),
+        // Member variable regardless of its visibility
+        // Smart casts are not safe
+        MEMBER_VARIABLE("member", "member variable that can be changed from another thread"),
+        // Some complex expression
+        // Smart casts are not safe
+        OTHER("other", "complex expression");
 
         override fun toString() = str
 
@@ -60,12 +75,12 @@ class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.
     }
 
     override fun toString(): String {
-        return kind.toString() + (id?.toString()) + " " + immanentNullability
+        return kind.toString() + " " + id?.toString() + " " + immanentNullability
     }
 
     override fun hashCode(): Int {
         var result = if (kind.isStable()) 1 else 0
-        result = 31 * result + (type?.hashCode() ?: 0)
+        result = 31 * result + type.hashCode()
         result = 31 * result + (id?.hashCode() ?: 0)
         return result
     }
