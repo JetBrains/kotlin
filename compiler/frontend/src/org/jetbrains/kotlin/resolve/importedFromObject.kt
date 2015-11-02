@@ -19,15 +19,17 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-abstract class ImportedFromObjectCallableDescriptor(val containingObject: ClassDescriptor): CallableDescriptor
+abstract class ImportedFromObjectCallableDescriptor<TCallable : CallableDescriptor>(val callableFromObject: TCallable) : CallableDescriptor {
+    val containingObject = callableFromObject.containingDeclaration as ClassDescriptor
+}
 
 // members imported from object should be wrapped to not require dispatch receiver
-class FunctionImportedFromObject(val functionFromObject: FunctionDescriptor) :
+class FunctionImportedFromObject(functionFromObject: FunctionDescriptor) :
         FunctionDescriptor by functionFromObject,
-        ImportedFromObjectCallableDescriptor(functionFromObject.containingDeclaration as ClassDescriptor) {
+        ImportedFromObjectCallableDescriptor<FunctionDescriptor>(functionFromObject) {
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 
-    override fun substitute(substitutor: TypeSubstitutor) = functionFromObject.substitute(substitutor).wrap()
+    override fun substitute(substitutor: TypeSubstitutor) = callableFromObject.substitute(substitutor).wrap()
 
     private val _original by lazy {
         functionFromObject.original.wrap()
@@ -43,12 +45,13 @@ class FunctionImportedFromObject(val functionFromObject: FunctionDescriptor) :
     }
 }
 
-class PropertyImportedFromObject(val propertyFromObject: PropertyDescriptor) :
+class PropertyImportedFromObject(propertyFromObject: PropertyDescriptor) :
         PropertyDescriptor by propertyFromObject,
-        ImportedFromObjectCallableDescriptor(propertyFromObject.containingDeclaration as ClassDescriptor) {
+        ImportedFromObjectCallableDescriptor<PropertyDescriptor>(propertyFromObject) {
+
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 
-    override fun substitute(substitutor: TypeSubstitutor) = propertyFromObject.substitute(substitutor)?.wrap()
+    override fun substitute(substitutor: TypeSubstitutor) = callableFromObject.substitute(substitutor)?.wrap()
 
     private val _original by lazy {
         propertyFromObject.original.wrap()

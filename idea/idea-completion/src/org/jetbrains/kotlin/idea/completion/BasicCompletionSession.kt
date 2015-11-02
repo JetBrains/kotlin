@@ -214,6 +214,11 @@ class BasicCompletionSession(
                     collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
                 }
 
+                val staticMembersCompletion = StaticMembersCompletion(collector, prefixMatcher, resolutionFacade, lookupElementFactory, referenceVariants!!.imported)
+                if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
+                    staticMembersCompletion.completeFromImports(position.containingFile as KtFile)
+                }
+
                 completeNonImported(lookupElementFactory)
                 flushToResultSet()
 
@@ -229,7 +234,7 @@ class BasicCompletionSession(
                 }
 
                 if (configuration.completeStaticMembers && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT && prefix.isNotEmpty()) {
-                    StaticMembersCompletion(collector, prefixMatcher, indicesHelper(false), lookupElementFactory).complete()
+                    staticMembersCompletion.completeFromIndices(indicesHelper(false))
                 }
             }
         }

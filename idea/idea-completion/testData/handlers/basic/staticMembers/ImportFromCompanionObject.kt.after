@@ -1,0 +1,9 @@
+import kotlin.text.Regex.Companion.escapeReplacement
+import kotlin.text.Regex.Companion.fromLiteral
+
+fun foo() {
+    escapeReplacement(<caret>)
+}
+
+// INVOCATION_COUNT: 1
+// ELEMENT_TEXT: "Regex.escapeReplacement"

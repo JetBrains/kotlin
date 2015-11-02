@@ -973,7 +973,7 @@ public class JetTypeMapper {
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind,
             List<ValueParameterDescriptor> valueParameters) {
         if (f instanceof FunctionImportedFromObject) {
-            return mapSignature(((FunctionImportedFromObject) f).getFunctionFromObject());
+            return mapSignature(((FunctionImportedFromObject) f).getCallableFromObject());
         }
 
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);

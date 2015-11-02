@@ -78,9 +78,7 @@ class StaticMembers(
                 return
             }
 
-            collection.addLookupElements(descriptor, expectedInfos, matcher) {
-                descriptor -> createLookupElements(descriptor, classDescriptor)
-            }
+            collection.addLookupElements(descriptor, expectedInfos, matcher) { createLookupElements(it) }
         }
 
         classDescriptor.getStaticScope().getContributedDescriptors().forEach(::processMember)
@@ -99,10 +97,10 @@ class StaticMembers(
         members.forEach(::processMember)
     }
 
-    private fun createLookupElements(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): Collection<LookupElement> {
+    private fun createLookupElements(memberDescriptor: DeclarationDescriptor): Collection<LookupElement> {
         return lookupElementFactory.createLookupElementsInSmartCompletion(memberDescriptor, bindingContext, useReceiverTypes = false)
                 .map {
-                    it.decorateAsStaticMember(memberDescriptor, classDescriptor, classNameAsLookupString = true)
+                    it.decorateAsStaticMember(memberDescriptor, classNameAsLookupString = true)!!
                             .assignSmartCompletionPriority(SmartCompletionItemPriority.STATIC_MEMBER)
                 }
     }

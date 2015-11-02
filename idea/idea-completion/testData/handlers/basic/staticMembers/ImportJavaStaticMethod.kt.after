@@ -1,0 +1,10 @@
+import javax.swing.SwingUtilities.invokeAndWait
+import javax.swing.SwingUtilities.invokeLater
+
+fun foo() {
+    invokeAndWait { <caret> }
+}
+
+// INVOCATION_COUNT: 1
+// ELEMENT_TEXT: "SwingUtilities.invokeAndWait"
+// TAIL_TEXT: " {...} ((() -> Unit)!) (javax.swing)"

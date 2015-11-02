@@ -20,41 +20,76 @@ import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
+import org.jetbrains.kotlin.idea.core.targetDescriptors
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import java.util.*
 
 class StaticMembersCompletion(
         private val collector: LookupElementsCollector,
         private val prefixMatcher: PrefixMatcher,
-        private val indicesHelper: KotlinIndicesHelper,
-        private val lookupElementFactory: LookupElementFactory
+        private val resolutionFacade: ResolutionFacade,
+        private val lookupElementFactory: LookupElementFactory,
+        alreadyAdded: Collection<DeclarationDescriptor>
 ) {
-    //TODO: SAM-adapters
-    //TODO: different priority&behaviour when static import from the same class exist
-    //TODO: filter out those that are visible from bases/imports etc
-    //TODO: filter out those that are accessible from SmartCompletion.additionalItems
-    fun complete() {
-        val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
-        val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
+    private val alreadyAdded = alreadyAdded.mapTo(HashSet()) {
+        if (it is ImportedFromObjectCallableDescriptor<*>) it.callableFromObject else it
+    }
 
-        for (member in indicesHelper.getJavaStaticMembers(descriptorKindFilter, nameFilter)) {
-            collector.addElement(createLookupElement(member) ?: continue)
-        }
+    //TODO: include it in smart completion?
+    fun completeFromImports(file: KtFile) {
+        val containers = file.importDirectives
+                .filter { !it.isAllUnder }
+                .map {
+                    it.targetDescriptors(resolutionFacade).map { it.containingDeclaration }.distinct().singleOrNull() as? ClassDescriptor
+                }
+                .filterNotNull()
+                .toSet()
 
-        for (member in indicesHelper.getObjectMembers(descriptorKindFilter, nameFilter)) {
-            collector.addElement(createLookupElement(member) ?: continue)
+        for (container in containers) {
+            val memberScope = if (container.kind == ClassKind.OBJECT) container.unsubstitutedMemberScope else container.staticScope
+            val members = memberScope.getDescriptorsFiltered(DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions, prefixMatcher.asNameFilter())
+            for (member in members) {
+                if (member is CallableDescriptor) {
+                    addFromDescriptor(member, ItemPriority.STATIC_MEMBER_FROM_IMPORTS)
+                }
+            }
         }
     }
 
-    private fun createLookupElement(descriptor: CallableDescriptor): LookupElement? {
-        var classDescriptor = descriptor.containingDeclaration as? ClassDescriptor ?: return null
-        if (classDescriptor.isCompanionObject) {
-            classDescriptor = classDescriptor.containingDeclaration as? ClassDescriptor ?: return null
+    //TODO: SAM-adapters
+    //TODO: filter out those that are accessible from SmartCompletion.additionalItems
+    //TODO: what about enum members?
+    //TODO: filter out Kotlin functions from file facades
+    //TODO: better presentation for lookup elements from imports too
+    //TODO: better sorting
+    //TODO: from the same file
+    fun completeFromIndices(indicesHelper: KotlinIndicesHelper) {
+        val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
+        val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
+
+        indicesHelper.getJavaStaticMembers(descriptorKindFilter, nameFilter).forEach { addFromDescriptor(it, ItemPriority.STATIC_MEMBER) }
+
+        indicesHelper.getObjectMembers(descriptorKindFilter, nameFilter).forEach { addFromDescriptor(it, ItemPriority.STATIC_MEMBER) }
+    }
+
+    private fun addFromDescriptor(member: CallableDescriptor, itemPriority: ItemPriority) {
+        if (member !in alreadyAdded) {
+            collector.addElement(createLookupElement(member, itemPriority) ?: return)
         }
+    }
+
+    private fun createLookupElement(descriptor: CallableDescriptor, itemPriority: ItemPriority): LookupElement? {
         return lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
-                .decorateAsStaticMember(descriptor, classDescriptor, classNameAsLookupString = false)
-                .assignPriority(ItemPriority.STATIC_MEMBER)
-                .suppressAutoInsertion()
+                .decorateAsStaticMember(descriptor, classNameAsLookupString = false)
+                ?.assignPriority(itemPriority)
+                ?.suppressAutoInsertion()
     }
 }

@@ -544,6 +544,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("ImportFromCompanionObject.kt")
+        public void testImportFromCompanionObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/staticMembers/ImportFromCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImportJavaStaticMethod.kt")
+        public void testImportJavaStaticMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/staticMembers/ImportJavaStaticMethod.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("JavaStaticMethod.kt")
         public void testJavaStaticMethod() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/staticMembers/JavaStaticMethod.kt");

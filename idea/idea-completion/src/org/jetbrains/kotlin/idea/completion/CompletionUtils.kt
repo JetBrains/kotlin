@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionProgressIndicator
-import com.intellij.codeInsight.completion.CompletionService
-import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
@@ -31,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.Name
@@ -70,6 +68,7 @@ enum class ItemPriority {
     IMPLEMENT,
     OVERRIDE,
     NAMED_PARAMETER,
+    STATIC_MEMBER_FROM_IMPORTS,
     STATIC_MEMBER
 }
 
@@ -354,9 +353,14 @@ fun singleCharPattern(char: Char) = StandardPatterns.character().equalTo(char)
 
 fun LookupElement.decorateAsStaticMember(
         memberDescriptor: DeclarationDescriptor,
-        classDescriptor: ClassDescriptor,
         classNameAsLookupString: Boolean
-): LookupElement {
+): LookupElement? {
+    var container = memberDescriptor.containingDeclaration as? ClassDescriptor ?: return null
+    var classDescriptor = if (container.isCompanionObject)
+        container.containingDeclaration as? ClassDescriptor ?: return null
+    else
+        container
+
     val qualifierPresentation = classDescriptor.getName().asString()
     val qualifierText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
 
@@ -384,15 +388,34 @@ fun LookupElement.decorateAsStaticMember(
         }
 
         override fun handleInsert(context: InsertionContext) {
-            val prefix = qualifierText + "."
+            val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
+            val file = context.file as KtFile
 
-            val offset = context.startOffset
-            context.document.insertString(offset, prefix)
-            context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, offset + prefix.length)
+            val classImportableFqName = container.importableFqName
+            val useImport = classImportableFqName != null && file.importDirectives.any {
+                !it.isAllUnder && it.importPath?.fqnPart()?.parent() == classImportableFqName
+            }
 
-            shortenReferences(context, offset, offset + prefix.length)
-            PsiDocumentManager.getInstance(context.project).doPostponedOperationsAndUnblockDocument(context.document)
+            var insertQualifier = true
+            if (useImport) {
+                psiDocumentManager.commitAllDocuments()
+                if (ImportInsertHelper.getInstance(context.project).importDescriptor(file, memberDescriptor) != ImportInsertHelper.ImportDescriptorResult.FAIL) {
+                    insertQualifier = false
+                }
+            }
 
+            if (insertQualifier) {
+                val prefix = qualifierText + "."
+
+                val offset = context.startOffset
+                context.document.insertString(offset, prefix)
+                context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, offset + prefix.length)
+
+                shortenReferences(context, offset, offset + prefix.length)
+
+            }
+
+            psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
             super.handleInsert(context)
         }
     }
