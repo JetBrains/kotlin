@@ -24,6 +24,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
+import kotlin.ArraysKt;
 import kotlin.CollectionsKt;
 import kotlin.Pair;
 import kotlin.Unit;
@@ -370,7 +371,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
         parametersBuilder.append(')');
         KtValueArgumentList newArgumentList = KtPsiFactoryKt.KtPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
 
-        Map<Integer, ? extends ValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
+        Map<Integer, ValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
 
         JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
         JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
@@ -410,9 +411,12 @@ public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
                 KtSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
                 changeArgumentName(argumentNameExpression, parameterInfo);
                 //noinspection ConstantConditions
-                newArgument.replace(oldArgument instanceof KtFunctionLiteralArgument
-                                    ? psiFactory.createArgument(oldArgument.getArgumentExpression(), null, false)
-                                    : oldArgument.asElement());
+                ValueArgument argumentReplacement = (ValueArgument) newArgument.replace(
+                        oldArgument instanceof KtFunctionLiteralArgument
+                        ? psiFactory.createArgument(oldArgument.getArgumentExpression(), null, false)
+                        : oldArgument.asElement()
+                );
+                argumentMap.put(parameterInfo.getOldIndex(), argumentReplacement);
             }
             // TODO: process default arguments in the middle
             else if (parameterInfo.getDefaultValueForCall() == null) {
@@ -429,14 +433,25 @@ public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
         }
 
         List<KtFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();
-        if (!lambdaArguments.isEmpty()) {
+        boolean hasLambdaArgumentsBefore = !lambdaArguments.isEmpty();
+        if (hasLambdaArgumentsBefore) {
             element.deleteChildRange(CollectionsKt.first(lambdaArguments), CollectionsKt.last(lambdaArguments));
         }
 
-        //TODO: this is not correct!
         KtValueArgument lastArgument = CollectionsKt.lastOrNull(newArgumentList.getArguments());
+        KtFunctionLiteralExpression lastLambdaExpr =
+                lastArgument != null ? KtFunctionLiteralArgumentKt.unpackFunctionLiteral(lastArgument.getArgumentExpression()) : null;
+        JetParameterInfo lastNewParam = ArraysKt.lastOrNull(changeInfo.getNewParameters());
         boolean hasTrailingLambdaInArgumentListAfter =
-                lastArgument != null && KtFunctionLiteralArgumentKt.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
+                lastLambdaExpr != null && lastNewParam != null && argumentMap.get(lastNewParam.getOldIndex()) == lastArgument;
+        boolean newLambdaWithDefaultValueWasAdded =
+                lastNewParam != null
+                && lastNewParam.isNewParameter()
+                && lastNewParam.getDefaultValueForCall() instanceof KtFunctionLiteralExpression
+                && lastArgument != null
+                && !lastArgument.isNamed();
+        boolean shouldMoveLambdaOut =
+                hasTrailingLambdaInArgumentListAfter && hasLambdaArgumentsBefore || newLambdaWithDefaultValueWasAdded;
 
         arguments = (KtValueArgumentList) arguments.replace(newArgumentList);
 
@@ -477,7 +492,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
             newElement = (KtElement) elementToReplace.replace(replacingElement);
         }
 
-        if (hasTrailingLambdaInArgumentListAfter) {
+        if (shouldMoveLambdaOut) {
             KtCallExpression newCallExpression =
                     (KtCallExpression) (newElement instanceof KtQualifiedExpression
                                       ? ((KtQualifiedExpression) newElement).getSelectorExpression()
@@ -531,7 +546,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
         return null;
     }
 
-    private static Map<Integer, ? extends ValueArgument> getParamIndexToArgumentMap(JetChangeInfo changeInfo, List<? extends ValueArgument> oldArguments) {
+    private static Map<Integer, ValueArgument> getParamIndexToArgumentMap(JetChangeInfo changeInfo, List<? extends ValueArgument> oldArguments) {
         Map<Integer, ValueArgument> argumentMap = new HashMap<Integer, ValueArgument>();
 
         for (int i = 0; i < oldArguments.size(); i++) {

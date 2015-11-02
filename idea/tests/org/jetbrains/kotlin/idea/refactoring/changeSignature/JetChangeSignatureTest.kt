@@ -833,4 +833,6 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testJvmOverloadedRemoveNonDefault3() = doTest { removeParameter(getNewParametersCount() - 1) }
 
     fun testJvmOverloadedConstructorSwapParams() = doTest { swapParameters(1, 2) }
+
+    fun testDefaultAfterLambda() = doTest { swapParameters(0, 1) }
 }
