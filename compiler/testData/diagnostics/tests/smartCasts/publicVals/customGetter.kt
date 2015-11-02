@@ -5,7 +5,7 @@ public class X {
     public fun fn(): Int {
         if (y != null)
             // With non-default getter smartcast is not possible
-            return y<!UNSAFE_CALL!>.<!>length
+            return <!SMARTCAST_IMPOSSIBLE!>y<!>.length
         else
             return 0
     }

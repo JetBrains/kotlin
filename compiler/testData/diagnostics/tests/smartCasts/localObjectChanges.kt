@@ -10,6 +10,6 @@ fun foo() {
                 i = null
             }
         }.bar()
-        i<!UNSAFE_CALL!>.<!>hashCode()
+        <!SMARTCAST_IMPOSSIBLE!>i<!>.hashCode()
     }
 }

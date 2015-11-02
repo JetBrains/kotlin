@@ -92,7 +92,7 @@ public object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
                 expressionType,
                 object : RuntimeAssertionInfo.DataFlowExtras {
                     override val canBeNull: Boolean
-                        get() = c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
+                        get() = c.dataFlowInfo.getPredictableNullability(dataFlowValue).canBeNull()
                     override val possibleTypes: Set<KotlinType>
                         get() = c.dataFlowInfo.getPossibleTypes(dataFlowValue)
                     override val presentableText: String

@@ -892,7 +892,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     private static boolean isKnownToBeNotNull(KtExpression expression, KotlinType jetType, ExpressionTypingContext context) {
         DataFlowValue dataFlowValue = createDataFlowValue(expression, jetType, context);
-        return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
+        return !context.dataFlowInfo.getPredictableNullability(dataFlowValue).canBeNull();
     }
 
     /**
@@ -1191,7 +1191,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo rightDataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
             if ((rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable())
-                || !rightDataFlowInfo.getNullability(leftValue).canBeNull()) {
+                || !rightDataFlowInfo.getPredictableNullability(leftValue).canBeNull()) {
                 dataFlowInfo = dataFlowInfo.disequate(leftValue, DataFlowValue.nullValue(components.builtIns));
             }
         }
@@ -1298,7 +1298,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                         new Function1<DataFlowValue, Nullability>() {
                             @Override
                             public Nullability invoke(DataFlowValue value) {
-                                return context.dataFlowInfo.getNullability(value);
+                                return context.dataFlowInfo.getPredictableNullability(value);
                             }
                         });
             }

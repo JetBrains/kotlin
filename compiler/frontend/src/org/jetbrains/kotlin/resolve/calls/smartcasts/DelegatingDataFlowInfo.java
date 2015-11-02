@@ -111,7 +111,18 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @Override
     @NotNull
     public Nullability getNullability(@NotNull DataFlowValue key) {
-        if (!key.isPredictable()) return key.getImmanentNullability();
+        return getNullability(key, false);
+    }
+
+    @Override
+    @NotNull
+    public Nullability getPredictableNullability(@NotNull DataFlowValue key) {
+        return getNullability(key, true);
+    }
+
+    @NotNull
+    private Nullability getNullability(@NotNull DataFlowValue key, boolean predictableOnly) {
+        if (predictableOnly && !key.isPredictable()) return key.getImmanentNullability();
         Nullability nullability = nullabilityInfo.get(key);
         return nullability != null ? nullability :
                parent != null ? parent.getNullability(key) :
@@ -123,7 +134,6 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
             @NotNull DataFlowValue value,
             @NotNull Nullability nullability
     ) {
-        if (!value.isPredictable()) return false;
         map.put(value, nullability);
         return nullability != getNullability(value);
     }

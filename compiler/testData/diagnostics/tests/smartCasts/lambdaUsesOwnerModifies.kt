@@ -6,7 +6,7 @@ fun foo(arg: Int?) {
     if (x == null) return
     run {
         // Not safe: x = null later in the owner
-        x<!UNSAFE_CALL!>.<!>hashCode()
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.hashCode()
     }
     x = null  
 }

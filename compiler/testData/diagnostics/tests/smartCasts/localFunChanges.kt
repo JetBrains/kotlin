@@ -7,8 +7,8 @@ fun foo() {
             i = null
             return true
         }
-        i<!UNSAFE_CALL!>.<!>hashCode()
-        trans(<!TYPE_MISMATCH!>i<!>, ::can)
-        i<!UNSAFE_CALL!>.<!>hashCode()
+        <!SMARTCAST_IMPOSSIBLE!>i<!>.hashCode()
+        trans(<!SMARTCAST_IMPOSSIBLE!>i<!>, ::can)
+        <!SMARTCAST_IMPOSSIBLE!>i<!>.hashCode()
     }
 }
