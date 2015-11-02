@@ -241,7 +241,6 @@ class FunctionDescriptorResolver(
                 true,
                 classElement.getPrimaryConstructorModifierList(),
                 classElement.getPrimaryConstructor() ?: classElement,
-                classDescriptor.getTypeConstructor().getParameters(),
                 classElement.getPrimaryConstructorParameters(),
                 trace
         )
@@ -259,7 +258,6 @@ class FunctionDescriptorResolver(
                 false,
                 constructor.getModifierList(),
                 constructor,
-                classDescriptor.getTypeConstructor().getParameters(),
                 constructor.getValueParameters(),
                 trace
         )
@@ -271,7 +269,6 @@ class FunctionDescriptorResolver(
             isPrimary: Boolean,
             modifierList: KtModifierList?,
             declarationToTrace: KtDeclaration,
-            typeParameters: List<TypeParameterDescriptor>,
             valueParameters: List<KtParameter>,
             trace: BindingTrace
     ): ConstructorDescriptorImpl {
@@ -291,7 +288,6 @@ class FunctionDescriptorResolver(
         )
         parameterScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH)
         val constructor = constructorDescriptor.initialize(
-                typeParameters,
                 resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace, null),
                 resolveVisibilityFromModifiers(
                         modifierList,

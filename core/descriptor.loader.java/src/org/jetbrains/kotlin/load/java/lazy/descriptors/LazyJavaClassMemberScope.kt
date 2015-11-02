@@ -480,7 +480,6 @@ public class LazyJavaClassMemberScope(
                 constructor, false, null, null, valueParameters.descriptors, Collections.emptyList(), false)
 
         constructorDescriptor.initialize(
-                classDescriptor.getTypeConstructor().getParameters(),
                 effectiveSignature.getValueParameters(),
                 constructor.getVisibility()
         )
@@ -508,12 +507,11 @@ public class LazyJavaClassMemberScope(
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
                 classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.components.sourceElementFactory.source(jClass)
         )
-        val typeParameters = classDescriptor.getTypeConstructor().getParameters()
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
                               else Collections.emptyList<ValueParameterDescriptor>()
         constructorDescriptor.setHasSynthesizedParameterNames(false)
 
-        constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(classDescriptor))
+        constructorDescriptor.initialize(valueParameters, getConstructorVisibility(classDescriptor))
         constructorDescriptor.setHasStableParameterNames(true)
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
         c.components.javaResolverCache.recordConstructor(jClass, constructorDescriptor);

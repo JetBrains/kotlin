@@ -227,7 +227,7 @@ public class SingleAbstractMethodUtils {
                     @NotNull List<ValueParameterDescriptor> valueParameters,
                     @NotNull KotlinType returnType
             ) {
-                result.initialize(typeParameters, valueParameters, original.getVisibility());
+                result.initialize(valueParameters, original.getVisibility());
                 result.setReturnType(returnType);
             }
         });

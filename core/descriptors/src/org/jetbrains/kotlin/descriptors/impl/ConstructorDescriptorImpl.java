@@ -55,12 +55,14 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     public ConstructorDescriptorImpl initialize(
-            @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @NotNull Visibility visibility
     ) {
-        super.initialize(null, calculateDispatchReceiverParameter(), typeParameters, unsubstitutedValueParameters, null,
-                         Modality.FINAL, visibility);
+        super.initialize(
+                null, calculateDispatchReceiverParameter(),
+                getContainingDeclaration().getDeclaredTypeParameters(),
+                unsubstitutedValueParameters, null,
+                Modality.FINAL, visibility);
         return this;
     }
 

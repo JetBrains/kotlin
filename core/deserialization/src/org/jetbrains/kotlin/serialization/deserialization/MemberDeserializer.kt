@@ -170,7 +170,6 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         )
         val local = c.childContext(descriptor, listOf())
         descriptor.initialize(
-                classDescriptor.typeConstructor.parameters,
                 local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
                 Deserialization.visibility(Flags.VISIBILITY.get(proto.flags))
         )

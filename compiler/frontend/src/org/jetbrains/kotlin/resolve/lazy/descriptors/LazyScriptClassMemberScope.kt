@@ -118,7 +118,6 @@ public class LazyScriptClassMemberScope protected constructor(
                 true,
                 SourceElement.NO_SOURCE
         ).initialize(
-                listOf(),
                 valueParameters,
                 Visibilities.PUBLIC
         )
