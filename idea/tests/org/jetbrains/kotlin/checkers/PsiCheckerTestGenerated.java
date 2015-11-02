@@ -187,6 +187,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NullAsAnnotationArgument.kt")
+        public void testNullAsAnnotationArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/NullAsAnnotationArgument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Nullability.kt")
         public void testNullability() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/Nullability.kt");
