@@ -14,582 +14,463 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
-import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.usageView.UsageInfo;
-import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.TIntArrayList;
-import gnu.trove.TIntProcedure;
-import kotlin.ArraysKt;
-import kotlin.CollectionsKt;
-import kotlin.Pair;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenWaitingSetKt;
-import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignatureUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractorUtilKt;
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.*;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.usageView.UsageInfo
+import com.intellij.util.containers.ContainerUtil
+import gnu.trove.TIntArrayList
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBody
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.createNameCounterpartMap
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.sure
+import java.util.*
 
-import java.util.*;
+class JetFunctionCallUsage(
+        element: KtCallElement,
+        private val callee: JetCallableDefinitionUsage<*>
+) : JetUsageInfo<KtCallElement>(element) {
+    private val context = element.analyze(BodyResolveMode.FULL)
+    private val resolvedCall = element.getResolvedCall(context)
 
-public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
-    private static final Comparator<Pair<KtElement, KtElement>>
-            REVERSED_TEXT_OFFSET_COMPARATOR = new Comparator<Pair<KtElement, KtElement>>() {
-        @Override
-        public int compare(
-                @NotNull Pair<KtElement, KtElement> p1,
-                @NotNull Pair<KtElement, KtElement> p2
-        ) {
-            int offset1 = p1.getFirst().getTextRange().getStartOffset();
-            int offset2 = p2.getFirst().getTextRange().getStartOffset();
-            return offset1 < offset2 ? 1
-                                     : offset1 > offset2 ? -1
-                                                         : 0;
-        }
-    };
+    override fun processUsage(changeInfo: JetChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
+        if (shouldSkipUsage(element)) return true
 
-    private static final ShortenReferences.Options SHORTEN_ARGUMENTS_OPTIONS = new ShortenReferences.Options(true, true);
+        changeNameIfNeeded(changeInfo, element)
 
-    private final JetCallableDefinitionUsage<?> callee;
-    private final BindingContext context;
-    private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
-
-    public JetFunctionCallUsage(@NotNull KtCallElement element, JetCallableDefinitionUsage callee) {
-        super(element);
-        this.callee = callee;
-        this.context = ResolutionUtils.analyze(element, BodyResolveMode.FULL);
-        this.resolvedCall = CallUtilKt.getResolvedCall(element, context);
-    }
-
-    @Override
-    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull KtCallElement element, @NotNull UsageInfo[] allUsages) {
-        if (shouldSkipUsage(element)) return true;
-
-        changeNameIfNeeded(changeInfo, element);
-
-        if (element.getValueArgumentList() != null) {
-            if (changeInfo.isParameterSetOrOrderChanged()) {
-                updateArgumentsAndReceiver(changeInfo, element, allUsages);
+        if (element.valueArgumentList != null) {
+            if (changeInfo.isParameterSetOrOrderChanged) {
+                updateArgumentsAndReceiver(changeInfo, element, allUsages)
             }
             else {
-                changeArgumentNames(changeInfo, element);
+                changeArgumentNames(changeInfo, element)
             }
         }
 
-        if (changeInfo.getNewParametersCount() == 0
-            && element instanceof KtDelegatorToSuperCall) {
-            KtEnumEntry enumEntry = PsiTreeUtil.getParentOfType(element, KtEnumEntry.class, true);
-            if (enumEntry != null && enumEntry.getInitializerList() == element.getParent()) {
-                PsiElement colon = enumEntry.getColon();
-                KtInitializerList initializerList = enumEntry.getInitializerList();
-                enumEntry.deleteChildRange(colon != null ? colon : initializerList, initializerList);
+        if (changeInfo.getNewParametersCount() == 0 && element is KtDelegatorToSuperCall) {
+            val enumEntry = element.getStrictParentOfType<KtEnumEntry>()
+            if (enumEntry != null && enumEntry.initializerList == element.parent) {
+                val initializerList = enumEntry.initializerList
+                enumEntry.deleteChildRange(enumEntry.getColon() ?: initializerList, initializerList)
             }
         }
 
-        return true;
+        return true
     }
 
-    private boolean shouldSkipUsage(KtCallElement element) {
+    private fun shouldSkipUsage(element: KtCallElement): Boolean {
         // TODO: We probable need more clever processing of invalid calls, but for now default to Java-like behaviour
-        if (resolvedCall == null && !(element instanceof KtDelegatorToSuperCall)) return true;
-        if (resolvedCall != null && !ArgumentMappingKt.isReallySuccess(resolvedCall)) {
-            // TODO: investigate why arguments are not recorded for enum constructor call
-            if (element instanceof KtDelegatorToSuperCall && element.getParent().getParent() instanceof KtEnumEntry) return false;
-            for (ValueArgument valueArgument : resolvedCall.getCall().getValueArguments()) {
-                if (!(resolvedCall.getArgumentMapping(valueArgument) instanceof ArgumentMatch)) return true;
-            }
-            Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = resolvedCall.getValueArguments();
-            for (ValueParameterDescriptor valueParameter : resolvedCall.getResultingDescriptor().getValueParameters()) {
-                if (!arguments.containsKey(valueParameter)) return true;
-            }
-        }
-        return false;
+        if (resolvedCall == null && element !is KtDelegatorToSuperCall) return true
+        if (resolvedCall == null || resolvedCall.isReallySuccess()) return false
+
+        // TODO: investigate why arguments are not recorded for enum constructor call
+        if (element is KtDelegatorToSuperCall && element.parent.parent is KtEnumEntry) return false
+
+        if (!resolvedCall.call.valueArguments.all{ resolvedCall.getArgumentMapping(it) is ArgumentMatch }) return true
+
+        val arguments = resolvedCall.valueArguments
+        return !resolvedCall.resultingDescriptor.valueParameters.all{ arguments.containsKey(it) }
     }
 
-    private boolean isPropertyJavaUsage() {
-        PsiElement calleeElement = this.callee.getElement();
-        return (calleeElement instanceof KtProperty || calleeElement instanceof KtParameter)
-               && resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof JavaMethodDescriptor;
-    }
-
-    protected void changeNameIfNeeded(JetChangeInfo changeInfo, KtCallElement element) {
-        if (!changeInfo.isNameChanged()) return;
-
-        KtExpression callee = element.getCalleeExpression();
-        if (!(callee instanceof KtSimpleNameExpression)) return;
-
-        String newName = changeInfo.getNewName();
-        if (isPropertyJavaUsage()) {
-            String currentName = ((KtSimpleNameExpression) callee).getReferencedName();
-            if (JvmAbi.isGetterName(currentName)) newName = JvmAbi.getterName(newName);
-            else if (JvmAbi.isSetterName(currentName)) newName = JvmAbi.setterName(newName);
+    private val isPropertyJavaUsage: Boolean
+        get() {
+            val calleeElement = this.callee.element
+            if (calleeElement !is KtProperty && calleeElement !is KtParameter) return false
+            return resolvedCall?.resultingDescriptor is JavaMethodDescriptor
         }
 
-        callee.replace(KtPsiFactoryKt.KtPsiFactory(getProject()).createSimpleName(newName));
+    protected fun changeNameIfNeeded(changeInfo: JetChangeInfo, element: KtCallElement) {
+        if (!changeInfo.isNameChanged) return
+
+        val callee = element.calleeExpression
+        if (callee !is KtSimpleNameExpression) return
+
+        var newName = changeInfo.newName
+        if (isPropertyJavaUsage) {
+            val currentName = callee.getReferencedName()
+            if (JvmAbi.isGetterName(currentName))
+                newName = JvmAbi.getterName(newName)
+            else if (JvmAbi.isSetterName(currentName)) newName = JvmAbi.setterName(newName)
+        }
+
+        callee.replace(KtPsiFactory(project).createSimpleName(newName))
     }
 
-    @Nullable
-    private KtExpression getReceiverExpressionIfMatched(
-            @NotNull ReceiverValue receiverValue,
-            @NotNull DeclarationDescriptor originalDescriptor,
-            @NotNull KtPsiFactory psiFactory
-    ) {
-        if (!receiverValue.exists()) return null;
+    private fun getReceiverExpressionIfMatched(
+            receiverValue: ReceiverValue,
+            originalDescriptor: DeclarationDescriptor,
+            psiFactory: KtPsiFactory
+    ): KtExpression? {
+        if (!receiverValue.exists()) return null
 
         // Replace descriptor of extension function/property with descriptor of its receiver
         // to simplify checking against receiver value in the corresponding resolved call
-        if (originalDescriptor instanceof CallableDescriptor && !(originalDescriptor instanceof ReceiverParameterDescriptor)) {
-            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) originalDescriptor).getExtensionReceiverParameter();
-            if (receiverParameter == null) return null;
-            originalDescriptor = receiverParameter;
+        val adjustedDescriptor = if (originalDescriptor is CallableDescriptor && originalDescriptor !is ReceiverParameterDescriptor) {
+            originalDescriptor.extensionReceiverParameter ?: return null
         }
+        else originalDescriptor
 
-        boolean currentIsExtension = resolvedCall.getExtensionReceiver() == receiverValue;
-        boolean originalIsExtension =
-                originalDescriptor instanceof ReceiverParameterDescriptor &&
-                ((ReceiverParameterDescriptor) originalDescriptor).getValue() instanceof ExtensionReceiver;
-        if (currentIsExtension != originalIsExtension) return null;
+        val currentIsExtension = resolvedCall!!.extensionReceiver == receiverValue
+        val originalIsExtension = adjustedDescriptor is ReceiverParameterDescriptor && adjustedDescriptor.value is ExtensionReceiver
+        if (currentIsExtension != originalIsExtension) return null
 
-        KotlinType originalType = originalDescriptor instanceof ReceiverParameterDescriptor
-                               ? ((ReceiverParameterDescriptor) originalDescriptor).getType()
-                               : originalDescriptor instanceof ClassDescriptor
-                                 ? ((ClassDescriptor) originalDescriptor).getDefaultType()
-                                 : null;
-        if (originalType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(receiverValue.getType(), originalType)) return null;
+        val originalType = when (adjustedDescriptor) {
+            is ReceiverParameterDescriptor -> adjustedDescriptor.type
+            is ClassDescriptor -> adjustedDescriptor.defaultType
+            else -> null
+        }
+        if (originalType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(receiverValue.type, originalType)) return null
 
-        return getReceiverExpression(receiverValue, psiFactory);
+        return getReceiverExpression(receiverValue, psiFactory)
     }
 
-    private boolean needSeparateVariable(@NotNull PsiElement element) {
-        if (element instanceof KtConstantExpression) return false;
-        if (element instanceof KtThisExpression) return false;
-        if (element instanceof KtSimpleNameExpression) return false;
-
-        //noinspection SuspiciousMethodCalls
-        if (element instanceof KtBinaryExpression
-            && OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(((KtBinaryExpression) element).getOperationToken())) return true;
-
-        //noinspection SuspiciousMethodCalls
-        if (element instanceof KtUnaryExpression
-            && OperatorConventions.INCREMENT_OPERATIONS.contains(((KtUnaryExpression) element).getOperationToken())) return true;
-
-        if (element instanceof KtCallExpression) {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                    CallUtilKt.getResolvedCall((KtCallExpression) element, context);
-            return resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
+    private fun needSeparateVariable(element: PsiElement): Boolean {
+        return when {
+            element is KtConstantExpression, element is KtThisExpression, element is KtSimpleNameExpression -> false
+            element is KtBinaryExpression && OperatorConventions.ASSIGNMENT_OPERATIONS.containsKeyRaw(element.operationToken) -> true
+            element is KtUnaryExpression && OperatorConventions.INCREMENT_OPERATIONS.containsRaw(element.operationToken) -> true
+            element is KtCallExpression -> element.getResolvedCall(context)?.resultingDescriptor is ConstructorDescriptor
+            else -> element.children.any { needSeparateVariable(it) }
         }
-
-        for (PsiElement child : element.getChildren()) {
-            if (needSeparateVariable(child)) return true;
-        }
-        return false;
     }
 
-    @NotNull
-    private KtExpression substituteReferences(
-            @NotNull KtExpression expression,
-            @NotNull Map<PsiReference, DeclarationDescriptor> referenceMap,
-            @NotNull final KtPsiFactory psiFactory
-    ) {
-        if (referenceMap.isEmpty() || resolvedCall == null) return expression;
+    private fun substituteReferences(
+            expression: KtExpression,
+            referenceMap: Map<PsiReference, DeclarationDescriptor>,
+            psiFactory: KtPsiFactory
+    ): KtExpression {
+        if (referenceMap.isEmpty() || resolvedCall == null) return expression
 
-        KtExpression newExpression = (KtExpression) expression.copy();
+        val newExpression = expression.copy() as KtExpression
 
-        Map<KtSimpleNameExpression, KtSimpleNameExpression> nameCounterpartMap =
-                ExtractorUtilKt.createNameCounterpartMap(expression, newExpression);
+        val nameCounterpartMap = createNameCounterpartMap(expression, newExpression)
 
-        Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();
+        val valueArguments = resolvedCall.valueArguments
 
-        List<Pair<KtElement, KtElement>> replacements = new ArrayList<Pair<KtElement, KtElement>>();
-        for (Map.Entry<PsiReference, DeclarationDescriptor> e : referenceMap.entrySet()) {
-            DeclarationDescriptor descriptor = e.getValue();
-
-            KtExpression argumentExpression;
-            boolean addReceiver = false;
-            if (descriptor instanceof ValueParameterDescriptor) { // Ordinary parameter
+        val replacements = ArrayList<Pair<KtElement, KtElement>>()
+        loop@ for ((ref, descriptor) in referenceMap.entries) {
+            var argumentExpression: KtExpression?
+            val addReceiver: Boolean
+            if (descriptor is ValueParameterDescriptor) {
+                // Ordinary parameter
                 // Find corresponding parameter in the current function (may differ from 'descriptor' if original function is part of override hierarchy)
-                ValueParameterDescriptor parameterDescriptor =
-                        resolvedCall.getResultingDescriptor().getValueParameters().get(((ValueParameterDescriptor) descriptor).getIndex());
+                val parameterDescriptor = resolvedCall.resultingDescriptor.valueParameters[descriptor.index]
+                val resolvedValueArgument = valueArguments[parameterDescriptor] as? ExpressionValueArgument ?: continue
+                val argument = resolvedValueArgument.valueArgument ?: continue
 
-                ResolvedValueArgument resolvedValueArgument = valueArguments.get(parameterDescriptor);
-                if (!(resolvedValueArgument instanceof ExpressionValueArgument)) continue;
-
-                ValueArgument argument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
-                if (argument == null) continue;
-
-                argumentExpression = argument.getArgumentExpression();
+                addReceiver = false
+                argumentExpression = argument.getArgumentExpression()
             }
             else {
-                addReceiver = !(descriptor instanceof ReceiverParameterDescriptor);
-                argumentExpression = getReceiverExpressionIfMatched(resolvedCall.getExtensionReceiver(), descriptor, psiFactory);
-                if (argumentExpression == null) {
-                    argumentExpression = getReceiverExpressionIfMatched(resolvedCall.getDispatchReceiver(), descriptor, psiFactory);
+                addReceiver = descriptor !is ReceiverParameterDescriptor
+                argumentExpression = getReceiverExpressionIfMatched(resolvedCall.extensionReceiver, descriptor, psiFactory)
+                                     ?: getReceiverExpressionIfMatched(resolvedCall.dispatchReceiver, descriptor, psiFactory)
+            }
+            if (argumentExpression == null) continue
+
+            if (needSeparateVariable(argumentExpression)
+                && PsiTreeUtil.getNonStrictParentOfType(element,
+                                                        KtConstructorDelegationCall::class.java,
+                                                        KtDelegationSpecifier::class.java,
+                                                        KtParameter::class.java) == null) {
+
+                KotlinIntroduceVariableHandler.doRefactoring(project, null, argumentExpression, listOf(argumentExpression)) {
+                    argumentExpression = psiFactory.createExpression(it.name!!)
                 }
             }
-            if (argumentExpression == null) continue;
 
-            //noinspection unchecked
-            if (needSeparateVariable(argumentExpression) &&
-                PsiTreeUtil.getNonStrictParentOfType(getElement(),
-                                                     KtConstructorDelegationCall.class,
-                                                     KtDelegationSpecifier.class,
-                                                     KtParameter.class) == null) {
+            var expressionToReplace: KtExpression = nameCounterpartMap.getRaw(ref.element) ?: continue
+            val parent = expressionToReplace.parent
 
-                final Ref<KtExpression> newExpressionRef = new Ref<KtExpression>();
-                KotlinIntroduceVariableHandler.doRefactoring(
-                        getProject(),
-                        null,
-                        argumentExpression,
-                        Collections.singletonList(argumentExpression),
-                        new Function1<KtProperty, Unit>() {
-                            @Override
-                            public Unit invoke(KtProperty property) {
-                                //noinspection ConstantConditions
-                                newExpressionRef.set(psiFactory.createExpression(property.getName()));
-                                return null;
-                            }
-                        }
-                );
-                argumentExpression = newExpressionRef.get();
-            }
-
-            //noinspection SuspiciousMethodCalls
-            KtExpression expressionToReplace = nameCounterpartMap.get(e.getKey().getElement());
-            if (expressionToReplace == null) continue;
-            PsiElement parent = expressionToReplace.getParent();
-            if (parent instanceof KtThisExpression) {
-                expressionToReplace = (KtThisExpression) parent;
+            if (parent is KtThisExpression) {
+                expressionToReplace = parent
             }
 
             if (addReceiver) {
-                KtCallExpression callExpression = PsiTreeUtil.getParentOfType(expressionToReplace, KtCallExpression.class, true);
-                if (callExpression != null && PsiTreeUtil.isAncestor(callExpression.getCalleeExpression(), expressionToReplace, false)) {
-                    expressionToReplace = callExpression;
-                } else {
-                    // Do not substitute operation references in infix/prefix calls
-                    if (parent instanceof KtOperationExpression
-                        && ((KtOperationExpression) parent).getOperationReference() == expressionToReplace) {
-                        continue;
-                    }
+                val callExpression = expressionToReplace.getParentOfTypeAndBranch<KtCallExpression>(true) { calleeExpression }
+                when {
+                    callExpression != null -> expressionToReplace = callExpression
+                    parent is KtOperationExpression && parent.operationReference == expressionToReplace -> continue@loop
                 }
-                replacements.add(
-                        new Pair<KtElement, KtElement>(
-                                expressionToReplace,
-                                psiFactory.createExpression(argumentExpression.getText() + "." + expressionToReplace.getText())
-                        )
-                );
+
+                val replacement = psiFactory.createExpression("${argumentExpression!!.text}.${expressionToReplace.text}")
+                replacements.add(expressionToReplace to replacement)
             }
             else {
-                replacements.add(new Pair<KtElement, KtElement>(expressionToReplace, argumentExpression));
+                replacements.add(expressionToReplace to argumentExpression!!)
             }
         }
 
         // Sort by descending offset so that call arguments are replaced before call itself
-        ContainerUtil.sort(replacements, REVERSED_TEXT_OFFSET_COMPARATOR);
-        for (Pair<KtElement, KtElement> replacement : replacements) {
-            replacement.getFirst().replace(replacement.getSecond());
+        ContainerUtil.sort(replacements, REVERSED_TEXT_OFFSET_COMPARATOR)
+        for ((expressionToReplace, replacingExpression) in replacements) {
+            expressionToReplace.replace(replacingExpression)
         }
 
-        return newExpression;
+        return newExpression
     }
 
-    private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, KtCallElement element, @NotNull UsageInfo[] allUsages) {
-        KtValueArgumentList arguments = element.getValueArgumentList();
-        assert arguments != null : "Argument list is expected: " + element.getText();
-        List<? extends ValueArgument> oldArguments = element.getValueArguments();
+    private fun updateArgumentsAndReceiver(changeInfo: JetChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>) {
+        var arguments = element.valueArgumentList.sure { "Argument list is expected: " + element.text }
+        val oldArguments = element.valueArguments
 
-        if (isPropertyJavaUsage()) {
-            updateJavaPropertyCall(changeInfo, element);
-            return;
-        }
+        if (isPropertyJavaUsage) return updateJavaPropertyCall(changeInfo, element)
 
-        boolean isNamedCall = oldArguments.size() > 1 && oldArguments.get(0).isNamed();
-        StringBuilder parametersBuilder = new StringBuilder("(");
-        boolean isFirst = true;
+        val isNamedCall = oldArguments.size > 1 && oldArguments[0].isNamed()
 
-        TIntArrayList indicesOfArgumentsWithDefaultValues = new TIntArrayList();
+        val indicesOfArgumentsWithDefaultValues = TIntArrayList()
 
-        KtPsiFactory psiFactory = new KtPsiFactory(element.getProject());
+        val psiFactory = KtPsiFactory(element.project)
 
-        List<JetParameterInfo> newSignatureParameters = changeInfo.getNonReceiverParameters();
-        for (JetParameterInfo parameterInfo : newSignatureParameters) {
-            if (isFirst) {
-                isFirst = false;
-            }
-            else {
-                parametersBuilder.append(',');
-            }
+        val newSignatureParameters = changeInfo.getNonReceiverParameters()
+        val newArgumentListText = newSignatureParameters
+                .map { parameterInfo ->
+                    val defaultValueForCall = parameterInfo.defaultValueForCall
+                    val defaultValueText = when {
+                        element.isInsideOfCallerBody(allUsages) ->
+                            parameterInfo.name
+                        defaultValueForCall != null ->
+                            substituteReferences(defaultValueForCall, parameterInfo.defaultValueParameterReferences, psiFactory).text
+                        else ->
+                            ""
+                    }
+                    val argumentValue = if (defaultValueText.isEmpty()) "0" else defaultValueText
+                    if (isNamedCall) "${parameterInfo.getInheritedName(callee)}=$argumentValue" else argumentValue
+                }
+                .joinToString(prefix = "(", postfix = ")")
+        val newArgumentList = KtPsiFactory(project).createCallArguments(newArgumentListText)
 
-            KtExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
+        val argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments)
 
-            String defaultValueText;
-            if (ChangeSignatureUtilsKt.isInsideOfCallerBody(element, allUsages)) {
-                defaultValueText = parameterInfo.getName();
-            }
-            else {
-                defaultValueText = defaultValueForCall != null
-                                   ? substituteReferences(defaultValueForCall,
-                                                          parameterInfo.getDefaultValueParameterReferences(),
-                                                          psiFactory).getText()
-                                   : "";
-            }
+        val newReceiverInfo = changeInfo.receiverParameterInfo
+        val originalReceiverInfo = changeInfo.methodDescriptor.receiver
 
-            if (isNamedCall) {
-                String newName = parameterInfo.getInheritedName(callee);
-                parametersBuilder.append(newName).append('=');
-            }
+        val extensionReceiver = if (resolvedCall != null) resolvedCall.extensionReceiver else ReceiverValue.NO_RECEIVER
+        val dispatchReceiver = if (resolvedCall != null) resolvedCall.dispatchReceiver else ReceiverValue.NO_RECEIVER
 
-            parametersBuilder.append(defaultValueText.isEmpty() ? '0' : defaultValueText);
-        }
-
-        parametersBuilder.append(')');
-        KtValueArgumentList newArgumentList = KtPsiFactoryKt.KtPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
-
-        Map<Integer, ValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
-
-        JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
-        JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
-
-        ReceiverValue extensionReceiver = resolvedCall != null ? resolvedCall.getExtensionReceiver() : ReceiverValue.NO_RECEIVER;
-        ReceiverValue dispatchReceiver = resolvedCall != null ? resolvedCall.getDispatchReceiver() : ReceiverValue.NO_RECEIVER;
-
-        PsiElement elementToReplace = element;
-        PsiElement parent = element.getParent();
-        if (parent instanceof KtQualifiedExpression && ((KtQualifiedExpression) parent).getSelectorExpression() == element) {
-            elementToReplace = parent;
+        var elementToReplace: PsiElement = element
+        val parent = element.parent
+        if (parent is KtQualifiedExpression && parent.selectorExpression == element) {
+            elementToReplace = parent
         }
 
         // Do not add extension receiver to calls with explicit dispatch receiver
-        if (newReceiverInfo != null
-            && elementToReplace instanceof KtQualifiedExpression
-            && dispatchReceiver instanceof ExpressionReceiver) return;
+        if (newReceiverInfo != null && elementToReplace is KtQualifiedExpression && dispatchReceiver is ExpressionReceiver) return
 
-        List<KtValueArgument> newArguments = newArgumentList.getArguments();
-        int actualIndex = 0;
-        for (int i = 0; i < newArguments.size(); i++) {
-            KtValueArgument newArgument = newArguments.get(i);
-            JetParameterInfo parameterInfo = newSignatureParameters.get(i);
+        val newArguments = newArgumentList.arguments
+        var actualIndex = 0
+        for (i in newArguments.indices) {
+            val newArgument = newArguments[i]
+            val parameterInfo = newSignatureParameters[i]
             if (parameterInfo == originalReceiverInfo) {
-                KtExpression receiverExpression = getReceiverExpression(extensionReceiver, psiFactory);
+                val receiverExpression = getReceiverExpression(extensionReceiver, psiFactory)
                 if (receiverExpression != null) {
-                    newArgument.replace(receiverExpression);
+                    newArgument.replace(receiverExpression)
                 }
-                actualIndex++;
-                continue;
+                actualIndex++
+                continue
             }
 
-            ValueArgument oldArgument = argumentMap.get(parameterInfo.getOldIndex());
+            val oldArgument = argumentMap[parameterInfo.oldIndex]
 
             if (oldArgument != null) {
-                ValueArgumentName argumentName = oldArgument.getArgumentName();
-                KtSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
-                changeArgumentName(argumentNameExpression, parameterInfo);
+                val argumentName = oldArgument.getArgumentName()
+                val argumentNameExpression = argumentName?.referenceExpression
+                changeArgumentName(argumentNameExpression, parameterInfo)
                 //noinspection ConstantConditions
-                ValueArgument argumentReplacement = (ValueArgument) newArgument.replace(
-                        oldArgument instanceof KtFunctionLiteralArgument
-                        ? psiFactory.createArgument(oldArgument.getArgumentExpression(), null, false)
-                        : oldArgument.asElement()
-                );
-                argumentMap.put(parameterInfo.getOldIndex(), argumentReplacement);
+                val argumentReplacement = newArgument.replace(
+                        if (oldArgument is KtFunctionLiteralArgument)
+                            psiFactory.createArgument(oldArgument.getArgumentExpression(), null, false)
+                        else
+                            oldArgument.asElement()) as ValueArgument
+                argumentMap.put(parameterInfo.oldIndex, argumentReplacement)
             }
-            // TODO: process default arguments in the middle
-            else if (parameterInfo.getDefaultValueForCall() == null) {
-                if (parameterInfo.getDefaultValueForParameter() != null) {
-                    newArgumentList.removeArgument(newArgument);
+            else if (parameterInfo.defaultValueForCall == null) {
+                if (parameterInfo.defaultValueForParameter != null) {
+                    newArgumentList.removeArgument(newArgument)
                 }
                 else {
-                    newArgument.delete(); // keep space between commas
+                    newArgument.delete() // keep space between commas
                 }
             }
             else {
-                indicesOfArgumentsWithDefaultValues.add(actualIndex++);
-            }
+                indicesOfArgumentsWithDefaultValues.add(actualIndex++)
+            }// TODO: process default arguments in the middle
         }
 
-        List<KtFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();
-        boolean hasLambdaArgumentsBefore = !lambdaArguments.isEmpty();
+        val lambdaArguments = element.functionLiteralArguments
+        val hasLambdaArgumentsBefore = !lambdaArguments.isEmpty()
         if (hasLambdaArgumentsBefore) {
-            element.deleteChildRange(CollectionsKt.first(lambdaArguments), CollectionsKt.last(lambdaArguments));
+            element.deleteChildRange(lambdaArguments.first(), lambdaArguments.last())
         }
 
-        KtValueArgument lastArgument = CollectionsKt.lastOrNull(newArgumentList.getArguments());
-        KtFunctionLiteralExpression lastLambdaExpr =
-                lastArgument != null ? KtFunctionLiteralArgumentKt.unpackFunctionLiteral(lastArgument.getArgumentExpression()) : null;
-        JetParameterInfo lastNewParam = ArraysKt.lastOrNull(changeInfo.getNewParameters());
-        boolean hasTrailingLambdaInArgumentListAfter =
-                lastLambdaExpr != null && lastNewParam != null && argumentMap.get(lastNewParam.getOldIndex()) == lastArgument;
-        boolean newLambdaWithDefaultValueWasAdded =
+        val lastArgument = newArgumentList.arguments.lastOrNull()
+        val lastLambdaExpr = if (lastArgument != null) lastArgument.getArgumentExpression()?.unpackFunctionLiteral() else null
+        val lastNewParam = changeInfo.newParameters.lastOrNull()
+        val hasTrailingLambdaInArgumentListAfter =
+                lastLambdaExpr != null && lastNewParam != null && argumentMap[lastNewParam.oldIndex] == lastArgument
+        val newLambdaWithDefaultValueWasAdded =
                 lastNewParam != null
-                && lastNewParam.isNewParameter()
-                && lastNewParam.getDefaultValueForCall() instanceof KtFunctionLiteralExpression
+                && lastNewParam.isNewParameter
+                && lastNewParam.defaultValueForCall is KtFunctionLiteralExpression
                 && lastArgument != null
-                && !lastArgument.isNamed();
-        boolean shouldMoveLambdaOut =
-                hasTrailingLambdaInArgumentListAfter && hasLambdaArgumentsBefore || newLambdaWithDefaultValueWasAdded;
+                && !lastArgument.isNamed()
+        val shouldMoveLambdaOut = hasTrailingLambdaInArgumentListAfter && hasLambdaArgumentsBefore || newLambdaWithDefaultValueWasAdded
 
-        arguments = (KtValueArgumentList) arguments.replace(newArgumentList);
+        arguments = arguments.replace(newArgumentList) as KtValueArgumentList
 
-        final List<KtElement> argumentsToShorten = new ArrayList<KtElement>(indicesOfArgumentsWithDefaultValues.size());
-        final List<KtValueArgument> argumentList = arguments.getArguments();
-        indicesOfArgumentsWithDefaultValues.forEach(
-                new TIntProcedure() {
-                    @Override
-                    public boolean execute(int i) {
-                        argumentsToShorten.add(argumentList.get(i));
-                        return true;
-                    }
-                }
-        );
-
-        for (KtElement argument : argumentsToShorten) {
-            ShortenWaitingSetKt.addToShorteningWaitSet(argument, SHORTEN_ARGUMENTS_OPTIONS);
+        val argumentsToShorten = ArrayList<KtElement>(indicesOfArgumentsWithDefaultValues.size())
+        val argumentList = arguments.arguments
+        indicesOfArgumentsWithDefaultValues.forEach {
+            argumentsToShorten.add(argumentList[it])
+            true
         }
+        argumentsToShorten.forEach { it.addToShorteningWaitSet(SHORTEN_ARGUMENTS_OPTIONS) }
 
-        KtElement newElement = element;
+        var newElement: KtElement = element
         if (newReceiverInfo != originalReceiverInfo) {
-            PsiElement replacingElement;
+            val replacingElement: PsiElement
             if (newReceiverInfo != null) {
-                ValueArgument receiverArgument = argumentMap.get(newReceiverInfo.getOldIndex());
-                KtExpression extensionReceiverExpression = receiverArgument != null ? receiverArgument.getArgumentExpression() : null;
-                KtExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
-                KtExpression receiver =
-                        extensionReceiverExpression != null ? psiFactory.createExpression(extensionReceiverExpression.getText())
-                        : defaultValueForCall != null ? defaultValueForCall
-                        : psiFactory.createExpression("_");
+                val receiverArgument = argumentMap[newReceiverInfo.oldIndex]
+                val extensionReceiverExpression = receiverArgument?.getArgumentExpression()
+                val defaultValueForCall = newReceiverInfo.defaultValueForCall
+                val receiver = extensionReceiverExpression?.let { psiFactory.createExpression(it.text) }
+                               ?: defaultValueForCall
+                               ?: psiFactory.createExpression("_")
 
-                replacingElement = CreateByPatternKt.createExpressionByPattern(psiFactory, "$0.$1", receiver, element);
+                replacingElement = psiFactory.createExpressionByPattern("$0.$1", receiver, element)
             }
             else {
-                replacingElement = psiFactory.createExpression(element.getText());
+                replacingElement = psiFactory.createExpression(element.text)
             }
 
-            newElement = (KtElement) elementToReplace.replace(replacingElement);
+            newElement = elementToReplace.replace(replacingElement) as KtElement
         }
 
         if (shouldMoveLambdaOut) {
-            KtCallExpression newCallExpression =
-                    (KtCallExpression) (newElement instanceof KtQualifiedExpression
-                                      ? ((KtQualifiedExpression) newElement).getSelectorExpression()
-                                      : newElement);
-            PsiModificationUtilsKt.moveFunctionLiteralOutsideParentheses(newCallExpression);
+            val newCallExpression = ((newElement as? KtQualifiedExpression)?.selectorExpression ?: newElement) as KtCallExpression
+            newCallExpression.moveFunctionLiteralOutsideParentheses()
         }
     }
 
-    private static void updateJavaPropertyCall(JetChangeInfo changeInfo, KtCallElement element) {
-        JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
-        JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
-        if (newReceiverInfo == originalReceiverInfo) return;
-
-        KtValueArgumentList arguments = element.getValueArgumentList();
-        assert arguments != null : "Argument list is expected: " + element.getText();
-        List<? extends ValueArgument> oldArguments = element.getValueArguments();
-
-        KtPsiFactory psiFactory = new KtPsiFactory(element.getProject());
-
-        KtValueArgument firstArgument = oldArguments.isEmpty() ? null : (KtValueArgument) oldArguments.get(0);
-
-        if (newReceiverInfo == null) {
-            if (firstArgument != null) arguments.removeArgument(firstArgument);
-        }
-        else {
-            KtExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
-            if (defaultValueForCall == null) {
-                defaultValueForCall = psiFactory.createExpression("_");
-            }
-            KtValueArgument newReceiverArgument = psiFactory.createArgument(defaultValueForCall, null, false);
-
-            if (originalReceiverInfo != null) {
-                if (firstArgument != null) firstArgument.replace(newReceiverArgument);
-            }
-            else {
-                arguments.addArgumentAfter(newReceiverArgument, null);
-            }
+    private fun changeArgumentNames(changeInfo: JetChangeInfo, element: KtCallElement) {
+        for (argument in element.valueArguments) {
+            val argumentName = argument.getArgumentName()
+            val argumentNameExpression = argumentName?.referenceExpression ?: continue
+            val oldParameterIndex = changeInfo.getOldParameterIndex(argumentNameExpression.getReferencedName()) ?: continue
+            val newParameterIndex = if (changeInfo.receiverParameterInfo != null) oldParameterIndex + 1 else oldParameterIndex
+            val parameterInfo = changeInfo.newParameters[newParameterIndex]
+            changeArgumentName(argumentNameExpression, parameterInfo)
         }
     }
 
-    @Nullable
-    private static KtExpression getReceiverExpression(@NotNull ReceiverValue receiver, @NotNull KtPsiFactory psiFactory) {
-        if (receiver instanceof ExpressionReceiver) {
-            return ((ExpressionReceiver) receiver).getExpression();
-        }
-        else if (receiver instanceof ThisReceiver) {
-            DeclarationDescriptor descriptor = ((ThisReceiver) receiver).getDeclarationDescriptor();
-            String thisText = descriptor instanceof ClassDescriptor ? "this@" + descriptor.getName().asString() : "this";
-            return psiFactory.createExpression(thisText);
-        }
-        return null;
+    private fun changeArgumentName(argumentNameExpression: KtSimpleNameExpression?, parameterInfo: JetParameterInfo) {
+        val identifier = argumentNameExpression?.getIdentifier() ?: return
+        val newName = parameterInfo.getInheritedName(callee)
+        identifier.replace(KtPsiFactory(project).createIdentifier(newName))
     }
 
-    private static Map<Integer, ValueArgument> getParamIndexToArgumentMap(JetChangeInfo changeInfo, List<? extends ValueArgument> oldArguments) {
-        Map<Integer, ValueArgument> argumentMap = new HashMap<Integer, ValueArgument>();
-
-        for (int i = 0; i < oldArguments.size(); i++) {
-            ValueArgument argument = oldArguments.get(i);
-            ValueArgumentName argumentName = argument.getArgumentName();
-            String oldParameterName = argumentName != null ? argumentName.getAsName().asString() : null;
-
-            if (oldParameterName != null) {
-                Integer oldParameterIndex = changeInfo.getOldParameterIndex(oldParameterName);
-
-                if (oldParameterIndex != null)
-                    argumentMap.put(oldParameterIndex, argument);
-            }
-            else
-                argumentMap.put(i, argument);
-        }
-
-        return argumentMap;
-    }
-
-    private void changeArgumentNames(JetChangeInfo changeInfo, KtCallElement element) {
-        for (ValueArgument argument : element.getValueArguments()) {
-            ValueArgumentName argumentName = argument.getArgumentName();
-            KtSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
-
-            if (argumentNameExpression != null) {
-                Integer oldParameterIndex = changeInfo.getOldParameterIndex(argumentNameExpression.getReferencedName());
-                if (oldParameterIndex == null) continue;
-
-                JetParameterInfo parameterInfo = changeInfo.getNewParameters()[
-                        changeInfo.getReceiverParameterInfo() != null ? oldParameterIndex + 1 : oldParameterIndex
-                ];
-                changeArgumentName(argumentNameExpression, parameterInfo);
+    companion object {
+        private val REVERSED_TEXT_OFFSET_COMPARATOR = object : Comparator<Pair<KtElement, KtElement>> {
+            override fun compare(p1: Pair<KtElement, KtElement>, p2: Pair<KtElement, KtElement>): Int {
+                val offset1 = p1.first.startOffset
+                val offset2 = p2.first.startOffset
+                return when {
+                    offset1 < offset2 -> 1
+                    offset1 > offset2 -> -1
+                    else -> 0
+                }
             }
         }
-    }
 
-    private void changeArgumentName(KtSimpleNameExpression argumentNameExpression, JetParameterInfo parameterInfo) {
-        PsiElement identifier = argumentNameExpression != null ? argumentNameExpression.getIdentifier() : null;
+        private val SHORTEN_ARGUMENTS_OPTIONS = ShortenReferences.Options(true, true)
 
-        if (identifier != null) {
-            String newName = parameterInfo.getInheritedName(callee);
-            identifier.replace(KtPsiFactoryKt.KtPsiFactory(getProject()).createIdentifier(newName));
+        private fun updateJavaPropertyCall(changeInfo: JetChangeInfo, element: KtCallElement) {
+            val newReceiverInfo = changeInfo.receiverParameterInfo
+            val originalReceiverInfo = changeInfo.methodDescriptor.receiver
+            if (newReceiverInfo == originalReceiverInfo) return
+
+            val arguments = element.valueArgumentList.sure { "Argument list is expected: " + element.text }
+            val oldArguments = element.valueArguments
+
+            val psiFactory = KtPsiFactory(element.project)
+
+            val firstArgument = oldArguments.firstOrNull() as KtValueArgument?
+
+            when {
+                newReceiverInfo != null -> {
+                    val defaultValueForCall = newReceiverInfo.defaultValueForCall ?: psiFactory.createExpression("_")
+                    val newReceiverArgument = psiFactory.createArgument(defaultValueForCall, null, false)
+
+                    if (originalReceiverInfo != null) {
+                        firstArgument?.replace(newReceiverArgument)
+                    }
+                    else {
+                        arguments.addArgumentAfter(newReceiverArgument, null)
+                    }
+                }
+
+                firstArgument != null -> arguments.removeArgument(firstArgument)
+            }
+        }
+
+        private fun getReceiverExpression(receiver: ReceiverValue, psiFactory: KtPsiFactory): KtExpression? {
+            return when (receiver) {
+                is ExpressionReceiver -> receiver.expression
+                is ThisReceiver -> {
+                    val descriptor = receiver.declarationDescriptor
+                    val thisText = if (descriptor is ClassDescriptor) "this@" + descriptor.name.asString() else "this"
+                    psiFactory.createExpression(thisText)
+                }
+                else -> null
+            }
+        }
+
+        private fun getParamIndexToArgumentMap(changeInfo: JetChangeInfo, oldArguments: List<ValueArgument>): MutableMap<Int, ValueArgument> {
+            val argumentMap = HashMap<Int, ValueArgument>()
+
+            for (i in oldArguments.indices) {
+                val argument = oldArguments[i]
+                val argumentName = argument.getArgumentName()
+                val oldParameterName = if (argumentName != null) argumentName.asName.asString() else null
+
+                if (oldParameterName != null) {
+                    val oldParameterIndex = changeInfo.getOldParameterIndex(oldParameterName)
+
+                    if (oldParameterIndex != null)
+                        argumentMap.put(oldParameterIndex, argument)
+                }
+                else
+                    argumentMap.put(i, argument)
+            }
+
+            return argumentMap
         }
     }
 }
