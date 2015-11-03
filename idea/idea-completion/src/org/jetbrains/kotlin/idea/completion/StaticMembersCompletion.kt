@@ -68,7 +68,6 @@ class StaticMembersCompletion(
     //TODO: filter out those that are accessible from SmartCompletion.additionalItems
     //TODO: what about enum members?
     //TODO: better presentation for lookup elements from imports too
-    //TODO: better sorting
     //TODO: from the same file
     fun completeFromIndices(indicesHelper: KotlinIndicesHelper) {
         val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions

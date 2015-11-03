@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.configureWithExtraFile
 import org.junit.Assert
 import java.io.File
@@ -34,7 +33,7 @@ public abstract class AbstractCompletionWeigherTest(val completionType: Completi
         assert(path.startsWith(pathPrefix))
         val relativePath = path.removePrefix(pathPrefix)
 
-        myFixture.configureWithExtraFile(relativePath, ".Data", ".Data1", ".Data2", ".Data3", relativePaths = true)
+        myFixture.configureWithExtraFile(relativePath, ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6", relativePaths = true)
 
         val text = myFixture.getEditor().getDocument().getText()
 

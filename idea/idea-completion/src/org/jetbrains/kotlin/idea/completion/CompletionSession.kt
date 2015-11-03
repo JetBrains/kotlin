@@ -253,7 +253,10 @@ abstract class CompletionSession(
     protected open fun createSorter(): CompletionSorter {
         var sorter = CompletionSorter.defaultSorter(parameters, prefixMatcher)!!
 
-        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, NotImportedWeigher(importableFqNameClassifier), KindWeigher, CallableWeigher)
+        sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher,
+                                    NotImportedWeigher(importableFqNameClassifier),
+                                    NotImportedStaticMemberWeigher(importableFqNameClassifier),
+                                    KindWeigher, CallableWeigher)
 
         sorter = sorter.weighAfter("stats", VariableOrFunctionWeigher, ImportedWeigher(importableFqNameClassifier))
 
@@ -452,6 +455,6 @@ abstract class CompletionSession(
     protected fun isImportableDescriptorImported(descriptor: DeclarationDescriptor): Boolean {
         val classification = importableFqNameClassifier.classify(descriptor.importableFqName!!, false)
         return classification != ImportableFqNameClassifier.Classification.notImported
-               && classification != ImportableFqNameClassifier.Classification.hasImportFromSamePackage
+               && classification != ImportableFqNameClassifier.Classification.siblingImported
     }
 }

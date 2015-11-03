@@ -42,7 +42,7 @@ object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
 class NotImportedWeigher(private val classifier: ImportableFqNameClassifier) : LookupElementWeigher("kotlin.notImported") {
     private enum class Weight {
         default,
-        hasImportFromSamePackage,
+        siblingImported,
         notImported,
         notToBeUsedInKotlin
     }
@@ -52,11 +52,19 @@ class NotImportedWeigher(private val classifier: ImportableFqNameClassifier) : L
         val o = element.`object` as? DeclarationLookupObject
         val fqName = o?.importableFqName ?: return Weight.default
         return when (classifier.classify(fqName, o is PackageLookupObject)) {
-            ImportableFqNameClassifier.Classification.hasImportFromSamePackage -> Weight.hasImportFromSamePackage
+            ImportableFqNameClassifier.Classification.siblingImported -> Weight.siblingImported
             ImportableFqNameClassifier.Classification.notImported -> Weight.notImported
             ImportableFqNameClassifier.Classification.notToBeUsedInKotlin -> Weight.notToBeUsedInKotlin
             else -> Weight.default
         }
+    }
+}
+
+class NotImportedStaticMemberWeigher(private val classifier: ImportableFqNameClassifier) : LookupElementWeigher("kotlin.notImportedMember") {
+    override fun weigh(element: LookupElement): Comparable<*>? {
+        if (element.getUserData(ITEM_PRIORITY_KEY) != ItemPriority.STATIC_MEMBER) return null
+        val fqName = (element.`object` as DeclarationLookupObject).importableFqName!!
+        return classifier.classify(fqName.parent(), false)
     }
 }
 

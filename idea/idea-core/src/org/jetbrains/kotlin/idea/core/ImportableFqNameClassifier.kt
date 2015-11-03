@@ -49,7 +49,7 @@ class ImportableFqNameClassifier(private val file: KtFile) {
         defaultImport,
         preciseImport,
         allUnderImport,
-        hasImportFromSamePackage,
+        siblingImported,
         notImported,
         notToBeUsedInKotlin
     }
@@ -77,7 +77,7 @@ class ImportableFqNameClassifier(private val file: KtFile) {
 
             isImportedWithAllUnderImport(fqName) -> Classification.allUnderImport
 
-            hasPreciseImportFromPackage(fqName.parent()) -> Classification.hasImportFromSamePackage
+            hasPreciseImportFromPackage(fqName.parent()) -> Classification.siblingImported
 
             else -> Classification.notImported
         }
