@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtVariableDeclaration
-import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -59,7 +56,7 @@ public class AutomaticVariableRenamer(
                     usageElement,
                     javaClass<KtVariableDeclaration>(),
                     javaClass<KtParameter>()
-            ) ?: continue
+            ) as KtCallableDeclaration? ?: continue
 
             if (parameterOrVariable.getTypeReference()?.isAncestor(usageElement) != true) continue
 

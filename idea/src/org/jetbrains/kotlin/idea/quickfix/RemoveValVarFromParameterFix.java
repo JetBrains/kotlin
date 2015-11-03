@@ -27,12 +27,13 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtValVarKeywordProvider;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
-public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtParameter> {
+public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtValVarKeywordProvider> {
     private final String varOrVal;
 
-    public RemoveValVarFromParameterFix(@NotNull KtParameter element) {
+    public RemoveValVarFromParameterFix(@NotNull KtValVarKeywordProvider element) {
         super(element);
         PsiElement valOrVarNode = element.getValOrVarKeyword();
         assert valOrVarNode != null : "Val or var node not found for " + PsiUtilsKt.getElementTextWithContext(element);
@@ -64,7 +65,7 @@ public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtParamet
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                return new RemoveValVarFromParameterFix((KtParameter) diagnostic.getPsiElement().getParent());
+                return new RemoveValVarFromParameterFix((KtValVarKeywordProvider) diagnostic.getPsiElement().getParent());
             }
         };
     }
