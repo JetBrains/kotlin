@@ -69,8 +69,10 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    private File compileLibrary(@NotNull String sourcePath) {
-        return MockLibraryUtil.compileLibraryToJar(new File(getTestDataDirectory(), sourcePath).getPath(), "customKotlinLib", false);
+    private File compileLibrary(@NotNull String sourcePath, @NotNull String... extraClassPath) {
+        return MockLibraryUtil.compileLibraryToJar(
+                new File(getTestDataDirectory(), sourcePath).getPath(), "customKotlinLib", false, extraClassPath
+        );
     }
 
     private void doTestWithTxt(@NotNull File... extraClassPath) throws Exception {
@@ -340,5 +342,12 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         else {
             assertEquals(null, debugInfo.get());
         }
+    }
+
+    public void testReplaceAnnotationClassWithInterface() throws Exception {
+        File library1 = compileLibrary("library-1");
+        File usage = compileLibrary("usage", library1.getPath());
+        File library2 = compileLibrary("library-2");
+        doTestWithTxt(usage, library2);
     }
 }
