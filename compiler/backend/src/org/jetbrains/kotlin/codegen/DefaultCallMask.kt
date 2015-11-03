@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
 class DefaultCallMask(val size: Int) {
@@ -47,5 +48,13 @@ class DefaultCallMask(val size: Int) {
         masks.add(mask)
 
         return masks
+    }
+
+    public fun generateOnStackIfNeeded(callGenerator: CallGenerator): Boolean {
+        val toInts = toInts()
+        for (mask in toInts) {
+            callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE))
+        }
+        return toInts.isNotEmpty();
     }
 }

@@ -2707,6 +2707,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/defaultArguments/convention")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Convention extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInConvention() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/convention"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("incWithDefaultInGetter.kt")
+            public void testIncWithDefaultInGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/incWithDefaultInGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt9140.kt")
+            public void testKt9140() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/kt9140.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("plusAssignWithDefaultInGetter.kt")
+            public void testPlusAssignWithDefaultInGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/plusAssignWithDefaultInGetter.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

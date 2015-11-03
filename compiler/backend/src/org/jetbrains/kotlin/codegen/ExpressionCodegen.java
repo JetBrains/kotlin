@@ -2477,18 +2477,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor();
 
-        List<Integer> masks =
-                argumentGenerator.generate(valueArguments, new ArrayList<ResolvedValueArgument>(resolvedCall.getValueArguments().values()))
-                        .toInts();
+        DefaultCallMask masks =
+                argumentGenerator.generate(valueArguments, new ArrayList<ResolvedValueArgument>(resolvedCall.getValueArguments().values()));
 
         if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
             tailRecursionCodegen.generateTailRecursion(resolvedCall);
             return;
         }
 
-        for (int mask : masks) {
-            callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE));
-        }
+        boolean defaultMaskWasGenerated = masks.generateOnStackIfNeeded(callGenerator);
 
         // Extra constructor marker argument
         if (callableMethod instanceof CallableMethod) {
@@ -2500,7 +2497,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        callGenerator.genCall(callableMethod, resolvedCall, !masks.isEmpty(), this);
+        callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
     }
 
     @NotNull
@@ -3532,7 +3529,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Callable callableMethod = resolveToCallableMethod(operationDescriptor, false);
             Type[] argumentTypes = callableMethod.getParameterTypes();
 
-            StackValue collectionElementReceiver = createCollectionElementReceiver(
+            StackValue.CollectionElementReceiver collectionElementReceiver = createCollectionElementReceiver(
                     expression, receiver, operationDescriptor, isGetter, resolvedGetCall, resolvedSetCall, callable
             );
 
@@ -3542,7 +3539,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private StackValue createCollectionElementReceiver(
+    private StackValue.CollectionElementReceiver createCollectionElementReceiver(
             @NotNull KtArrayAccessExpression expression,
             @NotNull StackValue receiver,
             @NotNull FunctionDescriptor operationDescriptor,
