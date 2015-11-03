@@ -289,6 +289,10 @@ public class SingleAbstractMethodUtils {
             @NotNull List<TypeParameterDescriptor> originalParameters,
             @Nullable DeclarationDescriptor newOwner
     ) {
+        if (newOwner instanceof SamAdapterConstructorDescriptor) {
+            return new TypeParameters(originalParameters, TypeSubstitutor.EMPTY);
+        }
+
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
                 JavaResolverUtils.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
         TypeSubstitutor typeParametersSubstitutor = JavaResolverUtils.createSubstitutorForTypeParameters(traitToFunTypeParameters);
