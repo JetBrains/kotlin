@@ -15,7 +15,7 @@ public open class InnerOfGeneric {
     public open inner class B</*0*/ L : kotlin.Any!> : test.InnerOfGeneric.A<L!> {
         public constructor B</*0*/ L : kotlin.Any!>()
 
-        public open inner class SubInner : test.InnerOfGeneric.A<L!>.Inner {
+        public open inner class SubInner : test.InnerOfGeneric.A<kotlin.Any!>.Inner {
             public constructor SubInner()
             public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<L!>!
         }
