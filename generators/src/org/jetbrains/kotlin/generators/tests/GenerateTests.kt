@@ -879,7 +879,7 @@ fun main(args: Array<String>) {
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
         }
         testClass<AbstractLookupTrackerTest>() {
-            model("incremental/lookupTracker", extension = null, excludeParentDirs = true)
+            model("incremental/lookupTracker", extension = null, recursive = false)
         }
 
         testClass(AbstractIncrementalLazyCachesTest::class.java) {
