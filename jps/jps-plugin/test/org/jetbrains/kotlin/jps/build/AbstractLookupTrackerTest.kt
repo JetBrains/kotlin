@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.util.*
@@ -92,7 +92,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 
             val actual = lines.joinToString("\n")
 
-            JetTestUtils.assertEqualsToFile(expectedFile, actual)
+            KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
         }
 
         for (actualFile in compiledFiles) {

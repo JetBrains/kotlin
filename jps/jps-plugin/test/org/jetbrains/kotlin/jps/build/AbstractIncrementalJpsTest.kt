@@ -46,7 +46,7 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.classFilesComparison.assertEqualDirectories
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.ByteArrayOutputStream
@@ -461,7 +461,7 @@ public abstract class AbstractIncrementalJpsTest(
         }
 
         override fun logLine(message: String?) {
-            logBuf.append(JetTestUtils.replaceHashWithStar(message!!.removePrefix("$rootPath/"))).append('\n')
+            logBuf.append(KotlinTestUtils.replaceHashWithStar(message!!.removePrefix("$rootPath/"))).append('\n')
         }
     }
 

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.modules;
 
 import junit.framework.TestCase;
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.<File>emptySet()
         ).asText().toString();
-        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
     }
 
     public void testFiltered() throws Exception {
@@ -48,7 +48,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
         ).asText().toString();
-        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
     }
 
     public void testMultiple() throws Exception {
@@ -72,6 +72,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.singleton(new File("cp12"))
         );
         String actual = builder.asText().toString();
-        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
     }
 }

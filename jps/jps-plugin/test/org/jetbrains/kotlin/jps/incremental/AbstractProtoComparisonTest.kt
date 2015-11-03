@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.load.kotlin.header.*
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
@@ -28,7 +28,7 @@ import java.io.File
 public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
 
     public fun doTest(testDataPath: String) {
-        val testDir = JetTestUtils.tmpDir("testDirectory")
+        val testDir = KotlinTestUtils.tmpDir("testDirectory")
 
         val oldClassFiles = compileFileAndGetClasses(testDataPath, testDir, "old")
         val newClassFiles = compileFileAndGetClasses(testDataPath, testDir, "new")
@@ -58,7 +58,7 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
             p.printDifference(oldClassMap[name]!!, newClassMap[name]!!)
         }
 
-        JetTestUtils.assertEqualsToFile(File(testDataPath + File.separator + "result.out"), sb.toString());
+        KotlinTestUtils.assertEqualsToFile(File(testDataPath + File.separator + "result.out"), sb.toString());
     }
 
     private fun compileFileAndGetClasses(testPath: String, testDir: File, prefix: String): List<File> {
