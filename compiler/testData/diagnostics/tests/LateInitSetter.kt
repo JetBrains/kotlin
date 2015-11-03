@@ -1,16 +1,22 @@
 class My {
 
     lateinit var x: String
-        <!PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR!>private<!> set
+        <!SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY!>private<!> set
 
     lateinit var y: String
-        // Ok, non-private setter
-        internal set
+        <!SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY!>internal<!> set
 
     lateinit protected var z: String
-        <!PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR!>private<!> set
+        <!SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY!>private<!> set
 
     lateinit private var w: String
-        // Ok, private var
+        // Ok, private var / private set
         private set
+
+    lateinit protected var v: String
+        <!SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY!>public<!> set
+
+    lateinit public var u: String
+        // Ok, public var / public set
+        public set
 }

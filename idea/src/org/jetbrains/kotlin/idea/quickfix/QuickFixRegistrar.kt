@@ -114,7 +114,7 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         val removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory()
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
-        PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR.registerFactory(removeModifierFactory)
+        SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY.registerFactory(removeModifierFactory)
         ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
         WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
