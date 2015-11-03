@@ -46,7 +46,7 @@ import java.util.Collection;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqNameFromTopLevelClass;
-import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemKt.filterConstraintsOut;
+import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemUtilsKt.filterConstraintsOut;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 

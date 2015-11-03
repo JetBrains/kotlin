@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -63,8 +61,6 @@ interface ConstraintSystem {
      */
     val currentSubstitutor: TypeSubstitutor
 
-    fun getNestedTypeVariables(type: KotlinType): List<TypeParameterDescriptor>
-
     fun toBuilder(filterConstraintPosition: (ConstraintPosition) -> Boolean = { true }): Builder
 
     interface Builder {
@@ -100,8 +96,4 @@ interface ConstraintSystem {
 
         fun build(): ConstraintSystem
     }
-}
-
-fun ConstraintSystem.filterConstraintsOut(excludePositionKind: ConstraintPositionKind): ConstraintSystem {
-    return toBuilder { !it.derivedFrom(excludePositionKind) }.build()
 }

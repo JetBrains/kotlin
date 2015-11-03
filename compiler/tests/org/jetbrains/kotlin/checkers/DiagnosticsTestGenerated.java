@@ -7955,6 +7955,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("externalTypeParameter.kt")
+                public void testExternalTypeParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/nestedCalls/externalTypeParameter.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inferenceForNestedBinaryCall.kt")
                 public void testInferenceForNestedBinaryCall() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/nestedCalls/inferenceForNestedBinaryCall.kt");

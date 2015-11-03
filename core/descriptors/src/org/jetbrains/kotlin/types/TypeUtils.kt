@@ -115,23 +115,6 @@ public fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: Kotlin
     return equalTypes(type1, type2)
 }
 
-fun KotlinType.getNestedArguments(): List<TypeProjection> {
-    val result = ArrayList<TypeProjection>()
-
-    val stack = ArrayDeque<TypeProjection>()
-    stack.push(TypeProjectionImpl(this))
-
-    while (!stack.isEmpty()) {
-        val typeProjection = stack.pop()
-        if (typeProjection.isStarProjection()) continue
-
-        result.add(typeProjection)
-
-        typeProjection.getType().getArguments().forEach { stack.add(it) }
-    }
-    return result
-}
-
 fun KotlinType.containsError() = ErrorUtils.containsErrorType(this)
 
 public fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }

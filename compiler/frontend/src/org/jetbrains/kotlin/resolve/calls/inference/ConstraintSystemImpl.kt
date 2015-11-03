@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isInternalAnnotationForResolv
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
@@ -108,13 +107,6 @@ internal class ConstraintSystemImpl(
         val parameterToInferredValueMap = getParameterToInferredValueMap(allTypeParameterBounds, getDefaultValue, substituteOriginal)
         val substitution = TypeConstructorSubstitution.createByParametersMap(parameterToInferredValueMap)
         return SubstitutionFilteringInternalResolveAnnotations(substitution).buildSubstitutor()
-    }
-
-    override fun getNestedTypeVariables(type: KotlinType): List<TypeParameterDescriptor> {
-        return type.getNestedArguments().map { typeProjection ->
-            val descriptor = typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
-            descriptor?.let { descriptorToVariable[it] }
-        }.filterNotNull()
     }
 
     override val typeParameterDescriptors: Set<TypeParameterDescriptor>

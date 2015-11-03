@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.INVARIANT
-import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import java.util.*
 
@@ -59,7 +58,7 @@ fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {
         return
     }
 
-    getNestedTypeVariables(constrainingType, original = true).forEach {
+    getNestedTypeVariables(constrainingType).forEach {
         val boundsForNestedVariable = getTypeBounds(it).bounds
         for (index in boundsForNestedVariable.indices) {
             generateNewBound(newBound, boundsForNestedVariable[index])
@@ -100,8 +99,7 @@ private fun ConstraintSystemBuilderImpl.generateNewBound(bound: Bound, substitut
 
     fun addNewBound(newConstrainingType: KotlinType, newBoundKind: BoundKind) {
         // We don't generate new recursive constraints
-        val nestedTypeVariables = getNestedTypeVariables(newConstrainingType, original = false)
-        if (nestedTypeVariables.contains(bound.typeVariable)) return
+        if (bound.typeVariable in getNestedTypeVariables(newConstrainingType)) return
 
         // We don't generate constraint if a type variable was substituted twice
         val derivedFrom = HashSet(bound.derivedFrom + substitution.derivedFrom)

@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
 import java.util.*
 
@@ -99,11 +98,8 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         type -> type.constructor.declarationDescriptor.let { it is TypeParameterDescriptor && isMyTypeVariable(it) }
     }
 
-    internal fun getNestedTypeVariables(type: KotlinType, original: Boolean): List<TypeParameterDescriptor> {
-        return type.getNestedArguments().map { typeProjection ->
-            typeProjection.type.constructor.declarationDescriptor as? TypeParameterDescriptor
-        }.filterNotNull().filter { if (original) it in descriptorToVariable.keys else isMyTypeVariable(it) }
-    }
+    internal fun getNestedTypeVariables(type: KotlinType): List<TypeParameterDescriptor> =
+            type.getNestedTypeParameters().filter { isMyTypeVariable(it) }
 
     override fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
         if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return
@@ -257,7 +253,7 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         typeBounds.addBound(bound)
 
         if (!bound.isProper) {
-            for (dependentTypeVariable in getNestedTypeVariables(bound.constrainingType, original = false)) {
+            for (dependentTypeVariable in getNestedTypeVariables(bound.constrainingType)) {
                 val dependentBounds = usedInBounds.getOrPut(dependentTypeVariable) { arrayListOf() }
                 dependentBounds.add(bound)
             }
@@ -359,7 +355,7 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         if (typeBounds.isFixed) return
         typeBounds.setFixed()
 
-        val nestedTypeVariables = typeBounds.bounds.flatMap { getNestedTypeVariables(it.constrainingType, original = false) }
+        val nestedTypeVariables = typeBounds.bounds.flatMap { getNestedTypeVariables(it.constrainingType) }
         nestedTypeVariables.forEach { fixVariable(it) }
 
         val value = typeBounds.value ?: return
