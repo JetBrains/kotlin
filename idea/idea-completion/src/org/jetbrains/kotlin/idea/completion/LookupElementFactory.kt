@@ -66,7 +66,7 @@ class LookupElementFactory(
         result.add(lookupElement)
 
         // add special item for function with one argument of function type with more than one parameter
-        if (descriptor is FunctionDescriptor && isNormalCall) {
+        if (descriptor is FunctionDescriptor && isNormalCall && callType != CallType.SUPER_MEMBERS) {
             result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
         }
 

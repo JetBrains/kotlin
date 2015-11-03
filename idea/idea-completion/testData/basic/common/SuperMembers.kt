@@ -49,6 +49,6 @@ abstract class A : Base(), I {
 // EXIST_JAVA_ONLY: { itemText: "getAbsolutePath", attributes: "" }
 // ABSENT: absolutePath
 
-// EXIST: { itemText: "onLambda1", tailText: " {...} (p: () -> Unit)", attributes: "" }
+// EXIST: { itemText: "onLambda1", tailText: "(p: () -> Unit)", attributes: "" }
 // EXIST: { itemText: "onLambda2", tailText: "(p: (Int, String) -> Unit)", attributes: "" }
-// EXIST: { itemText: "onLambda2", tailText: " { Int, String -> ... } (p: (Int, String) -> Unit)", attributes: "" }
+// ABSENT: { itemText: "onLambda2", tailText: " { Int, String -> ... } (p: (Int, String) -> Unit)" }

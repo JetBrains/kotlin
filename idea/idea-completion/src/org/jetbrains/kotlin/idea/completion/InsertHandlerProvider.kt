@@ -47,14 +47,17 @@ class InsertHandlerProvider(
                             0 -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false)
 
                             1 -> {
-                                val parameterType = parameters.single().getType()
-                                if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                                    val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
-                                    if (parameterCount <= 1) {
-                                        // otherwise additional item with lambda template is to be added
-                                        return KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                if (callType != CallType.SUPER_MEMBERS) { // for super call we don't suggest to generate "super.foo { ... }" (seems to be non-typical use)
+                                    val parameterType = parameters.single().getType()
+                                    if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+                                        val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                                        if (parameterCount <= 1) {
+                                            // otherwise additional item with lambda template is to be added
+                                            return KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                        }
                                     }
                                 }
+
                                 KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = true)
                             }
 
