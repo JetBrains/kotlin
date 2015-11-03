@@ -9,3 +9,4 @@ class Derived : Base() {
 }
 
 // ELEMENT: foo
+// TAIL_TEXT: "(p: Int)"

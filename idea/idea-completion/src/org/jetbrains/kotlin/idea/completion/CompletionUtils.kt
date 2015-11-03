@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionProgressIndicator
+import com.intellij.codeInsight.completion.CompletionService
+import com.intellij.codeInsight.completion.InsertionContext
+import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.*
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
@@ -62,6 +65,7 @@ tailrec fun <T : Any> LookupElement.getUserDataDeep(key: Key<T>): T? {
 }
 
 enum class ItemPriority {
+    SUPER_METHOD_WITH_ARGUMENTS,
     DEFAULT,
     IMPLEMENT,
     OVERRIDE,

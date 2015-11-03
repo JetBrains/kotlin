@@ -34,11 +34,13 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 data /* we need copy() */
 class LookupElementFactory(
@@ -46,6 +48,7 @@ class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<KotlinType>?,
         private val callType: CallType<*>?,
+        private val inDescriptor: DeclarationDescriptor,
         private val contextVariablesProvider: ContextVariablesProvider
 ) {
     companion object {
@@ -57,6 +60,14 @@ class LookupElementFactory(
 
     val insertHandlerProvider = basicFactory.insertHandlerProvider
 
+    private val superFunctions: Set<FunctionDescriptor> by lazy {
+        inDescriptor.parentsWithSelf
+                .filterIsInstance<FunctionDescriptor>()
+                .toList()
+                .flatMap { it.overriddenDescriptors }
+                .toSet()
+    }
+
     public fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
         val result = SmartList<LookupElement>()
 
@@ -66,8 +77,13 @@ class LookupElementFactory(
         result.add(lookupElement)
 
         // add special item for function with one argument of function type with more than one parameter
-        if (descriptor is FunctionDescriptor && isNormalCall && callType != CallType.SUPER_MEMBERS) {
-            result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
+        if (descriptor is FunctionDescriptor && isNormalCall) {
+            if (callType != CallType.SUPER_MEMBERS) {
+                result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
+            }
+            else if (useReceiverTypes) {
+                result.addIfNotNull(createSuperFunctionCallWithArguments(descriptor))
+            }
         }
 
         return result
@@ -94,7 +110,7 @@ class LookupElementFactory(
                 val fuzzyParameterType = FuzzyType(parameterType, descriptor.typeParameters)
                 for ((variable, substitutor) in contextVariablesProvider.functionTypeVariables(fuzzyParameterType)) {
                     val substitutedDescriptor = descriptor.substitute(substitutor)
-                    add(createFunctionCallElementWithArgument(substitutedDescriptor, variable.name.render(), useReceiverTypes))
+                    add(createFunctionCallElementWithArguments(substitutedDescriptor, variable.name.render(), useReceiverTypes))
                 }
             }
         }
@@ -137,21 +153,35 @@ class LookupElementFactory(
         return lookupElement
     }
 
-    private fun createFunctionCallElementWithArgument(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
+    private fun createSuperFunctionCallWithArguments(descriptor: FunctionDescriptor): LookupElement? {
+        if (descriptor.valueParameters.isEmpty()) return null
+        if (descriptor !in superFunctions) return null
+
+        val argumentText = descriptor.valueParameters.map {
+            (if (it.varargElementType != null) "*" else "") + it.name.render()
+        }.joinToString(", ")
+
+        val lookupElement = createFunctionCallElementWithArguments(descriptor, argumentText, true)
+        lookupElement.assignPriority(ItemPriority.SUPER_METHOD_WITH_ARGUMENTS)
+        lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+        return lookupElement
+    }
+
+    private fun createFunctionCallElementWithArguments(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
 
         val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
-        return FunctionCallWithArgumentLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
+        return FunctionCallWithArgumentsLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
     }
 
-    private inner class FunctionCallWithArgumentLookupElement(
+    private inner class FunctionCallWithArgumentsLookupElement(
             originalLookupElement: LookupElement,
             private val descriptor: FunctionDescriptor,
             private val argumentText: String,
             private val needTypeArguments: Boolean
     ) : LookupElementDecorator<LookupElement>(originalLookupElement) {
 
-        override fun equals(other: Any?) = other is FunctionCallWithArgumentLookupElement && delegate == other.delegate && argumentText == other.argumentText
+        override fun equals(other: Any?) = other is FunctionCallWithArgumentsLookupElement && delegate == other.delegate && argumentText == other.argumentText
         override fun hashCode() = delegate.hashCode() * 17 + argumentText.hashCode()
 
         override fun renderElement(presentation: LookupElementPresentation) {

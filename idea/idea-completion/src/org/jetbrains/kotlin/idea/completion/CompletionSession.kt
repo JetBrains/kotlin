@@ -420,7 +420,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory {
         return LookupElementFactory(basicLookupElementFactory, resolutionFacade, receiverTypes,
-                                    callTypeAndReceiver.callType, contextVariablesProvider)
+                                    callTypeAndReceiver.callType, inDescriptor, contextVariablesProvider)
     }
 
     private fun detectCallTypeAndReceiverTypes(): Pair<CallTypeAndReceiver<*, *>, Collection<KotlinType>?> {

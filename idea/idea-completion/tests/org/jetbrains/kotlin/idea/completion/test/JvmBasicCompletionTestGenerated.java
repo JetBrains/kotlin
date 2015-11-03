@@ -703,6 +703,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("SuperMembers3.kt")
+        public void testSuperMembers3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SuperMembers3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SuperMembers4.kt")
+        public void testSuperMembers4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SuperMembers4.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TopLevelClassCompletionInQualifiedCall.kt")
         public void testTopLevelClassCompletionInQualifiedCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TopLevelClassCompletionInQualifiedCall.kt");
