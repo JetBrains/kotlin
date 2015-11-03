@@ -143,6 +143,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("SuperMethod.kt")
+    public void testSuperMethod() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/SuperMethod.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SuperTypeArg.kt")
     public void testSuperTypeArg() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/SuperTypeArg.kt");

@@ -40,7 +40,7 @@ class InsertHandlerProvider(
         return when (descriptor) {
             is FunctionDescriptor -> {
                 when (callType) {
-                    is CallType.DEFAULT, is CallType.DOT, is CallType.SAFE -> {
+                    CallType.DEFAULT, CallType.DOT, CallType.SAFE, CallType.SUPER_MEMBERS -> {
                         val needTypeArguments = needTypeArguments(descriptor)
                         val parameters = descriptor.valueParameters
                         when (parameters.size()) {
@@ -62,7 +62,7 @@ class InsertHandlerProvider(
                         }
                     }
 
-                    is CallType.INFIX -> KotlinFunctionInsertHandler.Infix
+                    CallType.INFIX -> KotlinFunctionInsertHandler.Infix
 
                     else -> KotlinFunctionInsertHandler.OnlyName
                 }

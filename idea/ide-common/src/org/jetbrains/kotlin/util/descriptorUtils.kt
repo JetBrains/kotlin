@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 
 public fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?, descriptor2: DeclarationDescriptor?): Boolean {
@@ -67,4 +67,12 @@ public fun ClassDescriptor.findCallableMemberBySignature(signature: CallableMemb
                 it.getContainingDeclaration() == this
                 && OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature).getResult() == OVERRIDABLE
             } as? CallableMemberDescriptor
+}
+
+public fun TypeConstructor.supertypesWithAny(): Collection<KotlinType> {
+    val supertypes = supertypes
+    val noSuperClass = supertypes
+            .map { it.constructor.declarationDescriptor as? ClassDescriptor }
+            .all  { it == null || it.kind == ClassKind.INTERFACE }
+    return if (noSuperClass) supertypes + builtIns.anyType else supertypes
 }

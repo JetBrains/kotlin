@@ -66,6 +66,7 @@ class SmartCompletion(
 
         is CallTypeAndReceiver.DOT,
         is CallTypeAndReceiver.SAFE,
+        is CallTypeAndReceiver.SUPER_MEMBERS,
         is CallTypeAndReceiver.INFIX,
         is CallTypeAndReceiver.CALLABLE_REFERENCE ->
             expression.parent as KtExpression

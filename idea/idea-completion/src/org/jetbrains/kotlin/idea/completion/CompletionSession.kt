@@ -126,7 +126,7 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it) }
 
-    protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, isVisibleFilter)
+    protected val referenceVariantsHelper = ReferenceVariantsHelper(bindingContext, resolutionFacade, moduleDescriptor, isVisibleFilter)
 
     protected val callTypeAndReceiver: CallTypeAndReceiver<*, *>
     protected val receiverTypes: Collection<KotlinType>?
@@ -298,11 +298,6 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
                 excludeNonInitializedVariable = false,
                 useReceiverType = runtimeReceiver?.type)
 
-        val shadowedDeclarationsFilter = if (runtimeReceiver != null)
-            ShadowedDeclarationsFilter(bindingContext, resolutionFacade, position, runtimeReceiver)
-         else
-            ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, position, callTypeAndReceiver)
-
         var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
         if (callTypeAndReceiver.shouldCompleteCallableExtensions()) {
             val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
@@ -315,6 +310,11 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
             variants += pair.first
             notImportedExtensions = pair.second
         }
+
+        val shadowedDeclarationsFilter = if (runtimeReceiver != null)
+            ShadowedDeclarationsFilter(bindingContext, resolutionFacade, position, runtimeReceiver)
+        else
+            ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, position, callTypeAndReceiver)
 
         if (shadowedDeclarationsFilter != null) {
             variants = shadowedDeclarationsFilter.filter(variants)

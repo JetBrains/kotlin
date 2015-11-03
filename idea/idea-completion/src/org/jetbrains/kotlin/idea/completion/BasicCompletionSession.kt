@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -474,14 +474,9 @@ class BasicCompletionSession(
         override fun doComplete() {
             val classOrObject = position.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return
             val classDescriptor = resolutionFacade.resolveToDescriptor(classOrObject) as ClassDescriptor
-            var superClasses = classDescriptor.defaultType.constructor.supertypes
+            var superClasses = classDescriptor.defaultType.constructor.supertypesWithAny()
                     .map { it.constructor.declarationDescriptor as? ClassDescriptor }
                     .filterNotNull()
-
-            //TODO: IMO it's not good that Any is to be added manually
-            if (superClasses.all { it.kind == ClassKind.INTERFACE }) {
-                superClasses += classDescriptor.builtIns.any
-            }
 
             if (callTypeAndReceiver.receiver != null) {
                 val referenceVariantsSet = referenceVariants!!.imported.toSet()

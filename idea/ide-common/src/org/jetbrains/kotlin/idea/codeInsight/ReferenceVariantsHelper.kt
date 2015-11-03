@@ -44,6 +44,7 @@ import java.util.*
 class ReferenceVariantsHelper(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
+        private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
     fun getReferenceVariants(
@@ -151,6 +152,7 @@ class ReferenceVariantsHelper(
 
             is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
             is CallTypeAndReceiver.DOT -> receiverExpression = callTypeAndReceiver.receiver
+            is CallTypeAndReceiver.SUPER_MEMBERS -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.SAFE -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.INFIX -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.OPERATOR -> return emptyList()
@@ -179,15 +181,7 @@ class ReferenceVariantsHelper(
                 listOf(useReceiverType)
             }
             else {
-                val expressionType = bindingContext.getType(receiverExpression)
-                if (expressionType != null && !expressionType.isError()) {
-                    val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
-                    smartCastManager.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, containingDeclaration, dataFlowInfo)
-
-                }
-                else {
-                    emptyList()
-                }
+                callTypeAndReceiver.receiverTypes(bindingContext, contextElement, moduleDescriptor, resolutionFacade, predictableSmartCastsOnly = false)!!
             }
 
             descriptors.processAll(implicitReceiverTypes, explicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
@@ -199,6 +193,12 @@ class ReferenceVariantsHelper(
 
             // add non-instance members
             descriptors.addAll(resolutionScope.collectDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
+        }
+
+        if (callType == CallType.SUPER_MEMBERS) { // we need to unwrap fake overrides in case of "super." because ShadowedDeclarationsFilter does not work correctly
+            return descriptors.flatMapTo(LinkedHashSet()) {
+                if (it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) it.overriddenDescriptors else listOf(it)
+            }
         }
 
         return descriptors
