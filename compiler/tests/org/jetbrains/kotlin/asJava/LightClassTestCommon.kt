@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiClass
 import com.intellij.psi.impl.compiled.ClsElementImpl
 import junit.framework.TestCase
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.regex.Pattern
 
@@ -41,7 +41,7 @@ object LightClassTestCommon {
         val lightClass = findLightClass(fqName)
 
         val actual = actualText(fqName, lightClass, normalizeText)
-        JetTestUtils.assertEqualsToFile(JetTestUtils.replaceExtension(testDataFile, "java"), actual)
+        KotlinTestUtils.assertEqualsToFile(KotlinTestUtils.replaceExtension(testDataFile, "java"), actual)
     }
 
     private fun actualText(fqName: String?, lightClass: PsiClass?, normalizeText: (String) -> String): String {

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxMultifileClassKotlinTestGenerated extends AbstractBlackBoxMultifileClassCodegenTest {
     public void testAllFilesPresentInBoxMultifileClasses() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses"), Pattern.compile("^(.+)\\.1.kt$"), true);
     }
 
     @TestMetadata("compiler/testData/codegen/boxMultifileClasses/calls")
@@ -40,24 +40,24 @@ public class BlackBoxMultifileClassKotlinTestGenerated extends AbstractBlackBoxM
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Calls extends AbstractBlackBoxMultifileClassCodegenTest {
         public void testAllFilesPresentInCalls() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses/calls"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultifileClasses/calls"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
 
         @TestMetadata("callFromOtherPackage.1.kt")
         public void testCallFromOtherPackage() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/callFromOtherPackage.1.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/callFromOtherPackage.1.kt");
             doTestMultifileClassAgainstSources(fileName);
         }
 
         @TestMetadata("valFromOtherPackage.1.kt")
         public void testValFromOtherPackage() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/valFromOtherPackage.1.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/valFromOtherPackage.1.kt");
             doTestMultifileClassAgainstSources(fileName);
         }
 
         @TestMetadata("varFromOtherPackage.1.kt")
         public void testVarFromOtherPackage() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/varFromOtherPackage.1.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultifileClasses/calls/varFromOtherPackage.1.kt");
             doTestMultifileClassAgainstSources(fileName);
         }
     }

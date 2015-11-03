@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.checkers;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -30,40 +30,40 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/diagnostics/testsWithJava8")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class JetDiagnosticsWithJava8TestGenerated extends AbstractJetDiagnosticsWithFullJdkTest {
+public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFullJdkTest {
     public void testAllFilesPresentInTestsWithJava8() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithJava8/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Annotations extends AbstractJetDiagnosticsWithFullJdkTest {
+    public static class Annotations extends AbstractDiagnosticsWithFullJdkTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("deprecatedRepeatable.kt")
         public void testDeprecatedRepeatable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/deprecatedRepeatable.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/deprecatedRepeatable.kt");
             doTest(fileName);
         }
 
         @TestMetadata("javaRepeatable.kt")
         public void testJavaRepeatable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaRepeatable.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaRepeatable.kt");
             doTest(fileName);
         }
 
         @TestMetadata("javaRepeatableRetention.kt")
         public void testJavaRepeatableRetention() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaRepeatableRetention.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaRepeatableRetention.kt");
             doTest(fileName);
         }
 
         @TestMetadata("javaUnrepeatable.kt")
         public void testJavaUnrepeatable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaUnrepeatable.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/annotations/javaUnrepeatable.kt");
             doTest(fileName);
         }
     }
@@ -71,28 +71,28 @@ public class JetDiagnosticsWithJava8TestGenerated extends AbstractJetDiagnostics
     @TestMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DuplicateJvmSignature extends AbstractJetDiagnosticsWithFullJdkTest {
+    public static class DuplicateJvmSignature extends AbstractDiagnosticsWithFullJdkTest {
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Statics extends AbstractJetDiagnosticsWithFullJdkTest {
+        public static class Statics extends AbstractDiagnosticsWithFullJdkTest {
             public void testAllFilesPresentInStatics() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("jjk.kt")
             public void testJjk() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics/jjk.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics/jjk.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("jk.kt")
             public void testJk() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics/jk.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/duplicateJvmSignature/statics/jk.kt");
                 doTest(fileName);
             }
         }
@@ -101,14 +101,14 @@ public class JetDiagnosticsWithJava8TestGenerated extends AbstractJetDiagnostics
     @TestMetadata("compiler/testData/diagnostics/testsWithJava8/statics")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Statics extends AbstractJetDiagnosticsWithFullJdkTest {
+    public static class Statics extends AbstractDiagnosticsWithFullJdkTest {
         public void testAllFilesPresentInStatics() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/statics"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8/statics"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("inheritanceStaticMethodFromInterface.kt")
         public void testInheritanceStaticMethodFromInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/statics/inheritanceStaticMethodFromInterface.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/statics/inheritanceStaticMethodFromInterface.kt");
             doTest(fileName);
         }
     }

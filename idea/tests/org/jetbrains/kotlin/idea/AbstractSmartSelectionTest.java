@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public abstract class AbstractSmartSelectionTest extends LightCodeInsightTestCas
 
     public void doTestSmartSelection(@NotNull String path) throws Exception {
         configureByFile(path);
-        String expectedResultText = JetTestUtils.getLastCommentInFile((KtFile) getFile());
+        String expectedResultText = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
         List<KtExpression> expressions = JetRefactoringUtil.getSmartSelectSuggestions(
                 getFile(), getEditor().getCaretModel().getOffset());

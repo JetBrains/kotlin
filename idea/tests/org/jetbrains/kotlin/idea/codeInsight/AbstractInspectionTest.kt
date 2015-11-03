@@ -30,8 +30,8 @@ import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -40,12 +40,12 @@ import java.io.File
 import kotlin.test.assertFalse
 import java.util.*
 
-public abstract class AbstractInspectionTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         val ENTRY_POINT_ANNOTATION = "test.anno.EntryPoint"
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
 
     override fun setUp() {
         super.setUp()

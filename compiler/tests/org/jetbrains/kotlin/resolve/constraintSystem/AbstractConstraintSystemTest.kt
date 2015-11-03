@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariables
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JetLiteFixture
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinLiteFixture
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.tests.di.createContainerForTests
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.Variance
 import java.io.File
 import java.util.ArrayList
 
-abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
+abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
 
     private var _typeResolver: TypeResolver? = null
     private val typeResolver: TypeResolver
@@ -52,14 +52,14 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     override fun setUp() {
         super.setUp()
 
-        _typeResolver = createContainerForTests(getProject(), JetTestUtils.createEmptyModule()).typeResolver
+        _typeResolver = createContainerForTests(getProject(), KotlinTestUtils.createEmptyModule()).typeResolver
         _testDeclarations = analyzeDeclarations()
     }
 
     override fun tearDown() {
         _typeResolver = null
         _testDeclarations = null
-        super<JetLiteFixture>.tearDown()
+        super<KotlinLiteFixture>.tearDown()
     }
 
     override fun getTestDataPath(): String {
@@ -113,7 +113,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         }.join("\n", prefix = "result:\n")
 
         val boundsFile = File(filePath.replace("constraints", "bounds"))
-        JetTestUtils.assertEqualsToFile(boundsFile, "${constraintsFileText.join("\n")}\n\n$resultingStatus\n\n$result")
+        KotlinTestUtils.assertEqualsToFile(boundsFile, "${constraintsFileText.join("\n")}\n\n$resultingStatus\n\n$result")
     }
 
     class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String)

@@ -22,7 +22,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
@@ -187,7 +187,7 @@ public class SimpleTestClassModel implements TestClassModel {
 
     @Override
     public String getDataString() {
-        return JetTestUtils.getFilePath(rootFile);
+        return KotlinTestUtils.getFilePath(rootFile);
     }
 
     @Nullable
@@ -216,8 +216,8 @@ public class SimpleTestClassModel implements TestClassModel {
                 exclude.append("\"");
             }
             String assertTestsPresentStr = String.format(
-                    "JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s%s);",
-                    JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), recursive, exclude
+                    "KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s%s);",
+                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), recursive, exclude
             );
             p.println(assertTestsPresentStr);
         }

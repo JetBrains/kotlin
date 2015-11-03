@@ -23,7 +23,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
@@ -120,7 +120,7 @@ public class SingleClassTestModel implements TestClassModel {
 
     @Override
     public String getDataString() {
-        return JetTestUtils.getFilePath(rootFile);
+        return KotlinTestUtils.getFilePath(rootFile);
     }
 
     @Nullable
@@ -143,8 +143,8 @@ public class SingleClassTestModel implements TestClassModel {
         @Override
         public void generateBody(@NotNull Printer p) {
             String assertTestsPresentStr = String.format(
-                    "JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"));",
-                    JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern())
+                    "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"));",
+                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern())
             );
             p.println(assertTestsPresentStr);
         }

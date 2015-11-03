@@ -25,7 +25,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.newvfs.RefreshQueue
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.test.configureAs
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
 
-public class KotlinJavaScriptRefreshLibraryTest : JetLightCodeInsightFixtureTestCase() {
+public class KotlinJavaScriptRefreshLibraryTest : KotlinLightCodeInsightFixtureTestCase() {
 
     private val TEST_DATA_PATH = "idea/testData/internal"
     private val TEST_PACKAGE = "test"

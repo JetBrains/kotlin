@@ -20,7 +20,7 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 
 import java.io.File;
@@ -59,7 +59,7 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
             ((KotlinMavenConfigurator) configurator).changePomFile(getModule(), getFile(), version);
         }
 
-        JetTestUtils.assertEqualsToFile(new File(afterFile), getFile().getText().replace(version, "$VERSION$"));
+        KotlinTestUtils.assertEqualsToFile(new File(afterFile), getFile().getText().replace(version, "$VERSION$"));
     }
 
     @NotNull

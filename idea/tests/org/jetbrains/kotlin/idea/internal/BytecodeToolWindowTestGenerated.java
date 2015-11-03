@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.internal;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,60 +32,60 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeToolWindowTestGenerated extends AbstractBytecodeToolWindowTest {
     public void testAllFilesPresentInToolWindow() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/internal/toolWindow"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/internal/toolWindow"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("componentInlineFun")
     public void testComponentInlineFun() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/componentInlineFun/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/componentInlineFun/");
         doTest(fileName);
     }
 
     @TestMetadata("inlineFunctionBodyResolve")
     public void testInlineFunctionBodyResolve() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionBodyResolve/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionBodyResolve/");
         doTest(fileName);
     }
 
     @TestMetadata("inlineFunctionDeep1")
     public void testInlineFunctionDeep1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionDeep1/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionDeep1/");
         doTest(fileName);
     }
 
     @TestMetadata("inlineFunctionDeep2")
     public void testInlineFunctionDeep2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionDeep2/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionDeep2/");
         doTest(fileName);
     }
 
     @TestMetadata("inlineFunctionInfixCall")
     public void testInlineFunctionInfixCall() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionInfixCall/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionInfixCall/");
         doTest(fileName);
     }
 
     @TestMetadata("inlineFunctionReifiedParam")
     public void testInlineFunctionReifiedParam() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionReifiedParam/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/inlineFunctionReifiedParam/");
         doTest(fileName);
     }
 
     @TestMetadata("iteratorFun")
     public void testIteratorFun() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/iteratorFun/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/iteratorFun/");
         doTest(fileName);
     }
 
     @TestMetadata("multipleInlineFunctionCalls")
     public void testMultipleInlineFunctionCalls() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/multipleInlineFunctionCalls/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/multipleInlineFunctionCalls/");
         doTest(fileName);
     }
 
     @TestMetadata("objectInInlineFun")
     public void testObjectInInlineFun() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/internal/toolWindow/objectInInlineFun/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/internal/toolWindow/objectInInlineFun/");
         doTest(fileName);
     }
 }

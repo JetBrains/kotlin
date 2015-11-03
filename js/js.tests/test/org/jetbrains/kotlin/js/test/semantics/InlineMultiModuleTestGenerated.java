@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,66 +32,66 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class InlineMultiModuleTestGenerated extends AbstractInlineMultiModuleTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineMultiModule/cases"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineMultiModule/cases"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("anotherModuleValInClosure")
     public void testAnotherModuleValInClosure() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/anotherModuleValInClosure/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/anotherModuleValInClosure/");
         doTest(fileName);
     }
 
     @TestMetadata("callableReference")
     public void testCallableReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/callableReference/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/callableReference/");
         doTest(fileName);
     }
 
     @TestMetadata("calledByFqName")
     public void testCalledByFqName() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/calledByFqName/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/calledByFqName/");
         doTest(fileName);
     }
 
     @TestMetadata("extensionLambda")
     public void testExtensionLambda() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/extensionLambda/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/extensionLambda/");
         doTest(fileName);
     }
 
     @TestMetadata("lambda")
     public void testLambda() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambda/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambda/");
         doTest(fileName);
     }
 
     @TestMetadata("lambdaCalledInObjectLiteral")
     public void testLambdaCalledInObjectLiteral() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambdaCalledInObjectLiteral/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambdaCalledInObjectLiteral/");
         doTest(fileName);
     }
 
     @TestMetadata("lambdaWithClosure")
     public void testLambdaWithClosure() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambdaWithClosure/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/lambdaWithClosure/");
         doTest(fileName);
     }
 
     @TestMetadata("localNameClash")
     public void testLocalNameClash() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/localNameClash/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/localNameClash/");
         doTest(fileName);
     }
 
     @TestMetadata("method")
     public void testMethod() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/method/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/method/");
         doTest(fileName);
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/simple/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineMultiModule/cases/simple/");
         doTest(fileName);
     }
 }

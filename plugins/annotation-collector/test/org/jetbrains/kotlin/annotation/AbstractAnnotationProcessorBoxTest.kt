@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 import java.io.StringWriter
@@ -43,10 +43,10 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
         loadFileByFullPath(fileName)
         CodegenTestUtil.generateFiles(myEnvironment, myFiles)
 
-        val actualAnnotations = JetTestUtils.replaceHashWithStar(collectorExtension.stringWriter.toString())
+        val actualAnnotations = KotlinTestUtils.replaceHashWithStar(collectorExtension.stringWriter.toString())
         val expectedAnnotationsFile = File(path + "annotations.txt")
 
-        JetTestUtils.assertEqualsToFile(expectedAnnotationsFile, actualAnnotations)
+        KotlinTestUtils.assertEqualsToFile(expectedAnnotationsFile, actualAnnotations)
     }
 
     override fun codegenTestBasePath(): String {
@@ -54,7 +54,7 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
     }
 
     private fun createTestEnvironment(supportInheritedAnnotations: Boolean): AnnotationCollectorExtensionForTests {
-        val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
+        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
         val environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val project = environment.project
 

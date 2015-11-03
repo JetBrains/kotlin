@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetLiteFixture;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinLiteFixture;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixture {
+public abstract class KotlinMultiFileTestWithWithJava<M, F> extends KotlinLiteFixture {
     protected class ModuleAndDependencies {
         final M module;
         final List<String> dependencies;
@@ -53,7 +53,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
     protected static boolean writeSourceFile(@NotNull String fileName, @NotNull String content, @NotNull File targetDir) {
         try {
             File sourceFile = new File(targetDir, fileName);
-            JetTestUtils.mkdirs(sourceFile.getParentFile());
+            KotlinTestUtils.mkdirs(sourceFile.getParentFile());
             Files.write(content, sourceFile, Charset.forName("utf-8"));
             return true;
         }
@@ -75,10 +75,10 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
 
     @NotNull
     protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
-        return JetTestUtils.compilerConfigurationForTests(
+        return KotlinTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY,
                 TestJdkKind.MOCK_JDK,
-                Collections.singletonList(JetTestUtils.getAnnotationsJar()),
+                Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
                 Collections.singletonList(javaFilesDir)
         );
     }
@@ -100,7 +100,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
     protected static File createTmpDir(String dirName) {
         File dir = new File(FileUtil.getTempDirectory(), dirName);
         try {
-            JetTestUtils.mkdirs(dir);
+            KotlinTestUtils.mkdirs(dir);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
@@ -113,12 +113,12 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends JetLiteFixtu
         final File javaFilesDir = createJavaFilesDir();
         final File kotlinFilesDir = getKotlinSourceRoot();
 
-        String expectedText = JetTestUtils.doLoadFile(file);
+        String expectedText = KotlinTestUtils.doLoadFile(file);
 
         final Map<String, ModuleAndDependencies> modules = new HashMap<String, ModuleAndDependencies>();
 
         List<F> testFiles =
-                JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<M, F>() {
+                KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactory<M, F>() {
                     @Override
                     public F createFile(
                             @Nullable M module,

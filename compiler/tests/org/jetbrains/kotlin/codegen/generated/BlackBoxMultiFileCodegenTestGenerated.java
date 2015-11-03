@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.generated;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -33,113 +33,113 @@ import java.util.regex.Pattern;
 public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("accessorForProtected")
     public void testAccessorForProtected() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/accessorForProtected/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/accessorForProtected/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("accessorForProtectedInvokeVirtual")
     public void testAccessorForProtectedInvokeVirtual() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/accessorForProtectedInvokeVirtual/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/accessorForProtectedInvokeVirtual/");
         doTestMultiFile(fileName);
     }
 
     public void testAllFilesPresentInBoxMultiFile() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("callMultifileClassMemberFromOtherPackage")
     public void testCallMultifileClassMemberFromOtherPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/callMultifileClassMemberFromOtherPackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/callMultifileClassMemberFromOtherPackage/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("inlineMultifileClassMemberFromOtherPackage")
     public void testInlineMultifileClassMemberFromOtherPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/inlineMultifileClassMemberFromOtherPackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/inlineMultifileClassMemberFromOtherPackage/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("internalVisibility")
     public void testInternalVisibility() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/internalVisibility/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/internalVisibility/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("kt1515")
     public void testKt1515() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1515/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1515/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("kt1528")
     public void testKt1528() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1528/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1528/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("kt1845")
     public void testKt1845() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1845/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt1845/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("kt2060")
     public void testKt2060() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt2060/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt2060/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("kt9717")
     public void testKt9717() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt9717/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt9717/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("kt9717DifferentPackages")
     public void testKt9717DifferentPackages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt9717DifferentPackages/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt9717DifferentPackages/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("mainInFiles")
     public void testMainInFiles() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/mainInFiles/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/mainInFiles/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("multifileClassPartsInitialization")
     public void testMultifileClassPartsInitialization() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/multifileClassPartsInitialization/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/multifileClassPartsInitialization/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("packageLocalClassNotImportedWithDefaultImport")
     public void testPackageLocalClassNotImportedWithDefaultImport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/packageLocalClassNotImportedWithDefaultImport/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/packageLocalClassNotImportedWithDefaultImport/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("samWrappersDifferentFiles")
     public void testSamWrappersDifferentFiles() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/samWrappersDifferentFiles/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/samWrappersDifferentFiles/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("sameFileName")
     public void testSameFileName() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/sameFileName/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/sameFileName/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("samePartNameDifferentFacades")
     public void testSamePartNameDifferentFacades() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/samePartNameDifferentFacades/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/samePartNameDifferentFacades/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/simple/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/simple/");
         doTestMultiFile(fileName);
     }
 }

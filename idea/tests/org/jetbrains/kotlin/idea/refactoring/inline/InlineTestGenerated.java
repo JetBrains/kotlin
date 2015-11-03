@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,96 +32,96 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class InlineTestGenerated extends AbstractInlineTest {
     public void testAllFilesPresentInInline() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("Basic.kt")
     public void testBasic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/Basic.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/Basic.kt");
         doTest(fileName);
     }
 
     @TestMetadata("BasicCaretOnDeclaration.kt")
     public void testBasicCaretOnDeclaration() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/BasicCaretOnDeclaration.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/BasicCaretOnDeclaration.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ifInQualifiedExpression.kt")
     public void testIfInQualifiedExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/ifInQualifiedExpression.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/ifInQualifiedExpression.kt");
         doTest(fileName);
     }
 
     @TestMetadata("InFunctionLiteral.kt")
     public void testInFunctionLiteral() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/InFunctionLiteral.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/InFunctionLiteral.kt");
         doTest(fileName);
     }
 
     @TestMetadata("MethodReference.kt")
     public void testMethodReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/MethodReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/MethodReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("MultipleInitializers.kt")
     public void testMultipleInitializers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/MultipleInitializers.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/MultipleInitializers.kt");
         doTest(fileName);
     }
 
     @TestMetadata("MultipleUsages.kt")
     public void testMultipleUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/MultipleUsages.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/MultipleUsages.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Parameter.kt")
     public void testParameter() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/Parameter.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/Parameter.kt");
         doTest(fileName);
     }
 
     @TestMetadata("SeparateInitializer.kt")
     public void testSeparateInitializer() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/SeparateInitializer.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/SeparateInitializer.kt");
         doTest(fileName);
     }
 
     @TestMetadata("SeparateInitializerInTry.kt")
     public void testSeparateInitializerInTry() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/SeparateInitializerInTry.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/SeparateInitializerInTry.kt");
         doTest(fileName);
     }
 
     @TestMetadata("UsedInAssignment.kt")
     public void testUsedInAssignment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/UsedInAssignment.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/UsedInAssignment.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ValWithoutInitializer.kt")
     public void testValWithoutInitializer() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/ValWithoutInitializer.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/ValWithoutInitializer.kt");
         doTest(fileName);
     }
 
     @TestMetadata("varNoWrite.kt")
     public void testVarNoWrite() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/varNoWrite.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/varNoWrite.kt");
         doTest(fileName);
     }
 
     @TestMetadata("varWithAssignment.kt")
     public void testVarWithAssignment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/varWithAssignment.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/varWithAssignment.kt");
         doTest(fileName);
     }
 
     @TestMetadata("varWithInc.kt")
     public void testVarWithInc() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/varWithInc.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/varWithInc.kt");
         doTest(fileName);
     }
 
@@ -130,186 +130,186 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddParenthesis extends AbstractInlineTest {
         public void testAllFilesPresentInAddParenthesis() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/addParenthesis"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/addParenthesis"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("ArrayAccess.kt")
         public void testArrayAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/ArrayAccess.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/ArrayAccess.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ArrayAccessDontAdd.kt")
         public void testArrayAccessDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/ArrayAccessDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/ArrayAccessDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Binary.kt")
         public void testBinary() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Binary.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Binary.kt");
             doTest(fileName);
         }
 
         @TestMetadata("BinaryDontAdd.kt")
         public void testBinaryDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/BinaryDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/BinaryDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Call.kt")
         public void testCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Call.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Call.kt");
             doTest(fileName);
         }
 
         @TestMetadata("CallDontAdd.kt")
         public void testCallDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/CallDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/CallDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Callee.kt")
         public void testCallee() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Callee.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Callee.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ColonDontAdd.kt")
         public void testColonDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/ColonDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/ColonDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("If.kt")
         public void testIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/If.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/If.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfIntoArrayAccess.kt")
         public void testIfIntoArrayAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoArrayAccess.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoArrayAccess.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfIntoArrayAccessBrackets.kt")
         public void testIfIntoArrayAccessBrackets() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoArrayAccessBrackets.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoArrayAccessBrackets.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfIntoBinaryLeft.kt")
         public void testIfIntoBinaryLeft() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoBinaryLeft.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoBinaryLeft.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfIntoBinaryRight.kt")
         public void testIfIntoBinaryRight() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoBinaryRight.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoBinaryRight.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfIntoBinaryRightLeft.kt")
         public void testIfIntoBinaryRightLeft() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoBinaryRightLeft.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoBinaryRightLeft.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfIntoBinaryRightLeftDontAdd.kt")
         public void testIfIntoBinaryRightLeftDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoBinaryRightLeftDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoBinaryRightLeftDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfIntoPostfix.kt")
         public void testIfIntoPostfix() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoPostfix.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoPostfix.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IfIntoPrefix.kt")
         public void testIfIntoPrefix() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoPrefix.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IfIntoPrefix.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IsDontAdd.kt")
         public void testIsDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IsDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IsDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("IsIntoCall.kt")
         public void testIsIntoCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IsIntoCall.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/IsIntoCall.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeftAssociative.kt")
         public void testLeftAssociative() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/LeftAssociative.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/LeftAssociative.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeftAssociativeBoolean.kt")
         public void testLeftAssociativeBoolean() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/LeftAssociativeBoolean.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/LeftAssociativeBoolean.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeftAssociativeDontAdd.kt")
         public void testLeftAssociativeDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/LeftAssociativeDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/LeftAssociativeDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("PostfixIntoPrefix.kt")
         public void testPostfixIntoPrefix() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/PostfixIntoPrefix.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/PostfixIntoPrefix.kt");
             doTest(fileName);
         }
 
         @TestMetadata("PrefixIntoPostfix.kt")
         public void testPrefixIntoPostfix() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/PrefixIntoPostfix.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/PrefixIntoPostfix.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Qualified.kt")
         public void testQualified() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Qualified.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Qualified.kt");
             doTest(fileName);
         }
 
         @TestMetadata("QualifiedDontAdd.kt")
         public void testQualifiedDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/QualifiedDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/QualifiedDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("StringTemplate.kt")
         public void testStringTemplate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/StringTemplate.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/StringTemplate.kt");
             doTest(fileName);
         }
 
         @TestMetadata("StringTemplateAlreadyInBraces.kt")
         public void testStringTemplateAlreadyInBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/StringTemplateAlreadyInBraces.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/StringTemplateAlreadyInBraces.kt");
             doTest(fileName);
         }
 
         @TestMetadata("StringTemplateDontAdd.kt")
         public void testStringTemplateDontAdd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/StringTemplateDontAdd.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/StringTemplateDontAdd.kt");
             doTest(fileName);
         }
 
         @TestMetadata("UnaryIntoBinary.kt")
         public void testUnaryIntoBinary() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/UnaryIntoBinary.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/UnaryIntoBinary.kt");
             doTest(fileName);
         }
     }
@@ -319,48 +319,48 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ExplicateParameterTypes extends AbstractInlineTest {
         public void testAllFilesPresentInExplicateParameterTypes() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateParameterTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateParameterTypes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("EnoughDontExplicate.kt")
         public void testEnoughDontExplicate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/EnoughDontExplicate.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/EnoughDontExplicate.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ErrorTypes.kt")
         public void testErrorTypes() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/ErrorTypes.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/ErrorTypes.kt");
             doTest(fileName);
         }
 
         @TestMetadata("It.kt")
         public void testIt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/It.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/It.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ItMultiLine.kt")
         public void testItMultiLine() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/ItMultiLine.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/ItMultiLine.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Parenthesized.kt")
         public void testParenthesized() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/Parenthesized.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/Parenthesized.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Simplest.kt")
         public void testSimplest() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/Simplest.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/Simplest.kt");
             doTest(fileName);
         }
 
         @TestMetadata("TrivialDontExplicate.kt")
         public void testTrivialDontExplicate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/TrivialDontExplicate.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateParameterTypes/TrivialDontExplicate.kt");
             doTest(fileName);
         }
     }
@@ -370,60 +370,60 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ExplicateTypeArgument extends AbstractInlineTest {
         public void testAllFilesPresentInExplicateTypeArgument() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateTypeArgument"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateTypeArgument"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("DeeperNestedCall.kt")
         public void testDeeperNestedCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/DeeperNestedCall.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/DeeperNestedCall.kt");
             doTest(fileName);
         }
 
         @TestMetadata("EnoughDontExplicate.kt")
         public void testEnoughDontExplicate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/EnoughDontExplicate.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/EnoughDontExplicate.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ExplicateForSome.kt")
         public void testExplicateForSome() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/ExplicateForSome.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/ExplicateForSome.kt");
             doTest(fileName);
         }
 
         @TestMetadata("InStringTemplate.kt")
         public void testInStringTemplate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/InStringTemplate.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/InStringTemplate.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NestedCall.kt")
         public void testNestedCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/NestedCall.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/NestedCall.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Parenthesized.kt")
         public void testParenthesized() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/Parenthesized.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/Parenthesized.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Qualified.kt")
         public void testQualified() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/Qualified.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/Qualified.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Simplest.kt")
         public void testSimplest() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/Simplest.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/Simplest.kt");
             doTest(fileName);
         }
 
         @TestMetadata("TrivialDontExplicate.kt")
         public void testTrivialDontExplicate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/TrivialDontExplicate.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/explicateTypeArgument/TrivialDontExplicate.kt");
             doTest(fileName);
         }
     }
@@ -433,54 +433,54 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractInlineTest {
         public void testAllFilesPresentInProperty() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/property"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/property"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Basic.kt")
         public void testBasic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/Basic.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/Basic.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ClassObjectProperty.kt")
         public void testClassObjectProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/ClassObjectProperty.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/ClassObjectProperty.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ExtensionProperty.kt")
         public void testExtensionProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/ExtensionProperty.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/ExtensionProperty.kt");
             doTest(fileName);
         }
 
         @TestMetadata("InstanceProperty.kt")
         public void testInstanceProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/InstanceProperty.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/InstanceProperty.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ObjectProperty.kt")
         public void testObjectProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/ObjectProperty.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/ObjectProperty.kt");
             doTest(fileName);
         }
 
         @TestMetadata("QualifiedUsage.kt")
         public void testQualifiedUsage() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/QualifiedUsage.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/QualifiedUsage.kt");
             doTest(fileName);
         }
 
         @TestMetadata("WithGetter.kt")
         public void testWithGetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/WithGetter.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/WithGetter.kt");
             doTest(fileName);
         }
 
         @TestMetadata("WithInitializerAndGetter.kt")
         public void testWithInitializerAndGetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/WithInitializerAndGetter.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/WithInitializerAndGetter.kt");
             doTest(fileName);
         }
     }

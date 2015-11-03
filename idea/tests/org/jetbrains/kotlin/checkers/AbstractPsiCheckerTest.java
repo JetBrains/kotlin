@@ -21,11 +21,11 @@ import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 
 import java.io.File;
 
-public abstract class AbstractPsiCheckerTest extends JetLightCodeInsightFixtureTestCase {
+public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String filePath) throws Exception {
         myFixture.configureByFile(filePath);
         checkHighlighting(true, false, false);

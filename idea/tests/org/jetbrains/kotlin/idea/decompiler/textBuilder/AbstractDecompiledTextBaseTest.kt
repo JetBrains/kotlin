@@ -24,8 +24,8 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import kotlin.test.fail
@@ -33,7 +33,7 @@ import kotlin.test.fail
 public abstract class AbstractDecompiledTextBaseTest(
         baseDirectory: String,
         private val isJsLibrary: Boolean = false
-) : JetLightCodeInsightFixtureTestCase() {
+) : KotlinLightCodeInsightFixtureTestCase() {
     protected val TEST_DATA_PATH: String = PluginTestCaseBase.getTestDataPathBase() + baseDirectory
 
     protected val TEST_PACKAGE: String = "test"
@@ -52,7 +52,7 @@ public abstract class AbstractDecompiledTextBaseTest(
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
         if (isAllFilesPresentInTest()) {
-            return JetLightProjectDescriptor.INSTANCE
+            return KotlinLightProjectDescriptor.INSTANCE
         }
         return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false, isJsLibrary)
     }

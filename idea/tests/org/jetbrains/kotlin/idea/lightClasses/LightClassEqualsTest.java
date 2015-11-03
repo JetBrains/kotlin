@@ -24,15 +24,15 @@ import org.jetbrains.kotlin.asJava.KtLightClass;
 import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.KtLightClassForDecompiledDeclaration;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 
-public class LightClassEqualsTest extends JetLightCodeInsightFixtureTestCase {
+public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     public void testEqualsForExplicitDeclaration() throws Exception {

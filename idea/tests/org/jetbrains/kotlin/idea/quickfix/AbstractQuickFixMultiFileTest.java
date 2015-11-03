@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -126,10 +126,10 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
     protected void doMultiFileTest(final String beforeFileName) throws Exception {
         String multifileText = FileUtil.loadFile(new File(beforeFileName), true);
 
-        final List<TestFile> subFiles = JetTestUtils.createTestFiles(
+        final List<TestFile> subFiles = KotlinTestUtils.createTestFiles(
                 "single.kt",
                 multifileText,
-                new JetTestUtils.TestFileFactoryNoModules<TestFile>() {
+                new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
                     @NotNull
                     @Override
                     public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
@@ -196,7 +196,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                         }
                         actualTestFile.append("// FILE: ").append(afterFile.name).append("\n").append(afterText);
 
-                        JetTestUtils.assertEqualsToFile(new File(beforeFileName), actualTestFile.toString());
+                        KotlinTestUtils.assertEqualsToFile(new File(beforeFileName), actualTestFile.toString());
                     }
                 }
                 catch (ComparisonFailure e) {
@@ -281,7 +281,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                                 checkResultByFile(afterFilePath);
                             }
                             catch (ComparisonFailure e) {
-                                JetTestUtils.assertEqualsToFile(new File(afterFilePath), getEditor());
+                                KotlinTestUtils.assertEqualsToFile(new File(afterFilePath), getEditor());
                             }
 
                             PsiFile mainFile = myFile;
@@ -376,7 +376,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
 
     @Override
     protected String getTestDataPath() {
-        return JetTestUtils.getHomeDirectory() + "/";
+        return KotlinTestUtils.getHomeDirectory() + "/";
     }
 
     @NotNull

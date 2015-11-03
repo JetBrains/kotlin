@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.sure
@@ -53,7 +53,7 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
 
     override fun getModuleDescriptor(): ModuleDescriptor {
         val stdlibJar = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.absolutePath
-        val module = JetTestUtils.createEmptyModule("<module for stdlib>", JsPlatform)
+        val module = KotlinTestUtils.createEmptyModule("<module for stdlib>", JsPlatform)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(stdlibJar)
         assert(metadata.size() == 1)
 

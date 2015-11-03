@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -51,15 +51,15 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
     @NotNull
     private static String getTestDataPath() {
-        return JetTestUtils.getTestDataPathBase() + "/lineNumber";
+        return KotlinTestUtils.getTestDataPathBase() + "/lineNumber";
     }
 
     @NotNull
     private KotlinCoreEnvironment createEnvironment() {
         return KotlinCoreEnvironment.createForTests(
                 myTestRootDisposable,
-                JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
-                                                           JetTestUtils.getAnnotationsJar(), tmpdir),
+                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
+                                                              KotlinTestUtils.getAnnotationsJar(), tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
@@ -68,9 +68,9 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
         super.setUp();
 
         KotlinCoreEnvironment environment = createEnvironment();
-        KtFile psiFile = JetTestUtils.createFile(LINE_NUMBER_FUN + ".kt",
+        KtFile psiFile = KotlinTestUtils.createFile(LINE_NUMBER_FUN + ".kt",
                                                "package test;\n\npublic fun " + LINE_NUMBER_FUN + "(): Int = 0\n",
-                                                 environment.getProject());
+                                                    environment.getProject());
 
         OutputFileCollection outputFiles =
                 GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, environment);
@@ -90,7 +90,7 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
             throw ExceptionUtilsKt.rethrow(e);
         }
 
-        return new Pair(JetTestUtils.createFile(file.getName(), text, environment.getProject()), environment);
+        return new Pair(KotlinTestUtils.createFile(file.getName(), text, environment.getProject()), environment);
     }
 
     private void doTest(@NotNull String filename, boolean custom) {

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.psi.patternMatching
 
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtWhenCondition
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
-public abstract class AbstractPsiUnifierTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractPsiUnifierTest : KotlinLightCodeInsightFixtureTestCase() {
     public fun doTest(filePath: String) {
         fun findPattern(file: KtFile): KtElement {
             val selectionModel = myFixture.getEditor().getSelectionModel()

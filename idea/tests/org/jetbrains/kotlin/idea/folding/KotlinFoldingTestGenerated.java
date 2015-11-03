@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.folding;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,48 +34,48 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NoCollapse extends AbstractKotlinFoldingTest {
         public void testAllFilesPresentInNoCollapse() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/noCollapse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/noCollapse"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("class.kt")
         public void testClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/noCollapse/class.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/class.kt");
             doTest(fileName);
         }
 
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/noCollapse/function.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/function.kt");
             doTest(fileName);
         }
 
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/noCollapse/imports.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/imports.kt");
             doTest(fileName);
         }
 
         @TestMetadata("kdocComments.kt")
         public void testKdocComments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/noCollapse/kdocComments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/kdocComments.kt");
             doTest(fileName);
         }
 
         @TestMetadata("multilineComments.kt")
         public void testMultilineComments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/noCollapse/multilineComments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/multilineComments.kt");
             doTest(fileName);
         }
 
         @TestMetadata("object.kt")
         public void testObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/noCollapse/object.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/object.kt");
             doTest(fileName);
         }
 
         @TestMetadata("oneImport.kt")
         public void testOneImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/noCollapse/oneImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/noCollapse/oneImport.kt");
             doTest(fileName);
         }
     }
@@ -85,36 +85,36 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CheckCollapse extends AbstractKotlinFoldingTest {
         public void testAllFilesPresentInCheckCollapse() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("customRegions.kt")
         public void testCustomRegions() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/customRegions.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/customRegions.kt");
             doSettingsFoldingTest(fileName);
         }
 
         @TestMetadata("functionLiteral.kt")
         public void testFunctionLiteral() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/functionLiteral.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/functionLiteral.kt");
             doSettingsFoldingTest(fileName);
         }
 
         @TestMetadata("headerKDoc.kt")
         public void testHeaderKDoc() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/headerKDoc.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/headerKDoc.kt");
             doSettingsFoldingTest(fileName);
         }
 
         @TestMetadata("headerMultilineComment.kt")
         public void testHeaderMultilineComment() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/headerMultilineComment.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/headerMultilineComment.kt");
             doSettingsFoldingTest(fileName);
         }
 
         @TestMetadata("imports.kt")
         public void testImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/imports.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/imports.kt");
             doSettingsFoldingTest(fileName);
         }
     }

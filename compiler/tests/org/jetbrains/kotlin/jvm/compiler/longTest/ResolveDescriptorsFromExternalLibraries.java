@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -164,14 +164,14 @@ public class ResolveDescriptorsFromExternalLibraries {
         if (jar != null) {
             jetCoreEnvironment = KotlinCoreEnvironment.createForTests(
                     junk,
-                    JetTestUtils.compilerConfigurationForTests(
-                            ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), jar
+                    KotlinTestUtils.compilerConfigurationForTests(
+                            ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar(), jar
                     ),
                     EnvironmentConfigFiles.JVM_CONFIG_FILES);
         }
         else {
             CompilerConfiguration configuration =
-                    JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
+                    KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
             jetCoreEnvironment = KotlinCoreEnvironment.createForTests(junk, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
             if (!findRtJar().equals(jar)) {
                 throw new RuntimeException("rt.jar mismatch: " + jar + ", " + findRtJar());
@@ -263,7 +263,7 @@ public class ResolveDescriptorsFromExternalLibraries {
             return file;
         }
 
-        JetTestUtils.mkdirs(file.getParentFile());
+        KotlinTestUtils.mkdirs(file.getParentFile());
 
         File tmp = new File(file.getPath() + "~");
 

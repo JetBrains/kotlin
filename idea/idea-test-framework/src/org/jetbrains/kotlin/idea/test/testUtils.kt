@@ -44,7 +44,7 @@ public enum class ModuleKind {
     KOTLIN_JAVASCRIPT
 }
 
-public fun Module.configureAs(descriptor: JetLightProjectDescriptor) {
+public fun Module.configureAs(descriptor: KotlinLightProjectDescriptor) {
     val module = this
     updateModel(module, object : Consumer<ModifiableRootModel> {
         override fun consume(model: ModifiableRootModel) {

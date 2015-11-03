@@ -86,7 +86,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Project project = createEnvironment(Arrays.asList(extraClassPath)).getProject();
 
         AnalysisResult result = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
+                KotlinTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
         );
 
         PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
@@ -98,9 +98,9 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     private KotlinCoreEnvironment createEnvironment(@NotNull List<File> extraClassPath) {
         List<File> extras = new ArrayList<File>();
         extras.addAll(extraClassPath);
-        extras.add(JetTestUtils.getAnnotationsJar());
+        extras.add(KotlinTestUtils.getAnnotationsJar());
 
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
+        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, extras.toArray(new File[extras.size()]));
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
@@ -142,7 +142,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     public void testRawTypes() throws Exception {
-        JetTestUtils.compileJavaFiles(
+        KotlinTestUtils.compileJavaFiles(
                 Collections.singletonList(
                         new File(getTestDataDirectory() + "/library/test/A.java")
                 ),
@@ -169,7 +169,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         String outputMain = CliBaseTest.getNormalizedCompilerOutput(pair2.first, pair2.second, getTestDataDirectory().getPath());
 
-        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), outputLib + "\n" + outputMain);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), outputLib + "\n" + outputMain);
     }
 
     public void testDuplicateObjectInBinaryAndSources() throws Exception {
@@ -199,7 +199,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         // This test checks that there are no PARAMETER_NAME_CHANGED_ON_OVERRIDE or DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
         // warnings when subclassing in Kotlin from Java binaries (in case when no parameter names are available for Java classes)
 
-        JetTestUtils.compileJavaFiles(
+        KotlinTestUtils.compileJavaFiles(
                 Collections.singletonList(getTestDataFileWithExtension("java")),
                 Arrays.asList("-d", tmpdir.getPath())
         );
@@ -207,7 +207,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Project project = createEnvironment(Collections.singletonList(tmpdir)).getProject();
 
         AnalysisResult result = JvmResolveUtil.analyzeOneFileWithJavaIntegration(
-                JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
+                KotlinTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
         );
         result.throwIfError();
 
@@ -221,7 +221,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         // This test compiles a Java library of two classes (Super and Sub), then deletes Super.class and attempts to compile a Kotlin
         // source against this broken library. The expected result is an "incomplete hierarchy" error message from the compiler
 
-        JetTestUtils.compileJavaFiles(
+        KotlinTestUtils.compileJavaFiles(
                 Arrays.asList(
                         new File(getTestDataDirectory() + "/library/test/Super.java"),
                         new File(getTestDataDirectory() + "/library/test/Sub.java")
@@ -241,7 +241,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         ));
         String output = CliBaseTest.getNormalizedCompilerOutput(pair.first, pair.second, getTestDataDirectory().getPath());
 
-        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
     }
 
     public void testIncompleteHierarchyInKotlin() throws Exception {
@@ -258,7 +258,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         ));
         String output = CliBaseTest.getNormalizedCompilerOutput(pair.first, pair.second, getTestDataDirectory().getPath());
 
-        JetTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
+        KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), output);
     }
 
     /*test source mapping generation when source info is absent*/

@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.MultiFileTestCase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     protected fun extractCaretOffset(doc: Document): Int {
@@ -45,11 +45,11 @@ public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
 
     override fun setUp() {
         super.setUp()
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
         super.tearDown()
     }
 }

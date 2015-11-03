@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.generated;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,60 +32,60 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public void testAllFilesPresentInBoxWithJava() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/boxWithJava"), Pattern.compile("^([^\\.]+)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/boxWithJava"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
     @TestMetadata("defaultMethodCallFromTrait")
     public void testDefaultMethodCallFromTrait() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCallFromTrait/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCallFromTrait/");
         doTestWithJava(fileName);
     }
 
     @TestMetadata("defaultMethodCallViaClass")
     public void testDefaultMethodCallViaClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCallViaClass/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCallViaClass/");
         doTestWithJava(fileName);
     }
 
     @TestMetadata("defaultMethodCallViaTrait")
     public void testDefaultMethodCallViaTrait() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCallViaTrait/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCallViaTrait/");
         doTestWithJava(fileName);
     }
 
     @TestMetadata("defaultMethodOverride")
     public void testDefaultMethodOverride() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodOverride/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodOverride/");
         doTestWithJava(fileName);
     }
 
     @TestMetadata("dontDelegateToDefaultMethods")
     public void testDontDelegateToDefaultMethods() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/dontDelegateToDefaultMethods/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/dontDelegateToDefaultMethods/");
         doTestWithJava(fileName);
     }
 
     @TestMetadata("inheritKotlin")
     public void testInheritKotlin() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/inheritKotlin/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/inheritKotlin/");
         doTestWithJava(fileName);
     }
 
     @TestMetadata("invokeDefaultViaSuper")
     public void testInvokeDefaultViaSuper() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/invokeDefaultViaSuper/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/invokeDefaultViaSuper/");
         doTestWithJava(fileName);
     }
 
     @TestMetadata("longChainOfKotlinExtendsFromJavaWithDefault")
     public void testLongChainOfKotlinExtendsFromJavaWithDefault() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/longChainOfKotlinExtendsFromJavaWithDefault/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/longChainOfKotlinExtendsFromJavaWithDefault/");
         doTestWithJava(fileName);
     }
 
     @TestMetadata("samOnInterfaceWithDefaultMethod")
     public void testSamOnInterfaceWithDefaultMethod() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/samOnInterfaceWithDefaultMethod/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/samOnInterfaceWithDefaultMethod/");
         doTestWithJava(fileName);
     }
 
@@ -94,18 +94,18 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Reflection extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInReflection() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/boxWithJava/reflection"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/boxWithJava/reflection"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("realParameterNames")
         public void testRealParameterNames() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/reflection/realParameterNames/");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/reflection/realParameterNames/");
             doTestWithJava(fileName);
         }
 
         @TestMetadata("synthesizedParameterNames")
         public void testSynthesizedParameterNames() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/reflection/synthesizedParameterNames/");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/reflection/synthesizedParameterNames/");
             doTestWithJava(fileName);
         }
 

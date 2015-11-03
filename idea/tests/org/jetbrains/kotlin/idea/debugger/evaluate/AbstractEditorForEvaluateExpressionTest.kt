@@ -22,25 +22,25 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
+import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
+public abstract class AbstractCodeFragmentHighlightingTest : AbstractPsiCheckerTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
         myFixture.checkHighlighting(true, false, false)
@@ -82,7 +82,7 @@ public abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractComple
     }
 }
 
-public abstract class AbstractCodeFragmentAutoImportTest : AbstractJetPsiCheckerTest() {
+public abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
         myFixture.doHighlighting()
@@ -100,8 +100,8 @@ public abstract class AbstractCodeFragmentAutoImportTest : AbstractJetPsiChecker
         assertNull(fixAfter, "No import fix should be available after")
     }
 
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 }
 
 private fun KtCodeFragment.checkImports(testPath: String) {
@@ -110,7 +110,7 @@ private fun KtCodeFragment.checkImports(testPath: String) {
     val fragmentAfterFile = File(testPath + ".after.imports")
 
     if (fragmentAfterFile.exists()) {
-        JetTestUtils.assertEqualsToFile(fragmentAfterFile, importsText)
+        KotlinTestUtils.assertEqualsToFile(fragmentAfterFile, importsText)
     }
     else {
         assertTrue(importsText.isEmpty(), "Unexpected imports found: $importsText" )

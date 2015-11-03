@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.navigation;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,54 +34,54 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GotoClass extends AbstractKotlinGotoTest {
         public void testAllFilesPresentInGotoClass() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("enumEntries.kt")
         public void testEnumEntries() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/enumEntries.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/enumEntries.kt");
             doClassTest(fileName);
         }
 
         @TestMetadata("inClassObject.kt")
         public void testInClassObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/inClassObject.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/inClassObject.kt");
             doClassTest(fileName);
         }
 
         @TestMetadata("innerClass.kt")
         public void testInnerClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/innerClass.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/innerClass.kt");
             doClassTest(fileName);
         }
 
         @TestMetadata("localDeclarations.kt")
         public void testLocalDeclarations() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/localDeclarations.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/localDeclarations.kt");
             doClassTest(fileName);
         }
 
         @TestMetadata("noImplementationTrait.kt")
         public void testNoImplementationTrait() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/noImplementationTrait.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/noImplementationTrait.kt");
             doClassTest(fileName);
         }
 
         @TestMetadata("simpleClass.kt")
         public void testSimpleClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/simpleClass.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/simpleClass.kt");
             doClassTest(fileName);
         }
 
         @TestMetadata("simpleObject.kt")
         public void testSimpleObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/simpleObject.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/simpleObject.kt");
             doClassTest(fileName);
         }
 
         @TestMetadata("traitWithFunImplement.kt")
         public void testTraitWithFunImplement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/traitWithFunImplement.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/traitWithFunImplement.kt");
             doClassTest(fileName);
         }
     }
@@ -91,42 +91,42 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class GotoSymbol extends AbstractKotlinGotoTest {
         public void testAllFilesPresentInGotoSymbol() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("functions.kt")
         public void testFunctions() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/functions.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/functions.kt");
             doSymbolTest(fileName);
         }
 
         @TestMetadata("javaMethods.kt")
         public void testJavaMethods() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/javaMethods.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/javaMethods.kt");
             doSymbolTest(fileName);
         }
 
         @TestMetadata("properties.kt")
         public void testProperties() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/properties.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/properties.kt");
             doSymbolTest(fileName);
         }
 
         @TestMetadata("stdLibArrayListOf.kt")
         public void testStdLibArrayListOf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/stdLibArrayListOf.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/stdLibArrayListOf.kt");
             doSymbolTest(fileName);
         }
 
         @TestMetadata("stdLibArrayListOfNoSources.kt")
         public void testStdLibArrayListOfNoSources() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/stdLibArrayListOfNoSources.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/stdLibArrayListOfNoSources.kt");
             doSymbolTest(fileName);
         }
 
         @TestMetadata("stdLibJoinToString.kt")
         public void testStdLibJoinToString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/stdLibJoinToString.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/stdLibJoinToString.kt");
             doSymbolTest(fileName);
         }
     }

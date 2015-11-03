@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.code
 import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 import java.util.regex.Pattern
-import kotlin.test.fail
 
 public class CodeConformanceTest : TestCase() {
     companion object {

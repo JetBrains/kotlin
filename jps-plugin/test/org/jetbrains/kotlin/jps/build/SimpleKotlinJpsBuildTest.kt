@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY
 import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_ENABLED_PROPERTY
 import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_LOG_PATH_PROPERTY
 import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     override fun setUp() {
         super.setUp()
-        workDir = JetTestUtils.tmpDirForTest(this)
+        workDir = KotlinTestUtils.tmpDirForTest(this)
     }
 
     public fun testLoadingKotlinFromDifferentModules() {

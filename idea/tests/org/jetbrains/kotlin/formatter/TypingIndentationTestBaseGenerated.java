@@ -87,15 +87,13 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("ConsecutiveCallsInSaeCallsMiddle.after.kt")
         public void testConsecutiveCallsInSaeCallsMiddle() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/ConsecutiveCallsInSaeCallsMiddle.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/ConsecutiveCallsInSaeCallsMiddle.after.kt");
             doNewlineTest(fileName);
         }
 
         @TestMetadata("ConsecutiveCallsInSafeCallsEnd.after.kt")
         public void testConsecutiveCallsInSafeCallsEnd() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/ConsecutiveCallsInSafeCallsEnd.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/ConsecutiveCallsInSafeCallsEnd.after.kt");
             doNewlineTest(fileName);
         }
 
@@ -149,8 +147,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("InBinaryExpressionsBeforeCloseParenthesis.after.kt")
         public void testInBinaryExpressionsBeforeCloseParenthesis() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.kt");
             doNewlineTest(fileName);
         }
 
@@ -180,8 +177,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("InEnumInitializerListAfterComma.after.kt")
         public void testInEnumInitializerListAfterComma() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListAfterComma.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListAfterComma.after.kt");
             doNewlineTest(fileName);
         }
 
@@ -199,8 +195,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("InExpressionsParenthesesBeforeOperand.after.kt")
         public void testInExpressionsParenthesesBeforeOperand() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.kt");
             doNewlineTest(fileName);
         }
 
@@ -224,29 +219,25 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("InLambdaInsideChainCallSameLine.after.kt")
         public void testInLambdaInsideChainCallSameLine() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InLambdaInsideChainCallSameLine.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InLambdaInsideChainCallSameLine.after.kt");
             doNewlineTest(fileName);
         }
 
         @TestMetadata("InLambdaInsideChainCallSameLineWithSpaces.after.kt")
         public void testInLambdaInsideChainCallSameLineWithSpaces() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InLambdaInsideChainCallSameLineWithSpaces.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InLambdaInsideChainCallSameLineWithSpaces.after.kt");
             doNewlineTest(fileName);
         }
 
         @TestMetadata("InLambdaInsideChainCallWithNewLine.after.kt")
         public void testInLambdaInsideChainCallWithNewLine() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InLambdaInsideChainCallWithNewLine.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InLambdaInsideChainCallWithNewLine.after.kt");
             doNewlineTest(fileName);
         }
 
         @TestMetadata("InLambdaInsideChainCallWithNewLineWithSpaces.after.kt")
         public void testInLambdaInsideChainCallWithNewLineWithSpaces() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InLambdaInsideChainCallWithNewLineWithSpaces.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InLambdaInsideChainCallWithNewLineWithSpaces.after.kt");
             doNewlineTest(fileName);
         }
 
@@ -294,8 +285,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.kt")
         public void testSettingAlignMultilineParametersInCalls() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.kt");
             doNewlineTest(fileName);
         }
 
@@ -315,8 +305,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
             @TestMetadata("ScriptAfterExpression.after.kts")
             public void testScriptAfterExpression() throws Exception {
-                String fileName = KotlinTestUtils
-                        .navigationMetadata("idea/testData/indentationOnNewline/script/ScriptAfterExpression.after.kts");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/script/ScriptAfterExpression.after.kts");
                 doNewlineTest(fileName);
             }
 
@@ -362,36 +351,31 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("InBinaryExpressionInMiddle.after.inv.kt")
         public void testInBinaryExpressionInMiddle() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionInMiddle.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionInMiddle.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
         @TestMetadata("InBinaryExpressionUnfinished.after.inv.kt")
         public void testInBinaryExpressionUnfinished() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinished.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionUnfinished.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
         @TestMetadata("InBinaryExpressionsBeforeCloseParenthesis.after.inv.kt")
         public void testInBinaryExpressionsBeforeCloseParenthesis() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
         @TestMetadata("InDelegationListAfterColon.after.inv.kt")
         public void testInDelegationListAfterColon() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InDelegationListAfterColon.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InDelegationListAfterColon.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
         @TestMetadata("InDelegationListAfterComma.after.inv.kt")
         public void testInDelegationListAfterComma() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InDelegationListAfterComma.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InDelegationListAfterComma.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
@@ -409,15 +393,13 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("InEnumInitializerListAfterComma.after.inv.kt")
         public void testInEnumInitializerListAfterComma() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListAfterComma.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListAfterComma.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
         @TestMetadata("InEnumInitializerListNotEmpty.after.inv.kt")
         public void testInEnumInitializerListNotEmpty() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListNotEmpty.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InEnumInitializerListNotEmpty.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
@@ -429,8 +411,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("InExpressionsParenthesesBeforeOperand.after.inv.kt")
         public void testInExpressionsParenthesesBeforeOperand() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 
@@ -442,8 +423,7 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
 
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.inv.kt")
         public void testSettingAlignMultilineParametersInCalls() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.inv.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/indentationOnNewline/SettingAlignMultilineParametersInCalls.after.inv.kt");
             doNewlineTestWithInvert(fileName);
         }
 

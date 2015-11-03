@@ -71,7 +71,7 @@ public class MockLibraryUtil {
             @NotNull String... extraClasspath
     ) {
         try {
-            File contentDir = JetTestUtils.tmpDir("testLibrary-" + jarName);
+            File contentDir = KotlinTestUtils.tmpDir("testLibrary-" + jarName);
 
             File classesDir = new File(contentDir, "classes");
 
@@ -85,7 +85,7 @@ public class MockLibraryUtil {
             if (!javaFiles.isEmpty()) {
                 List<String> classpath = new ArrayList<String>();
                 classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
-                classpath.add(JetTestUtils.getAnnotationsJar().getPath());
+                classpath.add(KotlinTestUtils.getAnnotationsJar().getPath());
                 Collections.addAll(classpath, extraClasspath);
 
                 // Probably no kotlin files were present, so dir might not have been created after kotlin compiler
@@ -101,7 +101,7 @@ public class MockLibraryUtil {
                         "-d", classesDir.getPath()
                 );
 
-                JetTestUtils.compileJavaFiles(javaFiles, options);
+                KotlinTestUtils.compileJavaFiles(javaFiles, options);
             }
 
             return createJarFile(contentDir, classesDir, sourcesPath, jarName, addSources);
@@ -118,7 +118,7 @@ public class MockLibraryUtil {
             boolean addSources
     ) {
         try {
-            File contentDir = JetTestUtils.tmpDir("testLibrary-" + jarName);
+            File contentDir = KotlinTestUtils.tmpDir("testLibrary-" + jarName);
 
             File outDir = new File(contentDir, "out");
             File outputFile = new File(outDir, jarName + ".js");

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,54 +32,54 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class InlineJsStdlibTestGenerated extends AbstractInlineJsStdlibTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineStdlib/cases"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineStdlib/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("callNameClash.kt")
     public void testCallNameClash() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/callNameClash.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/callNameClash.kt");
         doTest(fileName);
     }
 
     @TestMetadata("callableRefToFunInCurrentModule.kt")
     public void testCallableRefToFunInCurrentModule() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/callableRefToFunInCurrentModule.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/callableRefToFunInCurrentModule.kt");
         doTest(fileName);
     }
 
     @TestMetadata("closure.kt")
     public void testClosure() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/closure.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/closure.kt");
         doTest(fileName);
     }
 
     @TestMetadata("closureInObjectLiteral.kt")
     public void testClosureInObjectLiteral() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/closureInObjectLiteral.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/closureInObjectLiteral.kt");
         doTest(fileName);
     }
 
     @TestMetadata("closureNested.kt")
     public void testClosureNested() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/closureNested.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/closureNested.kt");
         doTest(fileName);
     }
 
     @TestMetadata("localNamesClash.kt")
     public void testLocalNamesClash() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/localNamesClash.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/localNamesClash.kt");
         doTest(fileName);
     }
 
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/simple.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/simple.kt");
         doTest(fileName);
     }
 
     @TestMetadata("thisInExtension.kt")
     public void testThisInExtension() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/thisInExtension.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineStdlib/cases/thisInExtension.kt");
         doTest(fileName);
     }
 }

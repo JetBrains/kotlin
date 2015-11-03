@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsR
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxInlineCodegenTest
-import org.jetbrains.kotlin.findUsages.AbstractJetFindUsagesTest
+import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
-import org.jetbrains.kotlin.formatter.AbstractJetFormatterTest
-import org.jetbrains.kotlin.formatter.AbstractJetTypingIndentationTestBase
+import org.jetbrains.kotlin.formatter.AbstractFormatterTest
+import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.tests.generator.*
 import org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBackend
 import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForReservedWords
@@ -60,8 +60,8 @@ import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletio
 import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.kotlin.idea.debugger.AbstractJetPositionManagerTest
 import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
+import org.jetbrains.kotlin.idea.debugger.AbstractPositionManagerTest
 import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
@@ -70,7 +70,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiled
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiledTextTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJsDecompiledTextFromJsMetadataTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTextTest
-import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractJetQuickDocProviderTest
+import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -88,8 +88,8 @@ import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
-import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractJetExtractionTest
-import org.jetbrains.kotlin.idea.refactoring.move.AbstractJetMoveTest
+import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractExtractionTest
+import org.jetbrains.kotlin.idea.refactoring.move.AbstractMoveTest
 import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
 import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
@@ -116,8 +116,8 @@ import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeSha
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
 import org.jetbrains.kotlin.load.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
-import org.jetbrains.kotlin.parsing.AbstractJetParsingTest
-import org.jetbrains.kotlin.psi.patternMatching.AbstractJetPsiUnifierTest
+import org.jetbrains.kotlin.parsing.AbstractParsingTest
+import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
 import org.jetbrains.kotlin.renderer.AbstractFunctionDescriptorInExpressionRendererTest
 import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
@@ -127,10 +127,10 @@ import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
 import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
-import org.jetbrains.kotlin.safeDelete.AbstractJetSafeDeleteTest
+import org.jetbrains.kotlin.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
-import org.jetbrains.kotlin.types.AbstractJetTypeBindingTest
+import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -140,21 +140,21 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/tests", "compiler/testData") {
 
-        testClass<AbstractJetDiagnosticsTest>() {
+        testClass<AbstractDiagnosticsTest>() {
             model("diagnostics/tests")
             model("diagnostics/tests/script", extension = "kts")
             model("codegen/box/diagnostics")
         }
 
-        testClass<AbstractJetDiagnosticsTestWithStdLib>() {
+        testClass<AbstractDiagnosticsTestWithStdLib>() {
             model("diagnostics/testsWithStdLib")
         }
 
-        testClass<AbstractJetDiagnosticsTestWithJsStdLib>() {
+        testClass<AbstractDiagnosticsTestWithJsStdLib>() {
             model("diagnostics/testsWithJsStdLib")
         }
 
-        testClass<AbstractJetDiagnosticsTestWithJsStdLibAndBackendCompilation>() {
+        testClass<AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation>() {
             model("diagnostics/testsWithJsStdLibAndBackendCompilation")
         }
 
@@ -174,7 +174,7 @@ fun main(args: Array<String>) {
             model("constraintSystem", extension = "constraints")
         }
 
-        testClass<AbstractJetParsingTest>() {
+        testClass<AbstractParsingTest>() {
             model("psi", testMethod = "doParsingTest", pattern = "^(.*)\\.kts?$")
             model("parseCodeFragment/expression", testMethod = "doExpressionCodeFragmentParsingTest", extension = "kt")
             model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
@@ -334,7 +334,7 @@ fun main(args: Array<String>) {
             model("asJava/lightClasses")
         }
 
-        testClass<AbstractJetTypeBindingTest>() {
+        testClass<AbstractTypeBindingTest>() {
             model("type/binding")
         }
 
@@ -352,7 +352,7 @@ fun main(args: Array<String>) {
         testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJava8CodegenTestGenerated") {
             model("codegen/java8/boxWithJava", testMethod = "doTestWithJava", extension = null, recursive = true, excludeParentDirs = true)
         }
-        testClass<AbstractJetDiagnosticsWithFullJdkTest>("JetDiagnosticsWithJava8TestGenerated") {
+        testClass<AbstractDiagnosticsWithFullJdkTest>("DiagnosticsWithJava8TestGenerated") {
             model("diagnostics/testsWithJava8")
         }
     }
@@ -372,7 +372,7 @@ fun main(args: Array<String>) {
             model("resolve/partialBodyResolve")
         }
 
-        testClass<AbstractJetPsiCheckerTest>() {
+        testClass<AbstractPsiCheckerTest>() {
             model("checker", recursive = false)
             model("checker/regression")
             model("checker/recovery")
@@ -390,7 +390,7 @@ fun main(args: Array<String>) {
             model("kotlinAndJavaChecker/javaAgainstKotlin")
         }
 
-        testClass<AbstractJetPsiUnifierTest>() {
+        testClass<AbstractPsiUnifierTest>() {
             model("unifier")
         }
 
@@ -403,7 +403,7 @@ fun main(args: Array<String>) {
             model("quickfix.special/codeFragmentAutoImport", extension = "kt", recursive = false)
         }
 
-        testClass<AbstractJetJsCheckerTest>() {
+        testClass<AbstractJsCheckerTest>() {
             model("checker/js")
         }
 
@@ -475,7 +475,7 @@ fun main(args: Array<String>) {
             model("intentions", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
-        testClass<AbstractJetInspectionTest>() {
+        testClass<AbstractInspectionTest>() {
             model("intentions", pattern = "^(inspections\\.test)$", singleClass = true)
             model("inspections", pattern = "^(inspections\\.test)$", singleClass = true)
         }
@@ -513,11 +513,11 @@ fun main(args: Array<String>) {
             model("codeInsight/unwrapAndRemove/unwrapLambda", testMethod = "doTestLambdaUnwrapper")
         }
 
-        testClass<AbstractJetQuickDocProviderTest>() {
+        testClass<AbstractQuickDocProviderTest>() {
             model("editor/quickDoc", pattern = """^([^_]+)\.[^\.]*$""")
         }
 
-        testClass<AbstractJetSafeDeleteTest>() {
+        testClass<AbstractSafeDeleteTest>() {
             model("safeDelete/deleteClass/kotlinClass", testMethod = "doClassTest")
             model("safeDelete/deleteClass/kotlinClassWithJava", testMethod = "doClassTestWithJava")
             model("safeDelete/deleteObject/kotlinObject", testMethod = "doObjectTest")
@@ -553,7 +553,7 @@ fun main(args: Array<String>) {
             model("resolve/referenceToJavaWithWrongFileStructure", recursive = false)
         }
 
-        testClass<AbstractJetFindUsagesTest>() {
+        testClass<AbstractFindUsagesTest>() {
             model("findUsages/kotlin", pattern = """^(.+)\.0\.kt$""")
             model("findUsages/java", pattern = """^(.+)\.0\.java$""")
             model("findUsages/propertyFiles", pattern = """^(.+)\.0\.properties$""")
@@ -563,7 +563,7 @@ fun main(args: Array<String>) {
             model("findUsages/libraryUsages", pattern = """^(.+)\.0\.kt$""")
         }
 
-        testClass<AbstractJetMoveTest>() {
+        testClass<AbstractMoveTest>() {
             model("refactoring/move", extension = "test", singleClass = true)
         }
 
@@ -571,7 +571,7 @@ fun main(args: Array<String>) {
             model("multiFileIntentions", extension = "test", singleClass = true, filenameStartsLowerCase = true)
         }
 
-        testClass<AbstractJetMultiFileInspectionTest>() {
+        testClass<AbstractMultiFileInspectionTest>() {
             model("multiFileInspections", extension = "test", singleClass = true)
         }
 
@@ -582,13 +582,13 @@ fun main(args: Array<String>) {
             model("configuration/js-maven", extension = null, recursive = false, testMethod = "doTestWithJSMaven")
         }
 
-        testClass<AbstractJetFormatterTest>() {
+        testClass<AbstractFormatterTest>() {
             model("formatter", pattern = """^([^\.]+)\.after\.kt.*$""")
             model("formatter", pattern = """^([^\.]+)\.after\.inv\.kt.*$""",
                   testMethod = "doTestInverted", testClassName = "FormatterInverted")
         }
 
-        testClass<AbstractJetTypingIndentationTestBase>() {
+        testClass<AbstractTypingIndentationTestBase>() {
             model("indentationOnNewline", pattern = """^([^\.]+)\.after\.kt.*$""", testMethod = "doNewlineTest",
                   testClassName = "DirectSettings")
             model("indentationOnNewline", pattern = """^([^\.]+)\.after\.inv\.kt.*$""", testMethod = "doNewlineTestWithInvert",
@@ -675,7 +675,7 @@ fun main(args: Array<String>) {
             model("editor/optimizeImports", pattern = """^([^\.]+)\.kt$""")
         }
 
-        testClass<AbstractJetPositionManagerTest>() {
+        testClass<AbstractPositionManagerTest>() {
             model("debugger/positionManager", recursive = false, extension = "kt", testClassName = "SingleFile")
             model("debugger/positionManager", recursive = false, extension = null, testClassName = "MultiFile")
         }
@@ -707,7 +707,7 @@ fun main(args: Array<String>) {
             model("multiFileHighlighting", recursive = false)
         }
 
-        testClass<AbstractJetExtractionTest>() {
+        testClass<AbstractExtractionTest>() {
             model("refactoring/introduceVariable", extension = "kt", testMethod = "doIntroduceVariableTest")
             model("refactoring/extractFunction", extension = "kt", testMethod = "doExtractFunctionTest")
             model("refactoring/introduceProperty", extension = "kt", testMethod = "doIntroducePropertyTest")

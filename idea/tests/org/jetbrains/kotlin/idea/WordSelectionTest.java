@@ -22,15 +22,15 @@ import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TagsTestDataUtil;
 import org.testng.collections.Lists;
 
 import java.io.File;
 
-public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
+public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     private static final String TEST_RELATIVE_DIR = "wordSelection";
 
     public void testStatements() { doTest(); }
@@ -128,7 +128,7 @@ public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
                 editor.getDocument().getText()
         );
 
-        JetTestUtils.assertEqualsToFile(new File(failedFilePath), actualText);
+        KotlinTestUtils.assertEqualsToFile(new File(failedFilePath), actualText);
     }
 
 }

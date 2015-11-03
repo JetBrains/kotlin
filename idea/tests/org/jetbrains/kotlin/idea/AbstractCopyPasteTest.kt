@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-public abstract class AbstractCopyPasteTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractCopyPasteTest : KotlinLightCodeInsightFixtureTestCase() {
     private var savedImportsOnPasteSetting: Int = 0
     private val DEFAULT_TO_FILE_TEXT = "package to\n\n<caret>"
 

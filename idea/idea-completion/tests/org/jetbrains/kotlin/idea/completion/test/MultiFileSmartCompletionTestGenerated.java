@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.completion.test;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,108 +32,108 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmartCompletionTest {
     public void testAllFilesPresentInSmartMultiFile() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smartMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smartMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("AnonymousObjectGenericJava")
     public void testAnonymousObjectGenericJava() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/AnonymousObjectGenericJava/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/AnonymousObjectGenericJava/");
         doTest(fileName);
     }
 
     @TestMetadata("CallableReferenceNotImported")
     public void testCallableReferenceNotImported() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/CallableReferenceNotImported/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/CallableReferenceNotImported/");
         doTest(fileName);
     }
 
     @TestMetadata("CallablesInExcludedPackage")
     public void testCallablesInExcludedPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/CallablesInExcludedPackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/CallablesInExcludedPackage/");
         doTest(fileName);
     }
 
     @TestMetadata("FunctionFromAnotherPackage")
     public void testFunctionFromAnotherPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/FunctionFromAnotherPackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/FunctionFromAnotherPackage/");
         doTest(fileName);
     }
 
     @TestMetadata("GenericInheritors1")
     public void testGenericInheritors1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/GenericInheritors1/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/GenericInheritors1/");
         doTest(fileName);
     }
 
     @TestMetadata("GenericInheritors2")
     public void testGenericInheritors2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/GenericInheritors2/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/GenericInheritors2/");
         doTest(fileName);
     }
 
     @TestMetadata("GenericInheritors3")
     public void testGenericInheritors3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/GenericInheritors3/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/GenericInheritors3/");
         doTest(fileName);
     }
 
     @TestMetadata("GenericInheritors4")
     public void testGenericInheritors4() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/GenericInheritors4/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/GenericInheritors4/");
         doTest(fileName);
     }
 
     @TestMetadata("InheritorInTheSameFile")
     public void testInheritorInTheSameFile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/InheritorInTheSameFile/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/InheritorInTheSameFile/");
         doTest(fileName);
     }
 
     @TestMetadata("Inheritors")
     public void testInheritors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/Inheritors/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/Inheritors/");
         doTest(fileName);
     }
 
     @TestMetadata("InheritorsAndMultipleExpectedTypes")
     public void testInheritorsAndMultipleExpectedTypes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/InheritorsAndMultipleExpectedTypes/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/InheritorsAndMultipleExpectedTypes/");
         doTest(fileName);
     }
 
     @TestMetadata("JavaStaticMethodArgument")
     public void testJavaStaticMethodArgument() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/JavaStaticMethodArgument/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/JavaStaticMethodArgument/");
         doTest(fileName);
     }
 
     @TestMetadata("JavaStaticMethodArgument2")
     public void testJavaStaticMethodArgument2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/JavaStaticMethodArgument2/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/JavaStaticMethodArgument2/");
         doTest(fileName);
     }
 
     @TestMetadata("KT_8751")
     public void testKT_8751() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/KT_8751/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/KT_8751/");
         doTest(fileName);
     }
 
     @TestMetadata("KT_8751_2")
     public void testKT_8751_2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/KT_8751_2/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/KT_8751_2/");
         doTest(fileName);
     }
 
     @TestMetadata("NestedClassAfterAs")
     public void testNestedClassAfterAs() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NestedClassAfterAs/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NestedClassAfterAs/");
         doTest(fileName);
     }
 
     @TestMetadata("NoObjectDuplication")
     public void testNoObjectDuplication() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NoObjectDuplication/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NoObjectDuplication/");
         doTest(fileName);
     }
 }

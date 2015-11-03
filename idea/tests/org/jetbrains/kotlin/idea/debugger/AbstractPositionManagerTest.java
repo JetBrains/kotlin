@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.CollectionsKt;
@@ -57,7 +57,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractPositionManagerTest extends JetLightCodeInsightFixtureTestCase {
+public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsightFixtureTestCase {
     // Breakpoint is given as a line comment on a specific line, containing the regexp to match the name of the class where that line
     // can be found. This pattern matches against these line comments and saves the class name in the first group
     private static final Pattern BREAKPOINT_PATTERN = Pattern.compile("^.*//\\s*(.+)\\s*$");
@@ -79,7 +79,7 @@ public abstract class AbstractPositionManagerTest extends JetLightCodeInsightFix
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @NotNull

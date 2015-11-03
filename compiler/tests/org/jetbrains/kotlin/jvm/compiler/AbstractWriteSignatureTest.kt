@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.join
 import org.jetbrains.org.objectweb.asm.*
@@ -43,7 +43,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
     override fun setUp() {
         super.setUp()
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable)
+        jetCoreEnvironment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable)
     }
 
     override fun tearDown() {
@@ -55,7 +55,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
         val ktFile = File(ktFileName)
         val text = FileUtil.loadFile(ktFile, true)
 
-        val psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment!!.project)
+        val psiFile = KotlinTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment!!.project)
 
         val outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment!!)
 

@@ -23,7 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.Collections;
@@ -39,7 +39,7 @@ public class LightClassAnnotationsTest extends KotlinAsJavaTestBase {
 
     @Override
     protected void extraConfiguration(@NotNull CompilerConfiguration configuration) {
-        JvmContentRootsKt.addJvmClasspathRoot(configuration, JetTestUtils.getAnnotationsJar());
+        JvmContentRootsKt.addJvmClasspathRoot(configuration, KotlinTestUtils.getAnnotationsJar());
     }
 
     public void testExtraAnnotations() throws Exception {
@@ -64,6 +64,6 @@ public class LightClassAnnotationsTest extends KotlinAsJavaTestBase {
             sb.append(annotation.getText()).append("\n");
         }
 
-        JetTestUtils.assertEqualsToFile(new File(testDir, getTestName(false) + ".annotations.txt"), sb.toString());
+        KotlinTestUtils.assertEqualsToFile(new File(testDir, getTestName(false) + ".annotations.txt"), sb.toString());
     }
 }

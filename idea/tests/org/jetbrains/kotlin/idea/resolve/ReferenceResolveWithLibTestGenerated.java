@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.resolve;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,72 +32,72 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveWithLibTestGenerated extends AbstractReferenceResolveWithLibTest {
     public void testAllFilesPresentInReferenceWithLib() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceWithLib"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceWithLib"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
     @TestMetadata("delegatedPropertyWithTypeParameters.kt")
     public void testDelegatedPropertyWithTypeParameters() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/delegatedPropertyWithTypeParameters.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/delegatedPropertyWithTypeParameters.kt");
         doTest(fileName);
     }
 
     @TestMetadata("fakeOverride.kt")
     public void testFakeOverride() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/fakeOverride.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/fakeOverride.kt");
         doTest(fileName);
     }
 
     @TestMetadata("fakeOverride2.kt")
     public void testFakeOverride2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/fakeOverride2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/fakeOverride2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("innerClassFromLib.kt")
     public void testInnerClassFromLib() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/innerClassFromLib.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/innerClassFromLib.kt");
         doTest(fileName);
     }
 
     @TestMetadata("iteratorWithTypeParameter.kt")
     public void testIteratorWithTypeParameter() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/iteratorWithTypeParameter.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/iteratorWithTypeParameter.kt");
         doTest(fileName);
     }
 
     @TestMetadata("multiDeclarationWithTypeParameters.kt")
     public void testMultiDeclarationWithTypeParameters() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/multiDeclarationWithTypeParameters.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/multiDeclarationWithTypeParameters.kt");
         doTest(fileName);
     }
 
     @TestMetadata("nestedClassFromLib.kt")
     public void testNestedClassFromLib() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/nestedClassFromLib.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/nestedClassFromLib.kt");
         doTest(fileName);
     }
 
     @TestMetadata("packageOfLibDeclaration.kt")
     public void testPackageOfLibDeclaration() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/packageOfLibDeclaration.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/packageOfLibDeclaration.kt");
         doTest(fileName);
     }
 
     @TestMetadata("referenceToRootJavaClassFromLib.kt")
     public void testReferenceToRootJavaClassFromLib() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/referenceToRootJavaClassFromLib.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/referenceToRootJavaClassFromLib.kt");
         doTest(fileName);
     }
 
     @TestMetadata("sameNameInLib.kt")
     public void testSameNameInLib() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/sameNameInLib.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/sameNameInLib.kt");
         doTest(fileName);
     }
 
     @TestMetadata("setWithTypeParameters.kt")
     public void testSetWithTypeParameters() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/setWithTypeParameters.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceWithLib/setWithTypeParameters.kt");
         doTest(fileName);
     }
 }

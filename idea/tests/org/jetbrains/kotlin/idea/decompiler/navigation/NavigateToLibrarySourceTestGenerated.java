@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,90 +34,90 @@ public class NavigateToLibrarySourceTestGenerated extends AbstractNavigateToLibr
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Usercode extends AbstractNavigateToLibrarySourceTest {
         public void testAllFilesPresentInUsercode() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ClassObject.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ClassObject.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Constructor.kt")
         public void testConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Constructor.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Constructor.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Enum.kt")
         public void testEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Enum.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Enum.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ExtensionFunction.kt")
         public void testExtensionFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ExtensionFunction.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ExtensionFunction.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ExtensionProperty.kt")
         public void testExtensionProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ExtensionProperty.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ExtensionProperty.kt");
             doTest(fileName);
         }
 
         @TestMetadata("GenericFunctionWithExplicitlyDeclaredTypeArguments.kt")
         public void testGenericFunctionWithExplicitlyDeclaredTypeArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GenericFunctionWithExplicitlyDeclaredTypeArguments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GenericFunctionWithExplicitlyDeclaredTypeArguments.kt");
             doTest(fileName);
         }
 
         @TestMetadata("GenericFunctionWithInferredTypeArguments.kt")
         public void testGenericFunctionWithInferredTypeArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GenericFunctionWithInferredTypeArguments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GenericFunctionWithInferredTypeArguments.kt");
             doTest(fileName);
         }
 
         @TestMetadata("GlobalFunction.kt")
         public void testGlobalFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GlobalFunction.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GlobalFunction.kt");
             doTest(fileName);
         }
 
         @TestMetadata("GlobalProperty.kt")
         public void testGlobalProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GlobalProperty.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GlobalProperty.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/NamedObject.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/NamedObject.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OverloadedFunWithTypeParam.kt")
         public void testOverloadedFunWithTypeParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/OverloadedFunWithTypeParam.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/OverloadedFunWithTypeParam.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Property.kt")
         public void testProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Property.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Property.kt");
             doTest(fileName);
         }
 
         @TestMetadata("SameNameInDifferentSources.kt")
         public void testSameNameInDifferentSources() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/SameNameInDifferentSources.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/SameNameInDifferentSources.kt");
             doTest(fileName);
         }
 
         @TestMetadata("TypeWithSameShortName.kt")
         public void testTypeWithSameShortName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeWithSameShortName.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeWithSameShortName.kt");
             doTest(fileName);
         }
     }
@@ -127,90 +127,90 @@ public class NavigateToLibrarySourceTestGenerated extends AbstractNavigateToLibr
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UsercodeWithJSModule extends AbstractNavigateToLibrarySourceTest {
         public void testAllFilesPresentInUsercodeWithJSModule() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/navigation/usercode"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ClassObject.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ClassObject.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("Constructor.kt")
         public void testConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Constructor.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Constructor.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("Enum.kt")
         public void testEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Enum.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Enum.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("ExtensionFunction.kt")
         public void testExtensionFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ExtensionFunction.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ExtensionFunction.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("ExtensionProperty.kt")
         public void testExtensionProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ExtensionProperty.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/ExtensionProperty.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("GenericFunctionWithExplicitlyDeclaredTypeArguments.kt")
         public void testGenericFunctionWithExplicitlyDeclaredTypeArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GenericFunctionWithExplicitlyDeclaredTypeArguments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GenericFunctionWithExplicitlyDeclaredTypeArguments.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("GenericFunctionWithInferredTypeArguments.kt")
         public void testGenericFunctionWithInferredTypeArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GenericFunctionWithInferredTypeArguments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GenericFunctionWithInferredTypeArguments.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("GlobalFunction.kt")
         public void testGlobalFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GlobalFunction.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GlobalFunction.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("GlobalProperty.kt")
         public void testGlobalProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GlobalProperty.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/GlobalProperty.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/NamedObject.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/NamedObject.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("OverloadedFunWithTypeParam.kt")
         public void testOverloadedFunWithTypeParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/OverloadedFunWithTypeParam.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/OverloadedFunWithTypeParam.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("Property.kt")
         public void testProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Property.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/Property.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("SameNameInDifferentSources.kt")
         public void testSameNameInDifferentSources() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/SameNameInDifferentSources.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/SameNameInDifferentSources.kt");
             doWithJSModuleTest(fileName);
         }
 
         @TestMetadata("TypeWithSameShortName.kt")
         public void testTypeWithSameShortName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeWithSameShortName.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/navigation/usercode/TypeWithSameShortName.kt");
             doWithJSModuleTest(fileName);
         }
     }

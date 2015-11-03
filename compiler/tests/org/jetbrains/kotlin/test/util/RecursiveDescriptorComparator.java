@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 
@@ -266,7 +266,7 @@ public class RecursiveDescriptorComparator {
         }
 
         if (txtFile != null) {
-            JetTestUtils.assertEqualsToFile(txtFile, actualSerialized);
+            KotlinTestUtils.assertEqualsToFile(txtFile, actualSerialized);
         }
     }
 

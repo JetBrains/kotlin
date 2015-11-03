@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.renderer;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,42 +32,42 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class FunctionDescriptorInExpressionRendererTestGenerated extends AbstractFunctionDescriptorInExpressionRendererTest {
     public void testAllFilesPresentInRenderFunctionDescriptorInExpression() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/renderFunctionDescriptorInExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/renderFunctionDescriptorInExpression"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("basicFunExpr.kt")
     public void testBasicFunExpr() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/basicFunExpr.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/basicFunExpr.kt");
         doTest(fileName);
     }
 
     @TestMetadata("basicFunExprArgs.kt")
     public void testBasicFunExprArgs() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/basicFunExprArgs.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/basicFunExprArgs.kt");
         doTest(fileName);
     }
 
     @TestMetadata("basicLambda.kt")
     public void testBasicLambda() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/basicLambda.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/basicLambda.kt");
         doTest(fileName);
     }
 
     @TestMetadata("labeledLambda.kt")
     public void testLabeledLambda() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/labeledLambda.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/labeledLambda.kt");
         doTest(fileName);
     }
 
     @TestMetadata("parenthesizedFunExpr.kt")
     public void testParenthesizedFunExpr() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/parenthesizedFunExpr.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/parenthesizedFunExpr.kt");
         doTest(fileName);
     }
 
     @TestMetadata("parenthesizedLambda.kt")
     public void testParenthesizedLambda() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/parenthesizedLambda.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/renderFunctionDescriptorInExpression/parenthesizedLambda.kt");
         doTest(fileName);
     }
 }

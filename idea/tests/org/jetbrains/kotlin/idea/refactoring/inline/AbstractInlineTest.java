@@ -23,8 +23,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
@@ -34,7 +34,7 @@ import java.util.List;
 import static com.intellij.codeInsight.TargetElementUtilBase.ELEMENT_NAME_ACCEPTED;
 import static com.intellij.codeInsight.TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED;
 
-public abstract class AbstractInlineTest extends JetLightCodeInsightFixtureTestCase {
+public abstract class AbstractInlineTest extends KotlinLightCodeInsightFixtureTestCase {
     protected void doTest(@NotNull String path) throws IOException {
         File afterFile = new File(path + ".after");
 
@@ -73,6 +73,6 @@ public abstract class AbstractInlineTest extends JetLightCodeInsightFixtureTestC
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 }

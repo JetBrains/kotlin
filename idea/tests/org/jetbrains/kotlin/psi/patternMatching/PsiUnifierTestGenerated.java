@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi.patternMatching;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -30,128 +30,128 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/unifier")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
+public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
     public void testAllFilesPresentInUnifier() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("idea/testData/unifier/equivalence")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Equivalence extends AbstractJetPsiUnifierTest {
+    public static class Equivalence extends AbstractPsiUnifierTest {
         public void testAllFilesPresentInEquivalence() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/unifier/equivalence/controlStructures")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ControlStructures extends AbstractJetPsiUnifierTest {
+        public static class ControlStructures extends AbstractPsiUnifierTest {
             public void testAllFilesPresentInControlStructures() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("break.kt")
             public void testBreak() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/break.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/break.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("continue.kt")
             public void testContinue() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/continue.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/continue.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("doWhileRuntime.kt")
             public void testDoWhileRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/doWhileRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/doWhileRuntime.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("forRuntime.kt")
             public void testForRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/forRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/forRuntime.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("ifElseRuntime.kt")
             public void testIfElseRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/ifElseRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/ifElseRuntime.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("ifRuntime.kt")
             public void testIfRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/ifRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/ifRuntime.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("labeledReturn.kt")
             public void testLabeledReturn() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/labeledReturn.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/labeledReturn.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("throw.kt")
             public void testThrow() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/throw.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/throw.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("unitReturn.kt")
             public void testUnitReturn() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/unitReturn.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/unitReturn.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("valuedReturn.kt")
             public void testValuedReturn() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/valuedReturn.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/valuedReturn.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("whenWithSubjectRuntime.kt")
             public void testWhenWithSubjectRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/whenWithSubjectRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/whenWithSubjectRuntime.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("whenWithoutSubjectRuntime.kt")
             public void testWhenWithoutSubjectRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/whenWithoutSubjectRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/whenWithoutSubjectRuntime.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("whileRuntime.kt")
             public void testWhileRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/whileRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/whileRuntime.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("idea/testData/unifier/equivalence/controlStructures/blocks")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Blocks extends AbstractJetPsiUnifierTest {
+            public static class Blocks extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInBlocks() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/controlStructures/blocks"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/controlStructures/blocks"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("anonymousObjectsRuntime.kt")
                 public void testAnonymousObjectsRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/blocks/anonymousObjectsRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/blocks/anonymousObjectsRuntime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("localFunctionsRuntime.kt")
                 public void testLocalFunctionsRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/blocks/localFunctionsRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/blocks/localFunctionsRuntime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("localVarsRuntime.kt")
                 public void testLocalVarsRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/blocks/localVarsRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/controlStructures/blocks/localVarsRuntime.kt");
                     doTest(fileName);
                 }
             }
@@ -160,52 +160,52 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
         @TestMetadata("idea/testData/unifier/equivalence/declarations")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Declarations extends AbstractJetPsiUnifierTest {
+        public static class Declarations extends AbstractPsiUnifierTest {
             public void testAllFilesPresentInDeclarations() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class ClassesAndObjects extends AbstractJetPsiUnifierTest {
+            public static class ClassesAndObjects extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInClassesAndObjects() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/classesAndObjects"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/classesAndObjects"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("anonymousObjectBody.kt")
                 public void testAnonymousObjectBody() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/anonymousObjectBody.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/anonymousObjectBody.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("delegation.kt")
                 public void testDelegation() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/delegation.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/delegation.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("emptyBody.kt")
                 public void testEmptyBody() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/emptyBody.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/emptyBody.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("localClassBody.kt")
                 public void testLocalClassBody() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/localClassBody.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/localClassBody.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("localObjectBody.kt")
                 public void testLocalObjectBody() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/localObjectBody.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/localObjectBody.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("members.kt")
                 public void testMembers() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/members.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/classesAndObjects/members.kt");
                     doTest(fileName);
                 }
             }
@@ -213,70 +213,70 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
             @TestMetadata("idea/testData/unifier/equivalence/declarations/localCallables")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class LocalCallables extends AbstractJetPsiUnifierTest {
+            public static class LocalCallables extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInLocalCallables() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/localCallables"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/localCallables"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("localExtensionFunctions.kt")
                 public void testLocalExtensionFunctions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/localExtensionFunctions.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/localExtensionFunctions.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("localFunctions.kt")
                 public void testLocalFunctions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/localFunctions.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/localFunctions.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("localVariables.kt")
                 public void testLocalVariables() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/localVariables.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/localVariables.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("multiDeclaration.kt")
                 public void testMultiDeclaration() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/multiDeclaration.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/multiDeclaration.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class Lambdas extends AbstractJetPsiUnifierTest {
+                public static class Lambdas extends AbstractPsiUnifierTest {
                     public void testAllFilesPresentInLambdas() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/localCallables/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/localCallables/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
 
                     @TestMetadata("multipleParamsRuntime.kt")
                     public void testMultipleParamsRuntime() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/multipleParamsRuntime.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/multipleParamsRuntime.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("noParams.kt")
                     public void testNoParams() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/noParams.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/noParams.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("receiverArgumentsRuntime.kt")
                     public void testReceiverArgumentsRuntime() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/receiverArgumentsRuntime.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/receiverArgumentsRuntime.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("singleParam.kt")
                     public void testSingleParam() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/singleParam.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/singleParam.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("unitCoercion.kt")
                     public void testUnitCoercion() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/unitCoercion.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/localCallables/lambdas/unitCoercion.kt");
                         doTest(fileName);
                     }
                 }
@@ -285,14 +285,14 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
             @TestMetadata("idea/testData/unifier/equivalence/declarations/typeParameters")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class TypeParameters extends AbstractJetPsiUnifierTest {
+            public static class TypeParameters extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInTypeParameters() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/declarations/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("boundsAndConstraints.kt")
                 public void testBoundsAndConstraints() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/typeParameters/boundsAndConstraints.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/declarations/typeParameters/boundsAndConstraints.kt");
                     doTest(fileName);
                 }
             }
@@ -301,58 +301,58 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
         @TestMetadata("idea/testData/unifier/equivalence/expressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Expressions extends AbstractJetPsiUnifierTest {
+        public static class Expressions extends AbstractPsiUnifierTest {
             public void testAllFilesPresentInExpressions() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("arrayAccess.kt")
             public void testArrayAccess() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/arrayAccess.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/arrayAccess.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("const.kt")
             public void testConst() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/const.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/const.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("qualifiedName.kt")
             public void testQualifiedName() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/qualifiedName.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/qualifiedName.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("simpleNameRuntime.kt")
             public void testSimpleNameRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/simpleNameRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/simpleNameRuntime.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("stringTemplate.kt")
             public void testStringTemplate() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/stringTemplate.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/stringTemplate.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("idea/testData/unifier/equivalence/expressions/callableReferences")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class CallableReferences extends AbstractJetPsiUnifierTest {
+            public static class CallableReferences extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInCallableReferences() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/callableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("classRefRuntime.kt")
                 public void testClassRefRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/callableReferences/classRefRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/callableReferences/classRefRuntime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("functionRefRuntime.kt")
                 public void testFunctionRefRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/callableReferences/functionRefRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/callableReferences/functionRefRuntime.kt");
                     doTest(fileName);
                 }
             }
@@ -360,68 +360,68 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
             @TestMetadata("idea/testData/unifier/equivalence/expressions/calls")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Calls extends AbstractJetPsiUnifierTest {
+            public static class Calls extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInCalls() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/calls"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/calls"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("callAndCalleeRuntime.kt")
                 public void testCallAndCalleeRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callAndCalleeRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callAndCalleeRuntime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("callTypeArgumentsRuntime.kt")
                 public void testCallTypeArgumentsRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callTypeArgumentsRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callTypeArgumentsRuntime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("callUnderSmartCast.kt")
                 public void testCallUnderSmartCast() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callUnderSmartCast.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/callUnderSmartCast.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("externalArgumentsRuntime.kt")
                 public void testExternalArgumentsRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/externalArgumentsRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/externalArgumentsRuntime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("extraArguments.kt")
                 public void testExtraArguments() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/extraArguments.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/extraArguments.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("implicitReceiverArgument.kt")
                 public void testImplicitReceiverArgument() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/implicitReceiverArgument.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/implicitReceiverArgument.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("implicitThis.kt")
                 public void testImplicitThis() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/implicitThis.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/implicitThis.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("safeCall.kt")
                 public void testSafeCall() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/safeCall.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/safeCall.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("unresolved.kt")
                 public void testUnresolved() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/unresolved.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/unresolved.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("varargs.kt")
                 public void testVarargs() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/varargs.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/calls/varargs.kt");
                     doTest(fileName);
                 }
             }
@@ -429,26 +429,26 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
             @TestMetadata("idea/testData/unifier/equivalence/expressions/casts")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Casts extends AbstractJetPsiUnifierTest {
+            public static class Casts extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInCasts() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/casts"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/casts"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("as.kt")
                 public void testAs() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/casts/as.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/casts/as.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("is.kt")
                 public void testIs() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/casts/is.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/casts/is.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("safeAs.kt")
                 public void testSafeAs() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/casts/safeAs.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/casts/safeAs.kt");
                     doTest(fileName);
                 }
             }
@@ -456,106 +456,106 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
             @TestMetadata("idea/testData/unifier/equivalence/expressions/conventions")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Conventions extends AbstractJetPsiUnifierTest {
+            public static class Conventions extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInConventions() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("containsRuntime.kt")
                 public void testContainsRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/containsRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/containsRuntime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("equals.kt")
                 public void testEquals() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/equals.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/equals.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("getRuntime.kt")
                 public void testGetRuntime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/getRuntime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/getRuntime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("inc.kt")
                 public void testInc() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/inc.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/inc.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("infixCall.kt")
                 public void testInfixCall() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/infixCall.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/infixCall.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("lessThan.kt")
                 public void testLessThan() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/lessThan.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/lessThan.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("notContains.kt")
                 public void testNotContains() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/notContains.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/notContains.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("notEquals.kt")
                 public void testNotEquals() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/notEquals.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/notEquals.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("plus.kt")
                 public void testPlus() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/plus.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/plus.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("unaryMinus.kt")
                 public void testUnaryMinus() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/unaryMinus.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/unaryMinus.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class Assignments extends AbstractJetPsiUnifierTest {
+                public static class Assignments extends AbstractPsiUnifierTest {
                     public void testAllFilesPresentInAssignments() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions/assignments"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions/assignments"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
 
                     @TestMetadata("indexedPlusAssignRuntime.kt")
                     public void testIndexedPlusAssignRuntime() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/indexedPlusAssignRuntime.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/indexedPlusAssignRuntime.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("plusAndAssign.kt")
                     public void testPlusAndAssign() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/plusAndAssign.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/plusAndAssign.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("plusAndAssignWithSet.kt")
                     public void testPlusAndAssignWithSet() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/plusAndAssignWithSet.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/plusAndAssignWithSet.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("plusAssign.kt")
                     public void testPlusAssign() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/plusAssign.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/plusAssign.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("setRuntime.kt")
                     public void testSetRuntime() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/setRuntime.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/assignments/setRuntime.kt");
                         doTest(fileName);
                     }
                 }
@@ -563,32 +563,32 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
                 @TestMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class Invoke extends AbstractJetPsiUnifierTest {
+                public static class Invoke extends AbstractPsiUnifierTest {
                     public void testAllFilesPresentInInvoke() throws Exception {
-                        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/conventions/invoke"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
 
                     @TestMetadata("invokeOnCall.kt")
                     public void testInvokeOnCall() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke/invokeOnCall.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke/invokeOnCall.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("invokeOnConst.kt")
                     public void testInvokeOnConst() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke/invokeOnConst.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke/invokeOnConst.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("invokeOnQualified.kt")
                     public void testInvokeOnQualified() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke/invokeOnQualified.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke/invokeOnQualified.kt");
                         doTest(fileName);
                     }
 
                     @TestMetadata("invokeOnVar.kt")
                     public void testInvokeOnVar() throws Exception {
-                        String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke/invokeOnVar.kt");
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/conventions/invoke/invokeOnVar.kt");
                         doTest(fileName);
                     }
                 }
@@ -597,26 +597,26 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
             @TestMetadata("idea/testData/unifier/equivalence/expressions/misc")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Misc extends AbstractJetPsiUnifierTest {
+            public static class Misc extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInMisc() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/misc"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/misc"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("misc1.kt")
                 public void testMisc1() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/misc/misc1.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/misc/misc1.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("misc2.kt")
                 public void testMisc2() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/misc/misc2.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/misc/misc2.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("misc3.kt")
                 public void testMisc3() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/misc/misc3.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/misc/misc3.kt");
                     doTest(fileName);
                 }
             }
@@ -624,32 +624,32 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
             @TestMetadata("idea/testData/unifier/equivalence/expressions/super")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Super extends AbstractJetPsiUnifierTest {
+            public static class Super extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInSuper() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/super"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/super"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("multipleSuperTypes.kt")
                 public void testMultipleSuperTypes() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/super/multipleSuperTypes.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/super/multipleSuperTypes.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByClass1.kt")
                 public void testQualifiedByClass1() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/super/qualifiedByClass1.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/super/qualifiedByClass1.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByClass2.kt")
                 public void testQualifiedByClass2() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/super/qualifiedByClass2.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/super/qualifiedByClass2.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByClass3.kt")
                 public void testQualifiedByClass3() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/super/qualifiedByClass3.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/super/qualifiedByClass3.kt");
                     doTest(fileName);
                 }
             }
@@ -657,62 +657,62 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
             @TestMetadata("idea/testData/unifier/equivalence/expressions/this")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class This extends AbstractJetPsiUnifierTest {
+            public static class This extends AbstractPsiUnifierTest {
                 public void testAllFilesPresentInThis() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/this"), Pattern.compile("^(.+)\\.kt$"), true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/expressions/this"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("anonymousObjects.kt")
                 public void testAnonymousObjects() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/anonymousObjects.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/anonymousObjects.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByClass1.kt")
                 public void testQualifiedByClass1() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByClass1.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByClass1.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByClass2.kt")
                 public void testQualifiedByClass2() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByClass2.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByClass2.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByClass3.kt")
                 public void testQualifiedByClass3() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByClass3.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByClass3.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByFunction1.kt")
                 public void testQualifiedByFunction1() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByFunction1.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByFunction1.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByFunction2.kt")
                 public void testQualifiedByFunction2() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByFunction2.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByFunction2.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("qualifiedByFunction3.kt")
                 public void testQualifiedByFunction3() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByFunction3.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/qualifiedByFunction3.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("simpleThis1Runtime.kt")
                 public void testSimpleThis1Runtime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/simpleThis1Runtime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/simpleThis1Runtime.kt");
                     doTest(fileName);
                 }
 
                 @TestMetadata("simpleThis2Runtime.kt")
                 public void testSimpleThis2Runtime() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/simpleThis2Runtime.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/expressions/this/simpleThis2Runtime.kt");
                     doTest(fileName);
                 }
             }
@@ -721,44 +721,44 @@ public class JetPsiUnifierTestGenerated extends AbstractJetPsiUnifierTest {
         @TestMetadata("idea/testData/unifier/equivalence/types")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Types extends AbstractJetPsiUnifierTest {
+        public static class Types extends AbstractPsiUnifierTest {
             public void testAllFilesPresentInTypes() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/types"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/unifier/equivalence/types"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("function0.kt")
             public void testFunction0() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/function0.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/function0.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("function1.kt")
             public void testFunction1() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/function1.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/function1.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("function2.kt")
             public void testFunction2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/function2.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/function2.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("nonNullable.kt")
             public void testNonNullable() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/nonNullable.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/nonNullable.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("nullable.kt")
             public void testNullable() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/nullable.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/nullable.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("userTypeRuntime.kt")
             public void testUserTypeRuntime() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/userTypeRuntime.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/unifier/equivalence/types/userTypeRuntime.kt");
                 doTest(fileName);
             }
         }

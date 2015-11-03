@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaToKotlinConverterForWebDemoTest {
     public void testAllFilesPresentInFileOrElement() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement"), Pattern.compile("^(.+)\\.java$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement"), Pattern.compile("^(.+)\\.java$"), true);
     }
 
     @TestMetadata("j2k/testData/fileOrElement/annotations")
@@ -40,72 +40,72 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/annotations"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/annotations"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("annotationInterface1.java")
         public void testAnnotationInterface1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface1.java");
             doTest(fileName);
         }
 
         @TestMetadata("annotationInterface2.java")
         public void testAnnotationInterface2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface2.java");
             doTest(fileName);
         }
 
         @TestMetadata("annotationInterface3.java")
         public void testAnnotationInterface3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface3.java");
             doTest(fileName);
         }
 
         @TestMetadata("annotationInterface4.java")
         public void testAnnotationInterface4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationInterface4.java");
             doTest(fileName);
         }
 
         @TestMetadata("annotationUsages.java")
         public void testAnnotationUsages() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationUsages.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/annotationUsages.java");
             doTest(fileName);
         }
 
         @TestMetadata("javaClassArgument.java")
         public void testJavaClassArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/javaClassArgument.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/javaClassArgument.java");
             doTest(fileName);
         }
 
         @TestMetadata("javaClassArrayArgument.java")
         public void testJavaClassArrayArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/javaClassArrayArgument.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/javaClassArrayArgument.java");
             doTest(fileName);
         }
 
         @TestMetadata("jetbrainsNotNull.java")
         public void testJetbrainsNotNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNotNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNotNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("jetbrainsNotNullChainExpr.java")
         public void testJetbrainsNotNullChainExpr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNotNullChainExpr.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNotNullChainExpr.java");
             doTest(fileName);
         }
 
         @TestMetadata("jetbrainsNullable.java")
         public void testJetbrainsNullable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNullable.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNullable.java");
             doTest(fileName);
         }
 
         @TestMetadata("primaryConstructorAnnotation.java")
         public void testPrimaryConstructorAnnotation() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/primaryConstructorAnnotation.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/primaryConstructorAnnotation.java");
             doTest(fileName);
         }
     }
@@ -115,18 +115,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AnonymousBlock extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInAnonymousBlock() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/anonymousBlock"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/anonymousBlock"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("oneAnonBlock.java")
         public void testOneAnonBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/anonymousBlock/oneAnonBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/anonymousBlock/oneAnonBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("oneStaticAnonBlock.java")
         public void testOneStaticAnonBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/anonymousBlock/oneStaticAnonBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/anonymousBlock/oneStaticAnonBlock.java");
             doTest(fileName);
         }
     }
@@ -136,24 +136,24 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ArrayAccessExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInArrayAccessExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/arrayAccessExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/arrayAccessExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("expressionIndex.java")
         public void testExpressionIndex() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayAccessExpression/expressionIndex.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayAccessExpression/expressionIndex.java");
             doTest(fileName);
         }
 
         @TestMetadata("intIndex.java")
         public void testIntIndex() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayAccessExpression/intIndex.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayAccessExpression/intIndex.java");
             doTest(fileName);
         }
 
         @TestMetadata("variableIndex.java")
         public void testVariableIndex() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayAccessExpression/variableIndex.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayAccessExpression/variableIndex.java");
             doTest(fileName);
         }
     }
@@ -163,78 +163,78 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ArrayInitializerExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInArrayInitializerExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/arrayInitializerExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/arrayInitializerExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("doubleArray.java")
         public void testDoubleArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/doubleArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/doubleArray.java");
             doTest(fileName);
         }
 
         @TestMetadata("doubleArrayWithVariables.java")
         public void testDoubleArrayWithVariables() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/doubleArrayWithVariables.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/doubleArrayWithVariables.java");
             doTest(fileName);
         }
 
         @TestMetadata("floatArray.java")
         public void testFloatArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/floatArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/floatArray.java");
             doTest(fileName);
         }
 
         @TestMetadata("intArrayWithLength.java")
         public void testIntArrayWithLength() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/intArrayWithLength.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/intArrayWithLength.java");
             doTest(fileName);
         }
 
         @TestMetadata("javaLangDoubleArray.java")
         public void testJavaLangDoubleArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/javaLangDoubleArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/javaLangDoubleArray.java");
             doTest(fileName);
         }
 
         @TestMetadata("javaLangFloatArray.java")
         public void testJavaLangFloatArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/javaLangFloatArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/javaLangFloatArray.java");
             doTest(fileName);
         }
 
         @TestMetadata("newByte.java")
         public void testNewByte() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/newByte.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/newByte.java");
             doTest(fileName);
         }
 
         @TestMetadata("newInt.java")
         public void testNewInt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/newInt.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/newInt.java");
             doTest(fileName);
         }
 
         @TestMetadata("objectArrayWithLength.java")
         public void testObjectArrayWithLength() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/objectArrayWithLength.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/objectArrayWithLength.java");
             doTest(fileName);
         }
 
         @TestMetadata("oneDim.java")
         public void testOneDim() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/oneDim.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/oneDim.java");
             doTest(fileName);
         }
 
         @TestMetadata("oneDimWithVariables.java")
         public void testOneDimWithVariables() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/oneDimWithVariables.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/oneDimWithVariables.java");
             doTest(fileName);
         }
 
         @TestMetadata("twoDim.java")
         public void testTwoDim() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/twoDim.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayInitializerExpression/twoDim.java");
             doTest(fileName);
         }
     }
@@ -244,66 +244,66 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ArrayType extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInArrayType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/arrayType"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/arrayType"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("arrayInitializationStatement.java")
         public void testArrayInitializationStatement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/arrayInitializationStatement.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/arrayInitializationStatement.java");
             doTest(fileName);
         }
 
         @TestMetadata("arrayInitializationStatementWithDimension.java")
         public void testArrayInitializationStatementWithDimension() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/arrayInitializationStatementWithDimension.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/arrayInitializationStatementWithDimension.java");
             doTest(fileName);
         }
 
         @TestMetadata("arrayInitializationStatementWithDimension3d.java")
         public void testArrayInitializationStatementWithDimension3d() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/arrayInitializationStatementWithDimension3d.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/arrayInitializationStatementWithDimension3d.java");
             doTest(fileName);
         }
 
         @TestMetadata("arrayInitializationStatementWithDimensionExplicit.java")
         public void testArrayInitializationStatementWithDimensionExplicit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/arrayInitializationStatementWithDimensionExplicit.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/arrayInitializationStatementWithDimensionExplicit.java");
             doTest(fileName);
         }
 
         @TestMetadata("d2StringEmptyArray.java")
         public void testD2StringEmptyArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/d2StringEmptyArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/d2StringEmptyArray.java");
             doTest(fileName);
         }
 
         @TestMetadata("d3StringEmptyArray.java")
         public void testD3StringEmptyArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/d3StringEmptyArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/d3StringEmptyArray.java");
             doTest(fileName);
         }
 
         @TestMetadata("longArray.java")
         public void testLongArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/longArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/longArray.java");
             doTest(fileName);
         }
 
         @TestMetadata("methodArrayArgs.java")
         public void testMethodArrayArgs() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/methodArrayArgs.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/methodArrayArgs.java");
             doTest(fileName);
         }
 
         @TestMetadata("newIntArray.java")
         public void testNewIntArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/newIntArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/newIntArray.java");
             doTest(fileName);
         }
 
         @TestMetadata("newStringArray.java")
         public void testNewStringArray() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/newStringArray.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/arrayType/newStringArray.java");
             doTest(fileName);
         }
     }
@@ -313,30 +313,30 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AssertStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInAssertStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/assertStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/assertStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("onlyCondition.java")
         public void testOnlyCondition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assertStatement/onlyCondition.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assertStatement/onlyCondition.java");
             doTest(fileName);
         }
 
         @TestMetadata("onlyConditionWithBraces.java")
         public void testOnlyConditionWithBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assertStatement/onlyConditionWithBraces.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assertStatement/onlyConditionWithBraces.java");
             doTest(fileName);
         }
 
         @TestMetadata("withStringDetail.java")
         public void testWithStringDetail() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assertStatement/withStringDetail.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assertStatement/withStringDetail.java");
             doTest(fileName);
         }
 
         @TestMetadata("withStringDetail2.java")
         public void testWithStringDetail2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assertStatement/withStringDetail2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assertStatement/withStringDetail2.java");
             doTest(fileName);
         }
     }
@@ -346,96 +346,96 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AssignmentExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInAssignmentExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/assignmentExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/assignmentExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("and.java")
         public void testAnd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/and.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/and.java");
             doTest(fileName);
         }
 
         @TestMetadata("assignment.java")
         public void testAssignment() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/assignment.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/assignment.java");
             doTest(fileName);
         }
 
         @TestMetadata("divideAssign.java")
         public void testDivideAssign() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/divideAssign.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/divideAssign.java");
             doTest(fileName);
         }
 
         @TestMetadata("minusAssign.java")
         public void testMinusAssign() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/minusAssign.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/minusAssign.java");
             doTest(fileName);
         }
 
         @TestMetadata("multiplyAssign.java")
         public void testMultiplyAssign() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/multiplyAssign.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/multiplyAssign.java");
             doTest(fileName);
         }
 
         @TestMetadata("nullability.java")
         public void testNullability() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/nullability.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/nullability.java");
             doTest(fileName);
         }
 
         @TestMetadata("nullability-settings.java")
         public void testNullability_settings() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/nullability-settings.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/nullability-settings.java");
             doTest(fileName);
         }
 
         @TestMetadata("or.java")
         public void testOr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/or.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/or.java");
             doTest(fileName);
         }
 
         @TestMetadata("plusAssign.java")
         public void testPlusAssign() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/plusAssign.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/plusAssign.java");
             doTest(fileName);
         }
 
         @TestMetadata("reminder.java")
         public void testReminder() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/reminder.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/reminder.java");
             doTest(fileName);
         }
 
         @TestMetadata("shiftLeft.java")
         public void testShiftLeft() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/shiftLeft.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/shiftLeft.java");
             doTest(fileName);
         }
 
         @TestMetadata("shiftRight.java")
         public void testShiftRight() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/shiftRight.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/shiftRight.java");
             doTest(fileName);
         }
 
         @TestMetadata("simpleAssignment.java")
         public void testSimpleAssignment() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/simpleAssignment.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/simpleAssignment.java");
             doTest(fileName);
         }
 
         @TestMetadata("unsignedRightShift.java")
         public void testUnsignedRightShift() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/unsignedRightShift.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/unsignedRightShift.java");
             doTest(fileName);
         }
 
         @TestMetadata("xor.java")
         public void testXor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/xor.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/assignmentExpression/xor.java");
             doTest(fileName);
         }
     }
@@ -445,114 +445,114 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class BinaryExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInBinaryExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/binaryExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/binaryExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("and.java")
         public void testAnd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/and.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/and.java");
             doTest(fileName);
         }
 
         @TestMetadata("conditionalAnd.java")
         public void testConditionalAnd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/conditionalAnd.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/conditionalAnd.java");
             doTest(fileName);
         }
 
         @TestMetadata("conditionalOr.java")
         public void testConditionalOr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/conditionalOr.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/conditionalOr.java");
             doTest(fileName);
         }
 
         @TestMetadata("divide.java")
         public void testDivide() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/divide.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/divide.java");
             doTest(fileName);
         }
 
         @TestMetadata("greaterThan.java")
         public void testGreaterThan() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/greaterThan.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/greaterThan.java");
             doTest(fileName);
         }
 
         @TestMetadata("greaterThanEqual.java")
         public void testGreaterThanEqual() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/greaterThanEqual.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/greaterThanEqual.java");
             doTest(fileName);
         }
 
         @TestMetadata("lessThan.java")
         public void testLessThan() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/lessThan.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/lessThan.java");
             doTest(fileName);
         }
 
         @TestMetadata("lessThanEqual.java")
         public void testLessThanEqual() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/lessThanEqual.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/lessThanEqual.java");
             doTest(fileName);
         }
 
         @TestMetadata("minus.java")
         public void testMinus() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/minus.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/minus.java");
             doTest(fileName);
         }
 
         @TestMetadata("multiplePlusMinus.java")
         public void testMultiplePlusMinus() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/multiplePlusMinus.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/multiplePlusMinus.java");
             doTest(fileName);
         }
 
         @TestMetadata("multiply.java")
         public void testMultiply() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/multiply.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/multiply.java");
             doTest(fileName);
         }
 
         @TestMetadata("or.java")
         public void testOr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/or.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/or.java");
             doTest(fileName);
         }
 
         @TestMetadata("plus.java")
         public void testPlus() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/plus.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/plus.java");
             doTest(fileName);
         }
 
         @TestMetadata("remainder.java")
         public void testRemainder() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/remainder.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/remainder.java");
             doTest(fileName);
         }
 
         @TestMetadata("shiftLeft.java")
         public void testShiftLeft() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/shiftLeft.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/shiftLeft.java");
             doTest(fileName);
         }
 
         @TestMetadata("shiftRight.java")
         public void testShiftRight() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/shiftRight.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/shiftRight.java");
             doTest(fileName);
         }
 
         @TestMetadata("unsignedRightShift.java")
         public void testUnsignedRightShift() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/unsignedRightShift.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/unsignedRightShift.java");
             doTest(fileName);
         }
 
         @TestMetadata("xor.java")
         public void testXor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/xor.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/binaryExpression/xor.java");
             doTest(fileName);
         }
     }
@@ -562,12 +562,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Blocks extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInBlocks() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/blocks"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/blocks"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("Blocks.java")
         public void testBlocks() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/blocks/Blocks.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/blocks/Blocks.java");
             doTest(fileName);
         }
     }
@@ -577,72 +577,72 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class BoxedType extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInBoxedType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/boxedType"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/boxedType"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("boolean.java")
         public void testBoolean() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/boolean.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/boolean.java");
             doTest(fileName);
         }
 
         @TestMetadata("Boxing.java")
         public void testBoxing() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/Boxing.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/Boxing.java");
             doTest(fileName);
         }
 
         @TestMetadata("byte.java")
         public void testByte() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/byte.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/byte.java");
             doTest(fileName);
         }
 
         @TestMetadata("character.java")
         public void testCharacter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/character.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/character.java");
             doTest(fileName);
         }
 
         @TestMetadata("double.java")
         public void testDouble() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/double.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/double.java");
             doTest(fileName);
         }
 
         @TestMetadata("float.java")
         public void testFloat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/float.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/float.java");
             doTest(fileName);
         }
 
         @TestMetadata("integer.java")
         public void testInteger() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/integer.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/integer.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-671.java")
         public void testKt_671() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/kt-671.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/kt-671.java");
             doTest(fileName);
         }
 
         @TestMetadata("long.java")
         public void testLong() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/long.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/long.java");
             doTest(fileName);
         }
 
         @TestMetadata("object.java")
         public void testObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/object.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/object.java");
             doTest(fileName);
         }
 
         @TestMetadata("short.java")
         public void testShort() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/short.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/boxedType/short.java");
             doTest(fileName);
         }
     }
@@ -652,18 +652,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class BreakStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInBreakStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/breakStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/breakStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("breakWithLabel.java")
         public void testBreakWithLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/breakStatement/breakWithLabel.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/breakStatement/breakWithLabel.java");
             doTest(fileName);
         }
 
         @TestMetadata("breakWithoutLabel.java")
         public void testBreakWithoutLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/breakStatement/breakWithoutLabel.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/breakStatement/breakWithoutLabel.java");
             doTest(fileName);
         }
     }
@@ -673,42 +673,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallChainExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInCallChainExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/callChainExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/callChainExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("libraryFieldCall.java")
         public void testLibraryFieldCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryFieldCall.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryFieldCall.java");
             doTest(fileName);
         }
 
         @TestMetadata("libraryMethodCall.java")
         public void testLibraryMethodCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryMethodCall.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryMethodCall.java");
             doTest(fileName);
         }
 
         @TestMetadata("libraryMethodCallFromInstance.java")
         public void testLibraryMethodCallFromInstance() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryMethodCallFromInstance.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryMethodCallFromInstance.java");
             doTest(fileName);
         }
 
         @TestMetadata("libraryMethodCallFromInstance-settings.java")
         public void testLibraryMethodCallFromInstance_settings() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryMethodCallFromInstance-settings.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryMethodCallFromInstance-settings.java");
             doTest(fileName);
         }
 
         @TestMetadata("libraryStringFieldCall.java")
         public void testLibraryStringFieldCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryStringFieldCall.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/libraryStringFieldCall.java");
             doTest(fileName);
         }
 
         @TestMetadata("sout.java")
         public void testSout() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/sout.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/callChainExpression/sout.java");
             doTest(fileName);
         }
     }
@@ -719,197 +719,197 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class Class extends AbstractJavaToKotlinConverterForWebDemoTest {
         @TestMetadata("abstractClass.java")
         public void testAbstractClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/abstractClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/abstractClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("abstractClassShape.java")
         public void testAbstractClassShape() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/abstractClassShape.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/abstractClassShape.java");
             doTest(fileName);
         }
 
         public void testAllFilesPresentInClass() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/class"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/class"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("class.java")
         public void testClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/class.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/class.java");
             doTest(fileName);
         }
 
         @TestMetadata("ClassShadowing.java")
         public void testClassShadowing() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/ClassShadowing.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/ClassShadowing.java");
             doTest(fileName);
         }
 
         @TestMetadata("classWithEmptyMethods.java")
         public void testClassWithEmptyMethods() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/classWithEmptyMethods.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/classWithEmptyMethods.java");
             doTest(fileName);
         }
 
         @TestMetadata("classWithFields.java")
         public void testClassWithFields() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/classWithFields.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/classWithFields.java");
             doTest(fileName);
         }
 
         @TestMetadata("classWithMultiplyFields.java")
         public void testClassWithMultiplyFields() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/classWithMultiplyFields.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/classWithMultiplyFields.java");
             doTest(fileName);
         }
 
         @TestMetadata("emptyClass.java")
         public void testEmptyClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/emptyClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/emptyClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("extendsOneClassAndImplementsOneInterface.java")
         public void testExtendsOneClassAndImplementsOneInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/extendsOneClassAndImplementsOneInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/extendsOneClassAndImplementsOneInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("extendsOneClassAndImplementsSeveralInterfaces.java")
         public void testExtendsOneClassAndImplementsSeveralInterfaces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/extendsOneClassAndImplementsSeveralInterfaces.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/extendsOneClassAndImplementsSeveralInterfaces.java");
             doTest(fileName);
         }
 
         @TestMetadata("finalClass.java")
         public void testFinalClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/finalClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/finalClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("genericClass.java")
         public void testGenericClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/genericClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/genericClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("innerClassInInterface.java")
         public void testInnerClassInInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerClassInInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerClassInInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("innerEmptyClass.java")
         public void testInnerEmptyClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerEmptyClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerEmptyClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("innerEnum.java")
         public void testInnerEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerEnum.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerEnum.java");
             doTest(fileName);
         }
 
         @TestMetadata("innerInterface.java")
         public void testInnerInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("innerStaticClass.java")
         public void testInnerStaticClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerStaticClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/innerStaticClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("internalClass.java")
         public void testInternalClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/internalClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/internalClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-639.java")
         public void testKt_639() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/kt-639.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/kt-639.java");
             doTest(fileName);
         }
 
         @TestMetadata("notUtilityClass.java")
         public void testNotUtilityClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/notUtilityClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/notUtilityClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("oneStaticFieldOneNonStatic.java")
         public void testOneStaticFieldOneNonStatic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/oneStaticFieldOneNonStatic.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/oneStaticFieldOneNonStatic.java");
             doTest(fileName);
         }
 
         @TestMetadata("oneStaticMethod.java")
         public void testOneStaticMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/oneStaticMethod.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/oneStaticMethod.java");
             doTest(fileName);
         }
 
         @TestMetadata("oneStaticMethodOneNonStatic.java")
         public void testOneStaticMethodOneNonStatic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/oneStaticMethodOneNonStatic.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/oneStaticMethodOneNonStatic.java");
             doTest(fileName);
         }
 
         @TestMetadata("pivateClass.java")
         public void testPivateClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/pivateClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/pivateClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("privateInit.java")
         public void testPrivateInit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/privateInit.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/privateInit.java");
             doTest(fileName);
         }
 
         @TestMetadata("protectedClass.java")
         public void testProtectedClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/protectedClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/protectedClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("publicClass.java")
         public void testPublicClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/publicClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/publicClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("simpleInheritance.java")
         public void testSimpleInheritance() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/simpleInheritance.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/simpleInheritance.java");
             doTest(fileName);
         }
 
         @TestMetadata("twoStaticMethod.java")
         public void testTwoStaticMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/twoStaticMethod.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/twoStaticMethod.java");
             doTest(fileName);
         }
 
         @TestMetadata("utilityClass1.java")
         public void testUtilityClass1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass1.java");
             doTest(fileName);
         }
 
         @TestMetadata("utilityClass2.java")
         public void testUtilityClass2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass2.java");
             doTest(fileName);
         }
 
         @TestMetadata("utilityClass3.java")
         public void testUtilityClass3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/class/utilityClass3.java");
             doTest(fileName);
         }
     }
@@ -919,30 +919,30 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInClassExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/classExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/classExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("complexExample.java")
         public void testComplexExample() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/complexExample.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/complexExample.java");
             doTest(fileName);
         }
 
         @TestMetadata("objectClass.java")
         public void testObjectClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/objectClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/objectClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("primitivesAndArrays.java")
         public void testPrimitivesAndArrays() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/primitivesAndArrays.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/primitivesAndArrays.java");
             doTest(fileName);
         }
 
         @TestMetadata("stringClass.java")
         public void testStringClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/stringClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/classExpression/stringClass.java");
             doTest(fileName);
         }
     }
@@ -952,36 +952,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Comments extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInComments() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/comments"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/comments"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("comments.java")
         public void testComments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/comments.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/comments.java");
             doTest(fileName);
         }
 
         @TestMetadata("comments2.java")
         public void testComments2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/comments2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/comments2.java");
             doTest(fileName);
         }
 
         @TestMetadata("commentsForConstructors.java")
         public void testCommentsForConstructors() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/commentsForConstructors.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/commentsForConstructors.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldWithEndOfLineComment.java")
         public void testFieldWithEndOfLineComment() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/fieldWithEndOfLineComment.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/fieldWithEndOfLineComment.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams.java")
         public void testFieldsInitializedFromParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/fieldsInitializedFromParams.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/comments/fieldsInitializedFromParams.java");
             doTest(fileName);
         }
     }
@@ -991,18 +991,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConditionalExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInConditionalExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/conditionalExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/conditionalExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("multiline.java")
         public void testMultiline() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/conditionalExpression/multiline.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/conditionalExpression/multiline.java");
             doTest(fileName);
         }
 
         @TestMetadata("simple.java")
         public void testSimple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/conditionalExpression/simple.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/conditionalExpression/simple.java");
             doTest(fileName);
         }
     }
@@ -1013,251 +1013,251 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class Constructors extends AbstractJavaToKotlinConverterForWebDemoTest {
         @TestMetadata("allCallsPrimary.java")
         public void testAllCallsPrimary() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/allCallsPrimary.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/allCallsPrimary.java");
             doTest(fileName);
         }
 
         @TestMetadata("allCallsPrimary2.java")
         public void testAllCallsPrimary2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/allCallsPrimary2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/allCallsPrimary2.java");
             doTest(fileName);
         }
 
         public void testAllFilesPresentInConstructors() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/constructors"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/constructors"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("artificialPrimary.java")
         public void testArtificialPrimary() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/artificialPrimary.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/artificialPrimary.java");
             doTest(fileName);
         }
 
         @TestMetadata("chain.java")
         public void testChain() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/chain.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/chain.java");
             doTest(fileName);
         }
 
         @TestMetadata("constructorAnnotations.java")
         public void testConstructorAnnotations() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/constructorAnnotations.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/constructorAnnotations.java");
             doTest(fileName);
         }
 
         @TestMetadata("customerBuilder.java")
         public void testCustomerBuilder() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/customerBuilder.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/customerBuilder.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams1.java")
         public void testFieldsInitializedFromParams1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams1.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams2.java")
         public void testFieldsInitializedFromParams2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams2.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams3.java")
         public void testFieldsInitializedFromParams3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams3.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams4.java")
         public void testFieldsInitializedFromParams4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams4.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams5.java")
         public void testFieldsInitializedFromParams5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams5.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams5.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams6.java")
         public void testFieldsInitializedFromParams6() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams6.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams6.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams7.java")
         public void testFieldsInitializedFromParams7() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams7.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams7.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams8.java")
         public void testFieldsInitializedFromParams8() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams8.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams8.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParams9.java")
         public void testFieldsInitializedFromParams9() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams9.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParams9.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsInitializedFromParamsAnnotations.java")
         public void testFieldsInitializedFromParamsAnnotations() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParamsAnnotations.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/fieldsInitializedFromParamsAnnotations.java");
             doTest(fileName);
         }
 
         @TestMetadata("genericIdentifier.java")
         public void testGenericIdentifier() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/genericIdentifier.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/genericIdentifier.java");
             doTest(fileName);
         }
 
         @TestMetadata("identifier.java")
         public void testIdentifier() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/identifier.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/identifier.java");
             doTest(fileName);
         }
 
         @TestMetadata("lineBreaksBetweenParameters.java")
         public void testLineBreaksBetweenParameters() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/lineBreaksBetweenParameters.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/lineBreaksBetweenParameters.java");
             doTest(fileName);
         }
 
         @TestMetadata("methodCallInFactoryFun.java")
         public void testMethodCallInFactoryFun() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/methodCallInFactoryFun.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/methodCallInFactoryFun.java");
             doTest(fileName);
         }
 
         @TestMetadata("nestedClassNameInParameterDefaults.java")
         public void testNestedClassNameInParameterDefaults() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInParameterDefaults.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInParameterDefaults.java");
             doTest(fileName);
         }
 
         @TestMetadata("nestedClassNameInParameterDefaults2.java")
         public void testNestedClassNameInParameterDefaults2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInParameterDefaults2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInParameterDefaults2.java");
             doTest(fileName);
         }
 
         @TestMetadata("nestedClassNameInParameterDefaults3.java")
         public void testNestedClassNameInParameterDefaults3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInParameterDefaults3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInParameterDefaults3.java");
             doTest(fileName);
         }
 
         @TestMetadata("nestedClassNameInParameterDefaults4.java")
         public void testNestedClassNameInParameterDefaults4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInParameterDefaults4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInParameterDefaults4.java");
             doTest(fileName);
         }
 
         @TestMetadata("nestedClassNameInSuperParameters.java")
         public void testNestedClassNameInSuperParameters() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInSuperParameters.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/nestedClassNameInSuperParameters.java");
             doTest(fileName);
         }
 
         @TestMetadata("noPrimary.java")
         public void testNoPrimary() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/noPrimary.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/noPrimary.java");
             doTest(fileName);
         }
 
         @TestMetadata("parameterDefaults1.java")
         public void testParameterDefaults1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults1.java");
             doTest(fileName);
         }
 
         @TestMetadata("parameterDefaults2.java")
         public void testParameterDefaults2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults2.java");
             doTest(fileName);
         }
 
         @TestMetadata("parameterDefaults3.java")
         public void testParameterDefaults3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults3.java");
             doTest(fileName);
         }
 
         @TestMetadata("parameterDefaults4.java")
         public void testParameterDefaults4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults4.java");
             doTest(fileName);
         }
 
         @TestMetadata("parameterDefaults5.java")
         public void testParameterDefaults5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults5.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterDefaults5.java");
             doTest(fileName);
         }
 
         @TestMetadata("parameterModification.java")
         public void testParameterModification() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterModification.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/parameterModification.java");
             doTest(fileName);
         }
 
         @TestMetadata("privateConstructors.java")
         public void testPrivateConstructors() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/privateConstructors.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/privateConstructors.java");
             doTest(fileName);
         }
 
         @TestMetadata("qualifiedRefInFactoryFun.java")
         public void testQualifiedRefInFactoryFun() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/qualifiedRefInFactoryFun.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/qualifiedRefInFactoryFun.java");
             doTest(fileName);
         }
 
         @TestMetadata("secondaryConstructorWithDefaultValues.java")
         public void testSecondaryConstructorWithDefaultValues() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorWithDefaultValues.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorWithDefaultValues.java");
             doTest(fileName);
         }
 
         @TestMetadata("secondaryConstructorWithDefaultValues2.java")
         public void testSecondaryConstructorWithDefaultValues2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorWithDefaultValues2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorWithDefaultValues2.java");
             doTest(fileName);
         }
 
         @TestMetadata("secondaryConstructorsInInnerClass.java")
         public void testSecondaryConstructorsInInnerClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorsInInnerClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorsInInnerClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("secondaryConstructorsInNestedClass.java")
         public void testSecondaryConstructorsInNestedClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorsInNestedClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorsInNestedClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("secondaryConstructorsVisibility.java")
         public void testSecondaryConstructorsVisibility() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorsVisibility.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/secondaryConstructorsVisibility.java");
             doTest(fileName);
         }
 
         @TestMetadata("staticFieldRefInFactoryFun.java")
         public void testStaticFieldRefInFactoryFun() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/staticFieldRefInFactoryFun.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/staticFieldRefInFactoryFun.java");
             doTest(fileName);
         }
 
         @TestMetadata("withManyDefaultParams.java")
         public void testWithManyDefaultParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/withManyDefaultParams.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/withManyDefaultParams.java");
             doTest(fileName);
         }
     }
@@ -1267,18 +1267,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ContinueStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInContinueStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/continueStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/continueStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("continueWithLabel.java")
         public void testContinueWithLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/continueStatement/continueWithLabel.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/continueStatement/continueWithLabel.java");
             doTest(fileName);
         }
 
         @TestMetadata("continueWithoutLabel.java")
         public void testContinueWithoutLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/continueStatement/continueWithoutLabel.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/continueStatement/continueWithoutLabel.java");
             doTest(fileName);
         }
     }
@@ -1288,42 +1288,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeclarationStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInDeclarationStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/declarationStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/declarationStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("multiplyFinalIntDeclaration.java")
         public void testMultiplyFinalIntDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/multiplyFinalIntDeclaration.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/multiplyFinalIntDeclaration.java");
             doTest(fileName);
         }
 
         @TestMetadata("multiplyIntDeclaration.java")
         public void testMultiplyIntDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/multiplyIntDeclaration.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/multiplyIntDeclaration.java");
             doTest(fileName);
         }
 
         @TestMetadata("singleFinalIntDeclaration.java")
         public void testSingleFinalIntDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/singleFinalIntDeclaration.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/singleFinalIntDeclaration.java");
             doTest(fileName);
         }
 
         @TestMetadata("singleFinalStringDeclaration.java")
         public void testSingleFinalStringDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/singleFinalStringDeclaration.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/singleFinalStringDeclaration.java");
             doTest(fileName);
         }
 
         @TestMetadata("singleIntDeclaration.java")
         public void testSingleIntDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/singleIntDeclaration.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/singleIntDeclaration.java");
             doTest(fileName);
         }
 
         @TestMetadata("singleStringDeclaration.java")
         public void testSingleStringDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/singleStringDeclaration.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/declarationStatement/singleStringDeclaration.java");
             doTest(fileName);
         }
     }
@@ -1334,185 +1334,185 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class DetectProperties extends AbstractJavaToKotlinConverterForWebDemoTest {
         @TestMetadata("AccessInGetterWithThis.java")
         public void testAccessInGetterWithThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessInGetterWithThis.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessInGetterWithThis.java");
             doTest(fileName);
         }
 
         @TestMetadata("AccessorsImplementInterface.java")
         public void testAccessorsImplementInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessorsImplementInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AccessorsImplementInterface.java");
             doTest(fileName);
         }
 
         public void testAllFilesPresentInDetectProperties() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/detectProperties"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/detectProperties"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("AnonymousClass.java")
         public void testAnonymousClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AnonymousClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/AnonymousClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("CannotDropOnlySetter.java")
         public void testCannotDropOnlySetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/CannotDropOnlySetter.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/CannotDropOnlySetter.java");
             doTest(fileName);
         }
 
         @TestMetadata("Comments.java")
         public void testComments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/Comments.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/Comments.java");
             doTest(fileName);
         }
 
         @TestMetadata("DataClass.java")
         public void testDataClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("DataClassWithMutableField.java")
         public void testDataClassWithMutableField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClassWithMutableField.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DataClassWithMutableField.java");
             doTest(fileName);
         }
 
         @TestMetadata("DifferentFieldName.java")
         public void testDifferentFieldName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldName.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldName.java");
             doTest(fileName);
         }
 
         @TestMetadata("DifferentFieldNameAndDefaultParameterValue.java")
         public void testDifferentFieldNameAndDefaultParameterValue() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldNameAndDefaultParameterValue.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldNameAndDefaultParameterValue.java");
             doTest(fileName);
         }
 
         @TestMetadata("DifferentFieldNameAndSuperClass.java")
         public void testDifferentFieldNameAndSuperClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldNameAndSuperClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentFieldNameAndSuperClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("DifferentProtectedFieldName.java")
         public void testDifferentProtectedFieldName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentProtectedFieldName.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DifferentProtectedFieldName.java");
             doTest(fileName);
         }
 
         @TestMetadata("DropGetter.java")
         public void testDropGetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetter.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetter.java");
             doTest(fileName);
         }
 
         @TestMetadata("DropGetterAndSetter.java")
         public void testDropGetterAndSetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetterAndSetter.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetterAndSetter.java");
             doTest(fileName);
         }
 
         @TestMetadata("DropGetterForMutable.java")
         public void testDropGetterForMutable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetterForMutable.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/DropGetterForMutable.java");
             doTest(fileName);
         }
 
         @TestMetadata("FalseGetter.java")
         public void testFalseGetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FalseGetter.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FalseGetter.java");
             doTest(fileName);
         }
 
         @TestMetadata("FalseSetter.java")
         public void testFalseSetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FalseSetter.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FalseSetter.java");
             doTest(fileName);
         }
 
         @TestMetadata("FieldUsagesInFactoryMethods.java")
         public void testFieldUsagesInFactoryMethods() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FieldUsagesInFactoryMethods.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/FieldUsagesInFactoryMethods.java");
             doTest(fileName);
         }
 
         @TestMetadata("GetterAndSetterNamesDifferent.java")
         public void testGetterAndSetterNamesDifferent() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterAndSetterNamesDifferent.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterAndSetterNamesDifferent.java");
             doTest(fileName);
         }
 
         @TestMetadata("GetterSetterUsages.java")
         public void testGetterSetterUsages() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterSetterUsages.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterSetterUsages.java");
             doTest(fileName);
         }
 
         @TestMetadata("GetterTypeNotMatch.java")
         public void testGetterTypeNotMatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterTypeNotMatch.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/GetterTypeNotMatch.java");
             doTest(fileName);
         }
 
         @TestMetadata("InCompanionObject.java")
         public void testInCompanionObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InCompanionObject.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InCompanionObject.java");
             doTest(fileName);
         }
 
         @TestMetadata("InInterface.java")
         public void testInInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("InObject.java")
         public void testInObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InObject.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/InObject.java");
             doTest(fileName);
         }
 
         @TestMetadata("IsPrefix.java")
         public void testIsPrefix() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/IsPrefix.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/IsPrefix.java");
             doTest(fileName);
         }
 
         @TestMetadata("JavaKeywordPropertyName.java")
         public void testJavaKeywordPropertyName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/JavaKeywordPropertyName.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/JavaKeywordPropertyName.java");
             doTest(fileName);
         }
 
         @TestMetadata("KeywordPropertyName.java")
         public void testKeywordPropertyName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/KeywordPropertyName.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/KeywordPropertyName.java");
             doTest(fileName);
         }
 
         @TestMetadata("Overrides.java")
         public void testOverrides() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/Overrides.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/Overrides.java");
             doTest(fileName);
         }
 
         @TestMetadata("OverridesOfExternalCode.java")
         public void testOverridesOfExternalCode() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/OverridesOfExternalCode.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/OverridesOfExternalCode.java");
             doTest(fileName);
         }
 
         @TestMetadata("PropertyType.java")
         public void testPropertyType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/PropertyType.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/PropertyType.java");
             doTest(fileName);
         }
 
         @TestMetadata("SetterTypeNotMatch.java")
         public void testSetterTypeNotMatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterTypeNotMatch.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/detectProperties/SetterTypeNotMatch.java");
             doTest(fileName);
         }
     }
@@ -1522,30 +1522,30 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DoWhileStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInDoWhileStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/doWhileStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/doWhileStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("whileWithBlock.java")
         public void testWhileWithBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("whileWithEmptyBlock.java")
         public void testWhileWithEmptyBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithEmptyBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithEmptyBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("whileWithExpression.java")
         public void testWhileWithExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithExpression.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithExpression.java");
             doTest(fileName);
         }
 
         @TestMetadata("whileWithReturn.java")
         public void testWhileWithReturn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithReturn.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/doWhileStatement/whileWithReturn.java");
             doTest(fileName);
         }
     }
@@ -1555,54 +1555,54 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DocComments extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInDocComments() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/docComments"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/docComments"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("deprecatedDocTag.java")
         public void testDeprecatedDocTag() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTag.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/deprecatedDocTag.java");
             doTest(fileName);
         }
 
         @TestMetadata("docCommentWithParamTag.java")
         public void testDocCommentWithParamTag() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/docCommentWithParamTag.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/docCommentWithParamTag.java");
             doTest(fileName);
         }
 
         @TestMetadata("htmlInDocComment.java")
         public void testHtmlInDocComment() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/htmlInDocComment.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/htmlInDocComment.java");
             doTest(fileName);
         }
 
         @TestMetadata("inlineTagsInDocComment.java")
         public void testInlineTagsInDocComment() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/inlineTagsInDocComment.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/inlineTagsInDocComment.java");
             doTest(fileName);
         }
 
         @TestMetadata("linkTag.java")
         public void testLinkTag() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/linkTag.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/linkTag.java");
             doTest(fileName);
         }
 
         @TestMetadata("linkTagWithLabel.java")
         public void testLinkTagWithLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/linkTagWithLabel.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/linkTagWithLabel.java");
             doTest(fileName);
         }
 
         @TestMetadata("onlyDeprecatedDocTag.java")
         public void testOnlyDeprecatedDocTag() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/onlyDeprecatedDocTag.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/onlyDeprecatedDocTag.java");
             doTest(fileName);
         }
 
         @TestMetadata("seeTag.java")
         public void testSeeTag() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/seeTag.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/docComments/seeTag.java");
             doTest(fileName);
         }
     }
@@ -1612,114 +1612,114 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Enum extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInEnum() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/enum"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/enum"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("colorEnum.java")
         public void testColorEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/colorEnum.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/colorEnum.java");
             doTest(fileName);
         }
 
         @TestMetadata("companionObject.java")
         public void testCompanionObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/companionObject.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/companionObject.java");
             doTest(fileName);
         }
 
         @TestMetadata("constantsWithBody1.java")
         public void testConstantsWithBody1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/constantsWithBody1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/constantsWithBody1.java");
             doTest(fileName);
         }
 
         @TestMetadata("constantsWithBody2.java")
         public void testConstantsWithBody2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/constantsWithBody2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/constantsWithBody2.java");
             doTest(fileName);
         }
 
         @TestMetadata("emptyEnum.java")
         public void testEmptyEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/emptyEnum.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/emptyEnum.java");
             doTest(fileName);
         }
 
         @TestMetadata("enumConstantIsNotNull.java")
         public void testEnumConstantIsNotNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/enumConstantIsNotNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/enumConstantIsNotNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("enumImplementsOneInterface.java")
         public void testEnumImplementsOneInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/enumImplementsOneInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/enumImplementsOneInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("enumImplementsSeveralInterfaces.java")
         public void testEnumImplementsSeveralInterfaces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/enumImplementsSeveralInterfaces.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/enumImplementsSeveralInterfaces.java");
             doTest(fileName);
         }
 
         @TestMetadata("enumWithNameField.java")
         public void testEnumWithNameField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/enumWithNameField.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/enumWithNameField.java");
             doTest(fileName);
         }
 
         @TestMetadata("fieldsWithPrimaryPrivateConstructor.java")
         public void testFieldsWithPrimaryPrivateConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/fieldsWithPrimaryPrivateConstructor.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/fieldsWithPrimaryPrivateConstructor.java");
             doTest(fileName);
         }
 
         @TestMetadata("internalEnum.java")
         public void testInternalEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/internalEnum.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/internalEnum.java");
             doTest(fileName);
         }
 
         @TestMetadata("overrideToString.java")
         public void testOverrideToString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/overrideToString.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/overrideToString.java");
             doTest(fileName);
         }
 
         @TestMetadata("primaryPrivateConstructor.java")
         public void testPrimaryPrivateConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/primaryPrivateConstructor.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/primaryPrivateConstructor.java");
             doTest(fileName);
         }
 
         @TestMetadata("privateEnum.java")
         public void testPrivateEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/privateEnum.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/privateEnum.java");
             doTest(fileName);
         }
 
         @TestMetadata("protectedEnum.java")
         public void testProtectedEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/protectedEnum.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/protectedEnum.java");
             doTest(fileName);
         }
 
         @TestMetadata("publicEnum.java")
         public void testPublicEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/publicEnum.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/publicEnum.java");
             doTest(fileName);
         }
 
         @TestMetadata("runnableImplementation.java")
         public void testRunnableImplementation() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/runnableImplementation.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/runnableImplementation.java");
             doTest(fileName);
         }
 
         @TestMetadata("typeSafeEnum.java")
         public void testTypeSafeEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/typeSafeEnum.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/typeSafeEnum.java");
             doTest(fileName);
         }
     }
@@ -1729,42 +1729,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Equals extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInEquals() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/equals"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/equals"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("EqOperator.java")
         public void testEqOperator() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/EqOperator.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/EqOperator.java");
             doTest(fileName);
         }
 
         @TestMetadata("Equals1.java")
         public void testEquals1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals1.java");
             doTest(fileName);
         }
 
         @TestMetadata("Equals2.java")
         public void testEquals2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals2.java");
             doTest(fileName);
         }
 
         @TestMetadata("Equals3.java")
         public void testEquals3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals3.java");
             doTest(fileName);
         }
 
         @TestMetadata("Equals4.java")
         public void testEquals4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals4.java");
             doTest(fileName);
         }
 
         @TestMetadata("ObjectsEquals.java")
         public void testObjectsEquals() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/ObjectsEquals.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/ObjectsEquals.java");
             doTest(fileName);
         }
     }
@@ -1774,78 +1774,78 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Field extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInField() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/field"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/field"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("classChildExtendsBase.java")
         public void testClassChildExtendsBase() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/classChildExtendsBase.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/classChildExtendsBase.java");
             doTest(fileName);
         }
 
         @TestMetadata("conversion.java")
         public void testConversion() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/conversion.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/conversion.java");
             doTest(fileName);
         }
 
         @TestMetadata("internalField.java")
         public void testInternalField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/internalField.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/internalField.java");
             doTest(fileName);
         }
 
         @TestMetadata("privateField.java")
         public void testPrivateField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/privateField.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/privateField.java");
             doTest(fileName);
         }
 
         @TestMetadata("protectedField.java")
         public void testProtectedField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/protectedField.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/protectedField.java");
             doTest(fileName);
         }
 
         @TestMetadata("publicField.java")
         public void testPublicField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/publicField.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/publicField.java");
             doTest(fileName);
         }
 
         @TestMetadata("specifyType.java")
         public void testSpecifyType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/specifyType.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/specifyType.java");
             doTest(fileName);
         }
 
         @TestMetadata("valOrVar.java")
         public void testValOrVar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/valOrVar.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/valOrVar.java");
             doTest(fileName);
         }
 
         @TestMetadata("valWithInit.java")
         public void testValWithInit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/valWithInit.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/valWithInit.java");
             doTest(fileName);
         }
 
         @TestMetadata("varWithInit.java")
         public void testVarWithInit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/varWithInit.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/varWithInit.java");
             doTest(fileName);
         }
 
         @TestMetadata("varWithoutInit.java")
         public void testVarWithoutInit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/varWithoutInit.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/varWithoutInit.java");
             doTest(fileName);
         }
 
         @TestMetadata("volatileTransientAndStrictFp.java")
         public void testVolatileTransientAndStrictFp() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/volatileTransientAndStrictFp.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/field/volatileTransientAndStrictFp.java");
             doTest(fileName);
         }
     }
@@ -1855,252 +1855,252 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class For extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInFor() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/for"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/for"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("arrayIndicesReversed.java")
         public void testArrayIndicesReversed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/arrayIndicesReversed.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/arrayIndicesReversed.java");
             doTest(fileName);
         }
 
         @TestMetadata("commonCaseForTest.java")
         public void testCommonCaseForTest() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/commonCaseForTest.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/commonCaseForTest.java");
             doTest(fileName);
         }
 
         @TestMetadata("downTo1.java")
         public void testDownTo1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo1.java");
             doTest(fileName);
         }
 
         @TestMetadata("downTo2.java")
         public void testDownTo2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo2.java");
             doTest(fileName);
         }
 
         @TestMetadata("downTo3.java")
         public void testDownTo3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo3.java");
             doTest(fileName);
         }
 
         @TestMetadata("downTo4.java")
         public void testDownTo4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/downTo4.java");
             doTest(fileName);
         }
 
         @TestMetadata("falseArrayIndicesReversed.java")
         public void testFalseArrayIndicesReversed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed.java");
             doTest(fileName);
         }
 
         @TestMetadata("falseArrayIndicesReversed2.java")
         public void testFalseArrayIndicesReversed2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseArrayIndicesReversed2.java");
             doTest(fileName);
         }
 
         @TestMetadata("falseForRange.java")
         public void testFalseForRange() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseForRange.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseForRange.java");
             doTest(fileName);
         }
 
         @TestMetadata("falseIndicesReversed.java")
         public void testFalseIndicesReversed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseIndicesReversed.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/falseIndicesReversed.java");
             doTest(fileName);
         }
 
         @TestMetadata("forRangeWithBlock.java")
         public void testForRangeWithBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("forRangeWithLE.java")
         public void testForRangeWithLE() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithLE.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithLE.java");
             doTest(fileName);
         }
 
         @TestMetadata("forRangeWithLT.java")
         public void testForRangeWithLT() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithLT.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithLT.java");
             doTest(fileName);
         }
 
         @TestMetadata("forRangeWithLT2.java")
         public void testForRangeWithLT2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithLT2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithLT2.java");
             doTest(fileName);
         }
 
         @TestMetadata("forRangeWithNE.java")
         public void testForRangeWithNE() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithNE.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forRangeWithNE.java");
             doTest(fileName);
         }
 
         @TestMetadata("forThroughArrayIndices.java")
         public void testForThroughArrayIndices() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughArrayIndices.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughArrayIndices.java");
             doTest(fileName);
         }
 
         @TestMetadata("forThroughCollectionIndices.java")
         public void testForThroughCollectionIndices() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughCollectionIndices.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughCollectionIndices.java");
             doTest(fileName);
         }
 
         @TestMetadata("forThroughListIndices.java")
         public void testForThroughListIndices() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughListIndices.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughListIndices.java");
             doTest(fileName);
         }
 
         @TestMetadata("forThroughListIndicesNE.java")
         public void testForThroughListIndicesNE() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughListIndicesNE.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughListIndicesNE.java");
             doTest(fileName);
         }
 
         @TestMetadata("forThroughNonArrayIndices.java")
         public void testForThroughNonArrayIndices() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughNonArrayIndices.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughNonArrayIndices.java");
             doTest(fileName);
         }
 
         @TestMetadata("forThroughNonCollectionIndices.java")
         public void testForThroughNonCollectionIndices() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughNonCollectionIndices.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forThroughNonCollectionIndices.java");
             doTest(fileName);
         }
 
         @TestMetadata("forWithBlock.java")
         public void testForWithBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("forWithBlockAndDoubleUpdate.java")
         public void testForWithBlockAndDoubleUpdate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithBlockAndDoubleUpdate.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithBlockAndDoubleUpdate.java");
             doTest(fileName);
         }
 
         @TestMetadata("forWithEmptyBlock.java")
         public void testForWithEmptyBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithEmptyBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithEmptyBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("forWithExpression.java")
         public void testForWithExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithExpression.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithExpression.java");
             doTest(fileName);
         }
 
         @TestMetadata("forWithNullCondition.java")
         public void testForWithNullCondition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithNullCondition.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithNullCondition.java");
             doTest(fileName);
         }
 
         @TestMetadata("forWithNullInit.java")
         public void testForWithNullInit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithNullInit.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithNullInit.java");
             doTest(fileName);
         }
 
         @TestMetadata("forWithNullUpdate.java")
         public void testForWithNullUpdate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithNullUpdate.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithNullUpdate.java");
             doTest(fileName);
         }
 
         @TestMetadata("forWithReturn.java")
         public void testForWithReturn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithReturn.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/forWithReturn.java");
             doTest(fileName);
         }
 
         @TestMetadata("indicesReversed.java")
         public void testIndicesReversed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/indicesReversed.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/indicesReversed.java");
             doTest(fileName);
         }
 
         @TestMetadata("infiniteFor.java")
         public void testInfiniteFor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/infiniteFor.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/infiniteFor.java");
             doTest(fileName);
         }
 
         @TestMetadata("nameConflict1.java")
         public void testNameConflict1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict1.java");
             doTest(fileName);
         }
 
         @TestMetadata("nameConflict2.java")
         public void testNameConflict2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict2.java");
             doTest(fileName);
         }
 
         @TestMetadata("nameConflict3.java")
         public void testNameConflict3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict3.java");
             doTest(fileName);
         }
 
         @TestMetadata("nameConflict4.java")
         public void testNameConflict4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict4.java");
             doTest(fileName);
         }
 
         @TestMetadata("nameConflict5.java")
         public void testNameConflict5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict5.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/nameConflict5.java");
             doTest(fileName);
         }
 
         @TestMetadata("notInBlock.java")
         public void testNotInBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/notInBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/notInBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("withContinue1.java")
         public void testWithContinue1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue1.java");
             doTest(fileName);
         }
 
         @TestMetadata("withContinue2.java")
         public void testWithContinue2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue2.java");
             doTest(fileName);
         }
 
         @TestMetadata("withContinue3.java")
         public void testWithContinue3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinue3.java");
             doTest(fileName);
         }
 
         @TestMetadata("withContinueAndLabels.java")
         public void testWithContinueAndLabels() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinueAndLabels.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/for/withContinueAndLabels.java");
             doTest(fileName);
         }
     }
@@ -2110,36 +2110,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ForeachStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInForeachStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/foreachStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/foreachStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("enhancedForWithBlock.java")
         public void testEnhancedForWithBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("enhancedForWithEmptyBlock.java")
         public void testEnhancedForWithEmptyBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithEmptyBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithEmptyBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("enhancedForWithExpression.java")
         public void testEnhancedForWithExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithExpression.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithExpression.java");
             doTest(fileName);
         }
 
         @TestMetadata("enhancedForWithReturn.java")
         public void testEnhancedForWithReturn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithReturn.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/enhancedForWithReturn.java");
             doTest(fileName);
         }
 
         @TestMetadata("nullableIterable.java")
         public void testNullableIterable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/nullableIterable.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/foreachStatement/nullableIterable.java");
             doTest(fileName);
         }
     }
@@ -2149,36 +2149,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Formatting extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInFormatting() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/formatting"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/formatting"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("lineBreaksBetweenArguments.java")
         public void testLineBreaksBetweenArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/lineBreaksBetweenArguments.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/lineBreaksBetweenArguments.java");
             doTest(fileName);
         }
 
         @TestMetadata("nonStaticMembers.java")
         public void testNonStaticMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/nonStaticMembers.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/nonStaticMembers.java");
             doTest(fileName);
         }
 
         @TestMetadata("nonStaticMembersWithComments.java")
         public void testNonStaticMembersWithComments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/nonStaticMembersWithComments.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/nonStaticMembersWithComments.java");
             doTest(fileName);
         }
 
         @TestMetadata("staticAndNonStaticMembersWithComments.java")
         public void testStaticAndNonStaticMembersWithComments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/staticAndNonStaticMembersWithComments.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/staticAndNonStaticMembersWithComments.java");
             doTest(fileName);
         }
 
         @TestMetadata("staticMembersWithComments.java")
         public void testStaticMembersWithComments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/staticMembersWithComments.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/staticMembersWithComments.java");
             doTest(fileName);
         }
     }
@@ -2189,209 +2189,209 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class Function extends AbstractJavaToKotlinConverterForWebDemoTest {
         @TestMetadata("abstractMethod.java")
         public void testAbstractMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/abstractMethod.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/abstractMethod.java");
             doTest(fileName);
         }
 
         public void testAllFilesPresentInFunction() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/function"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/function"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("classGenericParam.java")
         public void testClassGenericParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/classGenericParam.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/classGenericParam.java");
             doTest(fileName);
         }
 
         @TestMetadata("emptyVoidMethod.java")
         public void testEmptyVoidMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/emptyVoidMethod.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/emptyVoidMethod.java");
             doTest(fileName);
         }
 
         @TestMetadata("extendsBaseWhichExtendsObject.java")
         public void testExtendsBaseWhichExtendsObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/extendsBaseWhichExtendsObject.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/extendsBaseWhichExtendsObject.java");
             doTest(fileName);
         }
 
         @TestMetadata("final.java")
         public void testFinal() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/final.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/final.java");
             doTest(fileName);
         }
 
         @TestMetadata("functionInFinalClass.java")
         public void testFunctionInFinalClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/functionInFinalClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/functionInFinalClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("internal.java")
         public void testInternal() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/internal.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/internal.java");
             doTest(fileName);
         }
 
         @TestMetadata("java8Lambdas.java")
         public void testJava8Lambdas() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8Lambdas.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8Lambdas.java");
             doTest(fileName);
         }
 
         @TestMetadata("java8MRKFunctionExpectedType.java")
         public void testJava8MRKFunctionExpectedType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8MRKFunctionExpectedType.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8MRKFunctionExpectedType.java");
             doTest(fileName);
         }
 
         @TestMetadata("java8MRSamConstructor.java")
         public void testJava8MRSamConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8MRSamConstructor.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/java8MRSamConstructor.java");
             doTest(fileName);
         }
 
         @TestMetadata("lineBreaksBetweenParameters.java")
         public void testLineBreaksBetweenParameters() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/lineBreaksBetweenParameters.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/lineBreaksBetweenParameters.java");
             doTest(fileName);
         }
 
         @TestMetadata("main.java")
         public void testMain() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/main.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/main.java");
             doTest(fileName);
         }
 
         @TestMetadata("main2.java")
         public void testMain2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/main2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/main2.java");
             doTest(fileName);
         }
 
         @TestMetadata("mainAndNullabilitySetting.java")
         public void testMainAndNullabilitySetting() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/mainAndNullabilitySetting.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/mainAndNullabilitySetting.java");
             doTest(fileName);
         }
 
         @TestMetadata("methodClassType.java")
         public void testMethodClassType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/methodClassType.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/methodClassType.java");
             doTest(fileName);
         }
 
         @TestMetadata("methodPrimitiveType.java")
         public void testMethodPrimitiveType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/methodPrimitiveType.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/methodPrimitiveType.java");
             doTest(fileName);
         }
 
         @TestMetadata("methodPrimitiveType2.java")
         public void testMethodPrimitiveType2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/methodPrimitiveType2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/methodPrimitiveType2.java");
             doTest(fileName);
         }
 
         @TestMetadata("methodWithReturnStatement.java")
         public void testMethodWithReturnStatement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/methodWithReturnStatement.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/methodWithReturnStatement.java");
             doTest(fileName);
         }
 
         @TestMetadata("open.java")
         public void testOpen() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/open.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/open.java");
             doTest(fileName);
         }
 
         @TestMetadata("override.java")
         public void testOverride() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/override.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/override.java");
             doTest(fileName);
         }
 
         @TestMetadata("overrideAndOpen.java")
         public void testOverrideAndOpen() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideAndOpen.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideAndOpen.java");
             doTest(fileName);
         }
 
         @TestMetadata("overrideObject.java")
         public void testOverrideObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideObject.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideObject.java");
             doTest(fileName);
         }
 
         @TestMetadata("overrideObject2.java")
         public void testOverrideObject2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideObject2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideObject2.java");
             doTest(fileName);
         }
 
         @TestMetadata("overrideObject3.java")
         public void testOverrideObject3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideObject3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideObject3.java");
             doTest(fileName);
         }
 
         @TestMetadata("overrideWithHigherVisibility.java")
         public void testOverrideWithHigherVisibility() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideWithHigherVisibility.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/overrideWithHigherVisibility.java");
             doTest(fileName);
         }
 
         @TestMetadata("ownGenericParam.java")
         public void testOwnGenericParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/ownGenericParam.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/ownGenericParam.java");
             doTest(fileName);
         }
 
         @TestMetadata("ownSeveralGenericParams.java")
         public void testOwnSeveralGenericParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/ownSeveralGenericParams.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/ownSeveralGenericParams.java");
             doTest(fileName);
         }
 
         @TestMetadata("parameterModification.java")
         public void testParameterModification() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/parameterModification.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/parameterModification.java");
             doTest(fileName);
         }
 
         @TestMetadata("private.java")
         public void testPrivate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/private.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/private.java");
             doTest(fileName);
         }
 
         @TestMetadata("protected.java")
         public void testProtected() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/protected.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/protected.java");
             doTest(fileName);
         }
 
         @TestMetadata("public.java")
         public void testPublic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/public.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/public.java");
             doTest(fileName);
         }
 
         @TestMetadata("synchronizedMethod.java")
         public void testSynchronizedMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/synchronizedMethod.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/synchronizedMethod.java");
             doTest(fileName);
         }
 
         @TestMetadata("throws.java")
         public void testThrows() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/throws.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/throws.java");
             doTest(fileName);
         }
 
         @TestMetadata("varVararg.java")
         public void testVarVararg() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/varVararg.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/varVararg.java");
             doTest(fileName);
         }
     }
@@ -2401,24 +2401,24 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Identifier extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInIdentifier() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/identifier"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/identifier"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("finalFieldReference.java")
         public void testFinalFieldReference() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/identifier/finalFieldReference.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/identifier/finalFieldReference.java");
             doTest(fileName);
         }
 
         @TestMetadata("keywords.java")
         public void testKeywords() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/identifier/keywords.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/identifier/keywords.java");
             doTest(fileName);
         }
 
         @TestMetadata("withDollar.java")
         public void testWithDollar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/identifier/withDollar.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/identifier/withDollar.java");
             doTest(fileName);
         }
     }
@@ -2428,42 +2428,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IfStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInIfStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/ifStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/ifStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("elseIf.java")
         public void testElseIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/elseIf.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/elseIf.java");
             doTest(fileName);
         }
 
         @TestMetadata("multiLine.java")
         public void testMultiLine() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/multiLine.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/multiLine.java");
             doTest(fileName);
         }
 
         @TestMetadata("singleLine.java")
         public void testSingleLine() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/singleLine.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/singleLine.java");
             doTest(fileName);
         }
 
         @TestMetadata("withBlocks.java")
         public void testWithBlocks() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/withBlocks.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/withBlocks.java");
             doTest(fileName);
         }
 
         @TestMetadata("withEmptyBlocks.java")
         public void testWithEmptyBlocks() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/withEmptyBlocks.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/withEmptyBlocks.java");
             doTest(fileName);
         }
 
         @TestMetadata("withoutElse.java")
         public void testWithoutElse() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/withoutElse.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/ifStatement/withoutElse.java");
             doTest(fileName);
         }
     }
@@ -2473,36 +2473,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ImportStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInImportStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/importStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/importStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("importWithKeywords.java")
         public void testImportWithKeywords() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/importWithKeywords.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/importWithKeywords.java");
             doTest(fileName);
         }
 
         @TestMetadata("importWithStar.java")
         public void testImportWithStar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/importWithStar.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/importWithStar.java");
             doTest(fileName);
         }
 
         @TestMetadata("oneImport.java")
         public void testOneImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/oneImport.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/oneImport.java");
             doTest(fileName);
         }
 
         @TestMetadata("onlyImports.java")
         public void testOnlyImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/onlyImports.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/onlyImports.java");
             doTest(fileName);
         }
 
         @TestMetadata("simpleImport.java")
         public void testSimpleImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/simpleImport.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/importStatement/simpleImport.java");
             doTest(fileName);
         }
     }
@@ -2512,36 +2512,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inheritance extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInInheritance() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/inheritance"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/inheritance"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("classOneExtendsBaseGeneric.java")
         public void testClassOneExtendsBaseGeneric() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/classOneExtendsBaseGeneric.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/classOneExtendsBaseGeneric.java");
             doTest(fileName);
         }
 
         @TestMetadata("classOneExtendsBaseWithOneParam.java")
         public void testClassOneExtendsBaseWithOneParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/classOneExtendsBaseWithOneParam.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/classOneExtendsBaseWithOneParam.java");
             doTest(fileName);
         }
 
         @TestMetadata("classOneExtendsBaseWithZeroParams.java")
         public void testClassOneExtendsBaseWithZeroParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/classOneExtendsBaseWithZeroParams.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/classOneExtendsBaseWithZeroParams.java");
             doTest(fileName);
         }
 
         @TestMetadata("classOneExtendsBaseWithZeroParamsNonEmptyConstructor.java")
         public void testClassOneExtendsBaseWithZeroParamsNonEmptyConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/classOneExtendsBaseWithZeroParamsNonEmptyConstructor.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/classOneExtendsBaseWithZeroParamsNonEmptyConstructor.java");
             doTest(fileName);
         }
 
         @TestMetadata("openModifier.java")
         public void testOpenModifier() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/openModifier.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/inheritance/openModifier.java");
             doTest(fileName);
         }
     }
@@ -2551,18 +2551,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IsOperator extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInIsOperator() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/isOperator"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/isOperator"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("complicatedExpression.java")
         public void testComplicatedExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/isOperator/complicatedExpression.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/isOperator/complicatedExpression.java");
             doTest(fileName);
         }
 
         @TestMetadata("simpleReference.java")
         public void testSimpleReference() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/isOperator/simpleReference.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/isOperator/simpleReference.java");
             doTest(fileName);
         }
     }
@@ -2572,228 +2572,228 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Issues extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInIssues() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/issues"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/issues"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("arrayLength.java")
         public void testArrayLength() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/arrayLength.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/arrayLength.java");
             doTest(fileName);
         }
 
         @TestMetadata("comments.java")
         public void testComments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/comments.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/comments.java");
             doTest(fileName);
         }
 
         @TestMetadata("doNotQualifyStatic.java")
         public void testDoNotQualifyStatic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/doNotQualifyStatic.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/doNotQualifyStatic.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-1016.java")
         public void testKt_1016() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-1016.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-1016.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-1048.java")
         public void testKt_1048() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-1048.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-1048.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-1074.java")
         public void testKt_1074() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-1074.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-1074.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-5294.java")
         public void testKt_5294() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-5294.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-5294.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-5400.java")
         public void testKt_5400() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-5400.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-5400.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-543.java")
         public void testKt_543() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-543.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-543.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-543-boxed.java")
         public void testKt_543_boxed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-543-boxed.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-543-boxed.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-543-mixed.java")
         public void testKt_543_mixed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-543-mixed.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-543-mixed.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-638.java")
         public void testKt_638() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-638.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-638.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-696.java")
         public void testKt_696() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-696.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-696.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-792.java")
         public void testKt_792() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-792.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-792.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-792-mixed.java")
         public void testKt_792_mixed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-792-mixed.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-792-mixed.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-794.java")
         public void testKt_794() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-794.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-794.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-794-mixed.java")
         public void testKt_794_mixed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-794-mixed.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-794-mixed.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-807.java")
         public void testKt_807() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-807.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-807.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-809.java")
         public void testKt_809() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-809.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-809.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-809-string.java")
         public void testKt_809_string() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-809-string.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-809-string.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-820.java")
         public void testKt_820() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-820.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-820.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-820-field.java")
         public void testKt_820_field() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-820-field.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-820-field.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-820-string.java")
         public void testKt_820_string() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-820-string.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-820-string.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-824.java")
         public void testKt_824() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-824.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-824.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-824-isDir.java")
         public void testKt_824_isDir() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-824-isDir.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-824-isDir.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-828.java")
         public void testKt_828() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-828.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-828.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-836.java")
         public void testKt_836() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-836.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-836.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-837.java")
         public void testKt_837() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-837.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-837.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-851.java")
         public void testKt_851() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-851.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-851.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-852.java")
         public void testKt_852() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-852.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-852.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-871.java")
         public void testKt_871() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-871.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-871.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-879.java")
         public void testKt_879() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-879.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-879.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-893.java")
         public void testKt_893() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-893.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-893.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-899.java")
         public void testKt_899() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-899.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-899.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-963.java")
         public void testKt_963() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-963.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-963.java");
             doTest(fileName);
         }
 
         @TestMetadata("qualifyStatic.java")
         public void testQualifyStatic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/qualifyStatic.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/qualifyStatic.java");
             doTest(fileName);
         }
 
         @TestMetadata("spaceBeforeAssignment.java")
         public void testSpaceBeforeAssignment() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/spaceBeforeAssignment.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/spaceBeforeAssignment.java");
             doTest(fileName);
         }
     }
@@ -2803,84 +2803,84 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinApiAccess extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInKotlinApiAccess() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/kotlinApiAccess"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/kotlinApiAccess"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("ClassObjectMembers.java")
         public void testClassObjectMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/ClassObjectMembers.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/ClassObjectMembers.java");
             doTest(fileName);
         }
 
         @TestMetadata("CorrectFunNullabilityDetected.java")
         public void testCorrectFunNullabilityDetected() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/CorrectFunNullabilityDetected.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/CorrectFunNullabilityDetected.java");
             doTest(fileName);
         }
 
         @TestMetadata("CorrectNullabilityDetected.java")
         public void testCorrectNullabilityDetected() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/CorrectNullabilityDetected.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/CorrectNullabilityDetected.java");
             doTest(fileName);
         }
 
         @TestMetadata("ExtensionFunction.java")
         public void testExtensionFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/ExtensionFunction.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/ExtensionFunction.java");
             doTest(fileName);
         }
 
         @TestMetadata("ExtensionProperty.java")
         public void testExtensionProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/ExtensionProperty.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/ExtensionProperty.java");
             doTest(fileName);
         }
 
         @TestMetadata("GlobalFunction.java")
         public void testGlobalFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/GlobalFunction.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/GlobalFunction.java");
             doTest(fileName);
         }
 
         @TestMetadata("GlobalGenericFunction.java")
         public void testGlobalGenericFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/GlobalGenericFunction.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/GlobalGenericFunction.java");
             doTest(fileName);
         }
 
         @TestMetadata("GlobalValue1.java")
         public void testGlobalValue1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/GlobalValue1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/GlobalValue1.java");
             doTest(fileName);
         }
 
         @TestMetadata("GlobalValue2.java")
         public void testGlobalValue2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/GlobalValue2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/GlobalValue2.java");
             doTest(fileName);
         }
 
         @TestMetadata("InheritedProperty.java")
         public void testInheritedProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/InheritedProperty.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/InheritedProperty.java");
             doTest(fileName);
         }
 
         @TestMetadata("ObjectMembers.java")
         public void testObjectMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/ObjectMembers.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/ObjectMembers.java");
             doTest(fileName);
         }
 
         @TestMetadata("Property.java")
         public void testProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/Property.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/Property.java");
             doTest(fileName);
         }
 
         @TestMetadata("Property2.java")
         public void testProperty2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/Property2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/kotlinApiAccess/Property2.java");
             doTest(fileName);
         }
     }
@@ -2890,12 +2890,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LabelStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInLabelStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/labelStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/labelStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("complicatedExampleFromJavaTutorial.java")
         public void testComplicatedExampleFromJavaTutorial() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/labelStatement/complicatedExampleFromJavaTutorial.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/labelStatement/complicatedExampleFromJavaTutorial.java");
             doTest(fileName);
         }
     }
@@ -2905,18 +2905,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class List extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInList() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/list"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/list"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("ForEach.java")
         public void testForEach() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/list/ForEach.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/list/ForEach.java");
             doTest(fileName);
         }
 
         @TestMetadata("Lists.java")
         public void testLists() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/list/Lists.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/list/Lists.java");
             doTest(fileName);
         }
     }
@@ -2926,60 +2926,60 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LiteralExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInLiteralExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/literalExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/literalExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("char.java")
         public void testChar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/char.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/char.java");
             doTest(fileName);
         }
 
         @TestMetadata("dollarInsideString.java")
         public void testDollarInsideString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/dollarInsideString.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/dollarInsideString.java");
             doTest(fileName);
         }
 
         @TestMetadata("double.java")
         public void testDouble() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/double.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/double.java");
             doTest(fileName);
         }
 
         @TestMetadata("endsWithDFL.java")
         public void testEndsWithDFL() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/endsWithDFL.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/endsWithDFL.java");
             doTest(fileName);
         }
 
         @TestMetadata("float.java")
         public void testFloat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/float.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/float.java");
             doTest(fileName);
         }
 
         @TestMetadata("hex.java")
         public void testHex() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/hex.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/hex.java");
             doTest(fileName);
         }
 
         @TestMetadata("long.java")
         public void testLong() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/long.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/long.java");
             doTest(fileName);
         }
 
         @TestMetadata("octal.java")
         public void testOctal() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/octal.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/octal.java");
             doTest(fileName);
         }
 
         @TestMetadata("trueOrFalse.java")
         public void testTrueOrFalse() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/trueOrFalse.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/literalExpression/trueOrFalse.java");
             doTest(fileName);
         }
     }
@@ -2989,60 +2989,60 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LocalVariable extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInLocalVariable() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/localVariable"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/localVariable"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("autoBangBang.java")
         public void testAutoBangBang() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/autoBangBang.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/autoBangBang.java");
             doTest(fileName);
         }
 
         @TestMetadata("conversion.java")
         public void testConversion() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/conversion.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/conversion.java");
             doTest(fileName);
         }
 
         @TestMetadata("literalConversion.java")
         public void testLiteralConversion() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/literalConversion.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/literalConversion.java");
             doTest(fileName);
         }
 
         @TestMetadata("nullIInitializer.java")
         public void testNullIInitializer() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/nullIInitializer.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/nullIInitializer.java");
             doTest(fileName);
         }
 
         @TestMetadata("object.java")
         public void testObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/object.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/object.java");
             doTest(fileName);
         }
 
         @TestMetadata("unboxing.java")
         public void testUnboxing() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/unboxing.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/unboxing.java");
             doTest(fileName);
         }
 
         @TestMetadata("valTypeDoNotMatch.java")
         public void testValTypeDoNotMatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/valTypeDoNotMatch.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/valTypeDoNotMatch.java");
             doTest(fileName);
         }
 
         @TestMetadata("varTypeDoNotMatch.java")
         public void testVarTypeDoNotMatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/varTypeDoNotMatch.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/varTypeDoNotMatch.java");
             doTest(fileName);
         }
 
         @TestMetadata("varWithNoInitializer.java")
         public void testVarWithNoInitializer() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/varWithNoInitializer.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/localVariable/varWithNoInitializer.java");
             doTest(fileName);
         }
     }
@@ -3052,78 +3052,78 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MethodCallExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInMethodCallExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/methodCallExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/methodCallExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("callWithKeywords.java")
         public void testCallWithKeywords() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/callWithKeywords.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/callWithKeywords.java");
             doTest(fileName);
         }
 
         @TestMetadata("collectionsMethods.java")
         public void testCollectionsMethods() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/collectionsMethods.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/collectionsMethods.java");
             doTest(fileName);
         }
 
         @TestMetadata("collectionsMethods2.java")
         public void testCollectionsMethods2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/collectionsMethods2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/collectionsMethods2.java");
             doTest(fileName);
         }
 
         @TestMetadata("emptyCall.java")
         public void testEmptyCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/emptyCall.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/emptyCall.java");
             doTest(fileName);
         }
 
         @TestMetadata("genericMethod.java")
         public void testGenericMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/genericMethod.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/genericMethod.java");
             doTest(fileName);
         }
 
         @TestMetadata("getClass.java")
         public void testGetClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/getClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/getClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("simpleCall.java")
         public void testSimpleCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/simpleCall.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/simpleCall.java");
             doTest(fileName);
         }
 
         @TestMetadata("specialBuiltinMembers.java")
         public void testSpecialBuiltinMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/specialBuiltinMembers.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/specialBuiltinMembers.java");
             doTest(fileName);
         }
 
         @TestMetadata("stringMethods.java")
         public void testStringMethods() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/stringMethods.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/stringMethods.java");
             doTest(fileName);
         }
 
         @TestMetadata("systemOut.java")
         public void testSystemOut() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/systemOut.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/systemOut.java");
             doTest(fileName);
         }
 
         @TestMetadata("vararg1.java")
         public void testVararg1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/vararg1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/vararg1.java");
             doTest(fileName);
         }
 
         @TestMetadata("vararg2.java")
         public void testVararg2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/vararg2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/vararg2.java");
             doTest(fileName);
         }
     }
@@ -3133,42 +3133,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Misc extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInMisc() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/misc"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/misc"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("packageWithClass.java")
         public void testPackageWithClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("packageWithClasses.java")
         public void testPackageWithClasses() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithClasses.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithClasses.java");
             doTest(fileName);
         }
 
         @TestMetadata("packageWithImports.java")
         public void testPackageWithImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithImports.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithImports.java");
             doTest(fileName);
         }
 
         @TestMetadata("packageWithMixedImports.java")
         public void testPackageWithMixedImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithMixedImports.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithMixedImports.java");
             doTest(fileName);
         }
 
         @TestMetadata("packageWithOpenClass.java")
         public void testPackageWithOpenClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithOpenClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithOpenClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("packageWithStaticImports.java")
         public void testPackageWithStaticImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithStaticImports.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/misc/packageWithStaticImports.java");
             doTest(fileName);
         }
     }
@@ -3178,42 +3178,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MutableCollections extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInMutableCollections() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/mutableCollections"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/mutableCollections"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("FunctionParameters.java")
         public void testFunctionParameters() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionParameters.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionParameters.java");
             doTest(fileName);
         }
 
         @TestMetadata("FunctionParameters2.java")
         public void testFunctionParameters2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionParameters2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionParameters2.java");
             doTest(fileName);
         }
 
         @TestMetadata("FunctionReturnValue.java")
         public void testFunctionReturnValue() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionReturnValue.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionReturnValue.java");
             doTest(fileName);
         }
 
         @TestMetadata("FunctionReturnValue2.java")
         public void testFunctionReturnValue2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionReturnValue2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/FunctionReturnValue2.java");
             doTest(fileName);
         }
 
         @TestMetadata("Overrides.java")
         public void testOverrides() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/Overrides.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/Overrides.java");
             doTest(fileName);
         }
 
         @TestMetadata("Recursion.java")
         public void testRecursion() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/Recursion.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/mutableCollections/Recursion.java");
             doTest(fileName);
         }
     }
@@ -3223,90 +3223,90 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NewClassExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInNewClassExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/newClassExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/newClassExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("classWithParam.java")
         public void testClassWithParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/classWithParam.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/classWithParam.java");
             doTest(fileName);
         }
 
         @TestMetadata("classWithParams.java")
         public void testClassWithParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/classWithParams.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/classWithParams.java");
             doTest(fileName);
         }
 
         @TestMetadata("classWithoutBody.java")
         public void testClassWithoutBody() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/classWithoutBody.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/classWithoutBody.java");
             doTest(fileName);
         }
 
         @TestMetadata("fullQualifiedName.java")
         public void testFullQualifiedName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/fullQualifiedName.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/fullQualifiedName.java");
             doTest(fileName);
         }
 
         @TestMetadata("fullQualifiedName2.java")
         public void testFullQualifiedName2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/fullQualifiedName2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/fullQualifiedName2.java");
             doTest(fileName);
         }
 
         @TestMetadata("genericClassInvocation.java")
         public void testGenericClassInvocation() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/genericClassInvocation.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/genericClassInvocation.java");
             doTest(fileName);
         }
 
         @TestMetadata("lineBreaks.java")
         public void testLineBreaks() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/lineBreaks.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/lineBreaks.java");
             doTest(fileName);
         }
 
         @TestMetadata("newAnonymousClass.java")
         public void testNewAnonymousClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newAnonymousClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newAnonymousClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("newAnonymousClass2.java")
         public void testNewAnonymousClass2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newAnonymousClass2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newAnonymousClass2.java");
             doTest(fileName);
         }
 
         @TestMetadata("newAnonymousClass3.java")
         public void testNewAnonymousClass3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newAnonymousClass3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newAnonymousClass3.java");
             doTest(fileName);
         }
 
         @TestMetadata("newClassByFullName.java")
         public void testNewClassByFullName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newClassByFullName.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newClassByFullName.java");
             doTest(fileName);
         }
 
         @TestMetadata("newInnerClass.java")
         public void testNewInnerClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newInnerClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newInnerClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("newListAndNewMember.java")
         public void testNewListAndNewMember() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newListAndNewMember.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newListAndNewMember.java");
             doTest(fileName);
         }
 
         @TestMetadata("newStaticInnerClass.java")
         public void testNewStaticInnerClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newStaticInnerClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/newStaticInnerClass.java");
             doTest(fileName);
         }
     }
@@ -3316,186 +3316,186 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nullability extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInNullability() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/nullability"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/nullability"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("autoNotNull.java")
         public void testAutoNotNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/autoNotNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/autoNotNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("FieldAssignedWithNull.java")
         public void testFieldAssignedWithNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldAssignedWithNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldAssignedWithNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("FieldComparedWithNull.java")
         public void testFieldComparedWithNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldComparedWithNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldComparedWithNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("FieldComparedWithNull2.java")
         public void testFieldComparedWithNull2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldComparedWithNull2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldComparedWithNull2.java");
             doTest(fileName);
         }
 
         @TestMetadata("FieldComparedWithNull3.java")
         public void testFieldComparedWithNull3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldComparedWithNull3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldComparedWithNull3.java");
             doTest(fileName);
         }
 
         @TestMetadata("FieldComparedWithNull4.java")
         public void testFieldComparedWithNull4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldComparedWithNull4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldComparedWithNull4.java");
             doTest(fileName);
         }
 
         @TestMetadata("FieldInitializedWithNull.java")
         public void testFieldInitializedWithNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldInitializedWithNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/FieldInitializedWithNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("IndirectOverride.java")
         public void testIndirectOverride() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/IndirectOverride.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/IndirectOverride.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodInvokedWithNullArg.java")
         public void testMethodInvokedWithNullArg() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodInvokedWithNullArg.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodInvokedWithNullArg.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodInvokedWithNullArg2.java")
         public void testMethodInvokedWithNullArg2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodInvokedWithNullArg2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodInvokedWithNullArg2.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodInvokedWithTernaryNullArg.java")
         public void testMethodInvokedWithTernaryNullArg() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodInvokedWithTernaryNullArg.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodInvokedWithTernaryNullArg.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodResultComparedWithNull.java")
         public void testMethodResultComparedWithNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultComparedWithNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultComparedWithNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodResultComparedWithNull2.java")
         public void testMethodResultComparedWithNull2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultComparedWithNull2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultComparedWithNull2.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodResultComparedWithNull3.java")
         public void testMethodResultComparedWithNull3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultComparedWithNull3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultComparedWithNull3.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodResultComparedWithNull4.java")
         public void testMethodResultComparedWithNull4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultComparedWithNull4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultComparedWithNull4.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodResultInitializesNullableField.java")
         public void testMethodResultInitializesNullableField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultInitializesNullableField.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodResultInitializesNullableField.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodReturnsNull.java")
         public void testMethodReturnsNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodReturnsNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodReturnsNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodReturnsNullInAnonymousClass.java")
         public void testMethodReturnsNullInAnonymousClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodReturnsNullInAnonymousClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodReturnsNullInAnonymousClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodReturnsNullInLocalClass.java")
         public void testMethodReturnsNullInLocalClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodReturnsNullInLocalClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodReturnsNullInLocalClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("MethodReturnsTernaryNull.java")
         public void testMethodReturnsTernaryNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodReturnsTernaryNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/MethodReturnsTernaryNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("NullableIntNoCrash.java")
         public void testNullableIntNoCrash() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/NullableIntNoCrash.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/NullableIntNoCrash.java");
             doTest(fileName);
         }
 
         @TestMetadata("NullableMethodDotAccess.java")
         public void testNullableMethodDotAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/NullableMethodDotAccess.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/NullableMethodDotAccess.java");
             doTest(fileName);
         }
 
         @TestMetadata("NullableVariableDotAccess.java")
         public void testNullableVariableDotAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/NullableVariableDotAccess.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/NullableVariableDotAccess.java");
             doTest(fileName);
         }
 
         @TestMetadata("OverrideWithInheritanceLoop.java")
         public void testOverrideWithInheritanceLoop() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/OverrideWithInheritanceLoop.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/OverrideWithInheritanceLoop.java");
             doTest(fileName);
         }
 
         @TestMetadata("Overrides.java")
         public void testOverrides() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/Overrides.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/Overrides.java");
             doTest(fileName);
         }
 
         @TestMetadata("ParameterComparedWithNull.java")
         public void testParameterComparedWithNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/ParameterComparedWithNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/ParameterComparedWithNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("VariableAssignedWithNull.java")
         public void testVariableAssignedWithNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/VariableAssignedWithNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/VariableAssignedWithNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("VariableComparedWithNull.java")
         public void testVariableComparedWithNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/VariableComparedWithNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/VariableComparedWithNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("VariableInitializedWithNull.java")
         public void testVariableInitializedWithNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/VariableInitializedWithNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/VariableInitializedWithNull.java");
             doTest(fileName);
         }
 
         @TestMetadata("VariableInitializedWithTernaryNull.java")
         public void testVariableInitializedWithTernaryNull() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/VariableInitializedWithTernaryNull.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/nullability/VariableInitializedWithTernaryNull.java");
             doTest(fileName);
         }
     }
@@ -3505,12 +3505,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ObjectLiteral extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInObjectLiteral() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/objectLiteral"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/objectLiteral"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("MyFrame.java")
         public void testMyFrame() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/objectLiteral/MyFrame.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/objectLiteral/MyFrame.java");
             doTest(fileName);
         }
     }
@@ -3521,47 +3521,47 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class Overloads extends AbstractJavaToKotlinConverterForWebDemoTest {
         @TestMetadata("Abstract.java")
         public void testAbstract() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Abstract.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Abstract.java");
             doTest(fileName);
         }
 
         @TestMetadata("AccessorToDrop.java")
         public void testAccessorToDrop() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/AccessorToDrop.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/AccessorToDrop.java");
             doTest(fileName);
         }
 
         public void testAllFilesPresentInOverloads() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/overloads"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/overloads"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("Annotations.java")
         public void testAnnotations() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Annotations.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Annotations.java");
             doTest(fileName);
         }
 
         @TestMetadata("Override.java")
         public void testOverride() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Override.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Override.java");
             doTest(fileName);
         }
 
         @TestMetadata("Private.java")
         public void testPrivate() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Private.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Private.java");
             doTest(fileName);
         }
 
         @TestMetadata("Simple.java")
         public void testSimple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Simple.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Simple.java");
             doTest(fileName);
         }
 
         @TestMetadata("Synchronized.java")
         public void testSynchronized() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Synchronized.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Synchronized.java");
             doTest(fileName);
         }
     }
@@ -3571,12 +3571,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PackageStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInPackageStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/packageStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/packageStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("keywordInPackageName.java")
         public void testKeywordInPackageName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/packageStatement/keywordInPackageName.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/packageStatement/keywordInPackageName.java");
             doTest(fileName);
         }
     }
@@ -3586,18 +3586,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ParenthesizedExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInParenthesizedExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/parenthesizedExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/parenthesizedExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("parenthesized.java")
         public void testParenthesized() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/parenthesizedExpression/parenthesized.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/parenthesizedExpression/parenthesized.java");
             doTest(fileName);
         }
 
         @TestMetadata("parenthesized2.java")
         public void testParenthesized2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/parenthesizedExpression/parenthesized2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/parenthesizedExpression/parenthesized2.java");
             doTest(fileName);
         }
     }
@@ -3607,42 +3607,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PolyadicExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInPolyadicExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/polyadicExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/polyadicExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("divide.java")
         public void testDivide() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/divide.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/divide.java");
             doTest(fileName);
         }
 
         @TestMetadata("minus.java")
         public void testMinus() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/minus.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/minus.java");
             doTest(fileName);
         }
 
         @TestMetadata("multiply.java")
         public void testMultiply() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/multiply.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/multiply.java");
             doTest(fileName);
         }
 
         @TestMetadata("plus.java")
         public void testPlus() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/plus.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/plus.java");
             doTest(fileName);
         }
 
         @TestMetadata("remainder.java")
         public void testRemainder() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/remainder.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/remainder.java");
             doTest(fileName);
         }
 
         @TestMetadata("unassignedShiftRight.java")
         public void testUnassignedShiftRight() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/unassignedShiftRight.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/polyadicExpression/unassignedShiftRight.java");
             doTest(fileName);
         }
     }
@@ -3652,60 +3652,60 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PostProcessing extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInPostProcessing() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/postProcessing"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/postProcessing"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("AnonymousObject.java")
         public void testAnonymousObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/AnonymousObject.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/AnonymousObject.java");
             doTest(fileName);
         }
 
         @TestMetadata("GetOperator.java")
         public void testGetOperator() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/GetOperator.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/GetOperator.java");
             doTest(fileName);
         }
 
         @TestMetadata("IfNullReturnToElvis.java")
         public void testIfNullReturnToElvis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfNullReturnToElvis.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfNullReturnToElvis.java");
             doTest(fileName);
         }
 
         @TestMetadata("IfToElvis.java")
         public void testIfToElvis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfToElvis.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfToElvis.java");
             doTest(fileName);
         }
 
         @TestMetadata("IfToSafeCall.java")
         public void testIfToSafeCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfToSafeCall.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/IfToSafeCall.java");
             doTest(fileName);
         }
 
         @TestMetadata("NotIs.java")
         public void testNotIs() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/NotIs.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/NotIs.java");
             doTest(fileName);
         }
 
         @TestMetadata("RedundantTypeCast.java")
         public void testRedundantTypeCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedundantTypeCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedundantTypeCast.java");
             doTest(fileName);
         }
 
         @TestMetadata("RedundantTypeCastAndInline.java")
         public void testRedundantTypeCastAndInline() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedundantTypeCastAndInline.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedundantTypeCastAndInline.java");
             doTest(fileName);
         }
 
         @TestMetadata("SyntheticExtensionPropertyAccess.java")
         public void testSyntheticExtensionPropertyAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/SyntheticExtensionPropertyAccess.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/SyntheticExtensionPropertyAccess.java");
             doTest(fileName);
         }
     }
@@ -3715,18 +3715,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PostfixOperator extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInPostfixOperator() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/postfixOperator"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/postfixOperator"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("decrement.java")
         public void testDecrement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postfixOperator/decrement.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postfixOperator/decrement.java");
             doTest(fileName);
         }
 
         @TestMetadata("increment.java")
         public void testIncrement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/postfixOperator/increment.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postfixOperator/increment.java");
             doTest(fileName);
         }
     }
@@ -3736,42 +3736,42 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PrefixOperator extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInPrefixOperator() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/prefixOperator"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/prefixOperator"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("decrement.java")
         public void testDecrement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/decrement.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/decrement.java");
             doTest(fileName);
         }
 
         @TestMetadata("excl.java")
         public void testExcl() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/excl.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/excl.java");
             doTest(fileName);
         }
 
         @TestMetadata("increment.java")
         public void testIncrement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/increment.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/increment.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-667.java")
         public void testKt_667() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/kt-667.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/kt-667.java");
             doTest(fileName);
         }
 
         @TestMetadata("nullableIf.java")
         public void testNullableIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/nullableIf.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/nullableIf.java");
             doTest(fileName);
         }
 
         @TestMetadata("tilde.java")
         public void testTilde() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/tilde.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/prefixOperator/tilde.java");
             doTest(fileName);
         }
     }
@@ -3781,12 +3781,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Projections extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInProjections() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/projections"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/projections"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("projections.java")
         public void testProjections() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/projections/projections.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/projections/projections.java");
             doTest(fileName);
         }
     }
@@ -3796,36 +3796,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RawGenerics extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInRawGenerics() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/rawGenerics"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/rawGenerics"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("cycle.java")
         public void testCycle() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/cycle.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/cycle.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-540.java")
         public void testKt_540() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/kt-540.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/kt-540.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-540-map.java")
         public void testKt_540_map() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/kt-540-map.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/kt-540-map.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-540-rawGenericClass.java")
         public void testKt_540_rawGenericClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/kt-540-rawGenericClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/kt-540-rawGenericClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("rawGenericMethod.java")
         public void testRawGenericMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/rawGenericMethod.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/rawGenerics/rawGenericMethod.java");
             doTest(fileName);
         }
     }
@@ -3835,36 +3835,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ReturnStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInReturnStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/returnStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/returnStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("currentMethodBug.java")
         public void testCurrentMethodBug() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/currentMethodBug.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/currentMethodBug.java");
             doTest(fileName);
         }
 
         @TestMetadata("returnChar.java")
         public void testReturnChar() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/returnChar.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/returnChar.java");
             doTest(fileName);
         }
 
         @TestMetadata("returnLiteral.java")
         public void testReturnLiteral() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/returnLiteral.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/returnLiteral.java");
             doTest(fileName);
         }
 
         @TestMetadata("returnNumber.java")
         public void testReturnNumber() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/returnNumber.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/returnNumber.java");
             doTest(fileName);
         }
 
         @TestMetadata("returnString.java")
         public void testReturnString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/returnString.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/returnStatement/returnString.java");
             doTest(fileName);
         }
     }
@@ -3874,30 +3874,30 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Settings extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInSettings() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/settings"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/settings"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("openByDefault.java")
         public void testOpenByDefault() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/openByDefault.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/openByDefault.java");
             doTest(fileName);
         }
 
         @TestMetadata("specifyFieldTypeByDefault.java")
         public void testSpecifyFieldTypeByDefault() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/specifyFieldTypeByDefault.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/specifyFieldTypeByDefault.java");
             doTest(fileName);
         }
 
         @TestMetadata("specifyLocalVariableTypeByDefault.java")
         public void testSpecifyLocalVariableTypeByDefault() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/specifyLocalVariableTypeByDefault.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/specifyLocalVariableTypeByDefault.java");
             doTest(fileName);
         }
 
         @TestMetadata("specifyLocalVariableTypeByDefaultInFor.java")
         public void testSpecifyLocalVariableTypeByDefaultInFor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/specifyLocalVariableTypeByDefaultInFor.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/settings/specifyLocalVariableTypeByDefaultInFor.java");
             doTest(fileName);
         }
     }
@@ -3907,36 +3907,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StaticMembers extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInStaticMembers() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/staticMembers"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/staticMembers"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("PrivateStaticMembers.java")
         public void testPrivateStaticMembers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMembers.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMembers.java");
             doTest(fileName);
         }
 
         @TestMetadata("PrivateStaticMethods1.java")
         public void testPrivateStaticMethods1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMethods1.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMethods1.java");
             doTest(fileName);
         }
 
         @TestMetadata("PrivateStaticMethods2.java")
         public void testPrivateStaticMethods2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMethods2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMethods2.java");
             doTest(fileName);
         }
 
         @TestMetadata("PrivateStaticMethods3.java")
         public void testPrivateStaticMethods3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMethods3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMethods3.java");
             doTest(fileName);
         }
 
         @TestMetadata("PrivateStaticMethods4.java")
         public void testPrivateStaticMethods4() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMethods4.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/staticMembers/PrivateStaticMethods4.java");
             doTest(fileName);
         }
     }
@@ -3946,24 +3946,24 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SuperExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInSuperExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/superExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/superExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("classAdotSuperFoo.java")
         public void testClassAdotSuperFoo() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/superExpression/classAdotSuperFoo.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/superExpression/classAdotSuperFoo.java");
             doTest(fileName);
         }
 
         @TestMetadata("classAextendsB.java")
         public void testClassAextendsB() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/superExpression/classAextendsB.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/superExpression/classAextendsB.java");
             doTest(fileName);
         }
 
         @TestMetadata("superStatement.java")
         public void testSuperStatement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/superExpression/superStatement.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/superExpression/superStatement.java");
             doTest(fileName);
         }
     }
@@ -3973,72 +3973,72 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Switch extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInSwitch() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/switch"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/switch"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("caseWithBlock.java")
         public void testCaseWithBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/caseWithBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/caseWithBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("comlicatedFallDown.java")
         public void testComlicatedFallDown() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/comlicatedFallDown.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/comlicatedFallDown.java");
             doTest(fileName);
         }
 
         @TestMetadata("continueAndBreakWithLabel.java")
         public void testContinueAndBreakWithLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/continueAndBreakWithLabel.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/continueAndBreakWithLabel.java");
             doTest(fileName);
         }
 
         @TestMetadata("emptySwitch.java")
         public void testEmptySwitch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/emptySwitch.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/emptySwitch.java");
             doTest(fileName);
         }
 
         @TestMetadata("enumConstants.java")
         public void testEnumConstants() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/enumConstants.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/enumConstants.java");
             doTest(fileName);
         }
 
         @TestMetadata("fallDown.java")
         public void testFallDown() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/fallDown.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/fallDown.java");
             doTest(fileName);
         }
 
         @TestMetadata("fallDownWithBlocks.java")
         public void testFallDownWithBlocks() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/fallDownWithBlocks.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/fallDownWithBlocks.java");
             doTest(fileName);
         }
 
         @TestMetadata("invalidSwitch.java")
         public void testInvalidSwitch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/invalidSwitch.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/invalidSwitch.java");
             doTest(fileName);
         }
 
         @TestMetadata("kt-539.java")
         public void testKt_539() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/kt-539.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/kt-539.java");
             doTest(fileName);
         }
 
         @TestMetadata("nondefault.java")
         public void testNondefault() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/nondefault.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/nondefault.java");
             doTest(fileName);
         }
 
         @TestMetadata("returnsAndThrows.java")
         public void testReturnsAndThrows() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/returnsAndThrows.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/switch/returnsAndThrows.java");
             doTest(fileName);
         }
     }
@@ -4048,12 +4048,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SynchronizedStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInSynchronizedStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/synchronizedStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/synchronizedStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("singleLineExample.java")
         public void testSingleLineExample() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/synchronizedStatement/singleLineExample.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/synchronizedStatement/singleLineExample.java");
             doTest(fileName);
         }
     }
@@ -4063,18 +4063,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ThisExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInThisExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/thisExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/thisExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("classAdotThisFoo.java")
         public void testClassAdotThisFoo() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/thisExpression/classAdotThisFoo.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/thisExpression/classAdotThisFoo.java");
             doTest(fileName);
         }
 
         @TestMetadata("thisStatement.java")
         public void testThisStatement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/thisExpression/thisStatement.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/thisExpression/thisStatement.java");
             doTest(fileName);
         }
     }
@@ -4084,12 +4084,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ThrowStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInThrowStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/throwStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/throwStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("simpleThrowStatement.java")
         public void testSimpleThrowStatement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/throwStatement/simpleThrowStatement.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/throwStatement/simpleThrowStatement.java");
             doTest(fileName);
         }
     }
@@ -4099,30 +4099,30 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ToKotlinClasses extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInToKotlinClasses() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/toKotlinClasses"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/toKotlinClasses"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("iterableAndIterator.java")
         public void testIterableAndIterator() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/iterableAndIterator.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/iterableAndIterator.java");
             doTest(fileName);
         }
 
         @TestMetadata("iterableAndIterator2.java")
         public void testIterableAndIterator2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/iterableAndIterator2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/iterableAndIterator2.java");
             doTest(fileName);
         }
 
         @TestMetadata("iterableAndIterator3.java")
         public void testIterableAndIterator3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/iterableAndIterator3.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/iterableAndIterator3.java");
             doTest(fileName);
         }
 
         @TestMetadata("TypeParameterBound.java")
         public void testTypeParameterBound() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/TypeParameterBound.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/TypeParameterBound.java");
             doTest(fileName);
         }
     }
@@ -4133,71 +4133,71 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     public static class Trait extends AbstractJavaToKotlinConverterForWebDemoTest {
         @TestMetadata("abstactInterface.java")
         public void testAbstactInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/abstactInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/abstactInterface.java");
             doTest(fileName);
         }
 
         public void testAllFilesPresentInTrait() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/trait"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/trait"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("emptyInterface.java")
         public void testEmptyInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/emptyInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/emptyInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("extendsOneClassAndImplementsSeveralInterfaces.java")
         public void testExtendsOneClassAndImplementsSeveralInterfaces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/extendsOneClassAndImplementsSeveralInterfaces.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/extendsOneClassAndImplementsSeveralInterfaces.java");
             doTest(fileName);
         }
 
         @TestMetadata("extendsOneInterface.java")
         public void testExtendsOneInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/extendsOneInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/extendsOneInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("interfaceWithFields.java")
         public void testInterfaceWithFields() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/interfaceWithFields.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/interfaceWithFields.java");
             doTest(fileName);
         }
 
         @TestMetadata("interfaceWithMethodDeclaration.java")
         public void testInterfaceWithMethodDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/interfaceWithMethodDeclaration.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/interfaceWithMethodDeclaration.java");
             doTest(fileName);
         }
 
         @TestMetadata("interfaceWithStaticFields.java")
         public void testInterfaceWithStaticFields() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/interfaceWithStaticFields.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/interfaceWithStaticFields.java");
             doTest(fileName);
         }
 
         @TestMetadata("internalInterface.java")
         public void testInternalInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/internalInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/internalInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("privateInterface.java")
         public void testPrivateInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/privateInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/privateInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("protectedInterface.java")
         public void testProtectedInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/protectedInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/protectedInterface.java");
             doTest(fileName);
         }
 
         @TestMetadata("publicInterface.java")
         public void testPublicInterface() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/publicInterface.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/trait/publicInterface.java");
             doTest(fileName);
         }
     }
@@ -4207,36 +4207,36 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TryStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInTryStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/tryStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/tryStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("commonCaseForTryStatement.java")
         public void testCommonCaseForTryStatement() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/commonCaseForTryStatement.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/commonCaseForTryStatement.java");
             doTest(fileName);
         }
 
         @TestMetadata("disjunctionType.java")
         public void testDisjunctionType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/disjunctionType.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/disjunctionType.java");
             doTest(fileName);
         }
 
         @TestMetadata("emptyTryWithTwoCatchesWithEmptyFinally.java")
         public void testEmptyTryWithTwoCatchesWithEmptyFinally() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/emptyTryWithTwoCatchesWithEmptyFinally.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/emptyTryWithTwoCatchesWithEmptyFinally.java");
             doTest(fileName);
         }
 
         @TestMetadata("emptyTryWithTwoCatchesWithFinally.java")
         public void testEmptyTryWithTwoCatchesWithFinally() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/emptyTryWithTwoCatchesWithFinally.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/emptyTryWithTwoCatchesWithFinally.java");
             doTest(fileName);
         }
 
         @TestMetadata("emptyTryWithTwoCatchesWithoutFinally.java")
         public void testEmptyTryWithTwoCatchesWithoutFinally() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/emptyTryWithTwoCatchesWithoutFinally.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryStatement/emptyTryWithTwoCatchesWithoutFinally.java");
             doTest(fileName);
         }
     }
@@ -4246,66 +4246,66 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TryWithResource extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInTryWithResource() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/tryWithResource"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/tryWithResource"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("Multiline.java")
         public void testMultiline() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/Multiline.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/Multiline.java");
             doTest(fileName);
         }
 
         @TestMetadata("MultipleResources.java")
         public void testMultipleResources() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/MultipleResources.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/MultipleResources.java");
             doTest(fileName);
         }
 
         @TestMetadata("Simple.java")
         public void testSimple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/Simple.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/Simple.java");
             doTest(fileName);
         }
 
         @TestMetadata("WithCatch.java")
         public void testWithCatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithCatch.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithCatch.java");
             doTest(fileName);
         }
 
         @TestMetadata("WithCatchAndFinally.java")
         public void testWithCatchAndFinally() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithCatchAndFinally.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithCatchAndFinally.java");
             doTest(fileName);
         }
 
         @TestMetadata("WithCatches.java")
         public void testWithCatches() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithCatches.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithCatches.java");
             doTest(fileName);
         }
 
         @TestMetadata("WithFinally.java")
         public void testWithFinally() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithFinally.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithFinally.java");
             doTest(fileName);
         }
 
         @TestMetadata("WithReturnAtEnd.java")
         public void testWithReturnAtEnd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithReturnAtEnd.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithReturnAtEnd.java");
             doTest(fileName);
         }
 
         @TestMetadata("WithReturnInAnonymousClass.java")
         public void testWithReturnInAnonymousClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithReturnInAnonymousClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithReturnInAnonymousClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("WithReturnInAnonymousClass2.java")
         public void testWithReturnInAnonymousClass2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithReturnInAnonymousClass2.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/tryWithResource/WithReturnInAnonymousClass2.java");
             doTest(fileName);
         }
     }
@@ -4315,60 +4315,60 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeCastExpression extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInTypeCastExpression() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/typeCastExpression"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/typeCastExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("castNullable.java")
         public void testCastNullable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/castNullable.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/castNullable.java");
             doTest(fileName);
         }
 
         @TestMetadata("extendsWildcardCast.java")
         public void testExtendsWildcardCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/extendsWildcardCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/extendsWildcardCast.java");
             doTest(fileName);
         }
 
         @TestMetadata("fooCast.java")
         public void testFooCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/fooCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/fooCast.java");
             doTest(fileName);
         }
 
         @TestMetadata("intCast.java")
         public void testIntCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/intCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/intCast.java");
             doTest(fileName);
         }
 
         @TestMetadata("primitiveType.java")
         public void testPrimitiveType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/primitiveType.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/primitiveType.java");
             doTest(fileName);
         }
 
         @TestMetadata("simpleGenericCast.java")
         public void testSimpleGenericCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/simpleGenericCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/simpleGenericCast.java");
             doTest(fileName);
         }
 
         @TestMetadata("stringCast.java")
         public void testStringCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/stringCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/stringCast.java");
             doTest(fileName);
         }
 
         @TestMetadata("superWildcardCast.java")
         public void testSuperWildcardCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/superWildcardCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/superWildcardCast.java");
             doTest(fileName);
         }
 
         @TestMetadata("wildcardCast.java")
         public void testWildcardCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/wildcardCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/wildcardCast.java");
             doTest(fileName);
         }
     }
@@ -4378,96 +4378,96 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeParameters extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInTypeParameters() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/typeParameters"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/typeParameters"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("classDoubleParametrizationWithTwoBoundsWithExtending.java")
         public void testClassDoubleParametrizationWithTwoBoundsWithExtending() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/classDoubleParametrizationWithTwoBoundsWithExtending.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/classDoubleParametrizationWithTwoBoundsWithExtending.java");
             doTest(fileName);
         }
 
         @TestMetadata("classParametrizationWithTwoBounds.java")
         public void testClassParametrizationWithTwoBounds() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/classParametrizationWithTwoBounds.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/classParametrizationWithTwoBounds.java");
             doTest(fileName);
         }
 
         @TestMetadata("classParametrizationWithTwoBoundsWithExtending.java")
         public void testClassParametrizationWithTwoBoundsWithExtending() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/classParametrizationWithTwoBoundsWithExtending.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/classParametrizationWithTwoBoundsWithExtending.java");
             doTest(fileName);
         }
 
         @TestMetadata("complexExampleWithClassExtending.java")
         public void testComplexExampleWithClassExtending() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/complexExampleWithClassExtending.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/complexExampleWithClassExtending.java");
             doTest(fileName);
         }
 
         @TestMetadata("complexExampleWithClassMultiplyExtending.java")
         public void testComplexExampleWithClassMultiplyExtending() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/complexExampleWithClassMultiplyExtending.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/complexExampleWithClassMultiplyExtending.java");
             doTest(fileName);
         }
 
         @TestMetadata("genericClass.java")
         public void testGenericClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/genericClass.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/genericClass.java");
             doTest(fileName);
         }
 
         @TestMetadata("genericParam.java")
         public void testGenericParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/genericParam.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/genericParam.java");
             doTest(fileName);
         }
 
         @TestMetadata("genericParam-settings.java")
         public void testGenericParam_settings() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/genericParam-settings.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/genericParam-settings.java");
             doTest(fileName);
         }
 
         @TestMetadata("manyGenericParams.java")
         public void testManyGenericParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/manyGenericParams.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/manyGenericParams.java");
             doTest(fileName);
         }
 
         @TestMetadata("methodDoubleParametrizationWithTwoBounds.java")
         public void testMethodDoubleParametrizationWithTwoBounds() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/methodDoubleParametrizationWithTwoBounds.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/methodDoubleParametrizationWithTwoBounds.java");
             doTest(fileName);
         }
 
         @TestMetadata("needTypeArgs.java")
         public void testNeedTypeArgs() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/needTypeArgs.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/needTypeArgs.java");
             doTest(fileName);
         }
 
         @TestMetadata("rawTypeCast.java")
         public void testRawTypeCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/rawTypeCast.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/rawTypeCast.java");
             doTest(fileName);
         }
 
         @TestMetadata("traitDoubleParametrizationWithTwoBoundsWithExtending.java")
         public void testTraitDoubleParametrizationWithTwoBoundsWithExtending() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/traitDoubleParametrizationWithTwoBoundsWithExtending.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/traitDoubleParametrizationWithTwoBoundsWithExtending.java");
             doTest(fileName);
         }
 
         @TestMetadata("typeFromOtherFile.java")
         public void testTypeFromOtherFile() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/typeFromOtherFile.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/typeFromOtherFile.java");
             doTest(fileName);
         }
 
         @TestMetadata("where.java")
         public void testWhere() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/where.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeParameters/where.java");
             doTest(fileName);
         }
     }
@@ -4477,18 +4477,18 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class VarArg extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInVarArg() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/varArg"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/varArg"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("ellipsisTypeSeveralParams.java")
         public void testEllipsisTypeSeveralParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/varArg/ellipsisTypeSeveralParams.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/varArg/ellipsisTypeSeveralParams.java");
             doTest(fileName);
         }
 
         @TestMetadata("ellipsisTypeSingleParams.java")
         public void testEllipsisTypeSingleParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/varArg/ellipsisTypeSingleParams.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/varArg/ellipsisTypeSingleParams.java");
             doTest(fileName);
         }
     }
@@ -4498,30 +4498,30 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WhileStatement extends AbstractJavaToKotlinConverterForWebDemoTest {
         public void testAllFilesPresentInWhileStatement() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/whileStatement"), Pattern.compile("^(.+)\\.java$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/whileStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
         @TestMetadata("whileWithBlock.java")
         public void testWhileWithBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("whileWithEmptyBlock.java")
         public void testWhileWithEmptyBlock() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithEmptyBlock.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithEmptyBlock.java");
             doTest(fileName);
         }
 
         @TestMetadata("whileWithExpression.java")
         public void testWhileWithExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithExpression.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithExpression.java");
             doTest(fileName);
         }
 
         @TestMetadata("whileWithReturn.java")
         public void testWhileWithReturn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithReturn.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/whileStatement/whileWithReturn.java");
             doTest(fileName);
         }
     }

@@ -20,12 +20,12 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 public abstract class AbstractKotlinGotoImplementationTest : LightCodeInsightTestCase() {
 
-    override fun getTestDataPath(): String = JetTestUtils.getHomeDirectory() + File.separator
+    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + File.separator
 
     override fun getProjectJDK(): Sdk = PluginTestCaseBase.mockJdk()
 

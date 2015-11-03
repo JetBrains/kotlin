@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.annotation;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,84 +32,84 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class AnnotationProcessorBoxTestGenerated extends AbstractAnnotationProcessorBoxTest {
     public void testAllFilesPresentInCollectToFile() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/annotation-collector/testData/collectToFile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/annotation-collector/testData/collectToFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("annotatedGettersSetters")
     public void testAnnotatedGettersSetters() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/annotatedGettersSetters/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/annotatedGettersSetters/");
         doTest(fileName);
     }
 
     @TestMetadata("annotationInSameFile")
     public void testAnnotationInSameFile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/annotationInSameFile/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/annotationInSameFile/");
         doTest(fileName);
     }
 
     @TestMetadata("anonymousClasses")
     public void testAnonymousClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/anonymousClasses/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/anonymousClasses/");
         doTest(fileName);
     }
 
     @TestMetadata("classAnnotations")
     public void testClassAnnotations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/classAnnotations/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/classAnnotations/");
         doTest(fileName);
     }
 
     @TestMetadata("constructors")
     public void testConstructors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/constructors/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/constructors/");
         doTest(fileName);
     }
 
     @TestMetadata("defaultPackage")
     public void testDefaultPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/defaultPackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/defaultPackage/");
         doTest(fileName);
     }
 
     @TestMetadata("fieldAnnotations")
     public void testFieldAnnotations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/fieldAnnotations/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/fieldAnnotations/");
         doTest(fileName);
     }
 
     @TestMetadata("inheritedSimple")
     public void testInheritedSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/inheritedSimple/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/inheritedSimple/");
         doTest(fileName);
     }
 
     @TestMetadata("inheritedTopLevel")
     public void testInheritedTopLevel() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/inheritedTopLevel/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/inheritedTopLevel/");
         doTest(fileName);
     }
 
     @TestMetadata("localClasses")
     public void testLocalClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/localClasses/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/localClasses/");
         doTest(fileName);
     }
 
     @TestMetadata("methodAnnotations")
     public void testMethodAnnotations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/methodAnnotations/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/methodAnnotations/");
         doTest(fileName);
     }
 
     @TestMetadata("nestedClasses")
     public void testNestedClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/nestedClasses/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/nestedClasses/");
         doTest(fileName);
     }
 
     @TestMetadata("platformStatic")
     public void testPlatformStatic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/platformStatic/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/platformStatic/");
         doTest(fileName);
     }
 }

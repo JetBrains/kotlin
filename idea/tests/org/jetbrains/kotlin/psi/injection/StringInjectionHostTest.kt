@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.junit.Assert.*
 import com.intellij.openapi.util.TextRange
 import java.util.HashMap
-import org.jetbrains.kotlin.test.JetLiteFixture
+import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.test.ConfigurationKind
 
-public class StringInjectionHostTest: JetLiteFixture() {
+public class StringInjectionHostTest: KotlinLiteFixture() {
     public fun testRegular() {
         with (quoted("")) {
             checkInjection("", mapOf(0 to 1))

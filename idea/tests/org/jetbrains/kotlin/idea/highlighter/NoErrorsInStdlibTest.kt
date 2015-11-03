@@ -23,15 +23,15 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {
+public class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
     public fun testNoErrors() {
         val root = myFixture.copyDirectoryToProject("../libraries/stdlib/src", "")
 
@@ -67,7 +67,7 @@ public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return object : JetJdkAndLibraryProjectDescriptor(File("dist/classes/builtins")) {
+        return object : KotlinJdkAndLibraryProjectDescriptor(File("dist/classes/builtins")) {
             override fun getSdk(): Sdk? = PluginTestCaseBase.fullJdk()
         }
     }

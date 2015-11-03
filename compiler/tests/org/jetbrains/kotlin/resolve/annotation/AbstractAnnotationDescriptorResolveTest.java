@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.test.JetLiteFixture;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinLiteFixture;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.io.File;
@@ -54,7 +54,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
-public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
+public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLiteFixture {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = DescriptorRenderer.Companion.withOptions(
             new Function1<DescriptorRendererOptions, Unit>() {
                 @Override
@@ -75,7 +75,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
+        return KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
     }
 
     protected void doTest(@NotNull String content, @NotNull String expectedAnnotation) {
@@ -337,8 +337,8 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
     @NotNull
     protected KtFile getFile(@NotNull String content) {
-        KtFile ktFile = JetTestUtils.createFile("dummy.kt", content, getProject());
-        AnalysisResult analysisResult = JetTestUtils.analyzeFile(ktFile, getEnvironment());
+        KtFile ktFile = KotlinTestUtils.createFile("dummy.kt", content, getProject());
+        AnalysisResult analysisResult = KotlinTestUtils.analyzeFile(ktFile, getEnvironment());
         context = analysisResult.getBindingContext();
 
         return ktFile;
@@ -358,7 +358,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFix
 
     protected static String getContent(@NotNull String annotationText) throws IOException {
         File file = new File(PATH);
-        return JetTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
+        return KotlinTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
     }
 
     private static String renderAnnotations(Annotations annotations, @Nullable final AnnotationUseSiteTarget defaultTarget) {

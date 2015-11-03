@@ -52,7 +52,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
 
         val environment = KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
-                JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
+                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project, environment.getModuleName())
@@ -72,7 +72,7 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
                 classDescriptor,
                 RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
-                JetTestUtils.replaceExtension(source, "txt")
+                KotlinTestUtils.replaceExtension(source, "txt")
         )
     }
 

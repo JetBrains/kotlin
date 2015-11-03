@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.build.android;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +32,12 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidJpsTestCaseGenerated extends AbstractAndroidJpsTestCase {
     public void testAllFilesPresentInAndroid() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-jps-plugin/testData/android"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-jps-plugin/testData/android"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-jps-plugin/testData/android/simple/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-jps-plugin/testData/android/simple/");
         doTest(fileName);
     }
 }

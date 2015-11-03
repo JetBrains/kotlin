@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.junit.Assert
 import junit.framework.AssertionFailedError
 
-public abstract class AbstractReferenceResolveInLibrarySourcesTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractReferenceResolveInLibrarySourcesTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         private val REF_CARET_MARKER = "<ref-caret>"
     }

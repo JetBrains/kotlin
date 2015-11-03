@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
 
-public class LiveTemplatesContextTest : JetLightCodeInsightFixtureTestCase() {
+public class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String =
             File(PluginTestCaseBase.getTestDataPathBase(), "/templates/context").getPath() + File.separator
 

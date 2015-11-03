@@ -48,7 +48,7 @@ public abstract class KotlinLiteFixture extends KotlinTestWithEnvironment {
     }
 
     protected String getTestDataPath() {
-        return JetTestUtils.getTestDataPathBase();
+        return KotlinTestUtils.getTestDataPathBase();
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class KotlinLiteFixture extends KotlinTestWithEnvironment {
     }
 
     protected String loadFile(@NonNls @TestDataFile String name) throws IOException {
-        return JetTestUtils.doLoadFile(myFullDataPath, name);
+        return KotlinTestUtils.doLoadFile(myFullDataPath, name);
     }
 
     protected KtFile createPsiFile(@Nullable String testName, @Nullable String fileName, String text) {
@@ -71,7 +71,7 @@ public abstract class KotlinLiteFixture extends KotlinTestWithEnvironment {
             Assert.assertNotNull(testName);
             fileName = testName + ".kt";
         }
-        return JetTestUtils.createFile(fileName, text, getProject());
+        return KotlinTestUtils.createFile(fileName, text, getProject());
     }
 
     protected KtFile loadPsiFile(String name) {

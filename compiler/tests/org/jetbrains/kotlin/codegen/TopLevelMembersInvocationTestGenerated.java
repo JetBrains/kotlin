@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,48 +32,48 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class TopLevelMembersInvocationTestGenerated extends AbstractTopLevelMembersInvocationTest {
     public void testAllFilesPresentInTopLevelMemberInvocation() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/topLevelMemberInvocation"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/topLevelMemberInvocation"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("extensionFunction")
     public void testExtensionFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/extensionFunction/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/extensionFunction/");
         doTest(fileName);
     }
 
     @TestMetadata("functionDifferentPackage")
     public void testFunctionDifferentPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/functionDifferentPackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/functionDifferentPackage/");
         doTest(fileName);
     }
 
     @TestMetadata("functionInMultiFilePackage")
     public void testFunctionInMultiFilePackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/functionInMultiFilePackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/functionInMultiFilePackage/");
         doTest(fileName);
     }
 
     @TestMetadata("functionSamePackage")
     public void testFunctionSamePackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/functionSamePackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/functionSamePackage/");
         doTest(fileName);
     }
 
     @TestMetadata("property")
     public void testProperty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/property/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/property/");
         doTest(fileName);
     }
 
     @TestMetadata("propertyWithGetter")
     public void testPropertyWithGetter() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/propertyWithGetter/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/propertyWithGetter/");
         doTest(fileName);
     }
 
     @TestMetadata("twoModules")
     public void testTwoModules() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/twoModules/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/topLevelMemberInvocation/twoModules/");
         doTest(fileName);
     }
 }

@@ -37,14 +37,14 @@ import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetLiteFixture;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinLiteFixture;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 import java.util.Map;
 import java.util.Set;
 
-public class TypeUnifierTest extends JetLiteFixture {
+public class TypeUnifierTest extends KotlinLiteFixture {
     private Set<TypeConstructor> variables;
 
     private KotlinBuiltIns builtIns;
@@ -62,7 +62,7 @@ public class TypeUnifierTest extends JetLiteFixture {
         super.setUp();
 
 
-        ModuleDescriptorImpl module = JetTestUtils.createEmptyModule();
+        ModuleDescriptorImpl module = KotlinTestUtils.createEmptyModule();
         builtIns = module.getBuiltIns();
         typeResolver = InjectionKt.createContainerForTests(getProject(), module).getTypeResolver();
         x = createTypeVariable("X");
@@ -212,7 +212,7 @@ public class TypeUnifierTest extends JetLiteFixture {
 
         KtTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;
-        KotlinType type = typeResolver.resolveType(TypeTestUtilsKt.asLexicalScope(withX), typeReference, JetTestUtils.DUMMY_TRACE, true);
+        KotlinType type = typeResolver.resolveType(TypeTestUtilsKt.asLexicalScope(withX), typeReference, KotlinTestUtils.DUMMY_TRACE, true);
 
         return new TypeProjectionImpl(getProjectionKind(typeStr, projection), type);
     }

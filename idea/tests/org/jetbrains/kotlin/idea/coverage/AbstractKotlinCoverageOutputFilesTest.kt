@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.idea.coverage
 
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
-public abstract class AbstractKotlinCoverageOutputFilesTest(): JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractKotlinCoverageOutputFilesTest(): KotlinLightCodeInsightFixtureTestCase() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/coverage/outputFiles"
 
     override fun getTestDataPath(): String? = TEST_DATA_PATH
@@ -41,7 +41,7 @@ public abstract class AbstractKotlinCoverageOutputFilesTest(): JetLightCodeInsig
             }
 
             val actualClasses = KotlinCoverageExtension.collectGeneratedClassQualifiedNames(outDir, kotlinFile)
-            JetTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.txt")), actualClasses!!.join("\n"))
+            KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.txt")), actualClasses!!.join("\n"))
         }
         finally {
             runWriteAction {

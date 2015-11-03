@@ -45,7 +45,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.frontend.di.InjectionKt.createLazyResolveSession;
 
 public class DefaultModalityModifiersTest extends KotlinLiteFixture {
-    private final JetDefaultModalityModifiersTestCase tc = new JetDefaultModalityModifiersTestCase();
+    private final DefaultModalityModifiersTestCase tc = new DefaultModalityModifiersTestCase();
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
@@ -64,7 +64,7 @@ public class DefaultModalityModifiersTest extends KotlinLiteFixture {
         super.tearDown();
     }
 
-    public class JetDefaultModalityModifiersTestCase  {
+    public class DefaultModalityModifiersTestCase {
         private final ModuleDescriptorImpl root = KotlinTestUtils.createEmptyModule("<test_root>");
         private DescriptorResolver descriptorResolver;
         private FunctionDescriptorResolver functionDescriptorResolver;

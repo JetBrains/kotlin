@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 import kotlin.test.assertEquals
@@ -50,7 +50,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
         for ((name, file) in expectedLayoutFiles) {
             val actualContents = actual[name]
             assertNotNull(actualContents, "File $name was not generated")
-            JetTestUtils.assertEqualsToFile(file, actualContents!!.contents)
+            KotlinTestUtils.assertEqualsToFile(file, actualContents!!.contents)
         }
     }
 
@@ -64,7 +64,7 @@ public abstract class AbstractAndroidXml2KConversionTest : UsefulTestCase() {
     }
 
     private fun getEnvironment(): KotlinCoreEnvironment {
-        val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API)
+        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API)
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 }

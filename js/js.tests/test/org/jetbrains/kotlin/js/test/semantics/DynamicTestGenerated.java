@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,126 +32,126 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class DynamicTestGenerated extends AbstractDynamicTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/dynamic/cases"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/dynamic/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("binaryOperations.kt")
     public void testBinaryOperations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/binaryOperations.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/binaryOperations.kt");
         doTest(fileName);
     }
 
     @TestMetadata("callGetMethod.kt")
     public void testCallGetMethod() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/callGetMethod.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/callGetMethod.kt");
         doTest(fileName);
     }
 
     @TestMetadata("callMethods.kt")
     public void testCallMethods() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/callMethods.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/callMethods.kt");
         doTest(fileName);
     }
 
     @TestMetadata("callSetMethod.kt")
     public void testCallSetMethod() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/callSetMethod.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/callSetMethod.kt");
         doTest(fileName);
     }
 
     @TestMetadata("compareTo.kt")
     public void testCompareTo() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/compareTo.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/compareTo.kt");
         doTest(fileName);
     }
 
     @TestMetadata("equals.kt")
     public void testEquals() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/equals.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/equals.kt");
         doTest(fileName);
     }
 
     @TestMetadata("getByBrackets.kt")
     public void testGetByBrackets() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/getByBrackets.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/getByBrackets.kt");
         doTest(fileName);
     }
 
     @TestMetadata("identityEquals.kt")
     public void testIdentityEquals() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/identityEquals.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/identityEquals.kt");
         doTest(fileName);
     }
 
     @TestMetadata("in.kt")
     public void testIn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/in.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/in.kt");
         doTest(fileName);
     }
 
     @TestMetadata("incrementAndDecrement.kt")
     public void testIncrementAndDecrement() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/incrementAndDecrement.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/incrementAndDecrement.kt");
         doTest(fileName);
     }
 
     @TestMetadata("infixCall.kt")
     public void testInfixCall() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/infixCall.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/infixCall.kt");
         doTest(fileName);
     }
 
     @TestMetadata("invoke.kt")
     public void testInvoke() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/invoke.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/invoke.kt");
         doTest(fileName);
     }
 
     @TestMetadata("is.kt")
     public void testIs() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/is.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/is.kt");
         doTest(fileName);
     }
 
     @TestMetadata("isJsPrimitiveType.kt")
     public void testIsJsPrimitiveType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/isJsPrimitiveType.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/isJsPrimitiveType.kt");
         doTest(fileName);
     }
 
     @TestMetadata("iterator.kt")
     public void testIterator() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/iterator.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/iterator.kt");
         doTest(fileName);
     }
 
     @TestMetadata("nameClashing.kt")
     public void testNameClashing() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/nameClashing.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/nameClashing.kt");
         doTest(fileName);
     }
 
     @TestMetadata("operationsWithAssignment.kt")
     public void testOperationsWithAssignment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/operationsWithAssignment.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/operationsWithAssignment.kt");
         doTest(fileName);
     }
 
     @TestMetadata("propertyAccess.kt")
     public void testPropertyAccess() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/propertyAccess.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/propertyAccess.kt");
         doTest(fileName);
     }
 
     @TestMetadata("setByBrackets.kt")
     public void testSetByBrackets() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/setByBrackets.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/setByBrackets.kt");
         doTest(fileName);
     }
 
     @TestMetadata("unaryOperations.kt")
     public void testUnaryOperations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/unaryOperations.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dynamic/cases/unaryOperations.kt");
         doTest(fileName);
     }
 }

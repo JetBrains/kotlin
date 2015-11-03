@@ -39,7 +39,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -83,7 +83,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/../dependencies/androidSDK");
         System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-21");
 
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
 
         super.setUp();
 
@@ -220,7 +220,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         Map listeners = (Map)listenersField.get(null);
         listeners.clear();
 
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
 
         myModule = null;
         myAdditionalModules = null;

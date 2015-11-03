@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.CliBaseTest;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -93,7 +93,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         File expectedFile = new File(testDataDir, baseName + ".expected");
         String normalizedContent = normalizeOutput(new File(testDataDir), content);
 
-        JetTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
+        KotlinTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
     }
 
     private static int runProcess(GeneralCommandLine commandLine, StringBuilder executionLog) throws ExecutionException {

@@ -21,7 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
@@ -73,14 +73,14 @@ public class SimpleTestMethodModel implements TestMethodModel {
 
     @Override
     public void generateBody(@NotNull Printer p) {
-        String filePath = JetTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
-        p.println("String fileName = JetTestUtils.navigationMetadata(\"", filePath, "\");");
+        String filePath = KotlinTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
+        p.println("String fileName = KotlinTestUtils.navigationMetadata(\"", filePath, "\");");
         p.println(doTestMethodName, "(fileName);");
     }
 
     @Override
     public String getDataString() {
-        return JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(rootDir, file)));
+        return KotlinTestUtils.getFilePath(new File(FileUtil.getRelativePath(rootDir, file)));
     }
 
     private boolean isIgnored() {

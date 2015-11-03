@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.completion.test;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,54 +32,54 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmWithLibBasicCompletionTestGenerated extends AbstractJvmWithLibBasicCompletionTest {
     public void testAllFilesPresentInWithLib() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/withLib"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/withLib"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
     @TestMetadata("NamedArgumentsJava.kt")
     public void testNamedArgumentsJava() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/NamedArgumentsJava.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/NamedArgumentsJava.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NamedArgumentsKotlin.kt")
     public void testNamedArgumentsKotlin() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/NamedArgumentsKotlin.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/NamedArgumentsKotlin.kt");
         doTest(fileName);
     }
 
     @TestMetadata("SamAdapter.kt")
     public void testSamAdapter() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/SamAdapter.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/SamAdapter.kt");
         doTest(fileName);
     }
 
     @TestMetadata("SamAdapterAndGenerics.kt")
     public void testSamAdapterAndGenerics() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/SamAdapterAndGenerics.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/SamAdapterAndGenerics.kt");
         doTest(fileName);
     }
 
     @TestMetadata("TopLevelNonImportedExtFun.kt")
     public void testTopLevelNonImportedExtFun() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/TopLevelNonImportedExtFun.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/TopLevelNonImportedExtFun.kt");
         doTest(fileName);
     }
 
     @TestMetadata("TopLevelNonImportedExtProp.kt")
     public void testTopLevelNonImportedExtProp() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/TopLevelNonImportedExtProp.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/TopLevelNonImportedExtProp.kt");
         doTest(fileName);
     }
 
     @TestMetadata("TopLevelNonImportedFun.kt")
     public void testTopLevelNonImportedFun() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/TopLevelNonImportedFun.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/TopLevelNonImportedFun.kt");
         doTest(fileName);
     }
 
     @TestMetadata("TopLevelNonImportedProperty.kt")
     public void testTopLevelNonImportedProperty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/TopLevelNonImportedProperty.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/withLib/TopLevelNonImportedProperty.kt");
         doTest(fileName);
     }
 }

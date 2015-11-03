@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.kdoc;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +32,12 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KDocHighlightingTestGenerated extends AbstractKDocHighlightingTest {
     public void testAllFilesPresentInHighlighting() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/highlighting"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/highlighting"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("UnresolvedReference.kt")
     public void testUnresolvedReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/highlighting/UnresolvedReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/highlighting/UnresolvedReference.kt");
         doTest(fileName);
     }
 }

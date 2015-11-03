@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 
@@ -34,7 +34,7 @@ public abstract class AbstractStubBuilderTest extends LightCodeInsightFixtureTes
         StubElement lighterTree = jetStubBuilder.buildStubTree(file);
         String stubTree = serializeStubToString(lighterTree);
         String expectedFile = sourcePath.replace(".kt", ".expected");
-        JetTestUtils.assertEqualsToFile(new File(expectedFile), stubTree);
+        KotlinTestUtils.assertEqualsToFile(new File(expectedFile), stubTree);
     }
 
     @NotNull

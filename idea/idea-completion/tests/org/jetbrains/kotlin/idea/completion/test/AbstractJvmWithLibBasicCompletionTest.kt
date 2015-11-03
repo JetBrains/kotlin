@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public abstract class AbstractJvmWithLibBasicCompletionTest : JetFixtureCompletionBaseTestCase() {
+public abstract class AbstractJvmWithLibBasicCompletionTest : KotlinFixtureCompletionBaseTestCase() {
     private val TEST_PATH = COMPLETION_TEST_DATA_BASE_PATH + "/basic/withLib"
 
     override fun getProjectDescriptor(): LightProjectDescriptor {

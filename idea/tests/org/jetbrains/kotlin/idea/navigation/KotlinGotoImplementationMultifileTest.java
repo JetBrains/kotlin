@@ -20,7 +20,7 @@ import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
@@ -77,7 +77,7 @@ public class KotlinGotoImplementationMultifileTest extends KotlinLightCodeInsigh
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return KotlinLightProjectDescriptor.INSTANCE;
     }
 
     private void doMultifileTest(String ... fileNames) throws Exception {

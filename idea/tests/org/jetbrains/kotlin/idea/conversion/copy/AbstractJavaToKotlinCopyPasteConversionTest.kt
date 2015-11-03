@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.test.assertEquals
 
@@ -33,7 +33,7 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopy
 
     override fun getTestDataPath() = BASE_PATH
 
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun setUp() {
         super.setUp()
@@ -69,6 +69,6 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopy
         assertEquals(noConversionExpected, !ConvertJavaCopyPastePostProcessor.conversionPerformed,
         if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested")
 
-        JetTestUtils.assertEqualsToFile(File(path.replace(".java", ".expected.kt")), myFixture.getFile().getText())
+        KotlinTestUtils.assertEqualsToFile(File(path.replace(".java", ".expected.kt")), myFixture.getFile().getText())
     }
 }

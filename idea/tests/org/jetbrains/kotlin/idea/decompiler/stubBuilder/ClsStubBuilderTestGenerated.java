@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,162 +32,162 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     public void testAllFilesPresentInStubBuilder() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/stubBuilder"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/stubBuilder"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("AnnotatedFlexibleTypes")
     public void testAnnotatedFlexibleTypes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotatedFlexibleTypes/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotatedFlexibleTypes/");
         doTest(fileName);
     }
 
     @TestMetadata("AnnotationClass")
     public void testAnnotationClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotationClass/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotationClass/");
         doTest(fileName);
     }
 
     @TestMetadata("Annotations")
     public void testAnnotations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Annotations/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Annotations/");
         doTest(fileName);
     }
 
     @TestMetadata("ClassMembers")
     public void testClassMembers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/ClassMembers/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/ClassMembers/");
         doTest(fileName);
     }
 
     @TestMetadata("ClassObject")
     public void testClassObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/ClassObject/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/ClassObject/");
         doTest(fileName);
     }
 
     @TestMetadata("Const")
     public void testConst() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Const/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Const/");
         doTest(fileName);
     }
 
     @TestMetadata("DataClass")
     public void testDataClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/DataClass/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/DataClass/");
         doTest(fileName);
     }
 
     @TestMetadata("Delegation")
     public void testDelegation() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Delegation/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Delegation/");
         doTest(fileName);
     }
 
     @TestMetadata("DependencyOnNestedClasses")
     public void testDependencyOnNestedClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/DependencyOnNestedClasses/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/DependencyOnNestedClasses/");
         doTest(fileName);
     }
 
     @TestMetadata("Enum")
     public void testEnum() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Enum/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Enum/");
         doTest(fileName);
     }
 
     @TestMetadata("FlexibleTypes")
     public void testFlexibleTypes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/FlexibleTypes/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/FlexibleTypes/");
         doTest(fileName);
     }
 
     @TestMetadata("InheritingClasses")
     public void testInheritingClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/InheritingClasses/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/InheritingClasses/");
         doTest(fileName);
     }
 
     @TestMetadata("LocalClass")
     public void testLocalClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/LocalClass/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/LocalClass/");
         doTest(fileName);
     }
 
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Modifiers/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Modifiers/");
         doTest(fileName);
     }
 
     @TestMetadata("MultifileClass")
     public void testMultifileClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/MultifileClass/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/MultifileClass/");
         doTest(fileName);
     }
 
     @TestMetadata("NamedCompanionObject")
     public void testNamedCompanionObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/NamedCompanionObject/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/NamedCompanionObject/");
         doTest(fileName);
     }
 
     @TestMetadata("NestedClasses")
     public void testNestedClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/NestedClasses/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/NestedClasses/");
         doTest(fileName);
     }
 
     @TestMetadata("Objects")
     public void testObjects() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Objects/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Objects/");
         doTest(fileName);
     }
 
     @TestMetadata("PrivateToThis")
     public void testPrivateToThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/PrivateToThis/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/PrivateToThis/");
         doTest(fileName);
     }
 
     @TestMetadata("Sealed")
     public void testSealed() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Sealed/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Sealed/");
         doTest(fileName);
     }
 
     @TestMetadata("SecondaryConstructors")
     public void testSecondaryConstructors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/SecondaryConstructors/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/SecondaryConstructors/");
         doTest(fileName);
     }
 
     @TestMetadata("TopLevelMembersAnnotatedKt")
     public void testTopLevelMembersAnnotatedKt() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersAnnotatedKt/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersAnnotatedKt/");
         doTest(fileName);
     }
 
     @TestMetadata("TopLevelMembersKt")
     public void testTopLevelMembersKt() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersKt/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersKt/");
         doTest(fileName);
     }
 
     @TestMetadata("TypeBoundsAndDelegationSpecifiers")
     public void testTypeBoundsAndDelegationSpecifiers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeBoundsAndDelegationSpecifiers/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeBoundsAndDelegationSpecifiers/");
         doTest(fileName);
     }
 
     @TestMetadata("TypeParams")
     public void testTypeParams() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeParams/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TypeParams/");
         doTest(fileName);
     }
 
     @TestMetadata("Types")
     public void testTypes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Types/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/Types/");
         doTest(fileName);
     }
 }

@@ -40,7 +40,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.test.JetTestUtils.*;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.*;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
 

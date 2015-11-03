@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
             fail("Expected data file does not exist. A new file created: " + txtFile);
         }
 
-        JetTestUtils.assertEqualsToFile(txtFile, actual);
+        KotlinTestUtils.assertEqualsToFile(txtFile, actual);
     }
 
     private static String moduleToString(@NotNull Module module) {

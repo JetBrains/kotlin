@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.navigation;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -33,65 +33,65 @@ import java.util.regex.Pattern;
 public class KotlinGotoImplementationTestGenerated extends AbstractKotlinGotoImplementationTest {
     @TestMetadata("AbstractClassImplementorsWithDeclaration.kt")
     public void testAbstractClassImplementorsWithDeclaration() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/AbstractClassImplementorsWithDeclaration.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/AbstractClassImplementorsWithDeclaration.kt");
         doTest(fileName);
     }
 
     public void testAllFilesPresentInImplementations() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/implementations"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/implementations"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
     @TestMetadata("ClassImplementorsWithDeclaration.kt")
     public void testClassImplementorsWithDeclaration() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/ClassImplementorsWithDeclaration.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/ClassImplementorsWithDeclaration.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ClassNavigation.kt")
     public void testClassNavigation() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/ClassNavigation.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/ClassNavigation.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConstructorPropertyOverriddenNavigation.kt")
     public void testConstructorPropertyOverriddenNavigation() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/ConstructorPropertyOverriddenNavigation.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/ConstructorPropertyOverriddenNavigation.kt");
         doTest(fileName);
     }
 
     @TestMetadata("EnumEntriesInheritance.kt")
     public void testEnumEntriesInheritance() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/EnumEntriesInheritance.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/EnumEntriesInheritance.kt");
         doTest(fileName);
     }
 
     @TestMetadata("FunctionOverrideNavigation.kt")
     public void testFunctionOverrideNavigation() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/FunctionOverrideNavigation.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/FunctionOverrideNavigation.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImplementGenericWithPrimitives.kt")
     public void testImplementGenericWithPrimitives() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/ImplementGenericWithPrimitives.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/ImplementGenericWithPrimitives.kt");
         doTest(fileName);
     }
 
     @TestMetadata("OverridesInEnumEntries.kt")
     public void testOverridesInEnumEntries() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/OverridesInEnumEntries.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/OverridesInEnumEntries.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PropertyOverriddenNavigation.kt")
     public void testPropertyOverriddenNavigation() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/PropertyOverriddenNavigation.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/PropertyOverriddenNavigation.kt");
         doTest(fileName);
     }
 
     @TestMetadata("TraitImplementorsWithDeclaration.kt")
     public void testTraitImplementorsWithDeclaration() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/navigation/implementations/TraitImplementorsWithDeclaration.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/implementations/TraitImplementorsWithDeclaration.kt");
         doTest(fileName);
     }
 }

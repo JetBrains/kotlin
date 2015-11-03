@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,30 +32,30 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeTextMultifileTestGenerated extends AbstractBytecodeTextTest {
     public void testAllFilesPresentInBytecodeTextMultifile() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeTextMultifile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeTextMultifile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("inlineJavaStaticFields")
     public void testInlineJavaStaticFields() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/inlineJavaStaticFields/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/inlineJavaStaticFields/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("javaStatics")
     public void testJavaStatics() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/javaStatics/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/javaStatics/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("partMembersCall")
     public void testPartMembersCall() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/partMembersCall/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/partMembersCall/");
         doTestMultiFile(fileName);
     }
 
     @TestMetadata("partMembersInline")
     public void testPartMembersInline() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/partMembersInline/");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeTextMultifile/partMembersInline/");
         doTestMultiFile(fileName);
     }
 }

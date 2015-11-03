@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
 
-public class KotlinLightClassInheritorTest : JetLightCodeInsightFixtureTestCase() {
+public class KotlinLightClassInheritorTest : KotlinLightCodeInsightFixtureTestCase() {
     public fun testAnnotation() {
         doTestInheritorByText("annotation class A", "java.lang.annotation.Annotation", false)
     }
@@ -54,5 +54,5 @@ public class KotlinLightClassInheritorTest : JetLightCodeInsightFixtureTestCase(
         Assert.assertTrue(psiClass.isInheritor(baseClass, checkDeep))
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
 }

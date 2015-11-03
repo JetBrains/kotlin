@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
 
@@ -82,17 +82,17 @@ public class CodegenTestFiles {
     }
 
     public static CodegenTestFiles create(Project project, String[] names) {
-        return create(project, names, JetTestUtils.getTestDataPathBase());
+        return create(project, names, KotlinTestUtils.getTestDataPathBase());
     }
 
     public static CodegenTestFiles create(Project project, String[] names, String testDataPath) {
         ArrayList<KtFile> files = new ArrayList<KtFile>();
         for (String name : names) {
             try {
-                String content = JetTestUtils.doLoadFile(testDataPath + "/codegen/", name);
+                String content = KotlinTestUtils.doLoadFile(testDataPath + "/codegen/", name);
                 int i = name.lastIndexOf('/');
                 //name = name.substring(i+1);
-                KtFile file = JetTestUtils.createFile(name, content, project);
+                KtFile file = KotlinTestUtils.createFile(name, content, project);
                 files.add(file);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -104,7 +104,7 @@ public class CodegenTestFiles {
     @NotNull
     public static CodegenTestFiles create(@NotNull String fileName, @NotNull String contentWithDiagnosticMarkup, @NotNull Project project) {
         String content = CheckerTestUtil.parseDiagnosedRanges(contentWithDiagnosticMarkup, new ArrayList<CheckerTestUtil.DiagnosedRange>());
-        KtFile file = JetTestUtils.createFile(fileName, content, project);
+        KtFile file = KotlinTestUtils.createFile(fileName, content, project);
         List<PsiErrorElement> ranges = AnalyzingUtils.getSyntaxErrorRanges(file);
         assert ranges.isEmpty() : "Syntax errors found in " + file + ": " + ranges;
 

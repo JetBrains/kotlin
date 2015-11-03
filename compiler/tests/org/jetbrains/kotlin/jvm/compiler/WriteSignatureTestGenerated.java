@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,108 +32,108 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     public void testAllFilesPresentInWriteSignature() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("ArrayOfCharSequence.kt")
     public void testArrayOfCharSequence() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/ArrayOfCharSequence.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/ArrayOfCharSequence.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ArrayOfInt.kt")
     public void testArrayOfInt() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/ArrayOfInt.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/ArrayOfInt.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Comparable.kt")
     public void testComparable() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/Comparable.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/Comparable.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Int.kt")
     public void testInt() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/Int.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/Int.kt");
         doTest(fileName);
     }
 
     @TestMetadata("IntArray.kt")
     public void testIntArray() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/IntArray.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/IntArray.kt");
         doTest(fileName);
     }
 
     @TestMetadata("IntQ.kt")
     public void testIntQ() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/IntQ.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/IntQ.kt");
         doTest(fileName);
     }
 
     @TestMetadata("jlString.kt")
     public void testJlString() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/jlString.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/jlString.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ListOfCharSequence.kt")
     public void testListOfCharSequence() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/ListOfCharSequence.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/ListOfCharSequence.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ListOfStar.kt")
     public void testListOfStar() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/ListOfStar.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/ListOfStar.kt");
         doTest(fileName);
     }
 
     @TestMetadata("MapEntry.kt")
     public void testMapEntry() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/MapEntry.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/MapEntry.kt");
         doTest(fileName);
     }
 
     @TestMetadata("MutableMapEntry.kt")
     public void testMutableMapEntry() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/MutableMapEntry.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/MutableMapEntry.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NonGeneric.kt")
     public void testNonGeneric() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/NonGeneric.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/NonGeneric.kt");
         doTest(fileName);
     }
 
     @TestMetadata("StarProjectionInClass.kt")
     public void testStarProjectionInClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionInClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionInClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("StarProjectionInSuper.kt")
     public void testStarProjectionInSuper() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionInSuper.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionInSuper.kt");
         doTest(fileName);
     }
 
     @TestMetadata("StarProjectionOutsideClass.kt")
     public void testStarProjectionOutsideClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionOutsideClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/StarProjectionOutsideClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("VarargCharSequence.kt")
     public void testVarargCharSequence() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/VarargCharSequence.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/VarargCharSequence.kt");
         doTest(fileName);
     }
 
     @TestMetadata("VarargGeneric.kt")
     public void testVarargGeneric() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/VarargGeneric.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/VarargGeneric.kt");
         doTest(fileName);
     }
 
@@ -142,30 +142,30 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractWriteSignatureTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("kArrayClassOfJClass.kt")
         public void testKArrayClassOfJClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kArrayClassOfJClass.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kArrayClassOfJClass.kt");
             doTest(fileName);
         }
 
         @TestMetadata("kArrayClassOfKClass.kt")
         public void testKArrayClassOfKClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kArrayClassOfKClass.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kArrayClassOfKClass.kt");
             doTest(fileName);
         }
 
         @TestMetadata("kClassBasic.kt")
         public void testKClassBasic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kClassBasic.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kClassBasic.kt");
             doTest(fileName);
         }
 
         @TestMetadata("kClassInt.kt")
         public void testKClassInt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kClassInt.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kClassInt.kt");
             doTest(fileName);
         }
     }
@@ -175,30 +175,30 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractWriteSignatureTest {
         public void testAllFilesPresentInConstructor() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Constructor0.kt")
         public void testConstructor0() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/constructor/Constructor0.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/constructor/Constructor0.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ConstructorCollectionParameter.kt")
         public void testConstructorCollectionParameter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/constructor/ConstructorCollectionParameter.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/constructor/ConstructorCollectionParameter.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ConstructorWithTypeParameter.kt")
         public void testConstructorWithTypeParameter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/constructor/ConstructorWithTypeParameter.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/constructor/ConstructorWithTypeParameter.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ConstructorWithTypeParameterAndValueParameterP.kt")
         public void testConstructorWithTypeParameterAndValueParameterP() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/constructor/ConstructorWithTypeParameterAndValueParameterP.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/constructor/ConstructorWithTypeParameterAndValueParameterP.kt");
             doTest(fileName);
         }
     }
@@ -208,144 +208,144 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeclarationSiteVariance extends AbstractWriteSignatureTest {
         public void testAllFilesPresentInDeclarationSiteVariance() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("FunctionTwoTypeParameters.kt")
         public void testFunctionTwoTypeParameters() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/FunctionTwoTypeParameters.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/FunctionTwoTypeParameters.kt");
             doTest(fileName);
         }
 
         @TestMetadata("InInInPosition.kt")
         public void testInInInPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InInInPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InInInPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("InInOutPosition.kt")
         public void testInInOutPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InInOutPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InInOutPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("InOfInInInPosition.kt")
         public void testInOfInInInPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InOfInInInPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InOfInInInPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("InOfInInOutPosition.kt")
         public void testInOfInInOutPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InOfInInOutPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InOfInInOutPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("InOfOutInInPosition.kt")
         public void testInOfOutInInPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InOfOutInInPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InOfOutInInPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("InOfOutInOutPosition.kt")
         public void testInOfOutInOutPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InOfOutInOutPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InOfOutInOutPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("MappedSupertypeWithVariance.kt")
         public void testMappedSupertypeWithVariance() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/MappedSupertypeWithVariance.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/MappedSupertypeWithVariance.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OutInField.kt")
         public void testOutInField() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutInField.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutInField.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OutInInPosition.kt")
         public void testOutInInPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutInInPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutInInPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OutInOutPosition.kt")
         public void testOutInOutPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutInOutPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutInOutPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OutOfInInInPosition.kt")
         public void testOutOfInInInPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutOfInInInPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutOfInInInPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OutOfInInOutPosition.kt")
         public void testOutOfInInOutPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutOfInInOutPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutOfInInOutPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OutOfOutInInPosition.kt")
         public void testOutOfOutInInPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutOfOutInInPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutOfOutInInPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OutOfOutInOutPosition.kt")
         public void testOutOfOutInOutPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutOfOutInOutPosition.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutOfOutInOutPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("PropertyGetterIn.kt")
         public void testPropertyGetterIn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertyGetterIn.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertyGetterIn.kt");
             doTest(fileName);
         }
 
         @TestMetadata("PropertyGetterOut.kt")
         public void testPropertyGetterOut() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertyGetterOut.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertyGetterOut.kt");
             doTest(fileName);
         }
 
         @TestMetadata("PropertyGetterTwoParams.kt")
         public void testPropertyGetterTwoParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertyGetterTwoParams.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertyGetterTwoParams.kt");
             doTest(fileName);
         }
 
         @TestMetadata("PropertySetterIn.kt")
         public void testPropertySetterIn() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertySetterIn.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertySetterIn.kt");
             doTest(fileName);
         }
 
         @TestMetadata("PropertySetterOut.kt")
         public void testPropertySetterOut() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertySetterOut.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/PropertySetterOut.kt");
             doTest(fileName);
         }
 
         @TestMetadata("SuperClassWithVariance.kt")
         public void testSuperClassWithVariance() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/SuperClassWithVariance.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/SuperClassWithVariance.kt");
             doTest(fileName);
         }
 
         @TestMetadata("SuperTraitWithVariance.kt")
         public void testSuperTraitWithVariance() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/SuperTraitWithVariance.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/SuperTraitWithVariance.kt");
             doTest(fileName);
         }
 
         @TestMetadata("SuperTypeWithVarianceInArguments.kt")
         public void testSuperTypeWithVarianceInArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/SuperTypeWithVarianceInArguments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/SuperTypeWithVarianceInArguments.kt");
             doTest(fileName);
         }
     }
@@ -355,18 +355,18 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nothing extends AbstractWriteSignatureTest {
         public void testAllFilesPresentInNothing() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/nothing"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/nothing"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("nothing.kt")
         public void testNothing() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/nothing/nothing.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/nothing/nothing.kt");
             doTest(fileName);
         }
 
         @TestMetadata("nullableNothing.kt")
         public void testNullableNothing() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/nothing/nullableNothing.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/nothing/nullableNothing.kt");
             doTest(fileName);
         }
     }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.completion.test.handlers;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -33,137 +33,137 @@ import java.util.regex.Pattern;
 public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordCompletionHandlerTest {
     @TestMetadata("AddCompanionToObject.kt")
     public void testAddCompanionToObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/AddCompanionToObject.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/AddCompanionToObject.kt");
         doTest(fileName);
     }
 
     public void testAllFilesPresentInKeywords() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("Break.kt")
     public void testBreak() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Break.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Break.kt");
         doTest(fileName);
     }
 
     @TestMetadata("CompanionObject.kt")
     public void testCompanionObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/CompanionObject.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/CompanionObject.kt");
         doTest(fileName);
     }
 
     @TestMetadata("FileKeyword.kt")
     public void testFileKeyword() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/FileKeyword.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/FileKeyword.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Getter1.kt")
     public void testGetter1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Getter1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Getter1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Getter2.kt")
     public void testGetter2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Getter2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Getter2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NoSpaceAfterNull.kt")
     public void testNoSpaceAfterNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/NoSpaceAfterNull.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/NoSpaceAfterNull.kt");
         doTest(fileName);
     }
 
     @TestMetadata("QualifiedReturnNonUnit.kt")
     public void testQualifiedReturnNonUnit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/QualifiedReturnNonUnit.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/QualifiedReturnNonUnit.kt");
         doTest(fileName);
     }
 
     @TestMetadata("QualifiedReturnNonUnitExplicit.kt")
     public void testQualifiedReturnNonUnitExplicit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/QualifiedReturnNonUnitExplicit.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/QualifiedReturnNonUnitExplicit.kt");
         doTest(fileName);
     }
 
     @TestMetadata("QualifiedReturnUnit.kt")
     public void testQualifiedReturnUnit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/QualifiedReturnUnit.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/QualifiedReturnUnit.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ReturnEmptyList.kt")
     public void testReturnEmptyList() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnEmptyList.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnEmptyList.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ReturnInEmptyType.kt")
     public void testReturnInEmptyType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInEmptyType.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInEmptyType.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ReturnInProperty.kt")
     public void testReturnInProperty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInProperty.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInProperty.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ReturnInTypeFunction.kt")
     public void testReturnInTypeFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInTypeFunction.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInTypeFunction.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ReturnInUnit.kt")
     public void testReturnInUnit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInUnit.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnInUnit.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ReturnNull.kt")
     public void testReturnNull() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnNull.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnNull.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Setter1.kt")
     public void testSetter1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Setter1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Setter1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Setter2.kt")
     public void testSetter2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Setter2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Setter2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("SpaceAfterImport.kt")
     public void testSpaceAfterImport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/SpaceAfterImport.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/SpaceAfterImport.kt");
         doTest(fileName);
     }
 
     @TestMetadata("UseSiteAnnotationTarget1.kt")
     public void testUseSiteAnnotationTarget1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("UseSiteAnnotationTarget2.kt")
     public void testUseSiteAnnotationTarget2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("UseSiteAnnotationTarget3.kt")
     public void testUseSiteAnnotationTarget3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget3.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/UseSiteAnnotationTarget3.kt");
         doTest(fileName);
     }
 }

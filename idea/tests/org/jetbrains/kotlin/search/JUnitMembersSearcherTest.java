@@ -23,7 +23,7 @@ import com.intellij.psi.search.searches.AnnotatedMembersSearch;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     private static final LightProjectDescriptor junitProjectDescriptor =
-            new JetJdkAndLibraryProjectDescriptor(new File(PathManager.getHomePath().replace(File.separatorChar, '/') + "/lib/junit-4.12.jar"));
+            new KotlinJdkAndLibraryProjectDescriptor(new File(PathManager.getHomePath().replace(File.separatorChar, '/') + "/lib/junit-4.12.jar"));
 
     public void testJunit3() throws IOException {
         doJUnit3test();

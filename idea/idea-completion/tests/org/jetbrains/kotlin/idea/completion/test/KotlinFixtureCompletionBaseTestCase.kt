@@ -20,11 +20,11 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import java.io.File
 
-public abstract class KotlinFixtureCompletionBaseTestCase : JetLightCodeInsightFixtureTestCase() {
+public abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtureTestCase() {
     public abstract fun getPlatform(): TargetPlatform
 
     protected open fun complete(completionType: CompletionType, invocationCount: Int): Array<LookupElement>?

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,84 +32,84 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class HighlightingTestGenerated extends AbstractHighlightingTest {
     public void testAllFilesPresentInHighlighter() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("Annotations.kt")
     public void testAnnotations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Annotations.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Annotations.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Dynamic.kt")
     public void testDynamic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Dynamic.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Dynamic.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Enums.kt")
     public void testEnums() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Enums.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Enums.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Field.kt")
     public void testField() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Field.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Field.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Functions.kt")
     public void testFunctions() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Functions.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Functions.kt");
         doTest(fileName);
     }
 
     @TestMetadata("JavaTypes.kt")
     public void testJavaTypes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/JavaTypes.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/JavaTypes.kt");
         doTest(fileName);
     }
 
     @TestMetadata("KDoc.kt")
     public void testKDoc() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/KDoc.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/KDoc.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Labels.kt")
     public void testLabels() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Labels.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Labels.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Object.kt")
     public void testObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Object.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Object.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Todo.kt")
     public void testTodo() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Todo.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Todo.kt");
         doTest(fileName);
     }
 
     @TestMetadata("TypesAndAnnotations.kt")
     public void testTypesAndAnnotations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/TypesAndAnnotations.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/TypesAndAnnotations.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Variables.kt")
     public void testVariables() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Variables.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Variables.kt");
         doTest(fileName);
     }
 
     @TestMetadata("VariablesAsFunctions.kt")
     public void testVariablesAsFunctions() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/VariablesAsFunctions.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/VariablesAsFunctions.kt");
         doTest(fileName);
     }
 
@@ -118,96 +118,96 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Deprecated extends AbstractHighlightingTest {
         public void testAllFilesPresentInDeprecated() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Class.kt")
         public void testClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Class.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Class.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ClassObject.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ClassObject.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ExtensionFunction.kt")
         public void testExtensionFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ExtensionFunction.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/ExtensionFunction.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Function.kt")
         public void testFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Function.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Function.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Get.kt")
         public void testGet() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Get.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Get.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Getter.kt")
         public void testGetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Getter.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Getter.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Inc.kt")
         public void testInc() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Inc.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Inc.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Invalid.kt")
         public void testInvalid() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Invalid.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Invalid.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Invoke.kt")
         public void testInvoke() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Invoke.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Invoke.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Operation.kt")
         public void testOperation() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Operation.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Operation.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Property.kt")
         public void testProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Property.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Property.kt");
             doTest(fileName);
         }
 
         @TestMetadata("RangeTo.kt")
         public void testRangeTo() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/RangeTo.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/RangeTo.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Setter.kt")
         public void testSetter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Setter.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Setter.kt");
             doTest(fileName);
         }
 
         @TestMetadata("SuperCall.kt")
         public void testSuperCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/SuperCall.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/SuperCall.kt");
             doTest(fileName);
         }
 
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Trait.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/deprecated/Trait.kt");
             doTest(fileName);
         }
     }

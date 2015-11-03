@@ -55,8 +55,8 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
@@ -70,7 +70,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractFindUsagesTest extends JetLightCodeInsightFixtureTestCase {
+public abstract class AbstractFindUsagesTest extends KotlinLightCodeInsightFixtureTestCase {
 
     public static final UsageViewPresentation USAGE_VIEW_PRESENTATION = new UsageViewPresentation();
 
@@ -282,7 +282,7 @@ public abstract class AbstractFindUsagesTest extends JetLightCodeInsightFixtureT
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @Override

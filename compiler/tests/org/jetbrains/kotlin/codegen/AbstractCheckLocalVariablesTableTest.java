@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.org.objectweb.asm.*;
 
@@ -54,7 +54,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
+        jetCoreEnvironment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
     }
 
     @Override
@@ -67,7 +67,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         ktFile = new File(ktFileName);
         String text = FileUtil.loadFile(ktFile, true);
 
-        KtFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
+        KtFile psiFile = KotlinTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
 
         OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment);
 
@@ -95,7 +95,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         ClassReader cr = new ClassReader(outputFile.asByteArray());
         List<LocalVariable> actualLocalVariables = readLocalVariable(cr, methodName);
 
-        JetTestUtils.assertEqualsToFile(ktFile, text.substring(0, text.indexOf("// VARIABLE : ")) + getActualVariablesAsString(actualLocalVariables));
+        KotlinTestUtils.assertEqualsToFile(ktFile, text.substring(0, text.indexOf("// VARIABLE : ")) + getActualVariablesAsString(actualLocalVariables));
     }
 
     private static String getActualVariablesAsString(List<LocalVariable> list) {

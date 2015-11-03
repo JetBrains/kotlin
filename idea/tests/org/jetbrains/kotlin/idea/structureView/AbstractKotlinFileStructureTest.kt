@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.structureView
 
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import com.intellij.util.ui.tree.TreeUtil
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
@@ -25,12 +25,12 @@ import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure
 import com.intellij.ide.util.FileStructurePopup
 import com.intellij.ide.actions.ViewStructureAction
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.ui.Queryable.PrintInfo
 import org.jetbrains.kotlin.test.util.configureWithExtraFile
 
-public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractKotlinFileStructureTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/structureView/fileStructure"
 
     public fun doTest(path: String) {
@@ -49,7 +49,7 @@ public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtu
 
         val printInfo = PrintInfo(arrayOf("text"), arrayOf("location"))
         val popupText = StructureViewUtil.print(popup.getTree(), false, printInfo, null)
-        JetTestUtils.assertEqualsToFile(File("${FileUtil.getNameWithoutExtension(path)}.after"), popupText)
+        KotlinTestUtils.assertEqualsToFile(File("${FileUtil.getNameWithoutExtension(path)}.after"), popupText)
     }
 
     protected fun FileStructurePopup.setup() {

@@ -21,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetLiteFixture;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinLiteFixture;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
+public abstract class ExtensibleResolveTestCase extends KotlinLiteFixture {
     private ExpectedResolveData expectedResolveData;
 
     @Override
@@ -52,8 +52,8 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
 
     protected void doTest(@NonNls String filePath) throws Exception {
         File file = new File(filePath);
-        String text = JetTestUtils.doLoadFile(file);
-        List<KtFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactoryNoModules<KtFile>() {
+        String text = KotlinTestUtils.doLoadFile(file);
+        List<KtFile> files = KotlinTestUtils.createTestFiles("file.kt", text, new KotlinTestUtils.TestFileFactoryNoModules<KtFile>() {
             @NotNull
             @Override
             public KtFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {

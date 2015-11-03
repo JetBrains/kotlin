@@ -26,7 +26,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
@@ -48,12 +48,12 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
         val expectedText = stubTreeFromDecompiledText.serializeToString()
         Assert.assertEquals(expectedText, stubTreeFromCls.serializeToString())
         if (txtFile != null) {
-            JetTestUtils.assertEqualsToFile(txtFile, expectedText)
+            KotlinTestUtils.assertEqualsToFile(txtFile, expectedText)
         }
     }
 
     private fun getClassFileToDecompile(sourcePath: String): VirtualFile {
-        val outDir = JetTestUtils.tmpDir("libForStubTest-" + sourcePath)
+        val outDir = KotlinTestUtils.tmpDir("libForStubTest-" + sourcePath)
         MockLibraryUtil.compileKotlin(sourcePath, outDir)
         val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outDir)!!
         return root.findClassFileByName(lastSegment(sourcePath))
@@ -64,7 +64,7 @@ public abstract class AbstractClsStubBuilderTest : LightCodeInsightFixtureTestCa
     }
 }
 
-internal fun StubElement<out PsiElement>.serializeToString(): String {
+fun StubElement<out PsiElement>.serializeToString(): String {
     return AbstractStubBuilderTest.serializeStubToString(this)
 }
 

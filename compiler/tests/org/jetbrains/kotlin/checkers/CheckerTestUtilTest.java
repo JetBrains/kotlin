@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetLiteFixture;
+import org.jetbrains.kotlin.test.KotlinLiteFixture;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public class CheckerTestUtilTest extends JetLiteFixture {
+public class CheckerTestUtilTest extends KotlinLiteFixture {
 
     public CheckerTestUtilTest() {
         super("diagnostics/checkerTestUtil");
@@ -129,7 +129,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
     }
 
     public void testAbstractJetDiagnosticsTest() throws Exception {
-        AbstractJetDiagnosticsTest test = new AbstractJetDiagnosticsTest() {
+        AbstractDiagnosticsTest test = new AbstractDiagnosticsTest() {
             {setUp();}
         };
         test.doTest(myFullDataPath + File.separatorChar + "test_with_diagnostic.kt");

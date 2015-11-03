@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironmentManagement
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
@@ -36,7 +36,7 @@ import kotlin.test.assertTrue
 
 public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     fun testAbsentClass() {
-        val tmpdir = JetTestUtils.tmpDirForTest(this)
+        val tmpdir = KotlinTestUtils.tmpDirForTest(this)
 
         val environment = createEnvironment(tmpdir)
         val project = environment.project
@@ -47,8 +47,8 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     }
 
     fun testNestedClass() {
-        val tmpdir = JetTestUtils.tmpDirForTest(this)
-        JetTestUtils.compileKotlinWithJava(
+        val tmpdir = KotlinTestUtils.tmpDirForTest(this)
+        KotlinTestUtils.compileKotlinWithJava(
                 listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, getTestRootDisposable()!!, null
         )
 
@@ -68,7 +68,7 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
 
     private fun createEnvironment(tmpdir: File?): KotlinCoreEnvironment {
         val environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!,
-                                                               JetTestUtils.compilerConfigurationForTests(
+                                                               KotlinTestUtils.compilerConfigurationForTests(
                                                                        ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                                                                EnvironmentConfigFiles.JVM_CONFIG_FILES)
 

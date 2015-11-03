@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import java.io.File
 
-abstract class AbstractIdeLightClassTest : JetLightCodeInsightFixtureTestCase() {
+abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun doTest(testDataPath: String) {
         myFixture.configureByFile(testDataPath)
@@ -42,5 +42,5 @@ abstract class AbstractIdeLightClassTest : JetLightCodeInsightFixtureTestCase() 
         )
     }
 
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

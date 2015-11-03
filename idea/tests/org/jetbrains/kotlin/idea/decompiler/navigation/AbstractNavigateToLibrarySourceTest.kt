@@ -25,7 +25,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.test.*
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.LinkedHashMap
 
@@ -56,7 +56,7 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
     }
 
     override fun getTestDataPath(): String =
-            JetTestUtils.getHomeDirectory() + File.separator
+            KotlinTestUtils.getHomeDirectory() + File.separator
 
     private fun checkAnnotatedLibraryCode(forceResolve: Boolean) {
         SourceNavigationHelper.setForceResolve(forceResolve)
@@ -104,9 +104,9 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
     private fun getExpectedAnnotatedLibraryCode(): String {
         val document = getDocument(getFile())
         TestCase.assertNotNull(document)
-        return JetTestUtils.getLastCommentedLines(document)
+        return KotlinTestUtils.getLastCommentedLines(document)
     }
 
-    private fun getProjectDescriptor(): JetLightProjectDescriptor =
+    private fun getProjectDescriptor(): KotlinLightProjectDescriptor =
             JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", true)
 }

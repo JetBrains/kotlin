@@ -21,10 +21,10 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.codeInsight.highlighting.actions.HighlightUsagesAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.ExpectedHighlightingData
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 
-public abstract class AbstractUsageHighlightingTest: JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractUsageHighlightingTest: KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         // Not standard <caret> to leave it in text after configureByFile and remove manually after collecting highlighting information
         val CARET_TAG = "~"
@@ -63,6 +63,6 @@ public abstract class AbstractUsageHighlightingTest: JetLightCodeInsightFixtureT
 
 
 
-    override fun getProjectDescriptor() = JetLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
     override fun getTestDataPath() = ""
 }

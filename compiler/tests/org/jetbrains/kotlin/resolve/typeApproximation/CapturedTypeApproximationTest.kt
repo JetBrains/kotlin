@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.typeApproximation
 
-import org.jetbrains.kotlin.test.JetLiteFixture
+import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public class CapturedTypeApproximationTest() : JetLiteFixture() {
+public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
 
     override fun getTestDataPath() = "compiler/testData/capturedTypeApproximation/"
 
@@ -47,7 +47,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
         assert(substitutions.size() in 1..2) { "Captured type approximation test requires substitutions for (T) or (T, R)" }
         val oneTypeVariable = substitutions.size() == 1
 
-        val declarationsText = JetTestUtils.doLoadFile(File(getTestDataPath() + "/declarations.kt"))
+        val declarationsText = KotlinTestUtils.doLoadFile(File(getTestDataPath() + "/declarations.kt"))
 
         fun analyzeTestFile(testType: String) = run {
             val test = declarationsText.replace("#TestType#", testType)
@@ -124,7 +124,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
             }
         }
 
-        JetTestUtils.assertEqualsToFile(File(getTestDataPath() + "/" + filePath), result.toString())
+        KotlinTestUtils.assertEqualsToFile(File(getTestDataPath() + "/" + filePath), result.toString())
     }
 
     private fun getTypePatternsForOneTypeVariable() = listOf("In<#T#>", "Out<#T#>", "Inv<#T#>", "Inv<in #T#>", "Inv<out #T#>")

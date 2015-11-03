@@ -26,7 +26,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.io.File
 
-public abstract class AbstractKotlinSourceInJavaCompletionTest : JetFixtureCompletionBaseTestCase() {
+public abstract class AbstractKotlinSourceInJavaCompletionTest : KotlinFixtureCompletionBaseTestCase() {
     override fun getPlatform() = JvmPlatform
 
     override fun doTest(testPath: String) {

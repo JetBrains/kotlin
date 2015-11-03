@@ -20,12 +20,12 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 
 val RELATIVE_COMPLETION_TEST_DATA_BASE_PATH = "idea/idea-completion/testData"
 
-val COMPLETION_TEST_DATA_BASE_PATH = JetTestUtils.getHomeDirectory() + "/" + RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
+val COMPLETION_TEST_DATA_BASE_PATH = KotlinTestUtils.getHomeDirectory() + "/" + RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
 
 fun testCompletion(fileText: String, platform: TargetPlatform?, complete: (CompletionType, Int) -> Array<LookupElement>?, defaultCompletionType: CompletionType = CompletionType.BASIC, defaultInvocationCount: Int = 0) {
     testWithAutoCompleteSetting(fileText) {

@@ -88,13 +88,13 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
         val testName = StringUtil.toLowerCase(getTestName(false))
 
         if (testName.endsWith("runtime")) {
-            return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+            return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
         }
         else if (testName.endsWith("stdlib")) {
             return ProjectDescriptorWithStdlibSources.INSTANCE
         }
 
-        return JetLightProjectDescriptor.INSTANCE
+        return KotlinLightProjectDescriptor.INSTANCE
     }
 
     protected fun getProjectDescriptorFromFileDirective(): LightProjectDescriptor {
@@ -110,7 +110,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
                     return ProjectDescriptorWithStdlibSources.INSTANCE
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME")) {
-                    return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
                 }
                 else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
                     return KotlinStdJSProjectDescriptor.instance
@@ -121,7 +121,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
             }
         }
 
-        return JetLightProjectDescriptor.INSTANCE
+        return KotlinLightProjectDescriptor.INSTANCE
     }
 
     protected fun isAllFilesPresentInTest(): Boolean

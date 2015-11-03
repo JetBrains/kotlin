@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -71,7 +71,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 FilesKt.readText(new File(filename), Charsets.UTF_8), "NO_KOTLIN_REFLECT"
         ) ? ConfigurationKind.NO_KOTLIN_REFLECT : ConfigurationKind.ALL;
 
-        myEnvironment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+        myEnvironment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                 getTestRootDisposable(), configurationKind, getTestJdkKind(filename)
         );
 
@@ -118,8 +118,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
-                JetTestUtils.compilerConfigurationForTests(
-                        ConfigurationKind.ALL, getTestJdkKind(ktFileFullPath), JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory
+                KotlinTestUtils.compilerConfigurationForTests(
+                        ConfigurationKind.ALL, getTestJdkKind(ktFileFullPath), KotlinTestUtils.getAnnotationsJar(), javaClassesTempDirectory
                 ),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
@@ -147,8 +147,8 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             }
         });
 
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar()
+        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar()
         );
         JvmContentRootsKt.addJavaSourceRoot(configuration, dirFile);
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -156,7 +156,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         classFileFactory =
                 GenerationUtils.compileManyFilesGetGenerationStateForTest(myEnvironment.getProject(), myFiles.getPsiFiles(),
                                                                           new JvmPackagePartProvider(myEnvironment)).getFactory();
-        File kotlinOut = JetTestUtils.tmpDir(toString());
+        File kotlinOut = KotlinTestUtils.tmpDir(toString());
         OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
 
         List<String> javacOptions = new ArrayList<String>(0);

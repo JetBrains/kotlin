@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.android;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,42 +32,42 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ParserResultEqualityTestGenerated extends AbstractParserResultEqualityTest {
     public void testAllFilesPresentInParserResultEquality() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-idea-plugin/testData/android/parserResultEquality"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-idea-plugin/testData/android/parserResultEquality"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/fqNameInAttr/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/fqNameInAttr/");
         doTest(fileName);
     }
 
     @TestMetadata("fqNameInTag")
     public void testFqNameInTag() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/fqNameInTag/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/fqNameInTag/");
         doTest(fileName);
     }
 
     @TestMetadata("multiFile")
     public void testMultiFile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/multiFile/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/multiFile/");
         doTest(fileName);
     }
 
     @TestMetadata("noIds")
     public void testNoIds() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/noIds/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/noIds/");
         doTest(fileName);
     }
 
     @TestMetadata("nolayout")
     public void testNolayout() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/nolayout/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/nolayout/");
         doTest(fileName);
     }
 
     @TestMetadata("singleFile")
     public void testSingleFile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/singleFile/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/parserResultEquality/singleFile/");
         doTest(fileName);
     }
 }

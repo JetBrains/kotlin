@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
-public abstract class AbstractKDocTypingTest : JetLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String = JetTestUtils.getHomeDirectory()
-    override fun getProjectDescriptor() = JetLightProjectDescriptor.INSTANCE
+public abstract class AbstractKDocTypingTest : KotlinLightCodeInsightFixtureTestCase() {
+    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory()
+    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     protected fun doTest(fileName: String) {
         myFixture.configureByFile(fileName)

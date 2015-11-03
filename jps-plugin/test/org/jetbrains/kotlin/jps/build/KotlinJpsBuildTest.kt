@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -679,7 +679,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 .map { "${it.messageText} at line ${it.line}, column ${it.column}" }.sorted().joinToString("\n")
         val projectRoot = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/" + getTestName(false))
         val expectedFile = File(projectRoot, "errors.txt")
-        JetTestUtils.assertEqualsToFile(expectedFile, actualErrors)
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actualErrors)
     }
 
     private fun buildCustom(canceledStatus: CanceledStatus, logger: TestProjectBuilderLogger,buildResult: BuildResult) {

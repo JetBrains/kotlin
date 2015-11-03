@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,30 +32,30 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToKotlinConverterMultiFileTest {
     public void testAllFilesPresentInMultiFile() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("FieldToProperty")
     public void testFieldToProperty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("j2k/testData/multiFile/FieldToProperty/");
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/FieldToProperty/");
         doTest(fileName);
     }
 
     @TestMetadata("GetterAndSetterUsages")
     public void testGetterAndSetterUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("j2k/testData/multiFile/GetterAndSetterUsages/");
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/GetterAndSetterUsages/");
         doTest(fileName);
     }
 
     @TestMetadata("ToCompanionObject")
     public void testToCompanionObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("j2k/testData/multiFile/ToCompanionObject/");
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/ToCompanionObject/");
         doTest(fileName);
     }
 
     @TestMetadata("ToObject")
     public void testToObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("j2k/testData/multiFile/ToObject/");
+        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/ToObject/");
         doTest(fileName);
     }
 }

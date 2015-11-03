@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.checkers;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -30,26 +30,26 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/checker/js")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class JetJsCheckerTestGenerated extends AbstractJetJsCheckerTest {
+public class JsCheckerTestGenerated extends AbstractJsCheckerTest {
     public void testAllFilesPresentInJs() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/js"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/js"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("basic.kt")
     public void testBasic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/js/basic.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/js/basic.kt");
         doTest(fileName);
     }
 
     @TestMetadata("dynamic.kt")
     public void testDynamic() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/js/dynamic.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/js/dynamic.kt");
         doTest(fileName);
     }
 
     @TestMetadata("helloWorld.kt")
     public void testHelloWorld() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/js/helloWorld.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/js/helloWorld.kt");
         doTest(fileName);
     }
 }

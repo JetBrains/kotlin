@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.JetTestUtils.TestFileFactoryNoModules
+import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactoryNoModules
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
@@ -110,7 +110,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         val fileName = file.getName()
         when {
             fileName.endsWith(".java") -> {
-                val sources = JetTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
+                val sources = KotlinTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
                     override fun create(fileName: String, text: String, directives: Map<String, String>): File {
                         val targetFile = File(tmpdir, fileName)
                         targetFile.writeText(adaptJavaSource(text))
@@ -120,10 +120,10 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 LoadDescriptorUtil.compileJavaWithAnnotationsJar(sources, tmpdir)
             }
             fileName.endsWith(".kt") -> {
-                val environment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                         myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
-                val jetFile = JetTestUtils.createFile(file.getPath(), text, environment.project)
+                val jetFile = KotlinTestUtils.createFile(file.getPath(), text, environment.project)
                 GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile, environment).writeAllTo(tmpdir)
             }
         }

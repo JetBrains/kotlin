@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
@@ -68,13 +68,13 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
-                JetTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
-                                                           CollectionsKt.plus(classPath, JetTestUtils.getAnnotationsJar()), classPath),
+                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
+                                                              CollectionsKt.plus(classPath, KotlinTestUtils.getAnnotationsJar()), classPath),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
         loadFiles(ArrayUtil.toStringArray(sourceFiles));
 
-        List<OccurrenceInfo> expected = readExpectedOccurrences(JetTestUtils.getTestDataPathBase() + "/codegen/" + sourceFiles.get(0));
+        List<OccurrenceInfo> expected = readExpectedOccurrences(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + sourceFiles.get(0));
         countAndCompareActualOccurrences(expected);
     }
 }

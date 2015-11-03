@@ -26,11 +26,11 @@ import com.intellij.openapi.application.Result
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import kotlin.test.fail
 
-public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTestCase() {
+public abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCase() {
     protected val fixture: JavaCodeInsightTestFixture
         get() = myFixture
 
@@ -109,7 +109,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
         return foundElement
     }
 
-    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
+    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     protected fun selectItem(item: LookupElement?, completionChar: Char) {
         val lookup = (fixture.getLookup() as LookupImpl)

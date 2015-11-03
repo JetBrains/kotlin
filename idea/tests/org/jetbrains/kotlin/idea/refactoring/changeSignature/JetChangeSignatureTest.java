@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.*;
@@ -1600,7 +1600,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                 checkResultByFile(afterFilePath);
             }
             catch (ComparisonFailure e) {
-                JetTestUtils.assertEqualsToFile(new File(afterFilePath), getEditor());
+                KotlinTestUtils.assertEqualsToFile(new File(afterFilePath), getEditor());
             }
             if (checkErrorsAfter && currentFile instanceof KtFile) {
                 DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) currentFile);

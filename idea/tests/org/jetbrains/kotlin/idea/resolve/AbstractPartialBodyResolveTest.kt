@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import java.util.HashSet
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.junit.Assert
@@ -45,20 +45,20 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
-public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTestCase() {
+    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     public fun doTest(testPath: String) {
         val dumpNormal = dump(testPath, BodyResolveMode.PARTIAL)
 
         val testPathNoExt = FileUtil.getNameWithoutExtension(testPath)
-        JetTestUtils.assertEqualsToFile(File(testPathNoExt + ".dump"), dumpNormal)
+        KotlinTestUtils.assertEqualsToFile(File(testPathNoExt + ".dump"), dumpNormal)
 
         val dumpForCompletion = dump(testPath, BodyResolveMode.PARTIAL_FOR_COMPLETION)
         val completionDump = File(testPathNoExt + ".completion")
         if (dumpForCompletion != dumpNormal) {
-            JetTestUtils.assertEqualsToFile(completionDump, dumpForCompletion)
+            KotlinTestUtils.assertEqualsToFile(completionDump, dumpForCompletion)
         }
         else {
             Assert.assertFalse(completionDump.exists())

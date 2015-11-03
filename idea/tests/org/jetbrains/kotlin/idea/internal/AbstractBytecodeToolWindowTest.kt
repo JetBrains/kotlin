@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.idea.internal
 
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractBytecodeToolWindowTest: JetLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+public abstract class AbstractBytecodeToolWindowTest: KotlinLightCodeInsightFixtureTestCase() {
+    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     public fun doTest(testPath: String) {
         val mainDir = File(testPath)

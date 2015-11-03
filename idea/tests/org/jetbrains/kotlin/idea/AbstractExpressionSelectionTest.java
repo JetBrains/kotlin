@@ -22,13 +22,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTestCase {
 
     public void doTestExpressionSelection(@NotNull String path) throws Exception {
         configureByFile(path);
-        final String expectedExpression = JetTestUtils.getLastCommentInFile((KtFile) getFile());
+        final String expectedExpression = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
         try {
             JetRefactoringUtil.selectExpression(getEditor(), getFile(), new JetRefactoringUtil.SelectExpressionCallback() {

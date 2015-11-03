@@ -33,13 +33,13 @@ import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.highlighter.markers.SuperDeclarationMarkerNavigationHandler;
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.ReferenceUtils;
 import org.jetbrains.kotlin.test.TagsTestDataUtil;
 import org.junit.Assert;
@@ -49,7 +49,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixtureTestCase {
+public abstract class AbstractLineMarkersTest extends KotlinLightCodeInsightFixtureTestCase {
 
     private static final String LINE_MARKER_PREFIX = "LINEMARKER:";
     private static final String TARGETS_PREFIX = "TARGETS";
@@ -62,7 +62,7 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     public void doTest(String path) {
@@ -96,7 +96,7 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
             catch (AssertionError error) {
                 try {
                     String actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.getFile().getText());
-                    JetTestUtils.assertEqualsToFile(new File(path), actualTextWithTestData);
+                    KotlinTestUtils.assertEqualsToFile(new File(path), actualTextWithTestData);
                 }
                 catch (FileComparisonFailure failure) {
                     throw new FileComparisonFailure(error.getMessage() + "\n" + failure.getMessage(),
@@ -114,8 +114,8 @@ public abstract class AbstractLineMarkersTest extends JetLightCodeInsightFixture
     }
 
     private void assertNavigationElements(List<LineMarkerInfo> markers) {
-        List<String> navigationDataComments = JetTestUtils.getLastCommentsInFile(
-                (KtFile) myFixture.getFile(), JetTestUtils.CommentType.BLOCK_COMMENT, false);
+        List<String> navigationDataComments = KotlinTestUtils.getLastCommentsInFile(
+                (KtFile) myFixture.getFile(), KotlinTestUtils.CommentType.BLOCK_COMMENT, false);
         if (navigationDataComments.isEmpty()) return;
 
         for (String navigationComment : navigationDataComments) {

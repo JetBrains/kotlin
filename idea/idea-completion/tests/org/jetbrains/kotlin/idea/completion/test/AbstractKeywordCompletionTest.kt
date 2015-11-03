@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.idea.completion.test
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.idea.completion.KeywordLookupObject
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public abstract class AbstractKeywordCompletionTest : JetFixtureCompletionBaseTestCase() {
+public abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCase() {
     override fun getPlatform() = JvmPlatform
 
     override fun defaultCompletionType() = CompletionType.BASIC
@@ -32,7 +32,7 @@ public abstract class AbstractKeywordCompletionTest : JetFixtureCompletionBaseTe
         return items.filter { it.`object` is KeywordLookupObject }.toTypedArray()
     }
 
-    override fun getProjectDescriptor() = JetLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     override fun defaultInvocationCount() = 1
 }

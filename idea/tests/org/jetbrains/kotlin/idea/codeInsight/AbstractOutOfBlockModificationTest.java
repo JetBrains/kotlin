@@ -22,14 +22,14 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
 import java.io.IOException;
 
-public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeInsightFixtureTestCase {
+public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCodeInsightFixtureTestCase {
     @Override
     public void setUp() {
         super.setUp();

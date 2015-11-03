@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 
@@ -72,7 +72,7 @@ public abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase()
                        assert(conflictFile == null) { "Conflict file $conflictFile should not exist" }
                    }
                    catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
-                       JetTestUtils.assertEqualsToFile(File(conflictFile!!.path), e.getMessage()!!)
+                       KotlinTestUtils.assertEqualsToFile(File(conflictFile!!.path), e.getMessage()!!)
                    }
                    finally {
                        PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()

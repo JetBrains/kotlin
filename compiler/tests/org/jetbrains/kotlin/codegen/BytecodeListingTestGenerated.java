@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +32,12 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     public void testAllFilesPresentInBytecodeListing() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("defaultImpls.kt")
     public void testDefaultImpls() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
         doTest(fileName);
     }
 
@@ -46,36 +46,36 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractBytecodeListingTest {
         public void testAllFilesPresentInAnnotations() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("defaultTargets.kt")
         public void testDefaultTargets() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/defaultTargets.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/defaultTargets.kt");
             doTest(fileName);
         }
 
         @TestMetadata("JvmSynthetic.kt")
         public void testJvmSynthetic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/JvmSynthetic.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/JvmSynthetic.kt");
             doTest(fileName);
         }
 
         @TestMetadata("literals.kt")
         public void testLiterals() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/literals.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/literals.kt");
             doTest(fileName);
         }
 
         @TestMetadata("onProperties.kt")
         public void testOnProperties() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/onProperties.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/onProperties.kt");
             doTest(fileName);
         }
 
         @TestMetadata("onReceiver.kt")
         public void testOnReceiver() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/onReceiver.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/annotations/onReceiver.kt");
             doTest(fileName);
         }
     }
@@ -85,12 +85,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SpecialBridges extends AbstractBytecodeListingTest {
         public void testAllFilesPresentInSpecialBridges() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/specialBridges"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("contains.kt")
         public void testContains() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/contains.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/contains.kt");
             doTest(fileName);
         }
     }

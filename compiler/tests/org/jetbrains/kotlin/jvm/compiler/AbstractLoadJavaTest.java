@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
@@ -59,7 +59,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.*;
-import static org.jetbrains.kotlin.test.JetTestUtils.*;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.*;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.*;
@@ -145,7 +145,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             }
         });
 
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
+        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
         ContentRootsKt.addKotlinSourceRoot(configuration, sourcesDir.getAbsolutePath());
         JvmContentRootsKt.addJavaSourceRoot(configuration, new File("compiler/testData/loadJava/include"));
@@ -190,7 +190,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, getAnnotationsJar(), libraryOut),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
-        KtFile jetFile = JetTestUtils.createFile(kotlinSrc.getPath(), FileUtil.loadFile(kotlinSrc, true), environment.getProject());
+        KtFile jetFile = KotlinTestUtils.createFile(kotlinSrc.getPath(), FileUtil.loadFile(kotlinSrc, true), environment.getProject());
 
         AnalysisResult result = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 environment.getProject(), Collections.singleton(jetFile)
@@ -225,7 +225,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assertTrue(srcDir.mkdir());
         assertTrue(compiledDir.mkdir());
 
-        List<File> srcFiles = JetTestUtils.createTestFiles(
+        List<File> srcFiles = KotlinTestUtils.createTestFiles(
                 new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName), true),
                 new TestFileFactoryNoModules<File>() {
                     @NotNull
@@ -242,7 +242,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                     }
                 });
 
-        JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+        KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                 getTestRootDisposable(), ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK
         );
 

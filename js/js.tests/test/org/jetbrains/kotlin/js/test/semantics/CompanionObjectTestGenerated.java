@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +32,12 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompanionObjectTestGenerated extends AbstractCompanionObjectTest {
     public void testAllFilesPresentInObjectIntrinsics() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objectIntrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("objects.kt")
     public void testObjects() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/objectIntrinsics/objects.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objectIntrinsics/objects.kt");
         doTest(fileName);
     }
 }

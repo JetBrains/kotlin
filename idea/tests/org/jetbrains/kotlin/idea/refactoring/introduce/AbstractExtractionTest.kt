@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.INTRODU
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtFile
@@ -58,7 +58,7 @@ import java.io.File
 import java.util.*
 import kotlin.test.assertEquals
 
-public abstract class AbstractExtractionTest() : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
     val fixture: JavaCodeInsightTestFixture get() = myFixture

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,48 +32,48 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncrementalCacheVersionChangedTest {
     public void testAllFilesPresentInCacheVersionChanged() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
     @TestMetadata("exportedModule")
     public void testExportedModule() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/exportedModule/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/exportedModule/");
         doTest(fileName);
     }
 
     @TestMetadata("module1Modified")
     public void testModule1Modified() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/module1Modified/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/module1Modified/");
         doTest(fileName);
     }
 
     @TestMetadata("module2Modified")
     public void testModule2Modified() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/module2Modified/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/module2Modified/");
         doTest(fileName);
     }
 
     @TestMetadata("moduleWithConstantModified")
     public void testModuleWithConstantModified() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified/");
         doTest(fileName);
     }
 
     @TestMetadata("moduleWithInlineModified")
     public void testModuleWithInlineModified() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified/");
         doTest(fileName);
     }
 
     @TestMetadata("touchedFile")
     public void testTouchedFile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/touchedFile/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/touchedFile/");
         doTest(fileName);
     }
 
     @TestMetadata("untouchedFiles")
     public void testUntouchedFiles() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles/");
         doTest(fileName);
     }
 
