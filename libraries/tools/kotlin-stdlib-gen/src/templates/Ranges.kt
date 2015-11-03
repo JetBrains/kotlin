@@ -18,10 +18,10 @@ fun ranges(): List<GenericFunction> {
         doc(RangesOfPrimitives) { "Returns a progression that goes over this range in reverse direction." }
         returns("TProgression")
         body(RangesOfPrimitives) {
-            "return TProgression(end, start, -ONE)"
+            "return TProgression.fromClosedRange(last, first, -ONE)"
         }
         body(ProgressionsOfPrimitives) {
-            "return TProgression(end, start, -increment)"
+            "return TProgression.fromClosedRange(last, first, -increment)"
         }
     }
 
@@ -34,10 +34,10 @@ fun ranges(): List<GenericFunction> {
         deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
         annotations("""@Suppress("DEPRECATION_ERROR")""")
         body(RangesOfPrimitives) {
-            "return TProgression(end, start, -ONE)"
+            "return TProgression.fromClosedRange(last, first, -ONE)"
         }
         body(ProgressionsOfPrimitives) {
-            "return TProgression(end, start, -increment)"
+            "return TProgression.fromClosedRange(last, first, -increment)"
         }
     }
 
@@ -52,13 +52,13 @@ fun ranges(): List<GenericFunction> {
         body(RangesOfPrimitives) {
             """
             checkStepIsPositive(step > 0, step)
-            return TProgression(start, end, step)
+            return TProgression.fromClosedRange(first, last, step)
             """
         }
         body(ProgressionsOfPrimitives) {
             """
             checkStepIsPositive(step > 0, step)
-            return TProgression(start, end, if (increment > 0) step else -step)
+            return TProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
             """
         }
     }
@@ -76,20 +76,20 @@ fun ranges(): List<GenericFunction> {
         body(RangesOfPrimitives) {
             """
             checkStepIsPositive(step > 0, step)
-            return TProgression(start, end, step)
+            return TProgression.fromClosedRange(first, last, step)
             """
         }
         bodyForTypes(RangesOfPrimitives, PrimitiveType.Float, PrimitiveType.Double) {
             """
             if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN.")
             checkStepIsPositive(step > 0, step)
-            return TProgression(start, end, step)
+            return TProgression.fromClosedRange(start, end, step)
             """
         }
         body(ProgressionsOfPrimitives) {
             """
             checkStepIsPositive(step > 0, step)
-            return TProgression(start, end, if (increment > 0) step else -step)
+            return TProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
             """
         }
     }
@@ -126,7 +126,7 @@ fun ranges(): List<GenericFunction> {
             else -> "-1"
         }
 
-        body { "return $progressionType($fromExpr, $toExpr, $incrementExpr)" }
+        body { "return $progressionType.fromClosedRange($fromExpr, $toExpr, $incrementExpr)" }
     }
 
     val numericPrimitives = PrimitiveType.numericPrimitives

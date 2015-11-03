@@ -287,7 +287,7 @@ public operator fun Range<Float>.contains(item: Short): Boolean {
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Byte): IntProgression {
-    return IntProgression(this, to.toInt(), -1)
+    return IntProgression.fromClosedRange(this, to.toInt(), -1)
 }
 
 /**
@@ -295,7 +295,7 @@ public infix fun Int.downTo(to: Byte): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Byte): LongProgression {
-    return LongProgression(this, to.toLong(), -1L)
+    return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
@@ -303,7 +303,7 @@ public infix fun Long.downTo(to: Byte): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Byte): IntProgression {
-    return IntProgression(this.toInt(), to.toInt(), -1)
+    return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
@@ -311,7 +311,7 @@ public infix fun Byte.downTo(to: Byte): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Byte): IntProgression {
-    return IntProgression(this.toInt(), to.toInt(), -1)
+    return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
@@ -321,7 +321,7 @@ public infix fun Short.downTo(to: Byte): IntProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Double.downTo(to: Byte): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
+    return DoubleProgression.fromClosedRange(this, to.toDouble(), -1.0)
 }
 
 /**
@@ -331,7 +331,7 @@ public infix fun Double.downTo(to: Byte): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Float.downTo(to: Byte): FloatProgression {
-    return FloatProgression(this, to.toFloat(), -1.0F)
+    return FloatProgression.fromClosedRange(this, to.toFloat(), -1.0F)
 }
 
 /**
@@ -339,7 +339,7 @@ public infix fun Float.downTo(to: Byte): FloatProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Char.downTo(to: Char): CharProgression {
-    return CharProgression(this, to, -1)
+    return CharProgression.fromClosedRange(this, to, -1)
 }
 
 /**
@@ -349,7 +349,7 @@ public infix fun Char.downTo(to: Char): CharProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Int.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
+    return DoubleProgression.fromClosedRange(this.toDouble(), to, -1.0)
 }
 
 /**
@@ -359,7 +359,7 @@ public infix fun Int.downTo(to: Double): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Long.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
+    return DoubleProgression.fromClosedRange(this.toDouble(), to, -1.0)
 }
 
 /**
@@ -369,7 +369,7 @@ public infix fun Long.downTo(to: Double): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Byte.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
+    return DoubleProgression.fromClosedRange(this.toDouble(), to, -1.0)
 }
 
 /**
@@ -379,7 +379,7 @@ public infix fun Byte.downTo(to: Double): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Short.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
+    return DoubleProgression.fromClosedRange(this.toDouble(), to, -1.0)
 }
 
 /**
@@ -389,7 +389,7 @@ public infix fun Short.downTo(to: Double): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Double.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this, to, -1.0)
+    return DoubleProgression.fromClosedRange(this, to, -1.0)
 }
 
 /**
@@ -399,7 +399,7 @@ public infix fun Double.downTo(to: Double): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Float.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
+    return DoubleProgression.fromClosedRange(this.toDouble(), to, -1.0)
 }
 
 /**
@@ -409,7 +409,7 @@ public infix fun Float.downTo(to: Double): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Int.downTo(to: Float): FloatProgression {
-    return FloatProgression(this.toFloat(), to, -1.0F)
+    return FloatProgression.fromClosedRange(this.toFloat(), to, -1.0F)
 }
 
 /**
@@ -419,7 +419,7 @@ public infix fun Int.downTo(to: Float): FloatProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Long.downTo(to: Float): FloatProgression {
-    return FloatProgression(this.toFloat(), to, -1.0F)
+    return FloatProgression.fromClosedRange(this.toFloat(), to, -1.0F)
 }
 
 /**
@@ -429,7 +429,7 @@ public infix fun Long.downTo(to: Float): FloatProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Byte.downTo(to: Float): FloatProgression {
-    return FloatProgression(this.toFloat(), to, -1.0F)
+    return FloatProgression.fromClosedRange(this.toFloat(), to, -1.0F)
 }
 
 /**
@@ -439,7 +439,7 @@ public infix fun Byte.downTo(to: Float): FloatProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Short.downTo(to: Float): FloatProgression {
-    return FloatProgression(this.toFloat(), to, -1.0F)
+    return FloatProgression.fromClosedRange(this.toFloat(), to, -1.0F)
 }
 
 /**
@@ -449,7 +449,7 @@ public infix fun Short.downTo(to: Float): FloatProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Double.downTo(to: Float): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
+    return DoubleProgression.fromClosedRange(this, to.toDouble(), -1.0)
 }
 
 /**
@@ -459,7 +459,7 @@ public infix fun Double.downTo(to: Float): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Float.downTo(to: Float): FloatProgression {
-    return FloatProgression(this, to, -1.0F)
+    return FloatProgression.fromClosedRange(this, to, -1.0F)
 }
 
 /**
@@ -467,7 +467,7 @@ public infix fun Float.downTo(to: Float): FloatProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Int): IntProgression {
-    return IntProgression(this, to, -1)
+    return IntProgression.fromClosedRange(this, to, -1)
 }
 
 /**
@@ -475,7 +475,7 @@ public infix fun Int.downTo(to: Int): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Int): LongProgression {
-    return LongProgression(this, to.toLong(), -1L)
+    return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
@@ -483,7 +483,7 @@ public infix fun Long.downTo(to: Int): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Int): IntProgression {
-    return IntProgression(this.toInt(), to, -1)
+    return IntProgression.fromClosedRange(this.toInt(), to, -1)
 }
 
 /**
@@ -491,7 +491,7 @@ public infix fun Byte.downTo(to: Int): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Int): IntProgression {
-    return IntProgression(this.toInt(), to, -1)
+    return IntProgression.fromClosedRange(this.toInt(), to, -1)
 }
 
 /**
@@ -501,7 +501,7 @@ public infix fun Short.downTo(to: Int): IntProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Double.downTo(to: Int): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
+    return DoubleProgression.fromClosedRange(this, to.toDouble(), -1.0)
 }
 
 /**
@@ -511,7 +511,7 @@ public infix fun Double.downTo(to: Int): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Float.downTo(to: Int): FloatProgression {
-    return FloatProgression(this, to.toFloat(), -1.0F)
+    return FloatProgression.fromClosedRange(this, to.toFloat(), -1.0F)
 }
 
 /**
@@ -519,7 +519,7 @@ public infix fun Float.downTo(to: Int): FloatProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Long): LongProgression {
-    return LongProgression(this.toLong(), to, -1L)
+    return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
@@ -527,7 +527,7 @@ public infix fun Int.downTo(to: Long): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Long): LongProgression {
-    return LongProgression(this, to, -1L)
+    return LongProgression.fromClosedRange(this, to, -1L)
 }
 
 /**
@@ -535,7 +535,7 @@ public infix fun Long.downTo(to: Long): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Long): LongProgression {
-    return LongProgression(this.toLong(), to, -1L)
+    return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
@@ -543,7 +543,7 @@ public infix fun Byte.downTo(to: Long): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Long): LongProgression {
-    return LongProgression(this.toLong(), to, -1L)
+    return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
@@ -553,7 +553,7 @@ public infix fun Short.downTo(to: Long): LongProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Double.downTo(to: Long): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
+    return DoubleProgression.fromClosedRange(this, to.toDouble(), -1.0)
 }
 
 /**
@@ -563,7 +563,7 @@ public infix fun Double.downTo(to: Long): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Float.downTo(to: Long): FloatProgression {
-    return FloatProgression(this, to.toFloat(), -1.0F)
+    return FloatProgression.fromClosedRange(this, to.toFloat(), -1.0F)
 }
 
 /**
@@ -571,7 +571,7 @@ public infix fun Float.downTo(to: Long): FloatProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Short): IntProgression {
-    return IntProgression(this, to.toInt(), -1)
+    return IntProgression.fromClosedRange(this, to.toInt(), -1)
 }
 
 /**
@@ -579,7 +579,7 @@ public infix fun Int.downTo(to: Short): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Short): LongProgression {
-    return LongProgression(this, to.toLong(), -1L)
+    return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
@@ -587,7 +587,7 @@ public infix fun Long.downTo(to: Short): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Short): IntProgression {
-    return IntProgression(this.toInt(), to.toInt(), -1)
+    return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
@@ -595,7 +595,7 @@ public infix fun Byte.downTo(to: Short): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Short): IntProgression {
-    return IntProgression(this.toInt(), to.toInt(), -1)
+    return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
@@ -605,7 +605,7 @@ public infix fun Short.downTo(to: Short): IntProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Double.downTo(to: Short): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
+    return DoubleProgression.fromClosedRange(this, to.toDouble(), -1.0)
 }
 
 /**
@@ -615,49 +615,49 @@ public infix fun Double.downTo(to: Short): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public infix fun Float.downTo(to: Short): FloatProgression {
-    return FloatProgression(this, to.toFloat(), -1.0F)
+    return FloatProgression.fromClosedRange(this, to.toFloat(), -1.0F)
 }
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun CharProgression.reversed(): CharProgression {
-    return CharProgression(end, start, -increment)
+    return CharProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun IntProgression.reversed(): IntProgression {
-    return IntProgression(end, start, -increment)
+    return IntProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun LongProgression.reversed(): LongProgression {
-    return LongProgression(end, start, -increment)
+    return LongProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
  * Returns a progression that goes over this range in reverse direction.
  */
 public fun CharRange.reversed(): CharProgression {
-    return CharProgression(end, start, -1)
+    return CharProgression.fromClosedRange(last, first, -1)
 }
 
 /**
  * Returns a progression that goes over this range in reverse direction.
  */
 public fun IntRange.reversed(): IntProgression {
-    return IntProgression(end, start, -1)
+    return IntProgression.fromClosedRange(last, first, -1)
 }
 
 /**
  * Returns a progression that goes over this range in reverse direction.
  */
 public fun LongRange.reversed(): LongProgression {
-    return LongProgression(end, start, -1L)
+    return LongProgression.fromClosedRange(last, first, -1L)
 }
 
 /**
@@ -666,7 +666,7 @@ public fun LongRange.reversed(): LongProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun ByteProgression.reversed(): ByteProgression {
-    return ByteProgression(end, start, -increment)
+    return ByteProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
@@ -675,7 +675,7 @@ public fun ByteProgression.reversed(): ByteProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun DoubleProgression.reversed(): DoubleProgression {
-    return DoubleProgression(end, start, -increment)
+    return DoubleProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
@@ -684,7 +684,7 @@ public fun DoubleProgression.reversed(): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun FloatProgression.reversed(): FloatProgression {
-    return FloatProgression(end, start, -increment)
+    return FloatProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
@@ -693,7 +693,7 @@ public fun FloatProgression.reversed(): FloatProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun ShortProgression.reversed(): ShortProgression {
-    return ShortProgression(end, start, -increment)
+    return ShortProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
@@ -702,7 +702,7 @@ public fun ShortProgression.reversed(): ShortProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun ByteRange.reversed(): ByteProgression {
-    return ByteProgression(end, start, -1)
+    return ByteProgression.fromClosedRange(last, first, -1)
 }
 
 /**
@@ -711,7 +711,7 @@ public fun ByteRange.reversed(): ByteProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun DoubleRange.reversed(): DoubleProgression {
-    return DoubleProgression(end, start, -1.0)
+    return DoubleProgression.fromClosedRange(last, first, -1.0)
 }
 
 /**
@@ -720,7 +720,7 @@ public fun DoubleRange.reversed(): DoubleProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun FloatRange.reversed(): FloatProgression {
-    return FloatProgression(end, start, -1.0f)
+    return FloatProgression.fromClosedRange(last, first, -1.0f)
 }
 
 /**
@@ -729,7 +729,7 @@ public fun FloatRange.reversed(): FloatProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun ShortRange.reversed(): ShortProgression {
-    return ShortProgression(end, start, -1)
+    return ShortProgression.fromClosedRange(last, first, -1)
 }
 
 /**
@@ -737,7 +737,7 @@ public fun ShortRange.reversed(): ShortProgression {
  */
 public infix fun CharProgression.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
-    return CharProgression(start, end, if (increment > 0) step else -step)
+    return CharProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -745,7 +745,7 @@ public infix fun CharProgression.step(step: Int): CharProgression {
  */
 public infix fun IntProgression.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
-    return IntProgression(start, end, if (increment > 0) step else -step)
+    return IntProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -753,7 +753,7 @@ public infix fun IntProgression.step(step: Int): IntProgression {
  */
 public infix fun LongProgression.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
-    return LongProgression(start, end, if (increment > 0) step else -step)
+    return LongProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -761,7 +761,7 @@ public infix fun LongProgression.step(step: Long): LongProgression {
  */
 public infix fun CharRange.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
-    return CharProgression(start, end, step)
+    return CharProgression.fromClosedRange(first, last, step)
 }
 
 /**
@@ -769,7 +769,7 @@ public infix fun CharRange.step(step: Int): CharProgression {
  */
 public infix fun IntRange.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
-    return IntProgression(start, end, step)
+    return IntProgression.fromClosedRange(first, last, step)
 }
 
 /**
@@ -777,7 +777,7 @@ public infix fun IntRange.step(step: Int): IntProgression {
  */
 public infix fun LongRange.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
-    return LongProgression(start, end, step)
+    return LongProgression.fromClosedRange(first, last, step)
 }
 
 /**
@@ -787,7 +787,7 @@ public infix fun LongRange.step(step: Long): LongProgression {
 @Suppress("DEPRECATION_ERROR")
 public infix fun ByteProgression.step(step: Int): ByteProgression {
     checkStepIsPositive(step > 0, step)
-    return ByteProgression(start, end, if (increment > 0) step else -step)
+    return ByteProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -797,7 +797,7 @@ public infix fun ByteProgression.step(step: Int): ByteProgression {
 @Suppress("DEPRECATION_ERROR")
 public infix fun DoubleProgression.step(step: Double): DoubleProgression {
     checkStepIsPositive(step > 0, step)
-    return DoubleProgression(start, end, if (increment > 0) step else -step)
+    return DoubleProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -807,7 +807,7 @@ public infix fun DoubleProgression.step(step: Double): DoubleProgression {
 @Suppress("DEPRECATION_ERROR")
 public infix fun FloatProgression.step(step: Float): FloatProgression {
     checkStepIsPositive(step > 0, step)
-    return FloatProgression(start, end, if (increment > 0) step else -step)
+    return FloatProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -817,7 +817,7 @@ public infix fun FloatProgression.step(step: Float): FloatProgression {
 @Suppress("DEPRECATION_ERROR")
 public infix fun ShortProgression.step(step: Int): ShortProgression {
     checkStepIsPositive(step > 0, step)
-    return ShortProgression(start, end, if (increment > 0) step else -step)
+    return ShortProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -827,7 +827,7 @@ public infix fun ShortProgression.step(step: Int): ShortProgression {
 @Suppress("DEPRECATION_ERROR")
 public infix fun ByteRange.step(step: Int): ByteProgression {
     checkStepIsPositive(step > 0, step)
-    return ByteProgression(start, end, step)
+    return ByteProgression.fromClosedRange(first, last, step)
 }
 
 /**
@@ -838,7 +838,7 @@ public infix fun ByteRange.step(step: Int): ByteProgression {
 public infix fun DoubleRange.step(step: Double): DoubleProgression {
     if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN.")
     checkStepIsPositive(step > 0, step)
-    return DoubleProgression(start, end, step)
+    return DoubleProgression.fromClosedRange(start, end, step)
 }
 
 /**
@@ -849,7 +849,7 @@ public infix fun DoubleRange.step(step: Double): DoubleProgression {
 public infix fun FloatRange.step(step: Float): FloatProgression {
     if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN.")
     checkStepIsPositive(step > 0, step)
-    return FloatProgression(start, end, step)
+    return FloatProgression.fromClosedRange(start, end, step)
 }
 
 /**
@@ -859,7 +859,7 @@ public infix fun FloatRange.step(step: Float): FloatProgression {
 @Suppress("DEPRECATION_ERROR")
 public infix fun ShortRange.step(step: Int): ShortProgression {
     checkStepIsPositive(step > 0, step)
-    return ShortProgression(start, end, step)
+    return ShortProgression.fromClosedRange(first, last, step)
 }
 
 /**

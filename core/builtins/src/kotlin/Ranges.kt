@@ -26,6 +26,9 @@ public class ByteRange(start: Byte, endInclusive: Byte) : ByteProgression(start,
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Byte get() = endInclusive
 
+    override val start: Byte get() = first
+    override val endInclusive: Byte get() = last
+
     override fun contains(item: Byte): Boolean = start <= item && item <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
@@ -51,6 +54,9 @@ public class ByteRange(start: Byte, endInclusive: Byte) : ByteProgression(start,
 public class CharRange(start: Char, endInclusive: Char) : CharProgression(start, endInclusive, 1), ClosedRange<Char> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Char get() = endInclusive
+
+    override val start: Char get() = first
+    override val endInclusive: Char get() = last
 
     override fun contains(item: Char): Boolean = start <= item && item <= endInclusive
 
@@ -79,6 +85,9 @@ public class ShortRange(start: Short, endInclusive: Short) : ShortProgression(st
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Short get() = endInclusive
 
+    override val start: Short get() = first
+    override val endInclusive: Short get() = last
+
     override fun contains(item: Short): Boolean = start <= item && item <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
@@ -105,6 +114,9 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Int get() = endInclusive
 
+    override val start: Int get() = first
+    override val endInclusive: Int get() = last
+
     override fun contains(item: Int): Boolean = start <= item && item <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
@@ -130,6 +142,9 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
 public class LongRange(start: Long, endInclusive: Long) : LongProgression(start, endInclusive, 1), ClosedRange<Long> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: Long get() = endInclusive
+
+    override val start: Long get() = first
+    override val endInclusive: Long get() = last
 
     override fun contains(item: Long): Boolean = start <= item && item <= endInclusive
 

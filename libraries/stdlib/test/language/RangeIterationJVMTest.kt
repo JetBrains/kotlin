@@ -17,17 +17,45 @@ import kotlin.test.*
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
 public class RangeIterationJVMTest {
     private fun <N : Any> doTest(
-            sequence: Progression<N>,
-            expectedStart: N,
-            expectedEnd: N,
+            sequence: Iterable<N>,
+            expectedFirst: N,
+            expectedLast: N,
             expectedIncrement: Number,
             expectedElements: List<N>
-                          ) {
-        assertEquals(expectedStart, sequence.start)
-        assertEquals(expectedEnd, sequence.end)
-        assertEquals(expectedIncrement, sequence.increment)
+    ) {
+        val first: Any
+        val last: Any
+        val increment: Number
+        when (sequence) {
+            is IntProgression -> {
+                first = sequence.first
+                last = sequence.last
+                increment = sequence.increment
+            }
+            is LongProgression -> {
+                first = sequence.first
+                last = sequence.last
+                increment = sequence.increment
+            }
+            is CharProgression -> {
+                first = sequence.first
+                last = sequence.last
+                increment = sequence.increment
+            }
+        // TODO: Drop this branch
+            is Progression -> {
+                first = sequence.start
+                last = sequence.end
+                increment = sequence.increment
+            }
+            else -> throw IllegalArgumentException("Unsupported sequence type: $sequence")
+        }
 
-        if (expectedElements.none())
+        assertEquals(expectedFirst, first)
+        assertEquals(expectedLast, last)
+        assertEquals(expectedIncrement, increment)
+
+        if (expectedElements.isEmpty())
             assertTrue(sequence.none())
         else
             assertEquals(expectedElements, sequence.toList())

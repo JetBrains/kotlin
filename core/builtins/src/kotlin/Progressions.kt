@@ -22,174 +22,298 @@ package kotlin
 /**
  * A progression of values of type `Byte`.
  */
-public open class ByteProgression(
-        override val start: Byte,
-                 val endInclusive: Byte,
-        override val increment: Int
-) : Progression<Byte> /*, Iterable<Byte> */ {
+public open class ByteProgression
+    @Deprecated("This constructor will become private soon. Use ByteProgression.fromClosedRange() instead.", ReplaceWith("ByteProgression.fromClosedRange(start, end, increment)"))
+    public constructor
+    (
+            start: Byte,
+            endInclusive: Byte,
+            override val increment: Int
+    ) : Progression<Byte> /*, Iterable<Byte> */ {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
     /**
+     * The first element in the progression.
+     */
+    public val first: Byte = start
+    /**
+     * The last element in the progression.
+     */
+    public val last: Byte = kotlin.internal.getProgressionFinalElement(start.toInt(), endInclusive.toInt(), increment).toByte()
+
+    @Deprecated("Use first instead.", ReplaceWith("first"))
+    public override val start: Byte get() = first
+
+    /**
      * The end value of the progression (inclusive).
      */
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    public override val end: Byte get() = endInclusive
+    @Deprecated("Use 'last' property instead.")
+    public override val end: Byte = endInclusive
 
-    override fun iterator(): ByteIterator = ByteProgressionIterator(start, endInclusive, increment)
+    override fun iterator(): ByteIterator = ByteProgressionIterator(first, last, increment)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is ByteProgression && (isEmpty() && other.isEmpty() ||
-        start == other.start && endInclusive == other.endInclusive && increment == other.increment)
+        first == other.first && last == other.last && increment == other.increment)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * start.toInt() + endInclusive.toInt()) + increment)
+        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + increment)
 
-    override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$first..$last step $increment" else "$first downTo $last step ${-increment}"
+
+    companion object {
+        /**
+         * Creates ByteProgression within the specified bounds of a closed range.
+
+         * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
+         * In order to go backwards the [step] must be negative.
+         */
+        public fun fromClosedRange(rangeStart: Byte, rangeEnd: Byte, step: Int): ByteProgression = ByteProgression(rangeStart, rangeEnd, step)
+    }
 }
 
 /**
  * A progression of values of type `Char`.
  */
-public open class CharProgression(
-        override val start: Char,
-                 val endInclusive: Char,
-        override val increment: Int
-) : Progression<Char> /*, Iterable<Char> */ {
+public open class CharProgression
+    @Deprecated("This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", ReplaceWith("CharProgression.fromClosedRange(start, end, increment)"))
+    public constructor
+    (
+            start: Char,
+            endInclusive: Char,
+            override val increment: Int
+    ) : Progression<Char> /*, Iterable<Char> */ {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
     /**
+     * The first element in the progression.
+     */
+    public val first: Char = start
+    /**
+     * The last element in the progression.
+     */
+    public val last: Char = kotlin.internal.getProgressionFinalElement(start.toInt(), endInclusive.toInt(), increment).toChar()
+
+    @Deprecated("Use first instead.", ReplaceWith("first"))
+    public override val start: Char get() = first
+
+    /**
      * The end value of the progression (inclusive).
      */
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    public override val end: Char get() = endInclusive
+    @Deprecated("Use 'last' property instead.")
+    public override val end: Char = endInclusive
 
-    override fun iterator(): CharIterator = CharProgressionIterator(start, endInclusive, increment)
+    override fun iterator(): CharIterator = CharProgressionIterator(first, last, increment)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is CharProgression && (isEmpty() && other.isEmpty() ||
-        start == other.start && endInclusive == other.endInclusive && increment == other.increment)
+        first == other.first && last == other.last && increment == other.increment)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * start.toInt() + endInclusive.toInt()) + increment)
+        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + increment)
 
-    override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$first..$last step $increment" else "$first downTo $last step ${-increment}"
+
+    companion object {
+        /**
+         * Creates CharProgression within the specified bounds of a closed range.
+
+         * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
+         * In order to go backwards the [step] must be negative.
+         */
+        public fun fromClosedRange(rangeStart: Char, rangeEnd: Char, step: Int): CharProgression = CharProgression(rangeStart, rangeEnd, step)
+    }
 }
 
 @Deprecated("Use IntProgression instead.", ReplaceWith("IntProgression"), level = DeprecationLevel.WARNING)
 /**
  * A progression of values of type `Short`.
  */
-public open class ShortProgression(
-        override val start: Short,
-                 val endInclusive: Short,
-        override val increment: Int
-) : Progression<Short> /*, Iterable<Short> */ {
+public open class ShortProgression
+    @Deprecated("This constructor will become private soon. Use ShortProgression.fromClosedRange() instead.", ReplaceWith("ShortProgression.fromClosedRange(start, end, increment)"))
+    public constructor
+    (
+            start: Short,
+            endInclusive: Short,
+            override val increment: Int
+    ) : Progression<Short> /*, Iterable<Short> */ {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
     /**
+     * The first element in the progression.
+     */
+    public val first: Short = start
+    /**
+     * The last element in the progression.
+     */
+    public val last: Short = kotlin.internal.getProgressionFinalElement(start.toInt(), endInclusive.toInt(), increment).toShort()
+
+    @Deprecated("Use first instead.", ReplaceWith("first"))
+    public override val start: Short get() = first
+
+    /**
      * The end value of the progression (inclusive).
      */
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    public override val end: Short get() = endInclusive
+    @Deprecated("Use 'last' property instead.")
+    public override val end: Short = endInclusive
 
-    override fun iterator(): ShortIterator = ShortProgressionIterator(start, endInclusive, increment)
+    override fun iterator(): ShortIterator = ShortProgressionIterator(first, last, increment)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is ShortProgression && (isEmpty() && other.isEmpty() ||
-        start == other.start && endInclusive == other.endInclusive && increment == other.increment)
+        first == other.first && last == other.last && increment == other.increment)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * start.toInt() + endInclusive.toInt()) + increment)
+        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + increment)
 
-    override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$first..$last step $increment" else "$first downTo $last step ${-increment}"
+
+    companion object {
+        /**
+         * Creates ShortProgression within the specified bounds of a closed range.
+
+         * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
+         * In order to go backwards the [step] must be negative.
+         */
+        public fun fromClosedRange(rangeStart: Short, rangeEnd: Short, step: Int): ShortProgression = ShortProgression(rangeStart, rangeEnd, step)
+    }
 }
 
 /**
  * A progression of values of type `Int`.
  */
-public open class IntProgression(
-        override val start: Int,
-                 val endInclusive: Int,
-        override val increment: Int
-) : Progression<Int> /*, Iterable<Int> */ {
+public open class IntProgression
+    @Deprecated("This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", ReplaceWith("IntProgression.fromClosedRange(start, end, increment)"))
+    public constructor
+    (
+            start: Int,
+            endInclusive: Int,
+            override val increment: Int
+    ) : Progression<Int> /*, Iterable<Int> */ {
     init {
         if (increment == 0) throw IllegalArgumentException("Increment must be non-zero")
     }
 
     /**
+     * The first element in the progression.
+     */
+    public val first: Int = start
+    /**
+     * The last element in the progression.
+     */
+    public val last: Int = kotlin.internal.getProgressionFinalElement(start.toInt(), endInclusive.toInt(), increment).toInt()
+
+    @Deprecated("Use first instead.", ReplaceWith("first"))
+    public override val start: Int get() = first
+
+    /**
      * The end value of the progression (inclusive).
      */
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    public override val end: Int get() = endInclusive
+    @Deprecated("Use 'last' property instead.")
+    public override val end: Int = endInclusive
 
-    override fun iterator(): IntIterator = IntProgressionIterator(start, endInclusive, increment)
+    override fun iterator(): IntIterator = IntProgressionIterator(first, last, increment)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is IntProgression && (isEmpty() && other.isEmpty() ||
-        start == other.start && endInclusive == other.endInclusive && increment == other.increment)
+        first == other.first && last == other.last && increment == other.increment)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * start + endInclusive) + increment)
+        if (isEmpty()) -1 else (31 * (31 * first + last) + increment)
 
-    override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$first..$last step $increment" else "$first downTo $last step ${-increment}"
+
+    companion object {
+        /**
+         * Creates IntProgression within the specified bounds of a closed range.
+
+         * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
+         * In order to go backwards the [step] must be negative.
+         */
+        public fun fromClosedRange(rangeStart: Int, rangeEnd: Int, step: Int): IntProgression = IntProgression(rangeStart, rangeEnd, step)
+    }
 }
 
 /**
  * A progression of values of type `Long`.
  */
-public open class LongProgression(
-        override val start: Long,
-                 val endInclusive: Long,
-        override val increment: Long
-) : Progression<Long> /*, Iterable<Long> */ {
+public open class LongProgression
+    @Deprecated("This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", ReplaceWith("LongProgression.fromClosedRange(start, end, increment)"))
+    public constructor
+    (
+            start: Long,
+            endInclusive: Long,
+            override val increment: Long
+    ) : Progression<Long> /*, Iterable<Long> */ {
     init {
         if (increment == 0L) throw IllegalArgumentException("Increment must be non-zero")
     }
 
     /**
+     * The first element in the progression.
+     */
+    public val first: Long = start
+    /**
+     * The last element in the progression.
+     */
+    public val last: Long = kotlin.internal.getProgressionFinalElement(start.toLong(), endInclusive.toLong(), increment).toLong()
+
+    @Deprecated("Use first instead.", ReplaceWith("first"))
+    public override val start: Long get() = first
+
+    /**
      * The end value of the progression (inclusive).
      */
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    public override val end: Long get() = endInclusive
+    @Deprecated("Use 'last' property instead.")
+    public override val end: Long = endInclusive
 
-    override fun iterator(): LongIterator = LongProgressionIterator(start, endInclusive, increment)
+    override fun iterator(): LongIterator = LongProgressionIterator(first, last, increment)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (increment > 0) start > endInclusive else start < endInclusive
+    public open fun isEmpty(): Boolean = if (increment > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is LongProgression && (isEmpty() && other.isEmpty() ||
-        start == other.start && endInclusive == other.endInclusive && increment == other.increment)
+        first == other.first && last == other.last && increment == other.increment)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * (start xor (start ushr 32)) + (endInclusive xor (endInclusive ushr 32))) + (increment xor (increment ushr 32))).toInt()
+        if (isEmpty()) -1 else (31 * (31 * (first xor (first ushr 32)) + (last xor (last ushr 32))) + (increment xor (increment ushr 32))).toInt()
 
-    override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
+    override fun toString(): String = if (increment > 0) "$first..$last step $increment" else "$first downTo $last step ${-increment}"
+
+    companion object {
+        /**
+         * Creates LongProgression within the specified bounds of a closed range.
+
+         * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
+         * In order to go backwards the [step] must be negative.
+         */
+        public fun fromClosedRange(rangeStart: Long, rangeEnd: Long, step: Long): LongProgression = LongProgression(rangeStart, rangeEnd, step)
+    }
 }
 
-@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
-@Suppress("DEPRECATION_ERROR")
 /**
  * A progression of values of type `Float`.
  */
+@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
 public open class FloatProgression(
         override val start: Float,
                  val endInclusive: Float,
@@ -221,11 +345,10 @@ public open class FloatProgression(
     override fun toString(): String = if (increment > 0) "$start..$endInclusive step $increment" else "$start downTo $endInclusive step ${-increment}"
 }
 
-@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
-@Suppress("DEPRECATION_ERROR")
 /**
  * A progression of values of type `Double`.
  */
+@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
 public open class DoubleProgression(
         override val start: Double,
                  val endInclusive: Double,

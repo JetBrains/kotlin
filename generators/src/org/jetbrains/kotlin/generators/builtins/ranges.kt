@@ -79,7 +79,11 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t> {
     @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
     override val end: $t get() = endInclusive
-
+""" + (if (kind != FLOAT && kind != DOUBLE) """
+    override val start: $t get() = first
+    override val endInclusive: $t get() = last
+""" else "") +
+"""
     override fun contains(item: $t): Boolean = start <= item && item <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
