@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeConstructorImpl;
 import org.jetbrains.kotlin.utils.Printer;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
@@ -170,6 +167,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @Override
     public String toString() {
         return "enum entry " + getName();
+    }
+
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
+        return Collections.emptyList();
     }
 
     private class EnumEntryScope extends MemberScopeImpl {

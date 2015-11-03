@@ -327,7 +327,7 @@ public class ResolveElementCache(
         val declaration = jetTypeConstraint.getParentOfType<KtDeclaration>(true)!!
         val descriptor = analyzer.resolveToDescriptor(declaration) as ClassDescriptor
 
-        for (parameterDescriptor in descriptor.getTypeConstructor().getParameters()) {
+        for (parameterDescriptor in descriptor.declaredTypeParameters) {
             ForceResolveUtil.forceResolveAllContents<TypeParameterDescriptor>(parameterDescriptor)
         }
 

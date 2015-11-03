@@ -96,7 +96,7 @@ class VarianceChecker(private val trace: BindingTrace) {
             val containingClass = descriptor.getContainingDeclaration()
             if (containingClass !is ClassDescriptor) return true
 
-            return containingClass.getTypeConstructor().getParameters().all { it.getVariance() == INVARIANT }
+            return containingClass.typeConstructor.parameters.all { it.getVariance() == INVARIANT }
         }
 
         private fun recordPrivateToThis(descriptor: CallableMemberDescriptor) {

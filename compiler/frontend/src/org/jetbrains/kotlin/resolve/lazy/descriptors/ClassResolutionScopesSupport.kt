@@ -37,7 +37,7 @@ class ClassResolutionScopesSupport(
 ) {
     private fun scopeWithGenerics(parent: LexicalScope, debugName: String): LexicalScopeImpl {
         return LexicalScopeImpl(parent, classDescriptor, false, null, debugName) {
-            classDescriptor.typeConstructor.parameters.forEach { addClassifierDescriptor(it) }
+            classDescriptor.declaredTypeParameters.forEach { addClassifierDescriptor(it) }
         }
     }
 

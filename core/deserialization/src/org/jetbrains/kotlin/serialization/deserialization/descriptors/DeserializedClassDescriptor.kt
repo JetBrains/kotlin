@@ -166,6 +166,8 @@ public class DeserializedClassDescriptor(
 
     override fun getSource() = sourceElement
 
+    override fun getDeclaredTypeParameters() = c.typeDeserializer.ownTypeParameters
+
     private inner class DeserializedClassTypeConstructor : AbstractClassTypeConstructor() {
         private val supertypes = c.storageManager.createLazyValue {
             computeSupertypes()

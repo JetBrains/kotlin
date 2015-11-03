@@ -104,7 +104,7 @@ public class DescriptorSerializer {
                 new MutableTypeTable(),
                 false
         );
-        for (TypeParameterDescriptor typeParameter : descriptor.getTypeConstructor().getParameters()) {
+        for (TypeParameterDescriptor typeParameter : descriptor.getDeclaredTypeParameters()) {
             serializer.typeParameters.intern(typeParameter);
         }
         return serializer;
@@ -137,7 +137,7 @@ public class DescriptorSerializer {
 
         builder.setFqName(getClassId(classDescriptor));
 
-        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
+        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getDeclaredTypeParameters()) {
             builder.addTypeParameter(typeParameter(typeParameterDescriptor));
         }
 

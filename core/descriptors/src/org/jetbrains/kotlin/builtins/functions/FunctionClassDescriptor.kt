@@ -66,6 +66,26 @@ public class FunctionClassDescriptor(
     private val typeConstructor = FunctionTypeConstructor()
     private val memberScope = FunctionClassScope(storageManager, this)
 
+    private val parameters: List<TypeParameterDescriptor>
+
+    init {
+        val result = ArrayList<TypeParameterDescriptor>()
+
+        fun typeParameter(variance: Variance, name: String) {
+            result.add(TypeParameterDescriptorImpl.createWithDefaultBound(
+                    this@FunctionClassDescriptor, Annotations.EMPTY, false, variance, Name.identifier(name), result.size()
+            ))
+        }
+
+        (1..arity).map { i ->
+            typeParameter(Variance.IN_VARIANCE, "P$i")
+        }
+
+        typeParameter(Variance.OUT_VARIANCE, "R")
+
+        parameters = result.toReadOnlyList()
+    }
+
     override fun getContainingDeclaration() = containingDeclaration
 
     override fun getStaticScope() = staticScope
@@ -86,26 +106,9 @@ public class FunctionClassDescriptor(
     override fun getAnnotations() = Annotations.EMPTY
     override fun getSource() = SourceElement.NO_SOURCE
 
+    override fun getDeclaredTypeParameters() = parameters
+
     private inner class FunctionTypeConstructor : AbstractClassTypeConstructor() {
-        private val parameters: List<TypeParameterDescriptor>
-
-        init {
-            val result = ArrayList<TypeParameterDescriptor>()
-
-            fun typeParameter(variance: Variance, name: String) {
-                result.add(TypeParameterDescriptorImpl.createWithDefaultBound(
-                        this@FunctionClassDescriptor, Annotations.EMPTY, false, variance, Name.identifier(name), result.size()
-                ))
-            }
-
-            (1..arity).map { i ->
-                typeParameter(Variance.IN_VARIANCE, "P$i")
-            }
-
-            typeParameter(Variance.OUT_VARIANCE, "R")
-
-            parameters = result.toReadOnlyList()
-        }
 
         private val supertypes = storageManager.createLazyValue {
             val result = ArrayList<KotlinType>(2)
@@ -138,7 +141,7 @@ public class FunctionClassDescriptor(
             result.toReadOnlyList()
         }
 
-        override fun getParameters() = parameters
+        override fun getParameters() = this@FunctionClassDescriptor.parameters
 
         override fun getSupertypes(): Collection<KotlinType> = supertypes()
 

@@ -117,7 +117,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 //TODO: non-inner classes
                 for (parent in ownerClass.parentsWithSelf) {
                     if (parent !is ClassDescriptor) break
-                    sourceTypeParams += parent.typeConstructor.parameters
+                    sourceTypeParams += parent.declaredTypeParameters
                 }
                 //TODO: duplicated parameter names
 

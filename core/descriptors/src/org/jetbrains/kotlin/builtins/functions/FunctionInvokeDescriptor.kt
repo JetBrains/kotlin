@@ -56,7 +56,7 @@ public class FunctionInvokeDescriptor private constructor(
 
     companion object Factory {
         fun create(functionClass: FunctionClassDescriptor): FunctionInvokeDescriptor {
-            val typeParameters = functionClass.getTypeConstructor().getParameters()
+            val typeParameters = functionClass.declaredTypeParameters
 
             val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION)
             result.initialize(

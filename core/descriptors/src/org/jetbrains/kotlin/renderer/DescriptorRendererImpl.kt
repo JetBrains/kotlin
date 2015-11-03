@@ -619,7 +619,7 @@ internal class DescriptorRendererImpl(
             val classDescriptor = constructor.getContainingDeclaration()
             builder.append(" ")
             renderName(classDescriptor, builder)
-            renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder, false)
+            renderTypeParameters(classDescriptor.declaredTypeParameters, builder, false)
         }
 
         renderValueParameters(constructor.valueParameters, constructor.hasSynthesizedParameterNames(), builder)
@@ -792,7 +792,7 @@ internal class DescriptorRendererImpl(
 
         if (isEnumEntry) return
 
-        val typeParameters = klass.typeConstructor.getParameters()
+        val typeParameters = klass.declaredTypeParameters
         renderTypeParameters(typeParameters, builder, false)
 
         if (!klass.kind.isSingleton && classWithPrimaryConstructor) {

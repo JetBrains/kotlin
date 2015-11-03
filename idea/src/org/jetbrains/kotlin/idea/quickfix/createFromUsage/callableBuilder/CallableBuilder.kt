@@ -349,7 +349,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             assert (receiverClassDescriptor is JavaClassDescriptor) { "Unexpected receiver class: $receiverClassDescriptor" }
 
-            val projections = receiverClassDescriptor.getTypeConstructor().getParameters()
+            val projections = receiverClassDescriptor.declaredTypeParameters
                     .map { TypeProjectionImpl(it.getDefaultType()) }
             val memberScope = receiverClassDescriptor.getMemberScope(projections)
 

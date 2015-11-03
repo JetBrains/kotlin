@@ -252,7 +252,7 @@ public class DeclarationsChecker {
         EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
         List<KtTypeParameter> typeParameterList = klass.getTypeParameters();
         int i = 0;
-        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
+        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getDeclaredTypeParameters()) {
             if (i >= typeParameterList.size()) return;
             for (KotlinType upperBound : typeParameterDescriptor.getUpperBounds()) {
                 EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);

@@ -295,7 +295,7 @@ class TypeInstantiationItems(
             private val freeParameters: Collection<TypeParameterDescriptor>,
             private val tail: Tail?) : InheritanceItemsSearcher {
 
-        private val baseHasTypeArgs = classDescriptor.typeConstructor.parameters.isNotEmpty()
+        private val baseHasTypeArgs = classDescriptor.declaredTypeParameters.isNotEmpty()
         private val expectedType = KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArgs)
         private val expectedFuzzyType = FuzzyType(expectedType, freeParameters)
 
@@ -309,7 +309,7 @@ class TypeInstantiationItems(
                 if (!visibilityFilter(descriptor)) continue
 
                 var inheritorFuzzyType = FuzzyType(descriptor.defaultType, descriptor.typeConstructor.parameters)
-                val hasTypeArgs = descriptor.getTypeConstructor().getParameters().isNotEmpty()
+                val hasTypeArgs = descriptor.declaredTypeParameters.isNotEmpty()
                 if (hasTypeArgs || baseHasTypeArgs) {
                     val substitutor = inheritorFuzzyType.checkIsSubtypeOf(expectedFuzzyType) ?: continue
                     if (!substitutor.isEmpty) {

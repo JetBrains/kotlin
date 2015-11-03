@@ -33,7 +33,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     private final ClassDescriptor original;
     private final TypeSubstitutor originalSubstitutor;
     private TypeSubstitutor newSubstitutor;
-    private List<TypeParameterDescriptor> typeParameters;
+    private List<TypeParameterDescriptor> typeConstructorParameters;
     private TypeConstructor typeConstructor;
 
     public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
@@ -48,9 +48,9 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
             }
             else {
                 List<TypeParameterDescriptor> originalTypeParameters = original.getTypeConstructor().getParameters();
-                typeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
+                typeConstructorParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
                 newSubstitutor = DescriptorSubstitutor.substituteTypeParameters(
-                        originalTypeParameters, originalSubstitutor.getSubstitution(), this, typeParameters
+                        originalTypeParameters, originalSubstitutor.getSubstitution(), this, typeConstructorParameters
                 );
             }
         }
@@ -79,7 +79,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                     originalTypeConstructor.getAnnotations(),
                     originalTypeConstructor.isFinal(),
                     originalTypeConstructor.toString(),
-                    typeParameters,
+                    typeConstructorParameters,
                     supertypes
             );
         }
@@ -247,5 +247,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public SourceElement getSource() {
         return SourceElement.NO_SOURCE;
+    }
+
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
+        getSubstitutor();
+        return typeConstructorParameters;
     }
 }

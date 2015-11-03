@@ -134,7 +134,7 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
 
     val headerScope = LexicalScopeImpl(outerScope, descriptor, false, descriptor.thisAsReceiverParameter,
                                        "Class ${descriptor.getName()} header scope") {
-        for (typeParameter in descriptor.getTypeConstructor().getParameters()) {
+        for (typeParameter in descriptor.declaredTypeParameters) {
             addClassifierDescriptor(typeParameter)
         }
         for (constructor in descriptor.getConstructors()) {

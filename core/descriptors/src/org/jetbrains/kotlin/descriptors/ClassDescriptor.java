@@ -94,4 +94,13 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
 
     @Nullable
     ConstructorDescriptor getUnsubstitutedPrimaryConstructor();
+
+    /**
+     * It may differ from 'typeConstructor.parameters' in current class is inner, 'typeConstructor.parameters' contains
+     * captured parameters from outer declaration.
+     * @return list of type parameters actually declared type parameters in current class
+     */
+    @ReadOnly
+    @NotNull
+    List<TypeParameterDescriptor> getDeclaredTypeParameters();
 }

@@ -47,7 +47,7 @@ class KotlinPullUpData(val sourceClass: KtClassOrObject,
     val targetClassDescriptor = targetClass.getClassDescriptorIfAny(resolutionFacade)!!
 
     val typeParametersInSourceClassContext by lazy {
-        sourceClassDescriptor.typeConstructor.parameters +
+        sourceClassDescriptor.declaredTypeParameters +
         sourceClass.getResolutionScope(sourceClassContext, resolutionFacade)
                 .collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
                 .filterIsInstance<TypeParameterDescriptor>()

@@ -143,6 +143,12 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         this.typeParameters = new ArrayList<TypeParameterDescriptor>(typeParameters);
     }
 
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
+        return typeParameters;
+    }
+
     public void createTypeConstructor() {
         assert typeConstructor == null : typeConstructor;
         this.typeConstructor = TypeConstructorImpl.createForClass(

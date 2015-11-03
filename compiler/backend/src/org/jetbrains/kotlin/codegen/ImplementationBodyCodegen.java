@@ -302,7 +302,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private JvmClassSignature signature() {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
 
-        typeMapper.writeFormalTypeParameters(descriptor.getTypeConstructor().getParameters(), sw);
+        typeMapper.writeFormalTypeParameters(descriptor.getDeclaredTypeParameters(), sw);
 
         sw.writeSuperclass();
         if (superClassType == null) {
