@@ -32,10 +32,12 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
@@ -122,14 +124,16 @@ public class ExpressionTypingUtils {
     }
 
     public static void checkVariableShadowing(
-            @NotNull ExpressionTypingContext context,
-            @NotNull VariableDescriptor variableDescriptor,
-            @Nullable VariableDescriptor oldDescriptor
+            @NotNull LexicalScope scope,
+            @NotNull BindingTrace trace,
+            @NotNull VariableDescriptor variableDescriptor
     ) {
+        VariableDescriptor oldDescriptor = ScopeUtilsKt.findLocalVariable(scope, variableDescriptor.getName());
+
         if (oldDescriptor != null && isLocal(variableDescriptor.getContainingDeclaration(), oldDescriptor)) {
             PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
             if (declaration != null) {
-                context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
+                trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
             }
         }
     }

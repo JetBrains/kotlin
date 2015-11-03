@@ -24,9 +24,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.ModifierCheckerCore;
+import org.jetbrains.kotlin.resolve.ModifiersChecker;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -36,13 +38,12 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.CommonSupertypes;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 
 import java.util.ArrayList;
@@ -453,15 +454,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
         }
 
-        {
-            // http://youtrack.jetbrains.net/issue/KT-527
+        checkVariableShadowing(context.scope, context.trace, variableDescriptor);
 
-            VariableDescriptor olderVariable = ScopeUtilsKt.findLocalVariable(context.scope, variableDescriptor.getName());
-            if (olderVariable != null && isLocal(context.scope.getOwnerDescriptor(), olderVariable)) {
-                PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor);
-                context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().asString()));
-            }
-        }
         return variableDescriptor;
     }
 

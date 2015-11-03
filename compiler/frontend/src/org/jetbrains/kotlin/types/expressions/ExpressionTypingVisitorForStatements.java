@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -153,10 +152,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             typeInfo = TypeInfoFactoryKt.noTypeInfo(context);
         }
 
-        {
-            VariableDescriptor olderVariable = ScopeUtilsKt.findLocalVariable(scope, propertyDescriptor.getName());
-            ExpressionTypingUtils.checkVariableShadowing(context, propertyDescriptor, olderVariable);
-        }
+        ExpressionTypingUtils.checkVariableShadowing(context.scope, context.trace, propertyDescriptor);
 
         scope.addVariableDescriptor(propertyDescriptor);
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(property, propertyDescriptor);
