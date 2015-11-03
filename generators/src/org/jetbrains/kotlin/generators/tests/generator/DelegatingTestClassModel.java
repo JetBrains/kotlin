@@ -28,6 +28,7 @@ public class DelegatingTestClassModel implements TestClassModel {
         this.delegate = delegate;
     }
 
+    @NotNull
     @Override
     public String getName() {
         return delegate.getName();
@@ -41,8 +42,8 @@ public class DelegatingTestClassModel implements TestClassModel {
 
     @NotNull
     @Override
-    public Collection<TestMethodModel> getTestMethods() {
-        return delegate.getTestMethods();
+    public Collection<MethodModel> getMethods() {
+        return delegate.getMethods();
     }
 
     @Override

@@ -104,6 +104,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
         }
     }
 
+    @NotNull
     @Override
     public String getName() {
         Matcher matcher = filenamePattern.matcher(file.getName());
@@ -122,5 +123,10 @@ public class SimpleTestMethodModel implements TestMethodModel {
             unescapedName = relativePath + "-" + StringUtil.capitalize(extractedName);
         }
         return (isIgnored() ? "ignored" : "test") + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
+    }
+
+    @Override
+    public void generateSignature(@NotNull Printer p) {
+        TestMethodModel.DefaultImpls.generateSignature(this, p);
     }
 }

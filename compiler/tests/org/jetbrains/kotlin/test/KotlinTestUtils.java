@@ -794,6 +794,15 @@ public class KotlinTestUtils {
         return testFile;
     }
 
+    public static String getTestsRoot(@NotNull TestCase testCase) {
+        try {
+            return (String) testCase.getClass().getMethod("getTestsRoot").invoke(testCase);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Can't call getTestsRoot() on test class", e);
+        }
+    }
+
     public static void assertAllTestsPresentByMetadata(
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,

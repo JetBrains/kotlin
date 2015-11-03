@@ -49,7 +49,7 @@ public class SingleClassTestModel implements TestClassModel {
     @NotNull
     private final TargetBackend targetBackend;
     @Nullable
-    private Collection<TestMethodModel> testMethods;
+    private Collection<MethodModel> methods;
 
     public SingleClassTestModel(
             @NotNull File rootFile,
@@ -75,8 +75,8 @@ public class SingleClassTestModel implements TestClassModel {
 
     @NotNull
     @Override
-    public Collection<TestMethodModel> getTestMethods() {
-        if (testMethods == null) {
+    public Collection<MethodModel> getMethods() {
+        if (methods == null) {
             final List<TestMethodModel> result = Lists.newArrayList();
 
             result.add(new TestAllFilesPresentMethodModel());
@@ -99,10 +99,10 @@ public class SingleClassTestModel implements TestClassModel {
                 }
             });
 
-            testMethods = result;
+            methods = Lists.<MethodModel>newArrayList(result);
         }
 
-        return testMethods;
+        return methods;
     }
 
     @NotNull
@@ -115,7 +115,7 @@ public class SingleClassTestModel implements TestClassModel {
     @Override
     public boolean isEmpty() {
         // There's always one test for checking if all tests are present
-        return getTestMethods().size() <= 1;
+        return getMethods().size() <= 1;
     }
 
     @Override
@@ -129,12 +129,14 @@ public class SingleClassTestModel implements TestClassModel {
         return "$PROJECT_ROOT";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return testClassName;
     }
 
     private class TestAllFilesPresentMethodModel implements TestMethodModel {
+        @NotNull
         @Override
         public String getName() {
             return "testAllFilesPresentIn" + testClassName;
@@ -152,6 +154,11 @@ public class SingleClassTestModel implements TestClassModel {
         @Override
         public String getDataString() {
             return null;
+        }
+
+        @Override
+        public void generateSignature(@NotNull Printer p) {
+            TestMethodModel.DefaultImpls.generateSignature(this, p);
         }
     }
 }

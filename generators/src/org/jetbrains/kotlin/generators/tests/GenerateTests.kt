@@ -1088,7 +1088,7 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                     }
                     else {
                         SimpleTestClassModel(rootFile, recursive, excludeParentDirs,
-                                             compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend, excludeDirs)
+                                             compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend, excludeDirs, false)
                     }
             )
         }

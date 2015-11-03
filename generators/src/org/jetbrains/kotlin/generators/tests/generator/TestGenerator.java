@@ -102,6 +102,7 @@ public class TestGenerator {
         TestClassModel model;
         if (testClassModels.size() == 1) {
             model = new DelegatingTestClassModel(single(testClassModels)) {
+                @NotNull
                 @Override
                 public String getName() {
                     return suiteClassName;
@@ -118,7 +119,7 @@ public class TestGenerator {
 
                 @NotNull
                 @Override
-                public Collection<TestMethodModel> getTestMethods() {
+                public Collection<MethodModel> getMethods() {
                     return Collections.emptyList();
                 }
 
@@ -127,6 +128,7 @@ public class TestGenerator {
                     return false;
                 }
 
+                @NotNull
                 @Override
                 public String getName() {
                     return suiteClassName;
@@ -161,12 +163,12 @@ public class TestGenerator {
         p.println("public " + staticModifier + "class ", testClassModel.getName(), " extends ", baseTestClassName, " {");
         p.pushIndent();
 
-        Collection<TestMethodModel> testMethods = testClassModel.getTestMethods();
+        Collection<MethodModel> testMethods = testClassModel.getMethods();
         Collection<TestClassModel> innerTestClasses = testClassModel.getInnerTestClasses();
 
-        for (Iterator<TestMethodModel> iterator = testMethods.iterator(); iterator.hasNext(); ) {
-            TestMethodModel testMethodModel = iterator.next();
-            generateTestMethod(p, testMethodModel);
+        for (Iterator<MethodModel> iterator = testMethods.iterator(); iterator.hasNext(); ) {
+            MethodModel methodModel = iterator.next();
+            generateTestMethod(p, methodModel);
             if (iterator.hasNext() || !innerTestClasses.isEmpty()) {
                 p.println();
             }
@@ -186,12 +188,16 @@ public class TestGenerator {
         p.println("}");
     }
 
-    private static void generateTestMethod(Printer p, TestMethodModel testMethodModel) {
-        generateMetadata(p, testMethodModel);
-        p.println("public void ", testMethodModel.getName(), "() throws Exception {");
+    private static void generateTestMethod(Printer p, MethodModel methodModel) {
+        generateMetadata(p, methodModel);
+        
+        methodModel.generateSignature(p);
+        p.printWithNoIndent(" {");
+        p.println();
+        
         p.pushIndent();
 
-        testMethodModel.generateBody(p);
+        methodModel.generateBody(p);
 
         p.popIndent();
         p.println("}");
