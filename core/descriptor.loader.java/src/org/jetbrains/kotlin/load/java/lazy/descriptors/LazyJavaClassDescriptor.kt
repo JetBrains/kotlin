@@ -131,7 +131,7 @@ class LazyJavaClassDescriptor(
     private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor() {
 
         private val parameters = c.storageManager.createLazyValue {
-            this@LazyJavaClassDescriptor.declaredTypeParameters
+            this@LazyJavaClassDescriptor.computeConstructorTypeParameters()
         }
 
         override fun getParameters(): List<TypeParameterDescriptor> = parameters()

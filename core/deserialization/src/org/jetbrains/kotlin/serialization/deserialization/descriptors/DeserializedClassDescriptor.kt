@@ -173,7 +173,11 @@ public class DeserializedClassDescriptor(
             computeSupertypes()
         }
 
-        override fun getParameters() = c.typeDeserializer.ownTypeParameters
+        private val parameters = c.storageManager.createLazyValue {
+            this@DeserializedClassDescriptor.computeConstructorTypeParameters()
+        }
+
+        override fun getParameters() = parameters()
 
         override fun getSupertypes() = supertypes()
 

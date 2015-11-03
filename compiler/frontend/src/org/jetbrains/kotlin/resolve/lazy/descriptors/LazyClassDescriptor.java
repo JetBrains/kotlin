@@ -576,7 +576,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = c.getStorageManager().createLazyValue(new Function0<List<TypeParameterDescriptor>>() {
             @Override
             public List<TypeParameterDescriptor> invoke() {
-                return LazyClassDescriptor.this.getDeclaredTypeParameters();
+                return TypeParameterUtilsKt.computeConstructorTypeParameters(LazyClassDescriptor.this);
             }
         });
 

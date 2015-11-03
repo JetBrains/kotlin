@@ -28,6 +28,12 @@ import java.util.Collection;
 import java.util.List;
 
 public interface TypeConstructor extends Annotated {
+    /**
+     * It may differ from ClassDescriptor.declaredParameters if the class is inner, in such case
+     * it also contains additional parameters from outer declarations.
+     *
+     * @return list of parameters for type constructor, both from current declaration and the outer one
+     */
     @NotNull
     @ReadOnly
     List<TypeParameterDescriptor> getParameters();

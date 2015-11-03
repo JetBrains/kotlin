@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -34,6 +36,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     private final TypeSubstitutor originalSubstitutor;
     private TypeSubstitutor newSubstitutor;
     private List<TypeParameterDescriptor> typeConstructorParameters;
+    private List<TypeParameterDescriptor> declaredTypeParameters;
     private TypeConstructor typeConstructor;
 
     public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
@@ -52,6 +55,13 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                 newSubstitutor = DescriptorSubstitutor.substituteTypeParameters(
                         originalTypeParameters, originalSubstitutor.getSubstitution(), this, typeConstructorParameters
                 );
+
+                declaredTypeParameters = CollectionsKt.filter(typeConstructorParameters, new Function1<TypeParameterDescriptor, Boolean>() {
+                    @Override
+                    public Boolean invoke(TypeParameterDescriptor descriptor) {
+                        return !descriptor.isCapturedFromOuterDeclaration();
+                    }
+                });
             }
         }
         return newSubstitutor;
@@ -253,6 +263,6 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
         getSubstitutor();
-        return typeConstructorParameters;
+        return declaredTypeParameters;
     }
 }

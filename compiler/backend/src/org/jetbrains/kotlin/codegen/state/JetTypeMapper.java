@@ -642,6 +642,8 @@ public class JetTypeMapper {
 
             List<TypeProjection> arguments = jetType.getArguments();
             for (TypeParameterDescriptor parameter : jetType.getConstructor().getParameters()) {
+                if (parameter.isCopyFromOuterDeclaration()) continue;
+
                 TypeProjection argument = arguments.get(parameter.getIndex());
 
                 if (projectionsAllowed && argument.isStarProjection()) {
