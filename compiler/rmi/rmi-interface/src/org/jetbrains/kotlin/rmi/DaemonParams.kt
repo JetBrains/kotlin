@@ -251,7 +251,11 @@ public data class CompilerId(
 public fun isDaemonEnabled(): Boolean = System.getProperty(COMPILE_DAEMON_ENABLED_PROPERTY) != null
 
 
-public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits: Boolean, vararg additionalParams: String): DaemonJVMOptions {
+public fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
+                                     vararg additionalParams: String,
+                                     inheritMemoryLimits: Boolean,
+                                     inheritAdditionalProperties: Boolean
+): DaemonJVMOptions {
     // note: sequence matters, explicit override in COMPILE_DAEMON_JVM_OPTIONS_PROPERTY should be done after inputArguments processing
     if (inheritMemoryLimits) {
         ManagementFactory.getRuntimeMXBean().inputArguments.filterExtractProps(opts.mappers, "-")
@@ -264,15 +268,23 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
                   .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
 
-    System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"" ) }
     opts.jvmParams.addAll(additionalParams)
-    System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { opts.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY") }
+    if (inheritAdditionalProperties) {
+        System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"") }
+        System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { opts.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY") }
+    }
     return opts
 }
 
 
-public fun configureDaemonJVMOptions(inheritMemoryLimits: Boolean, vararg additionalParams: String): DaemonJVMOptions =
-        configureDaemonJVMOptions(DaemonJVMOptions(), inheritMemoryLimits = inheritMemoryLimits, additionalParams = *additionalParams)
+public fun configureDaemonJVMOptions(vararg additionalParams: String,
+                                     inheritMemoryLimits: Boolean,
+                                     inheritAdditionalProperties: Boolean
+): DaemonJVMOptions =
+        configureDaemonJVMOptions(DaemonJVMOptions(),
+                                  additionalParams = *additionalParams,
+                                  inheritMemoryLimits = inheritMemoryLimits,
+                                  inheritAdditionalProperties = inheritAdditionalProperties)
 
 
 public fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {

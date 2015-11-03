@@ -77,8 +77,8 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
-        val daemonJVMOptions = configureDaemonJVMOptions(false,
-                                                         "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"")
+        val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"",
+                                                         inheritMemoryLimits = false, inheritAdditionalProperties = false)
         var daemonShotDown = false
 
         try {
@@ -118,7 +118,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val backupJvmOptions = System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
         try {
             System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
-            val opts = configureDaemonJVMOptions(inheritMemoryLimits = false)
+            val opts = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
             TestCase.assertEquals("200m", opts.maxMemory)
             TestCase.assertEquals("10k", opts.maxPermSize)
             TestCase.assertEquals("100", opts.reservedCodeCacheSize)
@@ -158,11 +158,12 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val logFile1 = createTempFile("kotlin-daemon1-test", ".log")
         val logFile2 = createTempFile("kotlin-daemon2-test", ".log")
         val daemonJVMOptions1 =
-                configureDaemonJVMOptions(false,
-                                          "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile1.absolutePath}\"")
+                configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile1.absolutePath}\"",
+                                          inheritMemoryLimits = false, inheritAdditionalProperties = false)
+
         val daemonJVMOptions2 =
-                configureDaemonJVMOptions(false,
-                                          "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile2.absolutePath}\"")
+                configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile2.absolutePath}\"",
+                                          inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
         TestCase.assertTrue(logFile1.length() == 0L && logFile2.length() == 0L)
 
@@ -258,7 +259,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val flagFile = createTempFile(getTestName(true), ".alive")
         flagFile.deleteOnExit()
         val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath, clientAliveFlagPath = flagFile.absolutePath)
-        val daemonJVMOptions = configureDaemonJVMOptions(false)
+        val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
         val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
         TestCase.assertNotNull("failed to connect daemon", daemon)
 
