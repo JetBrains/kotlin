@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.addImport;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,258 +32,258 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class AddImportTestGenerated extends AbstractAddImportTest {
     public void testAllFilesPresentInAddImport() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/addImport"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/addImport"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
     @TestMetadata("CannotImportClass1.kt")
     public void testCannotImportClass1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/CannotImportClass1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/CannotImportClass1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("CannotImportClass2.kt")
     public void testCannotImportClass2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/CannotImportClass2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/CannotImportClass2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ClassAlreadyImported1.kt")
     public void testClassAlreadyImported1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ClassAlreadyImported1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ClassAlreadyImported1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ClassAlreadyImported2.kt")
     public void testClassAlreadyImported2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ClassAlreadyImported2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ClassAlreadyImported2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Comments.kt")
     public void testComments() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/Comments.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/Comments.kt");
         doTest(fileName);
     }
 
     @TestMetadata("CommentsNoPackageDirective.kt")
     public void testCommentsNoPackageDirective() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/CommentsNoPackageDirective.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/CommentsNoPackageDirective.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsAndHasUsage1.kt")
     public void testConflictingNameAppearsAndHasUsage1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsAndHasUsage2.kt")
     public void testConflictingNameAppearsAndHasUsage2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsAndHasUsage3.kt")
     public void testConflictingNameAppearsAndHasUsage3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage3.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage3.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsAndHasUsage4.kt")
     public void testConflictingNameAppearsAndHasUsage4() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage4.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage4.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsAndHasUsage5.kt")
     public void testConflictingNameAppearsAndHasUsage5() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage5.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage5.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsAndHasUsage6.kt")
     public void testConflictingNameAppearsAndHasUsage6() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage6.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage6.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsButUsageIsQualified.kt")
     public void testConflictingNameAppearsButUsageIsQualified() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsButUsageIsQualified.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsButUsageIsQualified.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsFalseUsage.kt")
     public void testConflictingNameAppearsFalseUsage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsFalseUsage.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsFalseUsage.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsFalseUsage2.kt")
     public void testConflictingNameAppearsFalseUsage2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsFalseUsage2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsFalseUsage2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameAppearsNoUsage.kt")
     public void testConflictingNameAppearsNoUsage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsNoUsage.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsNoUsage.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameHasExplicitImportAlready.kt")
     public void testConflictingNameHasExplicitImportAlready() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameHasExplicitImportAlready.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameHasExplicitImportAlready.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameNoAllUnderImport.kt")
     public void testConflictingNameNoAllUnderImport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameNoAllUnderImport.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameNoAllUnderImport.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameNoAllUnderImport2.kt")
     public void testConflictingNameNoAllUnderImport2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameNoAllUnderImport2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameNoAllUnderImport2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConflictingNameNoAllUnderImport3.kt")
     public void testConflictingNameNoAllUnderImport3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameNoAllUnderImport3.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameNoAllUnderImport3.kt");
         doTest(fileName);
     }
 
     @TestMetadata("DropExplicitImports.kt")
     public void testDropExplicitImports() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/DropExplicitImports.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/DropExplicitImports.kt");
         doTest(fileName);
     }
 
     @TestMetadata("DropExplicitImports2.kt")
     public void testDropExplicitImports2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/DropExplicitImports2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/DropExplicitImports2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("FunctionAlreadyImported1.kt")
     public void testFunctionAlreadyImported1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/FunctionAlreadyImported1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/FunctionAlreadyImported1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("FunctionAlreadyImported2.kt")
     public void testFunctionAlreadyImported2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/FunctionAlreadyImported2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/FunctionAlreadyImported2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportClassSimple.kt")
     public void testImportClassSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportClassSimple.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ImportClassSimple.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportClassWhenFunctionImported.kt")
     public void testImportClassWhenFunctionImported() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportClassWhenFunctionImported.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ImportClassWhenFunctionImported.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportEnumMember1.kt")
     public void testImportEnumMember1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportEnumMember1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ImportEnumMember1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportEnumMember2.kt")
     public void testImportEnumMember2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportEnumMember2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ImportEnumMember2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportFromObject.kt")
     public void testImportFromObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportFromObject.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ImportFromObject.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportFunctionBug.kt")
     public void testImportFunctionBug() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportFunctionBug.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ImportFunctionBug.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportNestedClass.kt")
     public void testImportNestedClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportNestedClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ImportNestedClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportSecondFunction.kt")
     public void testImportSecondFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ImportSecondFunction.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/ImportSecondFunction.kt");
         doTest(fileName);
     }
 
     @TestMetadata("KeywordNames.kt")
     public void testKeywordNames() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/KeywordNames.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/KeywordNames.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NameCountForStarNotReached.kt")
     public void testNameCountForStarNotReached() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NameCountForStarNotReached.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/NameCountForStarNotReached.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NameCountForStarReached.kt")
     public void testNameCountForStarReached() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NameCountForStarReached.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/NameCountForStarReached.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NoConflictingNameForInaccessibleClass1.kt")
     public void testNoConflictingNameForInaccessibleClass1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NoConflictingNameForInaccessibleClass1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/NoConflictingNameForInaccessibleClass1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NoConflictingNameForInaccessibleClass2.kt")
     public void testNoConflictingNameForInaccessibleClass2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NoConflictingNameForInaccessibleClass2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/NoConflictingNameForInaccessibleClass2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NoNeedToImportStandardClass.kt")
     public void testNoNeedToImportStandardClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/NoNeedToImportStandardClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/NoNeedToImportStandardClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PackageDoesNotConflictWithClass.kt")
     public void testPackageDoesNotConflictWithClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/PackageDoesNotConflictWithClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/PackageDoesNotConflictWithClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PropertyAlreadyImported1.kt")
     public void testPropertyAlreadyImported1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/PropertyAlreadyImported1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/PropertyAlreadyImported1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PropertyAlreadyImported2.kt")
     public void testPropertyAlreadyImported2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/PropertyAlreadyImported2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/PropertyAlreadyImported2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("StdlibImportsLast.kt")
     public void testStdlibImportsLast() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/StdlibImportsLast.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/addImport/StdlibImportsLast.kt");
         doTest(fileName);
     }
 }
