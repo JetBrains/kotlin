@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class LookupTrackerTestGenerated extends AbstractLookupTrackerTest {
     public void testAllFilesPresentInLookupTracker() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker"), Pattern.compile("^([^\\.]+)$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("classifierMembers")
