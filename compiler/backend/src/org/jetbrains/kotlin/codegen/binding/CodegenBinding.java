@@ -212,7 +212,7 @@ public class CodegenBinding {
                 new ClassDescriptorImpl(descriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
                                         Collections.singleton(DescriptorUtilsKt.getBuiltIns(descriptor).getAnyType()),
                                         KotlinSourceElementKt.toSourceElement(script));
-        classDescriptor.initialize(KtScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
+        classDescriptor.initialize(KtScope.Companion.empty(classDescriptor), Collections.<ConstructorDescriptor>emptySet(), null);
 
         recordClosure(trace, classDescriptor, null, asmType, fileClassesManager);
 

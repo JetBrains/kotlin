@@ -161,13 +161,13 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     @Override
     @NotNull
     public KtScope getUnsubstitutedMemberScope() {
-        return KtScope.Empty.INSTANCE$; // used for getDefaultType
+        return KtScope.Companion.empty(this); // used for getDefaultType
     }
 
     @NotNull
     @Override
     public KtScope getStaticScope() {
-        return KtScope.Empty.INSTANCE$;
+        return KtScope.Companion.empty(this);
     }
 
     @Override

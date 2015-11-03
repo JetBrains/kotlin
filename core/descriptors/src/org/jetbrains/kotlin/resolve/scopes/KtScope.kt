@@ -50,19 +50,19 @@ public interface KtScope {
      */
     public fun printScopeStructure(p: Printer)
 
-    public object Empty : KtScopeImpl() {
-        override fun getContainingDeclaration(): DeclarationDescriptor {
-            throw UnsupportedOperationException("Don't take containing declaration of the Empty scope")
-        }
-
-        override fun toString() = "Empty"
-
-        override fun printScopeStructure(p: Printer) {
-            p.println("Empty")
-        }
-    }
-
     companion object {
+        public fun empty(ownerDescriptor: DeclarationDescriptor): KtScope {
+            return object : KtScopeImpl() {
+                override fun getContainingDeclaration() = ownerDescriptor
+
+                override fun toString() = "Empty scope with owner: $ownerDescriptor"
+
+                override fun printScopeStructure(p: Printer) {
+                    p.println(toString())
+                }
+            }
+        }
+
         public val ALL_NAME_FILTER: (Name) -> Boolean = { true }
     }
 }

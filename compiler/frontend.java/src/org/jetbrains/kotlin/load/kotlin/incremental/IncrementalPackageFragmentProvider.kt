@@ -99,7 +99,7 @@ public class IncrementalPackageFragmentProvider(
 
         val memberScope: NotNullLazyValue<KtScope> = storageManager.createLazyValue {
             if (fqName !in fqNamesToLoad) {
-                KtScope.Empty
+                KtScope.empty(this)
             }
             else {
                 val moduleMapping = incrementalCache.getModuleMappingData()?.let { ModuleMapping.create(it) }
@@ -128,7 +128,7 @@ public class IncrementalPackageFragmentProvider(
                         }
 
                 if (scopes.isEmpty()) {
-                    KtScope.Empty
+                    KtScope.empty(this)
                 }
                 else {
                     ChainedScope(this, "Member scope for incremental compilation: union of package parts data", *scopes.toTypedArray())
@@ -151,7 +151,7 @@ public class IncrementalPackageFragmentProvider(
             val memberScope = storageManager.createLazyValue {
                 val partsData = partsNames.map { incrementalCache.getPackagePartData(it) }.filterNotNull()
                 if (partsData.isEmpty())
-                    KtScope.Empty
+                    KtScope.empty(this)
                 else {
                     val scopes = partsData.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings)) }
                     ChainedScope(this,

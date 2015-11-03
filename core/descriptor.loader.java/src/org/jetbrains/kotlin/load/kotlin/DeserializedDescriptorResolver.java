@@ -104,7 +104,7 @@ public final class DeserializedDescriptorResolver {
             }
         }
         if (list.isEmpty()) {
-            return KtScope.Empty.INSTANCE$;
+            return KtScope.Companion.empty(descriptor);
         }
         return new ChainedScope(descriptor, "Member scope for union of package parts data", list.toArray(new KtScope[list.size()]));
     }

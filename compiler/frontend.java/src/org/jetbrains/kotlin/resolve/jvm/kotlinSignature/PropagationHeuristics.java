@@ -67,7 +67,7 @@ class PropagationHeuristics {
                                 arrayTypeFromSuper.getConstructor(),
                                 arrayTypeFromSuper.isMarkedNullable(),
                                 Arrays.asList(new TypeProjectionImpl(Variance.OUT_VARIANCE, elementTypeInSuper)),
-                                KtScope.Empty.INSTANCE$);
+                                KtScope.Companion.empty(elementType.getMemberScope().getContainingDeclaration()));
 
                         data.reportError("Return type is not a subtype of overridden method. " +
                                          "To fix it, add annotation with Kotlin signature to super method with type "

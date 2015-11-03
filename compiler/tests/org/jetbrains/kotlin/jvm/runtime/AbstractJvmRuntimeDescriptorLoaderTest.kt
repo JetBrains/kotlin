@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.erro
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.net.URLClassLoader
@@ -210,8 +211,11 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
             get() = throw UnsupportedOperationException()
     }
 
-    private class ScopeWithClassifiers(classifiers: List<ClassifierDescriptor>, ownerDescriptor: DeclarationDescriptor)
-        : SimpleKtScope(ownerDescriptor, "runtime descriptor loader test") {
+    private class ScopeWithClassifiers(
+            classifiers: List<ClassifierDescriptor>,
+            val ownerDescriptor: DeclarationDescriptor
+    ) : KtScopeImpl() {
+        override fun getContainingDeclaration() = ownerDescriptor
 
         private val classifierMap = HashMap<Name, ClassifierDescriptor>()
         val redeclarationHandler = RedeclarationHandler.THROW_EXCEPTION
@@ -227,6 +231,10 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classifierMap[name]
 
         override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = classifierMap.values
+
+        override fun printScopeStructure(p: Printer) {
+            p.println("runtime descriptor loader test")
+        }
     }
 
 }

@@ -27,7 +27,7 @@ public class MutablePackageFragmentDescriptor extends PackageFragmentDescriptorI
     public MutablePackageFragmentDescriptor(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
         super(module, fqName);
 
-        scope = new SimpleKtScope(this, "Members of " + fqName + " in " + module);
+        scope = KtScope.Companion.empty(module);
     }
 
     @NotNull

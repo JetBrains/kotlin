@@ -104,7 +104,7 @@ class ClassifierQualifier(
 
     override val scope: KtScope get() {
         if (classifier !is ClassDescriptor) {
-            return KtScope.Empty
+            return KtScope.empty(classifier)
         }
 
         val scopes = ArrayList<KtScope>(3)
@@ -125,7 +125,7 @@ class ClassifierQualifier(
 
     override fun getNestedClassesAndPackageMembersScope(): KtScope {
         if (classifier !is ClassDescriptor) {
-            return KtScope.Empty
+            return KtScope.empty(classifier)
         }
 
         val scopes = ArrayList<KtScope>(2)

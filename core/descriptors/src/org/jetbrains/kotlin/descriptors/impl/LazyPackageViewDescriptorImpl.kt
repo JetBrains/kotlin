@@ -41,7 +41,7 @@ public class LazyPackageViewDescriptorImpl(
 
     override val memberScope: KtScope = LazyScopeAdapter(storageManager.createLazyValue {
         if (fragments.isEmpty()) {
-            KtScope.Empty
+            KtScope.empty(this)
         }
         else {
             val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)

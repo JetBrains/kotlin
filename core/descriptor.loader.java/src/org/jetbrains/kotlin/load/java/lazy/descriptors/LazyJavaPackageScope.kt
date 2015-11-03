@@ -71,7 +71,7 @@ public class LazyJavaPackageScope(
                 c.components.deserializedDescriptorResolver.readData(binaryClass, DeserializedDescriptorResolver.KOTLIN_PACKAGE_FACADE)
             }
 
-            KtScope.Empty
+            KtScope.empty(packageFragment)
         }
         else {
             c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, containingDeclaration.kotlinBinaryClasses)
