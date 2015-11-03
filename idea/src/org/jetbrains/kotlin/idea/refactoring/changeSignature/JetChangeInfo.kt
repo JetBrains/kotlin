@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.util.UserDataHolder
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.psi.*
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.refactoring.changeSignature.*
@@ -62,7 +64,7 @@ public open class JetChangeInfo(
         receiver: JetParameterInfo? = methodDescriptor.receiver,
         val context: PsiElement,
         primaryPropagationTargets: Collection<PsiElement> = emptyList()
-) : ChangeInfo {
+) : ChangeInfo, UserDataHolder by UserDataHolderBase() {
     private class JvmOverloadSignature(
             val method: PsiMethod,
             val mandatoryParams: Set<KtParameter>,
@@ -119,6 +121,16 @@ public open class JetChangeInfo(
     public fun getNewParametersCount(): Int = newParameters.size()
 
     override fun getNewParameters(): Array<JetParameterInfo> = newParameters.toTypedArray()
+
+    fun getToBeRemoved(): BooleanArray {
+        return BooleanArray(originalParameters.size).apply {
+            Arrays.fill(this, true)
+            for (newParameter in newParameters) {
+                if (newParameter.oldIndex < 0) continue
+                this[newParameter.oldIndex] = false
+            }
+        }
+    }
 
     fun getNonReceiverParametersCount(): Int = newParameters.size() - (if (receiverParameterInfo != null) 1 else 0)
 

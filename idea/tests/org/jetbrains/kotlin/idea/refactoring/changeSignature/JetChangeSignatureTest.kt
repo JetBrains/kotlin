@@ -835,4 +835,22 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testJvmOverloadedConstructorSwapParams() = doTest { swapParameters(1, 2) }
 
     fun testDefaultAfterLambda() = doTest { swapParameters(0, 1) }
+
+    fun testRemoveDefaultParameterBeforeLambda() = doTest { removeParameter(1) }
+
+    fun testAddParameterKeepFormat() = doTest {
+        val psiFactory = KtPsiFactory(project)
+        val defaultValue1 = psiFactory.createExpression("4")
+        val defaultValue2 = psiFactory.createExpression("5")
+        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "d", BUILT_INS.intType, null, defaultValue1), 2)
+        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "e", BUILT_INS.intType, null, defaultValue2))
+    }
+
+    fun testRemoveParameterKeepFormat1() = doTest { removeParameter(0) }
+
+    fun testRemoveParameterKeepFormat2() = doTest { removeParameter(1) }
+
+    fun testRemoveParameterKeepFormat3() = doTest { removeParameter(2) }
+
+    fun testSwapParametersKeepFormat() = doTest { swapParameters(0, 2) }
 }

@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.ContainerUtil
-import gnu.trove.TIntArrayList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
+import org.jetbrains.kotlin.idea.core.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBody
@@ -34,14 +35,14 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -236,37 +237,68 @@ class JetFunctionCallUsage(
         return newExpression
     }
 
-    private fun updateArgumentsAndReceiver(changeInfo: JetChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>) {
-        var arguments = element.valueArgumentList.sure { "Argument list is expected: " + element.text }
-        val oldArguments = element.valueArguments
+    class ArgumentInfo(
+            val parameter: JetParameterInfo,
+            val parameterIndex: Int,
+            val resolvedArgument: ResolvedValueArgument?,
+            val receiverValue: ReceiverValue?
+    ) {
+        val mainValueArgument: ValueArgument?
+            get() = resolvedArgument?.arguments?.firstOrNull()
 
+        val wasNamed: Boolean
+            get() = mainValueArgument?.isNamed() ?: false
+
+        var name: String? = null
+            private set
+
+        fun makeNamed(callee: JetCallableDefinitionUsage<*>) {
+            name = parameter.getInheritedName(callee)
+        }
+
+        fun shouldSkip() = parameter.defaultValueForParameter != null && mainValueArgument == null
+    }
+
+    private fun getResolvedValueArgument(oldIndex: Int): ResolvedValueArgument? {
+        if (oldIndex < 0) return null
+
+        val parameterDescriptor = resolvedCall!!.resultingDescriptor.valueParameters[oldIndex]
+        return resolvedCall.valueArguments[parameterDescriptor]
+    }
+
+    private var KtValueArgument.generatedArgumentValue: Boolean
+            by NotNullableCopyableUserDataProperty(Key.create("GENERATED_ARGUMENT_VALUE"), false)
+
+    private fun ArgumentInfo.getArgumentByDefaultValue(
+            element: KtCallElement,
+            allUsages: Array<out UsageInfo>,
+            psiFactory: KtPsiFactory
+    ): KtValueArgument {
+        val isInsideOfCallerBody = element.isInsideOfCallerBody(allUsages)
+        val defaultValueForCall = parameter.defaultValueForCall
+        val argValue = when {
+            isInsideOfCallerBody -> psiFactory.createExpression(parameter.name)
+            defaultValueForCall != null -> substituteReferences(defaultValueForCall, parameter.defaultValueParameterReferences, psiFactory)
+            else -> null
+        }
+        val argName = (if (isInsideOfCallerBody) null else name)?.let { Name.guess(it) }
+        return psiFactory.createArgument(argValue ?: psiFactory.createExpression("0"), argName).apply {
+            generatedArgumentValue = true
+            if (argValue == null) {
+                getArgumentExpression()!!.delete()
+            }
+        }
+    }
+
+    private fun updateArgumentsAndReceiver(changeInfo: JetChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>) {
         if (isPropertyJavaUsage) return updateJavaPropertyCall(changeInfo, element)
 
-        val isNamedCall = oldArguments.size > 1 && oldArguments[0].isNamed()
+        val fullCallElement = element.getQualifiedExpressionForSelector() ?: element
 
-        val indicesOfArgumentsWithDefaultValues = TIntArrayList()
+        val oldArguments = element.valueArguments
+        val newParameters = changeInfo.getNonReceiverParameters()
 
-        val psiFactory = KtPsiFactory(element.project)
-
-        val newSignatureParameters = changeInfo.getNonReceiverParameters()
-        val newArgumentListText = newSignatureParameters
-                .map { parameterInfo ->
-                    val defaultValueForCall = parameterInfo.defaultValueForCall
-                    val defaultValueText = when {
-                        element.isInsideOfCallerBody(allUsages) ->
-                            parameterInfo.name
-                        defaultValueForCall != null ->
-                            substituteReferences(defaultValueForCall, parameterInfo.defaultValueParameterReferences, psiFactory).text
-                        else ->
-                            ""
-                    }
-                    val argumentValue = if (defaultValueText.isEmpty()) "0" else defaultValueText
-                    if (isNamedCall) "${parameterInfo.getInheritedName(callee)}=$argumentValue" else argumentValue
-                }
-                .joinToString(prefix = "(", postfix = ")")
-        val newArgumentList = KtPsiFactory(project).createCallArguments(newArgumentListText)
-
-        val argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments)
+        val purelyNamedCall = element is KtCallExpression && oldArguments.isNotEmpty() && oldArguments.all { it.isNamed() }
 
         val newReceiverInfo = changeInfo.receiverParameterInfo
         val originalReceiverInfo = changeInfo.methodDescriptor.receiver
@@ -274,90 +306,118 @@ class JetFunctionCallUsage(
         val extensionReceiver = if (resolvedCall != null) resolvedCall.extensionReceiver else ReceiverValue.NO_RECEIVER
         val dispatchReceiver = if (resolvedCall != null) resolvedCall.dispatchReceiver else ReceiverValue.NO_RECEIVER
 
-        var elementToReplace: PsiElement = element
-        val parent = element.parent
-        if (parent is KtQualifiedExpression && parent.selectorExpression == element) {
-            elementToReplace = parent
-        }
-
         // Do not add extension receiver to calls with explicit dispatch receiver
-        if (newReceiverInfo != null && elementToReplace is KtQualifiedExpression && dispatchReceiver is ExpressionReceiver) return
+        if (newReceiverInfo != null && fullCallElement is KtQualifiedExpression && dispatchReceiver is ExpressionReceiver) return
 
-        val newArguments = newArgumentList.arguments
-        var actualIndex = 0
-        for (i in newArguments.indices) {
-            val newArgument = newArguments[i]
-            val parameterInfo = newSignatureParameters[i]
-            if (parameterInfo == originalReceiverInfo) {
-                val receiverExpression = getReceiverExpression(extensionReceiver, psiFactory)
-                if (receiverExpression != null) {
-                    newArgument.replace(receiverExpression)
-                }
-                actualIndex++
-                continue
-            }
-
-            val oldArgument = argumentMap[parameterInfo.oldIndex]
-
-            if (oldArgument != null) {
-                val argumentName = oldArgument.getArgumentName()
-                val argumentNameExpression = argumentName?.referenceExpression
-                changeArgumentName(argumentNameExpression, parameterInfo)
-                //noinspection ConstantConditions
-                val argumentReplacement = newArgument.replace(
-                        if (oldArgument is KtFunctionLiteralArgument)
-                            psiFactory.createArgument(oldArgument.getArgumentExpression(), null, false)
-                        else
-                            oldArgument.asElement()) as ValueArgument
-                argumentMap.put(parameterInfo.oldIndex, argumentReplacement)
-            }
-            else if (parameterInfo.defaultValueForCall == null) {
-                if (parameterInfo.defaultValueForParameter != null) {
-                    newArgumentList.removeArgument(newArgument)
-                }
-                else {
-                    newArgument.delete() // keep space between commas
-                }
-            }
-            else {
-                indicesOfArgumentsWithDefaultValues.add(actualIndex++)
-            }// TODO: process default arguments in the middle
+        val newArgumentInfos = newParameters.withIndex().map {
+            val (index, param) = it
+            val oldIndex = param.oldIndex
+            val resolvedArgument = if (oldIndex >= 0) getResolvedValueArgument(oldIndex) else null
+            val receiverValue = if (param == originalReceiverInfo) extensionReceiver else null
+            ArgumentInfo(param, index, resolvedArgument, receiverValue)
         }
 
-        val lambdaArguments = element.functionLiteralArguments
-        val hasLambdaArgumentsBefore = !lambdaArguments.isEmpty()
-        if (hasLambdaArgumentsBefore) {
-            element.deleteChildRange(lambdaArguments.first(), lambdaArguments.last())
+        val lastParameterIndex = newParameters.lastIndex
+        var firstNamedIndex = newArgumentInfos.firstOrNull {
+            it.wasNamed
+            || (it.parameter.isNewParameter && purelyNamedCall)
+            || (it.resolvedArgument is VarargValueArgument && it.parameterIndex < lastParameterIndex)
+        }?.parameterIndex
+        if (firstNamedIndex == null) {
+            val lastNonDefaultArgIndex = (lastParameterIndex downTo 0).firstOrNull { !newArgumentInfos[it].shouldSkip() }
+                                         ?: -1
+            firstNamedIndex = (0..lastNonDefaultArgIndex).firstOrNull { newArgumentInfos[it].shouldSkip() }
         }
 
-        val lastArgument = newArgumentList.arguments.lastOrNull()
-        val lastLambdaExpr = if (lastArgument != null) lastArgument.getArgumentExpression()?.unpackFunctionLiteral() else null
-        val lastNewParam = changeInfo.newParameters.lastOrNull()
-        val hasTrailingLambdaInArgumentListAfter =
-                lastLambdaExpr != null && lastNewParam != null && argumentMap[lastNewParam.oldIndex] == lastArgument
-        val newLambdaWithDefaultValueWasAdded =
-                lastNewParam != null
-                && lastNewParam.isNewParameter
-                && lastNewParam.defaultValueForCall is KtFunctionLiteralExpression
-                && lastArgument != null
-                && !lastArgument.isNamed()
-        val shouldMoveLambdaOut = hasTrailingLambdaInArgumentListAfter && hasLambdaArgumentsBefore || newLambdaWithDefaultValueWasAdded
+        val lastPositionalIndex = if (firstNamedIndex != null) firstNamedIndex - 1 else lastParameterIndex
+        (lastPositionalIndex + 1 .. lastParameterIndex).forEach { newArgumentInfos[it].makeNamed(callee) }
 
-        arguments = arguments.replace(newArgumentList) as KtValueArgumentList
+        val psiFactory = KtPsiFactory(element.project)
 
-        val argumentsToShorten = ArrayList<KtElement>(indicesOfArgumentsWithDefaultValues.size())
-        val argumentList = arguments.arguments
-        indicesOfArgumentsWithDefaultValues.forEach {
-            argumentsToShorten.add(argumentList[it])
-            true
+        val newArgumentList = psiFactory.createCallArguments("()").apply {
+            for (argInfo in newArgumentInfos) {
+                if (argInfo.shouldSkip()) continue
+
+                val name = argInfo.name?.let { Name.guess(it) }
+
+                if (argInfo.receiverValue != null) {
+                    val receiverExpression = getReceiverExpression(argInfo.receiverValue, psiFactory) ?: continue
+                    addArgument(psiFactory.createArgument(receiverExpression, name))
+                    continue
+                }
+
+                val resolvedArgument = argInfo.resolvedArgument
+                when (resolvedArgument) {
+                    null, is DefaultValueArgument -> addArgument(argInfo.getArgumentByDefaultValue(element, allUsages, psiFactory))
+
+                    is ExpressionValueArgument -> {
+                        val valueArgument = resolvedArgument.valueArgument
+                        val newValueArgument: KtValueArgument = when {
+                            valueArgument == null -> argInfo.getArgumentByDefaultValue(element, allUsages, psiFactory)
+                            valueArgument is KtFunctionLiteralArgument -> psiFactory.createArgument(valueArgument.getArgumentExpression(), name)
+                            valueArgument is KtValueArgument && valueArgument.getArgumentName()?.asName == name -> valueArgument
+                            else -> psiFactory.createArgument(valueArgument.getArgumentExpression(), name)
+                        }
+                        addArgument(newValueArgument)
+                    }
+
+                    // TODO: Support Kotlin varargs
+                    is VarargValueArgument -> resolvedArgument.arguments.forEach {
+                        if (it is KtValueArgument) addArgument(it)
+                    }
+
+                    else -> return
+                }
+            }
         }
-        argumentsToShorten.forEach { it.addToShorteningWaitSet(SHORTEN_ARGUMENTS_OPTIONS) }
+
+        newArgumentList.arguments.singleOrNull()?.let {
+            if (it.getArgumentExpression() == null) {
+                newArgumentList.removeArgument(it)
+            }
+        }
+
+        val lastOldArgument = oldArguments.lastOrNull()
+        val lastNewParameter = newParameters.lastOrNull()
+        val lastNewArgument = newArgumentList.arguments.lastOrNull()
+        val oldLastResolvedArgument = getResolvedValueArgument(lastNewParameter?.oldIndex ?: -1) as? ExpressionValueArgument
+        val lambdaArgumentNotTouched =
+                lastOldArgument is KtFunctionLiteralArgument && oldLastResolvedArgument?.valueArgument == lastOldArgument
+        val newLambdaArgumentAddedLast = lastNewParameter != null
+                                         && lastNewParameter.isNewParameter
+                                         && lastNewParameter.defaultValueForCall is KtFunctionLiteralExpression
+                                         && lastNewArgument != null
+                                         && !lastNewArgument.isNamed()
+
+        if (lambdaArgumentNotTouched) {
+            newArgumentList.removeArgument(newArgumentList.arguments.last())
+        }
+        else {
+            val lambdaArguments = element.functionLiteralArguments
+            if (lambdaArguments.isNotEmpty()) {
+                element.deleteChildRange(lambdaArguments.first(), lambdaArguments.last())
+            }
+        }
+
+        var oldArgumentList = element.valueArgumentList.sure { "Argument list is expected: " + element.text }
+        replaceListPsiAndKeepDelimiters(oldArgumentList, newArgumentList) { arguments }
+
+        element.accept(
+                object: KtTreeVisitorVoid() {
+                    override fun visitArgument(argument: KtValueArgument) {
+                        if (argument.generatedArgumentValue) {
+                            argument.generatedArgumentValue = false
+                            argument.addToShorteningWaitSet(SHORTEN_ARGUMENTS_OPTIONS)
+                        }
+                    }
+                }
+        )
 
         var newElement: KtElement = element
         if (newReceiverInfo != originalReceiverInfo) {
             val replacingElement: PsiElement
             if (newReceiverInfo != null) {
-                val receiverArgument = argumentMap[newReceiverInfo.oldIndex]
+                val receiverArgument = getResolvedValueArgument(newReceiverInfo.oldIndex)?.arguments?.singleOrNull()
                 val extensionReceiverExpression = receiverArgument?.getArgumentExpression()
                 val defaultValueForCall = newReceiverInfo.defaultValueForCall
                 val receiver = extensionReceiverExpression?.let { psiFactory.createExpression(it.text) }
@@ -370,10 +430,10 @@ class JetFunctionCallUsage(
                 replacingElement = psiFactory.createExpression(element.text)
             }
 
-            newElement = elementToReplace.replace(replacingElement) as KtElement
+            newElement = fullCallElement.replace(replacingElement) as KtElement
         }
 
-        if (shouldMoveLambdaOut) {
+        if (!lambdaArgumentNotTouched && newLambdaArgumentAddedLast) {
             val newCallExpression = ((newElement as? KtQualifiedExpression)?.selectorExpression ?: newElement) as KtCallExpression
             newCallExpression.moveFunctionLiteralOutsideParentheses()
         }
@@ -450,27 +510,6 @@ class JetFunctionCallUsage(
                 }
                 else -> null
             }
-        }
-
-        private fun getParamIndexToArgumentMap(changeInfo: JetChangeInfo, oldArguments: List<ValueArgument>): MutableMap<Int, ValueArgument> {
-            val argumentMap = HashMap<Int, ValueArgument>()
-
-            for (i in oldArguments.indices) {
-                val argument = oldArguments[i]
-                val argumentName = argument.getArgumentName()
-                val oldParameterName = if (argumentName != null) argumentName.asName.asString() else null
-
-                if (oldParameterName != null) {
-                    val oldParameterIndex = changeInfo.getOldParameterIndex(oldParameterName)
-
-                    if (oldParameterIndex != null)
-                        argumentMap.put(oldParameterIndex, argument)
-                }
-                else
-                    argumentMap.put(i, argument)
-            }
-
-            return argumentMap
         }
     }
 }

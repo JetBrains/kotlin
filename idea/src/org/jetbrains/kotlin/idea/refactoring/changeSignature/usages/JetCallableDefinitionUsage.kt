@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -30,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbsent
+import org.jetbrains.kotlin.idea.core.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
@@ -203,7 +201,7 @@ class JetCallableDefinitionUsage<T : PsiElement>(
                 newParameterList = parameterList.replace(newParameterList) as KtParameterList
             }
             else {
-                newParameterList = replaceParameterListAndKeepDelimiters(parameterList, newParameterList)
+                newParameterList = replaceListPsiAndKeepDelimiters(parameterList, newParameterList) { parameters }
             }
         }
         else {
@@ -224,32 +222,6 @@ class JetCallableDefinitionUsage<T : PsiElement>(
         }
 
         newParameterList.addToShorteningWaitSet(Options.DEFAULT)
-    }
-
-    private fun replaceParameterListAndKeepDelimiters(parameterList: KtParameterList, newParameterList: KtParameterList): KtParameterList {
-        val oldParameters = parameterList.parameters
-        val newParameters = newParameterList.parameters
-        val oldCount = oldParameters.size
-        val newCount = newParameters.size
-
-        val commonCount = Math.min(oldCount, newCount)
-        for (i in 0..commonCount - 1) {
-            oldParameters[i] = oldParameters[i].replace(newParameters[i]) as KtParameter
-        }
-
-        if (commonCount == 0) return parameterList.replace(newParameterList) as KtParameterList
-
-        if (oldCount > commonCount) {
-            parameterList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, oldParameters.last())
-        }
-        else if (newCount > commonCount) {
-            parameterList.addRangeAfter(newParameters[commonCount - 1].nextSibling,
-                                        newParameterList.lastChild.prevSibling,
-                                        PsiTreeUtil.skipSiblingsBackward(parameterList.lastChild,
-                                                                         PsiWhiteSpace::class.java, PsiComment::class.java))
-        }
-
-        return parameterList
     }
 
     private fun changeVisibility(changeInfo: JetChangeInfo, element: PsiElement) {

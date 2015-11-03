@@ -113,7 +113,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
         else {
             findSAMUsages(info, result)
-            findConstructorDelegationUsages(info, result)
+            //findConstructorDelegationUsages(info, result)
             findKotlinOverrides(info, result)
             if (info is JavaChangeInfo) {
                 findKotlinCallers(info, result)
@@ -415,21 +415,6 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val samCallType = context.getType(callExpression) ?: continue
 
             result.add(DeferredJavaMethodOverrideOrSAMUsage(functionLiteral, functionDescriptor!!, samCallType))
-        }
-    }
-
-    private fun findConstructorDelegationUsages(changeInfo: ChangeInfo, result: MutableSet<UsageInfo>) {
-        val method = changeInfo.method
-        if (!(method.isTrueJavaMethod())) return
-        method as PsiMethod
-
-        if (!method.isConstructor) return
-
-        method.processDelegationCallConstructorUsages(method.useScope) {
-            if (it is KtConstructorDelegationCall) {
-                result.add(JavaConstructorDeferredUsageInDelegationCall(it))
-            }
-            true
         }
     }
 
