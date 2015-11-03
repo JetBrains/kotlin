@@ -3,8 +3,8 @@
 */
 package hello
 
-import kotlin.js.dom.html.window
-import kotlin.js.dom.html5.*
+import kotlin.browser.window
+import org.w3c.dom.*
 import jquery.*
 
 val canvas: HTMLCanvasElement
@@ -12,20 +12,20 @@ val canvas: HTMLCanvasElement
         return window.document.getElementsByTagName("canvas").item(0)!! as HTMLCanvasElement
     }
 
-val context: CanvasContext
+val context: CanvasRenderingContext2D
     get() {
-        return canvas.getContext("2d")!!
+        return canvas.getContext("2d") as CanvasRenderingContext2D
     }
 
 
 val width: Double
     get() {
-        return canvas.width
+        return canvas.width.toDouble()
     }
 
 val height: Double
     get() {
-        return canvas.height
+        return canvas.height.toDouble()
     }
 
 
@@ -48,7 +48,7 @@ class HelloKotlin() {
     init {
         context.font = "bold ${textHeightInPixels}px Georgia, serif"
     }
-    val textWidthInPixels = context.measureText(message)!!.width
+    val textWidthInPixels = context.measureText(message).width
 
     fun draw() {
         context.save()
@@ -59,7 +59,7 @@ class HelloKotlin() {
         context.shadowOffsetX = -4.0
         context.shadowOffsetY = 4.0
         context.fillStyle = "rgb(242,160,110)"
-        context.fillText(message, absX.toInt(), absY.toInt())
+        context.fillText(message, absX, absY)
         context.restore()
     }
 
@@ -86,7 +86,7 @@ class HelloKotlin() {
 fun renderBackground() {
     context.save()
     context.fillStyle = "#5C7EED"
-    context.fillRect(0, 0, width, height)
+    context.fillRect(0.0, 0.0, width, height)
     context.restore()
 }
 
@@ -106,5 +106,3 @@ fun main(args: Array<String>) {
                            }, interval)
     }
 }
-
-

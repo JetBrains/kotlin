@@ -4,6 +4,7 @@ import java.lang.*
 import java.util.*
 
 public object Collections {
+    @Deprecated("Use maxBy instead")
     public fun max<T>(col: Collection<T>, comp: Comparator<in T>): T = java.util.max(col, comp)
 
     public fun <T> sort(list: MutableList<T>): Unit = java.util.sort(list)
