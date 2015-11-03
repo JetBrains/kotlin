@@ -1199,7 +1199,7 @@ public class DescriptorResolver {
             return;
         }
 
-        assert jetTypeArguments.size() == arguments.size() : typeElement.getText() + ": " + jetTypeArguments + " - " + arguments;
+        assert jetTypeArguments.size() <= arguments.size() : typeElement.getText() + ": " + jetTypeArguments + " - " + arguments;
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
         for (int i = 0; i < jetTypeArguments.size(); i++) {

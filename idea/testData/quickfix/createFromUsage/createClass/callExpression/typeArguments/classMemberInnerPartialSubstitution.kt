@@ -1,5 +1,4 @@
 // "Create class 'Foo'" "true"
-// ERROR: Type mismatch: inferred type is kotlin.String but U was expected
 
 class B<T>(val t: T) {
 

@@ -6651,6 +6651,123 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/generics/innerClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class InnerClasses extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInInnerClasses() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/innerClasses"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("bareTypes.kt")
+                public void testBareTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/bareTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("checkBoundsOuter.kt")
+                public void testCheckBoundsOuter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/checkBoundsOuter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("importedInner.kt")
+                public void testImportedInner() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/importedInner.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerTP.kt")
+                public void testInnerTP() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/innerTP.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerUncheckedCast.kt")
+                public void testInnerUncheckedCast() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/innerUncheckedCast.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("innerVariance.kt")
+                public void testInnerVariance() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/innerVariance.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("iterator.kt")
+                public void testIterator() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/iterator.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("j+k.kt")
+                public void testJ_k() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/j+k.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt408.kt")
+                public void testKt408() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/kt408.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt6325.kt")
+                public void testKt6325() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/kt6325.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("parameterShadowing.kt")
+                public void testParameterShadowing() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/parameterShadowing.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("qualifiedOuter.kt")
+                public void testQualifiedOuter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/qualifiedOuter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("qualifiedTypesResolution.kt")
+                public void testQualifiedTypesResolution() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/qualifiedTypesResolution.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/simple.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleIn.kt")
+                public void testSimpleIn() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/simpleIn.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleOut.kt")
+                public void testSimpleOut() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/simpleOut.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleOutUseSite.kt")
+                public void testSimpleOutUseSite() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/simpleOutUseSite.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("substitutedMemberScope.kt")
+                public void testSubstitutedMemberScope() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/innerClasses/substitutedMemberScope.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/generics/nullability")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

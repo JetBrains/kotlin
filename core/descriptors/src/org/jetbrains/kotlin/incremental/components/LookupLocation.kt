@@ -40,6 +40,7 @@ public enum class NoLookupLocation : LookupLocation {
     FROM_REFLECTION,
     WHEN_RESOLVE_DECLARATION,
     WHEN_GET_DECLARATION_SCOPE,
+    WHEN_RESOLVING_DEFAULT_TYPE_ARGUMENTS,
     FOR_ALREADY_TRACKED,
     // TODO replace with real location (e.g. FROM_IDE) where it possible
     WHEN_GET_ALL_DESCRIPTORS,

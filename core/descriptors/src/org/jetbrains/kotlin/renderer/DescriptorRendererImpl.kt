@@ -246,6 +246,15 @@ internal class DescriptorRendererImpl(
         }.toString()
     }
 
+    private fun renderTypeArgumentsForTypeConstructor(
+            type: KotlinType,
+            typeConstructor: TypeConstructor
+    ): String {
+        return type.arguments.zip(type.constructor.parameters).filter {
+            (it.second.original.containingDeclaration as? ClassifierDescriptor)?.typeConstructor == typeConstructor
+        }.map { it.first }.let { renderTypeArguments(it) }
+    }
+
     private fun renderDefaultType(type: KotlinType): String {
         val sb = StringBuilder()
 
@@ -253,16 +262,42 @@ internal class DescriptorRendererImpl(
 
         if (type.isError()) {
             sb.append(type.getConstructor().toString()) // Debug name of an error type is more informative
+            sb.append(renderTypeArguments(type.getArguments()))
         }
         else {
-            sb.append(renderTypeConstructor(type.getConstructor()))
+            sb.append(renderTypeConstructorAndArguments(type))
         }
-        sb.append(renderTypeArguments(type.getArguments()))
+
         if (type.isMarkedNullable()) {
             sb.append("?")
         }
         return sb.toString()
     }
+
+    private fun renderTypeConstructorAndArguments(
+            type: KotlinType,
+            typeConstructor: TypeConstructor = type.constructor
+    ): String =
+        StringBuilder().apply {
+            val classDescriptor = typeConstructor.declarationDescriptor as? ClassDescriptor
+
+            if (classDescriptor is MissingDependencyErrorClass) {
+                append(renderTypeConstructor(typeConstructor))
+                append(renderTypeArguments(type.arguments))
+                return@apply
+            }
+
+            if (classDescriptor != null && classDescriptor.isInner) {
+                append(renderTypeConstructorAndArguments(type, (classDescriptor.containingDeclaration as ClassDescriptor).typeConstructor))
+                append('.')
+                append(renderName(classDescriptor.name))
+            }
+            else {
+                append(renderTypeConstructor(typeConstructor))
+            }
+
+            append(renderTypeArgumentsForTypeConstructor(type, typeConstructor))
+        }.toString()
 
     override fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
         val cd = typeConstructor.getDeclarationDescriptor()

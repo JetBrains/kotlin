@@ -1,4 +1,4 @@
-// PARAM_TYPES: A.B<U>
+// PARAM_TYPES: A<T>.B<U>
 // PARAM_TYPES: V, Data
 // PARAM_DESCRIPTOR: public final inner class B<U : Data> defined in A
 // PARAM_DESCRIPTOR: value-parameter val v: V defined in A.B.foo

@@ -1,5 +1,5 @@
 // PARAM_TYPES: A<T>
-// PARAM_TYPES: A.B<U>
+// PARAM_TYPES: A<T>.B<U>
 // PARAM_TYPES: V, Data
 // PARAM_DESCRIPTOR: public final class A<T : Data> where T : DataEx defined in root package
 // PARAM_DESCRIPTOR: public final inner class B<U : Data> where U : DataExEx defined in A

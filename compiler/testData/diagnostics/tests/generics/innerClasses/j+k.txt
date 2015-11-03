@@ -1,0 +1,22 @@
+package
+
+public fun main(): kotlin.Unit
+
+public open class Outer</*0*/ E : kotlin.Any!> {
+    public constructor Outer</*0*/ E : kotlin.Any!>()
+    public/*package*/ open fun baz(): Outer<E!>.Inner<E!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun set(/*0*/ x: Outer<kotlin.String!>.Inner<E!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open inner class Inner</*0*/ F : kotlin.Any!> {
+        public constructor Inner</*0*/ F : kotlin.Any!>()
+        public/*package*/ open fun bar(): F!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public/*package*/ open fun foo(): E!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public/*package*/ open fun outer(): Outer<E!>!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

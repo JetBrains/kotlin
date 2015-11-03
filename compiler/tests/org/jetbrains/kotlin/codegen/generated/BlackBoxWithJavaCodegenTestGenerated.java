@@ -77,6 +77,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("innerGenericClass")
+    public void testInnerGenericClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/innerGenericClass/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("interfaceCompanion")
     public void testInterfaceCompanion() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/interfaceCompanion/");

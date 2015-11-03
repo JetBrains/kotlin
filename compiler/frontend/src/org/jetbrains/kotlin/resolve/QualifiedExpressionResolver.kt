@@ -50,24 +50,35 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         }
     }
 
-    public fun resolveDescriptorForUserType(
+    data class TypeQualifierResolutionResult(
+            val qualifierParts: List<QualifierPart>,
+            val classifierDescriptor: ClassifierDescriptor? = null
+    ) {
+        val allProjections: List<KtTypeProjection>
+            get() = qualifierParts.flatMap { it.typeArguments?.arguments.orEmpty() }
+    }
+
+    public fun resolveDescriptorForType(
             userType: KtUserType,
             scope: LexicalScope,
             trace: BindingTrace
-    ): ClassifierDescriptor? {
+    ): TypeQualifierResolutionResult {
         if (userType.qualifier == null && !userType.startWithPackage) { // optimization for non-qualified types
-            return userType.referenceExpression?.let {
+            val descriptor = userType.referenceExpression?.let {
                 val classifier = scope.findClassifier(it.getReferencedNameAsName(), KotlinLookupLocation(it))
                 storeResult(trace, it, classifier, scope.ownerDescriptor, inImport = false, isQualifier = false)
                 classifier
             }
+
+            return TypeQualifierResolutionResult(userType.asQualifierPartList().first, descriptor)
         }
 
         val module = scope.ownerDescriptor.module
         val (qualifierPartList, hasError) = userType.asQualifierPartList()
         if (hasError) {
-            resolveToPackageOrClass(qualifierPartList, module, trace, scope.ownerDescriptor, scope, inImport = false)
-            return null
+            val descriptor = resolveToPackageOrClass(
+                    qualifierPartList, module, trace, scope.ownerDescriptor, scope, inImport = false) as? ClassifierDescriptor
+            return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
         assert(qualifierPartList.size() >= 1) {
             "Too short qualifier list for user type $userType : ${qualifierPartList.joinToString()}"
@@ -76,7 +87,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val qualifier = resolveToPackageOrClass(
                 qualifierPartList.subList(0, qualifierPartList.size() - 1), module,
                 trace, scope.ownerDescriptor, scope.check { !userType.startWithPackage }, inImport = false
-        ) ?: return null
+        ) ?: return TypeQualifierResolutionResult(qualifierPartList, null)
 
         val lastPart = qualifierPartList.last()
         val classifier = when (qualifier) {
@@ -85,7 +96,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             else -> null
         }
         storeResult(trace, lastPart.expression, classifier, scope.ownerDescriptor, inImport = false, isQualifier = false)
-        return classifier
+
+        return TypeQualifierResolutionResult(qualifierPartList, classifier)
     }
 
     private val KtUserType.startWithPackage: Boolean
@@ -266,7 +278,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         return result.asReversed()
     }
 
-    private data class QualifierPart(
+    data class QualifierPart(
             val name: Name,
             val expression: KtSimpleNameExpression,
             val typeArguments: KtTypeArgumentList? = null
