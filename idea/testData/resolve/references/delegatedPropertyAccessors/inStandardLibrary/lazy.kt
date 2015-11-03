@@ -1,5 +1,3 @@
-import kotlin.properties.Delegates
+val x: Int <caret>by lazy {1}
 
-val x: Int <caret>by Delegates.lazy {1}
-
-// REF: (in kotlin.properties.ReadOnlyProperty).getValue(R,kotlin.reflect.KProperty<*>)
+// REF: (for kotlin.Lazy<T> in kotlin).getValue(kotlin.Any?,kotlin.reflect.KProperty<*>)
