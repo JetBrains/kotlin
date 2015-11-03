@@ -205,6 +205,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             generateFunctionReferenceMethods(functionReferenceTarget);
         }
 
+        functionCodegen.generateDefaultIfNeeded(
+                context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
+        );
+
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
@@ -212,10 +216,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         }
 
         genClosureFields(closure, v, typeMapper);
-
-        functionCodegen.generateDefaultIfNeeded(
-                context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
-        );
     }
 
     @Override
