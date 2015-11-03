@@ -29,9 +29,10 @@ fun surroundWithBracesIfInStringTemplate(context: InsertionContext) {
     if (startOffset > 0 && document.charsSequence[startOffset - 1] == '$') {
         val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
         psiDocumentManager.commitAllDocuments()
-        psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
         if (context.file.findElementAt(startOffset - 1)?.node?.elementType == KtTokens.SHORT_TEMPLATE_ENTRY_START) {
+            psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
+
             document.insertString(startOffset, "{")
             context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, startOffset + 1)
 

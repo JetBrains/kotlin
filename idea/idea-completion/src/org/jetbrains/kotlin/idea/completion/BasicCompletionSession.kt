@@ -171,13 +171,11 @@ class BasicCompletionSession(
 
             val contextVariableTypesForSmartCompletion = withCollectRequiredContextVariableTypes(::completeWithSmartCompletion)
 
-            fun completeReferenceVariants(lookupElementFactory: LookupElementFactory) {
+            val contextVariableTypesForReferenceVariants = withCollectRequiredContextVariableTypes { lookupElementFactory ->
                 val (imported, notImported) = referenceVariantsWithNonInitializedVarExcluded!!
                 collector.addDescriptorElements(imported, lookupElementFactory)
                 collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
             }
-
-            val contextVariableTypesForReferenceVariants = withCollectRequiredContextVariableTypes(::completeReferenceVariants)
 
             KEYWORDS_ONLY.doComplete()
 
