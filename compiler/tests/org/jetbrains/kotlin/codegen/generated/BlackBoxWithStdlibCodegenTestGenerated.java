@@ -1428,7 +1428,7 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
 
         @TestMetadata("kt6382.kt")
         public void testKt6382() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/defaultArguments/kt6382.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/defaultArguments/kt6382.kt");
             doTestWithStdlib(fileName);
         }
 

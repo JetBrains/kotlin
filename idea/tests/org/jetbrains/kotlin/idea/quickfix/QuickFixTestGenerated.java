@@ -6853,7 +6853,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
             @TestMetadata("loopMultiParameter.kt")
             public void testLoopMultiParameter() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/loopMultiParameter.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/removeValVarFromParameter/loopMultiParameter.kt");
                 doTest(fileName);
             }
 
