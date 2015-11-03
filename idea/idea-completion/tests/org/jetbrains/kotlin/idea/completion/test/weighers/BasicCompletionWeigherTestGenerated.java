@@ -47,6 +47,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("DelegateToOtherObject.kt")
+    public void testDelegateToOtherObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/DelegateToOtherObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DeprecatedFun.kt")
     public void testDeprecatedFun() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/DeprecatedFun.kt");
@@ -140,6 +146,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     @TestMetadata("PropertiesBeforeKeywords.kt")
     public void testPropertiesBeforeKeywords() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/PropertiesBeforeKeywords.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SuperMembers.kt")
+    public void testSuperMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/SuperMembers.kt");
         doTest(fileName);
     }
 

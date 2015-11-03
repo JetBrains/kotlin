@@ -232,4 +232,10 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/SmartPriority3.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("SuperMembers.kt")
+    public void testSuperMembers() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/SuperMembers.kt");
+        doTest(fileName);
+    }
 }

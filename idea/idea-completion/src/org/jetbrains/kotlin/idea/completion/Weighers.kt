@@ -23,10 +23,7 @@ import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
 import com.intellij.openapi.util.Key
 import com.intellij.psi.util.proximity.PsiProximityComparator
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.smart.*
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -34,6 +31,8 @@ import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.getOriginalTopmostOverriddenDescriptors
 
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
@@ -245,5 +244,33 @@ class SmartCompletionInBasicWeigher(
             fullMatchWeight(nameSimilarity)
         else
             ifNotNullMatchWeight(nameSimilarity)
+    }
+}
+
+class PreferContextElementsWeigher(private val context: DeclarationDescriptor) : LookupElementWeigher("kotlin.preferContextElements", true, false) {
+    private val contextElements = context.parentsWithSelf
+            .takeWhile { it !is PackageFragmentDescriptor }
+            .toList()
+            .flatMap { if (it is CallableDescriptor) it.getOriginalTopmostOverriddenDescriptors() else listOf(it) }
+            .toSet()
+    private val contextElementNames = contextElements.map { it.name }.toSet()
+
+    override fun weigh(element: LookupElement): Boolean {
+        val lookupObject = element.`object` as? DeclarationLookupObject ?: return false
+        val descriptor = lookupObject.descriptor ?: return false
+        return descriptor.isContextElement()
+    }
+
+    private fun DeclarationDescriptor.isContextElement(): Boolean {
+        if (name !in contextElementNames) return false // optimization
+
+        if (this is CallableMemberDescriptor) {
+            val overridden = this.overriddenDescriptors
+            if (overridden.isNotEmpty()) {
+                return overridden.any { it.isContextElement() }
+            }
+        }
+
+        return original in contextElements
     }
 }

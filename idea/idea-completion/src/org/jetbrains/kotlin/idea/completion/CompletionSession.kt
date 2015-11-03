@@ -250,6 +250,14 @@ abstract class CompletionSession(protected val configuration: CompletionSessionC
 
         sorter = sorter.weighAfter("stats", VariableOrFunctionWeigher, ImportedWeigher(importableFqNameClassifier))
 
+        val preferContextElementsWeigher = PreferContextElementsWeigher(inDescriptor)
+        if (callTypeAndReceiver is CallTypeAndReceiver.SUPER_MEMBERS) { // for completion after "super." strictly prefer the current member
+            sorter = sorter.weighBefore("kotlin.deprecated", preferContextElementsWeigher)
+        }
+        else {
+            sorter = sorter.weighBefore("kotlin.proximity", preferContextElementsWeigher)
+        }
+
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
         return sorter
