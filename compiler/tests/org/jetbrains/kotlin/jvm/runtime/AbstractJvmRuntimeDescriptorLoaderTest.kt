@@ -88,10 +88,6 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         val actual = createReflectedPackageView(classLoader, JvmResolveUtil.TEST_MODULE_NAME)
 
-        val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL, true
-        ).first
-
         val comparatorConfiguration = Configuration(
                 /* checkPrimaryConstructors = */ fileName.endsWith(".kt"),
                 /* checkPropertyAccessors = */ true,
@@ -100,6 +96,17 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 { descriptor -> !descriptor.isJavaAnnotationConstructor() },
                 errorTypesForbidden(), renderer
         )
+
+        val differentResultFile = KotlinTestUtils.replaceExtension(file, "runtime.txt")
+        if (differentResultFile.exists()) {
+            RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(actual, comparatorConfiguration, differentResultFile)
+            return
+        }
+
+        val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
+                tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL, true
+        ).first
+
         RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
     }
 
@@ -144,7 +151,6 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         val packageScopes = arrayListOf<MemberScope>()
         val classes = arrayListOf<ClassDescriptor>()
-        var shouldAddPackageView = false
         for (classFile in allClassFiles) {
             val className = classFile.relativeTo(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
 
