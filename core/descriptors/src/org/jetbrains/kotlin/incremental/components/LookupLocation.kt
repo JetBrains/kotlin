@@ -30,7 +30,6 @@ interface LocationInfo {
 }
 
 public enum class NoLookupLocation : LookupLocation {
-    @Deprecated("Use more suitable constant if possible")
     FROM_IDE,
     FROM_BACKEND,
     FROM_TEST,
