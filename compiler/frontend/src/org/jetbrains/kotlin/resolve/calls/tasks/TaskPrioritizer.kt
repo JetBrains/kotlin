@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsLexicalScope
 import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.storage.StorageManager

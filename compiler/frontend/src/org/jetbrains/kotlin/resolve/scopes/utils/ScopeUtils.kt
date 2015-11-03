@@ -110,13 +110,13 @@ public fun HierarchicalScope.collectSyntheticExtensionProperties(receiverTypes: 
 public fun HierarchicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
         = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes) }
 
-public fun LexicalScope.takeSnapshot(): LexicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
+public fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
 @JvmOverloads
 public fun KtScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
 
 @Deprecated("Temporary method for scope migration")
-public fun KtScope.memberScopeAsLexicalScope(): LexicalScope = memberScopeAsImportingScope().asLexicalScope(getContainingDeclaration())
+public fun KtScope.memberScopeAsLexicalScope(): LexicalScope = LexicalScope.empty(memberScopeAsImportingScope(), getContainingDeclaration())
 
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: KtScope) : ImportingScope {
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)
@@ -247,11 +247,4 @@ fun chainImportingScopes(scopes: List<ImportingScope>, tail: ImportingScope? = n
                 assert(scope.parent == null)
                 scope.withParent(current)
             }
-}
-
-fun ImportingScope?.asLexicalScope(ownerDescriptor: DeclarationDescriptor): LexicalScope
-        = object : BaseLexicalScope(this ?: ImportingScope.Empty, ownerDescriptor) {
-    override fun printStructure(p: Printer) {
-        p.println("Empty lexical scope with owner = $ownerDescriptor and parent = ${this@asLexicalScope}.")
-    }
 }

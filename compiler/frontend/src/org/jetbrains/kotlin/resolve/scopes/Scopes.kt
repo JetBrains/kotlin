@@ -52,13 +52,20 @@ interface LexicalScope: HierarchicalScope {
     val isOwnerDescriptorAccessibleByLabel: Boolean
 
     val implicitReceiver: ReceiverParameterDescriptor?
+
+    companion object {
+        fun empty(parent: HierarchicalScope, ownerDescriptor: DeclarationDescriptor): BaseLexicalScope {
+            return object : BaseLexicalScope(parent, ownerDescriptor) {
+                override fun printStructure(p: Printer) {
+                    p.println("Empty lexical scope with owner = $ownerDescriptor and parent = ${parent}.")
+                }
+            }
+        }
+    }
 }
 
-// TODO: common base interface instead direct inheritance
 interface ImportingScope : HierarchicalScope {
     override val parent: ImportingScope?
-
-    // methods getDeclaredSmth for this scope will be delegated to importScope
 
     fun getContributedPackage(name: Name): PackageViewDescriptor?
 

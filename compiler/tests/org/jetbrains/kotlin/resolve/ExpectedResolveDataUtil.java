@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
@@ -138,7 +137,7 @@ public class ExpectedResolveDataUtil {
         emptyModule.setDependencies(emptyModule);
         emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE$);
 
-        LexicalScopeImpl lexicalScope = new LexicalScopeImpl(ScopeUtilsKt.asLexicalScope(ImportingScope.Empty.INSTANCE, emptyModule), classDescriptor, false,
+        LexicalScopeImpl lexicalScope = new LexicalScopeImpl(ImportingScope.Empty.INSTANCE, classDescriptor, false,
                                                              classDescriptor.getThisAsReceiverParameter(),
                                                              "Scope with implicit this for class: " + classDescriptor);
 

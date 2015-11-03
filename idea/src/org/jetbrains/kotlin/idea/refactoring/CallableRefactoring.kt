@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtExpression
@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.asLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import java.util.*
 
@@ -195,7 +194,7 @@ fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
         val containingDescriptor = getContainingDeclaration() ?: return null
         return when (containingDescriptor) {
             is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution()
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().memberScopeAsImportingScope().asLexicalScope(this)
+            is PackageFragmentDescriptor -> LexicalScope.empty(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
             else -> null
         }
     }
