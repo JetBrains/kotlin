@@ -201,7 +201,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        public Collection<PropertyDescriptor> getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
+        @SuppressWarnings({"unchecked"}) // KT-9898 Impossible implement kotlin interface in java
+        public Collection getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
             return properties.invoke(name);
         }
 
