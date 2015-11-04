@@ -23,27 +23,14 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Modifier
 
-public interface MemberScope {
-
-    public fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
-
-    @Deprecated("Should be removed soon")
-    public fun getPackage(name: Name): PackageViewDescriptor?
-
-    public fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-
-    public fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+public interface MemberScope : ResolutionScope {
 
     val ownerDescriptor: DeclarationDescriptor
 
-    /**
-     * All visible descriptors from current scope possibly filtered by the given name and kind filters
-     * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
-     */
-    public fun getContributedDescriptors(
-            kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-            nameFilter: (Name) -> Boolean = ALL_NAME_FILTER
-    ): Collection<DeclarationDescriptor>
+    public override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
+
+    @Deprecated("Should be removed soon")
+    public fun getPackage(name: Name): PackageViewDescriptor?
 
     /**
      * Is supposed to be used in tests and debug only

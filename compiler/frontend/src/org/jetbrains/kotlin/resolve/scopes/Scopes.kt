@@ -24,23 +24,8 @@ import org.jetbrains.kotlin.utils.Printer
 
 // see utils/ScopeUtils.kt
 
-interface HierarchicalScope {
+interface HierarchicalScope : ResolutionScope {
     val parent: HierarchicalScope?
-
-    /**
-     * All visible descriptors from current scope possibly filtered by the given name and kind filters
-     * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
-     */
-    fun getContributedDescriptors(
-            kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-            nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER
-    ): Collection<DeclarationDescriptor>
-
-    fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
-
-    fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
-
-    fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
     fun printStructure(p: Printer)
 }
