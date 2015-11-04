@@ -84,7 +84,6 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                                             scopes.add(bound.getMemberScope());
                                         }
                                         return new ChainedScope(
-                                                AbstractTypeParameterDescriptor.this,
                                                 "Scope for type parameter " + name.asString(),
                                                 scopes.toArray(new MemberScope[scopes.size()])
                                         );

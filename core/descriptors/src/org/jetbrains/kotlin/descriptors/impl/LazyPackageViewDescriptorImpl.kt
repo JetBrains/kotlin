@@ -41,11 +41,11 @@ public class LazyPackageViewDescriptorImpl(
 
     override val memberScope: MemberScope = LazyScopeAdapter(storageManager.createLazyValue {
         if (fragments.isEmpty()) {
-            MemberScope.empty(this)
+            MemberScope.Empty
         }
         else {
             val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)
-            ChainedScope(this, "package view scope for $fqName in ${module.getName()}", *scopes.toTypedArray())
+            ChainedScope("package view scope for $fqName in ${module.getName()}", *scopes.toTypedArray())
         }
     })
 

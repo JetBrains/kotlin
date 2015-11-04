@@ -45,8 +45,6 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
     val dynamicType = createDynamicType(builtIns)
 
     fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : MemberScopeImpl() {
-        override val ownerDescriptor: DeclarationDescriptor get() = owner
-
         override fun printScopeStructure(p: Printer) {
             p.println(javaClass.getSimpleName(), ": dynamic candidates for " + call)
         }

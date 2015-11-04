@@ -101,7 +101,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 supertypes,
                 KotlinSourceElementKt.toSourceElement(element)
         );
-        classDescriptor.initialize(MemberScope.Companion.empty(classDescriptor), Collections.<ConstructorDescriptor>emptySet(), null);
+        classDescriptor.initialize(MemberScope.Empty.INSTANCE, Collections.<ConstructorDescriptor>emptySet(), null);
 
         bindingTrace.record(CLASS_FOR_CALLABLE, callableDescriptor, classDescriptor);
         return classDescriptor;

@@ -165,7 +165,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     val TypeParameterDescriptor.correspondingType: KotlinType
         get() = cachedTypeForVariable.getOrPut(this) {
-            KotlinTypeImpl.create(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), MemberScope.empty(this))
+            KotlinTypeImpl.create(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), MemberScope.Empty)
         }
 
     fun KotlinType.isProper() = !TypeUtils.containsSpecialType(this) {
@@ -573,7 +573,7 @@ public fun createTypeSubstitutor(conversion: (TypeParameterDescriptor) -> TypePa
             if (descriptor !is TypeParameterDescriptor) return null
             val typeParameterDescriptor = conversion(descriptor) ?: return null
 
-            val type = KotlinTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), MemberScope.empty(typeParameterDescriptor))
+            val type = KotlinTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), MemberScope.Empty)
             return TypeProjectionImpl(type)
         }
     })

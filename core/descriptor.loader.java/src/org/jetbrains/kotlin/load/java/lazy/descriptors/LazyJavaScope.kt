@@ -51,10 +51,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public abstract class LazyJavaScope(
-        protected val c: LazyJavaResolverContext,
-        override val ownerDescriptor: DeclarationDescriptor
-) : MemberScopeImpl() {
+public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberScopeImpl() {
+    protected abstract val ownerDescriptor: DeclarationDescriptor
+
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
     private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(

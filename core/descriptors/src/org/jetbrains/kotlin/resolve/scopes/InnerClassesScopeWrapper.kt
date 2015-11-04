@@ -17,16 +17,11 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
 public class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl() {
-
-    override val ownerDescriptor: DeclarationDescriptor
-        get() = workerScope.ownerDescriptor
-
     override fun getContributedClassifier(name: Name, location: LookupLocation) = workerScope.getContributedClassifier(name, location) as? ClassDescriptor
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<ClassDescriptor> {

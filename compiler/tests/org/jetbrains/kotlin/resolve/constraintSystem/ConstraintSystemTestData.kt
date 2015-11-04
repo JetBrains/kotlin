@@ -66,7 +66,7 @@ public class ConstraintSystemTestData(
             val number = matcher.group(1)!!
             return KotlinTypeImpl.create(
                     Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns), false, listOf(),
-                    MemberScope.empty(functionFoo)
+                    MemberScope.Empty
             )
         }
         return typeResolver.resolveType(

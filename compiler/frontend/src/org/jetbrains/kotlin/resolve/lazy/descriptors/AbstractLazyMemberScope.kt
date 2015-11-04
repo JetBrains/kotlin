@@ -59,8 +59,6 @@ protected constructor(
         }.toReadOnlyList()
     }
 
-    override val ownerDescriptor: DeclarationDescriptor get() = thisDescriptor
-
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassDescriptor? {
         recordLookup(name, location)
         return classDescriptors(name).firstOrNull()
@@ -186,6 +184,6 @@ protected constructor(
     }
 
     private fun recordLookup(name: Name, from: LookupLocation) {
-        c.lookupTracker.record(from, ownerDescriptor, this, name)
+        c.lookupTracker.record(from, thisDescriptor, this, name)
     }
 }

@@ -40,7 +40,7 @@ private class PackageFragmentWithMissingDependencies(override val fqName: FqName
     }
 }
 
-private class ScopeWithMissingDependencies(val fqName: FqName, override val ownerDescriptor: DeclarationDescriptor) : MemberScopeImpl() {
+private class ScopeWithMissingDependencies(val fqName: FqName, val ownerDescriptor: DeclarationDescriptor) : MemberScopeImpl() {
 
     override fun printScopeStructure(p: Printer) {
         p.println("Special scope for decompiler, containing class with any name")
@@ -71,7 +71,7 @@ private class MissingDependencyErrorClassDescriptor(
         val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)
         emptyConstructor.initialize(listOf(), listOf(), Visibilities.DEFAULT_VISIBILITY)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
-        initialize(MemberScope.empty(this), setOf(emptyConstructor), emptyConstructor)
+        initialize(MemberScope.Empty, setOf(emptyConstructor), emptyConstructor)
     }
 
     override fun substitute(substitutor: TypeSubstitutor) = this

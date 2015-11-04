@@ -25,8 +25,6 @@ import java.lang.reflect.Modifier
 
 public interface MemberScope : ResolutionScope {
 
-    val ownerDescriptor: DeclarationDescriptor
-
     public override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
 
     @Deprecated("Should be removed soon")
@@ -37,19 +35,13 @@ public interface MemberScope : ResolutionScope {
      */
     public fun printScopeStructure(p: Printer)
 
-    companion object {
-        public fun empty(ownerDescriptor: DeclarationDescriptor): MemberScope {
-            return object : MemberScopeImpl() {
-                override val ownerDescriptor = ownerDescriptor
-
-                override fun toString() = "Empty scope with owner: $ownerDescriptor"
-
-                override fun printScopeStructure(p: Printer) {
-                    p.println(toString())
-                }
-            }
+    object Empty : MemberScopeImpl() {
+        override fun printScopeStructure(p: Printer) {
+            p.println("Empty member scope")
         }
+    }
 
+    companion object {
         public val ALL_NAME_FILTER: (Name) -> Boolean = { true }
     }
 }

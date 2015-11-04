@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -25,10 +24,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-public abstract class LazyJavaStaticScope(
-        c: LazyJavaResolverContext,
-        descriptor: ClassOrPackageFragmentDescriptor
-) : LazyJavaScope(c, descriptor) {
+public abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJavaScope(c) {
 
     override fun getDispatchReceiverParameter() = null
 

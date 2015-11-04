@@ -191,7 +191,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         private val scope: MemberScope
 
         init {
-            scope = ChainedScope(this, "synthetic package view for test", ScopeWithClassifiers(classes, this), *packageScopes.toTypedArray())
+            scope = ChainedScope("synthetic package view for test", ScopeWithClassifiers(classes), *packageScopes.toTypedArray())
         }
 
         override val fqName: FqName
@@ -211,10 +211,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
             get() = throw UnsupportedOperationException()
     }
 
-    private class ScopeWithClassifiers(
-            classifiers: List<ClassifierDescriptor>,
-            override val ownerDescriptor: DeclarationDescriptor
-    ) : MemberScopeImpl() {
+    private class ScopeWithClassifiers(classifiers: List<ClassifierDescriptor>) : MemberScopeImpl() {
         private val classifierMap = HashMap<Name, ClassifierDescriptor>()
         val redeclarationHandler = RedeclarationHandler.THROW_EXCEPTION
 

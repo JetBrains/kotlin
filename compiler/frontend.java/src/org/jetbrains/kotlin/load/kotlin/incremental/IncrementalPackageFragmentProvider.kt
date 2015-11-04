@@ -99,7 +99,7 @@ public class IncrementalPackageFragmentProvider(
 
         val memberScope: NotNullLazyValue<MemberScope> = storageManager.createLazyValue {
             if (fqName !in fqNamesToLoad) {
-                MemberScope.empty(this)
+                MemberScope.Empty
             }
             else {
                 val moduleMapping = incrementalCache.getModuleMappingData()?.let { ModuleMapping.create(it) }
@@ -128,10 +128,10 @@ public class IncrementalPackageFragmentProvider(
                         }
 
                 if (scopes.isEmpty()) {
-                    MemberScope.empty(this)
+                    MemberScope.Empty
                 }
                 else {
-                    ChainedScope(this, "Member scope for incremental compilation: union of package parts data", *scopes.toTypedArray())
+                    ChainedScope("Member scope for incremental compilation: union of package parts data", *scopes.toTypedArray())
                 }
             }
         }
@@ -151,11 +151,11 @@ public class IncrementalPackageFragmentProvider(
             val memberScope = storageManager.createLazyValue {
                 val partsData = partsNames.map { incrementalCache.getPackagePartData(it) }.filterNotNull()
                 if (partsData.isEmpty())
-                    MemberScope.empty(this)
+                    MemberScope.Empty
                 else {
                     val scopes = partsData.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings)) }
-                    ChainedScope(this,
-                                 "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
+                    ChainedScope(
+                            "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
                                  *scopes.toTypedArray<MemberScope>())
                 }
             }

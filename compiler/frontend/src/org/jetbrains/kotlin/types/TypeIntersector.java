@@ -136,7 +136,7 @@ public class TypeIntersector {
                 constructor,
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
-                new IntersectionScope(constructor, scopes)
+                new ChainedScope("member scope for intersection type " + constructor, scopes)
         );
     }
 
@@ -151,19 +151,6 @@ public class TypeIntersector {
         assert !upperBounds.isEmpty() : "Upper bound list is empty: " + descriptor;
         KotlinType upperBoundsAsType = intersectTypes(KotlinTypeChecker.DEFAULT, upperBounds);
         return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(descriptor).getNothingType();
-    }
-
-    // TODO: check intersectability, don't use a chained scope
-    private static class IntersectionScope extends ChainedScope {
-        public IntersectionScope(@NotNull TypeConstructor constructor, @NotNull MemberScope[] scopes) {
-            super(null, "member scope for intersection type " + constructor, scopes);
-        }
-
-        @NotNull
-        @Override
-        public DeclarationDescriptor getOwnerDescriptor() {
-            throw new UnsupportedOperationException("Should not call getContainingDeclaration on intersection scope " + this);
-        }
     }
 
     private static class TypeUnifier {

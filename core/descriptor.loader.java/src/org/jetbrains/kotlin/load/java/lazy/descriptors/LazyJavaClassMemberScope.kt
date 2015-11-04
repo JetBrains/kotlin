@@ -61,9 +61,9 @@ import java.util.*
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContext,
-        containingDeclaration: ClassDescriptor,
+        override val ownerDescriptor: ClassDescriptor,
         private val jClass: JavaClass
-) : LazyJavaScope(c, containingDeclaration) {
+) : LazyJavaScope(c) {
 
     override fun computeMemberIndex(): MemberIndex {
         return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
@@ -633,9 +633,6 @@ public class LazyJavaClassMemberScope(
             }
         }
     }
-
-    override val ownerDescriptor: ClassDescriptor
-        get() = super.ownerDescriptor as ClassDescriptor
 
     // namespaces should be resolved elsewhere
     override fun getPackage(name: Name) = null

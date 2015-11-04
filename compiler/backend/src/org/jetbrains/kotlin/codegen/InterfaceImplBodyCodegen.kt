@@ -65,7 +65,7 @@ public class InterfaceImplBodyCodegen(
                 descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
                 Modality.FINAL, Collections.emptyList(), SourceElement.NO_SOURCE)
 
-        classDescriptorImpl.initialize(MemberScope.empty(classDescriptorImpl), emptySet(), null)
+        classDescriptorImpl.initialize(MemberScope.Empty, emptySet(), null)
         return classDescriptorImpl
     }
 

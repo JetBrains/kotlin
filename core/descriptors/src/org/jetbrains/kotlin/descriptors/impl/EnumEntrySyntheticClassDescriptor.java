@@ -259,12 +259,6 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        public DeclarationDescriptor getOwnerDescriptor() {
-            return EnumEntrySyntheticClassDescriptor.this;
-        }
-
-        @NotNull
-        @Override
         public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter,
                 @NotNull Function1<? super Name, ? extends Boolean> nameFilter

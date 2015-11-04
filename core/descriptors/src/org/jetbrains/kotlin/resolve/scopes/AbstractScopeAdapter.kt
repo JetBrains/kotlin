@@ -33,9 +33,6 @@ public abstract class AbstractScopeAdapter : MemberScope {
             else
                 workerScope
 
-    override val ownerDescriptor: DeclarationDescriptor
-        get() = workerScope.ownerDescriptor
-
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return workerScope.getContributedFunctions(name, location)
     }

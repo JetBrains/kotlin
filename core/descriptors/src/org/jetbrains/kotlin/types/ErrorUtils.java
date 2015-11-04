@@ -193,12 +193,6 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public DeclarationDescriptor getOwnerDescriptor() {
-            return ERROR_MODULE;
-        }
-
-        @NotNull
-        @Override
         public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
@@ -246,12 +240,6 @@ public class ErrorUtils {
         @Override
         public Collection<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
-        public DeclarationDescriptor getOwnerDescriptor() {
-            return ERROR_MODULE;
         }
 
         @NotNull

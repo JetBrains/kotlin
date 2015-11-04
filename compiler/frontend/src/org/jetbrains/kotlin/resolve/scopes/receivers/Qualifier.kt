@@ -104,7 +104,7 @@ class ClassifierQualifier(
 
     override val scope: MemberScope get() {
         if (classifier !is ClassDescriptor) {
-            return MemberScope.empty(classifier)
+            return MemberScope.Empty
         }
 
         val scopes = ArrayList<MemberScope>(3)
@@ -120,12 +120,12 @@ class ClassifierQualifier(
             scopes.add(classifier.unsubstitutedInnerClassesScope)
         }
 
-        return ChainedScope(descriptor, "Member scope for $name as class or object", *scopes.toTypedArray())
+        return ChainedScope("Member scope for $name as class or object", *scopes.toTypedArray())
     }
 
     override fun getNestedClassesAndPackageMembersScope(): MemberScope {
         if (classifier !is ClassDescriptor) {
-            return MemberScope.empty(classifier)
+            return MemberScope.Empty
         }
 
         val scopes = ArrayList<MemberScope>(2)
@@ -136,7 +136,7 @@ class ClassifierQualifier(
             scopes.add(JetScopeUtils.getStaticNestedClassesScope(classifier))
         }
 
-        return ChainedScope(descriptor, "Static scope for $name as class or object", *scopes.toTypedArray())
+        return ChainedScope("Static scope for $name as class or object", *scopes.toTypedArray())
     }
 
     override fun toString() = "Classifier{$classifier}"

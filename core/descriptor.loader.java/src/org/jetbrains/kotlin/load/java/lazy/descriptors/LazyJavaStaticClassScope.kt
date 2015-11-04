@@ -36,8 +36,8 @@ import org.jetbrains.kotlin.types.KotlinType
 public class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,
         private val jClass: JavaClass,
-        descriptor: LazyJavaClassDescriptor
-) : LazyJavaStaticScope(c, descriptor) {
+        override val ownerDescriptor: LazyJavaClassDescriptor
+) : LazyJavaStaticScope(c) {
 
     override fun computeMemberIndex(): MemberIndex {
         val delegate = ClassMemberIndex(jClass) { it.isStatic() }
@@ -109,9 +109,6 @@ public class LazyJavaStaticClassScope(
             }
         }
     }
-
-    override val ownerDescriptor: LazyJavaClassDescriptor
-        get() = super.ownerDescriptor as LazyJavaClassDescriptor
 
     private fun getStaticFunctionsFromJavaSuperClasses(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
         val staticScope = descriptor.getParentJavaStaticClassScope() ?: return emptySet()

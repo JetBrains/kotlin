@@ -23,15 +23,11 @@ import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
-public open class ChainedScope(
-        private val descriptor: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
+public class ChainedScope(
         private val debugName: String,
         vararg scopes: MemberScope
 ) : MemberScope {
     private val scopeChain = scopes.clone()
-
-    override val ownerDescriptor: DeclarationDescriptor
-        get() = descriptor!!
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
             = getFirstMatch(scopeChain) { it.getContributedClassifier(name, location) }

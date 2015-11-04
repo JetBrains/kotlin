@@ -26,12 +26,9 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.sure
-import java.util.ArrayList
+import java.util.*
 
 public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : MemberScopeImpl() {
-    override val ownerDescriptor: DeclarationDescriptor
-        get() = moduleDescriptor.getPackage(fqName)
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
         if (name.isSpecial()) {
@@ -63,8 +60,6 @@ public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, pr
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
-
-        p.println("thisDescriptor = ", ownerDescriptor)
 
         p.popIndent()
         p.println("}")
