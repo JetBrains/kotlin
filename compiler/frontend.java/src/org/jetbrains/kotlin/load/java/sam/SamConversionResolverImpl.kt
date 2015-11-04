@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.sam
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.components.SamConversionResolver
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
@@ -28,18 +29,16 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 public object SamConversionResolverImpl : SamConversionResolver {
-    override fun resolveSamConstructor(name: Name, scope: MemberScope, location: LookupLocation): SamConstructorDescriptor? {
-        val classifier = scope.getContributedClassifier(name, location) as? LazyJavaClassDescriptor ?: return null
-        if (classifier.getFunctionTypeForSamInterface() == null) return null
-        return SingleAbstractMethodUtils.createSamConstructorFunction(scope.ownerDescriptor, classifier)
+    override fun resolveSamConstructor(constructorOwner: DeclarationDescriptor, classifier: () -> ClassifierDescriptor?): SamConstructorDescriptor? {
+        val classifierDescriptor = classifier()
+        if (classifierDescriptor !is LazyJavaClassDescriptor || classifierDescriptor.functionTypeForSamInterface == null) return null
+        return SingleAbstractMethodUtils.createSamConstructorFunction(constructorOwner, classifierDescriptor)
     }
 
     @Suppress("UNCHECKED_CAST")

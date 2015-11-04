@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
@@ -29,7 +32,6 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,
@@ -69,8 +71,9 @@ public class LazyJavaStaticClassScope(
     override fun getSubPackages(): Collection<FqName> = listOf()
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        val nestedClassesScope = ownerDescriptor.getUnsubstitutedInnerClassesScope()
-        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, nestedClassesScope, NoLookupLocation.FOR_ALREADY_TRACKED))
+        c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
+            ownerDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+        }?.let { result.add(it) }
 
         val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, ownerDescriptor)
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))

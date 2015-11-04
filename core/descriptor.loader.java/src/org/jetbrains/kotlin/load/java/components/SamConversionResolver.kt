@@ -16,25 +16,24 @@
 
 package org.jetbrains.kotlin.load.java.components
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 
 public interface SamConversionResolver {
     public companion object EMPTY : SamConversionResolver {
         override fun <D : FunctionDescriptor> resolveSamAdapter(original: D) = null
-        override fun resolveSamConstructor(name: Name, scope: MemberScope, location: LookupLocation) = null
+        override fun resolveSamConstructor(constructorOwner: DeclarationDescriptor, classifier: () -> ClassifierDescriptor?) = null
         override fun resolveFunctionTypeIfSamInterface(
                 classDescriptor: JavaClassDescriptor, resolveMethod: (JavaMethod) -> FunctionDescriptor
         ): KotlinType? = null
     }
 
-    public fun resolveSamConstructor(name: Name, scope: MemberScope, location: LookupLocation): SamConstructorDescriptor?
+    public fun resolveSamConstructor(constructorOwner: DeclarationDescriptor, classifier: () -> ClassifierDescriptor?): SamConstructorDescriptor?
 
     public fun <D : FunctionDescriptor> resolveSamAdapter(original: D): D?
 

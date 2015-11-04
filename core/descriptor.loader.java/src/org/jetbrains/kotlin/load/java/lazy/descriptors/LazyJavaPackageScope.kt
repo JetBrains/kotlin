@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaPackageScope(
         c: LazyJavaResolverContext,
@@ -154,7 +153,9 @@ public class LazyJavaPackageScope(
     )
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, this, NoLookupLocation.FOR_ALREADY_TRACKED))
+        c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
+            getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+        }?.let { result.add(it) }
     }
 
     override fun getSubPackages() = subPackages()
