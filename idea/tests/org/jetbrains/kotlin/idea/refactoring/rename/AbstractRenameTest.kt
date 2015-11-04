@@ -198,19 +198,21 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     private fun renameKotlinFunctionTest(renameParamsObject: JsonObject, context: TestContext) {
         val oldMethodName = Name.identifier(renameParamsObject.getString("oldName"))
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getContributedFunctions(oldMethodName, NoLookupLocation.FROM_TEST).first() }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) {
+            declaration, scope -> scope.getContributedFunctions(oldMethodName, NoLookupLocation.FROM_TEST).first() }
     }
 
     private fun renameKotlinPropertyTest(renameParamsObject: JsonObject, context: TestContext) {
         val oldPropertyName = Name.identifier(renameParamsObject.getString("oldName"))
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getContributedVariables(oldPropertyName, NoLookupLocation.FROM_TEST).first() }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) {
+            declaration, scope -> scope.getContributedVariables(oldPropertyName, NoLookupLocation.FROM_TEST).first() }
     }
 
     private fun renameKotlinClassTest(renameParamsObject: JsonObject, context: TestContext) {
         renameParamsObject.getString("classId") //assertion
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { scope -> scope.ownerDescriptor as ClassDescriptor }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) { declaration, scope -> declaration as ClassDescriptor }
     }
 
     private fun renameKotlinPackageTest(renameParamsObject: JsonObject, context: TestContext) {
@@ -263,7 +265,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     }
 
     private fun doRenameInKotlinClassOrPackage(
-            renameParamsObject: JsonObject, context: TestContext, findDescriptorToRename: (MemberScope) -> DeclarationDescriptor
+            renameParamsObject: JsonObject, context: TestContext, findDescriptorToRename: (DeclarationDescriptor, MemberScope) -> DeclarationDescriptor
     ) {
         val classIdStr = renameParamsObject.getNullableString("classId")
         val packageFqnStr = renameParamsObject.getNullableString("packageFqn")
@@ -284,13 +286,13 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             val module = jetFile.analyzeFullyAndGetResult().moduleDescriptor
 
-            val scopeToSearch = if (classIdStr != null) {
-                module.findClassAcrossModuleDependencies(classIdStr.toClassId())!!.getDefaultType().getMemberScope()
+            val (declaration, scopeToSearch)  = if (classIdStr != null) {
+                module.findClassAcrossModuleDependencies(classIdStr.toClassId())!!.let { it to it.defaultType.memberScope }
             } else {
-                module.getPackage(FqName(packageFqnStr!!)).memberScope
+                module.getPackage(FqName(packageFqnStr!!)).let { it to it.memberScope }
             }
 
-            val psiElement = DescriptorToSourceUtils.descriptorToDeclaration(findDescriptorToRename(scopeToSearch))!!
+            val psiElement = DescriptorToSourceUtils.descriptorToDeclaration(findDescriptorToRename(declaration, scopeToSearch))!!
 
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
 

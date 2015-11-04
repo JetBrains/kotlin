@@ -16,17 +16,12 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.utils.Printer
 
-public fun MemberScope.asLexicalScope(): LexicalScope {
-    val importingScope = memberScopeAsImportingScope()
-    return object : BaseLexicalScope(importingScope, ownerDescriptor) {
-        override fun printStructure(p: Printer) {
-            p.println("Util scope for tests")
-        }
-    }
-}
+fun KotlinBuiltIns.builtInPackageAsLexicalScope()
+        = LexicalScope.empty(getBuiltInsPackageScope().memberScopeAsImportingScope(), getBuiltInsModule())

@@ -101,10 +101,10 @@ public fun resolvePossiblyAmbiguousCallableReference(
 ): OverloadResolutionResults<CallableDescriptor>? {
     val reference = callableReferenceExpression.getCallableReference()
 
-    fun resolveInScope(traceTitle: String, staticScope: MemberScope): OverloadResolutionResults<CallableDescriptor> {
+    fun resolveInScope(traceTitle: String, classifier: ClassifierDescriptor, staticScope: MemberScope): OverloadResolutionResults<CallableDescriptor> {
 
         // todo: drop this class when new resolve will be finished
-        class StaticScopeAsLexicalScope(val staticScope: MemberScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), staticScope.ownerDescriptor) {
+        class StaticScopeAsLexicalScope(val staticScope: MemberScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), classifier) {
             override fun printStructure(p: Printer) {
                 p.println(toString())
             }
@@ -141,11 +141,11 @@ public fun resolvePossiblyAmbiguousCallableReference(
         return null
     }
 
-    val possibleStatic = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static scope", classifier.getStaticScope())
+    val possibleStatic = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static scope", classifier, classifier.getStaticScope())
     if (possibleStatic.isSomething()) return possibleStatic
 
     val possibleNested = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static nested classes scope",
-                                        JetScopeUtils.getStaticNestedClassesScope(classifier))
+                                        classifier, JetScopeUtils.getStaticNestedClassesScope(classifier))
     if (possibleNested.isSomething()) return possibleNested
 
     val possibleWithReceiver = resolveWithReceiver("trace to resolve ::${reference.getReferencedName()} with receiver",

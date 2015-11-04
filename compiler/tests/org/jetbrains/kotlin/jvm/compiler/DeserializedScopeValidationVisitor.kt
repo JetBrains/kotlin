@@ -28,29 +28,19 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.MemberComparator
 
 class DeserializedScopeValidationVisitor : ValidationVisitor() {
-    override fun validateScope(scope: MemberScope, collector: DescriptorValidator.DiagnosticCollector) {
-        super.validateScope(scope, collector)
-        validateDeserializedScope(scope)
+    override fun validateScope(scopeOwner: DeclarationDescriptor, scope: MemberScope, collector: DescriptorValidator.DiagnosticCollector) {
+        super.validateScope(scopeOwner, scope, collector)
+        validateDeserializedScope(scopeOwner, scope)
     }
 }
 
-private fun validateDeserializedScope(scope: MemberScope) {
-    val isPackageViewScope = scope.safeGetContainingDeclaration() is PackageViewDescriptor
+private fun validateDeserializedScope(scopeOwner: DeclarationDescriptor, scope: MemberScope) {
+    val isPackageViewScope = scopeOwner is PackageViewDescriptor
     if (scope is DeserializedMemberScope || isPackageViewScope) {
         val relevantDescriptors = scope.getContributedDescriptors().filter { member ->
             member is CallableMemberDescriptor && member.getKind().isReal() || (!isPackageViewScope && member is ClassDescriptor)
         }
-        checkSorted(relevantDescriptors, scope.ownerDescriptor)
-    }
-}
-
-//NOTE: see TypeUtils#IntersectionScope#getContainingDeclaration()
-private fun MemberScope.safeGetContainingDeclaration(): DeclarationDescriptor? {
-    return try {
-        ownerDescriptor
-    }
-    catch (e: UnsupportedOperationException) {
-        null
+        checkSorted(relevantDescriptors, scopeOwner)
     }
 }
 

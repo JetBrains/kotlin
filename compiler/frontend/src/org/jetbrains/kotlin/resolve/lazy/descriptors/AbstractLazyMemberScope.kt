@@ -186,6 +186,6 @@ protected constructor(
     }
 
     private fun recordLookup(name: Name, from: LookupLocation) {
-        c.lookupTracker.record(from, this, name)
+        c.lookupTracker.record(from, ownerDescriptor, this, name)
     }
 }

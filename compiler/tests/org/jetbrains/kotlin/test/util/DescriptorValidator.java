@@ -84,7 +84,7 @@ public class DescriptorValidator {
             return this;
         }
 
-        protected void validateScope(@NotNull MemberScope scope, @NotNull DiagnosticCollector collector) {
+        protected void validateScope(DeclarationDescriptor scopeOwner, @NotNull MemberScope scope, @NotNull DiagnosticCollector collector) {
             for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(scope)) {
                 if (recursiveFilter.apply(descriptor)) {
                     descriptor.accept(new ScopeValidatorVisitor(collector), scope);
@@ -107,7 +107,7 @@ public class DescriptorValidator {
                 return;
             }
 
-            validateScope(type.getMemberScope(), collector);
+            validateScope(descriptor, type.getMemberScope(), collector);
         }
 
         private void validateReturnType(CallableDescriptor descriptor, DiagnosticCollector collector) {
@@ -191,7 +191,7 @@ public class DescriptorValidator {
         public Boolean visitPackageFragmentDescriptor(
                 PackageFragmentDescriptor descriptor, DiagnosticCollector collector
         ) {
-            validateScope(descriptor.getMemberScope(), collector);
+            validateScope(descriptor, descriptor.getMemberScope(), collector);
             return true;
         }
 
@@ -199,7 +199,7 @@ public class DescriptorValidator {
         public Boolean visitPackageViewDescriptor(PackageViewDescriptor descriptor, DiagnosticCollector collector) {
             if (!recursiveFilter.apply(descriptor)) return false;
 
-            validateScope(descriptor.getMemberScope(), collector);
+            validateScope(descriptor, descriptor.getMemberScope(), collector);
             return true;
         }
 
@@ -245,7 +245,7 @@ public class DescriptorValidator {
 
             validateType(descriptor, descriptor.getDefaultType(), collector);
 
-            validateScope(descriptor.getUnsubstitutedInnerClassesScope(), collector);
+            validateScope(descriptor, descriptor.getUnsubstitutedInnerClassesScope(), collector);
 
             List<ConstructorDescriptor> primary = Lists.newArrayList();
             for (ConstructorDescriptor constructorDescriptor : descriptor.getConstructors()) {

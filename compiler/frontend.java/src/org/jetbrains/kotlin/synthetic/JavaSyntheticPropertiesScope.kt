@@ -78,7 +78,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         val (descriptor, lookedNames) = syntheticPropertyInClass(Pair(classifier, name))
 
         if (location !is NoLookupLocation) {
-            lookedNames.forEach { lookupTracker.record(location, classifier.unsubstitutedMemberScope, it) }
+            lookedNames.forEach { lookupTracker.record(location, classifier, classifier.unsubstitutedMemberScope, it) }
         }
 
         return descriptor

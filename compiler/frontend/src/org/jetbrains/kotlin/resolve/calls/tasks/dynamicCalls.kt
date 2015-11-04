@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
@@ -229,7 +230,7 @@ public fun DeclarationDescriptor.isDynamic(): Boolean {
 }
 
 class CollectorForDynamicReceivers<D: CallableDescriptor>(val delegate: CallableDescriptorCollector<D>) : CallableDescriptorCollector<D> by delegate {
-    override fun getExtensionsByName(scope: LexicalScope, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D> {
+    override fun getExtensionsByName(scope: HierarchicalScope, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D> {
         return delegate.getExtensionsByName(scope, name, receiverTypes, location).filter {
             it.getExtensionReceiverParameter()?.getType()?.isDynamic() ?: false
         }

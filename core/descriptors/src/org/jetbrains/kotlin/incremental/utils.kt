@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -26,19 +27,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-public fun LookupTracker.record(from: LookupLocation, inScope: MemberScope, name: Name) {
+public fun LookupTracker.record(from: LookupLocation, scopeOwner: DeclarationDescriptor, inScope: MemberScope, name: Name) {
     if (this == LookupTracker.DO_NOTHING || from is NoLookupLocation) return
 
     val location = from.location ?: return
 
-    val scopeContainingDeclaration = inScope.ownerDescriptor
-
     val scopeKind =
-            when (scopeContainingDeclaration) {
+            when (scopeOwner) {
                 is ClassifierDescriptor -> ScopeKind.CLASSIFIER
                 is PackageFragmentDescriptor -> ScopeKind.PACKAGE
-                else -> throw AssertionError("Unexpected containing declaration type: ${scopeContainingDeclaration.javaClass}")
+                else -> throw AssertionError("Unexpected containing declaration type: ${scopeOwner.javaClass}")
             }
 
-    record(location, scopeContainingDeclaration.fqNameUnsafe.asString(), scopeKind, name.asString())
+    record(location, scopeOwner.fqNameUnsafe.asString(), scopeKind, name.asString())
 }

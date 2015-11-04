@@ -166,7 +166,7 @@ public class KotlinOverridingTest extends KotlinLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         KtNamedFunction function = KtPsiFactoryKt.KtPsiFactory(getProject()).createFunction(funDecl);
-        LexicalScope scope = TypeTestUtilsKt.asLexicalScope(root.getBuiltIns().getBuiltInsPackageScope());
+        LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(root.getBuiltIns());
         return functionDescriptorResolver.resolveFunctionDescriptor(root, scope, function,
                                                                     KotlinTestUtils.DUMMY_TRACE, DataFlowInfo.EMPTY);
     }

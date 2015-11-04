@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtTypeProjection;
 import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -200,7 +201,7 @@ public class TypeUnifierTest extends KotlinLiteFixture {
     }
 
     private TypeProjection makeTypeProjection(MemberScope scope, String typeStr) {
-        LexicalScope withX = new LexicalScopeImpl(TypeTestUtilsKt.asLexicalScope(scope), scope.getOwnerDescriptor(),
+        LexicalScope withX = new LexicalScopeImpl(ScopeUtilsKt.memberScopeAsImportingScope(scope), builtIns.getBuiltInsModule(),
                                                   false, null, "With X", RedeclarationHandler.DO_NOTHING,
                                                   new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                                       @Override

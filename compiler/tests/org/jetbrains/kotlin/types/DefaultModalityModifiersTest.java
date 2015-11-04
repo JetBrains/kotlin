@@ -32,7 +32,11 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -91,7 +95,7 @@ public class DefaultModalityModifiersTest extends KotlinLiteFixture {
             assert aClass instanceof KtClass;
             AnalysisResult bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(file);
             final DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
-            return new LexicalScopeImpl(TypeTestUtilsKt.asLexicalScope(libraryScope), root, false, null,
+            return new LexicalScopeImpl(ScopeUtilsKt.memberScopeAsImportingScope(libraryScope), root, false, null,
                                         "JetDefaultModalityModifiersTest", RedeclarationHandler.DO_NOTHING,
                                         new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                             @Override

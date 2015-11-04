@@ -59,7 +59,7 @@ public class ResolveSessionUtils {
             PackageViewDescriptor packageDescriptor = module.getPackage(packageFqName);
             if (!packageDescriptor.isEmpty()) {
                 FqName relativeClassFqName = FqNamesUtilKt.tail(fqName, packageFqName);
-                ClassDescriptor classDescriptor = findByQualifiedName(packageDescriptor.getMemberScope(), relativeClassFqName);
+                ClassDescriptor classDescriptor = findClassByRelativePath(packageDescriptor.getMemberScope(), relativeClassFqName);
                 if (classDescriptor != null && filter.apply(classDescriptor)) {
                     result.add(classDescriptor);
                 }
@@ -76,17 +76,18 @@ public class ResolveSessionUtils {
     }
 
     @Nullable
-    public static ClassDescriptor findByQualifiedName(@NotNull MemberScope outerScope, @NotNull FqName path) {
+    public static ClassDescriptor findClassByRelativePath(@NotNull MemberScope packageScope, @NotNull FqName path) {
         if (path.isRoot()) return null;
 
-        MemberScope scope = outerScope;
+        MemberScope scope = packageScope;
+        ClassifierDescriptor classifier = null;
         for (Name name : path.pathSegments()) {
-            ClassifierDescriptor classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_FIND_BY_FQNAME);
+            classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_FIND_BY_FQNAME);
             if (!(classifier instanceof ClassDescriptor)) return null;
             scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
         }
 
-        return (ClassDescriptor) scope.getOwnerDescriptor();
+        return (ClassDescriptor) classifier;
     }
 
     @NotNull

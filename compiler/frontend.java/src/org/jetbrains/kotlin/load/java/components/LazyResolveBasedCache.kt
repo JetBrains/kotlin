@@ -59,7 +59,7 @@ public class LazyResolveBasedCache(private val resolveSession: ResolveSession) :
             val packageDescriptor = resolveSession.getPackageFragment(fqName)
             if (packageDescriptor == null) break
 
-            val result = ResolveSessionUtils.findByQualifiedName(packageDescriptor.getMemberScope(), fullFqName.tail(fqName))
+            val result = ResolveSessionUtils.findClassByRelativePath(packageDescriptor.getMemberScope(), fullFqName.tail(fqName))
             if (result != null) return result
 
             if (fqName.isRoot()) break
