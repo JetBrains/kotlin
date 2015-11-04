@@ -28,7 +28,7 @@ public class SubstitutingScope(private val workerScope: MemberScope, private val
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
 
-    private val _allDescriptors by lazy { substitute(workerScope.getDescriptors()) }
+    private val _allDescriptors by lazy { substitute(workerScope.getContributedDescriptors()) }
 
     private fun <D : DeclarationDescriptor> substitute(descriptor: D?): D? {
         if (descriptor == null) return null
@@ -59,18 +59,18 @@ public class SubstitutingScope(private val workerScope: MemberScope, private val
         return result
     }
 
-    override fun getProperties(name: Name, location: LookupLocation) = substitute(workerScope.getProperties(name, location))
+    override fun getContributedVariables(name: Name, location: LookupLocation) = substitute(workerScope.getContributedVariables(name, location))
 
-    override fun getClassifier(name: Name, location: LookupLocation) = substitute(workerScope.getClassifier(name, location))
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = substitute(workerScope.getContributedClassifier(name, location))
 
-    override fun getFunctions(name: Name, location: LookupLocation) = substitute(workerScope.getFunctions(name, location))
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = substitute(workerScope.getContributedFunctions(name, location))
 
     override fun getPackage(name: Name) = workerScope.getPackage(name)
 
     override fun getContainingDeclaration() = workerScope.getContainingDeclaration()
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean) = _allDescriptors
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                           nameFilter: (Name) -> Boolean) = _allDescriptors
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")

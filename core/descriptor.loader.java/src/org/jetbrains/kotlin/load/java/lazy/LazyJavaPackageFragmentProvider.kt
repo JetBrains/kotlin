@@ -65,7 +65,7 @@ public class LazyJavaPackageFragmentProvider(
 
             javaClass.outerClass?.let { outerClass ->
                 val outerClassScope = resolveClass(outerClass)?.unsubstitutedInnerClassesScope
-                return outerClassScope?.getClassifier(javaClass.name, NoLookupLocation.FROM_JAVA_LOADER) as? ClassDescriptor
+                return outerClassScope?.getContributedClassifier(javaClass.name, NoLookupLocation.FROM_JAVA_LOADER) as? ClassDescriptor
             }
 
             val kotlinResult = c.resolveKotlinBinaryClass(c.components.kotlinClassFinder.findKotlinClass(javaClass))

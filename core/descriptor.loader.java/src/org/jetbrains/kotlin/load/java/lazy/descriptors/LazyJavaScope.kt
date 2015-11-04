@@ -214,7 +214,7 @@ public abstract class LazyJavaScope(
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         recordLookup(name, location)
         return functions(name)
     }
@@ -298,13 +298,13 @@ public abstract class LazyJavaScope(
         return propertyType
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         recordLookup(name, location)
         return properties(name)
     }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean) = allDescriptors()
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                           nameFilter: (Name) -> Boolean) = allDescriptors()
 
     protected fun computeDescriptors(
             kindFilter: DescriptorKindFilter,
@@ -317,7 +317,7 @@ public abstract class LazyJavaScope(
             for (name in getClassNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
                     // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
-                    result.addIfNotNull(getClassifier(name, location))
+                    result.addIfNotNull(getContributedClassifier(name, location))
                 }
             }
         }
@@ -325,7 +325,7 @@ public abstract class LazyJavaScope(
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK) && !kindFilter.excludes.contains(NonExtensions)) {
             for (name in getFunctionNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
-                    result.addAll(getFunctions(name, location))
+                    result.addAll(getContributedFunctions(name, location))
                 }
             }
         }
@@ -333,7 +333,7 @@ public abstract class LazyJavaScope(
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK) && !kindFilter.excludes.contains(NonExtensions)) {
             for (name in getPropertyNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
-                    result.addAll(getProperties(name, location))
+                    result.addAll(getContributedVariables(name, location))
                 }
             }
         }

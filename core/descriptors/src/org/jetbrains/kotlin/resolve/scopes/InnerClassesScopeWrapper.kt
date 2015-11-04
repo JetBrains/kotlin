@@ -27,11 +27,11 @@ public class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScop
         return workerScope.getContainingDeclaration()
     }
 
-    override fun getClassifier(name: Name, location: LookupLocation) = workerScope.getClassifier(name, location) as? ClassDescriptor
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = workerScope.getContributedClassifier(name, location) as? ClassDescriptor
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<ClassDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<ClassDescriptor> {
         val restrictedFilter = kindFilter.restrictedToKindsOrNull(DescriptorKindFilter.CLASSIFIERS_MASK) ?: return listOf()
-        return workerScope.getDescriptors(restrictedFilter, nameFilter).filterIsInstance<ClassDescriptor>()
+        return workerScope.getContributedDescriptors(restrictedFilter, nameFilter).filterIsInstance<ClassDescriptor>()
     }
 
     override fun printScopeStructure(p: Printer) {

@@ -302,7 +302,7 @@ public class LazyJavaClassMemberScope(
 
     private fun getFunctionsFromSupertypes(name: Name): Set<SimpleFunctionDescriptor> {
           return getContainingDeclaration().typeConstructor.supertypes.flatMap {
-              it.memberScope.getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { f -> f as SimpleFunctionDescriptor }
+              it.memberScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { f -> f as SimpleFunctionDescriptor }
           }.toSet()
       }
 
@@ -414,7 +414,7 @@ public class LazyJavaClassMemberScope(
 
     private fun getPropertiesFromSupertypes(name: Name): Set<PropertyDescriptor> {
         return getContainingDeclaration().typeConstructor.supertypes.flatMap {
-            it.memberScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { p -> p }
+            it.memberScope.getContributedVariables(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { p -> p }
         }.toSet()
     }
 
@@ -615,7 +615,7 @@ public class LazyJavaClassMemberScope(
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? =
             DescriptorUtils.getDispatchReceiverParameterIfNeeded(getContainingDeclaration())
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         recordLookup(name, location)
         return nestedClasses(name)
     }
@@ -628,7 +628,7 @@ public class LazyJavaClassMemberScope(
 
         return memberIndex().getAllFieldNames() +
         getContainingDeclaration().getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
-            supertype.getMemberScope().getDescriptors(kindFilter, nameFilter).map { variable ->
+            supertype.getMemberScope().getContributedDescriptors(kindFilter, nameFilter).map { variable ->
                 variable.getName()
             }
         }

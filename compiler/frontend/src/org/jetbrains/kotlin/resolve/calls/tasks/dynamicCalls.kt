@@ -50,7 +50,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             p.println(javaClass.getSimpleName(), ": dynamic candidates for " + call)
         }
 
-        override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
             if (isAugmentedAssignmentConvention(name)) return listOf()
             if (call.getCallType() == Call.CallType.INVOKE
                 && call.getValueArgumentList() == null && call.getFunctionLiteralArguments().isEmpty()) {
@@ -78,7 +78,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             return false
         }
 
-        override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
             return if (call.getValueArgumentList() == null && call.getValueArguments().isEmpty()) {
                 listOf(createDynamicProperty(owner, name, call))
             }

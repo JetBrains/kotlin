@@ -57,8 +57,8 @@ public open class LazyClassMemberScope(
         computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED)
     }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                           nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val result = LinkedHashSet(descriptorsFromDeclaredElements())
         result.addAll(extraDescriptors())
         return result
@@ -67,12 +67,12 @@ public open class LazyClassMemberScope(
     protected open fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
         for (supertype in thisDescriptor.typeConstructor.supertypes) {
-            for (descriptor in supertype.memberScope.getDescriptors()) {
+            for (descriptor in supertype.memberScope.getContributedDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
-                    result.addAll(getFunctions(descriptor.name, location))
+                    result.addAll(getContributedFunctions(descriptor.name, location))
                 }
                 else if (descriptor is PropertyDescriptor) {
-                    result.addAll(getProperties(descriptor.name, location))
+                    result.addAll(getContributedVariables(descriptor.name, location))
                 }
                 // Nothing else is inherited
             }
@@ -115,9 +115,9 @@ public open class LazyClassMemberScope(
         OverrideResolver.resolveUnknownVisibilities(result, trace)
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         // TODO: this should be handled by lazy function descriptors
-        val functions = super.getFunctions(name, location)
+        val functions = super.getContributedFunctions(name, location)
         resolveUnknownVisibilitiesForMembers(functions)
         return functions
     }
@@ -127,7 +127,7 @@ public open class LazyClassMemberScope(
 
         val fromSupertypes = Lists.newArrayList<FunctionDescriptor>()
         for (supertype in thisDescriptor.typeConstructor.supertypes) {
-            fromSupertypes.addAll(supertype.memberScope.getFunctions(name, location))
+            fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, location))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location)
@@ -149,7 +149,7 @@ public open class LazyClassMemberScope(
                 if (parameter.getType().isError()) continue
                 if (!primaryConstructorParameters.get(parameter.index).hasValOrVar()) continue
 
-                val properties = getProperties(parameter.name, location)
+                val properties = getContributedVariables(parameter.name, location)
                 if (properties.isEmpty()) continue
 
                 val property = properties.iterator().next()
@@ -167,7 +167,7 @@ public open class LazyClassMemberScope(
         if (name == DescriptorResolver.COPY_METHOD_NAME) {
             for (parameter in constructor.getValueParameters()) {
                 // force properties resolution to fill BindingContext.VALUE_PARAMETER_AS_PROPERTY slice
-                getProperties(parameter.name, location)
+                getContributedVariables(parameter.name, location)
             }
 
             val copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(constructor.getValueParameters(), thisDescriptor, trace)
@@ -175,9 +175,9 @@ public open class LazyClassMemberScope(
         }
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         // TODO: this should be handled by lazy property descriptors
-        val properties = super.getProperties(name, location)
+        val properties = super.getContributedVariables(name, location)
         resolveUnknownVisibilitiesForMembers(properties as Collection<CallableMemberDescriptor>)
         return properties
     }
@@ -197,7 +197,7 @@ public open class LazyClassMemberScope(
         // Members from supertypes
         val fromSupertypes = ArrayList<PropertyDescriptor>()
         for (supertype in thisDescriptor.typeConstructor.supertypes) {
-            fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED))
+            fromSupertypes.addAll(supertype.memberScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_PROPERTIES, result))
         generateFakeOverrides(name, fromSupertypes, result, javaClass<PropertyDescriptor>())
@@ -249,14 +249,14 @@ public open class LazyClassMemberScope(
         var n = 1
         while (true) {
             val componentName = createComponentName(n)
-            val functions = getFunctions(componentName, location)
+            val functions = getContributedFunctions(componentName, location)
             if (functions.isEmpty()) break
 
             result.addAll(functions)
 
             n++
         }
-        result.addAll(getFunctions(Name.identifier("copy"), location))
+        result.addAll(getContributedFunctions(Name.identifier("copy"), location))
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
@@ -315,13 +315,13 @@ public open class LazyClassMemberScope(
     companion object {
         private val EXTRACT_FUNCTIONS: MemberExtractor<FunctionDescriptor> = object : MemberExtractor<FunctionDescriptor> {
             override fun extract(extractFrom: KotlinType, name: Name): Collection<FunctionDescriptor> {
-                return extractFrom.memberScope.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+                return extractFrom.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             }
         }
 
         private val EXTRACT_PROPERTIES: MemberExtractor<PropertyDescriptor> = object : MemberExtractor<PropertyDescriptor> {
             override fun extract(extractFrom: KotlinType, name: Name): Collection<PropertyDescriptor> {
-                return extractFrom.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+                return extractFrom.memberScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
             }
         }
     }

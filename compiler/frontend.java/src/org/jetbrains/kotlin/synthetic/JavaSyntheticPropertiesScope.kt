@@ -111,14 +111,14 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
         val possibleGetMethodNames = possibleGetMethodNames(name)
         val getMethod = possibleGetMethodNames
-                                .flatMap { memberScope.getFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE) }
+                                .flatMap { memberScope.getContributedFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE) }
                                 .singleOrNull {
                                     isGoodGetMethod(it) && it.hasJavaOriginInHierarchy()
                                 } ?: return result(null, possibleGetMethodNames)
 
 
         val setMethodName = setMethodName(getMethod.name)
-        val setMethod = memberScope.getFunctions(setMethodName, NoLookupLocation.FROM_SYNTHETIC_SCOPE)
+        val setMethod = memberScope.getContributedFunctions(setMethodName, NoLookupLocation.FROM_SYNTHETIC_SCOPE)
                 .singleOrNull { isGoodSetMethod(it, getMethod) }
 
         val propertyType = getMethod.returnType!!
@@ -203,7 +203,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
         val classifier = type.declarationDescriptor
         if (classifier is ClassDescriptor) {
-            for (descriptor in classifier.getUnsubstitutedMemberScope().getDescriptors(DescriptorKindFilter.FUNCTIONS)) {
+            for (descriptor in classifier.getUnsubstitutedMemberScope().getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)) {
                 if (descriptor is FunctionDescriptor) {
                     val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
                     addIfNotNull(syntheticPropertyInClass(Pair(classifier, propertyName)).descriptor)

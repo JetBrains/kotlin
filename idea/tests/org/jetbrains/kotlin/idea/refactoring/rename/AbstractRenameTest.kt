@@ -198,13 +198,13 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     private fun renameKotlinFunctionTest(renameParamsObject: JsonObject, context: TestContext) {
         val oldMethodName = Name.identifier(renameParamsObject.getString("oldName"))
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getFunctions(oldMethodName, NoLookupLocation.FROM_TEST).first() }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getContributedFunctions(oldMethodName, NoLookupLocation.FROM_TEST).first() }
     }
 
     private fun renameKotlinPropertyTest(renameParamsObject: JsonObject, context: TestContext) {
         val oldPropertyName = Name.identifier(renameParamsObject.getString("oldName"))
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getProperties(oldPropertyName, NoLookupLocation.FROM_TEST).first() }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) { it.getContributedVariables(oldPropertyName, NoLookupLocation.FROM_TEST).first() }
     }
 
     private fun renameKotlinClassTest(renameParamsObject: JsonObject, context: TestContext) {

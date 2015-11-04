@@ -105,7 +105,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
     override fun getMembersByName(receiver: KotlinType, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         val receiverScope = receiver.memberScope
-        val members = receiverScope.getFunctions(name, location)
+        val members = receiverScope.getContributedFunctions(name, location)
         val constructors = getConstructors(receiverScope.memberScopeAsImportingScope(), name, location, { !isStaticNestedClass(it) })
 
         if (name == OperatorNameConventions.INVOKE && KotlinBuiltIns.isExtensionFunctionType(receiver)) {
@@ -194,7 +194,7 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
 
     override fun getMembersByName(receiver: KotlinType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         val memberScope = receiver.memberScope
-        val properties = memberScope.getProperties(name, location)
+        val properties = memberScope.getContributedVariables(name, location)
         val fakeDescriptor = getFakeDescriptorForObject(memberScope.memberScopeAsImportingScope(), name, location)
         return if (fakeDescriptor != null) properties + fakeDescriptor else properties
     }

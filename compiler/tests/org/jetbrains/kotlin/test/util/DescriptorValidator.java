@@ -412,7 +412,7 @@ public class DescriptorValidator {
         public Void visitVariableDescriptor(
                 VariableDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getProperties(descriptor.getName(), NoLookupLocation.FROM_TEST));
+            assertFound(scope, descriptor, scope.getContributedVariables(descriptor.getName(), NoLookupLocation.FROM_TEST));
             return null;
         }
 
@@ -420,7 +420,7 @@ public class DescriptorValidator {
         public Void visitFunctionDescriptor(
                 FunctionDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getFunctions(descriptor.getName(), NoLookupLocation.FROM_TEST));
+            assertFound(scope, descriptor, scope.getContributedFunctions(descriptor.getName(), NoLookupLocation.FROM_TEST));
             return null;
         }
 
@@ -428,7 +428,7 @@ public class DescriptorValidator {
         public Void visitTypeParameterDescriptor(
                 TypeParameterDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
+            assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
             return null;
         }
 
@@ -436,7 +436,7 @@ public class DescriptorValidator {
         public Void visitClassDescriptor(
                 ClassDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
+            assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
             return null;
         }
 

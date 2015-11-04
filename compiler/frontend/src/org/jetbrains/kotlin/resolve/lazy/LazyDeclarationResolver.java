@@ -72,7 +72,7 @@ public class LazyDeclarationResolver {
         //     class A {} class A { fun foo(): A<completion here>}
         // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
-        ClassifierDescriptor scopeDescriptor = scope.getClassifier(classOrObject.getNameAsSafeName(), location);
+        ClassifierDescriptor scopeDescriptor = scope.getContributedClassifier(classOrObject.getNameAsSafeName(), location);
         DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor == null) {
@@ -148,7 +148,7 @@ public class LazyDeclarationResolver {
             public DeclarationDescriptor visitNamedFunction(@NotNull KtNamedFunction function, Void data) {
                 LookupLocation location = lookupLocationFor(function, function.isTopLevel());
                 MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(function, location);
-                scopeForDeclaration.getFunctions(function.getNameAsSafeName(), location);
+                scopeForDeclaration.getContributedFunctions(function.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 
@@ -160,7 +160,7 @@ public class LazyDeclarationResolver {
                     // This is a primary constructor parameter
                     ClassDescriptor classDescriptor = getClassDescriptor(jetClass, lookupLocationFor(jetClass, false));
                     if (parameter.hasValOrVar()) {
-                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName(), lookupLocationFor(parameter, false));
+                        classDescriptor.getDefaultType().getMemberScope().getContributedVariables(parameter.getNameAsSafeName(), lookupLocationFor(parameter, false));
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                     }
                     else {
@@ -204,7 +204,7 @@ public class LazyDeclarationResolver {
             public DeclarationDescriptor visitProperty(@NotNull KtProperty property, Void data) {
                 LookupLocation location = lookupLocationFor(property, property.isTopLevel());
                 MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
-                scopeForDeclaration.getProperties(property.getNameAsSafeName(), location);
+                scopeForDeclaration.getContributedVariables(property.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 

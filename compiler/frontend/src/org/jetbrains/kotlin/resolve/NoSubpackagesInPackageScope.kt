@@ -28,10 +28,10 @@ class NoSubpackagesInPackageScope(packageDescriptor: PackageViewDescriptor) : Ab
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val modifiedFilter = kindFilter.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
         if (modifiedFilter.kindMask == 0) return listOf()
-        return workerScope.getDescriptors(modifiedFilter, nameFilter).filter { it !is PackageViewDescriptor }
+        return workerScope.getContributedDescriptors(modifiedFilter, nameFilter).filter { it !is PackageViewDescriptor }
     }
 
 }

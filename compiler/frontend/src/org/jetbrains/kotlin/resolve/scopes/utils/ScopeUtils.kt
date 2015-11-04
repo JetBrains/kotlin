@@ -134,13 +134,13 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
             = emptyList<FunctionDescriptor>()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = memberScope.getDescriptors(kindFilter, nameFilter)
+            = memberScope.getContributedDescriptors(kindFilter, nameFilter)
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = memberScope.getClassifier(name, location)
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = memberScope.getContributedClassifier(name, location)
 
-    override fun getContributedVariables(name: Name, location: LookupLocation) = memberScope.getProperties(name, location)
+    override fun getContributedVariables(name: Name, location: LookupLocation) = memberScope.getContributedVariables(name, location)
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = memberScope.getFunctions(name, location)
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = memberScope.getContributedFunctions(name, location)
 
     override fun equals(other: Any?) = other is MemberScopeToImportingScopeAdapter && other.memberScope == memberScope
 

@@ -42,7 +42,7 @@ public object CodegenUtilKt {
     ): Map<CallableMemberDescriptor, CallableDescriptor> {
         if (delegateExpressionType?.isDynamic() ?: false) return mapOf();
 
-        return descriptor.getDefaultType().getMemberScope().getDescriptors().asSequence()
+        return descriptor.getDefaultType().getMemberScope().getContributedDescriptors().asSequence()
             .filterIsInstance<CallableMemberDescriptor>()
             .filter { it.getKind() == CallableMemberDescriptor.Kind.DELEGATION }
             .asIterable()
@@ -58,7 +58,7 @@ public object CodegenUtilKt {
                             val name = overriddenDescriptor.getName()
 
                             // this is the actual member of delegateExpressionType that we are delegating to
-                            (scope.getFunctions(name, NoLookupLocation.FROM_BACKEND) + scope.getProperties(name, NoLookupLocation.FROM_BACKEND))
+                            (scope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND) + scope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND))
                                     .first {
                                         (listOf(it) + DescriptorUtils.getAllOverriddenDescriptors(it)).map { it.getOriginal() }.contains(overriddenDescriptor.getOriginal())
                                     }

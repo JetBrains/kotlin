@@ -278,7 +278,7 @@ class TypeInstantiationItems(
                 is ClassDescriptor -> container.getStaticScope()
                 else -> return
             }
-            val samConstructor = scope.getFunctions(`class`.name, NoLookupLocation.FROM_IDE)
+            val samConstructor = scope.getContributedFunctions(`class`.name, NoLookupLocation.FROM_IDE)
                                          .filterIsInstance<SamConstructorDescriptor>()
                                          .singleOrNull() ?: return
             lookupElementFactory.createLookupElementsInSmartCompletion(samConstructor, bindingContext, useReceiverTypes = false)

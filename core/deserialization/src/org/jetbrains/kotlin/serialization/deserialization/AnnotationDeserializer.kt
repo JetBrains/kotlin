@@ -135,7 +135,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private fun resolveEnumValue(enumClassId: ClassId, enumEntryName: Name): ConstantValue<*> {
         val enumClass = resolveClass(enumClassId)
         if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-            val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(enumEntryName, NoLookupLocation.FROM_DESERIALIZATION)
+            val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(enumEntryName, NoLookupLocation.FROM_DESERIALIZATION)
             if (enumEntry is ClassDescriptor) {
                 return factory.createEnumValue(enumEntry)
             }

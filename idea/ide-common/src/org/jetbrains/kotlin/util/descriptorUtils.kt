@@ -61,7 +61,7 @@ public fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?,
 public fun ClassDescriptor.findCallableMemberBySignature(signature: CallableMemberDescriptor): CallableMemberDescriptor? {
     val descriptorKind = if (signature is FunctionDescriptor) DescriptorKindFilter.FUNCTIONS else DescriptorKindFilter.VARIABLES
     return getDefaultType().getMemberScope()
-            .getDescriptors(descriptorKind)
+            .getContributedDescriptors(descriptorKind)
             .filterIsInstance<CallableMemberDescriptor>()
             .firstOrNull {
                 it.getContainingDeclaration() == this

@@ -77,7 +77,7 @@ public class DeserializerForClassfileDecompiler(
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
         ) { emptyList() }
-        return membersScope.getDescriptors()
+        return membersScope.getContributedDescriptors()
     }
 
     companion object {

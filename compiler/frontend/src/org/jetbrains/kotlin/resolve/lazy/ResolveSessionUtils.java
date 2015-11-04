@@ -81,7 +81,7 @@ public class ResolveSessionUtils {
 
         MemberScope scope = outerScope;
         for (Name name : path.pathSegments()) {
-            ClassifierDescriptor classifier = scope.getClassifier(name, NoLookupLocation.WHEN_FIND_BY_FQNAME);
+            ClassifierDescriptor classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_FIND_BY_FQNAME);
             if (!(classifier instanceof ClassDescriptor)) return null;
             scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
         }

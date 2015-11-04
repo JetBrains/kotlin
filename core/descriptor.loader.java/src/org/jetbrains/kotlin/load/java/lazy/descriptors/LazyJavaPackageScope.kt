@@ -99,29 +99,29 @@ public class LazyJavaPackageScope(
         }
     }
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         if (!SpecialNames.isSafeIdentifier(name)) return null
 
         recordLookup(name, location)
         return classes(name)
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
         recordLookup(name, location)
-        return deserializedPackageScope().getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+        return deserializedPackageScope().getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation): List<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): List<FunctionDescriptor> {
         // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
         recordLookup(name, location)
-        return deserializedPackageScope().getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+        return deserializedPackageScope().getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
     }
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                      kindFilter: DescriptorKindFilter,
                                      nameFilter: (Name) -> Boolean) {
-        result.addAll(deserializedPackageScope().getDescriptors(kindFilter, nameFilter))
+        result.addAll(deserializedPackageScope().getContributedDescriptors(kindFilter, nameFilter))
     }
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
@@ -162,7 +162,7 @@ public class LazyJavaPackageScope(
     override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = listOf<Name>()
 
     // we don't use implementation from super which caches all descriptors and does not use filters
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return computeDescriptors(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
     }
 }

@@ -43,7 +43,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Bar" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
-        val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
+        val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getContributedFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
         Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
@@ -52,7 +52,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Bar" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
-        val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
+        val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getContributedFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
         Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
@@ -61,7 +61,7 @@ public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Foo" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
-        val propertyDescriptor = descriptor.defaultType.memberScope.getProperties(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
+        val propertyDescriptor = descriptor.defaultType.memberScope.getContributedVariables(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(propertyDescriptor)
         Assert.assertEquals("Doc for property xyzzy", doc!!.getContent())
     }

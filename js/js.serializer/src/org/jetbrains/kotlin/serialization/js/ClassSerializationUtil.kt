@@ -32,7 +32,7 @@ public object ClassSerializationUtil {
         val classProto = serializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
         sink.writeClass(classDescriptor, classProto)
 
-        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getDescriptors(), serializer, sink, skip)
+        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getContributedDescriptors(), serializer, sink, skip)
     }
 
     public fun serializeClasses(descriptors: Collection<DeclarationDescriptor>, serializer: DescriptorSerializer, sink: Sink, skip: (DeclarationDescriptor) -> Boolean) {

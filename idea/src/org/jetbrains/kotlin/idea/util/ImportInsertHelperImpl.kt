@@ -237,7 +237,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val topLevelScope = resolutionFacade.getFileResolutionScope(file)
             val conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
                     .flatMap {
-                        importedScopes.map { scope -> scope.getClassifier(it, NoLookupLocation.FROM_IDE) }.filterNotNull()
+                        importedScopes.map { scope -> scope.getContributedClassifier(it, NoLookupLocation.FROM_IDE) }.filterNotNull()
                     }
                     .filter { importedClass ->
                         isVisible(importedClass)
@@ -272,7 +272,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             }
 
             val parentScope = getMemberScope(fqName.parent(), moduleDescriptor) ?: return null
-            val classifier = parentScope.getClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)
+            val classifier = parentScope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_IDE)
             val classDescriptor = classifier as? ClassDescriptor ?: return null
             return classDescriptor.getDefaultType().getMemberScope()
         }

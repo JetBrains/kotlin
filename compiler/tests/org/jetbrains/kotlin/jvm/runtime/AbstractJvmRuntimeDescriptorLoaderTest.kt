@@ -228,9 +228,9 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
             }
         }
 
-        override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classifierMap[name]
+        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classifierMap[name]
 
-        override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = classifierMap.values
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = classifierMap.values
 
         override fun printScopeStructure(p: Printer) {
             p.println("runtime descriptor loader test")

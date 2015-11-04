@@ -75,12 +75,12 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
     @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
-            (memberScope.getProperties(name, NoLookupLocation.FROM_REFLECTION) +
-             staticScope.getProperties(name, NoLookupLocation.FROM_REFLECTION)) as Collection<PropertyDescriptor>
+            (memberScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION) +
+             staticScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION)) as Collection<PropertyDescriptor>
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
-            memberScope.getFunctions(name, NoLookupLocation.FROM_REFLECTION) +
-            staticScope.getFunctions(name, NoLookupLocation.FROM_REFLECTION)
+            memberScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION) +
+            staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override val simpleName: String? get() {
         if (jClass.isAnonymousClass()) return null
@@ -120,7 +120,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
     override val nestedClasses: Collection<KClass<*>>
-        get() = descriptor.unsubstitutedInnerClassesScope.getDescriptors().map { nestedClass ->
+        get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().map { nestedClass ->
             val source = (nestedClass as DeclarationDescriptorWithSource).source
             when (source) {
                 is KotlinJvmBinarySourceElement ->

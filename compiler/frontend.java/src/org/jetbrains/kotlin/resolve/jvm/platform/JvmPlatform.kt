@@ -51,7 +51,7 @@ private val DEFAULT_IMPORTS_FOR_JVM = ArrayList<ImportPath>().apply {
     add(ImportPath("kotlin.io.*"))
 
     fun addAllClassifiersFromScope(scope: MemberScope) {
-        for (descriptor in scope.getDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
+        for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
             add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
         }
     }

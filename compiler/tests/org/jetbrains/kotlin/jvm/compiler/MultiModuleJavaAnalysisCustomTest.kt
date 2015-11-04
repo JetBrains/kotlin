@@ -118,12 +118,12 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     private fun checkClassInPackage(moduleDescriptor: ModuleDescriptor, packageName: String, className: String) {
         val kotlinPackage = moduleDescriptor.getPackage(FqName(packageName))
         val kotlinClassName = Name.identifier(className)
-        val kotlinClass = kotlinPackage.memberScope.getClassifier(kotlinClassName, NoLookupLocation.FROM_TEST) as ClassDescriptor
+        val kotlinClass = kotlinPackage.memberScope.getContributedClassifier(kotlinClassName, NoLookupLocation.FROM_TEST) as ClassDescriptor
         checkClass(kotlinClass)
     }
 
     private fun checkClass(classDescriptor: ClassDescriptor) {
-        classDescriptor.getDefaultType().getMemberScope().getDescriptors().filterIsInstance<CallableDescriptor>().forEach {
+        classDescriptor.getDefaultType().getMemberScope().getContributedDescriptors().filterIsInstance<CallableDescriptor>().forEach {
             checkCallable(it)
         }
 

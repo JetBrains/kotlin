@@ -127,7 +127,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> {
         val packageView = module.getPackage(fqn)
-        val members = packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
+        val members = packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
         return ContainerUtil.mapNotNull(members, object : Function<DeclarationDescriptor, FqName> {
             override fun `fun`(member: DeclarationDescriptor): FqName? {
                 if (member is PackageViewDescriptor) {

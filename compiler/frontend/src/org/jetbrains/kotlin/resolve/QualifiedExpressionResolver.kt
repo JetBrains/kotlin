@@ -80,8 +80,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
         val lastPart = qualifierPartList.last()
         val classifier = when (qualifier) {
-            is PackageViewDescriptor -> qualifier.memberScope.getClassifier(lastPart.name, lastPart.location)
-            is ClassDescriptor -> qualifier.unsubstitutedInnerClassesScope.getClassifier(lastPart.name, lastPart.location)
+            is PackageViewDescriptor -> qualifier.memberScope.getContributedClassifier(lastPart.name, lastPart.location)
+            is ClassDescriptor -> qualifier.unsubstitutedInnerClassesScope.getContributedClassifier(lastPart.name, lastPart.location)
             else -> null
         }
         storeResult(trace, lastPart.expression, classifier, scope.ownerDescriptor, inImport = false, isQualifier = false)
@@ -183,24 +183,24 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         when (packageOrClassDescriptor) {
             is PackageViewDescriptor -> {
                 val packageScope = packageOrClassDescriptor.memberScope
-                descriptors.addIfNotNull(packageScope.getClassifier(lastName, location))
-                descriptors.addAll(packageScope.getProperties(lastName, location))
-                descriptors.addAll(packageScope.getFunctions(lastName, location))
+                descriptors.addIfNotNull(packageScope.getContributedClassifier(lastName, location))
+                descriptors.addAll(packageScope.getContributedVariables(lastName, location))
+                descriptors.addAll(packageScope.getContributedFunctions(lastName, location))
             }
 
             is ClassDescriptor -> {
                 descriptors.addIfNotNull(
-                        packageOrClassDescriptor.unsubstitutedInnerClassesScope.getClassifier(lastName, location)
+                        packageOrClassDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(lastName, location)
                 )
                 val staticClassScope = packageOrClassDescriptor.staticScope
-                descriptors.addAll(staticClassScope.getFunctions(lastName, location))
-                descriptors.addAll(staticClassScope.getProperties(lastName, location))
+                descriptors.addAll(staticClassScope.getContributedFunctions(lastName, location))
+                descriptors.addAll(staticClassScope.getContributedVariables(lastName, location))
 
                 if (packageOrClassDescriptor.kind == ClassKind.OBJECT) {
-                    descriptors.addAll(packageOrClassDescriptor.unsubstitutedMemberScope.getFunctions(lastName, location).map {
+                    descriptors.addAll(packageOrClassDescriptor.unsubstitutedMemberScope.getContributedFunctions(lastName, location).map {
                         FunctionImportedFromObject(it)
                     })
-                    val properties = packageOrClassDescriptor.unsubstitutedMemberScope.getProperties(lastName, location)
+                    val properties = packageOrClassDescriptor.unsubstitutedMemberScope.getContributedVariables(lastName, location)
                             .filterIsInstance<PropertyDescriptor>().map { PropertyImportedFromObject(it) }
                     descriptors.addAll(properties)
                 }
@@ -230,8 +230,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
             is ClassDescriptor -> {
                 val memberScope = packageOrClassDescriptor.unsubstitutedMemberScope
-                descriptors.addAll(memberScope.getFunctions(lastName, lastPart.location))
-                descriptors.addAll(memberScope.getProperties(lastName, lastPart.location))
+                descriptors.addAll(memberScope.getContributedFunctions(lastName, lastPart.location))
+                descriptors.addAll(memberScope.getContributedVariables(lastName, lastPart.location))
                 if (descriptors.isNotEmpty()) {
                     trace.report(Errors.CANNOT_BE_IMPORTED.on(lastPart.expression, lastName))
                 }
@@ -304,7 +304,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             val nextDescriptor = when (descriptor) {
                 // TODO: support inner classes which captured type parameter from outer class
                 is ClassDescriptor ->
-                    descriptor.unsubstitutedInnerClassesScope.getClassifier(qualifierPart.name, qualifierPart.location)
+                    descriptor.unsubstitutedInnerClassesScope.getContributedClassifier(qualifierPart.name, qualifierPart.location)
                 is PackageViewDescriptor -> {
                     val packageView = if (qualifierPart.typeArguments == null) {
                         moduleDescriptor.getPackage(descriptor.fqName.child(qualifierPart.name))
@@ -314,7 +314,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
                     if (packageView != null && !packageView.isEmpty()) {
                         packageView
                     } else {
-                        descriptor.memberScope.getClassifier(qualifierPart.name, qualifierPart.location)
+                        descriptor.memberScope.getContributedClassifier(qualifierPart.name, qualifierPart.location)
                     }
                 }
                 else -> null

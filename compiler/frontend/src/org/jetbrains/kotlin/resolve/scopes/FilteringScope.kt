@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 public class FilteringScope(private val workerScope: MemberScope, private val predicate: (DeclarationDescriptor) -> Boolean) : MemberScope {
 
-    override fun getFunctions(name: Name, location: LookupLocation) = workerScope.getFunctions(name, location).filter(predicate)
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = workerScope.getContributedFunctions(name, location).filter(predicate)
 
     override fun getContainingDeclaration() = workerScope.getContainingDeclaration()
 
@@ -32,12 +32,12 @@ public class FilteringScope(private val workerScope: MemberScope, private val pr
 
     override fun getPackage(name: Name) = filterDescriptor(workerScope.getPackage(name))
 
-    override fun getClassifier(name: Name, location: LookupLocation) = filterDescriptor(workerScope.getClassifier(name, location))
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = filterDescriptor(workerScope.getContributedClassifier(name, location))
 
-    override fun getProperties(name: Name, location: LookupLocation) = workerScope.getProperties(name, location).filter(predicate)
+    override fun getContributedVariables(name: Name, location: LookupLocation) = workerScope.getContributedVariables(name, location).filter(predicate)
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean) = workerScope.getDescriptors(kindFilter, nameFilter).filter(predicate)
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                           nameFilter: (Name) -> Boolean) = workerScope.getContributedDescriptors(kindFilter, nameFilter).filter(predicate)
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")

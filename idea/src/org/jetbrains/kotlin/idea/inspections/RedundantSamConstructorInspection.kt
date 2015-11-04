@@ -174,7 +174,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val containingClass = originalFunctionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 
             // SAM adapters for static functions
-            for (staticFunWithSameName in containingClass.staticScope.getFunctions(functionResolvedCall.resultingDescriptor.name, NoLookupLocation.FROM_IDE)) {
+            for (staticFunWithSameName in containingClass.staticScope.getContributedFunctions(functionResolvedCall.resultingDescriptor.name, NoLookupLocation.FROM_IDE)) {
                 if (staticFunWithSameName is SamAdapterDescriptor<*>) {
                     if (isSamAdapterSuitableForCall(staticFunWithSameName, originalFunctionDescriptor, samConstructorCallArguments.size())) {
                         return samConstructorCallArguments.check { canBeReplaced(functionCall, it) } ?: emptyList()

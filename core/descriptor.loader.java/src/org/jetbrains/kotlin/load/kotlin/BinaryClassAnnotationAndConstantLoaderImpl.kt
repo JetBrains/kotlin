@@ -152,7 +152,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             private fun enumEntryValue(enumClassId: ClassId, name: Name): ConstantValue<*> {
                 val enumClass = resolveClass(enumClassId)
                 if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-                    val classifier = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
+                    val classifier = enumClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
                     if (classifier is ClassDescriptor) {
                         return factory.createEnumValue(classifier)
                     }

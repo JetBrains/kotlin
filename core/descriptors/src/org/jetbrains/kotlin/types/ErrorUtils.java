@@ -169,13 +169,13 @@ public class ErrorUtils {
 
         @Nullable
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull LookupLocation location) {
+        public ClassifierDescriptor getContributedClassifier(@NotNull Name name, @NotNull LookupLocation location) {
             return createErrorClass(name.asString());
         }
 
         @NotNull
         @Override
-        public Set<PropertyDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
+        public Set<PropertyDescriptor> getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
             return ERROR_PROPERTY_GROUP;
         }
 
@@ -186,7 +186,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+        public Set<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
 
@@ -198,7 +198,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getDescriptors(
+        public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
             return Collections.emptyList();
@@ -224,7 +224,7 @@ public class ErrorUtils {
 
         @Nullable
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull Name name, @NotNull LookupLocation location) {
+        public ClassifierDescriptor getContributedClassifier(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 
@@ -236,13 +236,13 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<PropertyDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
+        public Collection<PropertyDescriptor> getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+        public Collection<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException();
         }
 
@@ -254,7 +254,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getDescriptors(
+        public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
             throw new IllegalStateException();

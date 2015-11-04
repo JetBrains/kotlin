@@ -37,7 +37,7 @@ import java.util.*
 
 public object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveSamConstructor(name: Name, scope: MemberScope, location: LookupLocation): SamConstructorDescriptor? {
-        val classifier = scope.getClassifier(name, location) as? LazyJavaClassDescriptor ?: return null
+        val classifier = scope.getContributedClassifier(name, location) as? LazyJavaClassDescriptor ?: return null
         if (classifier.getFunctionTypeForSamInterface() == null) return null
         return SingleAbstractMethodUtils.createSamConstructorFunction(scope.getContainingDeclaration(), classifier)
     }

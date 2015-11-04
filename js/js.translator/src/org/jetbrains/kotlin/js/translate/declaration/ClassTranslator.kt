@@ -240,7 +240,7 @@ public class ClassTranslator private constructor(
     }
 
     private fun generateOtherBridges(properties: MutableList<JsPropertyInitializer>) {
-        for (memberDescriptor in descriptor.getDefaultType().getMemberScope().getDescriptors()) {
+        for (memberDescriptor in descriptor.getDefaultType().getMemberScope().getContributedDescriptors()) {
             if (memberDescriptor is FunctionDescriptor) {
                 val bridgesToGenerate = generateBridgesForFunctionDescriptor(memberDescriptor, identity())
 

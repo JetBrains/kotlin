@@ -42,17 +42,17 @@ public fun LexicalScope.getAllAccessibleVariables(name: Name): Collection<Variab
 }
 
 public fun LexicalScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor> {
-    return getImplicitReceiversWithInstance().flatMap { it.type.memberScope.getFunctions(name, NoLookupLocation.FROM_IDE) } +
-            collectFunctions(name, NoLookupLocation.FROM_IDE)
+    return getImplicitReceiversWithInstance().flatMap { it.type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) } +
+           collectFunctions(name, NoLookupLocation.FROM_IDE)
 }
 
 public fun LexicalScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {
-    it.type.memberScope.getProperties(name, NoLookupLocation.FROM_IDE)
+    it.type.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE)
 }
 
 public fun LexicalScope.getVariableFromImplicitReceivers(name: Name): VariableDescriptor? {
     getImplicitReceiversWithInstance().forEach {
-        it.type.memberScope.getProperties(name, NoLookupLocation.FROM_IDE).singleOrNull()?.let { return it }
+        it.type.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE).singleOrNull()?.let { return it }
     }
     return null
 }

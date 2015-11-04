@@ -52,12 +52,12 @@ fun generate(): String {
 
     val builtIns = TargetPlatform.Default.builtIns
     @Suppress("UNCHECKED_CAST")
-    val allPrimitiveTypes = builtIns.getBuiltInsPackageScope().getDescriptors()
+    val allPrimitiveTypes = builtIns.getBuiltInsPackageScope().getContributedDescriptors()
             .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.getDefaultType()) } as List<ClassDescriptor>
 
     for (descriptor in allPrimitiveTypes + builtIns.getString()) {
         @Suppress("UNCHECKED_CAST")
-        val functions = descriptor.getMemberScope(listOf()).getDescriptors()
+        val functions = descriptor.getMemberScope(listOf()).getContributedDescriptors()
                 .filter { it is CallableDescriptor && !EXCLUDED_FUNCTIONS.contains(it.getName().asString()) } as List<CallableDescriptor>
 
         for (function in functions) {

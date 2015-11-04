@@ -45,10 +45,10 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
 
     @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
-            scope.getProperties(name, NoLookupLocation.FROM_REFLECTION) as Collection<PropertyDescriptor>
+            scope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION) as Collection<PropertyDescriptor>
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
-            scope.getFunctions(name, NoLookupLocation.FROM_REFLECTION)
+            scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun equals(other: Any?): Boolean =
             other is KPackageImpl && jClass == other.jClass

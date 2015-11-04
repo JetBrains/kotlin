@@ -63,7 +63,8 @@ public class LazyJavaStaticClassScope(
             memberIndex().getAllFieldNames() + (if (jClass.isEnum) listOf(DescriptorUtils.ENUM_VALUES) else emptyList())
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         // We don't need to track lookups here because we find nested/inner classes in LazyJavaClassMemberScope
         return null
     }
@@ -113,7 +114,7 @@ public class LazyJavaStaticClassScope(
 
     private fun getStaticFunctionsFromJavaSuperClasses(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
         val staticScope = descriptor.getParentJavaStaticClassScope() ?: return emptySet()
-        return staticScope.getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as SimpleFunctionDescriptor }.toSet()
+        return staticScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as SimpleFunctionDescriptor }.toSet()
     }
 
     private fun getStaticPropertiesFromJavaSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
@@ -125,7 +126,7 @@ public class LazyJavaStaticClassScope(
 
             if (staticScope !is LazyJavaStaticClassScope) return getStaticPropertiesFromJavaSupertypes(name, superTypeDescriptor)
 
-            return staticScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it }
+            return staticScope.getContributedVariables(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it }
         }
 
         return descriptor.typeConstructor.supertypes.flatMap(::getStaticProperties).toSet()

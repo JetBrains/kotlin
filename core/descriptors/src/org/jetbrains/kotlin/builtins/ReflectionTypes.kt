@@ -38,7 +38,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
 
     fun find(className: String): ClassDescriptor {
         val name = Name.identifier(className)
-        return kotlinReflectScope.getClassifier(name, NoLookupLocation.FROM_REFLECTION) as? ClassDescriptor
+        return kotlinReflectScope.getContributedClassifier(name, NoLookupLocation.FROM_REFLECTION) as? ClassDescriptor
                 ?: ErrorUtils.createErrorClass(KOTLIN_REFLECT_FQ_NAME.child(name).asString())
     }
 

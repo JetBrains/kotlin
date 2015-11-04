@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.name.ClassId
 public fun ModuleDescriptor.findClassAcrossModuleDependencies(classId: ClassId): ClassDescriptor? {
     val packageViewDescriptor = getPackage(classId.packageFqName)
     val segments = classId.relativeClassName.pathSegments()
-    val topLevelClass = packageViewDescriptor.memberScope.getClassifier(segments.first(), NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
+    val topLevelClass = packageViewDescriptor.memberScope.getContributedClassifier(segments.first(), NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
     var result = topLevelClass
     for (name in segments.subList(1, segments.size())) {
-        result = result.unsubstitutedInnerClassesScope.getClassifier(name, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
+        result = result.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
     }
     return result
 }

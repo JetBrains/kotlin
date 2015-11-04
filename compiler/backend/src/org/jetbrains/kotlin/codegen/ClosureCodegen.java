@@ -469,6 +469,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                                    ? DescriptorUtilsKt.getBuiltIns(elementDescriptor).getFunction(arity)
                                    : DescriptorUtilsKt.getBuiltIns(elementDescriptor).getExtensionFunction(arity);
         MemberScope scope = elementClass.getDefaultType().getMemberScope();
-        return scope.getFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
+        return scope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }
 }

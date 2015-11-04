@@ -199,7 +199,7 @@ public fun buildDecompiledText(
                 }
             }
 
-            val allDescriptors = descriptor.secondaryConstructors + descriptor.defaultType.memberScope.getDescriptors()
+            val allDescriptors = descriptor.secondaryConstructors + descriptor.defaultType.memberScope.getContributedDescriptors()
             val (enumEntries, members) = allDescriptors.partition(::isEnumEntry)
 
             for ((index, enumEntry) in enumEntries.withIndex()) {

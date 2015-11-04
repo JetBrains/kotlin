@@ -383,7 +383,7 @@ public class DescriptorUtils {
     @Nullable
     public static ClassDescriptor getInnerClassByName(@NotNull ClassDescriptor classDescriptor, @NotNull String innerClassName, @NotNull LookupLocation location) {
         ClassifierDescriptor classifier =
-                classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName), location);
+                classDescriptor.getDefaultType().getMemberScope().getContributedClassifier(Name.identifier(innerClassName), location);
         assert classifier instanceof ClassDescriptor :
                 "Inner class " + innerClassName + " in " + classDescriptor + " should be instance of ClassDescriptor, but was: "
                 + (classifier == null ? "null" : classifier.getClass());
@@ -551,6 +551,6 @@ public class DescriptorUtils {
 
     @NotNull
     public static Collection<DeclarationDescriptor> getAllDescriptors(@NotNull MemberScope scope) {
-        return scope.getDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
+        return scope.getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
     }
 }

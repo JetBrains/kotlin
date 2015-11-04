@@ -49,7 +49,7 @@ private class ScopeWithMissingDependencies(val fqName: FqName, val containing: D
         p.println("Special scope for decompiler, containing class with any name")
     }
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         return MissingDependencyErrorClassDescriptor(getContainingDeclaration(), fqName.child(name))
     }
 }

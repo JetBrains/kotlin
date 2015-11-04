@@ -412,7 +412,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private boolean isGenericToArrayPresent() {
         Collection<FunctionDescriptor> functions =
-                descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("toArray"), NoLookupLocation.FROM_BACKEND);
+                descriptor.getDefaultType().getMemberScope().getContributedFunctions(Name.identifier("toArray"), NoLookupLocation.FROM_BACKEND);
         for (FunctionDescriptor function : functions) {
             if (CallResolverUtilKt.isOrOverridesSynthesized(function)) {
                 continue;
@@ -794,7 +794,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Type type = typeMapper.mapType(DescriptorUtilsKt.getBuiltIns(descriptor).getArrayType(INVARIANT, descriptor.getDefaultType()));
 
         VariableDescriptor valuesProperty =
-                CollectionsKt.single(descriptor.getStaticScope().getProperties(ENUM_VALUES, NoLookupLocation.FROM_BACKEND), new Function1<VariableDescriptor, Boolean>() {
+                CollectionsKt.single(descriptor.getStaticScope().getContributedVariables(ENUM_VALUES, NoLookupLocation.FROM_BACKEND), new Function1<VariableDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(VariableDescriptor descriptor) {
                         return CodegenUtil.isEnumValuesProperty(descriptor);
@@ -814,7 +814,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateEnumValueOfMethod() {
         FunctionDescriptor valueOfFunction =
-                CollectionsKt.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
+                CollectionsKt.single(descriptor.getStaticScope().getContributedFunctions(ENUM_VALUE_OF, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(FunctionDescriptor descriptor) {
                         return CodegenUtil.isEnumValueOfMethod(descriptor);

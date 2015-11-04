@@ -88,12 +88,12 @@ object OverloadUtil {
 
         collectModulePackageMembersWithSameName(packageMembersByName, c.functions.values) {
             scope, name ->
-            scope.getFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
+            scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
         }
 
         collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values) {
             scope, name ->
-            scope.getProperties(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filterIsInstance<CallableMemberDescriptor>()
+            scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filterIsInstance<CallableMemberDescriptor>()
         }
 
         // TODO handle constructor redeclarations in modules. See also: https://youtrack.jetbrains.com/issue/KT-3632

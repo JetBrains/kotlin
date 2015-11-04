@@ -67,7 +67,7 @@ fun PsiMember.getJavaMemberDescriptor(): DeclarationDescriptor? {
 }
 
 public fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {
-    return getContainingScope(method)?.getFunctions(method.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(method)
+    return getContainingScope(method)?.getContributedFunctions(method.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(method)
 }
 
 public fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
@@ -75,7 +75,7 @@ public fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructo
 }
 
 public fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
-    return getContainingScope(field)?.getProperties(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
+    return getContainingScope(field)?.getContributedVariables(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
 }
 
 private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): MemberScope? {

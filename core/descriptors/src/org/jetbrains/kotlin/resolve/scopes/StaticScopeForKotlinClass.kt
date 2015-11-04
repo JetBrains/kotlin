@@ -30,7 +30,7 @@ import java.util.*
 public class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
 ) : MemberScopeImpl() {
-    override fun getClassifier(name: Name, location: LookupLocation) = null // TODO
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = null // TODO
 
     private val functions: List<FunctionDescriptor> by lazy {
         if (containingClass.getKind() != ClassKind.ENUM_CLASS) {
@@ -50,12 +50,12 @@ public class StaticScopeForKotlinClass(
         }
     }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean) = functions + properties
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                           nameFilter: (Name) -> Boolean) = functions + properties
 
-    override fun getProperties(name: Name, location: LookupLocation) = properties.filterTo(ArrayList(1)) { it.name == name }
+    override fun getContributedVariables(name: Name, location: LookupLocation) = properties.filterTo(ArrayList(1)) { it.name == name }
 
-    override fun getFunctions(name: Name, location: LookupLocation) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = functions.filterTo(ArrayList<FunctionDescriptor>(2)) { it.getName() == name }
 
     override fun getContainingDeclaration() = containingClass
 

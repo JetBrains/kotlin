@@ -79,7 +79,7 @@ public abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTes
                 module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
 
         override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> =
-                module.getPackage(facadeFqName.parent()).memberScope.getDescriptors().filter {
+                module.getPackage(facadeFqName.parent()).memberScope.getContributedDescriptors().filter {
                     it is CallableMemberDescriptor &&
                     it.module != module.builtIns.builtInsModule &&
                     isFromFacade(it, facadeFqName)

@@ -111,7 +111,7 @@ public class FunctionClassDescriptor(
             val result = ArrayList<KotlinType>(2)
 
             fun add(packageFragment: PackageFragmentDescriptor, name: Name) {
-                val descriptor = packageFragment.getMemberScope().getClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
+                val descriptor = packageFragment.getMemberScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
                                  ?: error("Class $name not found in $packageFragment")
 
                 val typeConstructor = descriptor.getTypeConstructor()

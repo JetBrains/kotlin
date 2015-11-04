@@ -130,7 +130,7 @@ public class DeserializedClassDescriptor(
         if (!classProto.hasCompanionObjectName()) return null
 
         val companionObjectName = c.nameResolver.getName(classProto.getCompanionObjectName())
-        return memberScope.getClassifier(companionObjectName, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor
+        return memberScope.getContributedClassifier(companionObjectName, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor
     }
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = companionObjectDescriptor()
@@ -192,13 +192,13 @@ public class DeserializedClassDescriptor(
             computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         }
 
-        override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                    nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = allDescriptors()
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                               nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = allDescriptors()
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
             val fromSupertypes = ArrayList<FunctionDescriptor>()
             for (supertype in classDescriptor.getTypeConstructor().supertypes) {
-                fromSupertypes.addAll(supertype.memberScope.getFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
+                fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
             generateFakeOverrides(name, fromSupertypes, functions)
         }
@@ -206,7 +206,7 @@ public class DeserializedClassDescriptor(
         override fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
             val fromSupertypes = ArrayList<PropertyDescriptor>()
             for (supertype in classDescriptor.getTypeConstructor().supertypes) {
-                fromSupertypes.addAll(supertype.memberScope.getProperties(name, NoLookupLocation.FOR_ALREADY_TRACKED))
+                fromSupertypes.addAll(supertype.memberScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
             generateFakeOverrides(name, fromSupertypes, descriptors)
         }
@@ -229,12 +229,12 @@ public class DeserializedClassDescriptor(
 
         override fun addNonDeclaredDescriptors(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
             for (supertype in classDescriptor.getTypeConstructor().supertypes) {
-                for (descriptor in supertype.memberScope.getDescriptors()) {
+                for (descriptor in supertype.memberScope.getContributedDescriptors()) {
                     if (descriptor is FunctionDescriptor) {
-                        result.addAll(getFunctions(descriptor.name, location))
+                        result.addAll(getContributedFunctions(descriptor.name, location))
                     }
                     else if (descriptor is PropertyDescriptor) {
-                        result.addAll(getProperties(descriptor.name, location))
+                        result.addAll(getContributedVariables(descriptor.name, location))
                     }
                     // Nothing else is inherited
                 }
@@ -312,7 +312,7 @@ public class DeserializedClassDescriptor(
             val result = HashSet<Name>()
 
             for (supertype in getTypeConstructor().getSupertypes()) {
-                for (descriptor in supertype.getMemberScope().getDescriptors()) {
+                for (descriptor in supertype.getMemberScope().getContributedDescriptors()) {
                     if (descriptor is SimpleFunctionDescriptor || descriptor is PropertyDescriptor) {
                         result.add(descriptor.getName())
                     }

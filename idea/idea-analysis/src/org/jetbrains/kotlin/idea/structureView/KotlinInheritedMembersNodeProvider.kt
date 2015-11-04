@@ -45,7 +45,7 @@ public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<Tr
         val children = ArrayList<TreeElement>()
 
         val defaultType = descriptor.getDefaultType()
-        for (memberDescriptor in defaultType.getMemberScope().getDescriptors()) {
+        for (memberDescriptor in defaultType.getMemberScope().getContributedDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
 
             when (memberDescriptor.getKind()) {

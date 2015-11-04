@@ -61,12 +61,12 @@ protected constructor(
 
     override fun getContainingDeclaration() = thisDescriptor
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassDescriptor? {
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassDescriptor? {
         recordLookup(name, location)
         return classDescriptors(name).firstOrNull()
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         recordLookup(name, location)
         return functionDescriptors(name)
     }
@@ -94,7 +94,7 @@ protected constructor(
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         recordLookup(name, location)
         return propertyDescriptors(name)
     }
@@ -138,19 +138,19 @@ protected constructor(
             else if (declaration is KtFunction) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getFunctions(name, location))
+                    result.addAll(getContributedFunctions(name, location))
                 }
             }
             else if (declaration is KtProperty) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getProperties(name, location))
+                    result.addAll(getContributedVariables(name, location))
                 }
             }
             else if (declaration is KtParameter) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getProperties(name, location))
+                    result.addAll(getContributedVariables(name, location))
                 }
             }
             else if (declaration is KtScript) {

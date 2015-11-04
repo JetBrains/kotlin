@@ -45,8 +45,8 @@ public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, pr
         return packageViewDescriptor
     }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                           nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.PACKAGES_MASK)) return listOf()
         if (fqName.isRoot() && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return listOf()
 
