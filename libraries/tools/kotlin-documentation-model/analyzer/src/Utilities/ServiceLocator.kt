@@ -1,6 +1,5 @@
 package org.jetbrains.dokka.Utilities
 
-import org.jetbrains.dokka.DokkaGenerator
 import java.io.File
 import java.util.*
 import java.util.jar.JarFile
@@ -11,12 +10,11 @@ data class ServiceDescriptor(val name: String, val category: String, val descrip
 class ServiceLookupException(message: String) : Exception(message)
 
 public object ServiceLocator {
-    public fun <T : Any> lookup(clazz: Class<T>, category: String, implementationName: String, conf: DokkaGenerator): T {
+    public fun <T : Any> lookup(clazz: Class<T>, category: String, implementationName: String): T {
         val descriptor = lookupDescriptor(category, implementationName)
         val loadedClass = javaClass.classLoader.loadClass(descriptor.className)
         val constructor = loadedClass.constructors
-                .filter { it.parameterTypes.isEmpty() || (it.parameterTypes.size == 1 && conf.javaClass.isInstance(it.parameterTypes[0])) }
-                .sortedByDescending { it.parameterTypes.size }
+                .filter { it.parameterTypes.isEmpty() }
                 .firstOrNull() ?: throw ServiceLookupException("Class ${descriptor.className} has no corresponding constructor")
 
         val implementationRawType: Any = if (constructor.parameterTypes.isEmpty()) constructor.newInstance() else constructor.newInstance(constructor)
@@ -27,19 +25,6 @@ public object ServiceLocator {
 
         @Suppress("UNCHECKED_CAST")
         return implementationRawType as T
-    }
-
-    public fun <T> lookupClass(clazz: Class<T>, category: String, implementationName: String): Class<T> = lookupDescriptor(category, implementationName).className.let { className ->
-        javaClass.classLoader.loadClass(className).let { loaded ->
-            if (!clazz.isAssignableFrom(loaded)) {
-                throw ServiceLookupException("Class $className is not a subtype of ${clazz.name}")
-            }
-
-            @Suppress("UNCHECKED_CAST")
-            val casted = loaded as Class<T>
-
-            casted
-        }
     }
 
     private fun lookupDescriptor(category: String, implementationName: String): ServiceDescriptor {
@@ -81,13 +66,7 @@ public object ServiceLocator {
     } ?: emptyList()
 }
 
-public inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String, conf: DokkaGenerator): T = lookup(T::class.java, category, implementationName, conf)
-public inline fun <reified T : Any> ServiceLocator.lookupClass(category: String, implementationName: String): Class<T> = lookupClass(T::class.java, category, implementationName)
-public inline fun <reified T : Any> ServiceLocator.lookupOrNull(category: String, implementationName: String, conf: DokkaGenerator): T? = try {
-    lookup(T::class.java, category, implementationName, conf)
-} catch (any: Throwable) {
-    null
-}
+public inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String): T = lookup(T::class.java, category, implementationName)
 
 private val ZipEntry.fileName: String
     get() = name.substringAfterLast("/", name)
