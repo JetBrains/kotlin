@@ -4591,7 +4591,7 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
 
                 @TestMetadata("manyIncompleteCandidates.kt")
                 public void testManyIncompleteCandidates() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/manyIncompleteCandidates.kt");
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/manyIncompleteCandidates.kt");
                     doTest(fileName);
                 }
 
