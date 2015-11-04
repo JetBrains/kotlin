@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
@@ -202,12 +202,12 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KtScope getBuiltInsPackageScope() {
+    public MemberScope getBuiltInsPackageScope() {
         return builtinsPackageFragment.getMemberScope();
     }
 
     @NotNull
-    public KtScope getAnnotationPackageScope() {
+    public MemberScope getAnnotationPackageScope() {
         return annotationPackageFragment.getMemberScope();
     }
 

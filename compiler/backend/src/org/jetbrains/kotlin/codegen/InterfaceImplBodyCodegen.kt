@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToTraitImpl
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.util.*
@@ -65,7 +65,7 @@ public class InterfaceImplBodyCodegen(
                 descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
                 Modality.FINAL, Collections.emptyList(), SourceElement.NO_SOURCE)
 
-        classDescriptorImpl.initialize(KtScope.empty(classDescriptorImpl), emptySet(), null)
+        classDescriptorImpl.initialize(MemberScope.empty(classDescriptorImpl), emptySet(), null)
         return classDescriptorImpl
     }
 

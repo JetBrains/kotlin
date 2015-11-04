@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.utils.Printer
 
-public fun KtScope.asLexicalScope(): LexicalScope {
+public fun MemberScope.asLexicalScope(): LexicalScope {
     val importingScope = memberScopeAsImportingScope()
     return object : BaseLexicalScope(importingScope, getContainingDeclaration()) {
         override fun printStructure(p: Printer) {

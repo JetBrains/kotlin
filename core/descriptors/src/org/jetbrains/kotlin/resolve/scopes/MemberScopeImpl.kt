@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
-abstract class KtScopeImpl : KtScope {
+abstract class MemberScopeImpl : MemberScope {
     override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
     override fun getProperties(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()

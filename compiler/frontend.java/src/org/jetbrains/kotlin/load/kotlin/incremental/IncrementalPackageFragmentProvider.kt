@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -97,9 +97,9 @@ public class IncrementalPackageFragmentProvider(
         public val target: TargetId
             get() = this@IncrementalPackageFragmentProvider.target
 
-        val memberScope: NotNullLazyValue<KtScope> = storageManager.createLazyValue {
+        val memberScope: NotNullLazyValue<MemberScope> = storageManager.createLazyValue {
             if (fqName !in fqNamesToLoad) {
-                KtScope.empty(this)
+                MemberScope.empty(this)
             }
             else {
                 val moduleMapping = incrementalCache.getModuleMappingData()?.let { ModuleMapping.create(it) }
@@ -128,7 +128,7 @@ public class IncrementalPackageFragmentProvider(
                         }
 
                 if (scopes.isEmpty()) {
-                    KtScope.empty(this)
+                    MemberScope.empty(this)
                 }
                 else {
                     ChainedScope(this, "Member scope for incremental compilation: union of package parts data", *scopes.toTypedArray())
@@ -142,7 +142,7 @@ public class IncrementalPackageFragmentProvider(
             return IncrementalMultifileClassPackageFragment(multifileClassFqName, partsNames)
         }
 
-        override fun getMemberScope(): KtScope = memberScope()
+        override fun getMemberScope(): MemberScope = memberScope()
 
         public inner class IncrementalMultifileClassPackageFragment(
                 val multifileClassFqName: FqName,
@@ -151,16 +151,16 @@ public class IncrementalPackageFragmentProvider(
             val memberScope = storageManager.createLazyValue {
                 val partsData = partsNames.map { incrementalCache.getPackagePartData(it) }.filterNotNull()
                 if (partsData.isEmpty())
-                    KtScope.empty(this)
+                    MemberScope.empty(this)
                 else {
                     val scopes = partsData.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings)) }
                     ChainedScope(this,
                                  "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
-                                 *scopes.toTypedArray<KtScope>())
+                                 *scopes.toTypedArray<MemberScope>())
                 }
             }
 
-            override fun getMemberScope(): KtScope = memberScope()
+            override fun getMemberScope(): MemberScope = memberScope()
         }
 
         private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(

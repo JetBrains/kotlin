@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.ClassData;
 import org.jetbrains.kotlin.serialization.ClassDataWithSource;
 import org.jetbrains.kotlin.serialization.PackageData;
@@ -74,7 +74,7 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    public KtScope createKotlinPackagePartScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
+    public MemberScope createKotlinPackagePartScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART);
         if (data != null) {
             String[] strings = kotlinClass.getClassHeader().getStrings();
@@ -95,18 +95,18 @@ public final class DeserializedDescriptorResolver {
     }
 
     @NotNull
-    public KtScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull List<KotlinJvmBinaryClass> packageParts) {
-        List<KtScope> list = new ArrayList<KtScope>();
+    public MemberScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull List<KotlinJvmBinaryClass> packageParts) {
+        List<MemberScope> list = new ArrayList<MemberScope>();
         for (KotlinJvmBinaryClass callable : packageParts) {
-            KtScope scope = createKotlinPackagePartScope(descriptor, callable);
+            MemberScope scope = createKotlinPackagePartScope(descriptor, callable);
             if (scope != null) {
                 list.add(scope);
             }
         }
         if (list.isEmpty()) {
-            return KtScope.Companion.empty(descriptor);
+            return MemberScope.Companion.empty(descriptor);
         }
-        return new ChainedScope(descriptor, "Member scope for union of package parts data", list.toArray(new KtScope[list.size()]));
+        return new ChainedScope(descriptor, "Member scope for union of package parts data", list.toArray(new MemberScope[list.size()]));
     }
 
     @Nullable

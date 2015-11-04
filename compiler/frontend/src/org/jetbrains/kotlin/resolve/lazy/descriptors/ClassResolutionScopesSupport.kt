@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
@@ -108,7 +108,7 @@ class ClassResolutionScopesSupport(
             ownerDescriptor: DeclarationDescriptor,
             classDescriptor: ClassDescriptor
     ): LexicalScope {
-        val staticScopes = ArrayList<KtScope>(3)
+        val staticScopes = ArrayList<MemberScope>(3)
 
         // todo filter fake overrides
         staticScopes.add(classDescriptor.staticScope)

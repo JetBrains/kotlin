@@ -113,12 +113,12 @@ public fun HierarchicalScope.collectSyntheticExtensionFunctions(receiverTypes: C
 public fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
 @JvmOverloads
-public fun KtScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
+public fun MemberScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
 
 @Deprecated("Temporary method for scope migration")
-public fun KtScope.memberScopeAsLexicalScope(): LexicalScope = LexicalScope.empty(memberScopeAsImportingScope(), getContainingDeclaration())
+public fun MemberScope.memberScopeAsLexicalScope(): LexicalScope = LexicalScope.empty(memberScopeAsImportingScope(), getContainingDeclaration())
 
-private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: KtScope) : ImportingScope {
+private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: MemberScope) : ImportingScope {
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)
 
     override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)

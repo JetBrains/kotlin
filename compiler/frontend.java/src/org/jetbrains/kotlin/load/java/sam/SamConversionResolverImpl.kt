@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
 public object SamConversionResolverImpl : SamConversionResolver {
-    override fun resolveSamConstructor(name: Name, scope: KtScope, location: LookupLocation): SamConstructorDescriptor? {
+    override fun resolveSamConstructor(name: Name, scope: MemberScope, location: LookupLocation): SamConstructorDescriptor? {
         val classifier = scope.getClassifier(name, location) as? LazyJavaClassDescriptor ?: return null
         if (classifier.getFunctionTypeForSamInterface() == null) return null
         return SingleAbstractMethodUtils.createSamConstructorFunction(scope.getContainingDeclaration(), classifier)

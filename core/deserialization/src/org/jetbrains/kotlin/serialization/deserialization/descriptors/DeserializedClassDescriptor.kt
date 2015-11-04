@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -96,7 +96,7 @@ public class DeserializedClassDescriptor(
 
     override fun getAnnotations() = annotations
 
-    override fun getUnsubstitutedMemberScope(): KtScope = memberScope
+    override fun getUnsubstitutedMemberScope(): MemberScope = memberScope
 
     override fun getStaticScope() = staticScope
 
@@ -189,7 +189,7 @@ public class DeserializedClassDescriptor(
     private inner class DeserializedClassMemberScope : DeserializedMemberScope(c, classProto.functionList, classProto.propertyList) {
         private val classDescriptor: DeserializedClassDescriptor get() = this@DeserializedClassDescriptor
         private val allDescriptors = c.storageManager.createLazyValue {
-            computeDescriptors(DescriptorKindFilter.ALL, KtScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+            computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         }
 
         override fun getDescriptors(kindFilter: DescriptorKindFilter,

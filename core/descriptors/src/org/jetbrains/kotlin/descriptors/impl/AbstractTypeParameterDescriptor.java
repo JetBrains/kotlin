@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -76,17 +76,17 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                         Annotations.Companion.getEMPTY(),
                         getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
                         new LazyScopeAdapter(storageManager.createLazyValue(
-                                new Function0<KtScope>() {
+                                new Function0<MemberScope>() {
                                     @Override
-                                    public KtScope invoke() {
-                                        List<KtScope> scopes = new ArrayList<KtScope>();
+                                    public MemberScope invoke() {
+                                        List<MemberScope> scopes = new ArrayList<MemberScope>();
                                         for (KotlinType bound : getUpperBounds()) {
                                             scopes.add(bound.getMemberScope());
                                         }
                                         return new ChainedScope(
                                                 AbstractTypeParameterDescriptor.this,
                                                 "Scope for type parameter " + name.asString(),
-                                                scopes.toArray(new KtScope[scopes.size()])
+                                                scopes.toArray(new MemberScope[scopes.size()])
                                         );
                                     }
                                 }

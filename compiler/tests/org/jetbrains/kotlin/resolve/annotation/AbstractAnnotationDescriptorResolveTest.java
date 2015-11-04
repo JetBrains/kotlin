@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -168,7 +168,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
     @NotNull
     protected static FunctionDescriptor getFunctionDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name) {
         Name functionName = Name.identifier(name);
-        KtScope memberScope = packageView.getMemberScope();
+        MemberScope memberScope = packageView.getMemberScope();
         Collection<FunctionDescriptor> functions = memberScope.getFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + packageView.getName();
         return functions.iterator().next();
@@ -177,7 +177,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
     @NotNull
     private static FunctionDescriptor getFunctionDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name functionName = Name.identifier(name);
-        KtScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        MemberScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
         Collection<FunctionDescriptor> functions = memberScope.getFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + classDescriptor.getName();
         return functions.iterator().next();
@@ -186,7 +186,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
     @Nullable
     protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name, boolean failOnMissing) {
         Name propertyName = Name.identifier(name);
-        KtScope memberScope = packageView.getMemberScope();
+        MemberScope memberScope = packageView.getMemberScope();
         Collection<PropertyDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
         if (properties.isEmpty()) {
             for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(memberScope)) {
@@ -213,7 +213,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
     @NotNull
     private static PropertyDescriptor getPropertyDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
-        KtScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        MemberScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
         Collection<PropertyDescriptor> properties = memberScope.getProperties(propertyName, NoLookupLocation.FROM_TEST);
         assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + classDescriptor.getName();
         return properties.iterator().next();
@@ -231,7 +231,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinLite
     @NotNull
     private static ClassDescriptor getInnerClassDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
-        KtScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+        MemberScope memberScope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
         ClassifierDescriptor innerClass = memberScope.getClassifier(propertyName, NoLookupLocation.FROM_TEST);
         assert innerClass instanceof ClassDescriptor : "Failed to find inner class " +
                                                        propertyName +

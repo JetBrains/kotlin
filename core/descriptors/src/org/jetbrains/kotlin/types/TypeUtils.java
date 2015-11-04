@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
@@ -67,7 +67,7 @@ public class TypeUtils {
 
         @NotNull
         @Override
-        public KtScope getMemberScope() {
+        public MemberScope getMemberScope() {
             throw new IllegalStateException(name);
         }
 
@@ -232,7 +232,7 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static KotlinType makeUnsubstitutedType(ClassDescriptor classDescriptor, KtScope unsubstitutedMemberScope) {
+    public static KotlinType makeUnsubstitutedType(ClassDescriptor classDescriptor, MemberScope unsubstitutedMemberScope) {
         if (ErrorUtils.isError(classDescriptor)) {
             return ErrorUtils.createErrorType("Unsubstituted type for " + classDescriptor);
         }
@@ -529,7 +529,7 @@ public class TypeUtils {
 
         @Override
         @NotNull
-        public KtScope getMemberScope() {
+        public MemberScope getMemberScope() {
             return delegate.getMemberScope();
         }
 

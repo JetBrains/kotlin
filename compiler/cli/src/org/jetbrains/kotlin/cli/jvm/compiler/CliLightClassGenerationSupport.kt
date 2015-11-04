@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
@@ -127,7 +127,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> {
         val packageView = module.getPackage(fqn)
-        val members = packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, KtScope.ALL_NAME_FILTER)
+        val members = packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
         return ContainerUtil.mapNotNull(members, object : Function<DeclarationDescriptor, FqName> {
             override fun `fun`(member: DeclarationDescriptor): FqName? {
                 if (member is PackageViewDescriptor) {

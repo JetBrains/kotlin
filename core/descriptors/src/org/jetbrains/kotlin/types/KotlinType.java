@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public interface KotlinType extends Annotated {
     boolean isMarkedNullable();
 
     @NotNull
-    KtScope getMemberScope();
+    MemberScope getMemberScope();
 
     boolean isError();
 

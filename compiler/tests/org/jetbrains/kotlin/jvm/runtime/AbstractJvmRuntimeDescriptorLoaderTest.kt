@@ -142,7 +142,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
         val allClassFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.class"), generatedPackageDir)
 
-        val packageScopes = arrayListOf<KtScope>()
+        val packageScopes = arrayListOf<MemberScope>()
         val classes = arrayListOf<ClassDescriptor>()
         var shouldAddPackageView = false
         for (classFile in allClassFiles) {
@@ -186,9 +186,9 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
     }
 
     private class SyntheticPackageViewForTest(override val module: ModuleDescriptor,
-                                              packageScopes: List<KtScope>,
+                                              packageScopes: List<MemberScope>,
                                               classes: List<ClassifierDescriptor>) : PackageViewDescriptor {
-        private val scope: KtScope
+        private val scope: MemberScope
 
         init {
             scope = ChainedScope(this, "synthetic package view for test", ScopeWithClassifiers(classes, this), *packageScopes.toTypedArray())
@@ -196,7 +196,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
         override val fqName: FqName
             get() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
-        override val memberScope: KtScope
+        override val memberScope: MemberScope
             get() = scope
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
                 visitor.visitPackageViewDescriptor(this, data)
@@ -214,7 +214,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
     private class ScopeWithClassifiers(
             classifiers: List<ClassifierDescriptor>,
             val ownerDescriptor: DeclarationDescriptor
-    ) : KtScopeImpl() {
+    ) : MemberScopeImpl() {
         override fun getContainingDeclaration() = ownerDescriptor
 
         private val classifierMap = HashMap<Name, ClassifierDescriptor>()

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.util.*
 
-public class SubstitutingScope(private val workerScope: KtScope, private val substitutor: TypeSubstitutor) : KtScope {
+public class SubstitutingScope(private val workerScope: MemberScope, private val substitutor: TypeSubstitutor) : MemberScope {
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
 

@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.utils.Printer
 public open class ChainedScope(
         private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
         private val debugName: String,
-        vararg scopes: KtScope
-) : KtScope {
+        vararg scopes: MemberScope
+) : MemberScope {
     private val scopeChain = scopes.clone()
 
     override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?

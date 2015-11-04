@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -468,7 +468,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         ClassDescriptor elementClass = elementDescriptor.getExtensionReceiverParameter() == null
                                    ? DescriptorUtilsKt.getBuiltIns(elementDescriptor).getFunction(arity)
                                    : DescriptorUtilsKt.getBuiltIns(elementDescriptor).getExtensionFunction(arity);
-        KtScope scope = elementClass.getDefaultType().getMemberScope();
+        MemberScope scope = elementClass.getDefaultType().getMemberScope();
         return scope.getFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }
 }

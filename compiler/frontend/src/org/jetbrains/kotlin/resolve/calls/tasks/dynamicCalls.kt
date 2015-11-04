@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
@@ -43,7 +43,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
 
     val dynamicType = createDynamicType(builtIns)
 
-    fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : KtScopeImpl() {
+    fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : MemberScopeImpl() {
         override fun getContainingDeclaration() = owner
 
         override fun printScopeStructure(p: Printer) {

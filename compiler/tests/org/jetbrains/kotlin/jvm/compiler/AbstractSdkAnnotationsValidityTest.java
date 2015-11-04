@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.TypeTransformingVisitor;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -155,7 +155,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
             return null;
         }
 
-        private Void visitDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull KtScope memberScope) {
+        private Void visitDeclarationRecursively(@NotNull DeclarationDescriptor descriptor, @NotNull MemberScope memberScope) {
             for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(memberScope)) {
                 member.acceptVoid(this);
             }

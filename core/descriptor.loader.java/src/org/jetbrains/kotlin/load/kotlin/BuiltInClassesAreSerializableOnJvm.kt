@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.DelegatingType
@@ -42,7 +42,7 @@ class BuiltInClassesAreSerializableOnJvm(
 
     private fun createMockJavaIoSerializableType(): KotlinType {
         val mockJavaIoPackageFragment = object : PackageFragmentDescriptorImpl(moduleDescriptor, FqName("java.io")) {
-            override fun getMemberScope() = KtScope.empty(this)
+            override fun getMemberScope() = MemberScope.empty(this)
         }
 
         //NOTE: can't reference anyType right away, because this is sometimes called when JvmBuiltIns are initializing
@@ -56,7 +56,7 @@ class BuiltInClassesAreSerializableOnJvm(
                 mockJavaIoPackageFragment, Name.identifier("Serializable"), Modality.ABSTRACT, superTypes, SourceElement.NO_SOURCE
         )
 
-        mockSerializableClass.initialize(KtScope.empty(mockSerializableClass), emptySet(), null)
+        mockSerializableClass.initialize(MemberScope.empty(mockSerializableClass), emptySet(), null)
         return mockSerializableClass.defaultType
     }
 

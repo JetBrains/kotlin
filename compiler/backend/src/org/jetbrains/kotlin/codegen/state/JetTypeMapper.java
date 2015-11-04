@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.*;
@@ -307,7 +307,7 @@ public class JetTypeMapper {
 
         String facadeSimpleName;
 
-        KtScope scope = packageFragmentDescriptor.getMemberScope();
+        MemberScope scope = packageFragmentDescriptor.getMemberScope();
         if (scope instanceof AbstractScopeAdapter) {
             scope = ((AbstractScopeAdapter) scope).getActualScope();
         }

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
@@ -124,7 +124,7 @@ public class TypeIntersector {
 
         TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.Companion.getEMPTY(), resultingTypes);
 
-        KtScope[] scopes = new KtScope[resultingTypes.size()];
+        MemberScope[] scopes = new MemberScope[resultingTypes.size()];
         int i = 0;
         for (KotlinType type : resultingTypes) {
             scopes[i] = type.getMemberScope();
@@ -155,7 +155,7 @@ public class TypeIntersector {
 
     // TODO: check intersectability, don't use a chained scope
     private static class IntersectionScope extends ChainedScope {
-        public IntersectionScope(@NotNull TypeConstructor constructor, @NotNull KtScope[] scopes) {
+        public IntersectionScope(@NotNull TypeConstructor constructor, @NotNull MemberScope[] scopes) {
             super(null, "member scope for intersection type " + constructor, scopes);
         }
 

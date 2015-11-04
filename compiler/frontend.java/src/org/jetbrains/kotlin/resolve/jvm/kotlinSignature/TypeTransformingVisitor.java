@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -148,7 +148,7 @@ public class TypeTransformingVisitor extends KtVisitor<KotlinType, Void> {
             altArguments.add(getAltArgument(type, typeConstructor, i, arguments.get(i)));
         }
 
-        KtScope memberScope;
+        MemberScope memberScope;
         if (typeConstructorClassifier instanceof TypeParameterDescriptor) {
             memberScope = typeConstructorClassifier.getDefaultType().getMemberScope();
         }

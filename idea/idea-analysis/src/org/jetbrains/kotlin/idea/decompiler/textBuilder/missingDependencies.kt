@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.types.ErrorUtils.createErrorType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeSubstitution
@@ -35,12 +35,12 @@ import org.jetbrains.kotlin.utils.Printer
 
 private class PackageFragmentWithMissingDependencies(override val fqName: FqName, moduleDescriptor: ModuleDescriptor) :
         PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
-    override fun getMemberScope(): KtScope {
+    override fun getMemberScope(): MemberScope {
         return ScopeWithMissingDependencies(fqName, this)
     }
 }
 
-private class ScopeWithMissingDependencies(val fqName: FqName, val containing: DeclarationDescriptor) : KtScopeImpl() {
+private class ScopeWithMissingDependencies(val fqName: FqName, val containing: DeclarationDescriptor) : MemberScopeImpl() {
     override fun getContainingDeclaration(): DeclarationDescriptor {
         return containing
     }
@@ -74,7 +74,7 @@ private class MissingDependencyErrorClassDescriptor(
         val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)
         emptyConstructor.initialize(listOf(), listOf(), Visibilities.DEFAULT_VISIBILITY)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
-        initialize(KtScope.empty(this), setOf(emptyConstructor), emptyConstructor)
+        initialize(MemberScope.empty(this), setOf(emptyConstructor), emptyConstructor)
     }
 
     override fun substitute(substitutor: TypeSubstitutor) = this

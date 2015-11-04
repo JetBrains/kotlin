@@ -32,8 +32,8 @@ public final class JetScopeUtils {
     private JetScopeUtils() {}
 
     @NotNull
-    public static KtScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
-        KtScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
+    public static MemberScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
+        MemberScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
         return new FilteringScope(innerClassesScope, new Function1<DeclarationDescriptor, Boolean>() {
             @Override
             public Boolean invoke(DeclarationDescriptor descriptor) {
@@ -125,7 +125,7 @@ public final class JetScopeUtils {
 
     @TestOnly
     @NotNull
-    public static String printStructure(@Nullable KtScope scope) {
+    public static String printStructure(@Nullable MemberScope scope) {
         StringBuilder out = new StringBuilder();
         Printer p = new Printer(out);
         if (scope == null) {

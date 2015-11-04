@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Modifier
 
-public interface KtScope {
+public interface MemberScope {
 
     public fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
 
@@ -51,8 +51,8 @@ public interface KtScope {
     public fun printScopeStructure(p: Printer)
 
     companion object {
-        public fun empty(ownerDescriptor: DeclarationDescriptor): KtScope {
-            return object : KtScopeImpl() {
+        public fun empty(ownerDescriptor: DeclarationDescriptor): MemberScope {
+            return object : MemberScopeImpl() {
                 override fun getContainingDeclaration() = ownerDescriptor
 
                 override fun toString() = "Empty scope with owner: $ownerDescriptor"
@@ -70,7 +70,7 @@ public interface KtScope {
 /**
  * The same as getDescriptors(kindFilter, nameFilter) but the result is guaranteed to be filtered by kind and name.
  */
-public fun KtScope.getDescriptorsFiltered(
+public fun MemberScope.getDescriptorsFiltered(
         kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
         nameFilter: (Name) -> Boolean = { true }
 ): Collection<DeclarationDescriptor> {

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTaskHolder
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
@@ -62,7 +62,7 @@ class LazyOperationsLog(
     public fun getText(): String {
         val groupedByOwner = records.groupByTo(IdentityHashMap()) {
             val owner = it.data.fieldOwner
-            if (owner is KtScope) owner.getContainingDeclaration() else owner
+            if (owner is MemberScope) owner.getContainingDeclaration() else owner
         }.map { Pair(it.getKey(), it.getValue()) }
 
         return groupedByOwner.map {
@@ -118,7 +118,7 @@ class LazyOperationsLog(
 
         sb.append(" = ${render(data.result)}")
 
-        if (data.fieldOwner is KtScope) {
+        if (data.fieldOwner is MemberScope) {
             sb.append(" // through ${render(data.fieldOwner)}")
         }
 

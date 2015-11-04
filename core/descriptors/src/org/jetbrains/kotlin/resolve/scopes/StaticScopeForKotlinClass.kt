@@ -29,7 +29,7 @@ import java.util.*
 // We don't need to track lookups here since this scope used only for introduce special Enum class members
 public class StaticScopeForKotlinClass(
         private val containingClass: ClassDescriptor
-) : KtScopeImpl() {
+) : MemberScopeImpl() {
     override fun getClassifier(name: Name, location: LookupLocation) = null // TODO
 
     private val functions: List<FunctionDescriptor> by lazy {

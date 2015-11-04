@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.utils.Printer;
 
@@ -160,7 +160,7 @@ public class ErrorUtils {
         return false;
     }
 
-    public static class ErrorScope implements KtScope {
+    public static class ErrorScope implements MemberScope {
         private final String debugMessage;
 
         private ErrorScope(@NotNull String debugMessage) {
@@ -215,7 +215,7 @@ public class ErrorUtils {
         }
     }
 
-    private static class ThrowingScope implements KtScope {
+    private static class ThrowingScope implements MemberScope {
         private final String debugMessage;
 
         private ThrowingScope(@NotNull String message) {
@@ -281,7 +281,7 @@ public class ErrorUtils {
             ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
             errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                         Visibilities.INTERNAL);
-            KtScope memberScope = createErrorScope(getName().asString());
+            MemberScope memberScope = createErrorScope(getName().asString());
             errorConstructor.setReturnType(
                     new ErrorTypeImpl(
                             createErrorTypeConstructorWithCustomDebugName("<ERROR>", this),
@@ -305,13 +305,13 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public KtScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
             return createErrorScope("Error scope for class " + getName() + " with arguments: " + typeArguments);
         }
 
         @NotNull
         @Override
-        public KtScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
+        public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
             return createErrorScope("Error scope for class " + getName() + " with arguments: " + typeSubstitution);
         }
     }
@@ -322,12 +322,12 @@ public class ErrorUtils {
     }
 
     @NotNull
-    public static KtScope createErrorScope(@NotNull String debugMessage) {
+    public static MemberScope createErrorScope(@NotNull String debugMessage) {
         return createErrorScope(debugMessage, false);
     }
 
     @NotNull
-    public static KtScope createErrorScope(@NotNull String debugMessage, boolean throwExceptions) {
+    public static MemberScope createErrorScope(@NotNull String debugMessage, boolean throwExceptions) {
         if (throwExceptions) {
             return new ThrowingScope(debugMessage);
         }
@@ -490,12 +490,12 @@ public class ErrorUtils {
 
     private static class ErrorTypeImpl implements KotlinType {
         private final TypeConstructor constructor;
-        private final KtScope memberScope;
+        private final MemberScope memberScope;
         private final List<TypeProjection> arguments;
 
         private ErrorTypeImpl(
                 @NotNull TypeConstructor constructor,
-                @NotNull KtScope memberScope,
+                @NotNull MemberScope memberScope,
                 @NotNull List<TypeProjection> arguments
         ) {
             this.constructor = constructor;
@@ -503,7 +503,7 @@ public class ErrorUtils {
             this.arguments = arguments;
         }
 
-        private ErrorTypeImpl(@NotNull TypeConstructor constructor, @NotNull KtScope memberScope) {
+        private ErrorTypeImpl(@NotNull TypeConstructor constructor, @NotNull MemberScope memberScope) {
             this(constructor, memberScope, Collections.<TypeProjection>emptyList());
         }
 
@@ -532,7 +532,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public KtScope getMemberScope() {
+        public MemberScope getMemberScope() {
             return memberScope;
         }
 

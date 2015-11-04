@@ -22,17 +22,17 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.scopes.*;
 
 public class MutablePackageFragmentDescriptor extends PackageFragmentDescriptorImpl {
-    private final KtScope scope;
+    private final MemberScope scope;
 
     public MutablePackageFragmentDescriptor(@NotNull ModuleDescriptor module, @NotNull FqName fqName) {
         super(module, fqName);
 
-        scope = KtScope.Companion.empty(module);
+        scope = MemberScope.Companion.empty(module);
     }
 
     @NotNull
     @Override
-    public KtScope getMemberScope() {
+    public MemberScope getMemberScope() {
         return scope;
     }
 }

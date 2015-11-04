@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
@@ -101,10 +101,10 @@ public fun resolvePossiblyAmbiguousCallableReference(
 ): OverloadResolutionResults<CallableDescriptor>? {
     val reference = callableReferenceExpression.getCallableReference()
 
-    fun resolveInScope(traceTitle: String, staticScope: KtScope): OverloadResolutionResults<CallableDescriptor> {
+    fun resolveInScope(traceTitle: String, staticScope: MemberScope): OverloadResolutionResults<CallableDescriptor> {
 
         // todo: drop this class when new resolve will be finished
-        class StaticScopeAsLexicalScope(val staticScope: KtScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), staticScope.getContainingDeclaration()) {
+        class StaticScopeAsLexicalScope(val staticScope: MemberScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), staticScope.getContainingDeclaration()) {
             override fun printStructure(p: Printer) {
                 p.println(toString())
             }

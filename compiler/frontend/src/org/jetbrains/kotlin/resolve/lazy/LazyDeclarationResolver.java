@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager;
 
 import javax.inject.Inject;
@@ -66,7 +66,7 @@ public class LazyDeclarationResolver {
 
     @NotNull
     public ClassDescriptor getClassDescriptor(@NotNull KtClassOrObject classOrObject, @NotNull LookupLocation location) {
-        KtScope scope = getMemberScopeDeclaredIn(classOrObject, location);
+        MemberScope scope = getMemberScopeDeclaredIn(classOrObject, location);
 
         // Why not use the result here. Because it may be that there is a redeclaration:
         //     class A {} class A { fun foo(): A<completion here>}
@@ -147,7 +147,7 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitNamedFunction(@NotNull KtNamedFunction function, Void data) {
                 LookupLocation location = lookupLocationFor(function, function.isTopLevel());
-                KtScope scopeForDeclaration = getMemberScopeDeclaredIn(function, location);
+                MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(function, location);
                 scopeForDeclaration.getFunctions(function.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
@@ -203,7 +203,7 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitProperty(@NotNull KtProperty property, Void data) {
                 LookupLocation location = lookupLocationFor(property, property.isTopLevel());
-                KtScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
+                MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
                 scopeForDeclaration.getProperties(property.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
@@ -226,7 +226,7 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    /*package*/ KtScope getMemberScopeDeclaredIn(@NotNull KtDeclaration declaration, @NotNull LookupLocation location) {
+    /*package*/ MemberScope getMemberScopeDeclaredIn(@NotNull KtDeclaration declaration, @NotNull LookupLocation location) {
         KtDeclaration parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(declaration);
         boolean isTopLevel = parentDeclaration == null;
         if (isTopLevel) { // for top level declarations we search directly in package because of possible conflicts with imports

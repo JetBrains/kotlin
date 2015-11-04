@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -165,7 +165,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     val TypeParameterDescriptor.correspondingType: KotlinType
         get() = cachedTypeForVariable.getOrPut(this) {
-            KotlinTypeImpl.create(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), KtScope.empty(this))
+            KotlinTypeImpl.create(Annotations.EMPTY, this.getTypeConstructor(), false, listOf(), MemberScope.empty(this))
         }
 
     fun KotlinType.isProper() = !TypeUtils.containsSpecialType(this) {
@@ -573,7 +573,7 @@ public fun createTypeSubstitutor(conversion: (TypeParameterDescriptor) -> TypePa
             if (descriptor !is TypeParameterDescriptor) return null
             val typeParameterDescriptor = conversion(descriptor) ?: return null
 
-            val type = KotlinTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), KtScope.empty(typeParameterDescriptor))
+            val type = KotlinTypeImpl.create(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), MemberScope.empty(typeParameterDescriptor))
             return TypeProjectionImpl(type)
         }
     })

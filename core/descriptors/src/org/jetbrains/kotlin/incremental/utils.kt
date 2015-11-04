@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-public fun LookupTracker.record(from: LookupLocation, inScope: KtScope, name: Name) {
+public fun LookupTracker.record(from: LookupLocation, inScope: MemberScope, name: Name) {
     if (this == LookupTracker.DO_NOTHING || from is NoLookupLocation) return
 
     val location = from.location ?: return

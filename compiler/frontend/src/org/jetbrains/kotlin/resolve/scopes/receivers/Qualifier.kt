@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
@@ -56,7 +56,7 @@ public interface Qualifier: ReceiverValue {
     // package, classifier or companion object descriptor
     public val resultingDescriptor: DeclarationDescriptor
 
-    public val scope: KtScope
+    public val scope: MemberScope
 }
 
 abstract class QualifierReceiver(
@@ -74,7 +74,7 @@ abstract class QualifierReceiver(
             (classifier as? ClassDescriptor)?.classObjectType?.let { ExpressionReceiver(referenceExpression, it) }
             ?: ReceiverValue.NO_RECEIVER
 
-    abstract fun getNestedClassesAndPackageMembersScope(): KtScope
+    abstract fun getNestedClassesAndPackageMembersScope(): MemberScope
 
     override fun getType(): KotlinType = throw IllegalStateException("No type corresponds to QualifierReceiver '$this'")
 
@@ -88,9 +88,9 @@ class PackageQualifier(
 
     override val classifier: ClassifierDescriptor? get() = null
 
-    override val scope: KtScope get() = packageView.memberScope
+    override val scope: MemberScope get() = packageView.memberScope
 
-    override fun getNestedClassesAndPackageMembersScope(): KtScope = packageView.memberScope
+    override fun getNestedClassesAndPackageMembersScope(): MemberScope = packageView.memberScope
 
     override fun toString() = "Package{$packageView}"
 }
@@ -102,12 +102,12 @@ class ClassifierQualifier(
 
     override val packageView: PackageViewDescriptor? get() = null
 
-    override val scope: KtScope get() {
+    override val scope: MemberScope get() {
         if (classifier !is ClassDescriptor) {
-            return KtScope.empty(classifier)
+            return MemberScope.empty(classifier)
         }
 
-        val scopes = ArrayList<KtScope>(3)
+        val scopes = ArrayList<MemberScope>(3)
 
         val classObjectTypeScope = classifier.classObjectType?.memberScope?.let {
             FilteringScope(it) { it !is ClassDescriptor }
@@ -123,12 +123,12 @@ class ClassifierQualifier(
         return ChainedScope(descriptor, "Member scope for $name as class or object", *scopes.toTypedArray())
     }
 
-    override fun getNestedClassesAndPackageMembersScope(): KtScope {
+    override fun getNestedClassesAndPackageMembersScope(): MemberScope {
         if (classifier !is ClassDescriptor) {
-            return KtScope.empty(classifier)
+            return MemberScope.empty(classifier)
         }
 
-        val scopes = ArrayList<KtScope>(2)
+        val scopes = ArrayList<MemberScope>(2)
 
         scopes.add(classifier.staticScope)
 

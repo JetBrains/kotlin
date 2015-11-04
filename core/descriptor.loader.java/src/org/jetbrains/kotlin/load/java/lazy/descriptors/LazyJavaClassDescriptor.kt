@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
@@ -92,10 +92,10 @@ class LazyJavaClassDescriptor(
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
 
     private val innerClassesScope = InnerClassesScopeWrapper(getUnsubstitutedMemberScope())
-    override fun getUnsubstitutedInnerClassesScope(): KtScope = innerClassesScope
+    override fun getUnsubstitutedInnerClassesScope(): MemberScope = innerClassesScope
 
     private val staticScope = LazyJavaStaticClassScope(c, jClass, this)
-    override fun getStaticScope(): KtScope = staticScope
+    override fun getStaticScope(): MemberScope = staticScope
 
     override fun getUnsubstitutedPrimaryConstructor(): ConstructorDescriptor? = null
 

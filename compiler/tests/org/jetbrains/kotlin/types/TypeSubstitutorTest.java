@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
@@ -105,7 +104,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                                                                }
                                                            });
         return new LexicalChainedScope(typeParameters, module, false, null, "TypeSubstitutorTest::getContextScope()",
-                                new KtScope[] {
+                                new MemberScope[] {
                                         contextClass.getDefaultType().getMemberScope(),
                                         module.getBuiltIns().getBuiltInsPackageScope()
                                 });

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -66,7 +66,7 @@ public class ConstraintSystemTestData(
             val number = matcher.group(1)!!
             return KotlinTypeImpl.create(
                     Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns), false, listOf(),
-                    KtScope.empty(functionFoo)
+                    MemberScope.empty(functionFoo)
             )
         }
         return typeResolver.resolveType(

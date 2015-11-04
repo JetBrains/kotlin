@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberScope
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.testFramework.UsefulTestCase
@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.resolve.MemberComparator
 
 class DeserializedScopeValidationVisitor : ValidationVisitor() {
-    override fun validateScope(scope: KtScope, collector: DescriptorValidator.DiagnosticCollector) {
+    override fun validateScope(scope: MemberScope, collector: DescriptorValidator.DiagnosticCollector) {
         super.validateScope(scope, collector)
         validateDeserializedScope(scope)
     }
 }
 
-private fun validateDeserializedScope(scope: KtScope) {
+private fun validateDeserializedScope(scope: MemberScope) {
     val isPackageViewScope = scope.safeGetContainingDeclaration() is PackageViewDescriptor
     if (scope is DeserializedMemberScope || isPackageViewScope) {
         val relevantDescriptors = scope.getDescriptors().filter { member ->
@@ -45,7 +45,7 @@ private fun validateDeserializedScope(scope: KtScope) {
 }
 
 //NOTE: see TypeUtils#IntersectionScope#getContainingDeclaration()
-private fun KtScope.safeGetContainingDeclaration(): DeclarationDescriptor? {
+private fun MemberScope.safeGetContainingDeclaration(): DeclarationDescriptor? {
     return try {
         getContainingDeclaration()
     }

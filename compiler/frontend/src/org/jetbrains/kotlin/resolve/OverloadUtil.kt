@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -105,7 +105,7 @@ object OverloadUtil {
     private inline fun collectModulePackageMembersWithSameName(
             packageMembersByName: MultiMap<FqNameUnsafe, CallableMemberDescriptor>,
             interestingDescriptors: Collection<CallableMemberDescriptor>,
-            getMembersByName: (KtScope, Name) -> Collection<CallableMemberDescriptor>
+            getMembersByName: (MemberScope, Name) -> Collection<CallableMemberDescriptor>
     ) {
         val observedFQNs = hashSetOf<FqNameUnsafe>()
         for (descriptor in interestingDescriptors) {
@@ -122,7 +122,7 @@ object OverloadUtil {
 
     private inline fun getModulePackageMembersWithSameName(
             packageMember: CallableMemberDescriptor,
-            getMembersByName: (KtScope, Name) -> Collection<CallableMemberDescriptor>
+            getMembersByName: (MemberScope, Name) -> Collection<CallableMemberDescriptor>
     ): Collection<CallableMemberDescriptor> {
         val containingPackage = packageMember.containingDeclaration
         if (containingPackage !is PackageFragmentDescriptor) {

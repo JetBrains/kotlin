@@ -126,7 +126,7 @@ private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedNam
     return getParamDescriptors(fromDescriptor).filter { it.getName().asString() == name }
 }
 
-private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): KtScope {
+private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): MemberScope {
     return descriptor.getContainingDeclaration().getPackage(descriptor.fqName).memberScope
 }
 

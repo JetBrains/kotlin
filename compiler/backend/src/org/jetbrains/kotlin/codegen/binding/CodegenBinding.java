@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
 import org.jetbrains.kotlin.util.slicedMap.Slices;
@@ -212,7 +212,7 @@ public class CodegenBinding {
                 new ClassDescriptorImpl(descriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
                                         Collections.singleton(DescriptorUtilsKt.getBuiltIns(descriptor).getAnyType()),
                                         KotlinSourceElementKt.toSourceElement(script));
-        classDescriptor.initialize(KtScope.Companion.empty(classDescriptor), Collections.<ConstructorDescriptor>emptySet(), null);
+        classDescriptor.initialize(MemberScope.Companion.empty(classDescriptor), Collections.<ConstructorDescriptor>emptySet(), null);
 
         recordClosure(trace, classDescriptor, null, asmType, fileClassesManager);
 

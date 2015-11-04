@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.junit.Assert
 import java.io.File
@@ -263,7 +263,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     }
 
     private fun doRenameInKotlinClassOrPackage(
-            renameParamsObject: JsonObject, context: TestContext, findDescriptorToRename: (KtScope) -> DeclarationDescriptor
+            renameParamsObject: JsonObject, context: TestContext, findDescriptorToRename: (MemberScope) -> DeclarationDescriptor
     ) {
         val classIdStr = renameParamsObject.getNullableString("classId")
         val packageFqnStr = renameParamsObject.getNullableString("packageFqn")

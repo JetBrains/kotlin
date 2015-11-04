@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.*;
 
@@ -153,7 +153,7 @@ public class ManglingUtils {
     private static String getSimpleMangledName(@NotNull CallableMemberDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
-        KtScope jetScope = null;
+        MemberScope jetScope = null;
 
         String nameToCompare = descriptor.getName().asString();
 

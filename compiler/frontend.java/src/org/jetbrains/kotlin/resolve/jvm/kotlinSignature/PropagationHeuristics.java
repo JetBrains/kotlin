@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.KotlinTypeImpl;
 import org.jetbrains.kotlin.types.TypeProjectionImpl;
@@ -67,7 +67,7 @@ class PropagationHeuristics {
                                 arrayTypeFromSuper.getConstructor(),
                                 arrayTypeFromSuper.isMarkedNullable(),
                                 Arrays.asList(new TypeProjectionImpl(Variance.OUT_VARIANCE, elementTypeInSuper)),
-                                KtScope.Companion.empty(elementType.getMemberScope().getContainingDeclaration()));
+                                MemberScope.Companion.empty(elementType.getMemberScope().getContainingDeclaration()));
 
                         data.reportError("Return type is not a subtype of overridden method. " +
                                          "To fix it, add annotation with Kotlin signature to super method with type "

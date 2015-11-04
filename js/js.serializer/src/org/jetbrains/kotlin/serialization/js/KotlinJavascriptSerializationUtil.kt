@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -193,7 +193,7 @@ public object KotlinJavascriptSerializationUtil {
             result.add(fqName)
         }
 
-        for (descriptor in packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, KtScope.ALL_NAME_FILTER)) {
+        for (descriptor in packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)) {
             if (descriptor is PackageViewDescriptor) {
                 getSubPackagesFqNames(descriptor, result)
             }

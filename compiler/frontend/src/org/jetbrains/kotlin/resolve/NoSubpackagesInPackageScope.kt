@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class NoSubpackagesInPackageScope(packageDescriptor: PackageViewDescriptor) : AbstractScopeAdapter() {
-    override val workerScope: KtScope = packageDescriptor.memberScope
+    override val workerScope: MemberScope = packageDescriptor.memberScope
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 

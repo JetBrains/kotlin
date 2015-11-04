@@ -33,7 +33,7 @@ interface HierarchicalScope {
      */
     fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-            nameFilter: (Name) -> Boolean = KtScope.ALL_NAME_FILTER
+            nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER
     ): Collection<DeclarationDescriptor>
 
     fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?

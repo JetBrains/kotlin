@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapperKt;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -401,7 +401,7 @@ public class SignaturesPropagationData {
         boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, howThisTypeIsUsed);
         ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper);
         List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, resultClassifier, typesFromSuper);
-        KtScope resultScope;
+        MemberScope resultScope;
         if (resultClassifier instanceof ClassDescriptor) {
             resultScope = ((ClassDescriptor) resultClassifier).getMemberScope(resultArguments);
         }

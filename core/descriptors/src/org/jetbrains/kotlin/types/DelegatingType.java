@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public abstract class DelegatingType implements KotlinType {
 
     @NotNull
     @Override
-    public KtScope getMemberScope() {
+    public MemberScope getMemberScope() {
         return getDelegate().getMemberScope();
     }
 

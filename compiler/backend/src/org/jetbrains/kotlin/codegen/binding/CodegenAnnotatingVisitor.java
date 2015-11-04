@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -101,7 +101,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 supertypes,
                 KotlinSourceElementKt.toSourceElement(element)
         );
-        classDescriptor.initialize(KtScope.Companion.empty(classDescriptor), Collections.<ConstructorDescriptor>emptySet(), null);
+        classDescriptor.initialize(MemberScope.Companion.empty(classDescriptor), Collections.<ConstructorDescriptor>emptySet(), null);
 
         bindingTrace.record(CLASS_FOR_CALLABLE, callableDescriptor, classDescriptor);
         return classDescriptor;

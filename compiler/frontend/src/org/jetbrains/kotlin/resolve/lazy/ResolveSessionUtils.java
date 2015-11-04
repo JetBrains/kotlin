@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 import org.jetbrains.kotlin.psi.KtNamedDeclarationUtil;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,10 +76,10 @@ public class ResolveSessionUtils {
     }
 
     @Nullable
-    public static ClassDescriptor findByQualifiedName(@NotNull KtScope outerScope, @NotNull FqName path) {
+    public static ClassDescriptor findByQualifiedName(@NotNull MemberScope outerScope, @NotNull FqName path) {
         if (path.isRoot()) return null;
 
-        KtScope scope = outerScope;
+        MemberScope scope = outerScope;
         for (Name name : path.pathSegments()) {
             ClassifierDescriptor classifier = scope.getClassifier(name, NoLookupLocation.WHEN_FIND_BY_FQNAME);
             if (!(classifier instanceof ClassDescriptor)) return null;

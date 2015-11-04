@@ -31,7 +31,7 @@ public class LexicalChainedScope @JvmOverloads constructor(
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
         private val debugName: String,
-        vararg memberScopes: KtScope, // todo JetScope -> MemberScope
+        vararg memberScopes: MemberScope,
         @Deprecated("This value is temporary hack for resolve -- don't use it!")
         val isStaticScope: Boolean = false
 ): LexicalScope {
