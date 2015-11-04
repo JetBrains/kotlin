@@ -39,7 +39,7 @@ public object SamConversionResolverImpl : SamConversionResolver {
     override fun resolveSamConstructor(name: Name, scope: MemberScope, location: LookupLocation): SamConstructorDescriptor? {
         val classifier = scope.getContributedClassifier(name, location) as? LazyJavaClassDescriptor ?: return null
         if (classifier.getFunctionTypeForSamInterface() == null) return null
-        return SingleAbstractMethodUtils.createSamConstructorFunction(scope.getContainingDeclaration(), classifier)
+        return SingleAbstractMethodUtils.createSamConstructorFunction(scope.ownerDescriptor, classifier)
     }
 
     @Suppress("UNCHECKED_CAST")

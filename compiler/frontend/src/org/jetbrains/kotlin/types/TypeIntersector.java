@@ -161,7 +161,7 @@ public class TypeIntersector {
 
         @NotNull
         @Override
-        public DeclarationDescriptor getContainingDeclaration() {
+        public DeclarationDescriptor getOwnerDescriptor() {
             throw new UnsupportedOperationException("Should not call getContainingDeclaration on intersection scope " + this);
         }
     }

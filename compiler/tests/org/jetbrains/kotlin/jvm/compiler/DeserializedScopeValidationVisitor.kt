@@ -40,14 +40,14 @@ private fun validateDeserializedScope(scope: MemberScope) {
         val relevantDescriptors = scope.getContributedDescriptors().filter { member ->
             member is CallableMemberDescriptor && member.getKind().isReal() || (!isPackageViewScope && member is ClassDescriptor)
         }
-        checkSorted(relevantDescriptors, scope.getContainingDeclaration())
+        checkSorted(relevantDescriptors, scope.ownerDescriptor)
     }
 }
 
 //NOTE: see TypeUtils#IntersectionScope#getContainingDeclaration()
 private fun MemberScope.safeGetContainingDeclaration(): DeclarationDescriptor? {
     return try {
-        getContainingDeclaration()
+        ownerDescriptor
     }
     catch (e: UnsupportedOperationException) {
         null

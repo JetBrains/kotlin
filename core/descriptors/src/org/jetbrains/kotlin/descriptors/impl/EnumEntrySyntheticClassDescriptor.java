@@ -258,7 +258,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        public DeclarationDescriptor getContainingDeclaration() {
+        public DeclarationDescriptor getOwnerDescriptor() {
             return EnumEntrySyntheticClassDescriptor.this;
         }
 

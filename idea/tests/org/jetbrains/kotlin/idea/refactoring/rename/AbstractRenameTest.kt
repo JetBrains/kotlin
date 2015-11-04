@@ -210,7 +210,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     private fun renameKotlinClassTest(renameParamsObject: JsonObject, context: TestContext) {
         renameParamsObject.getString("classId") //assertion
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { scope -> scope.getContainingDeclaration() as ClassDescriptor }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) { scope -> scope.ownerDescriptor as ClassDescriptor }
     }
 
     private fun renameKotlinPackageTest(renameParamsObject: JsonObject, context: TestContext) {

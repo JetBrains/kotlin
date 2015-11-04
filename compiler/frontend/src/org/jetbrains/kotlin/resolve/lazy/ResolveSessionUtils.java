@@ -86,7 +86,7 @@ public class ResolveSessionUtils {
             scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
         }
 
-        return (ClassDescriptor) scope.getContainingDeclaration();
+        return (ClassDescriptor) scope.getOwnerDescriptor();
     }
 
     @NotNull

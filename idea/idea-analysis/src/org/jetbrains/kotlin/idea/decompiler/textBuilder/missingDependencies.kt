@@ -40,17 +40,14 @@ private class PackageFragmentWithMissingDependencies(override val fqName: FqName
     }
 }
 
-private class ScopeWithMissingDependencies(val fqName: FqName, val containing: DeclarationDescriptor) : MemberScopeImpl() {
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        return containing
-    }
+private class ScopeWithMissingDependencies(val fqName: FqName, override val ownerDescriptor: DeclarationDescriptor) : MemberScopeImpl() {
 
     override fun printScopeStructure(p: Printer) {
         p.println("Special scope for decompiler, containing class with any name")
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        return MissingDependencyErrorClassDescriptor(getContainingDeclaration(), fqName.child(name))
+        return MissingDependencyErrorClassDescriptor(ownerDescriptor, fqName.child(name))
     }
 }
 

@@ -192,7 +192,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public DeclarationDescriptor getContainingDeclaration() {
+        public DeclarationDescriptor getOwnerDescriptor() {
             return ERROR_MODULE;
         }
 
@@ -248,7 +248,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public DeclarationDescriptor getContainingDeclaration() {
+        public DeclarationDescriptor getOwnerDescriptor() {
             return ERROR_MODULE;
         }
 

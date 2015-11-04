@@ -162,7 +162,7 @@ public class LazyJavaClassMemberScope(
         val overriddenBuiltinProperty = getter?.getOverriddenBuiltinWithDifferentJvmName()
         val specialGetterName = overriddenBuiltinProperty?.getBuiltinSpecialPropertyGetterName()
         if (specialGetterName != null
-                && !this@LazyJavaClassMemberScope.getContainingDeclaration().hasRealKotlinSuperClassWithOverrideOf(
+                && !this@LazyJavaClassMemberScope.ownerDescriptor.hasRealKotlinSuperClassWithOverrideOf(
                 overriddenBuiltinProperty!!)
         ) {
             return findGetterByName(specialGetterName, functions)
@@ -221,7 +221,7 @@ public class LazyJavaClassMemberScope(
 
         // Merge functions with same signatures
         val mergedFunctionFromSuperTypes = DescriptorResolverUtils.resolveOverrides(
-                name, functionsFromSupertypes, emptyList(), getContainingDeclaration(), ErrorReporter.DO_NOTHING)
+                name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING)
 
         // add declarations
         addOverriddenBuiltinMethods(name, result, mergedFunctionFromSuperTypes, result) {
@@ -245,7 +245,7 @@ public class LazyJavaClassMemberScope(
             functionsFromSupertypes: Collection<SimpleFunctionDescriptor>
     ) {
         result.addAll(DescriptorResolverUtils.resolveOverrides(
-                name, functionsFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
+                name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
     }
 
     private fun addOverriddenBuiltinMethods(
@@ -301,7 +301,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun getFunctionsFromSupertypes(name: Name): Set<SimpleFunctionDescriptor> {
-          return getContainingDeclaration().typeConstructor.supertypes.flatMap {
+          return ownerDescriptor.typeConstructor.supertypes.flatMap {
               it.memberScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { f -> f as SimpleFunctionDescriptor }
           }.toSet()
       }
@@ -323,7 +323,7 @@ public class LazyJavaClassMemberScope(
         }
 
         result.addAll(DescriptorResolverUtils.resolveOverrides(
-                name, propertiesFromSupertypes + propertiesOverridesFromSuperTypes, result, getContainingDeclaration(), c.components.errorReporter))
+                name, propertiesFromSupertypes + propertiesOverridesFromSuperTypes, result, ownerDescriptor, c.components.errorReporter))
     }
 
     private fun addPropertyOverrideByMethod(
@@ -351,7 +351,7 @@ public class LazyJavaClassMemberScope(
         val annotations = c.resolveAnnotations(method)
 
         val propertyDescriptor = JavaPropertyDescriptor(
-                getContainingDeclaration(), annotations, modality, method.getVisibility(),
+                ownerDescriptor, annotations, modality, method.getVisibility(),
                 /* isVar = */ false, method.name, c.components.sourceElementFactory.source(method), /* original */ null,
                 /* isStaticFinal = */ false
         )
@@ -380,12 +380,12 @@ public class LazyJavaClassMemberScope(
                     null
 
         assert(setterMethod?.let { it.modality == getterMethod.modality } ?: true) {
-            "Different accessors modalities when creating overrides for $overriddenProperty in ${getContainingDeclaration()}" +
+            "Different accessors modalities when creating overrides for $overriddenProperty in ${ownerDescriptor}" +
             "for getter is ${getterMethod.modality}, but for setter is ${setterMethod?.modality}"
         }
 
         val propertyDescriptor = JavaPropertyDescriptor(
-                getContainingDeclaration(), Annotations.EMPTY, getterMethod.modality, getterMethod.visibility,
+                ownerDescriptor, Annotations.EMPTY, getterMethod.modality, getterMethod.visibility,
                 /* isVar = */ setterMethod != null, overriddenProperty.name, getterMethod.source,
                 /* original */ null,
                 /* isStaticFinal = */ false
@@ -413,7 +413,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun getPropertiesFromSupertypes(name: Name): Set<PropertyDescriptor> {
-        return getContainingDeclaration().typeConstructor.supertypes.flatMap {
+        return ownerDescriptor.typeConstructor.supertypes.flatMap {
             it.memberScope.getContributedVariables(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { p -> p }
         }.toSet()
     }
@@ -423,7 +423,7 @@ public class LazyJavaClassMemberScope(
             valueParameters: LazyJavaScope.ResolvedValueParameters
     ): LazyJavaScope.MethodSignatureData {
         val propagated = c.components.externalSignatureResolver.resolvePropagatedSignature(
-                method, getContainingDeclaration(), returnType, null, valueParameters.descriptors, methodTypeParameters
+                method, ownerDescriptor, returnType, null, valueParameters.descriptors, methodTypeParameters
         )
         val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
                 method, !propagated.getSuperMethods().isEmpty(), propagated.getReturnType(),
@@ -469,7 +469,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {
-        val classDescriptor = getContainingDeclaration()
+        val classDescriptor = ownerDescriptor
 
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
                 classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.components.sourceElementFactory.source(constructor)
@@ -504,7 +504,7 @@ public class LazyJavaClassMemberScope(
         if (jClass.isInterface() && !isAnnotation)
             return null
 
-        val classDescriptor = getContainingDeclaration()
+        val classDescriptor = ownerDescriptor
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
                 classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.components.sourceElementFactory.source(jClass)
         )
@@ -598,7 +598,7 @@ public class LazyJavaClassMemberScope(
         if (jNestedClass == null) {
             val field = enumEntryIndex()[name]
             if (field != null) {
-                EnumEntrySyntheticClassDescriptor.create(c.storageManager, getContainingDeclaration(), name,
+                EnumEntrySyntheticClassDescriptor.create(c.storageManager, ownerDescriptor, name,
                                                          c.storageManager.createLazyValue {
                                                              memberIndex().getAllFieldNames() + memberIndex().getMethodNames({true})
                                                          }, c.components.sourceElementFactory.source(field))
@@ -607,13 +607,13 @@ public class LazyJavaClassMemberScope(
         }
         else {
             LazyJavaClassDescriptor(
-                    c, getContainingDeclaration(), DescriptorUtils.getFqName(getContainingDeclaration()).child(name).toSafe(), jNestedClass
+                    c, ownerDescriptor, DescriptorUtils.getFqName(ownerDescriptor).child(name).toSafe(), jNestedClass
             )
         }
     }
 
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? =
-            DescriptorUtils.getDispatchReceiverParameterIfNeeded(getContainingDeclaration())
+            DescriptorUtils.getDispatchReceiverParameterIfNeeded(ownerDescriptor)
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         recordLookup(name, location)
@@ -627,14 +627,15 @@ public class LazyJavaClassMemberScope(
         if (jClass.isAnnotationType()) return memberIndex().getMethodNames(nameFilter)
 
         return memberIndex().getAllFieldNames() +
-        getContainingDeclaration().getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
+               ownerDescriptor.getTypeConstructor().getSupertypes().flatMapTo(LinkedHashSet<Name>()) { supertype ->
             supertype.getMemberScope().getContributedDescriptors(kindFilter, nameFilter).map { variable ->
                 variable.getName()
             }
         }
     }
 
-    override fun getContainingDeclaration() = super.getContainingDeclaration() as ClassDescriptor
+    override val ownerDescriptor: ClassDescriptor
+        get() = super.ownerDescriptor as ClassDescriptor
 
     // namespaces should be resolved elsewhere
     override fun getPackage(name: Name) = null

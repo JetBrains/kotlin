@@ -62,7 +62,7 @@ class LazyOperationsLog(
     public fun getText(): String {
         val groupedByOwner = records.groupByTo(IdentityHashMap()) {
             val owner = it.data.fieldOwner
-            if (owner is MemberScope) owner.getContainingDeclaration() else owner
+            if (owner is MemberScope) owner.ownerDescriptor else owner
         }.map { Pair(it.getKey(), it.getValue()) }
 
         return groupedByOwner.map {

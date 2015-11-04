@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 public fun MemberScope.asLexicalScope(): LexicalScope {
     val importingScope = memberScopeAsImportingScope()
-    return object : BaseLexicalScope(importingScope, getContainingDeclaration()) {
+    return object : BaseLexicalScope(importingScope, ownerDescriptor) {
         override fun printStructure(p: Printer) {
             p.println("Util scope for tests")
         }

@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
 public class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl() {
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        return workerScope.getContainingDeclaration()
-    }
+
+    override val ownerDescriptor: DeclarationDescriptor
+        get() = workerScope.ownerDescriptor
 
     override fun getContributedClassifier(name: Name, location: LookupLocation) = workerScope.getContributedClassifier(name, location) as? ClassDescriptor
 

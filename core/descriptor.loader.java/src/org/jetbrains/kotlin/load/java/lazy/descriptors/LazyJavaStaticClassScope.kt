@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
@@ -72,32 +69,32 @@ public class LazyJavaStaticClassScope(
     override fun getSubPackages(): Collection<FqName> = listOf()
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        val nestedClassesScope = getContainingDeclaration().getUnsubstitutedInnerClassesScope()
+        val nestedClassesScope = ownerDescriptor.getUnsubstitutedInnerClassesScope()
         result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, nestedClassesScope, NoLookupLocation.FOR_ALREADY_TRACKED))
 
-        val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, getContainingDeclaration())
-        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
+        val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, ownerDescriptor)
+        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
 
         if (jClass.isEnum()) {
             when (name) {
-                DescriptorUtils.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(getContainingDeclaration()))
-                DescriptorUtils.ENUM_VALUES -> result.add(createEnumValuesMethod(getContainingDeclaration()))
+                DescriptorUtils.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(ownerDescriptor))
+                DescriptorUtils.ENUM_VALUES -> result.add(createEnumValuesMethod(ownerDescriptor))
             }
         }
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
-        val propertiesFromSupertypes = getStaticPropertiesFromJavaSupertypes(name, getContainingDeclaration())
+        val propertiesFromSupertypes = getStaticPropertiesFromJavaSupertypes(name, ownerDescriptor)
 
         val actualProperties =
                 if (!result.isEmpty()) {
-                    DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter)
+                    DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, ownerDescriptor, c.components.errorReporter)
                 }
                 else {
                     propertiesFromSupertypes.groupBy {
                         it.realOriginal
                     }.flatMap {
-                        DescriptorResolverUtils.resolveOverrides(name, it.value, result, getContainingDeclaration(), c.components.errorReporter)
+                        DescriptorResolverUtils.resolveOverrides(name, it.value, result, ownerDescriptor, c.components.errorReporter)
                     }
                 }
 
@@ -105,12 +102,13 @@ public class LazyJavaStaticClassScope(
 
         if (jClass.isEnum) {
             if (name == DescriptorUtils.ENUM_VALUES) {
-                result.add(createEnumValuesProperty(getContainingDeclaration()))
+                result.add(createEnumValuesProperty(ownerDescriptor))
             }
         }
     }
 
-    override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaClassDescriptor
+    override val ownerDescriptor: LazyJavaClassDescriptor
+        get() = super.ownerDescriptor as LazyJavaClassDescriptor
 
     private fun getStaticFunctionsFromJavaSuperClasses(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
         val staticScope = descriptor.getParentJavaStaticClassScope() ?: return emptySet()

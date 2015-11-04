@@ -104,7 +104,7 @@ public fun resolvePossiblyAmbiguousCallableReference(
     fun resolveInScope(traceTitle: String, staticScope: MemberScope): OverloadResolutionResults<CallableDescriptor> {
 
         // todo: drop this class when new resolve will be finished
-        class StaticScopeAsLexicalScope(val staticScope: MemberScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), staticScope.getContainingDeclaration()) {
+        class StaticScopeAsLexicalScope(val staticScope: MemberScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), staticScope.ownerDescriptor) {
             override fun printStructure(p: Printer) {
                 p.println(toString())
             }

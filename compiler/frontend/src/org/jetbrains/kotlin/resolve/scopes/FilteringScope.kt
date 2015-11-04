@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.utils.Printer
 
 public class FilteringScope(private val workerScope: MemberScope, private val predicate: (DeclarationDescriptor) -> Boolean) : MemberScope {
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = workerScope.getContributedFunctions(name, location).filter(predicate)
+    override val ownerDescriptor: DeclarationDescriptor
+        get() = workerScope.ownerDescriptor
 
-    override fun getContainingDeclaration() = workerScope.getContainingDeclaration()
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = workerScope.getContributedFunctions(name, location).filter(predicate)
 
     private fun <D : DeclarationDescriptor> filterDescriptor(descriptor: D?): D?
             = if (descriptor != null && predicate(descriptor)) descriptor else null

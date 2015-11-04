@@ -116,7 +116,7 @@ public fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is Lex
 public fun MemberScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
 
 @Deprecated("Temporary method for scope migration")
-public fun MemberScope.memberScopeAsLexicalScope(): LexicalScope = LexicalScope.empty(memberScopeAsImportingScope(), getContainingDeclaration())
+public fun MemberScope.memberScopeAsLexicalScope(): LexicalScope = LexicalScope.empty(memberScopeAsImportingScope(), ownerDescriptor)
 
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: MemberScope) : ImportingScope {
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)

@@ -34,7 +34,7 @@ public interface MemberScope {
 
     public fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
-    public fun getContainingDeclaration(): DeclarationDescriptor
+    val ownerDescriptor: DeclarationDescriptor
 
     /**
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
@@ -53,7 +53,7 @@ public interface MemberScope {
     companion object {
         public fun empty(ownerDescriptor: DeclarationDescriptor): MemberScope {
             return object : MemberScopeImpl() {
-                override fun getContainingDeclaration() = ownerDescriptor
+                override val ownerDescriptor = ownerDescriptor
 
                 override fun toString() = "Empty scope with owner: $ownerDescriptor"
 

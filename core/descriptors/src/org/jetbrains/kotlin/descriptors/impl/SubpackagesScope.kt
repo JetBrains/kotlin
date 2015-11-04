@@ -30,9 +30,8 @@ import org.jetbrains.kotlin.utils.sure
 import java.util.ArrayList
 
 public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : MemberScopeImpl() {
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        return moduleDescriptor.getPackage(fqName)
-    }
+    override val ownerDescriptor: DeclarationDescriptor
+        get() = moduleDescriptor.getPackage(fqName)
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
         if (name.isSpecial()) {
@@ -65,7 +64,7 @@ public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, pr
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
 
-        p.println("thisDescriptor = ", getContainingDeclaration())
+        p.println("thisDescriptor = ", ownerDescriptor)
 
         p.popIndent()
         p.println("}")

@@ -53,7 +53,7 @@ import java.util.*
 
 public abstract class LazyJavaScope(
         protected val c: LazyJavaResolverContext,
-        private val containingDeclaration: DeclarationDescriptor
+        override val ownerDescriptor: DeclarationDescriptor
 ) : MemberScopeImpl() {
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
@@ -65,8 +65,6 @@ public abstract class LazyJavaScope(
             //    when on recursive call we return an empty collection, recursion collapses gracefully
             listOf()
     )
-
-    override fun getContainingDeclaration() = containingDeclaration
 
     protected val memberIndex: NotNullLazyValue<MemberIndex> = c.storageManager.createLazyValue { computeMemberIndex() }
 
@@ -113,7 +111,7 @@ public abstract class LazyJavaScope(
     fun resolveMethodToFunctionDescriptor(method: JavaMethod): JavaMethodDescriptor {
         val annotations = c.resolveAnnotations(method)
         val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
-                containingDeclaration, annotations, method.name, c.components.sourceElementFactory.source(method)
+                ownerDescriptor, annotations, method.name, c.components.sourceElementFactory.source(method)
         )
 
         val c = c.child(functionDescriptorImpl, method)
@@ -237,7 +235,7 @@ public abstract class LazyJavaScope(
 
         computeNonDeclaredProperties(name, properties)
 
-        if (DescriptorUtils.isAnnotationClass(containingDeclaration))
+        if (DescriptorUtils.isAnnotationClass(ownerDescriptor))
             properties.toReadOnlyList()
         else
             enhanceSignatures(properties).toReadOnlyList()
@@ -275,7 +273,7 @@ public abstract class LazyJavaScope(
         val annotations = c.resolveAnnotations(field)
         val propertyName = field.getName()
 
-        return JavaPropertyDescriptor(containingDeclaration, annotations, Modality.FINAL, visibility, isVar, propertyName,
+        return JavaPropertyDescriptor(ownerDescriptor, annotations, Modality.FINAL, visibility, isVar, propertyName,
                                       c.components.sourceElementFactory.source(field), /* original = */ null, /*isConst= */ field.isFinalStatic)
     }
 
@@ -351,13 +349,13 @@ public abstract class LazyJavaScope(
 
     protected abstract fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
 
-    override fun toString() = "Lazy scope for ${getContainingDeclaration()}"
+    override fun toString() = "Lazy scope for ${ownerDescriptor}"
     
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
 
-        p.println("containingDeclaration: ${getContainingDeclaration()}")
+        p.println("containingDeclaration: ${ownerDescriptor}")
 
         p.popIndent()
         p.println("}")

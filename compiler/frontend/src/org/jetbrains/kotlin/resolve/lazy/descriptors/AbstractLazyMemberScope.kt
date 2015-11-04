@@ -59,7 +59,7 @@ protected constructor(
         }.toReadOnlyList()
     }
 
-    override fun getContainingDeclaration() = thisDescriptor
+    override val ownerDescriptor: DeclarationDescriptor get() = thisDescriptor
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassDescriptor? {
         recordLookup(name, location)

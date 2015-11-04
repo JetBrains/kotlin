@@ -78,7 +78,7 @@ public class LazyJavaPackageScope(
         }
     }
 
-    private val packageFragment: LazyJavaPackageFragment get() = getContainingDeclaration() as LazyJavaPackageFragment
+    private val packageFragment: LazyJavaPackageFragment get() = ownerDescriptor as LazyJavaPackageFragment
 
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> { name ->
         val classId = ClassId(packageFragment.fqName, name)

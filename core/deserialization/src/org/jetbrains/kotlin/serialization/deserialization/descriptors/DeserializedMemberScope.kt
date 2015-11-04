@@ -116,7 +116,8 @@ public abstract class DeserializedMemberScope protected constructor(
 
     protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
-    override fun getContainingDeclaration() = c.containingDeclaration
+    override val ownerDescriptor: DeclarationDescriptor
+        get() = c.containingDeclaration
 
     protected fun computeDescriptors(
             kindFilter: DescriptorKindFilter,
@@ -179,7 +180,7 @@ public abstract class DeserializedMemberScope protected constructor(
         p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
-        p.println("containingDeclaration = " + getContainingDeclaration())
+        p.println("containingDeclaration = " + ownerDescriptor)
 
         p.popIndent()
         p.println("}")

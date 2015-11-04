@@ -41,7 +41,8 @@ class FunctionClassScope(
         }
     }
 
-    override fun getContainingDeclaration() = functionClass
+    override val ownerDescriptor: DeclarationDescriptor
+        get() = functionClass
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.CALLABLES.kindMask)) return listOf()
@@ -75,7 +76,7 @@ class FunctionClassScope(
                             }
 
                             override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
-                                error("Conflict in scope of ${getContainingDeclaration()}: $fromSuper vs $fromCurrent")
+                                error("Conflict in scope of $ownerDescriptor: $fromSuper vs $fromCurrent")
                             }
                         }
                 )

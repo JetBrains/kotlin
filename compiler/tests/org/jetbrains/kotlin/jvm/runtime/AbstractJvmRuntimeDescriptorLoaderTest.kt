@@ -213,10 +213,8 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
     private class ScopeWithClassifiers(
             classifiers: List<ClassifierDescriptor>,
-            val ownerDescriptor: DeclarationDescriptor
+            override val ownerDescriptor: DeclarationDescriptor
     ) : MemberScopeImpl() {
-        override fun getContainingDeclaration() = ownerDescriptor
-
         private val classifierMap = HashMap<Name, ClassifierDescriptor>()
         val redeclarationHandler = RedeclarationHandler.THROW_EXCEPTION
 

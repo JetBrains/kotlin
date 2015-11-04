@@ -31,7 +31,7 @@ public fun LookupTracker.record(from: LookupLocation, inScope: MemberScope, name
 
     val location = from.location ?: return
 
-    val scopeContainingDeclaration = inScope.getContainingDeclaration()
+    val scopeContainingDeclaration = inScope.ownerDescriptor
 
     val scopeKind =
             when (scopeContainingDeclaration) {
