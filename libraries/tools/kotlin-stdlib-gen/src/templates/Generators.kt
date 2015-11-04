@@ -420,16 +420,16 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) {
+        doc(CharSequences, Strings) { f ->
             """
-            Splits the original char sequence into pair of strings,
-            where *first* string contains characters for which [predicate] yielded `true`,
-            while *second* string contains characters for which [predicate] yielded `false`.
+            Splits the original ${f.collection} into pair of ${f.collection}s,
+            where *first* ${f.collection} contains characters for which [predicate] yielded `true`,
+            while *second* ${f.collection} contains characters for which [predicate] yielded `false`.
             """
         }
-        returns(CharSequences, Strings) { "Pair<String, String>" }
-        body(CharSequences, Strings) {
+        returns(CharSequences, Strings) { "Pair<SELF, SELF>" }
+        body(CharSequences, Strings) { f ->
+            val toString = if (f == Strings) ".toString()" else ""
             """
             val first = StringBuilder()
             val second = StringBuilder()
@@ -440,7 +440,7 @@ fun generators(): List<GenericFunction> {
                     second.append(element)
                 }
             }
-            return Pair(first.toString(), second.toString())
+            return Pair(first$toString, second$toString)
             """
         }
     }

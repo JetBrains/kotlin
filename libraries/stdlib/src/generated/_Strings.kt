@@ -504,31 +504,29 @@ public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns a string containing only those characters from the original string that match the given [predicate].
+ * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
  */
-public inline fun CharSequence.filter(predicate: (Char) -> Boolean): String {
-    return filterTo(StringBuilder(), predicate).toString()
+public inline fun CharSequence.filter(predicate: (Char) -> Boolean): CharSequence {
+    return filterTo(StringBuilder(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a string containing only those characters from the original string that match the given [predicate].
  */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun String.filter(predicate: (Char) -> Boolean): String {
     return filterTo(StringBuilder(), predicate).toString()
 }
 
 /**
- * Returns a string containing only those characters from the original string that do not match the given [predicate].
+ * Returns a char sequence containing only those characters from the original char sequence that do not match the given [predicate].
  */
-public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): String {
-    return filterNotTo(StringBuilder(), predicate).toString()
+public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequence {
+    return filterNotTo(StringBuilder(), predicate)
 }
 
 /**
- * Returns a list containing all elements not matching the given [predicate].
+ * Returns a string containing only those characters from the original string that do not match the given [predicate].
  */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
     return filterNotTo(StringBuilder(), predicate).toString()
 }
@@ -574,7 +572,15 @@ public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (C
 }
 
 /**
- * Returns a string containing characters at indices at the specified [indices].
+ * Returns a char sequence containing characters of the original char sequence at the specified range of [indices].
+ */
+public fun CharSequence.slice(indices: IntRange): CharSequence {
+    if (indices.isEmpty()) return ""
+    return subSequence(indices)
+}
+
+/**
+ * Returns a string containing characters of the original string at the specified range of [indices].
  */
 public fun String.slice(indices: IntRange): String {
     if (indices.isEmpty()) return ""
@@ -582,7 +588,20 @@ public fun String.slice(indices: IntRange): String {
 }
 
 /**
- * Returns a string containing characters at specified [indices].
+ * Returns a char sequence containing characters of the original char sequence at specified [indices].
+ */
+public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
+    val size = indices.collectionSizeOrDefault(10)
+    if (size == 0) return ""
+    val result = StringBuilder(size)
+    for (i in indices) {
+        result.append(get(i))
+    }
+    return result
+}
+
+/**
+ * Returns a string containing characters of the original string at specified [indices].
  */
 public fun String.slice(indices: Iterable<Int>): String {
     val size = indices.collectionSizeOrDefault(10)
@@ -675,18 +694,17 @@ public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns a string with characters in reversed order.
+ * Returns a char sequence with characters in reversed order.
  */
-public fun CharSequence.reversed(): String {
-    return StringBuilder().append(this).reverse().toString()
+public fun CharSequence.reversed(): CharSequence {
+    return StringBuilder(this).reverse()
 }
 
 /**
- * Returns a list with elements in reversed order.
+ * Returns a string with characters in reversed order.
  */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.reversed(): String {
-    return StringBuilder().append(this).reverse().toString()
+    return StringBuilder(this).reverse().toString()
 }
 
 /**
@@ -1450,11 +1468,11 @@ public inline fun String.sumByDouble(transform: (Char) -> Double): Double {
 }
 
 /**
- * Splits the original char sequence into pair of strings,
- * where *first* string contains characters for which [predicate] yielded `true`,
- * while *second* string contains characters for which [predicate] yielded `false`.
+ * Splits the original char sequence into pair of char sequences,
+ * where *first* char sequence contains characters for which [predicate] yielded `true`,
+ * while *second* char sequence contains characters for which [predicate] yielded `false`.
  */
-public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<String, String> {
+public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<CharSequence, CharSequence> {
     val first = StringBuilder()
     val second = StringBuilder()
     for (element in this) {
@@ -1464,15 +1482,14 @@ public inline fun CharSequence.partition(predicate: (Char) -> Boolean): Pair<Str
             second.append(element)
         }
     }
-    return Pair(first.toString(), second.toString())
+    return Pair(first, second)
 }
 
 /**
- * Splits the original string into pair of lists,
- * where *first* list contains elements for which [predicate] yielded `true`,
- * while *second* list contains elements for which [predicate] yielded `false`.
+ * Splits the original string into pair of strings,
+ * where *first* string contains characters for which [predicate] yielded `true`,
+ * while *second* string contains characters for which [predicate] yielded `false`.
  */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
     val first = StringBuilder()
     val second = StringBuilder()

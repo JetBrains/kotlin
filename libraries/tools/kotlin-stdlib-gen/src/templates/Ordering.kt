@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.DocExtensions.collection
 
 fun ordering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -39,13 +40,11 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) { "Returns a string with characters in reversed order." }
-        returns(CharSequences, Strings) { "String" }
-        body(CharSequences, Strings) {
-            // TODO: Replace with StringBuilder(this) when JS can handle it
+        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} with characters in reversed order." }
+        returns(CharSequences, Strings) { "SELF" }
+        body(CharSequences, Strings) { f ->
             """
-            return StringBuilder().append(this).reverse().toString()
+            return StringBuilder(this).reverse()${ if (f == Strings) ".toString()" else "" }
             """
         }
 

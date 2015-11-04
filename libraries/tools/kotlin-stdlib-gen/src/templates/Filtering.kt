@@ -1,6 +1,8 @@
 package templates
 
 import templates.Family.*
+import templates.DocExtensions.collection
+import templates.DocExtensions.element
 
 fun filtering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -357,14 +359,9 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) { "Returns a string containing only those characters from the original string that match the given [predicate]." }
-        returns(CharSequences, Strings) { "String" }
-        body(CharSequences, Strings) {
-            """
-            return filterTo(StringBuilder(), predicate).toString()
-            """
-        }
+        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing only those characters from the original ${f.collection} that match the given [predicate]." }
+        returns(CharSequences, Strings) { "SELF" }
+        body(CharSequences, Strings) { f -> """return filterTo(StringBuilder(), predicate)${toResult(f)}""" }
 
         inline(false, Sequences)
         doc(Sequences) { "Returns a sequence containing all elements matching the given [predicate]." }
@@ -414,14 +411,9 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) { "Returns a string containing only those characters from the original string that do not match the given [predicate]." }
-        returns(CharSequences, Strings) { "String" }
-        body(CharSequences, Strings) {
-            """
-            return filterNotTo(StringBuilder(), predicate).toString()
-            """
-        }
+        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing only those characters from the original ${f.collection} that do not match the given [predicate]." }
+        returns(CharSequences, Strings) { "SELF" }
+        body(CharSequences, Strings) { f -> """return filterNotTo(StringBuilder(), predicate)${toResult(f)}""" }
 
         inline(false, Sequences)
         doc(Sequences) { "Returns a sequence containing all elements not matching the given [predicate]." }
@@ -509,9 +501,9 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(Strings) { "Returns a string containing characters at specified [indices]." }
-        returns(Strings) { "String" }
-        body(Strings) {
+        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing ${f.element}s of the original ${f.collection} at specified [indices]." }
+        returns(CharSequences, Strings) { "SELF" }
+        body(CharSequences, Strings) { f ->
             """
             val size = indices.collectionSizeOrDefault(10)
             if (size == 0) return ""
@@ -519,7 +511,7 @@ fun filtering(): List<GenericFunction> {
             for (i in indices) {
                 result.append(get(i))
             }
-            return result.toString()
+            return result${toResult(f)}
             """
         }
     }
@@ -541,12 +533,12 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(Strings) { "Returns a string containing characters at indices at the specified [indices]." }
-        returns(Strings) { "String" }
-        body(Strings) {
+        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing ${f.element}s of the original ${f.collection} at the specified range of [indices]." }
+        returns(CharSequences, Strings) { "SELF" }
+        body(CharSequences, Strings) { f ->
             """
             if (indices.isEmpty()) return ""
-            return substring(indices)
+            return ${ mapOf(Strings to "substring", CharSequences to "subSequence")[f]}(indices)
             """
         }
     }

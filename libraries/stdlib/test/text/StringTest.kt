@@ -216,12 +216,18 @@ class StringTest {
         assertEquals("aDAB", data.slice(iter).toString())
     }
 
-    @test fun reverse() = withOneCharSequenceArg { arg1 ->
-        fun String.reversed(): String = arg1(this).reversed()
-
+    @test fun reverse() {
         assertEquals("dcba", "abcd".reversed())
         assertEquals("4321", "1234".reversed())
         assertEquals("", "".reversed())
+    }
+
+    @test fun reverseCharSequence() = withOneCharSequenceArg { arg1 ->
+        fun String.reversedCs(): CharSequence = arg1(this).reversed()
+
+        assertContentEquals("dcba", "abcd".reversedCs())
+        assertContentEquals("4321", "1234".reversedCs())
+        assertContentEquals("", "".reversedCs())
     }
 
     @test fun indices() = withOneCharSequenceArg { arg1 ->
@@ -716,14 +722,24 @@ class StringTest {
     }
 
 
-    @test fun filter() = withOneCharSequenceArg { arg1 ->
-        assertEquals("acdca", arg1("abcdcba").filter { !it.equals('b') })
-        assertEquals("1234", arg1("a1b2c3d4").filter { it.isAsciiDigit() })
+    @test fun filter() {
+        assertEquals("acdca", ("abcdcba").filter { !it.equals('b') })
+        assertEquals("1234", ("a1b2c3d4").filter { it.isAsciiDigit() })
     }
 
-    @test fun filterNot() = withOneCharSequenceArg { arg1 ->
-        assertEquals("acdca", arg1("abcdcba").filterNot { it.equals('b') })
-        assertEquals("abcd", arg1("a1b2c3d4").filterNot { it.isAsciiDigit() })
+    @test fun filterCharSequence() = withOneCharSequenceArg { arg1 ->
+        assertContentEquals("acdca", arg1("abcdcba").filter { !it.equals('b') })
+        assertContentEquals("1234", arg1("a1b2c3d4").filter { it.isAsciiDigit() })
+    }
+
+    @test fun filterNot() {
+        assertEquals("acdca", ("abcdcba").filterNot { it.equals('b') })
+        assertEquals("abcd", ("a1b2c3d4").filterNot { it.isAsciiDigit() })
+    }
+
+    @test fun filterNotCharSequence() = withOneCharSequenceArg { arg1 ->
+        assertContentEquals("acdca", arg1("abcdcba").filterNot { it.equals('b') })
+        assertContentEquals("abcd", arg1("a1b2c3d4").filterNot { it.isAsciiDigit() })
     }
 
     @test fun all() = withOneCharSequenceArg("AbCd") { data ->
@@ -754,10 +770,17 @@ class StringTest {
         assertNull(data.filterNot { it.isAsciiLetter() || it.isAsciiDigit() }.firstOrNull())
     }
 
-    @test fun partition() = withOneCharSequenceArg("a1b2c3") { data ->
+    @test fun partition() {
+        val data = "a1b2c3"
         val pair = data.partition { it.isAsciiDigit() }
         assertEquals("123", pair.first, "pair.first")
         assertEquals("abc", pair.second, "pair.second")
+    }
+
+    @test fun partitionCharSequence() = withOneCharSequenceArg("a1b2c3") { data ->
+        val pair = data.partition { it.isAsciiDigit() }
+        assertContentEquals("123", pair.first, "pair.first")
+        assertContentEquals("abc", pair.second, "pair.second")
     }
 
     @test fun map() = withOneCharSequenceArg { arg1 ->
