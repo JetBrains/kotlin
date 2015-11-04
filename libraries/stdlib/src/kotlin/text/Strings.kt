@@ -9,9 +9,9 @@ import kotlin.text.MatchResult
 import kotlin.text.Regex
 
 /**
- * Returns a string with leading and trailing characters matching the [predicate] trimmed.
+ * Returns a sub sequence of this char sequence having leading and trailing characters matching the [predicate] trimmed.
  */
-inline public fun CharSequence.trim(predicate: (Char) -> Boolean): String {
+inline public fun CharSequence.trim(predicate: (Char) -> Boolean): CharSequence {
     var startIndex = 0
     var endIndex = length() - 1
     var startFound = false
@@ -34,24 +34,36 @@ inline public fun CharSequence.trim(predicate: (Char) -> Boolean): String {
         }
     }
 
-    return substring(startIndex, endIndex + 1)
+    return subSequence(startIndex, endIndex + 1)
 }
 
 /**
- * Returns a string with leading characters matching the [predicate] trimmed.
+ * Returns a string with leading and trailing characters matching the [predicate] trimmed.
  */
-inline public fun CharSequence.trimStart(predicate: (Char) -> Boolean): String {
+inline public fun String.trim(predicate: (Char) -> Boolean): String
+        = (this as CharSequence).trim(predicate).toString()
+
+/**
+ * Returns a sub sequence of this char sequence having leading characters matching the [predicate] trimmed.
+ */
+inline public fun CharSequence.trimStart(predicate: (Char) -> Boolean): CharSequence {
     for (index in this.indices)
         if (!predicate(this[index]))
-            return substring(index)
+            return subSequence(index, length)
 
     return ""
 }
 
 /**
- * Returns a string with trailing characters matching the [predicate] trimmed.
+ * Returns a string with leading characters matching the [predicate] trimmed.
  */
-inline public fun CharSequence.trimEnd(predicate: (Char) -> Boolean): String {
+inline public fun String.trimStart(predicate: (Char) -> Boolean): String
+        = (this as CharSequence).trimStart(predicate).toString()
+
+/**
+ * Returns a sub sequence of this char sequence having trailing characters matching the [predicate] trimmed.
+ */
+inline public fun CharSequence.trimEnd(predicate: (Char) -> Boolean): CharSequence {
     for (index in this.indices.reversed())
         if (!predicate(this[index]))
             return substring(0, index + 1)
@@ -60,76 +72,136 @@ inline public fun CharSequence.trimEnd(predicate: (Char) -> Boolean): String {
 }
 
 /**
- * Returns a string with leading and trailing characters in the [chars] array trimmed.
+ * Returns a string with trailing characters matching the [predicate] trimmed.
  */
-public fun CharSequence.trim(vararg chars: Char): String = trim { it in chars }
+inline public fun String.trimEnd(predicate: (Char) -> Boolean): String
+        = (this as CharSequence).trimEnd(predicate).toString()
 
 /**
- * Returns a string with leading and trailing characters in the [chars] array trimmed.
+ * Returns a sub sequence of this char sequence having leading and trailing characters from the [chars] array trimmed.
  */
-public fun CharSequence.trimStart(vararg chars: Char): String = trimStart { it in chars }
+public fun CharSequence.trim(vararg chars: Char): CharSequence = trim { it in chars }
 
 /**
- * Returns a string with trailing characters in the [chars] array trimmed.
+ * Returns a string with leading and trailing characters from the [chars] array trimmed.
  */
-public fun CharSequence.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
+public fun String.trim(vararg chars: Char): String = trim { it in chars }
+
+/**
+ * Returns a sub sequence of this char sequence having leading and trailing characters from the [chars] array trimmed.
+ */
+public fun CharSequence.trimStart(vararg chars: Char): CharSequence = trimStart { it in chars }
+
+/**
+ * Returns a string with leading and trailing characters from the [chars] array trimmed.
+ */
+public fun String.trimStart(vararg chars: Char): String = trimStart { it in chars }
+
+/**
+ * Returns a sub sequence of this char sequence having trailing characters from the [chars] array trimmed.
+ */
+public fun CharSequence.trimEnd(vararg chars: Char): CharSequence = trimEnd { it in chars }
+
+/**
+ * Returns a string with trailing characters from the [chars] array trimmed.
+ */
+public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
+
+/**
+ * Returns a sub sequence of this char sequence having leading and trailing whitespace trimmed.
+ */
+public fun CharSequence.trim(): CharSequence = trim { it.isWhitespace() }
 
 /**
  * Returns a string with leading and trailing whitespace trimmed.
  */
-public fun CharSequence.trim(): String = trim { it.isWhitespace() }
+public fun String.trim(): String = (this as CharSequence).trim().toString()
+
+/**
+ * Returns a sub sequence of this char sequence having leading whitespace removed.
+ */
+public fun CharSequence.trimStart(): CharSequence = trimStart { it.isWhitespace() }
 
 /**
  * Returns a string with leading whitespace removed.
  */
-public fun CharSequence.trimStart(): String = trimStart { it.isWhitespace() }
+public fun String.trimStart(): String = (this as CharSequence).trimStart().toString()
+
+/**
+ * Returns a sub sequence of this char sequence having trailing whitespace removed.
+ */
+public fun CharSequence.trimEnd(): CharSequence = trimEnd { it.isWhitespace() }
 
 /**
  * Returns a string with trailing whitespace removed.
  */
-public fun CharSequence.trimEnd(): String = trimEnd { it.isWhitespace() }
+public fun String.trimEnd(): String = (this as CharSequence).trimEnd().toString()
 
 /**
- * Left pad a String with a specified character or space.
+ * Returns a char sequence with content of this char sequence padded at the beginning
+ * to the specified [length] with the specified character or space.
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
  * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
  * as are necessary to reach that length.
  */
-public fun CharSequence.padStart(length: Int, padChar: Char = ' '): String {
+public fun CharSequence.padStart(length: Int, padChar: Char = ' '): CharSequence {
     if (length < 0)
-        throw IllegalArgumentException("String length $length is less than zero.")
-    if (length <= this.length())
-        return this.toString()
+        throw IllegalArgumentException("Desired length $length is less than zero.")
+    if (length <= this.length)
+        return this.subSequence(0, this.length)
 
     val sb = StringBuilder(length)
-    for (i in 1..(length - this.length()))
+    for (i in 1..(length - this.length))
         sb.append(padChar)
     sb.append(this)
-    return sb.toString()
+    return sb
 }
 
 /**
- * Right pad a String with a specified character or space.
+ * Pads the string to the specified [length] at the beginning with the specified character or space.
  *
  * @param length the desired string length.
  * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
  * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
  * as are necessary to reach that length.
  */
-public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): String {
+public fun String.padStart(length: Int, padChar: Char = ' '): String
+        = (this as CharSequence).padStart(length, padChar).toString()
+
+/**
+ * Returns a char sequence with content of this char sequence padded at the end
+ * to the specified [length] with the specified character or space.
+ *
+ * @param length the desired string length.
+ * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
+ * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * as are necessary to reach that length.
+ */
+public fun CharSequence.padEnd(length: Int, padChar: Char = ' '): CharSequence {
     if (length < 0)
-        throw IllegalArgumentException("String length $length is less than zero.")
-    if (length <= this.length())
-        return this.toString()
+        throw IllegalArgumentException("Desired length $length is less than zero.")
+    if (length <= this.length)
+        return this.subSequence(0, this.length)
 
     val sb = StringBuilder(length)
     sb.append(this)
-    for (i in 1..(length - this.length()))
+    for (i in 1..(length - this.length))
         sb.append(padChar)
-    return sb.toString()
+    return sb
 }
+
+/**
+ * Pads the string to the specified [length] at the end with the specified character or space.
+ *
+ * @param length the desired string length.
+ * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
+ * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
+ * as are necessary to reach that length.
+ */
+public fun String.padEnd(length: Int, padChar: Char = ' '): String
+        = (this as CharSequence).padEnd(length, padChar).toString()
 
 /**
  * Returns `true` if this nullable char sequence is either `null` or empty.
@@ -202,24 +274,6 @@ public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
     return index in 0..length() - 2
             && this[index].isHighSurrogate()
             && this[index + 1].isLowSurrogate()
-}
-
-/**
- * Returns a subsequence obtained by taking the characters at the given [indices] in this sequence.
- */
-public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
-    val sb = StringBuilder()
-    for (i in indices) {
-        sb.append(get(i))
-    }
-    return sb.toString()
-}
-
-/**
- * Returns a subsequence of this sequence specified by given [range].
- */
-public fun CharSequence.slice(range: IntRange): CharSequence {
-    return subSequence(range.start, range.end + 1) // inclusive
 }
 
 /**
@@ -345,77 +399,145 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
 }
 
 /**
- * Returns a string with content of this char sequence where its part at the given range
+ * Returns a char sequence with content of this char sequence where its part at the given range
  * is replaced with the [replacement] char sequence.
  * @param firstIndex the index of the first character to be replaced.
  * @param lastIndex the index of the first character after the replacement to keep in the string.
  */
-public fun CharSequence.replaceRange(firstIndex: Int, lastIndex: Int, replacement: CharSequence): String {
+public fun CharSequence.replaceRange(firstIndex: Int, lastIndex: Int, replacement: CharSequence): CharSequence {
     if (lastIndex < firstIndex)
         throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
     val sb = StringBuilder()
     sb.append(this, 0, firstIndex)
     sb.append(replacement)
     sb.append(this, lastIndex, length())
-    return sb.toString()
+    return sb
 }
 
 /**
- * Returns a string with content of this char sequence where its part at the given [range]
+ * Replaces the part of the string at the given range with the [replacement] char sequence.
+ * @param firstIndex the index of the first character to be replaced.
+ * @param lastIndex the index of the first character after the replacement to keep in the string.
+ */
+public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: CharSequence): String
+        = (this as CharSequence).replaceRange(firstIndex, lastIndex, replacement).toString()
+
+/**
+ * Returns a char sequence with content of this char sequence where its part at the given [range]
  * is replaced with the [replacement] char sequence.
  *
  * The end index of the [range] is included in the part to be replaced.
  */
-public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence): String = replaceRange(range.start, range.end + 1, replacement)
+public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence): CharSequence
+        = replaceRange(range.start, range.end + 1, replacement)
 
 /**
- * Returns a string with content of this char sequence where its part at the given range is removed.
+ * Replace the part of string at the given [range] with the [replacement] string.
+ *
+ * The end index of the [range] is included in the part to be replaced.
+ */
+public fun String.replaceRange(range: IntRange, replacement: CharSequence): String
+        = replaceRange(range.start, range.end + 1, replacement)
+
+/**
+ * Returns a char sequence with content of this char sequence where its part at the given range is removed.
  *
  * @param firstIndex the index of the first character to be removed.
  * @param lastIndex the index of the first character after the removed part to keep in the string.
  *
  * [lastIndex] is not included in the removed part.
  */
-public fun CharSequence.removeRange(firstIndex: Int, lastIndex: Int): String {
+public fun CharSequence.removeRange(firstIndex: Int, lastIndex: Int): CharSequence {
     if (lastIndex < firstIndex)
         throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
 
     if (lastIndex == firstIndex)
-        return this.toString()
+        return this.subSequence(0, length)
 
     val sb = StringBuilder(length() - (lastIndex - firstIndex))
     sb.append(this, 0, firstIndex)
     sb.append(this, lastIndex, length())
-    return sb.toString()
+    return sb
 }
 
 /**
- * Returns a string with content of this char sequence where its part at the given [range] is removed.
+ * Removes the part of a string at a given range.
+ * @param firstIndex the index of the first character to be removed.
+ * @param lastIndex the index of the first character after the removed part to keep in the string.
+ *
+ *  [lastIndex] is not included in the removed part.
+ */
+public fun String.removeRange(firstIndex: Int, lastIndex: Int): String
+        = (this as CharSequence).removeRange(firstIndex, lastIndex).toString()
+
+/**
+ * Returns a char sequence with content of this char sequence where its part at the given [range] is removed.
  *
  * The end index of the [range] is included in the removed part.
  */
-public fun CharSequence.removeRange(range: Range<Int>): String = removeRange(range.start, range.end + 1)
+public fun CharSequence.removeRange(range: IntRange): CharSequence = removeRange(range.start, range.end + 1)
+
+/**
+ * Removes the part of a string at the given [range].
+ *
+ * The end index of the [range] is included in the removed part.
+ */
+public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
+
+/**
+ * If this char sequence starts with the given [prefix], returns a new char sequence
+ * with the prefix removed. Otherwise, returns a new char sequence with the same characters.
+ */
+public fun CharSequence.removePrefix(prefix: CharSequence): CharSequence {
+    if (startsWith(prefix)) {
+        return subSequence(prefix.length, length)
+    }
+    return subSequence(0, length)
+}
 
 /**
  * If this string starts with the given [prefix], returns a copy of this string
  * with the prefix removed. Otherwise, returns this string.
  */
-public fun String.removePrefix(prefix: String): String {
+public fun String.removePrefix(prefix: CharSequence): String {
     if (startsWith(prefix)) {
-        return substring(prefix.length())
+        return substring(prefix.length)
     }
     return this
+}
+
+/**
+ * If this char sequence ends with the given [suffix], returns a new char sequence
+ * with the suffix removed. Otherwise, returns a new char sequence with the same characters.
+ */
+public fun CharSequence.removeSuffix(suffix: CharSequence): CharSequence {
+    if (endsWith(suffix)) {
+        return subSequence(0, length - suffix.length)
+    }
+    return subSequence(0, length)
 }
 
 /**
  * If this string ends with the given [suffix], returns a copy of this string
  * with the suffix removed. Otherwise, returns this string.
  */
-public fun String.removeSuffix(suffix: String): String {
+public fun String.removeSuffix(suffix: CharSequence): String {
     if (endsWith(suffix)) {
-        return substring(0, length() - suffix.length())
+        return substring(0, length - suffix.length)
     }
     return this
+}
+
+/**
+ * When this char sequence starts with the given [prefix] and ends with the given [suffix],
+ * returns a new char sequence having both the given [prefix] and [suffix] removed.
+ * Otherwise returns a new char sequence with the same characters.
+ */
+public fun CharSequence.removeSurrounding(prefix: CharSequence, suffix: CharSequence): CharSequence {
+    if (startsWith(prefix) && endsWith(suffix)) {
+        return subSequence(prefix.length, length - suffix.length)
+    }
+    return subSequence(0, length)
 }
 
 /**
@@ -423,19 +545,26 @@ public fun String.removeSuffix(suffix: String): String {
  * it starts with the [prefix] and ends with the [suffix].
  * Otherwise returns this string unchanged.
  */
-public fun String.removeSurrounding(prefix: String, suffix: String): String {
+public fun String.removeSurrounding(prefix: CharSequence, suffix: CharSequence): String {
     if (startsWith(prefix) && endsWith(suffix)) {
-        return substring(prefix.length(), length() - suffix.length())
+        return substring(prefix.length, length - suffix.length)
     }
     return this
 }
+
+/**
+ * When this char sequence starts with and ends with the given [delimiter],
+ * returns a new char sequence having this [delimiter] removed both from the start and end.
+ * Otherwise returns a new char sequence with the same characters.
+ */
+public fun CharSequence.removeSurrounding(delimiter: CharSequence): CharSequence = removeSurrounding(delimiter, delimiter)
 
 /**
  * Removes the given [delimiter] string from both the start and the end of this string
  * if and only if it starts with and ends with the [delimiter].
  * Otherwise returns this string unchanged.
  */
-public fun String.removeSurrounding(delimiter: String): String = removeSurrounding(delimiter, delimiter)
+public fun String.removeSurrounding(delimiter: CharSequence): String = removeSurrounding(delimiter, delimiter)
 
 /**
  * Replace part of string before the first occurrence of given delimiter with the [replacement] string.

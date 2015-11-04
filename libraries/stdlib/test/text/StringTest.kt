@@ -25,8 +25,8 @@ fun withTwoCharSequenceArgs(f: ((String) -> CharSequence, (String) -> CharSequen
             f(arg1Builder, arg2Builder)
 }
 
-fun assertContentEquals(expected: String, actual: CharSequence) {
-    assertEquals(expected, actual.toString())
+fun assertContentEquals(expected: String, actual: CharSequence, message: String? = null) {
+    assertEquals(expected, actual.toString(), message)
 }
 
 // helper predicates available on both platforms
@@ -236,8 +236,8 @@ class StringTest {
         val s = arg1("sample text")
         val replacement = arg2("??")
 
-        assertEquals("sa??e text", s.replaceRange(2, 5, replacement))
-        assertEquals("sa?? text", s.replaceRange(2..5, replacement))
+        assertContentEquals("sa??e text", s.replaceRange(2, 5, replacement))
+        assertContentEquals("sa?? text", s.replaceRange(2..5, replacement))
         assertFails {
             s.replaceRange(5..2, replacement)
         }
@@ -246,21 +246,21 @@ class StringTest {
         }
 
         // symmetry with indices
-        assertEquals(replacement.toString(), s.replaceRange(s.indices, replacement))
+        assertContentEquals(replacement.toString(), s.replaceRange(s.indices, replacement))
     }
 
     @test fun removeRange() = withOneCharSequenceArg("sample text") { s ->
-        assertEquals("sae text", s.removeRange(2, 5))
-        assertEquals("sa text", s.removeRange(2..5))
+        assertContentEquals("sae text", s.removeRange(2, 5))
+        assertContentEquals("sa text", s.removeRange(2..5))
 
-        assertEquals(s.toString(), s.removeRange(2,2))
+        assertContentEquals(s.toString(), s.removeRange(2,2))
 
         // symmetry with indices
-        assertEquals("", s.removeRange(s.indices))
+        assertContentEquals("", s.removeRange(s.indices))
 
         // symmetry with replaceRange
-        assertEquals(s.replaceRange(2, 5, ""), s.removeRange(2, 5))
-        assertEquals(s.replaceRange(2..5, ""), s.removeRange(2..5))
+        assertContentEquals(s.toString().replaceRange(2, 5, ""), s.removeRange(2, 5))
+        assertContentEquals(s.toString().replaceRange(2..5, ""), s.removeRange(2..5))
     }
 
     @test fun substringDelimited() {
@@ -318,43 +318,43 @@ class StringTest {
     }
 
     @test fun trimStart() = withOneCharSequenceArg { arg1 ->
-        fun String.trimStart(): String = arg1(this).trimStart()
-        assertEquals("", "".trimStart())
-        assertEquals("a", "a".trimStart())
-        assertEquals("a", " a".trimStart())
-        assertEquals("a", "  a".trimStart())
-        assertEquals("a  ", "  a  ".trimStart())
-        assertEquals("a b", "  a b".trimStart())
-        assertEquals("a b ", "  a b ".trimStart())
-        assertEquals("a", " \u00A0 a".trimStart())
+        fun String.trimStartCS(): CharSequence = arg1(this).trimStart()
+        assertContentEquals("", "".trimStartCS())
+        assertContentEquals("a", "a".trimStartCS())
+        assertContentEquals("a", " a".trimStartCS())
+        assertContentEquals("a", "  a".trimStartCS())
+        assertContentEquals("a  ", "  a  ".trimStartCS())
+        assertContentEquals("a b", "  a b".trimStartCS())
+        assertContentEquals("a b ", "  a b ".trimStartCS())
+        assertContentEquals("a", " \u00A0 a".trimStartCS())
 
-        assertEquals("a", "\ta".trimStart())
-        assertEquals("a", "\t\ta".trimStart())
-        assertEquals("a", "\ra".trimStart())
-        assertEquals("a", "\na".trimStart())
+        assertContentEquals("a", "\ta".trimStartCS())
+        assertContentEquals("a", "\t\ta".trimStartCS())
+        assertContentEquals("a", "\ra".trimStartCS())
+        assertContentEquals("a", "\na".trimStartCS())
 
-        assertEquals("a=", arg1("-=-=a=").trimStart('-','='))
-        assertEquals("123a", arg1("ab123a").trimStart { it < '0' || it > '9' }) // TODO: Use !it.isDigit when available in JS
+        assertContentEquals("a=", arg1("-=-=a=").trimStart('-','='))
+        assertContentEquals("123a", arg1("ab123a").trimStart {  !it.isAsciiDigit() })
     }
 
     @test fun trimEnd() = withOneCharSequenceArg { arg1 ->
-        fun String.trimEnd(): String = arg1(this).trimEnd()
-        assertEquals("", "".trimEnd())
-        assertEquals("a", "a".trimEnd())
-        assertEquals("a", "a ".trimEnd())
-        assertEquals("a", "a  ".trimEnd())
-        assertEquals("  a", "  a  ".trimEnd())
-        assertEquals("a b", "a b  ".trimEnd())
-        assertEquals(" a b", " a b  ".trimEnd())
-        assertEquals("a", "a \u00A0 ".trimEnd())
+        fun String.trimEndCS(): CharSequence = arg1(this).trimEnd()
+        assertContentEquals("", "".trimEndCS())
+        assertContentEquals("a", "a".trimEndCS())
+        assertContentEquals("a", "a ".trimEndCS())
+        assertContentEquals("a", "a  ".trimEndCS())
+        assertContentEquals("  a", "  a  ".trimEndCS())
+        assertContentEquals("a b", "a b  ".trimEndCS())
+        assertContentEquals(" a b", " a b  ".trimEndCS())
+        assertContentEquals("a", "a \u00A0 ".trimEndCS())
 
-        assertEquals("a", "a\t".trimEnd())
-        assertEquals("a", "a\t\t".trimEnd())
-        assertEquals("a", "a\r".trimEnd())
-        assertEquals("a", "a\n".trimEnd())
+        assertContentEquals("a", "a\t".trimEndCS())
+        assertContentEquals("a", "a\t\t".trimEndCS())
+        assertContentEquals("a", "a\r".trimEndCS())
+        assertContentEquals("a", "a\n".trimEndCS())
 
-        assertEquals("=a", arg1("=a=-=-").trimEnd('-','='))
-        assertEquals("ab123", arg1("ab123a").trimEnd { it < '0' || it > '9' }) // TODO: Use !it.isDigit when available in JS
+        assertContentEquals("=a", arg1("=a=-=-").trimEnd('-','='))
+        assertContentEquals("ab123", arg1("ab123a").trimEnd { !it.isAsciiDigit() })
     }
 
     @test fun trimStartAndEnd() = withOneCharSequenceArg { arg1 ->
@@ -369,9 +369,9 @@ class StringTest {
                 " \u00A0 a \u00A0 "
         )
 
-        for (example in examples.map { arg1(it) }) {
-            assertEquals(example.trim(), example.trimEnd().trimStart())
-            assertEquals(example.trim(), example.trimStart().trimEnd())
+        for ((source, example) in examples.map { it to arg1(it) }) {
+            assertContentEquals(source.trimEnd().trimStart(), example.trim())
+            assertContentEquals(source.trimStart().trimEnd(), example.trim())
         }
 
         val examplesForPredicate = arrayOf("123",
@@ -379,57 +379,88 @@ class StringTest {
         )
 
         val trimChars = charArrayOf('-', '=')
-        val trimPredicate = { it: Char -> it < '0' || it > '9' } // TODO: Use !it.isDigit when available in JS
-        for (example in examplesForPredicate.map { arg1(it) }) {
-            assertEquals(example.trimStart(*trimChars).trimEnd(*trimChars), example.trim(*trimChars))
-            assertEquals(example.trimStart(trimPredicate).trimEnd(trimPredicate), example.trim(trimPredicate))
+        val trimPredicate = { it: Char -> !it.isAsciiDigit() }
+        for ((source, example) in examplesForPredicate.map { it to arg1(it) }) {
+            assertContentEquals(source.trimStart(*trimChars).trimEnd(*trimChars), example.trim(*trimChars))
+            assertContentEquals(source.trimStart(trimPredicate).trimEnd(trimPredicate), example.trim(trimPredicate))
         }
     }
 
     @test fun padStart() = withOneCharSequenceArg { arg1 ->
-        fun String.padStart(length: Int): String = arg1(this).padStart(length)
-        assertEquals("s", "s".padStart(0))
-        assertEquals("s", "s".padStart(1))
-        assertEquals("  ", "".padStart(2))
-        assertEquals("--s", arg1("s").padStart(3, '-'))
+        val s = arg1("s")
+        assertContentEquals("s", s.padStart(0))
+        assertContentEquals("s", s.padStart(1))
+        assertContentEquals("--s", s.padStart(3, '-'))
+        assertContentEquals("  ", arg1("").padStart(2))
         assertFails {
-            "s".padStart(-1)
+            s.padStart(-1)
         }
     }
 
     @test fun padEnd() = withOneCharSequenceArg { arg1 ->
-        fun String.padEnd(length: Int): String = arg1(this).padEnd(length)
-        assertEquals("s", "s".padEnd(0))
-        assertEquals("s", "s".padEnd(1))
-        assertEquals("  ", "".padEnd(2))
-        assertEquals("s--", arg1("s").padEnd(3, '-'))
+        val s = arg1("s")
+        assertContentEquals("s", s.padEnd(0))
+        assertContentEquals("s", s.padEnd(1))
+        assertContentEquals("s--", s.padEnd(3, '-'))
+        assertContentEquals("  ", arg1("").padEnd(2))
         assertFails {
-            "s".padEnd(-1)
+            s.padEnd(-1)
         }
     }
 
-    @test fun removePrefix() {
-        assertEquals("fix", "prefix".removePrefix("pre"), "Removes prefix")
-        assertEquals("prefix", "preprefix".removePrefix("pre"), "Removes prefix once")
-        assertEquals("sample", "sample".removePrefix("value"))
+    @test fun removePrefix() = withOneCharSequenceArg("pre") { prefix ->
+        assertEquals("fix", "prefix".removePrefix(prefix), "Removes prefix")
+        assertEquals("prefix", "preprefix".removePrefix(prefix), "Removes prefix once")
+        assertEquals("sample", "sample".removePrefix(prefix))
         assertEquals("sample", "sample".removePrefix(""))
     }
 
-    @test fun removeSuffix() {
-        assertEquals("suf", "suffix".removeSuffix("fix"), "Removes suffix")
-        assertEquals("suffix", "suffixfix".removeSuffix("fix"), "Removes suffix once")
-        assertEquals("sample", "sample".removeSuffix("value"))
+    @test fun removeSuffix() = withOneCharSequenceArg("fix") { suffix ->
+        assertEquals("suf", "suffix".removeSuffix(suffix), "Removes suffix")
+        assertEquals("suffix", "suffixfix".removeSuffix(suffix), "Removes suffix once")
+        assertEquals("sample", "sample".removeSuffix(suffix))
         assertEquals("sample", "sample".removeSuffix(""))
     }
 
-    @test fun removeSurrounding() {
-        assertEquals("value", "<value>".removeSurrounding("<", ">"))
-        assertEquals("<value>", "<<value>>".removeSurrounding("<", ">"), "Removes surrounding once")
-        assertEquals("<value", "<value".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
-        assertEquals("value>", "value>".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
-        assertEquals("value", "value".removeSurrounding("<", ">"))
+    @test fun removeSurrounding() = withOneCharSequenceArg { arg1 ->
+        val pre = arg1("<")
+        val post = arg1(">")
+        assertEquals("value", "<value>".removeSurrounding(pre, post))
+        assertEquals("<value>", "<<value>>".removeSurrounding(pre, post), "Removes surrounding once")
+        assertEquals("<value", "<value".removeSurrounding(pre, post), "Only removes surrounding when both prefix and suffix present")
+        assertEquals("value>", "value>".removeSurrounding(pre, post), "Only removes surrounding when both prefix and suffix present")
+        assertEquals("value", "value".removeSurrounding(pre, post))
     }
 
+    @test fun removePrefixCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
+        fun String.removePrefix(prefix: String) = arg1(this).removePrefix(arg2(prefix))
+        val prefix = "pre"
+
+        assertContentEquals("fix", "prefix".removePrefix(prefix), "Removes prefix")
+        assertContentEquals("prefix", "preprefix".removePrefix(prefix), "Removes prefix once")
+        assertContentEquals("sample", "sample".removePrefix(prefix))
+        assertContentEquals("sample", "sample".removePrefix(""))
+    }
+
+    @test fun removeSuffixCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
+        fun String.removeSuffix(suffix: String) = arg1(this).removeSuffix(arg2(suffix))
+        val suffix = "fix"
+
+        assertContentEquals("suf", "suffix".removeSuffix(suffix), "Removes suffix")
+        assertContentEquals("suffix", "suffixfix".removeSuffix(suffix), "Removes suffix once")
+        assertContentEquals("sample", "sample".removeSuffix(suffix))
+        assertContentEquals("sample", "sample".removeSuffix(""))
+    }
+
+    @test fun removeSurroundingCharSequence() = withTwoCharSequenceArgs { arg1, arg2 ->
+        fun String.removeSurrounding(prefix: String, postfix: String) = arg1(this).removeSurrounding(arg2(prefix), arg2(postfix))
+
+        assertContentEquals("value", "<value>".removeSurrounding("<", ">"))
+        assertContentEquals("<value>", "<<value>>".removeSurrounding("<", ">"), "Removes surrounding once")
+        assertContentEquals("<value", "<value".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
+        assertContentEquals("value>", "value>".removeSurrounding("<", ">"), "Only removes surrounding when both prefix and suffix present")
+        assertContentEquals("value", "value".removeSurrounding("<", ">"))
+    }
 
     /*
     // unit test commented out until rangesDelimitiedBy would become public

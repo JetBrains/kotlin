@@ -8,140 +8,6 @@ import java.util.NoSuchElementException
 import kotlin.text.MatchResult
 import kotlin.text.Regex
 
-/**
- * Returns the string with leading and trailing characters matching the [predicate] trimmed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-inline public fun String.trim(predicate: (Char) -> Boolean): String {
-    var startIndex = 0
-    var endIndex = length() - 1
-    var startFound = false
-
-    while (startIndex <= endIndex) {
-        val index = if (!startFound) startIndex else endIndex
-        val match = predicate(this[index])
-
-        if (!startFound) {
-            if (!match)
-                startFound = true
-            else
-                startIndex += 1
-        }
-        else {
-            if (!match)
-                break
-            else
-                endIndex -= 1
-        }
-    }
-
-    return substring(startIndex, endIndex + 1)
-}
-
-/**
- * Returns the string with leading characters matching the [predicate] trimmed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-inline public fun String.trimStart(predicate: (Char) -> Boolean): String {
-    for (index in this.indices)
-        if (!predicate(this[index]))
-            return substring(index)
-
-    return ""
-}
-
-/**
- * Returns the string with trailing characters matching the [predicate] trimmed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-inline public fun String.trimEnd(predicate: (Char) -> Boolean): String {
-    for (index in this.indices.reversed())
-        if (!predicate(this[index]))
-            return substring(0, index + 1)
-
-    return ""
-}
-
-/**
- * Returns the string with leading and trailing characters in the [chars] array trimmed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.trim(vararg chars: Char): String = trim { it in chars }
-
-/**
- * Returns the string with leading and trailing characters in the [chars] array trimmed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.trimStart(vararg chars: Char): String = trimStart { it in chars }
-
-/**
- * Returns the string with trailing characters in the [chars] array trimmed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
-
-/**
- * Returns a string with leading and trailing whitespace trimmed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.trim(): String = trim { it.isWhitespace() }
-
-/**
- * Returns a string with leading whitespace removed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.trimStart(): String = trimStart { it.isWhitespace() }
-
-/**
- * Returns a string with trailing whitespace removed.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.trimEnd(): String = trimEnd { it.isWhitespace() }
-
-/**
- * Left pad a String with a specified character or space.
- *
- * @param length the desired string length.
- * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
- * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
- * as are necessary to reach that length.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.padStart(length: Int, padChar: Char = ' '): String {
-    if (length < 0)
-        throw IllegalArgumentException("String length $length is less than zero.")
-    if (length <= this.length())
-        return this
-
-    val sb = StringBuilder(length)
-    for (i in 1..(length - this.length()))
-        sb.append(padChar)
-    sb.append(this)
-    return sb.toString()
-}
-
-/**
- * Right pad a String with a specified character or space.
- *
- * @param length the desired string length.
- * @param padChar the character to pad string with, if it has length less than the [length] specified. Space is used by default.
- * @returns Returns a string, of length at least [length], consisting of string prepended with [padChar] as many times.
- * as are necessary to reach that length.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.padEnd(length: Int, padChar: Char = ' '): String {
-    if (length < 0)
-        throw IllegalArgumentException("String length $length is less than zero.")
-    if (length <= this.length())
-        return this
-
-    val sb = StringBuilder(length)
-    sb.append(this)
-    for (i in 1..(length - this.length()))
-        sb.append(padChar)
-    return sb.toString()
-}
-
 /** Returns `true` if the string is not `null` and not empty */
 @Deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"), DeprecationLevel.ERROR)
 @kotlin.jvm.JvmName("isNotEmptyNullable")
@@ -273,69 +139,7 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
     val index = lastIndexOf(delimiter)
     return if (index == -1) missingDelimiterValue else substring(index + delimiter.length(), length())
 }
-*/
 
-/**
- * Replaces the part of the string at the given range with the [replacement] string.
- * @param firstIndex the index of the first character to be replaced.
- * @param lastIndex the index of the first character after the replacement to keep in the string.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: String): String {
-    if (lastIndex < firstIndex)
-        throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
-    val sb = StringBuilder()
-    sb.append(this, 0, firstIndex)
-    sb.append(replacement)
-    sb.append(this, lastIndex, length())
-    return sb.toString()
-}
-
-/**
- * Replace the part of string at the given [range] with the [replacement] string.
- *
- * The end index of the [range] is included in the part to be replaced.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.replaceRange(range: IntRange, replacement: String): String = replaceRange(range.start, range.end + 1, replacement)
-
-/**
- * Removes the part of a string at a given range.
- * @param firstIndex the index of the first character to be removed.
- * @param lastIndex the index of the first character after the removed part to keep in the string.
- *
- *  [lastIndex] is not included in the removed part.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.removeRange(firstIndex: Int, lastIndex: Int): String {
-    if (lastIndex < firstIndex)
-        throw IndexOutOfBoundsException("Last index ($lastIndex) is less than first index ($firstIndex)")
-
-    if (lastIndex == firstIndex)
-        return this
-
-    val sb = StringBuilder(length() - (lastIndex - firstIndex))
-    sb.append(this, 0, firstIndex)
-    sb.append(this, lastIndex, length())
-    return sb.toString()
-}
-
-/**
- * Removes the part of a string at the given [range].
- *
- * The end index of the [range] is included in the removed part.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
-
-/*
-
-/**
- * Removes the given [delimiter] string from both the start and the end of this string
- * if and only if it starts with and ends with the [delimiter].
- * Otherwise returns this string unchanged.
- */
-public fun String.removeSurrounding(delimiter: String): String = removeSurrounding(delimiter, delimiter)
 
 /**
  * Replace part of string before the first occurrence of given delimiter with the [replacement] string.
@@ -409,6 +213,30 @@ public fun String.replaceBeforeLast(delimiter: String, replacement: String, miss
     return if (index == -1) missingDelimiterValue else replaceRange(0, index, replacement)
 }
 */
+
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: String): String
+        = replaceRange(firstIndex, lastIndex, replacement)
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.replaceRange(range: IntRange, replacement: String): String
+        = replaceRange(range.start, range.end + 1, replacement)
+
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.removePrefix(prefix: String): String = removePrefix(prefix)
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.removeSuffix(suffix: String): String = removeSuffix(suffix)
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.removeSurrounding(prefix: String, suffix: String): String = removeSurrounding(prefix, suffix)
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun String.removeSurrounding(delimiter: String): String = removeSurrounding(delimiter, delimiter)
+
+
 
 /**
  * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
