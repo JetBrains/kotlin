@@ -911,8 +911,6 @@ public abstract class StackValue {
         private final ExpressionCodegen codegen;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
-        private final FunctionDescriptor setterDescriptor;
-        private final FunctionDescriptor getterDescriptor;
 
         public CollectionElement(
                 @NotNull CollectionElementReceiver collectionElementReceiver,
@@ -924,10 +922,10 @@ public abstract class StackValue {
             super(type, false, false, collectionElementReceiver, true);
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
-            this.setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
-            this.getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
-            this.setter = resolvedSetCall == null ? null : codegen.resolveToCallable(setterDescriptor, false, resolvedSetCall);
-            this.getter = resolvedGetCall == null ? null : codegen.resolveToCallable(getterDescriptor, false, resolvedGetCall);
+            this.setter = resolvedSetCall == null ? null :
+                          codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(resolvedSetCall), false, resolvedSetCall);
+            this.getter = resolvedGetCall == null ? null :
+                          codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(resolvedGetCall), false, resolvedGetCall);
             this.codegen = codegen;
         }
 
