@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -778,7 +779,7 @@ public class DescriptorResolver {
             else {
                 LexicalWritableScope writableScope = new LexicalWritableScope(
                         scope, containingDeclaration, false, null, new TraceBasedRedeclarationHandler(trace),
-                        "Scope with type parameters of a property");
+                        LexicalScopeKind.PROPERTY_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(
                         propertyDescriptor, writableScope, scope, typeParameters, trace);
                 writableScope.changeLockLevel(LexicalWritableScope.LockLevel.READING);
@@ -991,7 +992,7 @@ public class DescriptorResolver {
 
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(
-            @NotNull LexicalScope scope,
+            @NotNull LexicalScope scopeWithTypeParameters,
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull AnnotationSplitter annotationSplitter,
@@ -1002,7 +1003,7 @@ public class DescriptorResolver {
         if (setter != null) {
             Annotations annotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER),
-                    annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace)));
+                    annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, setter.getModifierList(), trace)));
             KtParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptorImpl(propertyDescriptor, annotations,
@@ -1032,7 +1033,7 @@ public class DescriptorResolver {
                     type = propertyDescriptor.getType(); // TODO : this maybe unknown at this point
                 }
                 else {
-                    type = typeResolver.resolveType(scope, typeReference, trace, true);
+                    type = typeResolver.resolveType(scopeWithTypeParameters, typeReference, trace, true);
                     KotlinType inType = propertyDescriptor.getType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
@@ -1045,7 +1046,7 @@ public class DescriptorResolver {
                 }
 
                 ValueParameterDescriptorImpl valueParameterDescriptor =
-                        resolveValueParameterDescriptor(scope, setterDescriptor, parameter, 0, type, trace);
+                        resolveValueParameterDescriptor(scopeWithTypeParameters, setterDescriptor, parameter, 0, type, trace);
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
             else {
@@ -1071,7 +1072,7 @@ public class DescriptorResolver {
 
     @Nullable
     private PropertyGetterDescriptorImpl resolvePropertyGetterDescriptor(
-            @NotNull LexicalScope scope,
+            @NotNull LexicalScope scopeWithTypeParameters,
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull AnnotationSplitter annotationSplitter,
@@ -1082,13 +1083,13 @@ public class DescriptorResolver {
         if (getter != null) {
             Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
-                    annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace)));
+                    annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, getter.getModifierList(), trace)));
 
             KotlinType outType = propertyDescriptor.getType();
             KotlinType returnType = outType;
             KtTypeReference returnTypeReference = getter.getReturnTypeReference();
             if (returnTypeReference != null) {
-                returnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
+                returnType = typeResolver.resolveType(scopeWithTypeParameters, returnTypeReference, trace, true);
                 if (outType != null && !TypeUtils.equalTypes(returnType, outType)) {
                     trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType(), outType));
                 }

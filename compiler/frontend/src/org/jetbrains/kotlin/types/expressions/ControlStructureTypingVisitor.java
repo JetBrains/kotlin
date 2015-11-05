@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
@@ -98,8 +99,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         KtExpression elseBranch = ifExpression.getElse();
         KtExpression thenBranch = ifExpression.getThen();
 
-        LexicalWritableScope thenScope = newWritableScopeImpl(context, "Then scope");
-        LexicalWritableScope elseScope = newWritableScopeImpl(context, "Else scope");
+        LexicalWritableScope thenScope = newWritableScopeImpl(context, LexicalScopeKind.THEN);
+        LexicalWritableScope elseScope = newWritableScopeImpl(context, LexicalScopeKind.ELSE);
         DataFlowInfo thenInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(conditionDataFlowInfo);
         DataFlowInfo elseInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, false, context).and(conditionDataFlowInfo);
 
@@ -227,7 +228,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo bodyTypeInfo;
         DataFlowInfo conditionInfo = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
         if (body != null) {
-            LexicalWritableScope scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
+            LexicalWritableScope scopeToExtend = newWritableScopeImpl(context, LexicalScopeKind.WHILE);
             bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     scopeToExtend, Collections.singletonList(body),
                     CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
@@ -320,7 +321,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             bodyTypeInfo = facade.getTypeInfo(body, context.replaceScope(context.scope));
         }
         else if (body != null) {
-            LexicalWritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
+            LexicalWritableScope writableScope = newWritableScopeImpl(context, LexicalScopeKind.DO_WHILE);
             conditionScope = writableScope;
             List<KtExpression> block;
             if (body instanceof KtBlockExpression) {
@@ -388,7 +389,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             loopRangeInfo = TypeInfoFactoryKt.noTypeInfo(context);
         }
 
-        LexicalWritableScope loopScope = newWritableScopeImpl(context, "Scope with for-loop index");
+        LexicalWritableScope loopScope = newWritableScopeImpl(context, LexicalScopeKind.FOR);
 
         KtParameter loopParameter = expression.getLoopParameter();
         if (loopParameter != null) {
@@ -480,7 +481,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 KotlinType throwableType = components.builtIns.getThrowable().getDefaultType();
                 components.dataFlowAnalyzer.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
-                    LexicalWritableScope catchScope = newWritableScopeImpl(context, "Catch scope");
+                    LexicalWritableScope catchScope = newWritableScopeImpl(context, LexicalScopeKind.CATCH);
                     catchScope.addVariableDescriptor(variableDescriptor);
                     KotlinType type = facade.getTypeInfo(catchBody, context.replaceScope(catchScope)).getType();
                     if (type != null) {

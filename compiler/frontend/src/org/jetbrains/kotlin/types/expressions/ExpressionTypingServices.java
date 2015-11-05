@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -160,7 +161,7 @@ public class ExpressionTypingServices {
 
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
         LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null,
-                                                              new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
+                                                              new TraceBasedRedeclarationHandler(context.trace), LexicalScopeKind.CODE_BLOCK);
         scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
 
         KotlinTypeInfo r;

@@ -51,7 +51,7 @@ public final class JetScopeUtils {
                 getPropertyDeclarationInnerScope(propertyDescriptor, parentScope,
                                                  propertyDescriptor.getTypeParameters(),
                                                  propertyDescriptor.getExtensionReceiverParameter(), trace);
-        return new LexicalScopeImpl(propertyDeclarationInnerScope, parentScope.getOwnerDescriptor(), false, null, "Accessor Scope");
+        return new LexicalScopeImpl(propertyDeclarationInnerScope, parentScope.getOwnerDescriptor(), false, null, LexicalScopeKind.UNSORTED);
     }
 
     public static LexicalScope getPropertyDeclarationInnerScope(
@@ -111,7 +111,7 @@ public final class JetScopeUtils {
     ) {
         return new LexicalScopeImpl(
                 outerScope, propertyDescriptor, addLabelForProperty, receiver,
-                "Property declaration inner scope",
+                LexicalScopeKind.UNSORTED,
                 redeclarationHandler, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
             @Override
             public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {

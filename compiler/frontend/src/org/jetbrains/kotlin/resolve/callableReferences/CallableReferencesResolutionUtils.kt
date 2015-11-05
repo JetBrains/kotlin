@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
@@ -105,6 +106,9 @@ public fun resolvePossiblyAmbiguousCallableReference(
 
         // todo: drop this class when new resolve will be finished
         class StaticScopeAsLexicalScope(val staticScope: MemberScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), classifier) {
+            override val kind: LexicalScopeKind
+                get() = LexicalScopeKind.CALLABLE_REFERENCE
+
             override fun printStructure(p: Printer) {
                 p.println(toString())
             }

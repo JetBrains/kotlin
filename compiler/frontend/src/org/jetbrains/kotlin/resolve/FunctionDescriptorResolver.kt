@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
@@ -142,7 +143,7 @@ class FunctionDescriptorResolver(
             expectedFunctionType: KotlinType
     ) {
         val innerScope = LexicalWritableScope(scope, functionDescriptor, true, null,
-                                              TraceBasedRedeclarationHandler(trace), "Function descriptor header scope")
+                                              TraceBasedRedeclarationHandler(trace), LexicalScopeKind.FUNCTION_HEADER)
 
         val typeParameterDescriptors = descriptorResolver.
                 resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.getTypeParameters(), trace)
@@ -284,7 +285,7 @@ class FunctionDescriptorResolver(
                 constructorDescriptor,
                 false, null,
                 TraceBasedRedeclarationHandler(trace),
-                "Scope with value parameters of a constructor"
+                LexicalScopeKind.CONSTRUCTOR_HEADER
         )
         parameterScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH)
         val constructor = constructorDescriptor.initialize(

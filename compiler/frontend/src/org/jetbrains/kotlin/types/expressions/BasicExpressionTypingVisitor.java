@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.constants.*;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -1224,11 +1225,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo leftTypeInfo = getTypeInfoOrNullType(left, context.replaceExpectedType(booleanType), facade);
         DataFlowInfo dataFlowInfo = leftTypeInfo.getDataFlowInfo();
 
-        LexicalWritableScope leftScope = newWritableScopeImpl(context, "Left scope of && or ||");
+        LexicalWritableScope leftScope = newWritableScopeImpl(context, LexicalScopeKind.LEFT_BOOLEAN_EXPRESSION);
         // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
         boolean isAnd = operationType == KtTokens.ANDAND;
         DataFlowInfo flowInfoLeft = components.dataFlowAnalyzer.extractDataFlowInfoFromCondition(left, isAnd, context).and(dataFlowInfo);
-        LexicalWritableScope rightScope = isAnd ? leftScope : newWritableScopeImpl(context, "Right scope of && or ||");
+        LexicalWritableScope rightScope = isAnd ? leftScope : newWritableScopeImpl(context, LexicalScopeKind.RIGHT_BOOLEAN_EXPRESSION);
 
         ExpressionTypingContext contextForRightExpr =
                 context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope).replaceExpectedType(booleanType);

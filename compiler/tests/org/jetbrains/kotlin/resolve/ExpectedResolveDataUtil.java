@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
@@ -139,7 +140,7 @@ public class ExpectedResolveDataUtil {
 
         LexicalScopeImpl lexicalScope = new LexicalScopeImpl(ImportingScope.Empty.INSTANCE, classDescriptor, false,
                                                              classDescriptor.getThisAsReceiverParameter(),
-                                                             "Scope with implicit this for class: " + classDescriptor);
+                                                             LexicalScopeKind.SYNTHETIC);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 new BindingTraceContext(), lexicalScope,

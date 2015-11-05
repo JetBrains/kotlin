@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.AnnotationChecker;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -146,7 +147,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     
     protected ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
         return new ExpressionTypingVisitorForStatements(this,
-                                                        ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"),
+                                                        ExpressionTypingUtils.newWritableScopeImpl(context, LexicalScopeKind.CODE_BLOCK),
                                                         basic, controlStructures, patterns, functions);
     }
 

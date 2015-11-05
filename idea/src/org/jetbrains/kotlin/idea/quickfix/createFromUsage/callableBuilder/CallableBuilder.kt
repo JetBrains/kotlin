@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -354,7 +355,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val memberScope = receiverClassDescriptor.getMemberScope(projections)
 
             return LexicalScopeImpl(memberScope.memberScopeAsImportingScope(), receiverClassDescriptor, false, null,
-                                    "Scope with type parameters for ${receiverClassDescriptor.getName()}") {
+                                    LexicalScopeKind.SYNTHETIC) {
                 receiverClassDescriptor.typeConstructor.parameters.forEach { addClassifierDescriptor(it) }
             }
         }

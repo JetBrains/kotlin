@@ -73,7 +73,7 @@ public class FunctionDescriptorUtil {
             @NotNull RedeclarationHandler redeclarationHandler
     ) {
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
-        return new LexicalScopeImpl(outerScope, descriptor, true, receiver, "Function inner scope", redeclarationHandler,
+        return new LexicalScopeImpl(outerScope, descriptor, true, receiver, LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationHandler,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override
                                         public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {

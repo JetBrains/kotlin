@@ -28,7 +28,7 @@ class LexicalWritableScope(
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
         redeclarationHandler: RedeclarationHandler,
-        private val debugName: String
+        override val kind: LexicalScopeKind
 ) : LexicalScope, WritableScopeStorage(redeclarationHandler) {
     public enum class LockLevel {
         WRITING,
@@ -106,7 +106,7 @@ class LexicalWritableScope(
         override fun getContributedFunctions(name: Name, location: LookupLocation)
                 = this@LexicalWritableScope.getFunctions(name, descriptorLimit)
 
-        override fun toString(): String = "Snapshot($descriptorLimit) for $debugName"
+        override fun toString(): String = "Snapshot($descriptorLimit) for $kind"
 
         override fun printStructure(p: Printer) {
             p.println("Snapshot with descriptorLimit = $descriptorLimit for scope:")
@@ -114,10 +114,10 @@ class LexicalWritableScope(
         }
     }
 
-    override fun toString(): String = debugName
+    override fun toString(): String = kind.toString()
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName, ": ", debugName, "; for descriptor: ", ownerDescriptor.name,
+        p.println(javaClass.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
                   " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 

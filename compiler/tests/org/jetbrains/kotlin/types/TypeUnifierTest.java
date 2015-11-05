@@ -202,7 +202,7 @@ public class TypeUnifierTest extends KotlinLiteFixture {
 
     private TypeProjection makeTypeProjection(MemberScope scope, String typeStr) {
         LexicalScope withX = new LexicalScopeImpl(ScopeUtilsKt.memberScopeAsImportingScope(scope), builtIns.getBuiltInsModule(),
-                                                  false, null, "With X", RedeclarationHandler.DO_NOTHING,
+                                                  false, null, LexicalScopeKind.SYNTHETIC, RedeclarationHandler.DO_NOTHING,
                                                   new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                                       @Override
                                                       public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.withParent
 import org.jetbrains.kotlin.storage.StorageManager
@@ -106,6 +107,9 @@ public open class FileScopeProviderImpl(
         scope = LazyImportScope(scope, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName")
 
         val lexicalScope = object : BaseLexicalScope(scope, packageFragment) {
+            override val kind: LexicalScopeKind
+                get() = LexicalScopeKind.FILE
+
             override fun printStructure(p: Printer) {
                 p.println("File top-level scope (empty)")
             }

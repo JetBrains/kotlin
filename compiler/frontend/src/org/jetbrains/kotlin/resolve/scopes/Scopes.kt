@@ -38,15 +38,60 @@ interface LexicalScope: HierarchicalScope {
 
     val implicitReceiver: ReceiverParameterDescriptor?
 
+    val kind: LexicalScopeKind
+
     companion object {
         fun empty(parent: HierarchicalScope, ownerDescriptor: DeclarationDescriptor): BaseLexicalScope {
             return object : BaseLexicalScope(parent, ownerDescriptor) {
+                override val kind: LexicalScopeKind get() = LexicalScopeKind.EMPTY
+
                 override fun printStructure(p: Printer) {
                     p.println("Empty lexical scope with owner = $ownerDescriptor and parent = ${parent}.")
                 }
             }
         }
     }
+}
+
+enum class LexicalScopeKind {
+    @Deprecated("Temporary")
+    UNSORTED,
+    EMPTY,
+
+    CLASS_HEADER,
+    CLASS_INHERITANCE,
+    CONSTRUCTOR_HEADER,
+    PRIMARY_CONSTRUCTOR_DEFAULT_VALUE,
+    CLASS_STATIC_SCOPE,
+    CLASS_MEMBER_SCOPE,
+    CLASS_INITIALIZER,
+
+    PROPERTY_HEADER,
+    PROPERTY_INITIALIZER,
+    PROPERTY_DELEGATE,
+    PROPERTY_ACCESSOR,
+
+    FUNCTION_HEADER,
+    FUNCTION_INNER_SCOPE,
+
+    CODE_BLOCK,
+
+    LEFT_BOOLEAN_EXPRESSION,
+    RIGHT_BOOLEAN_EXPRESSION,
+
+    THEN,
+    ELSE,
+    DO_WHILE,
+    CATCH,
+    FOR,
+    WHILE,
+    WHEN,
+
+    FILE,
+    CALLABLE_REFERENCE,
+
+    // for tests, KDoc & IDE
+    SYNTHETIC
 }
 
 interface ImportingScope : HierarchicalScope {

@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -35,14 +32,14 @@ class ClassResolutionScopesSupport(
         private val getOuterScope: () -> LexicalScope,
         private val primaryConstructorParameters: List<KtParameter>? = null
 ) {
-    private fun scopeWithGenerics(parent: LexicalScope, debugName: String): LexicalScopeImpl {
-        return LexicalScopeImpl(parent, classDescriptor, false, null, debugName) {
+    private fun scopeWithGenerics(parent: LexicalScope): LexicalScopeImpl {
+        return LexicalScopeImpl(parent, classDescriptor, false, null, LexicalScopeKind.CLASS_HEADER) {
             classDescriptor.declaredTypeParameters.forEach { addClassifierDescriptor(it) }
         }
     }
 
     public val scopeForClassHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
-        scopeWithGenerics(getOuterScope(), "Scope for class header resolution for ${classDescriptor.name}")
+        scopeWithGenerics(getOuterScope())
     }
 
     private val inheritanceScope: () -> LexicalScope = storageManager.createLazyValueWithPostCompute(
@@ -57,10 +54,9 @@ class ClassResolutionScopesSupport(
 
 
     public val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
-        val scopeWithGenerics = scopeWithGenerics(inheritanceScope(),
-                                                  "Scope with generics for ${classDescriptor.name}")
+        val scopeWithGenerics = scopeWithGenerics(inheritanceScope())
         LexicalScopeImpl(scopeWithGenerics, classDescriptor, true, classDescriptor.thisAsReceiverParameter,
-                              "Scope for member declaration resolution: ${classDescriptor.name}")
+                              LexicalScopeKind.CLASS_MEMBER_SCOPE)
     }
 
     public val scopeForStaticMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
@@ -69,7 +65,7 @@ class ClassResolutionScopesSupport(
         }
         else {
             LexicalScopeImpl(inheritanceScope(), classDescriptor, false, null,
-                             "Scope for static member declaration resolution: ${classDescriptor.name}")
+                             LexicalScopeKind.CLASS_STATIC_SCOPE)
         }
     }
 
@@ -80,7 +76,7 @@ class ClassResolutionScopesSupport(
             "primary constructor parameters must be not null, because primary constructor exist: $primaryConstructor"
         }
         LexicalScopeImpl(scopeForMemberDeclarationResolution(), primaryConstructor, false, null,
-                         "Scope for initializer resolution: ${classDescriptor.name}") {
+                         LexicalScopeKind.CLASS_INITIALIZER) {
             primaryConstructorParameters!!.forEachIndexed {
                 index, parameter ->
                 if (!parameter.hasValOrVar()) {
@@ -117,9 +113,9 @@ class ClassResolutionScopesSupport(
         staticScopes.addIfNotNull(classDescriptor.companionObjectDescriptor?.unsubstitutedInnerClassesScope)
 
         return LexicalChainedScope(parent, ownerDescriptor, false,
-                            classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter,
-                            "Scope with static members, nested classes and companion object for ${classDescriptor.name}",
-                            memberScopes = *staticScopes.toTypedArray(), isStaticScope = true)
+                                   classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter,
+                                   LexicalScopeKind.CLASS_INHERITANCE,
+                                   memberScopes = *staticScopes.toTypedArray(), isStaticScope = true)
     }
 
 }

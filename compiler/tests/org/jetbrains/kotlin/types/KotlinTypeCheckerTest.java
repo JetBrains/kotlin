@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
@@ -562,7 +563,7 @@ public class KotlinTypeCheckerTest extends KotlinLiteFixture {
         );
 
         LexicalScope scope = new LexicalScopeImpl(scopeWithImports, scopeWithImports.getOwnerDescriptor(), false,
-                                                  receiverParameterDescriptor, "Scope with receiver: " + thisType);
+                                                  receiverParameterDescriptor, LexicalScopeKind.SYNTHETIC);
         assertType(scope, expression, expectedType);
     }
 

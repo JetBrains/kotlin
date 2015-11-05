@@ -27,7 +27,7 @@ public class LexicalScopeImpl @JvmOverloads constructor(
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
-        private val debugName: String,
+        override val kind: LexicalScopeKind,
         redeclarationHandler: RedeclarationHandler = RedeclarationHandler.DO_NOTHING,
         initialize: LexicalScopeImpl.InitializeHandler.() -> Unit = {}
 ): LexicalScope, WritableScopeStorage(redeclarationHandler) {
@@ -43,10 +43,10 @@ public class LexicalScopeImpl @JvmOverloads constructor(
     override fun getContributedFunctions(name: Name, location: LookupLocation) = getFunctions(name)
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = addedDescriptors
 
-    override fun toString(): String = debugName
+    override fun toString(): String = kind.toString()
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName, ": ", debugName, "; for descriptor: ", ownerDescriptor.name,
+        p.println(javaClass.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
                   " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 

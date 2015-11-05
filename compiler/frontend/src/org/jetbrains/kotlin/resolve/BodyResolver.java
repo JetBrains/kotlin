@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
-import org.jetbrains.kotlin.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -566,7 +563,7 @@ public class BodyResolver {
             final ConstructorDescriptor unsubstitutedPrimaryConstructor
     ) {
         return new LexicalScopeImpl(originalScope, unsubstitutedPrimaryConstructor, false, null,
-                                    "Scope with value parameters of a constructor", RedeclarationHandler.DO_NOTHING,
+                                    LexicalScopeKind.PRIMARY_CONSTRUCTOR_DEFAULT_VALUE, RedeclarationHandler.DO_NOTHING,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override
                                         public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
@@ -805,7 +802,7 @@ public class BodyResolver {
             KtProperty property = (KtProperty) function.getParent();
             final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
             innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
-                                              "Accessor inner scope with synthetic field",
+                                              LexicalScopeKind.PROPERTY_ACCESSOR,
                                               RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                 @Override
                 public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
