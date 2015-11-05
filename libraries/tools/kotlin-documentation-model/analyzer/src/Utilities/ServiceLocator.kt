@@ -40,10 +40,10 @@ public object ServiceLocator {
         return ServiceDescriptor(implementationName, category, properties["description"]?.toString(), className)
     }
 
-    fun allServices(category: String): List<ServiceDescriptor> = javaClass.classLoader.getResourceAsStream("dokka/$category")?.use { stream ->
+    fun allServices(category: String): List<ServiceDescriptor> {
         val entries = this.javaClass.classLoader.getResources("dokka/$category")?.toList() ?: emptyList()
 
-        entries.flatMap {
+        return entries.flatMap {
             when (it.protocol) {
                 "file" -> File(it.file).listFiles()?.filter { it.extension == "properties" }?.map { lookupDescriptor(category, it.nameWithoutExtension) } ?: emptyList()
                 "jar" -> {
@@ -63,7 +63,7 @@ public object ServiceLocator {
                 else -> emptyList<ServiceDescriptor>()
             }
         }
-    } ?: emptyList()
+    }
 }
 
 public inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String): T = lookup(T::class.java, category, implementationName)
