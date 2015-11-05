@@ -4022,6 +4022,27 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/simpleClassLiterals.kt");
                 doTestWithStdlib(fileName);
             }
+
+            @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/methodsFromAny")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class MethodsFromAny extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInMethodsFromAny() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("callableReferences.kt")
+                public void testCallableReferences() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/methodsFromAny/callableReferences.kt");
+                    doTestWithStdlib(fileName);
+                }
+
+                @TestMetadata("classReference.kt")
+                public void testClassReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/noKotlinReflect/methodsFromAny/classReference.kt");
+                    doTestWithStdlib(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/parameters")

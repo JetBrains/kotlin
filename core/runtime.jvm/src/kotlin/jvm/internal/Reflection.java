@@ -39,6 +39,8 @@ public class Reflection {
         factory = impl != null ? impl : new ReflectionFactory();
     }
 
+    /* package */ static final String REFLECTION_NOT_AVAILABLE = " (Kotlin reflection is not available)";
+
     private static final KClass[] EMPTY_K_CLASS_ARRAY = new KClass[0];
 
     public static KClass createKotlinClass(Class javaClass) {

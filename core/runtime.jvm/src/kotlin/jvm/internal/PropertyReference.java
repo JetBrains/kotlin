@@ -19,4 +19,24 @@ package kotlin.jvm.internal;
 import kotlin.reflect.KProperty;
 
 public abstract class PropertyReference extends CallableReference implements KProperty {
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof PropertyReference)) return false;
+
+        PropertyReference other = (PropertyReference) obj;
+        return getOwner().equals(other.getOwner()) &&
+               getName().equals(other.getName()) &&
+               getSignature().equals(other.getSignature());
+    }
+
+    @Override
+    public int hashCode() {
+        return (getOwner().hashCode() * 31 + getName().hashCode()) * 31 + getSignature().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "property " + getName() + Reflection.REFLECTION_NOT_AVAILABLE;
+    }
 }

@@ -79,4 +79,28 @@ public class FunctionReference extends FunctionImpl implements KFunction {
     protected static Error error() {
         throw new KotlinReflectionNotSupportedError();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof FunctionReference)) return false;
+
+        FunctionReference other = (FunctionReference) obj;
+        return getOwner().equals(other.getOwner()) &&
+               getName().equals(other.getName()) &&
+               getSignature().equals(other.getSignature());
+    }
+
+    @Override
+    public int hashCode() {
+        return (getOwner().hashCode() * 31 + getName().hashCode()) * 31 + getSignature().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        // TODO: consider adding the class name to toString() for constructors
+        return "<init>".equals(getName())
+               ? "constructor" + Reflection.REFLECTION_NOT_AVAILABLE
+               : "function " + getName() + Reflection.REFLECTION_NOT_AVAILABLE;
+    }
 }
