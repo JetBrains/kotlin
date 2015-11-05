@@ -43,8 +43,12 @@ import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.classFilesComparison.assertEqualDirectories
+import org.jetbrains.kotlin.jps.incremental.LOOKUP_TRACKER_STORAGE_PROVIDER
+import org.jetbrains.kotlin.jps.incremental.LOOKUP_TRACKER_TARGET
+import org.jetbrains.kotlin.jps.incremental.LookupSymbol
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
@@ -75,11 +79,15 @@ public abstract class AbstractIncrementalJpsTest(
         private val COMMANDS_AS_MESSAGE_PART = COMMANDS.joinToString("/") { "\".$it\"" }
     }
 
+    protected open val enableExperimentalIncrementalCompilation = false
+
     protected var testDataDir: File by Delegates.notNull()
 
     protected var workDir: File by Delegates.notNull()
 
     protected var projectDescriptor: ProjectDescriptor by Delegates.notNull()
+
+    protected var lookupsDuringTest: MutableSet<LookupSymbol> by Delegates.notNull()
 
     protected val mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
@@ -98,6 +106,11 @@ public abstract class AbstractIncrementalJpsTest(
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
+        lookupsDuringTest = hashSetOf()
+
+        if (enableExperimentalIncrementalCompilation) {
+            IncrementalCompilation.enableExperimental()
+        }
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -106,13 +119,18 @@ public abstract class AbstractIncrementalJpsTest(
 
     override fun tearDown() {
         System.clearProperty("kotlin.jps.tests")
+
+        if (enableExperimentalIncrementalCompilation) {
+            IncrementalCompilation.disableExperimental()
+        }
+
         super.tearDown()
     }
 
     protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
         get() = null
 
-    protected open fun createLookupTracker(): LookupTracker = LookupTracker.DO_NOTHING
+    private fun createLookupTracker(): TestLookupTracker = TestLookupTracker()
 
     protected open fun checkLookups(@Suppress("UNUSED_PARAMETER") lookupTracker: LookupTracker, compiledFiles: Set<File>) {
     }
@@ -135,6 +153,9 @@ public abstract class AbstractIncrementalJpsTest(
             if (checkLookups) {
                 checkLookups(lookupTracker, logger.compiledFiles)
             }
+
+            val lookups = lookupTracker.lookups.map { LookupSymbol(it.name, it.scopeFqName) }
+            lookupsDuringTest.addAll(lookups)
 
             if (!buildResult.isSuccessful) {
                 val errorMessages =
@@ -314,6 +335,7 @@ public abstract class AbstractIncrementalJpsTest(
 
     private fun createMappingsDump(project: ProjectDescriptor) =
             createKotlinIncrementalCacheDump(project) + "\n\n\n" +
+            createLookupCacheDump(project) + "\n\n\n" +
             createCommonMappingsDump(project) + "\n\n\n" +
             createJavaMappingsDump(project)
 
@@ -325,6 +347,21 @@ public abstract class AbstractIncrementalJpsTest(
                 append("</target $target>\n\n\n")
             }
         }.toString()
+    }
+
+    private fun createLookupCacheDump(project: ProjectDescriptor): String {
+        val sb = StringBuilder()
+        val p = Printer(sb)
+        p.println("Begin of Lookup Maps")
+        p.println()
+
+        val lookupStorage = project.dataManager.getStorage(LOOKUP_TRACKER_TARGET, LOOKUP_TRACKER_STORAGE_PROVIDER)
+        lookupStorage.forceGC()
+        p.print(lookupStorage.dump(lookupsDuringTest))
+
+        p.println()
+        p.println("End of Lookup Maps")
+        return sb.toString()
     }
 
     private fun createCommonMappingsDump(project: ProjectDescriptor): String {
