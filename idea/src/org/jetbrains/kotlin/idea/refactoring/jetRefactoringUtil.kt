@@ -59,6 +59,7 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -74,6 +75,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -760,4 +762,11 @@ fun KtExpression.removeTemplateEntryBracesIfPossible(): KtExpression {
     val intention = RemoveCurlyBracesFromTemplateIntention()
     val newEntry = if (intention.isApplicableTo(parent)) intention.applyTo(parent) else parent
     return newEntry.expression!!
+}
+
+fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
+    val callableDescriptor = element.resolveToDescriptor() as? CallableDescriptor ?: return
+    if (callableDescriptor.overriddenDescriptors.isEmpty()) {
+        element.removeModifier(KtTokens.OVERRIDE_KEYWORD)
+    }
 }

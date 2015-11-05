@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbsent
+import org.jetbrains.kotlin.idea.core.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.core.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
@@ -52,7 +53,8 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         function: T,
         val originalCallableDescriptor: CallableDescriptor,
         baseFunction: KotlinCallableDefinitionUsage<PsiElement>?,
-        private val samCallType: KotlinType?
+        private val samCallType: KotlinType?,
+        private val canDropOverride: Boolean = true
 ) : KotlinUsageInfo<T>(function) {
     val baseFunction: KotlinCallableDefinitionUsage<*> = baseFunction ?: this
 
@@ -137,6 +139,10 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
 
         if (changeInfo.isVisibilityChanged() && !KtPsiUtil.isLocal(element as KtDeclaration)) {
             changeVisibility(changeInfo, element)
+        }
+
+        if (canDropOverride) {
+            dropOverrideKeywordIfNecessary(element)
         }
 
         return true
