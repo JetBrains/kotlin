@@ -19,10 +19,6 @@ package org.jetbrains.kotlin.idea.completion.test
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import com.intellij.util.ArrayUtil
-import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.io.File
 
@@ -31,15 +27,14 @@ public abstract class AbstractKotlinSourceInJavaCompletionTest : KotlinFixtureCo
 
     override fun doTest(testPath: String) {
         val mockLibDir = File(COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib")
-        val listFiles = mockLibDir.listFiles()
-        TestCase.assertNotNull(listFiles)
-        val paths = ArrayUtil.toStringArray(ContainerUtil.map<File, String>(listFiles, object : Function<File, String> {
-            override fun `fun`(file: File): String {
-                return FileUtil.toSystemIndependentName(file.getAbsolutePath())
-            }
-        }))
+        val paths = mockLibDir.listFiles()!!.map {
+            FileUtil.toSystemIndependentName(it.absolutePath)
+        }.toTypedArray()
+
         myFixture.configureByFiles(*paths)
-        super.doTest(testPath)
+        LightClassComputationControl.testWithControl(project, FileUtil.loadFile(File(testPath))) {
+            super.doTest(testPath)
+        }
     }
 
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST

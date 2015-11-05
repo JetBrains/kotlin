@@ -5,3 +5,4 @@ public class Testing {
 }
 
 // EXIST: DefaultImpls
+// LIGHT_CLASS: mockLib.foo.MyInterface

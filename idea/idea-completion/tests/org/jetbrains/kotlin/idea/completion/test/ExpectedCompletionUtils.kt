@@ -133,6 +133,7 @@ public object ExpectedCompletionUtils {
             NOTHING_ELSE_PREFIX,
             RUNTIME_TYPE,
             COMPLETION_TYPE_PREFIX,
+            LightClassComputationControl.LIGHT_CLASS_DIRECTIVE,
             AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE)
 
     public fun itemsShouldExist(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {

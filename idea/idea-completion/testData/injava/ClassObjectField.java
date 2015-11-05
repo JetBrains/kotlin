@@ -5,3 +5,4 @@ public class Testing {
 }
 
 // EXIST: Companion
+// LIGHT_CLASS: mockLib.foo.LibClass

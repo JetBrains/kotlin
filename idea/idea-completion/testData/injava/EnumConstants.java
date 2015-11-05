@@ -5,3 +5,4 @@ public class Testing {
 }
 
 // EXIST: RED, GREEN, BLUE
+// LIGHT_CLASS: mockLib.foo.LibEnum

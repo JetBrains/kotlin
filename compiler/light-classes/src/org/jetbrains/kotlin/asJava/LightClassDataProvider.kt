@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.google.common.collect.Lists
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
@@ -107,6 +108,8 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
             if (pop !== javaFileStub) {
                 LOG.error("Unbalanced stack operations: " + pop)
             }
+
+            ServiceManager.getService(project, StubComputationTracker::class.java)?.onStubComputed(javaFileStub)
         }
         catch (e: ProcessCanceledException) {
             throw e
@@ -353,4 +356,9 @@ class LightClassDataProviderForFileFacade(
     override fun toString(): String {
         return this.javaClass.name + " for $facadeFqName"
     }
+}
+
+
+interface StubComputationTracker {
+    fun onStubComputed(javaFileStub: PsiJavaFileStub)
 }
