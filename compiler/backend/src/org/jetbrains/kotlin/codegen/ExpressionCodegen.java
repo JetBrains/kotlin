@@ -3156,7 +3156,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private StackValue generateAugmentedAssignment(KtBinaryExpression expression) {
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
-        FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        FunctionDescriptor descriptor = accessibleFunctionDescriptor(resolvedCall);
         Callable callable = resolveToCallable(descriptor, false, resolvedCall);
         KtExpression lhs = expression.getLeft();
         Type lhsType = expressionType(lhs);
