@@ -35,8 +35,6 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
     // ignore KDoc like comments which starts with `/**`, example: /** text */
     val COMMENT_WITH_LOOKUP_INFO = "/\\*[^*]+\\*/".toRegex()
 
-    override fun createLookupTracker(): LookupTracker = TestLookupTracker()
-
     override fun checkLookups(lookupTracker: LookupTracker, compiledFiles: Set<File>) {
         if (lookupTracker !is TestLookupTracker) throw AssertionError("Expected TestLookupTracker, but: ${lookupTracker.javaClass}")
 
@@ -119,22 +117,22 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
     }
 }
 
-private data class LookupInfo(
-        val lookupContainingFile: String,
-        val lookupLine: Int,
-        val lookupColumn: Int,
-        val scopeFqName: String,
-        val scopeKind: ScopeKind,
-        val name: String
-)
-
-private class TestLookupTracker : LookupTracker {
+class TestLookupTracker : LookupTracker {
     val lookups = arrayListOf<LookupInfo>()
 
     override fun record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String) {
         val (line, column) = locationInfo.position
         lookups.add(LookupInfo(locationInfo.filePath, line, column, scopeFqName, scopeKind, name))
     }
+
+    data class LookupInfo(
+            val lookupContainingFile: String,
+            val lookupLine: Int,
+            val lookupColumn: Int,
+            val scopeFqName: String,
+            val scopeKind: ScopeKind,
+            val name: String
+    )
 }
 
 

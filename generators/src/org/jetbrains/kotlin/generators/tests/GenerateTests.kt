@@ -102,10 +102,7 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
-import org.jetbrains.kotlin.jps.build.AbstractIncrementalCacheVersionChangedTest
-import org.jetbrains.kotlin.jps.build.AbstractIncrementalJpsTest
-import org.jetbrains.kotlin.jps.build.AbstractIncrementalLazyCachesTest
-import org.jetbrains.kotlin.jps.build.AbstractLookupTrackerTest
+import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.incremental.AbstractProtoComparisonTest
 import org.jetbrains.kotlin.js.test.semantics.*
@@ -887,6 +884,23 @@ fun main(args: Array<String>) {
         }
 
         testClass(AbstractIncrementalCacheVersionChangedTest::class.java) {
+            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
+        }
+    }
+
+    testGroup("jps-plugin/test", "jps-plugin/testData") {
+        testClass<AbstractExperimentalIncrementalJpsTest>() {
+            model("incremental/multiModule", extension = null, excludeParentDirs = true)
+            model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
+            model("incremental/withJava", extension = null, excludeParentDirs = true)
+            model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractExperimentalIncrementalLazyCachesTest>() {
+            model("incremental/lazyKotlinCaches", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractExperimentalIncrementalCacheVersionChangedTest>() {
             model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
         }
     }

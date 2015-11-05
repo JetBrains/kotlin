@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.jps.incremental.storage.*
+import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.util.*
 
@@ -135,6 +137,36 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
                 lookupMap[lookup] = fileIds
             }
         }
+    }
+
+    @TestOnly
+    public fun forceGC() {
+        removeGarbageIfNeeded(force = true)
+        flush(false)
+    }
+
+    @TestOnly
+    public fun dump(lookupSymbols: Set<LookupSymbol>): String {
+        flush(false)
+
+        val sb = StringBuilder()
+        val p = Printer(sb)
+        val lookupsStrings = lookupSymbols.groupBy { LookupHashPair(it.name, it.scope) }
+        val lookups = lookupMap.copyAsMap()
+
+        for ((lookup, fileIds) in lookups.entries.sortedBy { it.key }) {
+            val key = if (lookup in lookupsStrings) {
+                lookupsStrings[lookup]!!.map { "${it.scope}#${it.name}" }.sorted().joinToString(", ")
+            }
+            else {
+                lookup.toString()
+            }
+
+            val value = fileIds.map { idToFile[it]?.absolutePath ?: it.toString() }.sorted().joinToString(", ")
+            p.println("$key -> $value")
+        }
+
+        return sb.toString()
     }
 }
 
