@@ -69,15 +69,15 @@ fun PsiMember.getJavaMemberDescriptor(resolutionFacade: ResolutionFacade? = null
 fun ResolutionFacade.psiClassToDescriptor(
         psiClass: PsiClass,
         declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
-): ClassifierDescriptor? {
+): ClassDescriptor? {
     return if (psiClass is KtLightClass && psiClass !is KtLightClassForDecompiledDeclaration) {
-        val origin = psiClass.getOrigin () ?: return null
+        val origin = psiClass.getOrigin() ?: return null
         val declaration = declarationTranslator(origin) ?: return null
         resolveToDescriptor(declaration)
     }
     else {
-        this.getFrontendService(psiClass, JavaDescriptorResolver::class.java).resolveClass(JavaClassImpl(psiClass))
-    } as? ClassifierDescriptor
+        psiClass.getJavaClassDescriptor(this)
+    } as? ClassDescriptor
 }
 
 private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFacade?): JavaDescriptorResolver? {
