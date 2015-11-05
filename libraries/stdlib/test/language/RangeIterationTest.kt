@@ -4,24 +4,56 @@ package language
 import org.junit.Test as test
 import kotlin.test.*
 
-// Test data for codegen is generated from this class. If you change it, rerun GenerateTests
-public class RangeIterationTest {
-    private fun <N : Any> doTest(
-            sequence: Progression<N>,
-            expectedStart: N,
-            expectedEnd: N,
+public open class RangeIterationTestBase {
+    public fun <N : Any> doTest(
+            sequence: Iterable<N>,
+            expectedFirst: N,
+            expectedLast: N,
             expectedIncrement: Number,
             expectedElements: List<N>
     ) {
-        assertEquals(expectedStart, sequence.start)
-        assertEquals(expectedEnd, sequence.end)
-        assertEquals(expectedIncrement, sequence.increment)
+        val first: Any
+        val last: Any
+        val increment: Number
+        when (sequence) {
+            is IntProgression -> {
+                first = sequence.first
+                last = sequence.last
+                increment = sequence.increment
+            }
+            is LongProgression -> {
+                first = sequence.first
+                last = sequence.last
+                increment = sequence.increment
+            }
+            is CharProgression -> {
+                first = sequence.first
+                last = sequence.last
+                increment = sequence.increment
+            }
+            // TODO: Drop this branch
+            is Progression -> {
+                first = sequence.start
+                last = sequence.end
+                increment = sequence.increment
+            }
+            else -> throw IllegalArgumentException("Unsupported sequence type: $sequence")
+        }
 
-        if (expectedElements.none())
+        assertEquals(expectedFirst, first)
+        assertEquals(expectedLast, last)
+        assertEquals(expectedIncrement, increment)
+
+        if (expectedElements.isEmpty())
             assertTrue(sequence.none())
         else
             assertEquals(expectedElements, sequence.toList())
     }
+
+}
+
+// Test data for codegen is generated from this class. If you change it, rerun GenerateTests
+public class RangeIterationTest : RangeIterationTestBase() {
 
     @test fun emptyConstant() {
         doTest(IntRange.EMPTY, 1, 0, 1, listOf())
@@ -162,12 +194,12 @@ public class RangeIterationTest {
 
     // 'inexact' means last element is not equal to sequence end
     @test fun inexactSteppedRange() {
-        doTest(3..8 step 2, 3, 8, 2, listOf(3, 5, 7))
-        doTest(3.toByte()..8.toByte() step 2, 3, 8, 2, listOf(3, 5, 7))
-        doTest(3.toShort()..8.toShort() step 2, 3, 8, 2, listOf(3, 5, 7))
-        doTest(3.toLong()..8.toLong() step 2.toLong(), 3.toLong(), 8.toLong(), 2.toLong(), listOf<Long>(3, 5, 7))
+        doTest(3..8 step 2, 3, 7, 2, listOf(3, 5, 7))
+        doTest(3.toByte()..8.toByte() step 2, 3, 7, 2, listOf(3, 5, 7))
+        doTest(3.toShort()..8.toShort() step 2, 3, 7, 2, listOf(3, 5, 7))
+        doTest(3.toLong()..8.toLong() step 2.toLong(), 3.toLong(), 7.toLong(), 2.toLong(), listOf<Long>(3, 5, 7))
 
-        doTest('a'..'d' step 2, 'a', 'd', 2, listOf('a', 'c'))
+        doTest('a'..'d' step 2, 'a', 'c', 2, listOf('a', 'c'))
 
         doTest(4.0..5.8 step 0.5, 4.0, 5.8, 0.5, listOf(4.0, 4.5, 5.0, 5.5))
         doTest(4.0.toFloat()..5.8.toFloat() step 0.5.toFloat(), 4.0.toFloat(), 5.8.toFloat(), 0.5.toFloat(),
@@ -176,12 +208,12 @@ public class RangeIterationTest {
 
     // 'inexact' means last element is not equal to sequence end
     @test fun inexactSteppedDownTo() {
-        doTest(8 downTo 3 step 2, 8, 3, -2, listOf(8, 6, 4))
-        doTest(8.toByte() downTo 3.toByte() step 2, 8, 3, -2, listOf(8, 6, 4))
-        doTest(8.toShort() downTo 3.toShort() step 2, 8, 3, -2, listOf(8, 6, 4))
-        doTest(8.toLong() downTo 3.toLong() step 2.toLong(), 8.toLong(), 3.toLong(), -2.toLong(), listOf<Long>(8, 6, 4))
+        doTest(8 downTo 3 step 2, 8, 4, -2, listOf(8, 6, 4))
+        doTest(8.toByte() downTo 3.toByte() step 2, 8, 4, -2, listOf(8, 6, 4))
+        doTest(8.toShort() downTo 3.toShort() step 2, 8, 4, -2, listOf(8, 6, 4))
+        doTest(8.toLong() downTo 3.toLong() step 2.toLong(), 8.toLong(), 4.toLong(), -2.toLong(), listOf<Long>(8, 6, 4))
 
-        doTest('d' downTo 'a' step 2, 'd', 'a', -2, listOf('d', 'b'))
+        doTest('d' downTo 'a' step 2, 'd', 'b', -2, listOf('d', 'b'))
 
         doTest(5.5 downTo 3.7 step 0.5, 5.5, 3.7, -0.5, listOf(5.5, 5.0, 4.5, 4.0))
         doTest(5.5.toFloat() downTo 3.7.toFloat() step 0.5.toFloat(), 5.5.toFloat(), 3.7.toFloat(), -0.5.toFloat(),
@@ -252,17 +284,14 @@ public class RangeIterationTest {
                 listOf<Float>(6.0.toFloat(), 5.5.toFloat(), 5.0.toFloat(), 4.5.toFloat(), 4.0.toFloat()))
     }
 
-    // 'inexact' means last element is not equal to sequence end
+    // invariant progression.reversed().toList() == progression.toList().reversed() is preserved
+    // 'inexact' means that start of reversed progression is not the end of original progression, but the last element
     @test fun reversedInexactSteppedDownTo() {
-        doTest((8 downTo 3 step 2).reversed(), 3, 8, 2, listOf(3, 5, 7))
-        doTest((8.toByte() downTo 3.toByte() step 2).reversed(), 3, 8, 2, listOf(3, 5, 7))
-        doTest((8.toShort() downTo 3.toShort() step 2).reversed(), 3, 8, 2, listOf(3, 5, 7))
-        doTest((8.toLong() downTo 3.toLong() step 2.toLong()).reversed(), 3.toLong(), 8.toLong(), 2.toLong(), listOf<Long>(3, 5, 7))
+        doTest((8 downTo 3 step 2).reversed(), 4, 8, 2, listOf(4, 6, 8))
+        doTest((8.toByte() downTo 3.toByte() step 2).reversed(), 4, 8, 2, listOf(4, 6, 8))
+        doTest((8.toShort() downTo 3.toShort() step 2).reversed(), 4, 8, 2, listOf(4, 6, 8))
+        doTest((8.toLong() downTo 3.toLong() step 2.toLong()).reversed(), 4.toLong(), 8.toLong(), 2.toLong(), listOf<Long>(4, 6, 8))
 
-        doTest(('d' downTo 'a' step 2).reversed(), 'a', 'd', 2, listOf('a', 'c'))
-
-        doTest((5.8 downTo 4.0 step 0.5).reversed(), 4.0, 5.8, 0.5, listOf(4.0, 4.5, 5.0, 5.5))
-        doTest((5.8.toFloat() downTo 4.0.toFloat() step 0.5.toFloat()).reversed(), 4.0.toFloat(), 5.8.toFloat(), 0.5.toFloat(),
-                listOf<Float>(4.0.toFloat(), 4.5.toFloat(), 5.0.toFloat(), 5.5.toFloat()))
+        doTest(('d' downTo 'a' step 2).reversed(), 'b', 'd', 2, listOf('b', 'd'))
     }
 }
