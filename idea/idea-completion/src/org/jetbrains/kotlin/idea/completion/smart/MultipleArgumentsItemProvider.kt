@@ -65,8 +65,7 @@ class MultipleArgumentsItemProvider(
                     }
                     val variables = ArrayList<VariableDescriptor>()
                     for ((i, parameter) in parameters.withIndex()) {
-                        val variable = variableInScope(parameter, resolutionScope) ?: break
-                        variables.add(variable) // TODO: cannot inline variable because of KT-5890
+                        variables.add(variableInScope(parameter, resolutionScope) ?: break)
 
                         if (i > 0 && parameters.asSequence().drop(i + 1).all { it.hasDefaultValue() }) { // this is the last parameter or all others have default values
                             val lookupElement = createParametersLookupElement(variables, tail)
