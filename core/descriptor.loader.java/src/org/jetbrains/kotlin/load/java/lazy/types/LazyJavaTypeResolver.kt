@@ -456,7 +456,7 @@ private object ConstantStarSubstitution : TypeSubstitution() {
 
         val newProjections = key.constructor.parameters.map(::StarProjectionImpl)
 
-        val substitution = IndexedParametersSubstitution(key.constructor, newProjections)
+        val substitution = TypeConstructorSubstitution.create(key.constructor, newProjections)
 
         return TypeProjectionImpl(
                 TypeSubstitutor.create(substitution).substitute(key.constructor.declarationDescriptor!!.defaultType, Variance.INVARIANT)!!

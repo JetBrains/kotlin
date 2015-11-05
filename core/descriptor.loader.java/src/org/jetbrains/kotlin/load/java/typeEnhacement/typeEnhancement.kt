@@ -101,7 +101,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
     ).filterNotNull().compositeAnnotationsOrSingle()
 
     val newSubstitution = computeNewSubstitution(
-        typeConstructor.parameters, enhancedArguments
+        typeConstructor, enhancedArguments
     )
 
     val enhancedType = KotlinTypeImpl.create(

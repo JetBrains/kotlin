@@ -64,7 +64,7 @@ public class TypeSubstitutor {
 
     @NotNull
     public static TypeSubstitutor create(@NotNull KotlinType context) {
-        return create(new IndexedParametersSubstitution(context.getConstructor(), context.getArguments()));
+        return create(TypeConstructorSubstitution.create(context.getConstructor(), context.getArguments()));
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

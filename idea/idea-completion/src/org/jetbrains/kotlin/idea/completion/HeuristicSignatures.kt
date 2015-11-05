@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.types.IndexedParametersSubstitution
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SubstitutionUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import java.util.*
 
 public class HeuristicSignatures(
@@ -70,7 +67,7 @@ public class HeuristicSignatures(
 
             val type = typeFromText(typeStr, typeParameters)
 
-            val substitutor = IndexedParametersSubstitution(ownerClass.typeConstructor, ownerType.arguments).buildSubstitutor()
+            val substitutor = TypeConstructorSubstitution.create(ownerClass.typeConstructor, ownerType.arguments).buildSubstitutor()
             return substitutor.substitute(type, Variance.INVARIANT)
         }
     }

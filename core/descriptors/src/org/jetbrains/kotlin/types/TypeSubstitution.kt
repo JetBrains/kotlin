@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
@@ -59,10 +60,21 @@ public abstract class TypeConstructorSubstitution : TypeSubstitution() {
                 override fun get(key: TypeConstructor) = map[key.declarationDescriptor]
                 override fun isEmpty() = map.isEmpty()
             }
+
+        @JvmStatic
+        public fun create(typeConstructor: TypeConstructor, arguments: List<TypeProjection>): TypeSubstitution {
+            val parameters = typeConstructor.parameters
+
+            if (parameters.lastOrNull()?.isCapturedFromOuterDeclaration ?: false) {
+                return createByConstructorsMap(typeConstructor.parameters.map { it.typeConstructor }.zip(arguments).toMap())
+            }
+
+            return IndexedParametersSubstitution(parameters, arguments)
+        }
     }
 }
 
-public class IndexedParametersSubstitution(
+public class IndexedParametersSubstitution private constructor(
     private val parameters: Array<TypeParameterDescriptor>,
     private val arguments: Array<TypeProjection>
 ) : TypeSubstitution() {
@@ -71,10 +83,6 @@ public class IndexedParametersSubstitution(
             "Number of arguments should not be less then number of parameters, but: parameters=${parameters.size()}, args=${arguments.size()}"
         }
     }
-
-    constructor(
-            typeConstructor: TypeConstructor, argumentsList: List<TypeProjection>
-    ) : this(typeConstructor.parameters, argumentsList)
 
     constructor(
             parameters: List<TypeParameterDescriptor>, argumentsList: List<TypeProjection>
@@ -95,20 +103,20 @@ public class IndexedParametersSubstitution(
 }
 
 public fun KotlinType.computeNewSubstitution(
-    newParameters: List<TypeParameterDescriptor>,
-    newArguments: List<TypeProjection>
+        typeConstructor: TypeConstructor,
+        newArguments: List<TypeProjection>
 ): TypeSubstitution {
     val previousSubstitution = getSubstitution()
     if (newArguments.isEmpty()) return previousSubstitution
 
-    val newIndexedSubstitution = IndexedParametersSubstitution(newParameters, newArguments)
+    val newSubstitution = TypeConstructorSubstitution.create(typeConstructor, newArguments)
 
     // If previous substitution was trivial just replace it with indexed one
     if (previousSubstitution is IndexedParametersSubstitution || previousSubstitution.isEmpty()) {
-        return newIndexedSubstitution
+        return newSubstitution
     }
 
-    val composedSubstitution = CompositeTypeSubstitution(newIndexedSubstitution, previousSubstitution)
+    val composedSubstitution = CompositeTypeSubstitution(newSubstitution, previousSubstitution)
 
     return composedSubstitution
 }

@@ -512,7 +512,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public TypeSubstitution getSubstitution() {
-            return new IndexedParametersSubstitution(constructor, arguments);
+            return TypeConstructorSubstitution.create(constructor, arguments);
         }
 
         @Override
