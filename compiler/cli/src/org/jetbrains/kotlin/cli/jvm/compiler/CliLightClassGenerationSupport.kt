@@ -139,7 +139,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     }
 
     override fun getPsiClass(classOrObject: KtClassOrObject): PsiClass? {
-        return KtLightClassForExplicitDeclaration.create(psiManager, classOrObject)
+        return KtLightClassForExplicitDeclaration.create(classOrObject)
     }
 
     override fun resolveClassToDescriptor(classOrObject: KtClassOrObject): ClassDescriptor? {

@@ -48,10 +48,9 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import javax.swing.Icon
 
 public open class KtLightClassForExplicitDeclaration(
-        manager: PsiManager,
         protected val classFqName: FqName, // FqName of (possibly inner) class
         protected val classOrObject: KtClassOrObject)
-: KtWrappingLightClass(manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+: KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private var delegate: PsiClass? = null
 
     private fun getLocalClassParent(): PsiElement? {
@@ -138,7 +137,7 @@ public open class KtLightClassForExplicitDeclaration(
     override fun getFqName(): FqName = classFqName
 
     override fun copy(): PsiElement {
-        return KtLightClassForExplicitDeclaration(manager, classFqName, classOrObject.copy() as KtClassOrObject)
+        return KtLightClassForExplicitDeclaration(classFqName, classOrObject.copy() as KtClassOrObject)
     }
 
     override fun getDelegate(): PsiClass {
@@ -365,7 +364,7 @@ public open class KtLightClassForExplicitDeclaration(
         return getDelegate().innerClasses
             .map {
                 val declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(it) as KtClassOrObject?
-                if (declaration != null) create(myManager, declaration, it) else null
+                if (declaration != null) create(declaration, it) else null
             }
             .filterNotNull()
     }
@@ -387,7 +386,6 @@ public open class KtLightClassForExplicitDeclaration(
 
         @JvmOverloads
         public fun create(
-                manager: PsiManager,
                 classOrObject: KtClassOrObject,
                 psiClass: PsiClass? = null
         ): KtLightClassForExplicitDeclaration? {
@@ -398,17 +396,17 @@ public open class KtLightClassForExplicitDeclaration(
             val fqName = predictFqName(classOrObject) ?: return null
 
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
-                return KtLightClassForAnonymousDeclaration(manager, fqName, classOrObject)
+                return KtLightClassForAnonymousDeclaration(fqName, classOrObject)
             }
 
             if (classOrObject.hasInterfaceDefaultImpls) {
                 val implsFqName = fqName.defaultImplsChild()
                 if (implsFqName.asString() == psiClass?.qualifiedName) {
-                    return KtLightClassForInterfaceDefaultImpls(manager, implsFqName, classOrObject)
+                    return KtLightClassForInterfaceDefaultImpls(implsFqName, classOrObject)
                 }
             }
 
-            return KtLightClassForExplicitDeclaration(manager, fqName, classOrObject)
+            return KtLightClassForExplicitDeclaration(fqName, classOrObject)
         }
 
         private fun predictFqName(classOrObject: KtClassOrObject): FqName? {

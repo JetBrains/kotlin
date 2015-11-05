@@ -20,7 +20,6 @@ import com.intellij.lang.Language;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,10 +40,8 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     private final KtLightClassForFacade delegate;
     private final KtFile file;
 
-    public FakeLightClassForFileOfPackage(
-            @NotNull PsiManager manager, @NotNull KtLightClassForFacade delegate, @NotNull KtFile file
-    ) {
-        super(manager);
+    public FakeLightClassForFileOfPackage(@NotNull KtLightClassForFacade delegate, @NotNull KtFile file) {
+        super(delegate.getManager());
         this.delegate = delegate;
         this.file = file;
     }
@@ -82,7 +79,7 @@ public class FakeLightClassForFileOfPackage extends AbstractLightClass implement
     @NotNull
     @Override
     public PsiElement copy() {
-        return new FakeLightClassForFileOfPackage(getManager(), delegate, file);
+        return new FakeLightClassForFileOfPackage(delegate, file);
     }
 
     @Override

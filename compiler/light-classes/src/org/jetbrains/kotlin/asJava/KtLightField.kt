@@ -125,7 +125,7 @@ sealed class KtLightFieldImpl(
                     val kotlinEnumEntry = origin as? KtEnumEntry
                     val initializingClass = if (kotlinEnumEntry != null && kotlinEnumEntry.declarations.isNotEmpty()) {
                         val enumConstantFqName = FqName(containingClass.getFqName().asString() + "." + kotlinEnumEntry.name)
-                        KtLightClassForEnumEntry(delegate.manager, enumConstantFqName, kotlinEnumEntry, delegate)
+                        KtLightClassForEnumEntry(enumConstantFqName, kotlinEnumEntry, delegate)
                     }
                     else null
                     return KtLightEnumConstant(kotlinEnumEntry, delegate, containingClass, initializingClass)
