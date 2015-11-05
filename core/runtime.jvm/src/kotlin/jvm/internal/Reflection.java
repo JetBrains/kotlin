@@ -45,12 +45,20 @@ public class Reflection {
         return factory.createKotlinClass(javaClass);
     }
 
+    public static KClass createKotlinClass(Class javaClass, String internalName) {
+        return factory.createKotlinClass(javaClass, internalName);
+    }
+
     public static KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         return factory.getOrCreateKotlinPackage(javaClass, moduleName);
     }
 
     public static KClass getOrCreateKotlinClass(Class javaClass) {
         return factory.getOrCreateKotlinClass(javaClass);
+    }
+
+    public static KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
+        return factory.getOrCreateKotlinClass(javaClass, internalName);
     }
 
     public static KClass[] getOrCreateKotlinClasses(Class[] javaClasses) {
@@ -96,6 +104,7 @@ public class Reflection {
     }
 
     // Deprecated
+    // TODO: drop before 1.0
 
     @Deprecated
     public static KPackage createKotlinPackage(Class javaClass, String moduleName) {

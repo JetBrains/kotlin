@@ -30,12 +30,22 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     }
 
     @Override
+    public KClass createKotlinClass(Class javaClass, String internalName) {
+        return new KClassImpl(javaClass);
+    }
+
+    @Override
     public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         return new KPackageImpl(javaClass, moduleName);
     }
 
     @Override
     public KClass getOrCreateKotlinClass(Class javaClass) {
+        return KClassCacheKt.getOrCreateKotlinClass(javaClass);
+    }
+
+    @Override
+    public KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
         return KClassCacheKt.getOrCreateKotlinClass(javaClass);
     }
 

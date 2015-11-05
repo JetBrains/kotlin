@@ -23,11 +23,19 @@ public class ReflectionFactory {
         return new ClassReference(javaClass);
     }
 
+    public KClass createKotlinClass(Class javaClass, String internalName) {
+        return new ClassReference(javaClass);
+    }
+
     public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
         return null;
     }
 
     public KClass getOrCreateKotlinClass(Class javaClass) {
+        return new ClassReference(javaClass);
+    }
+
+    public KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
         return new ClassReference(javaClass);
     }
 
