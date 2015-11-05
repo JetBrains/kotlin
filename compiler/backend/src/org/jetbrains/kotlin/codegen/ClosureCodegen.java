@@ -260,7 +260,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                         }
 
                         if (functionReferenceTarget != null) {
-                            v.invokestatic(REFLECTION, "function", Type.getMethodDescriptor(K_FUNCTION, FUNCTION_REFERENCE), false);
+                            if (!"true".equalsIgnoreCase(System.getProperty("kotlin.jvm.optimize.callable.references"))) {
+                                v.invokestatic(REFLECTION, "function", Type.getMethodDescriptor(K_FUNCTION, FUNCTION_REFERENCE), false);
+                            }
                         }
 
                         return Unit.INSTANCE$;
