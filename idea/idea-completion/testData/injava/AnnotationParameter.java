@@ -1,3 +1,5 @@
+package test;
+
 @mockLib.foo.Anno(<caret>)
 public class Testing {
 }
