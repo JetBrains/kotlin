@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -62,6 +64,20 @@ fun PsiMember.getJavaMemberDescriptor(resolutionFacade: ResolutionFacade? = null
         is PsiField -> getJavaFieldDescriptor(resolutionFacade)
         else -> null
     }
+}
+
+fun ResolutionFacade.psiClassToDescriptor(
+        psiClass: PsiClass,
+        declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
+): ClassifierDescriptor? {
+    return if (psiClass is KtLightClass && psiClass !is KtLightClassForDecompiledDeclaration) {
+        val origin = psiClass.getOrigin () ?: return null
+        val declaration = declarationTranslator(origin) ?: return null
+        resolveToDescriptor(declaration)
+    }
+    else {
+        this.getFrontendService(psiClass, JavaDescriptorResolver::class.java).resolveClass(JavaClassImpl(psiClass))
+    } as? ClassifierDescriptor
 }
 
 private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFacade?): JavaDescriptorResolver? {
