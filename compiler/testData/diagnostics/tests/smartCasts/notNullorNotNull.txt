@@ -1,0 +1,3 @@
+package
+
+public fun bar(/*0*/ x: kotlin.Int?): kotlin.Int

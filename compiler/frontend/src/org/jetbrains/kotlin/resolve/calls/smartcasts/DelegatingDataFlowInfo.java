@@ -219,11 +219,11 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         newTypeInfo.putAll(a, collectTypesFromMeAndParents(b));
         newTypeInfo.putAll(b, collectTypesFromMeAndParents(a));
         if (!a.getType().equals(b.getType())) {
-            // To avoid smart casts to Nothing or Nothing? and recording base types of own type
-            if (!KotlinBuiltIns.isNothingOrNullableNothing(b.getType()) && !TypeUtilsKt.isSubtypeOf(a.getType(), b.getType())) {
+            // To avoid recording base types of own type
+            if (!TypeUtilsKt.isSubtypeOf(a.getType(), b.getType())) {
                 newTypeInfo.put(a, b.getType());
             }
-            if (!KotlinBuiltIns.isNothingOrNullableNothing(a.getType()) && !TypeUtilsKt.isSubtypeOf(b.getType(), a.getType())) {
+            if (!TypeUtilsKt.isSubtypeOf(b.getType(), a.getType())) {
                 newTypeInfo.put(b, a.getType());
             }
         }

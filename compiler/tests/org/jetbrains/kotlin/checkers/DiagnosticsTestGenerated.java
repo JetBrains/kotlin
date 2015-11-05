@@ -14625,6 +14625,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notNullorNotNull.kt")
+            public void testNotNullorNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/notNullorNotNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ownerDeclaresBothModifies.kt")
             public void testOwnerDeclaresBothModifies() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/ownerDeclaresBothModifies.kt");
