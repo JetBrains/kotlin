@@ -19,13 +19,18 @@ package org.jetbrains.kotlin.idea.completion.smart
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.ValueArgumentName
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -160,5 +165,26 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     override fun createSorter(): CompletionSorter {
         return super.createSorter()
                 .weighBefore(KindWeigher.toString(), NameSimilarityWeigher, SmartCompletionPriorityWeigher)
+    }
+
+    override fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory {
+        return super.createLookupElementFactory(contextVariablesProvider).copy(
+                standardLookupElementsPostProcessor = { wrapStandardLookupElement(it) }
+        )
+    }
+
+    private fun wrapStandardLookupElement(lookupElement: LookupElement): LookupElement {
+        val descriptor = (lookupElement.`object` as DeclarationLookupObject).descriptor
+        var element = lookupElement
+
+        if (descriptor is FunctionDescriptor && descriptor.valueParameters.isNotEmpty()) {
+            element = element.keepOldArgumentListOnTab()
+        }
+
+        if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]!!) {
+            element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
+        }
+
+        return element
     }
 }

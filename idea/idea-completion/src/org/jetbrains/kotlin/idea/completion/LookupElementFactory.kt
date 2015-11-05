@@ -48,7 +48,8 @@ class LookupElementFactory(
         private val receiverTypes: Collection<KotlinType>?,
         private val callType: CallType<*>?,
         private val inDescriptor: DeclarationDescriptor,
-        private val contextVariablesProvider: ContextVariablesProvider
+        private val contextVariablesProvider: ContextVariablesProvider,
+        private val standardLookupElementsPostProcessor: (LookupElement) -> LookupElement = { it }
 ) {
     companion object {
         fun hasSingleFunctionTypeParameter(descriptor: FunctionDescriptor): Boolean {
@@ -73,8 +74,7 @@ class LookupElementFactory(
 
         val isNormalCall = callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE || callType == CallType.SUPER_MEMBERS
 
-        var lookupElement = createLookupElement(descriptor, useReceiverTypes, parametersAndTypeGrayed = !isNormalCall && callType != CallType.INFIX)
-        result.add(lookupElement)
+        result.add(createLookupElement(descriptor, useReceiverTypes, parametersAndTypeGrayed = !isNormalCall && callType != CallType.INFIX))
 
         // add special item for function with one argument of function type with more than one parameter
         if (descriptor is FunctionDescriptor && isNormalCall) {
@@ -86,7 +86,7 @@ class LookupElementFactory(
             }
         }
 
-        return result
+        return result.map(standardLookupElementsPostProcessor)
     }
 
     private fun MutableCollection<LookupElement>.addSpecialFunctionCallElements(descriptor: FunctionDescriptor, useReceiverTypes: Boolean) {

@@ -281,7 +281,7 @@ class TypeInstantiationItems(
             val samConstructor = scope.getContributedFunctions(`class`.name, NoLookupLocation.FROM_IDE)
                                          .filterIsInstance<SamConstructorDescriptor>()
                                          .singleOrNull() ?: return
-            lookupElementFactory.createLookupElementsInSmartCompletion(samConstructor, bindingContext, useReceiverTypes = false)
+            lookupElementFactory.createStandardLookupElementsForDescriptor(samConstructor, useReceiverTypes = false)
                     .mapTo(collection) {
                         it.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION).addTail(tail)
                     }

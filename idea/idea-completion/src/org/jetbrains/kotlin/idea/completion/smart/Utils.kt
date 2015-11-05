@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertH
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
@@ -247,26 +246,6 @@ fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade)
     if (!CallType.CALLABLE_REFERENCE.descriptorKindFilter.accepts(this)) return null // not supported by callable references
     val type = getReflectionTypeForCandidateDescriptor(this, resolutionFacade.getFrontendService(ReflectionTypes::class.java)) ?: return null
     return FuzzyType(type, emptyList())
-}
-
-fun LookupElementFactory.createLookupElementsInSmartCompletion(
-        descriptor: DeclarationDescriptor,
-        bindingContext: BindingContext,
-        useReceiverTypes: Boolean
-): Collection<LookupElement> {
-    return createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes).map {
-        var element = it
-
-        if (descriptor is FunctionDescriptor && descriptor.valueParameters.isNotEmpty()) {
-            element = element.keepOldArgumentListOnTab()
-        }
-
-        if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]!!) {
-            element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
-        }
-
-        element
-    }
 }
 
 enum class SmartCompletionItemPriority {

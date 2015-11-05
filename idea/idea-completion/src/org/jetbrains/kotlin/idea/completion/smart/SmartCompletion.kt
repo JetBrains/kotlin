@@ -163,7 +163,7 @@ class SmartCompletion(
         val infoMatcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
 
         result.addLookupElements(descriptor, expectedInfos, infoMatcher, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { descriptor ->
-            lookupElementFactory.createLookupElementsInSmartCompletion(descriptor, bindingContext, true)
+            lookupElementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes = true)
         }
 
         if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {

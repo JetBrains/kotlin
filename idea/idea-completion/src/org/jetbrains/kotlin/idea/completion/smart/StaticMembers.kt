@@ -98,7 +98,7 @@ class StaticMembers(
     }
 
     private fun createLookupElements(memberDescriptor: DeclarationDescriptor): Collection<LookupElement> {
-        return lookupElementFactory.createLookupElementsInSmartCompletion(memberDescriptor, bindingContext, useReceiverTypes = false)
+        return lookupElementFactory.createStandardLookupElementsForDescriptor(memberDescriptor, useReceiverTypes = false)
                 .map {
                     it.decorateAsStaticMember(memberDescriptor, classNameAsLookupString = true)!!
                             .assignSmartCompletionPriority(SmartCompletionItemPriority.STATIC_MEMBER)
