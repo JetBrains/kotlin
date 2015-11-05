@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -54,14 +54,14 @@ import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.removeLast
 import java.util.*
 
-public open class JetChangeInfo(
-        val methodDescriptor: JetMethodDescriptor,
+public open class KotlinChangeInfo(
+        val methodDescriptor: KotlinMethodDescriptor,
         private var name: String = methodDescriptor.getName(),
         val newReturnType: KotlinType? = methodDescriptor.baseDescriptor.getReturnType(),
         var newReturnTypeText: String = methodDescriptor.renderOriginalReturnType(),
         var newVisibility: Visibility = methodDescriptor.getVisibility(),
-        parameterInfos: List<JetParameterInfo> = methodDescriptor.getParameters(),
-        receiver: JetParameterInfo? = methodDescriptor.receiver,
+        parameterInfos: List<KotlinParameterInfo> = methodDescriptor.getParameters(),
+        receiver: KotlinParameterInfo? = methodDescriptor.receiver,
         val context: PsiElement,
         primaryPropagationTargets: Collection<PsiElement> = emptyList()
 ) : ChangeInfo, UserDataHolder by UserDataHolderBase() {
@@ -75,8 +75,8 @@ public open class JetChangeInfo(
         }
     }
 
-    var receiverParameterInfo: JetParameterInfo? = receiver
-        set(value: JetParameterInfo?) {
+    var receiverParameterInfo: KotlinParameterInfo? = receiver
+        set(value: KotlinParameterInfo?) {
             if (value != null && value !in newParameters) {
                 newParameters.add(value)
             }
@@ -120,7 +120,7 @@ public open class JetChangeInfo(
 
     public fun getNewParametersCount(): Int = newParameters.size()
 
-    override fun getNewParameters(): Array<JetParameterInfo> = newParameters.toTypedArray()
+    override fun getNewParameters(): Array<KotlinParameterInfo> = newParameters.toTypedArray()
 
     fun getToBeRemoved(): BooleanArray {
         return BooleanArray(originalParameters.size).apply {
@@ -134,17 +134,17 @@ public open class JetChangeInfo(
 
     fun getNonReceiverParametersCount(): Int = newParameters.size() - (if (receiverParameterInfo != null) 1 else 0)
 
-    fun getNonReceiverParameters(): List<JetParameterInfo> {
+    fun getNonReceiverParameters(): List<KotlinParameterInfo> {
         methodDescriptor.baseDeclaration.let { if (it is KtProperty || it is KtParameter) return emptyList() }
         return receiverParameterInfo?.let { receiver -> newParameters.filter { it != receiver } } ?: newParameters
     }
 
-    public fun setNewParameter(index: Int, parameterInfo: JetParameterInfo) {
+    public fun setNewParameter(index: Int, parameterInfo: KotlinParameterInfo) {
         newParameters.set(index, parameterInfo)
     }
 
     @JvmOverloads
-    public fun addParameter(parameterInfo: JetParameterInfo, atIndex: Int = -1) {
+    public fun addParameter(parameterInfo: KotlinParameterInfo, atIndex: Int = -1) {
         if (atIndex >= 0) {
             newParameters.add(atIndex, parameterInfo)
         }
@@ -165,7 +165,7 @@ public open class JetChangeInfo(
         receiverParameterInfo = null
     }
 
-    public fun hasParameter(parameterInfo: JetParameterInfo): Boolean =
+    public fun hasParameter(parameterInfo: KotlinParameterInfo): Boolean =
             parameterInfo in newParameters
 
     override fun isGenerateDelegate(): Boolean = false
@@ -226,7 +226,7 @@ public open class JetChangeInfo(
         this.primaryPropagationTargets = primaryPropagationTargets
     }
 
-    public fun getNewSignature(inheritedCallable: JetCallableDefinitionUsage<PsiElement>): String {
+    public fun getNewSignature(inheritedCallable: KotlinCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
 
         val defaultVisibility = if (kind.isConstructor) Visibilities.PUBLIC else Visibilities.DEFAULT_VISIBILITY
@@ -267,12 +267,12 @@ public open class JetChangeInfo(
                && getMethod() == DescriptorToSourceUtils.descriptorToDeclaration(inheritedCallableDescriptor)
     }
 
-    public fun getNewParametersSignature(inheritedCallable: JetCallableDefinitionUsage<*>): String {
+    public fun getNewParametersSignature(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         return "(" + getNewParametersSignatureWithoutParentheses(inheritedCallable) + ")"
     }
 
     public fun getNewParametersSignatureWithoutParentheses(
-            inheritedCallable: JetCallableDefinitionUsage<*>
+            inheritedCallable: KotlinCallableDefinitionUsage<*>
     ): String {
         val signatureParameters = getNonReceiverParameters()
 
@@ -286,14 +286,14 @@ public open class JetChangeInfo(
                 .joinToString(separator = ", ")
     }
 
-    public fun renderReceiverType(inheritedCallable: JetCallableDefinitionUsage<*>): String? {
+    public fun renderReceiverType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String? {
         val receiverTypeText = receiverParameterInfo?.currentTypeText ?: return null
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return receiverTypeText
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return receiverTypeText
         return currentBaseFunction.extensionReceiverParameter!!.type.renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
     }
 
-    public fun renderReturnType(inheritedCallable: JetCallableDefinitionUsage<*>): String {
+    public fun renderReturnType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return newReturnTypeText
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return newReturnTypeText
         return currentBaseFunction.getReturnType()!!.renderTypeWithSubstitution(typeSubstitutor, newReturnTypeText, false)
@@ -396,7 +396,7 @@ public open class JetChangeInfo(
         fun getJavaParameterInfos(
                 originalPsiMethod: PsiMethod,
                 currentPsiMethod: PsiMethod,
-                newParameterList: List<JetParameterInfo>
+                newParameterList: List<KotlinParameterInfo>
         ): MutableList<ParameterInfoImpl> {
             val defaultValuesToSkip = newParameterList.size - currentPsiMethod.parameterList.parametersCount
             val defaultValuesToRetain = newParameterList.count { it.defaultValueForParameter != null } - defaultValuesToSkip
@@ -495,17 +495,17 @@ public open class JetChangeInfo(
     }
 }
 
-public val JetChangeInfo.originalBaseFunctionDescriptor: CallableDescriptor
+public val KotlinChangeInfo.originalBaseFunctionDescriptor: CallableDescriptor
     get() = methodDescriptor.baseDescriptor
 
-public val JetChangeInfo.kind: Kind get() = methodDescriptor.kind
+public val KotlinChangeInfo.kind: Kind get() = methodDescriptor.kind
 
-public val JetChangeInfo.oldName: String?
+public val KotlinChangeInfo.oldName: String?
     get() = (methodDescriptor.getMethod() as? KtFunction)?.getName()
 
-public fun JetChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescriptor.affectedCallables + propagationTargetUsageInfos
+public fun KotlinChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescriptor.affectedCallables + propagationTargetUsageInfos
 
-public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMethodDescriptor): JetChangeInfo {
+public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: KotlinMethodDescriptor): KotlinChangeInfo {
     val method = getMethod() as PsiMethod
 
     val functionDescriptor = method.getJavaMethodDescriptor()!!
@@ -531,11 +531,11 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
                     else -> null
                 }
 
-        with(JetParameterInfo(callableDescriptor = functionDescriptor,
-                              originalIndex = oldIndex,
-                              name = info.getName(),
-                              type = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType,
-                              defaultValueForCall = defaultValueExpr)) {
+        with(KotlinParameterInfo(callableDescriptor = functionDescriptor,
+                                 originalIndex = oldIndex,
+                                 name = info.getName(),
+                                 type = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType,
+                                 defaultValueForCall = defaultValueExpr)) {
             currentTypeText = IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(currentType)
             this
         }
@@ -544,12 +544,12 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
     val returnType = functionDescriptor.getReturnType()
     val returnTypeText = if (returnType != null) IdeDescriptorRenderers.SOURCE_CODE.renderType(returnType) else ""
 
-    return JetChangeInfo(originalChangeSignatureDescriptor,
-                         getNewName(),
-                         returnType,
-                         returnTypeText,
-                         functionDescriptor.getVisibility(),
-                         newParameters,
-                         null,
-                         method)
+    return KotlinChangeInfo(originalChangeSignatureDescriptor,
+                            getNewName(),
+                            returnType,
+                            returnTypeText,
+                            functionDescriptor.getVisibility(),
+                            newParameters,
+                            null,
+                            method)
 }

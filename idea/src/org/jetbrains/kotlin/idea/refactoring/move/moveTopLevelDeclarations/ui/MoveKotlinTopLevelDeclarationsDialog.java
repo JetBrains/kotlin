@@ -64,7 +64,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
 import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
@@ -341,7 +341,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 .withRoots(ProjectRootManager.getInstance(myProject).getContentRoots())
                 .withTreeRootVisible(true);
 
-        String title = JetRefactoringBundle.message("refactoring.move.top.level.declaration.file.title");
+        String title = KotlinRefactoringBundle.message("refactoring.move.top.level.declaration.file.title");
         fileChooser.addBrowseFolderListener(title, null, myProject, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
         String initialTargetPath =
@@ -532,7 +532,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 if (ret != Messages.YES) return null;
             }
 
-            return new DeferredJetFileKotlinMoveTarget(
+            return new KotlinMoveTargetForDeferredFile(
                     myProject,
                     new FqName(getTargetPackage()),
                     new Function1<KtFile, KtFile>() {
@@ -556,7 +556,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 return null;
             }
 
-            return new JetFileKotlinMoveTarget(jetFile);
+            return new KotlinMoveTargetForExistingFile(jetFile);
         }
 
         File targetDir = targetFile.getParentFile();
@@ -569,7 +569,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             return null;
         }
 
-        return new DeferredJetFileKotlinMoveTarget(
+        return new KotlinMoveTargetForDeferredFile(
                 myProject,
                 new FqName(psiPackage.getQualifiedName()),
                 new Function1<KtFile, KtFile>() {
@@ -594,7 +594,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         else {
             PsiFile targetFile = JetRefactoringUtilKt.toPsiFile(new File(getTargetFilePath()), myProject);
             if (!(targetFile == null || targetFile instanceof KtFile)) {
-                return JetRefactoringBundle.message("refactoring.move.non.kotlin.file");
+                return KotlinRefactoringBundle.message("refactoring.move.non.kotlin.file");
             }
         }
 

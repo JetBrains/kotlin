@@ -20,7 +20,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -66,7 +66,7 @@ public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
         val file = myFixture.getFile() as KtFile
         val expectedResultText = KotlinTestUtils.getLastCommentInFile(file)
         try {
-            JetRefactoringUtil.selectExpression(myFixture.getEditor(), file, object : JetRefactoringUtil.SelectExpressionCallback {
+            KotlinRefactoringUtil.selectExpression(myFixture.getEditor(), file, object : KotlinRefactoringUtil.SelectExpressionCallback {
                 override fun run(expression: KtExpression?) {
                     val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression!!, expression.analyze(BodyResolveMode.PARTIAL), { true }, "value").sorted()
                     val result = StringUtil.join(names, "\n").trim()
@@ -74,7 +74,7 @@ public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
                 }
             })
         }
-        catch (e: JetRefactoringUtil.IntroduceRefactoringException) {
+        catch (e: KotlinRefactoringUtil.IntroduceRefactoringException) {
             throw AssertionError("Failed to find expression: " + e.getMessage())
         }
     }

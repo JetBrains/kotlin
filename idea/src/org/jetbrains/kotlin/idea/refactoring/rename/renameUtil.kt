@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.psi.PsiElement
-import com.intellij.usageView.UsageInfo
-import java.util.ArrayList
-import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
+import com.intellij.refactoring.util.MoveRenameUsageInfo
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.references.AbstractJetReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import java.util.*
 
 fun checkConflictsAndReplaceUsageInfos(result: MutableList<UsageInfo>) {
     val usagesToAdd = ArrayList<UsageInfo>()
@@ -52,7 +52,7 @@ class UnresolvableConventionViolationUsageInfo(
         element: PsiElement,
         referencedElement: PsiElement
 ) : UnresolvableCollisionUsageInfo(element, referencedElement) {
-    override fun getDescription(): String = JetRefactoringBundle.message("naming.convention.will.be.violated.after.rename")
+    override fun getDescription(): String = KotlinRefactoringBundle.message("naming.convention.will.be.violated.after.rename")
 }
 
 fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {

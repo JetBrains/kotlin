@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.util.*
 
-class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
+class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
     companion object {
         private val BUILT_INS = JvmPlatform.builtIns
         private val EXTENSIONS = arrayOf(".kt", ".java")
@@ -112,25 +112,25 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
         setActiveEditor(editors!![0])
     }
 
-    private fun createChangeInfo(): JetChangeInfo {
+    private fun createChangeInfo(): KotlinChangeInfo {
         configureFiles()
 
-        val element = (JetChangeSignatureHandler().findTargetMember(file, editor) as KtElement?).sure { "Target element is null" }
+        val element = (KotlinChangeSignatureHandler().findTargetMember(file, editor) as KtElement?).sure { "Target element is null" }
         val context = file.findElementAt(editor.caretModel.offset).sure { "Context element is null" }
         val bindingContext = element.analyze(BodyResolveMode.FULL)
-        val callableDescriptor = JetChangeSignatureHandler
+        val callableDescriptor = KotlinChangeSignatureHandler
                 .findDescriptor(element, project, editor, bindingContext)
                 .sure { "Target descriptor is null" }
-        return createChangeInfo(project, callableDescriptor, JetChangeSignatureConfiguration.Empty, context)!!
+        return createChangeInfo(project, callableDescriptor, KotlinChangeSignatureConfiguration.Empty, context)!!
     }
 
-    private fun doTest(configure: JetChangeInfo.() -> Unit = {}) {
-        JetChangeSignatureProcessor(project, createChangeInfo().apply { configure() }, "Change signature").run()
+    private fun doTest(configure: KotlinChangeInfo.() -> Unit = {}) {
+        KotlinChangeSignatureProcessor(project, createChangeInfo().apply { configure() }, "Change signature").run()
 
         compareEditorsWithExpectedData()
     }
 
-    private fun doTestConflict(configure: JetChangeInfo.() -> Unit = {}) {
+    private fun doTestConflict(configure: KotlinChangeInfo.() -> Unit = {}) {
         try {
             doTest(configure)
             TestCase.fail("No conflicts found")
@@ -147,7 +147,7 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
         }
     }
 
-    private fun doTestUnmodifiable(configure: JetChangeInfo.() -> Unit = {}) {
+    private fun doTestUnmodifiable(configure: KotlinChangeInfo.() -> Unit = {}) {
         try {
             doTest(configure)
             TestCase.fail("No conflicts found")
@@ -243,7 +243,7 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
         }
     }
 
-    private fun JetChangeInfo.swapParameters(i: Int, j: Int) {
+    private fun KotlinChangeInfo.swapParameters(i: Int, j: Int) {
         val newParameters = newParameters
         val temp = newParameters[i]
         setNewParameter(i, newParameters[j])
@@ -254,7 +254,7 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testBadSelection() {
         configureByFile(getTestName(false) + "Before.kt")
-        TestCase.assertNull(JetChangeSignatureHandler().findTargetMember(file, editor))
+        TestCase.assertNull(KotlinChangeSignatureHandler().findTargetMember(file, editor))
     }
 
     fun testSynthesized() = doTestConflict()
@@ -274,12 +274,12 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testAddConstructorVisibility() = doTest {
         newVisibility = Visibilities.PROTECTED
 
-        val newParameter = JetParameterInfo(
+        val newParameter = KotlinParameterInfo(
                 callableDescriptor = originalBaseFunctionDescriptor,
                 name = "x",
                 type = BUILT_INS.anyType,
                 defaultValueForCall = KtPsiFactory(project).createExpression("12"),
-                valOrVar = JetValVar.Val
+                valOrVar = KotlinValVar.Val
         )
         addParameter(newParameter)
     }
@@ -287,9 +287,9 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testConstructor() = doTest {
         newVisibility = Visibilities.PUBLIC
 
-        newParameters[0].valOrVar = JetValVar.Var
-        newParameters[1].valOrVar = JetValVar.None
-        newParameters[2].valOrVar = JetValVar.Val
+        newParameters[0].valOrVar = KotlinValVar.Var
+        newParameters[1].valOrVar = KotlinValVar.None
+        newParameters[2].valOrVar = KotlinValVar.Val
 
         newParameters[0].name = "_x1"
         newParameters[1].name = "_x2"
@@ -301,9 +301,9 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testGenericConstructor() = doTest {
         newVisibility = Visibilities.PUBLIC
 
-        newParameters[0].valOrVar = JetValVar.Var
-        newParameters[1].valOrVar = JetValVar.None
-        newParameters[2].valOrVar = JetValVar.Val
+        newParameters[0].valOrVar = KotlinValVar.Var
+        newParameters[1].valOrVar = KotlinValVar.None
+        newParameters[2].valOrVar = KotlinValVar.Val
 
         newParameters[0].name = "_x1"
         newParameters[1].name = "_x2"
@@ -342,7 +342,7 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testExpressionFunction() = doTest {
         newParameters[0].name = "x1"
 
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "y1", BUILT_INS.intType))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "y1", BUILT_INS.intType))
     }
 
     fun testFunctionsAddRemoveArguments() = doTest {
@@ -352,16 +352,16 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
         val newParameters = newParameters
         setNewParameter(2, newParameters[1])
         setNewParameter(1, newParameters[0])
-        setNewParameter(0, JetParameterInfo(originalBaseFunctionDescriptor, -1, "x0", BUILT_INS.nullableAnyType, null, defaultValueForCall))
+        setNewParameter(0, KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "x0", BUILT_INS.nullableAnyType, null, defaultValueForCall))
     }
 
     fun testFakeOverride() = doTest {
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "i", BUILT_INS.intType))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "i", BUILT_INS.intType))
     }
 
     fun testFunctionLiteral() = doTest {
         newParameters[1].name = "y1"
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "x", BUILT_INS.anyType))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "x", BUILT_INS.anyType))
 
         newReturnTypeText = "Int"
     }
@@ -393,12 +393,12 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testNoDefaultValuesInOverrides() = doTest { swapParameters(0, 1) }
 
     fun testOverridesInEnumEntries() = doTest {
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType))
     }
 
     fun testEnumEntriesWithoutSuperCalls() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
     }
 
     fun testParameterChangeInOverrides() = doTest {
@@ -408,15 +408,15 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testConstructorJavaUsages() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("\"abc\"")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
     }
 
     fun testFunctionJavaUsagesAndOverridesAddParam() = doTest {
         val psiFactory = KtPsiFactory(project)
         val defaultValueForCall1 = psiFactory.createExpression("\"abc\"")
         val defaultValueForCall2 = psiFactory.createExpression("\"def\"")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall1))
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "o", BUILT_INS.nullableAnyType, null, defaultValueForCall2))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall1))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "o", BUILT_INS.nullableAnyType, null, defaultValueForCall2))
     }
 
     fun testFunctionJavaUsagesAndOverridesChangeNullability() = doTest {
@@ -482,10 +482,10 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testFunctionRenameJavaUsages() = doTest { newName = "bar" }
 
-    fun testParameterModifiers() = doTest { addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType)) }
+    fun testParameterModifiers() = doTest { addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType)) }
 
     fun testFqNameShortening() = doTest {
-        val newParameter = JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.anyType).apply {
+        val newParameter = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.anyType).apply {
             currentTypeText = "kotlin.String"
         }
         addParameter(newParameter)
@@ -493,7 +493,7 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testObjectMember() = doTest { removeParameter(0) }
 
-    fun testParameterListAddParam() = doTest { addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "l", BUILT_INS.longType)) }
+    fun testParameterListAddParam() = doTest { addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "l", BUILT_INS.longType)) }
 
     fun testParameterListRemoveParam() = doTest { removeParameter(getNewParametersCount() - 1) }
 
@@ -501,25 +501,25 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testAddNewReceiver() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("X(0)")
-        receiverParameterInfo = JetParameterInfo(originalBaseFunctionDescriptor, -1, "_", BUILT_INS.anyType, null, defaultValueForCall)
+        receiverParameterInfo = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "_", BUILT_INS.anyType, null, defaultValueForCall)
                 .apply { currentTypeText = "X" }
     }
 
     fun testAddNewReceiverForMember() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("X(0)")
-        receiverParameterInfo = JetParameterInfo(originalBaseFunctionDescriptor, -1, "_", BUILT_INS.anyType, null, defaultValueForCall)
+        receiverParameterInfo = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "_", BUILT_INS.anyType, null, defaultValueForCall)
                 .apply { currentTypeText = "X" }
     }
 
     fun testAddNewReceiverForMemberConflict() = doTestConflict {
         val defaultValueForCall = KtPsiFactory(project).createExpression("X(0)")
-        receiverParameterInfo = JetParameterInfo(originalBaseFunctionDescriptor, -1, "_", BUILT_INS.anyType, null, defaultValueForCall)
+        receiverParameterInfo = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "_", BUILT_INS.anyType, null, defaultValueForCall)
                 .apply { currentTypeText = "X" }
     }
 
     fun testAddNewReceiverConflict() = doTestConflict {
         val defaultValueForCall = KtPsiFactory(project).createExpression("X(0)")
-        receiverParameterInfo = JetParameterInfo(originalBaseFunctionDescriptor, -1, "_", BUILT_INS.anyType, null, defaultValueForCall)
+        receiverParameterInfo = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "_", BUILT_INS.anyType, null, defaultValueForCall)
                 .apply { currentTypeText = "X" }
     }
 
@@ -572,36 +572,36 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testSecondaryConstructor() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("\"foo\"")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
     }
 
     fun testJavaConstructorInDelegationCall() = doJavaTest { newParameters.add(ParameterInfoImpl(-1, "s", stringPsiType, "\"foo\"")) }
 
     fun testPrimaryConstructorByThisRef() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("\"foo\"")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
     }
 
     fun testPrimaryConstructorBySuperRef() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("\"foo\"")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
     }
 
     fun testSecondaryConstructorByThisRef() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("\"foo\"")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
     }
 
     fun testSecondaryConstructorBySuperRef() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("\"foo\"")
-        addParameter(JetParameterInfo(methodDescriptor.baseDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(methodDescriptor.baseDescriptor, -1, "s", BUILT_INS.stringType, null, defaultValueForCall))
     }
 
     fun testJavaConstructorBySuperRef() = doJavaTest { newParameters.add(ParameterInfoImpl(-1, "s", stringPsiType, "\"foo\"")) }
 
     fun testNoConflictWithReceiverName() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("0")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "i", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "i", BUILT_INS.intType, null, defaultValueForCall))
     }
 
     fun testRemoveParameterBeforeLambda() = doTest { removeParameter(1) }
@@ -639,7 +639,7 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testPrimaryConstructorByRef() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
     }
 
     fun testReceiverToParameterExplicitReceiver() = doTest { receiverParameterInfo = null }
@@ -669,12 +669,12 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testAddPropertyReceiverConflict() = doTestConflict {
         val defaultValueForCall = KtPsiFactory(project).createExpression("\"\"")
-        receiverParameterInfo = JetParameterInfo(originalBaseFunctionDescriptor, -1, "receiver", BUILT_INS.stringType, null, defaultValueForCall)
+        receiverParameterInfo = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "receiver", BUILT_INS.stringType, null, defaultValueForCall)
     }
 
     fun testAddPropertyReceiver() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("\"\"")
-        receiverParameterInfo = JetParameterInfo(originalBaseFunctionDescriptor, -1, "receiver", BUILT_INS.stringType, null, defaultValueForCall)
+        receiverParameterInfo = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "receiver", BUILT_INS.stringType, null, defaultValueForCall)
     }
 
     fun testChangePropertyReceiver() = doTest { receiverParameterInfo!!.currentTypeText = "Int" }
@@ -683,7 +683,7 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testAddTopLevelPropertyReceiver() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("A()")
-        receiverParameterInfo = JetParameterInfo(originalBaseFunctionDescriptor, -1, "receiver", null, null, defaultValueForCall)
+        receiverParameterInfo = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "receiver", null, null, defaultValueForCall)
                 .apply { currentTypeText = "test.A" }
     }
 
@@ -700,12 +700,12 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
         val psiFactory = KtPsiFactory(project)
 
         val defaultValueForCall1 = psiFactory.createExpression("1")
-        val newParameter1 = JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", null, null, defaultValueForCall1)
+        val newParameter1 = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", null, null, defaultValueForCall1)
                 .apply { currentTypeText = "kotlin.Int" }
         addParameter(newParameter1)
 
         val defaultValueForCall2 = psiFactory.createExpression("\"abc\"")
-        val newParameter2 = JetParameterInfo(originalBaseFunctionDescriptor, -1, "s", null, null, defaultValueForCall2)
+        val newParameter2 = KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "s", null, null, defaultValueForCall2)
                 .apply { currentTypeText = "kotlin.String" }
         addParameter(newParameter2)
 
@@ -730,21 +730,21 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testPropagateWithParameterDuplication() = doTestConflict {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
 
         primaryPropagationTargets = listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
     }
 
     fun testPropagateWithVariableDuplication() = doTestConflict {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
 
         primaryPropagationTargets = listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
     }
 
     fun testPropagateWithThisQualificationInClassMember() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
 
         val classA = KotlinFullClassNameIndex.getInstance().get("A", project, project.allScope()).first()
         val functionBar = classA.declarations.first { it is KtNamedFunction && it.name == "bar" }
@@ -753,7 +753,7 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testPropagateWithThisQualificationInExtension() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
 
         primaryPropagationTargets = listOf(KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, project.allScope()).first())
     }
@@ -765,14 +765,14 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testPrimaryConstructorParameterPropagation() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
 
         primaryPropagationTargets = findCallers(method.getRepresentativeLightMethod()!!)
     }
 
     fun testSecondaryConstructorParameterPropagation() = doTest {
         val defaultValueForCall = KtPsiFactory(project).createExpression("1")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValueForCall))
 
         primaryPropagationTargets = findCallers(method.getRepresentativeLightMethod()!!)
     }
@@ -800,12 +800,12 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     private fun doTestJvmOverloadedAddDefault(index: Int) = doTest {
         val defaultValue = KtPsiFactory(project).createExpression("2")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, defaultValue, defaultValue), index)
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, defaultValue, defaultValue), index)
     }
 
     private fun doTestJvmOverloadedAddNonDefault(index: Int) = doTest {
         val defaultValue = KtPsiFactory(project).createExpression("2")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValue), index)
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "n", BUILT_INS.intType, null, defaultValue), index)
     }
 
     fun testJvmOverloadedAddDefault1() = doTestJvmOverloadedAddDefault(0)
@@ -842,8 +842,8 @@ class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
         val psiFactory = KtPsiFactory(project)
         val defaultValue1 = psiFactory.createExpression("4")
         val defaultValue2 = psiFactory.createExpression("5")
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "d", BUILT_INS.intType, null, defaultValue1), 2)
-        addParameter(JetParameterInfo(originalBaseFunctionDescriptor, -1, "e", BUILT_INS.intType, null, defaultValue2))
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "d", BUILT_INS.intType, null, defaultValue1), 2)
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "e", BUILT_INS.intType, null, defaultValue2))
     }
 
     fun testRemoveParameterKeepFormat1() = doTest { removeParameter(0) }

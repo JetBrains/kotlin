@@ -24,20 +24,20 @@ import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
 
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-public class JetFunctionParameterTableModel extends JetCallableParameterTableModel {
-    public JetFunctionParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context) {
+public class KotlinFunctionParameterTableModel extends KotlinCallableParameterTableModel {
+    public KotlinFunctionParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement context) {
         super(methodDescriptor,
               context,
               new NameColumn(context.getProject()),
               new TypeColumn(context.getProject(), KotlinFileType.INSTANCE),
-              new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(),
-                                                                                                      KotlinFileType.INSTANCE),
+              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(context.getProject(),
+                                                                                                            KotlinFileType.INSTANCE),
               new ReceiverColumn(context.getProject(), methodDescriptor));
     }
 
@@ -51,11 +51,11 @@ public class JetFunctionParameterTableModel extends JetCallableParameterTableMod
 
     @Override
     @Nullable
-    public JetParameterInfo getReceiver() {
+    public KotlinParameterInfo getReceiver() {
         return ((ReceiverColumn)getColumnInfos()[getColumnCount() - 1]).receiver;
     }
 
-    public void setReceiver(@Nullable JetParameterInfo receiver) {
+    public void setReceiver(@Nullable KotlinParameterInfo receiver) {
         ((ReceiverColumn)getColumnInfos()[getColumnCount() - 1]).receiver = receiver;
     }
 
@@ -63,13 +63,13 @@ public class JetFunctionParameterTableModel extends JetCallableParameterTableMod
         return column instanceof ReceiverColumn;
     }
 
-    protected static class ReceiverColumn<TableItem extends ParameterTableModelItemBase<JetParameterInfo>>
-            extends ColumnInfoBase<JetParameterInfo, TableItem, Boolean> {
+    protected static class ReceiverColumn<TableItem extends ParameterTableModelItemBase<KotlinParameterInfo>>
+            extends ColumnInfoBase<KotlinParameterInfo, TableItem, Boolean> {
         private final Project project;
         @Nullable
-        private JetParameterInfo receiver;
+        private KotlinParameterInfo receiver;
 
-        public ReceiverColumn(Project project, @Nullable JetMethodDescriptor methodDescriptor) {
+        public ReceiverColumn(Project project, @Nullable KotlinMethodDescriptor methodDescriptor) {
             super("Receiver:");
             this.project = project;
             this.receiver = methodDescriptor != null ? methodDescriptor.getReceiver() : null;

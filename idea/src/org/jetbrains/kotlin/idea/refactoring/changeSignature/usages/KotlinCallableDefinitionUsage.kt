@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbse
 import org.jetbrains.kotlin.idea.core.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.getCallableSubstitutor
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
@@ -48,13 +48,13 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import org.jetbrains.kotlin.utils.sure
 
-class JetCallableDefinitionUsage<T : PsiElement>(
+class KotlinCallableDefinitionUsage<T : PsiElement>(
         function: T,
         val originalCallableDescriptor: CallableDescriptor,
-        baseFunction: JetCallableDefinitionUsage<PsiElement>?,
+        baseFunction: KotlinCallableDefinitionUsage<PsiElement>?,
         private val samCallType: KotlinType?
-) : JetUsageInfo<T>(function) {
-    val baseFunction: JetCallableDefinitionUsage<*> = baseFunction ?: this
+) : KotlinUsageInfo<T>(function) {
+    val baseFunction: KotlinCallableDefinitionUsage<*> = baseFunction ?: this
 
     val hasExpectedType: Boolean = checkIfHasExpectedType(originalCallableDescriptor, isInherited)
 
@@ -98,7 +98,7 @@ class JetCallableDefinitionUsage<T : PsiElement>(
     val isInherited: Boolean
         get() = baseFunction !== this
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
         if (element !is KtNamedDeclaration) return true
 
         val psiFactory = KtPsiFactory(element.project)
@@ -142,7 +142,7 @@ class JetCallableDefinitionUsage<T : PsiElement>(
         return true
     }
 
-    protected fun changeReturnTypeIfNeeded(changeInfo: JetChangeInfo, element: PsiElement) {
+    protected fun changeReturnTypeIfNeeded(changeInfo: KotlinChangeInfo, element: PsiElement) {
         if (element !is KtCallableDeclaration) return
         if (element is KtConstructor<*>) return
 
@@ -166,7 +166,7 @@ class JetCallableDefinitionUsage<T : PsiElement>(
     }
 
     private fun processParameterListWithStructuralChanges(
-            changeInfo: JetChangeInfo,
+            changeInfo: KotlinChangeInfo,
             element: PsiElement,
             originalParameterList: KtParameterList?,
             psiFactory: KtPsiFactory) {
@@ -224,7 +224,7 @@ class JetCallableDefinitionUsage<T : PsiElement>(
         newParameterList.addToShorteningWaitSet(Options.DEFAULT)
     }
 
-    private fun changeVisibility(changeInfo: JetChangeInfo, element: PsiElement) {
+    private fun changeVisibility(changeInfo: KotlinChangeInfo, element: PsiElement) {
         val newVisibilityToken = changeInfo.newVisibility.toKeywordToken()
         when (element) {
             is KtCallableDeclaration -> element.setVisibility(newVisibilityToken)
@@ -233,7 +233,7 @@ class JetCallableDefinitionUsage<T : PsiElement>(
         }
     }
 
-    private fun changeParameter(parameterIndex: Int, parameter: KtParameter, parameterInfo: JetParameterInfo) {
+    private fun changeParameter(parameterIndex: Int, parameter: KtParameter, parameterInfo: KotlinParameterInfo) {
         val valOrVarKeyword = parameter.valOrVarKeyword
         val valOrVar = parameterInfo.valOrVar
 
@@ -247,7 +247,7 @@ class JetCallableDefinitionUsage<T : PsiElement>(
                 valOrVarKeyword.delete()
             }
         }
-        else if (valOrVar != JetValVar.None && newKeyword != null) {
+        else if (valOrVar != KotlinValVar.None && newKeyword != null) {
             val firstChild = parameter.firstChild
             parameter.addBefore(newKeyword, firstChild)
             parameter.addBefore(psiFactory.createWhiteSpace(), firstChild)

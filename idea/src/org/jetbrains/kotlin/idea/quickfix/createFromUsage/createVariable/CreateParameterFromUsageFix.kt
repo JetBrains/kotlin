@@ -36,20 +36,20 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 public open class CreateParameterFromUsageFix<E : KtElement>(
         val functionDescriptor: FunctionDescriptor,
-        val parameterInfo: JetParameterInfo,
+        val parameterInfo: KotlinParameterInfo,
         val defaultValueContext: E
 ) : CreateFromUsageFixBase<E>(defaultValueContext) {
     override fun getText(): String {
         return with(parameterInfo) {
-            if (valOrVar != JetValVar.None) "Create property '$name' as constructor parameter" else "Create parameter '$name'"
+            if (valOrVar != KotlinValVar.None) "Create property '$name' as constructor parameter" else "Create parameter '$name'"
         }
     }
 
     override fun startInWriteAction() = false
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val config = object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
+        val config = object : KotlinChangeSignatureConfiguration {
+            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify { it.addParameter(parameterInfo) }
             }
 
@@ -90,11 +90,11 @@ public open class CreateParameterFromUsageFix<E : KtElement>(
             val paramType = info.returnTypeInfo.getPossibleTypes(builder).firstOrNull() ?: return null
             if (paramType.hasTypeParametersToAdd(constructorDescriptor, builder.currentFileContext)) return null
 
-            val paramInfo = JetParameterInfo(
+            val paramInfo = KotlinParameterInfo(
                     callableDescriptor = constructorDescriptor,
                     name = info.name,
                     type = paramType,
-                    valOrVar = if (info.writable) JetValVar.Var else JetValVar.Val
+                    valOrVar = if (info.writable) KotlinValVar.Var else KotlinValVar.Val
             )
 
             return CreateParameterFromUsageFix(constructorDescriptor, paramInfo, element)

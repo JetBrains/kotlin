@@ -21,7 +21,7 @@ import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.refactoring.RefactoringActionHandler
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureHandler
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceLambdaParameterHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterHandler
@@ -72,7 +72,7 @@ public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
         return false
     }
 
-    override fun getChangeSignatureHandler() = JetChangeSignatureHandler()
+    override fun getChangeSignatureHandler() = KotlinChangeSignatureHandler()
 
     override fun getPullUpHandler() = KotlinPullUpHandler()
 

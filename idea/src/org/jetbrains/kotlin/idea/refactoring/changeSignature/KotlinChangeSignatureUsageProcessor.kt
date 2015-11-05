@@ -80,23 +80,23 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
-class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
+class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     // This is special 'PsiElement' whose purpose is to wrap JetMethodDescriptor so that it can be kept in the usage list
     private class OriginalJavaMethodDescriptorWrapper(element: PsiElement) : UsageInfo(element) {
-        internal var originalJavaMethodDescriptor: JetMethodDescriptor? = null
+        internal var originalJavaMethodDescriptor: KotlinMethodDescriptor? = null
     }
 
-    private class DummyJetChangeInfo(
+    private class DummyKotlinChangeInfo(
             method: PsiElement,
-            methodDescriptor: JetMethodDescriptor
-    ) : JetChangeInfo(methodDescriptor = methodDescriptor,
-                      name = "",
-                      newReturnType = null,
-                      newReturnTypeText = "",
-                      newVisibility = Visibilities.DEFAULT_VISIBILITY,
-                      parameterInfos = emptyList<JetParameterInfo>(),
-                      receiver = null,
-                      context = method)
+            methodDescriptor: KotlinMethodDescriptor
+    ) : KotlinChangeInfo(methodDescriptor = methodDescriptor,
+                         name = "",
+                         newReturnType = null,
+                         newReturnTypeText = "",
+                         newVisibility = Visibilities.DEFAULT_VISIBILITY,
+                         parameterInfos = emptyList<KotlinParameterInfo>(),
+                         receiver = null,
+                         context = method)
 
     // It's here to prevent O(usage_count^2) performance
     private var initializedOriginalDescriptor: Boolean = false
@@ -108,7 +108,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         result.add(OriginalJavaMethodDescriptorWrapper(info.method))
 
-        if (info is JetChangeInfo) {
+        if (info is KotlinChangeInfo) {
             findAllMethodUsages(info, result)
         }
         else {
@@ -123,10 +123,10 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         return result.toTypedArray()
     }
 
-    private fun findAllMethodUsages(changeInfo: JetChangeInfo, result: MutableSet<UsageInfo>) {
+    private fun findAllMethodUsages(changeInfo: KotlinChangeInfo, result: MutableSet<UsageInfo>) {
         loop@ for (functionUsageInfo in changeInfo.getAffectedCallables()) {
             when (functionUsageInfo) {
-                is JetCallableDefinitionUsage<*> -> findOneMethodUsages(functionUsageInfo, changeInfo, result)
+                is KotlinCallableDefinitionUsage<*> -> findOneMethodUsages(functionUsageInfo, changeInfo, result)
                 is KotlinCallerUsage -> findCallerUsages(functionUsageInfo, changeInfo, result)
                 else -> {
                     result.add(functionUsageInfo)
@@ -143,7 +143,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                             KotlinCallerCallUsage(callElement)
                         }
                         else {
-                            JetFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)
+                            KotlinFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)
                         }
                         result.add(usage)
                     }
@@ -152,7 +152,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
     }
 
-    private fun findCallerUsages(callerUsage: KotlinCallerUsage, changeInfo: JetChangeInfo, result: MutableSet<UsageInfo>) {
+    private fun findCallerUsages(callerUsage: KotlinCallerUsage, changeInfo: KotlinChangeInfo, result: MutableSet<UsageInfo>) {
         result.add(callerUsage)
 
         val element = callerUsage.element ?: return
@@ -191,7 +191,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         }
 
                         if (receiver is ThisReceiver) {
-                            result.add(JetImplicitThisUsage(callElement, receiver.declarationDescriptor))
+                            result.add(KotlinImplicitThisUsage(callElement, receiver.declarationDescriptor))
                         }
                         else if (!receiver.exists()) {
                             result.add(
@@ -222,8 +222,8 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     }
 
     private fun findOneMethodUsages(
-            functionUsageInfo: JetCallableDefinitionUsage<*>,
-            changeInfo: JetChangeInfo,
+            functionUsageInfo: KotlinCallableDefinitionUsage<*>,
+            changeInfo: KotlinChangeInfo,
             result: MutableSet<UsageInfo>
     ) {
         val isInherited = functionUsageInfo.isInherited
@@ -244,17 +244,17 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
                 when {
                     parent is KtCallExpression ->
-                        result.add(JetFunctionCallUsage(parent, functionUsageInfo))
+                        result.add(KotlinFunctionCallUsage(parent, functionUsageInfo))
 
                     parent is KtUserType && parent.parent is KtTypeReference -> {
                         parent = parent.parent.parent
 
                         if (parent is KtConstructorCalleeExpression && parent.parent is KtDelegatorToSuperCall)
-                            result.add(JetFunctionCallUsage(parent.parent as KtDelegatorToSuperCall, functionUsageInfo))
+                            result.add(KotlinFunctionCallUsage(parent.parent as KtDelegatorToSuperCall, functionUsageInfo))
                     }
 
                     element is KtSimpleNameExpression && (functionPsi is KtProperty || functionPsi is KtParameter) ->
-                        result.add(JetPropertyCallUsage(element))
+                        result.add(KotlinPropertyCallUsage(element))
                 }
             }
         }
@@ -280,7 +280,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
                         // Usages in named arguments of the calls usage will be changed when the function call is changed
                         if ((element is KtSimpleNameExpression || element is KDocName) && element.parent !is KtValueArgumentName) {
-                            result.add(JetParameterUsage(element as KtElement, parameterInfo, functionUsageInfo))
+                            result.add(KotlinParameterUsage(element as KtElement, parameterInfo, functionUsageInfo))
                         }
                     }
                 }
@@ -294,21 +294,21 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         if (functionPsi is KtClass && functionPsi.isEnum()) {
             for (declaration in functionPsi.declarations) {
                 if (declaration is KtEnumEntry && declaration.getDelegationSpecifiers().isEmpty()) {
-                    result.add(JetEnumEntryWithoutSuperCallUsage(declaration))
+                    result.add(KotlinEnumEntryWithoutSuperCallUsage(declaration))
                 }
             }
         }
 
         functionPsi.processDelegationCallConstructorUsages(functionPsi.useScope) {
             when (it) {
-                is KtConstructorDelegationCall -> result.add(JetConstructorDelegationCallUsage(it, changeInfo))
-                is KtDelegatorToSuperCall -> result.add(JetFunctionCallUsage(it, functionUsageInfo))
+                is KtConstructorDelegationCall -> result.add(KotlinConstructorDelegationCallUsage(it, changeInfo))
+                is KtDelegatorToSuperCall -> result.add(KotlinFunctionCallUsage(it, functionUsageInfo))
             }
             true
         }
     }
 
-    private fun processInternalReferences(functionUsageInfo: JetCallableDefinitionUsage<*>, visitor: KtTreeVisitor<BindingContext>) {
+    private fun processInternalReferences(functionUsageInfo: KotlinCallableDefinitionUsage<*>, visitor: KtTreeVisitor<BindingContext>) {
         val ktFunction = functionUsageInfo.declaration as KtFunction
 
         val body = ktFunction.bodyExpression
@@ -321,9 +321,9 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     }
 
     private fun findOriginalReceiversUsages(
-            functionUsageInfo: JetCallableDefinitionUsage<*>,
+            functionUsageInfo: KotlinCallableDefinitionUsage<*>,
             result: MutableSet<UsageInfo>,
-            changeInfo: JetChangeInfo
+            changeInfo: KotlinChangeInfo
     ) {
         val originalReceiverInfo = changeInfo.methodDescriptor.receiver
         val callableDescriptor = functionUsageInfo.originalCallableDescriptor
@@ -338,12 +338,12 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
                         if (receiverDescriptor === callableDescriptor.extensionReceiverParameter) {
                             assert(originalReceiverInfo != null) { "No original receiver info provided: " + functionUsageInfo.declaration.text }
-                            result.add(JetParameterUsage(expression, originalReceiverInfo!!, functionUsageInfo))
+                            result.add(KotlinParameterUsage(expression, originalReceiverInfo!!, functionUsageInfo))
                         }
                         else {
                             val targetDescriptor = receiverDescriptor.type.constructor.declarationDescriptor
                             assert(targetDescriptor != null) { "Receiver type has no descriptor: " + functionUsageInfo.declaration.text }
-                            result.add(JetNonQualifiedOuterThisUsage(expression.parent as KtThisExpression, targetDescriptor!!))
+                            result.add(KotlinNonQualifiedOuterThisUsage(expression.parent as KtThisExpression, targetDescriptor!!))
                         }
                     }
 
@@ -353,10 +353,10 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         val targetDescriptor = receiverValue.declarationDescriptor
                         if (compareDescriptors(callElement.project, targetDescriptor, callableDescriptor)) {
                             assert(originalReceiverInfo != null) { "No original receiver info provided: " + functionUsageInfo.declaration.text }
-                            result.add(JetImplicitThisToParameterUsage(callElement, originalReceiverInfo!!, functionUsageInfo))
+                            result.add(KotlinImplicitThisToParameterUsage(callElement, originalReceiverInfo!!, functionUsageInfo))
                         }
                         else {
-                            result.add(JetImplicitThisUsage(callElement, targetDescriptor))
+                            result.add(KotlinImplicitThisUsage(callElement, targetDescriptor))
                         }
                     }
 
@@ -454,7 +454,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             result: MutableSet<UsageInfo>,
             function: KtNamedFunction,
             functionDescriptor: FunctionDescriptor) {
-        val functionInfoForParameters = JetCallableDefinitionUsage<PsiElement>(function, functionDescriptor, null, null)
+        val functionInfoForParameters = KotlinCallableDefinitionUsage<PsiElement>(function, functionDescriptor, null, null)
         val oldParameters = function.valueParameters
         val parameters = changeInfo.newParameters
         for ((paramIndex, parameterInfo) in parameters.withIndex()) {
@@ -472,12 +472,12 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
                 result.add(
                         object : JavaMethodDeferredKotlinUsage<KtElement>(element as KtElement) {
-                            override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<KtElement> {
+                            override fun resolve(javaMethodChangeInfo: KotlinChangeInfo): JavaMethodKotlinUsageWithDelegate<KtElement> {
                                 return object : JavaMethodKotlinUsageWithDelegate<KtElement>(element as KtElement, javaMethodChangeInfo) {
-                                    override val delegateUsage: JetUsageInfo<KtElement>
-                                        get() = JetParameterUsage(element as KtElement,
-                                                                  this.javaMethodChangeInfo.newParameters[paramIndex],
-                                                                  functionInfoForParameters)
+                                    override val delegateUsage: KotlinUsageInfo<KtElement>
+                                        get() = KotlinParameterUsage(element as KtElement,
+                                                                     this.javaMethodChangeInfo.newParameters[paramIndex],
+                                                                     functionInfoForParameters)
                                 }
                             }
                         }
@@ -497,7 +497,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             refUsages.set(adjustedUsages.toTypedArray())
         }
 
-        if (info !is JetChangeInfo) return result
+        if (info !is KotlinChangeInfo) return result
 
         val parameterNames = HashSet<String>()
         val function = info.method
@@ -546,7 +546,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             }
 
             if (parametersScope != null) {
-                if (kind === JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar !== JetValVar.None) {
+                if (kind === KotlinMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR && valOrVar !== KotlinValVar.None) {
                     for (property in parametersScope.getVariablesFromImplicitReceivers(Name.identifier(parameterName))) {
                         val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) ?: continue
                         if (propertyDeclaration.parent !is KtParameterList) {
@@ -584,7 +584,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
     private fun findParameterDuplicationInCaller(
             result: MultiMap<PsiElement, String>,
-            changeInfo: JetChangeInfo,
+            changeInfo: KotlinChangeInfo,
             caller: KtNamedDeclaration,
             callerDescriptor: DeclarationDescriptor) {
         val valueParameters = caller.getValueParameters()
@@ -603,11 +603,11 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     private fun findThisLabelConflicts(
             refUsages: Ref<Array<UsageInfo>>,
             result: MultiMap<PsiElement, String>,
-            changeInfo: JetChangeInfo,
+            changeInfo: KotlinChangeInfo,
             callable: KtCallableDeclaration) {
         val psiFactory = KtPsiFactory(callable.project)
         for (usageInfo in refUsages.get()) {
-            if (usageInfo !is JetParameterUsage) continue
+            if (usageInfo !is KotlinParameterUsage) continue
 
             val newExprText = usageInfo.getReplacementText(changeInfo)
             if (!newExprText.startsWith("this")) continue
@@ -643,12 +643,12 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     private fun findInternalExplicitReceiverConflicts(
             usages: Array<UsageInfo>,
             result: MultiMap<PsiElement, String>,
-            originalReceiverInfo: JetParameterInfo?
+            originalReceiverInfo: KotlinParameterInfo?
     ) {
         if (originalReceiverInfo != null) return
 
         for (usageInfo in usages) {
-            if (!(usageInfo is JetFunctionCallUsage || usageInfo is JetPropertyCallUsage)) continue
+            if (!(usageInfo is KotlinFunctionCallUsage || usageInfo is KotlinPropertyCallUsage)) continue
 
             val callElement = usageInfo.element as? KtElement ?: continue
 
@@ -663,7 +663,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     private fun findReceiverIntroducingConflicts(
             result: MultiMap<PsiElement, String>,
             callable: PsiElement,
-            newReceiverInfo: JetParameterInfo?) {
+            newReceiverInfo: KotlinParameterInfo?) {
         if (newReceiverInfo != null && (callable is KtNamedFunction) && callable.bodyExpression != null) {
             val noReceiverRefToContext = KotlinFileReferencesResolver.resolve(callable, true, true).filter {
                 val resolvedCall = it.key.getResolvedCall(it.value)
@@ -701,7 +701,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
     private fun createReplacementUsage(
             originalUsageInfo: UsageInfo,
-            javaMethodChangeInfo: JetChangeInfo,
+            javaMethodChangeInfo: KotlinChangeInfo,
             allUsages: Array<UsageInfo>
     ): UsageInfo? {
         if (originalUsageInfo is JavaMethodDeferredKotlinUsage<*>) return originalUsageInfo.resolve(javaMethodChangeInfo)
@@ -782,7 +782,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val isJavaMethodUsage = isJavaMethodUsage(usageInfo)
 
         if (usageInfo is KotlinWrapperForJavaUsageInfos) {
-            val javaChangeInfos = (changeInfo as JetChangeInfo).getOrCreateJavaChangeInfos()
+            val javaChangeInfos = (changeInfo as KotlinChangeInfo).getOrCreateJavaChangeInfos()
             assert(javaChangeInfos != null) { "JavaChangeInfo not found: " + method.text }
 
             javaChangeInfos!!.firstOrNull {
@@ -795,7 +795,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                 for (usage in javaUsageInfos) {
                     if (isOverriderOrCaller(usage) && beforeMethodChange) continue
                     for (processor in processors) {
-                        if (processor is JetChangeSignatureUsageProcessor) continue
+                        if (processor is KotlinChangeSignatureUsageProcessor) continue
                         if (isOverriderOrCaller(usage)) {
                             processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos)
                         }
@@ -819,11 +819,11 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
             val methodDescriptor = method.getJavaMethodDescriptor()
             assert(methodDescriptor != null)
-            descriptorWrapper.originalJavaMethodDescriptor = JetChangeSignatureData(methodDescriptor!!, method, listOf(methodDescriptor))
+            descriptorWrapper.originalJavaMethodDescriptor = KotlinChangeSignatureData(methodDescriptor!!, method, listOf(methodDescriptor))
 
             // This change info is used as a placeholder before primary method update
             // It gets replaced with real change info afterwards
-            val dummyChangeInfo = DummyJetChangeInfo(changeInfo.method, descriptorWrapper.originalJavaMethodDescriptor!!)
+            val dummyChangeInfo = DummyKotlinChangeInfo(changeInfo.method, descriptorWrapper.originalJavaMethodDescriptor!!)
             for (i in usages.indices) {
                 val oldUsageInfo = usages[i]
                 if (!isJavaMethodUsage(oldUsageInfo)) continue
@@ -843,7 +843,7 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         if (usageInfo is JavaMethodKotlinUsageWithDelegate<*>) {
             // Do not call getOriginalJavaMethodDescriptorWrapper() on each usage to avoid O(usage_count^2) performance
-            if (usageInfo.javaMethodChangeInfo is DummyJetChangeInfo) {
+            if (usageInfo.javaMethodChangeInfo is DummyKotlinChangeInfo) {
                 val descriptorWrapper = usages.firstIsInstanceOrNull<OriginalJavaMethodDescriptorWrapper>()
                 val methodDescriptor = (descriptorWrapper?.originalJavaMethodDescriptor) ?: return true
 
@@ -868,11 +868,11 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
 
         @Suppress("UNCHECKED_CAST")
-        return (usageInfo as? JetUsageInfo<PsiElement>)?.processUsage(changeInfo as JetChangeInfo, element, usages) ?: false
+        return (usageInfo as? KotlinUsageInfo<PsiElement>)?.processUsage(changeInfo as KotlinChangeInfo, element, usages) ?: false
     }
 
     override fun processPrimaryMethod(changeInfo: ChangeInfo): Boolean {
-        if (changeInfo !is JetChangeInfo) return false
+        if (changeInfo !is KotlinChangeInfo) return false
 
         for (primaryFunction in changeInfo.methodDescriptor.primaryCallables) {
             primaryFunction.processUsage(changeInfo, primaryFunction.declaration, UsageInfo.EMPTY_ARRAY)

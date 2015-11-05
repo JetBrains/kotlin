@@ -23,7 +23,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -83,4 +83,4 @@ public class ExtractKotlinFunctionHandler(
     }
 }
 
-val EXTRACT_FUNCTION: String = JetRefactoringBundle.message("extract.function")
+val EXTRACT_FUNCTION: String = KotlinRefactoringBundle.message("extract.function")

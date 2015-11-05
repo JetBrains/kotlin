@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.refactoring.replaceListPsiAndKeepDelimiters
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBody
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.createNameCounterpartMap
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
@@ -53,14 +53,14 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-class JetFunctionCallUsage(
+class KotlinFunctionCallUsage(
         element: KtCallElement,
-        private val callee: JetCallableDefinitionUsage<*>
-) : JetUsageInfo<KtCallElement>(element) {
+        private val callee: KotlinCallableDefinitionUsage<*>
+) : KotlinUsageInfo<KtCallElement>(element) {
     private val context = element.analyze(BodyResolveMode.FULL)
     private val resolvedCall = element.getResolvedCall(context)
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
         if (shouldSkipUsage(element)) return true
 
         changeNameIfNeeded(changeInfo, element)
@@ -106,7 +106,7 @@ class JetFunctionCallUsage(
             return resolvedCall?.resultingDescriptor is JavaMethodDescriptor
         }
 
-    protected fun changeNameIfNeeded(changeInfo: JetChangeInfo, element: KtCallElement) {
+    protected fun changeNameIfNeeded(changeInfo: KotlinChangeInfo, element: KtCallElement) {
         if (!changeInfo.isNameChanged) return
 
         val callee = element.calleeExpression
@@ -238,7 +238,7 @@ class JetFunctionCallUsage(
     }
 
     class ArgumentInfo(
-            val parameter: JetParameterInfo,
+            val parameter: KotlinParameterInfo,
             val parameterIndex: Int,
             val resolvedArgument: ResolvedValueArgument?,
             val receiverValue: ReceiverValue?
@@ -252,7 +252,7 @@ class JetFunctionCallUsage(
         var name: String? = null
             private set
 
-        fun makeNamed(callee: JetCallableDefinitionUsage<*>) {
+        fun makeNamed(callee: KotlinCallableDefinitionUsage<*>) {
             name = parameter.getInheritedName(callee)
         }
 
@@ -290,7 +290,7 @@ class JetFunctionCallUsage(
         }
     }
 
-    private fun updateArgumentsAndReceiver(changeInfo: JetChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>) {
+    private fun updateArgumentsAndReceiver(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>) {
         if (isPropertyJavaUsage) return updateJavaPropertyCall(changeInfo, element)
 
         val fullCallElement = element.getQualifiedExpressionForSelector() ?: element
@@ -439,7 +439,7 @@ class JetFunctionCallUsage(
         }
     }
 
-    private fun changeArgumentNames(changeInfo: JetChangeInfo, element: KtCallElement) {
+    private fun changeArgumentNames(changeInfo: KotlinChangeInfo, element: KtCallElement) {
         for (argument in element.valueArguments) {
             val argumentName = argument.getArgumentName()
             val argumentNameExpression = argumentName?.referenceExpression ?: continue
@@ -450,7 +450,7 @@ class JetFunctionCallUsage(
         }
     }
 
-    private fun changeArgumentName(argumentNameExpression: KtSimpleNameExpression?, parameterInfo: JetParameterInfo) {
+    private fun changeArgumentName(argumentNameExpression: KtSimpleNameExpression?, parameterInfo: KotlinParameterInfo) {
         val identifier = argumentNameExpression?.getIdentifier() ?: return
         val newName = parameterInfo.getInheritedName(callee)
         identifier.replace(KtPsiFactory(project).createIdentifier(newName))
@@ -471,7 +471,7 @@ class JetFunctionCallUsage(
 
         private val SHORTEN_ARGUMENTS_OPTIONS = ShortenReferences.Options(true, true)
 
-        private fun updateJavaPropertyCall(changeInfo: JetChangeInfo, element: KtCallElement) {
+        private fun updateJavaPropertyCall(changeInfo: KotlinChangeInfo, element: KtCallElement) {
             val newReceiverInfo = changeInfo.receiverParameterInfo
             val originalReceiverInfo = changeInfo.methodDescriptor.receiver
             if (newReceiverInfo == originalReceiverInfo) return

@@ -30,19 +30,19 @@ import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetUsageInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import java.util.*
 
-public class JetChangeSignatureProcessor(project: Project,
-                                         changeInfo: JetChangeInfo,
-                                         private val commandName: String) : ChangeSignatureProcessorBase(project, changeInfo) {
+public class KotlinChangeSignatureProcessor(project: Project,
+                                            changeInfo: KotlinChangeInfo,
+                                            private val commandName: String) : ChangeSignatureProcessorBase(project, changeInfo) {
     override fun createUsageViewDescriptor(usages: Array<UsageInfo>): UsageViewDescriptor {
         val subject = if (getChangeInfo().kind.isConstructor) "constructor" else "function"
-        return JetUsagesViewDescriptor(myChangeInfo.getMethod(), RefactoringBundle.message("0.to.change.signature", subject))
+        return KotlinUsagesViewDescriptor(myChangeInfo.getMethod(), RefactoringBundle.message("0.to.change.signature", subject))
     }
 
-    override fun getChangeInfo() = super.getChangeInfo() as JetChangeInfo
+    override fun getChangeInfo() = super.getChangeInfo() as KotlinChangeInfo
 
     override fun findUsages(): Array<UsageInfo> {
         val allUsages = ArrayList<UsageInfo>()
@@ -52,7 +52,7 @@ public class JetChangeSignatureProcessor(project: Project,
                 KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), getChangeInfo().getMethod())
             }
         }
-        super.findUsages().filterTo(allUsages) { it is JetUsageInfo<*> || it is UnresolvableCollisionUsageInfo }
+        super.findUsages().filterTo(allUsages) { it is KotlinUsageInfo<*> || it is UnresolvableCollisionUsageInfo }
 
         return allUsages.toTypedArray()
     }

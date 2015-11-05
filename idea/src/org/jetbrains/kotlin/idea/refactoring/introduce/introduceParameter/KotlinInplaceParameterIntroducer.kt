@@ -29,7 +29,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.ui.JBColor
 import com.intellij.ui.NonFocusableCheckBox
 import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorParameterListIfAbsent
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -135,7 +135,7 @@ public class KotlinInplaceParameterIntroducer(
                         val parameterName = currentName ?: parameter.getName()
                         val parameterType = currentType ?: parameter.getTypeReference()!!.getText()
                         descriptor = descriptor.copy(newParameterName = parameterName!!, newParameterTypeText = parameterType)
-                        val modifier = if (valVar != JetValVar.None) "${valVar.keywordName} " else ""
+                        val modifier = if (valVar != KotlinValVar.None) "${valVar.keywordName} " else ""
                         val defaultValue = if (withDefaultValue) " = ${newArgumentValue.getText()}" else ""
 
                         "$modifier$parameterName: $parameterType$defaultValue"

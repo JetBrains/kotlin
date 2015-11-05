@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -58,7 +58,7 @@ public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUs
         } ?: anyType
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
-        val parameterInfo = JetParameterInfo(
+        val parameterInfo = KotlinParameterInfo(
                 callableDescriptor = functionDescriptor,
                 name = name,
                 type = paramType,

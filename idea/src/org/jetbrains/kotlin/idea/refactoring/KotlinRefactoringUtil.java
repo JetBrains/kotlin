@@ -65,9 +65,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class JetRefactoringUtil {
-
-    private JetRefactoringUtil() {
+public class KotlinRefactoringUtil {
+    private KotlinRefactoringUtil() {
     }
 
     @NotNull
@@ -422,7 +421,8 @@ public class JetRefactoringUtil {
             @NotNull final SelectExpressionCallback callback) throws IntroduceRefactoringException {
         List<KtExpression> expressions = getSmartSelectSuggestions(file, offset);
         if (expressions.size() == 0) {
-            if (failOnEmptySuggestion) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
+            if (failOnEmptySuggestion) throw new IntroduceRefactoringException(
+                    KotlinRefactoringBundle.message("cannot.refactor.not.expression"));
             return;
         }
 
@@ -466,7 +466,7 @@ public class JetRefactoringUtil {
         });
 
         JBPopupFactory.getInstance().createListPopupBuilder(list).
-                setTitle(JetRefactoringBundle.message("expressions.title")).setMovable(false).setResizable(false).
+                setTitle(KotlinRefactoringBundle.message("expressions.title")).setMovable(false).setResizable(false).
                 setRequestFocus(true).setItemChoosenCallback(new Runnable() {
             @Override
             public void run() {
@@ -494,7 +494,7 @@ public class JetRefactoringUtil {
             //todo: if it's infix expression => add (), then commit document then return new created expression
 
             if (failOnNoExpression) {
-                throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
+                throw new IntroduceRefactoringException(KotlinRefactoringBundle.message("cannot.refactor.not.expression"));
             }
             return null;
         }

@@ -39,7 +39,7 @@ public class MissingConstructorKeywordFix(element: KtPrimaryConstructor) : Kotli
                 diagnostic.createIntentionForFirstParentOfType(::MissingConstructorKeywordFix)
 
         public fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory {
-            JetWholeProjectForEachElementOfTypeFix.createByPredicate<KtPrimaryConstructor>(
+            WholeProjectForEachElementOfTypeFix.createByPredicate<KtPrimaryConstructor>(
                     predicate = { it.getModifierList() != null && !it.hasConstructorKeyword() },
                     taskProcessor = { it.addConstructorKeyword() },
                     name = "Add missing 'constructor' keyword in whole project"

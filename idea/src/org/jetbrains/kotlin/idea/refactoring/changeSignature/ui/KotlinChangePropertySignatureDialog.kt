@@ -41,9 +41,9 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import kotlin.properties.Delegates
 
-public class JetChangePropertySignatureDialog(
+public class KotlinChangePropertySignatureDialog(
         project: Project,
-        private val methodDescriptor: JetMethodDescriptor,
+        private val methodDescriptor: KotlinMethodDescriptor,
         private val commandName: String?
 ): RefactoringDialog(project, true) {
     private val visibilityCombo = JComboBox(
@@ -98,7 +98,7 @@ public class JetChangePropertySignatureDialog(
                 receiverTypeCheckBox.addActionListener { updateReceiverUI() }
                 receiverTypeCheckBox.setSelected(methodDescriptor.receiver != null)
                 addComponent(receiverTypeCheckBox)
-                this@JetChangePropertySignatureDialog.receiverTypeCheckBox = receiverTypeCheckBox
+                this@KotlinChangePropertySignatureDialog.receiverTypeCheckBox = receiverTypeCheckBox
 
                 val receiverTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.renderOriginalReceiverType() ?: "",
                                                                                  methodDescriptor.baseDeclaration)
@@ -144,34 +144,34 @@ public class JetChangePropertySignatureDialog(
         val originalDescriptor = methodDescriptor.original
 
         val receiver = if (receiverTypeCheckBox?.isSelected() ?: false) {
-            originalDescriptor.receiver ?: JetParameterInfo(callableDescriptor = originalDescriptor.baseDescriptor,
-                                                            name = "receiver",
-                                                            defaultValueForCall = getDefaultReceiverValue())
+            originalDescriptor.receiver ?: KotlinParameterInfo(callableDescriptor = originalDescriptor.baseDescriptor,
+                                                               name = "receiver",
+                                                               defaultValueForCall = getDefaultReceiverValue())
         } else null
         receiver?.currentTypeText = receiverTypeField.getText()
-        val changeInfo = JetChangeInfo(originalDescriptor,
-                                       nameField.getText(),
-                                       null,
-                                       returnTypeField.getText(),
-                                       visibilityCombo.getSelectedItem() as Visibility,
-                                       emptyList(),
-                                       receiver,
-                                       originalDescriptor.getMethod())
+        val changeInfo = KotlinChangeInfo(originalDescriptor,
+                                          nameField.getText(),
+                                          null,
+                                          returnTypeField.getText(),
+                                          visibilityCombo.getSelectedItem() as Visibility,
+                                          emptyList(),
+                                          receiver,
+                                          originalDescriptor.getMethod())
 
-        invokeRefactoring(JetChangeSignatureProcessor(myProject, changeInfo, commandName ?: getTitle()))
+        invokeRefactoring(KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: getTitle()))
     }
 
     companion object {
         fun createProcessorForSilentRefactoring(
                 project: Project,
                 commandName: String,
-                descriptor: JetMethodDescriptor
+                descriptor: KotlinMethodDescriptor
         ): BaseRefactoringProcessor {
             val originalDescriptor = descriptor.original
-            val changeInfo = JetChangeInfo(methodDescriptor = originalDescriptor, context = originalDescriptor.getMethod())
+            val changeInfo = KotlinChangeInfo(methodDescriptor = originalDescriptor, context = originalDescriptor.getMethod())
             changeInfo.setNewName(descriptor.getName())
             changeInfo.receiverParameterInfo = descriptor.receiver
-            return JetChangeSignatureProcessor(project, changeInfo, commandName)
+            return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
     }
 }

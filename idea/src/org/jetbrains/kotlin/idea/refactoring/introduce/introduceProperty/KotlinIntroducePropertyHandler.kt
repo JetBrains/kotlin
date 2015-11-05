@@ -114,4 +114,4 @@ public class KotlinIntroducePropertyHandler(
     }
 }
 
-val INTRODUCE_PROPERTY: String = JetRefactoringBundle.message("introduce.property")
+val INTRODUCE_PROPERTY: String = KotlinRefactoringBundle.message("introduce.property")

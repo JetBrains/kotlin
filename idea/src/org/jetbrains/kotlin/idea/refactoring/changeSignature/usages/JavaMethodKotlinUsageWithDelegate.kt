@@ -18,27 +18,27 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.psi.PsiElement
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 
 public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
         val psiElement: T,
-        var javaMethodChangeInfo: JetChangeInfo): UsageInfo(psiElement) {
-    abstract val delegateUsage: JetUsageInfo<T>
+        var javaMethodChangeInfo: KotlinChangeInfo): UsageInfo(psiElement) {
+    abstract val delegateUsage: KotlinUsageInfo<T>
 
     fun processUsage(allUsages: Array<UsageInfo>): Boolean = delegateUsage.processUsage(javaMethodChangeInfo, psiElement, allUsages)
 }
 
 public class JavaMethodKotlinCallUsage(
         callElement: KtCallElement,
-        javaMethodChangeInfo: JetChangeInfo,
+        javaMethodChangeInfo: KotlinChangeInfo,
         propagationCall: Boolean
 ): JavaMethodKotlinUsageWithDelegate<KtCallElement>(callElement, javaMethodChangeInfo) {
     @Suppress("UNCHECKED_CAST")
     override val delegateUsage = when {
         propagationCall -> KotlinCallerCallUsage(psiElement)
-        psiElement is KtConstructorDelegationCall -> JetConstructorDelegationCallUsage(psiElement, javaMethodChangeInfo)
-        else -> JetFunctionCallUsage(psiElement, javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable)
-    } as JetUsageInfo<KtCallElement>
+        psiElement is KtConstructorDelegationCall -> KotlinConstructorDelegationCallUsage(psiElement, javaMethodChangeInfo)
+        else -> KotlinFunctionCallUsage(psiElement, javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable)
+    } as KotlinUsageInfo<KtCallElement>
 }

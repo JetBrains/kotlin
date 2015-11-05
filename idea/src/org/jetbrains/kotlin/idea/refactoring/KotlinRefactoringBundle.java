@@ -25,13 +25,13 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
-public class JetRefactoringBundle {
+public class KotlinRefactoringBundle {
     private static Reference<ResourceBundle> ourBundle;
 
     @NonNls
-    private static final String BUNDLE = "org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle";
+    private static final String BUNDLE = "org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle";
 
-    private JetRefactoringBundle() {
+    private KotlinRefactoringBundle() {
     }
 
     @NotNull

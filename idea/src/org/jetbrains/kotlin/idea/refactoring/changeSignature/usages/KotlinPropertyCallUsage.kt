@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
@@ -28,22 +28,22 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-public class JetPropertyCallUsage(element: KtSimpleNameExpression): JetUsageInfo<KtSimpleNameExpression>(element) {
+public class KotlinPropertyCallUsage(element: KtSimpleNameExpression): KotlinUsageInfo<KtSimpleNameExpression>(element) {
     private val resolvedCall = element.getResolvedCall(element.analyze())
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: KtSimpleNameExpression, allUsages: Array<out UsageInfo>): Boolean {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtSimpleNameExpression, allUsages: Array<out UsageInfo>): Boolean {
         updateName(changeInfo, element)
         updateReceiver(changeInfo, element)
         return true
     }
 
-    private fun updateName(changeInfo: JetChangeInfo, element: KtSimpleNameExpression) {
+    private fun updateName(changeInfo: KotlinChangeInfo, element: KtSimpleNameExpression) {
         if (changeInfo.isNameChanged()) {
             element.mainReference.handleElementRename(changeInfo.getNewName())
         }
     }
 
-    private fun updateReceiver(changeInfo: JetChangeInfo, element: KtSimpleNameExpression) {
+    private fun updateReceiver(changeInfo: KotlinChangeInfo, element: KtSimpleNameExpression) {
         val newReceiver = changeInfo.receiverParameterInfo
         val oldReceiver = changeInfo.methodDescriptor.receiver
         if (newReceiver == oldReceiver) return

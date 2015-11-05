@@ -22,10 +22,10 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
-public interface JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility> {
+public interface KotlinMethodDescriptor : MethodDescriptor<KotlinParameterInfo, Visibility> {
     enum class Kind(val isConstructor: Boolean) {
         FUNCTION(false),
         PRIMARY_CONSTRUCTOR(true),
@@ -41,20 +41,20 @@ public interface JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibi
         }
     }
 
-    val original: JetMethodDescriptor
+    val original: KotlinMethodDescriptor
 
     val baseDeclaration: PsiElement
     val baseDescriptor: CallableDescriptor
 
-    val originalPrimaryCallable: JetCallableDefinitionUsage<PsiElement>
-    val primaryCallables: Collection<JetCallableDefinitionUsage<PsiElement>>
+    val originalPrimaryCallable: KotlinCallableDefinitionUsage<PsiElement>
+    val primaryCallables: Collection<KotlinCallableDefinitionUsage<PsiElement>>
     val affectedCallables: Collection<UsageInfo>
 
-    val receiver: JetParameterInfo?
+    val receiver: KotlinParameterInfo?
 }
 
-fun JetMethodDescriptor.renderOriginalReturnType(): String =
+fun KotlinMethodDescriptor.renderOriginalReturnType(): String =
         baseDescriptor.getReturnType()?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""
 
-fun JetMethodDescriptor.renderOriginalReceiverType(): String? =
+fun KotlinMethodDescriptor.renderOriginalReceiverType(): String? =
         baseDescriptor.getExtensionReceiverParameter()?.getType()?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }

@@ -22,56 +22,56 @@ import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-public class JetPrimaryConstructorParameterTableModel extends JetCallableParameterTableModel {
-    public JetPrimaryConstructorParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context) {
+public class KotlinPrimaryConstructorParameterTableModel extends KotlinCallableParameterTableModel {
+    public KotlinPrimaryConstructorParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement context) {
         super(methodDescriptor,
               context,
               new ValVarColumn(),
               new NameColumn(context.getProject()),
               new TypeColumn(context.getProject(), KotlinFileType.INSTANCE),
-              new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(), KotlinFileType.INSTANCE));
+              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(context.getProject(), KotlinFileType.INSTANCE));
     }
 
     public static boolean isValVarColumn(ColumnInfo column) {
         return column instanceof ValVarColumn;
     }
 
-    protected static class ValVarColumn extends ColumnInfoBase<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>, JetValVar> {
+    protected static class ValVarColumn extends ColumnInfoBase<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>, KotlinValVar> {
         public ValVarColumn() {
-            super(JetRefactoringBundle.message("column.name.val.var"));
+            super(KotlinRefactoringBundle.message("column.name.val.var"));
         }
 
         @Override
-        public boolean isCellEditable(ParameterTableModelItemBase<JetParameterInfo> item) {
+        public boolean isCellEditable(ParameterTableModelItemBase<KotlinParameterInfo> item) {
             return !item.isEllipsisType() && item.parameter.isNewParameter();
         }
 
         @Override
-        public JetValVar valueOf(ParameterTableModelItemBase<JetParameterInfo> item) {
+        public KotlinValVar valueOf(ParameterTableModelItemBase<KotlinParameterInfo> item) {
             return item.parameter.getValOrVar();
         }
 
         @Override
-        public void setValue(ParameterTableModelItemBase<JetParameterInfo> item, JetValVar value) {
+        public void setValue(ParameterTableModelItemBase<KotlinParameterInfo> item, KotlinValVar value) {
             item.parameter.setValOrVar(value);
         }
 
         @Override
-        public TableCellRenderer doCreateRenderer(ParameterTableModelItemBase<JetParameterInfo> item) {
-            return new ComboBoxTableRenderer<JetValVar>(JetValVar.values());
+        public TableCellRenderer doCreateRenderer(ParameterTableModelItemBase<KotlinParameterInfo> item) {
+            return new ComboBoxTableRenderer<KotlinValVar>(KotlinValVar.values());
         }
 
         @Override
-        public TableCellEditor doCreateEditor(ParameterTableModelItemBase<JetParameterInfo> item) {
+        public TableCellEditor doCreateEditor(ParameterTableModelItemBase<KotlinParameterInfo> item) {
             return new ComboBoxCellEditor(new JComboBox());
         }
 

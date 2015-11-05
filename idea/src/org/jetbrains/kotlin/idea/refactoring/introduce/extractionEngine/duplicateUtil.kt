@@ -24,7 +24,7 @@ import com.intellij.openapi.editor.Editor
 import java.util.ArrayList
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.ScrollType
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColors
@@ -79,7 +79,7 @@ public fun processDuplicates(
     else
         Messages.showYesNoDialog(
                 project,
-                JetRefactoringBundle.message(
+                KotlinRefactoringBundle.message(
                         "0.has.detected.1.code.fragments.in.this.file.that.can.be.replaced.with.a.call.to.extracted.declaration",
                         ApplicationNamesInfo.getInstance().getProductName(),
                         duplicateReplacers.size()

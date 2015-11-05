@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -44,13 +44,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import java.util.*
 
-public class JetChangeSignatureData(
+public class KotlinChangeSignatureData(
         override val baseDescriptor: CallableDescriptor,
         override val baseDeclaration: PsiElement,
         private val descriptorsForSignatureChange: Collection<CallableDescriptor>
-) : JetMethodDescriptor {
-    private val parameters: List<JetParameterInfo>
-    override val receiver: JetParameterInfo?
+) : KotlinMethodDescriptor {
+    private val parameters: List<KotlinParameterInfo>
+    override val receiver: KotlinParameterInfo?
 
     init {
         receiver = createReceiverInfoIfNeeded()
@@ -63,7 +63,7 @@ public class JetChangeSignatureData(
         parameters = baseDescriptor.getValueParameters()
                 .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
                     val jetParameter = valueParameters?.get(parameterDescriptor.index)
-                    JetParameterInfo(
+                    KotlinParameterInfo(
                             callableDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.index,
                             name = parameterDescriptor.getName().asString(),
@@ -75,7 +75,7 @@ public class JetChangeSignatureData(
                 }
     }
 
-    private fun createReceiverInfoIfNeeded(): JetParameterInfo? {
+    private fun createReceiverInfoIfNeeded(): KotlinParameterInfo? {
         val callable = baseDeclaration as? KtCallableDeclaration ?: return null
         val bodyScope = (callable as? KtFunction)?.bodyExpression?.let { it.getResolutionScope(it.analyze(), it.getResolutionFacade()) }
         val paramNames = baseDescriptor.valueParameters.map { it.name.asString() }
@@ -86,21 +86,21 @@ public class JetChangeSignatureData(
         } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
         val receiverName = KotlinNameSuggester.suggestNamesByType(receiverType, validator, "receiver").first()
-        return JetParameterInfo(callableDescriptor = baseDescriptor, name = receiverName, type = receiverType)
+        return KotlinParameterInfo(callableDescriptor = baseDescriptor, name = receiverName, type = receiverType)
     }
 
-    override val original: JetMethodDescriptor
+    override val original: KotlinMethodDescriptor
         get() = this
 
-    override val primaryCallables: Collection<JetCallableDefinitionUsage<PsiElement>> by lazy {
+    override val primaryCallables: Collection<KotlinCallableDefinitionUsage<PsiElement>> by lazy {
         descriptorsForSignatureChange.map {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.getProject(), it)
             assert(declaration != null) { "No declaration found for " + baseDescriptor }
-            JetCallableDefinitionUsage<PsiElement>(declaration!!, it, null, null)
+            KotlinCallableDefinitionUsage<PsiElement>(declaration!!, it, null, null)
         }
     }
 
-    override val originalPrimaryCallable: JetCallableDefinitionUsage<PsiElement> by lazy {
+    override val originalPrimaryCallable: KotlinCallableDefinitionUsage<PsiElement> by lazy {
         primaryCallables.first { it.declaration == baseDeclaration }
     }
 
@@ -115,7 +115,7 @@ public class JetChangeSignatureData(
                             if (overridingMethod is KtLightMethod) {
                                 val overridingDeclaration = overridingMethod.namedUnwrappedElement as KtNamedDeclaration
                                 val overridingDescriptor = overridingDeclaration.resolveToDescriptor() as CallableDescriptor
-                                JetCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
+                                KotlinCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
                             }
                             else OverriderUsageInfo(overridingMethod, baseMethod, true, true, true)
                         }.filterNotNullTo(HashSet<UsageInfo>())
@@ -123,7 +123,7 @@ public class JetChangeSignatureData(
         }
     }
 
-    override fun getParameters(): List<JetParameterInfo> {
+    override fun getParameters(): List<KotlinParameterInfo> {
         return parameters
     }
 

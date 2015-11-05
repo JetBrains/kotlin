@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
 
-public class JetSecondaryConstructorParameterTableModel extends JetCallableParameterTableModel {
-    public JetSecondaryConstructorParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context) {
+public class KotlinSecondaryConstructorParameterTableModel extends KotlinCallableParameterTableModel {
+    public KotlinSecondaryConstructorParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement context) {
         super(methodDescriptor,
               context,
               new NameColumn(context.getProject()),
               new TypeColumn(context.getProject(), KotlinFileType.INSTANCE),
-              new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(), KotlinFileType.INSTANCE));
+              new DefaultValueColumn<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>>(context.getProject(), KotlinFileType.INSTANCE));
     }
 }

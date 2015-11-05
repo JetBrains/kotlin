@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -25,7 +24,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
@@ -34,14 +32,13 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtVisitor
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.flatMapDescendantsOfTypeVisitor
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import java.util.HashMap
+import java.util.*
 
-public abstract class JetWholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
-    private val LOG = Logger.getInstance(javaClass<JetWholeProjectModalAction<*>>());
+public abstract class WholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
+    private val LOG = Logger.getInstance(javaClass<WholeProjectModalAction<*>>());
 
     override final fun startInWriteAction() = false
 
@@ -101,8 +98,8 @@ public abstract class JetWholeProjectModalAction<TData : Any>(val title: String)
     protected abstract fun applyChangesForFile(project: Project, file: KtFile, data: TData)
 }
 
-public abstract class JetWholeProjectModalByCollectionAction<TTask : Any>(modalTitle: String)
-: JetWholeProjectModalAction<Collection<TTask>>(modalTitle) {
+public abstract class WholeProjectModalByCollectionAction<TTask : Any>(modalTitle: String)
+: WholeProjectModalAction<Collection<TTask>>(modalTitle) {
     override fun collectDataForFile(project: Project, file: KtFile): Collection<TTask>? {
         val accumulator = arrayListOf<TTask>()
         collectTasksForFile(project, file, accumulator)
@@ -112,12 +109,12 @@ public abstract class JetWholeProjectModalByCollectionAction<TTask : Any>(modalT
     abstract fun collectTasksForFile(project: Project, file: KtFile, accumulator: MutableCollection<TTask>)
 }
 
-internal class JetWholeProjectForEachElementOfTypeFix<TTask : Any> private constructor(
+internal class WholeProjectForEachElementOfTypeFix<TTask : Any> private constructor(
         private val collectingVisitorFactory: (MutableCollection<TTask>) -> KtVisitorVoid,
         private val tasksProcessor: (Collection<TTask>) -> Unit,
         private val name: String,
         private val familyName: String = name
-) : JetWholeProjectModalByCollectionAction<TTask>("Applying '$name'") {
+) : WholeProjectModalByCollectionAction<TTask>("Applying '$name'") {
 
     override fun getFamilyName() = familyName
     override fun getText() = name
@@ -152,7 +149,7 @@ internal class JetWholeProjectForEachElementOfTypeFix<TTask : Any> private const
                 noinline tasksFactory: (TElement) -> Collection<TTask>,
                 noinline tasksProcessor: (Collection<TTask>) -> Unit,
                 name: String
-        ) = JetWholeProjectForEachElementOfTypeFix(
+        ) = WholeProjectForEachElementOfTypeFix(
                 collectingVisitorFactory = { accumulator -> flatMapDescendantsOfTypeVisitor(accumulator, tasksFactory) },
                 tasksProcessor = tasksProcessor,
                 name = name,

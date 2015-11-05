@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
@@ -110,7 +110,7 @@ class KotlinOverridingDialog extends DialogWrapper {
 
         assert element instanceof PsiMethod
                 : "Method accepts only kotlin functions/properties and java methods, but '" + element.getText() + "' was found";
-        return JetRefactoringUtil.formatPsiMethod((PsiMethod) element, true, false);
+        return KotlinRefactoringUtil.formatPsiMethod((PsiMethod) element, true, false);
     }
 
     @Override

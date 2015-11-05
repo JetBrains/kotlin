@@ -85,7 +85,7 @@ public class MoveDeclarationToSeparateFileIntention :
             }
             return
         }
-        val moveTarget = DeferredJetFileKotlinMoveTarget(project, packageName) {
+        val moveTarget = KotlinMoveTargetForDeferredFile(project, packageName) {
             createKotlinFile(targetFileName, directory, packageName.asString())
         }
         val moveOptions = MoveKotlinTopLevelDeclarationsOptions(

@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -26,14 +26,14 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
-public abstract class JetImplicitReceiverUsage(callElement: KtElement): JetUsageInfo<KtElement>(callElement) {
+public abstract class KotlinImplicitReceiverUsage(callElement: KtElement): KotlinUsageInfo<KtElement>(callElement) {
     protected abstract fun getNewReceiverText(): String
 
     protected open fun processReplacedElement(element: KtElement) {
 
     }
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: KtElement, allUsages: Array<out UsageInfo>): Boolean {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtElement, allUsages: Array<out UsageInfo>): Boolean {
         val newQualifiedCall = KtPsiFactory(element.getProject()).createExpression(
                 "${getNewReceiverText()}.${element.getText()}"
         ) as KtQualifiedExpression
@@ -42,11 +42,11 @@ public abstract class JetImplicitReceiverUsage(callElement: KtElement): JetUsage
     }
 }
 
-public class JetImplicitThisToParameterUsage(
+public class KotlinImplicitThisToParameterUsage(
         callElement: KtElement,
-        val parameterInfo: JetParameterInfo,
-        val containingCallable: JetCallableDefinitionUsage<*>
-): JetImplicitReceiverUsage(callElement) {
+        val parameterInfo: KotlinParameterInfo,
+        val containingCallable: KotlinCallableDefinitionUsage<*>
+): KotlinImplicitReceiverUsage(callElement) {
     override fun getNewReceiverText(): String = parameterInfo.getInheritedName(containingCallable)
 
     override fun processReplacedElement(element: KtElement) {
@@ -54,10 +54,10 @@ public class JetImplicitThisToParameterUsage(
     }
 }
 
-public class JetImplicitThisUsage(
+public class KotlinImplicitThisUsage(
         callElement: KtElement,
         val targetDescriptor: DeclarationDescriptor
-): JetImplicitReceiverUsage(callElement) {
+): KotlinImplicitReceiverUsage(callElement) {
     override fun getNewReceiverText(): String {
         val name = targetDescriptor.getName()
         return if (name.isSpecial()) "this" else "this@${name.asString()}"

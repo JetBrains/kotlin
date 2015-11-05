@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureData
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureData
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.originalBaseFunctionDescriptor
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetConstructorDelegationCallUsage
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionCallUsage
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetUsageInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinConstructorDelegationCallUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -56,23 +56,23 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
 
     }
 
-    private fun createChangeInfo(data: IntroduceParameterData, method: PsiElement): JetChangeInfo? {
+    private fun createChangeInfo(data: IntroduceParameterData, method: PsiElement): KotlinChangeInfo? {
         val psiMethodDescriptor = when (method) {
             is KtFunction -> method.resolveToDescriptor() as? FunctionDescriptor
             is PsiMethod -> method.getJavaMethodDescriptor()
             else -> null
         } ?: return null
-        val changeSignatureData = JetChangeSignatureData(psiMethodDescriptor, method, Collections.singletonList(psiMethodDescriptor))
-        val changeInfo = JetChangeInfo(methodDescriptor = changeSignatureData, context = method)
+        val changeSignatureData = KotlinChangeSignatureData(psiMethodDescriptor, method, Collections.singletonList(psiMethodDescriptor))
+        val changeInfo = KotlinChangeInfo(methodDescriptor = changeSignatureData, context = method)
 
         data.getParametersToRemove().toNativeArray().sortedDescending().forEach { changeInfo.removeParameter(it) }
 
         // Temporarily assume that the new parameter is of Any type. Actual type is substituted during the signature update phase
         val defaultValueForCall = (data.getParameterInitializer().getExpression()!! as? PsiExpression)?.let { it.j2k() }
-        changeInfo.addParameter(JetParameterInfo(callableDescriptor = psiMethodDescriptor,
-                                                 name = data.getParameterName(),
-                                                 type = psiMethodDescriptor.builtIns.anyType,
-                                                 defaultValueForCall = defaultValueForCall))
+        changeInfo.addParameter(KotlinParameterInfo(callableDescriptor = psiMethodDescriptor,
+                                                    name = data.getParameterName(),
+                                                    type = psiMethodDescriptor.builtIns.anyType,
+                                                    defaultValueForCall = defaultValueForCall))
         return changeInfo
     }
 
@@ -92,7 +92,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
                 .map { it.unwrapped }
                 .filterIsInstance<KtFunction>()
         return (kotlinFunctions + element).all {
-            JetCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null).processUsage(changeInfo, it, usages)
+            KotlinCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null).processUsage(changeInfo, it, usages)
         }
     }
 
@@ -103,10 +103,10 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         val callElement = refElement.getParentOfTypeAndBranch<KtCallElement>(true) { getCalleeExpression() } ?: return true
         val delegateUsage = if (callElement is KtConstructorDelegationCall) {
             @Suppress("CAST_NEVER_SUCCEEDS")
-            (JetConstructorDelegationCallUsage(callElement, changeInfo) as JetUsageInfo<KtCallElement>)
+            (KotlinConstructorDelegationCallUsage(callElement, changeInfo) as KotlinUsageInfo<KtCallElement>)
         }
         else {
-            JetFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)
+            KotlinFunctionCallUsage(callElement, changeInfo.methodDescriptor.originalPrimaryCallable)
         }
         return delegateUsage.processUsage(changeInfo, callElement, usages)
     }

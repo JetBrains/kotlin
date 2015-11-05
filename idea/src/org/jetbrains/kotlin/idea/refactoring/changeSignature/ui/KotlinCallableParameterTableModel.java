@@ -23,32 +23,32 @@ import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 
-public abstract class JetCallableParameterTableModel extends ParameterTableModelBase<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>> {
+public abstract class KotlinCallableParameterTableModel extends ParameterTableModelBase<KotlinParameterInfo, ParameterTableModelItemBase<KotlinParameterInfo>> {
     private final Project project;
-    private final JetMethodDescriptor methodDescriptor;
+    private final KotlinMethodDescriptor methodDescriptor;
 
-    protected JetCallableParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context, ColumnInfo... columnInfos) {
+    protected KotlinCallableParameterTableModel(KotlinMethodDescriptor methodDescriptor, PsiElement context, ColumnInfo... columnInfos) {
         super(context, context, columnInfos);
         this.methodDescriptor = methodDescriptor;
         project = context.getProject();
     }
 
     @Nullable
-    public JetParameterInfo getReceiver() {
+    public KotlinParameterInfo getReceiver() {
         return null;
     }
 
     @Override
-    protected ParameterTableModelItemBase<JetParameterInfo> createRowItem(@Nullable JetParameterInfo parameterInfo) {
+    protected ParameterTableModelItemBase<KotlinParameterInfo> createRowItem(@Nullable KotlinParameterInfo parameterInfo) {
         if (parameterInfo == null) {
-            parameterInfo = new JetParameterInfo(methodDescriptor.getBaseDescriptor(), -1, "", null, null, null, JetValVar.None, null);
+            parameterInfo = new KotlinParameterInfo(methodDescriptor.getBaseDescriptor(), -1, "", null, null, null, KotlinValVar.None, null);
         }
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(project);
         PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
@@ -57,7 +57,7 @@ public abstract class JetCallableParameterTableModel extends ParameterTableModel
                 defaultValueForCall != null ? defaultValueForCall.getText() : "",
                 myDefaultValueContext
         );
-        return new ParameterTableModelItemBase<JetParameterInfo>(parameterInfo, paramTypeCodeFragment, defaultValueCodeFragment) {
+        return new ParameterTableModelItemBase<KotlinParameterInfo>(parameterInfo, paramTypeCodeFragment, defaultValueCodeFragment) {
             @Override
             public boolean isEllipsisType() {
                 return false;

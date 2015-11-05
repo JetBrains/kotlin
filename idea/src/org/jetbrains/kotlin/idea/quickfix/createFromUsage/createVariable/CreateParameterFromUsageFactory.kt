@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 import com.intellij.codeInsight.intention.IntentionAction
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactoryWithDelegate
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 
 data class CreateParameterData<E : KtElement>(
         val context: BindingContext,
-        val parameterInfo: JetParameterInfo,
+        val parameterInfo: KotlinParameterInfo,
         val originalExpression: E
 )
 

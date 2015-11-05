@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-public enum class JetValVar(val keywordName: String) {
+public enum class KotlinValVar(val keywordName: String) {
     None("none") {
         override fun createKeyword(factory: KtPsiFactory) = null
     },
@@ -36,11 +36,11 @@ public enum class JetValVar(val keywordName: String) {
     abstract fun createKeyword(factory: KtPsiFactory): PsiElement?
 }
 
-fun PsiElement?.toValVar(): JetValVar {
+fun PsiElement?.toValVar(): KotlinValVar {
     return when {
-        this == null -> JetValVar.None
-        getNode().getElementType() == KtTokens.VAL_KEYWORD -> JetValVar.Val
-        getNode().getElementType() == KtTokens.VAR_KEYWORD -> JetValVar.Var
+        this == null -> KotlinValVar.None
+        getNode().getElementType() == KtTokens.VAL_KEYWORD -> KotlinValVar.Val
+        getNode().getElementType() == KtTokens.VAR_KEYWORD -> KotlinValVar.Var
         else -> throw IllegalArgumentException("Unknown val/var token: " + getText())
     }
 }

@@ -17,14 +17,11 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.psi.KtDelegatorToSuperCall
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtInitializerList
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
+import org.jetbrains.kotlin.psi.*
 
-public class JetEnumEntryWithoutSuperCallUsage(enumEntry: KtEnumEntry) : JetUsageInfo<KtEnumEntry>(enumEntry) {
-    override fun processUsage(changeInfo: JetChangeInfo, element: KtEnumEntry, allUsages: Array<out UsageInfo>): Boolean {
+public class KotlinEnumEntryWithoutSuperCallUsage(enumEntry: KtEnumEntry) : KotlinUsageInfo<KtEnumEntry>(enumEntry) {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtEnumEntry, allUsages: Array<out UsageInfo>): Boolean {
         if (changeInfo.newParameters.size() > 0) {
             val psiFactory = KtPsiFactory(element)
 
@@ -33,7 +30,7 @@ public class JetEnumEntryWithoutSuperCallUsage(enumEntry: KtEnumEntry) : JetUsag
                     element.nameIdentifier
             ) as KtInitializerList).initializers[0] as KtDelegatorToSuperCall
 
-            return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryCallable)
+            return KotlinFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryCallable)
                     .processUsage(changeInfo, delegatorToSuperCall, allUsages)
         }
 

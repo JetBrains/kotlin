@@ -45,9 +45,9 @@ import com.intellij.util.ui.table.JBTableRowEditor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor.Kind
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTypeCodeFragment
@@ -60,35 +60,35 @@ import java.awt.event.ItemListener
 import java.util.*
 import javax.swing.*
 
-public class JetChangeSignatureDialog(
+public class KotlinChangeSignatureDialog(
         project: Project,
-        methodDescriptor: JetMethodDescriptor,
+        methodDescriptor: KotlinMethodDescriptor,
         context: PsiElement,
         private val commandName: String?
 ) : ChangeSignatureDialogBase<
-        JetParameterInfo,
+        KotlinParameterInfo,
         PsiElement,
         Visibility,
-        JetMethodDescriptor,
-        ParameterTableModelItemBase<JetParameterInfo>,
-        JetCallableParameterTableModel>(project, methodDescriptor, false, context) {
+        KotlinMethodDescriptor,
+        ParameterTableModelItemBase<KotlinParameterInfo>,
+        KotlinCallableParameterTableModel>(project, methodDescriptor, false, context) {
     override fun getFileType() = KotlinFileType.INSTANCE
 
-    override fun createParametersInfoModel(descriptor: JetMethodDescriptor) = createParametersInfoModel(descriptor, myDefaultValueContext)
+    override fun createParametersInfoModel(descriptor: KotlinMethodDescriptor) = createParametersInfoModel(descriptor, myDefaultValueContext)
 
     override fun createReturnTypeCodeFragment() = createReturnTypeCodeFragment(myProject, myMethod)
 
-    private val parametersTableModel: JetCallableParameterTableModel get() = super.myParametersTableModel
+    private val parametersTableModel: KotlinCallableParameterTableModel get() = super.myParametersTableModel
     
-    override fun getRowPresentation(item: ParameterTableModelItemBase<JetParameterInfo>, selected: Boolean, focused: Boolean): JComponent? {
+    override fun getRowPresentation(item: ParameterTableModelItemBase<KotlinParameterInfo>, selected: Boolean, focused: Boolean): JComponent? {
         val panel = JPanel(BorderLayout())
 
         val valOrVar: String
         if (myMethod.kind === Kind.PRIMARY_CONSTRUCTOR) {
             valOrVar = when (item.parameter.valOrVar) {
-                JetValVar.None -> "    "
-                JetValVar.Val -> "val "
-                JetValVar.Var -> "var "
+                KotlinValVar.None -> "    "
+                KotlinValVar.Val -> "val "
+                KotlinValVar.Var -> "var "
             }
         }
         else {
@@ -127,12 +127,12 @@ public class JetChangeSignatureDialog(
         return panel
     }
 
-    private fun getPresentationName(item: ParameterTableModelItemBase<JetParameterInfo>): String {
+    private fun getPresentationName(item: ParameterTableModelItemBase<KotlinParameterInfo>): String {
         val parameter = item.parameter
         return if (parameter == parametersTableModel.getReceiver()) "<receiver>" else parameter.getName()
     }
 
-    private fun getColumnTextMaxLength(nameFunction: Function1<ParameterTableModelItemBase<JetParameterInfo>, String?>) =
+    private fun getColumnTextMaxLength(nameFunction: Function1<ParameterTableModelItemBase<KotlinParameterInfo>, String?>) =
             parametersTableModel.getItems().map { nameFunction(it)?.length() ?: 0 }.max() ?: 0
 
     private fun getParamNamesMaxLength() = getColumnTextMaxLength { getPresentationName(it) }
@@ -143,7 +143,7 @@ public class JetChangeSignatureDialog(
 
     override fun isListTableViewSupported() = true
 
-    override fun isEmptyRow(row: ParameterTableModelItemBase<JetParameterInfo>): Boolean {
+    override fun isEmptyRow(row: ParameterTableModelItemBase<KotlinParameterInfo>): Boolean {
         if (!row.parameter.getName().isNullOrEmpty()) return false
         if (!row.parameter.getTypeText().isNullOrEmpty()) return false
         return true
@@ -156,7 +156,7 @@ public class JetChangeSignatureDialog(
     override fun mayPropagateParameters() =
             getParameters().any { it.isNewParameter && it != parametersTableModel.getReceiver() }
 
-    override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<JetParameterInfo>): JBTableRowEditor? {
+    override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<KotlinParameterInfo>): JBTableRowEditor? {
         return object : JBTableRowEditor() {
             private val components = ArrayList<JComponent>()
             private val nameEditor = EditorTextField(item.parameter.getName(), getProject(), getFileType())
@@ -178,23 +178,23 @@ public class JetChangeSignatureDialog(
                     val component: JComponent
                     val columnFinal = column
 
-                    if (JetCallableParameterTableModel.isTypeColumn(columnInfo)) {
+                    if (KotlinCallableParameterTableModel.isTypeColumn(columnInfo)) {
                         val document = PsiDocumentManager.getInstance(getProject()).getDocument(item.typeCodeFragment)
                         editor = EditorTextField(document, getProject(), getFileType())
                         component = editor
                     }
-                    else if (JetCallableParameterTableModel.isNameColumn(columnInfo)) {
+                    else if (KotlinCallableParameterTableModel.isNameColumn(columnInfo)) {
                         editor = nameEditor
                         component = editor
                         updateNameEditor()
                     }
-                    else if (JetCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
+                    else if (KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
                         val document = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment)
                         editor = EditorTextField(document, getProject(), getFileType())
                         component = editor
                     }
-                    else if (JetPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
-                        val comboBox = JComboBox(JetValVar.values())
+                    else if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
+                        val comboBox = JComboBox(KotlinValVar.values())
                         comboBox.setSelectedItem(item.parameter.valOrVar)
                         comboBox.addItemListener(object : ItemListener {
                             override fun itemStateChanged(e: ItemEvent) {
@@ -205,12 +205,12 @@ public class JetChangeSignatureDialog(
                         component = comboBox
                         editor = null
                     }
-                    else if (JetFunctionParameterTableModel.isReceiverColumn(columnInfo)) {
+                    else if (KotlinFunctionParameterTableModel.isReceiverColumn(columnInfo)) {
                         val checkBox = JCheckBox()
                         checkBox.setSelected(parametersTableModel.getReceiver() == item.parameter)
                         checkBox.addItemListener {
                             val newReceiver = if (it.getStateChange() == ItemEvent.SELECTED) item.parameter else null
-                            (parametersTableModel as JetFunctionParameterTableModel).setReceiver(newReceiver)
+                            (parametersTableModel as KotlinFunctionParameterTableModel).setReceiver(newReceiver)
                             updateSignature()
                             updateNameEditor()
                         }
@@ -247,13 +247,13 @@ public class JetChangeSignatureDialog(
                     override fun getValueAt(column: Int): Any? {
                         val columnInfo = parametersTableModel.getColumnInfos()[column]
 
-                        if (JetPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo))
+                        if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo))
                             return (components.get(column) as @Suppress("NO_TYPE_ARGUMENTS_ON_RHS") JComboBox).getSelectedItem()
-                        else if (JetCallableParameterTableModel.isTypeColumn(columnInfo))
+                        else if (KotlinCallableParameterTableModel.isTypeColumn(columnInfo))
                             return item.typeCodeFragment
-                        else if (JetCallableParameterTableModel.isNameColumn(columnInfo))
+                        else if (KotlinCallableParameterTableModel.isNameColumn(columnInfo))
                             return (components.get(column) as EditorTextField).getText()
-                        else if (JetCallableParameterTableModel.isDefaultValueColumn(columnInfo))
+                        else if (KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo))
                             return item.defaultValueCodeFragment
                         else
                             return null
@@ -332,11 +332,11 @@ public class JetChangeSignatureDialog(
         if (myNamePanel.isVisible()
             && myMethod.canChangeName()
             && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(getMethodName())) {
-            throw ConfigurationException(JetRefactoringBundle.message("function.name.is.invalid"))
+            throw ConfigurationException(KotlinRefactoringBundle.message("function.name.is.invalid"))
         }
 
         if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite && !hasTypeReference(myReturnTypeCodeFragment)) {
-            throw ConfigurationException(JetRefactoringBundle.message("return.type.is.invalid"))
+            throw ConfigurationException(KotlinRefactoringBundle.message("return.type.is.invalid"))
         }
 
         val parameterInfos = parametersTableModel.getItems()
@@ -346,11 +346,11 @@ public class JetChangeSignatureDialog(
 
             if (item.parameter != parametersTableModel.getReceiver()
                 && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(parameterName)) {
-                throw ConfigurationException(JetRefactoringBundle.message("parameter.name.is.invalid", parameterName))
+                throw ConfigurationException(KotlinRefactoringBundle.message("parameter.name.is.invalid", parameterName))
             }
 
             if (!hasTypeReference(item.typeCodeFragment)) {
-                throw ConfigurationException(JetRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.getText()))
+                throw ConfigurationException(KotlinRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.getText()))
             }
         }
     }
@@ -363,10 +363,10 @@ public class JetChangeSignatureDialog(
                                             getMethodName(),
                                             myDefaultValueContext)
         changeInfo.primaryPropagationTargets = myMethodsToPropagateParameters ?: emptyList();
-        return JetChangeSignatureProcessor(myProject, changeInfo, commandName ?: getTitle())
+        return KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: getTitle())
     }
 
-    public fun getMethodDescriptor(): JetMethodDescriptor = myMethod
+    public fun getMethodDescriptor(): KotlinMethodDescriptor = myMethod
 
     override fun getSelectedIdx(): Int {
         return myMethod.getParameters().withIndex().firstOrNull { it.value.isNewParameter }?.index
@@ -374,20 +374,20 @@ public class JetChangeSignatureDialog(
     }
 
     companion object {
-        private fun createParametersInfoModel(descriptor: JetMethodDescriptor, defaultValueContext: PsiElement): JetCallableParameterTableModel {
+        private fun createParametersInfoModel(descriptor: KotlinMethodDescriptor, defaultValueContext: PsiElement): KotlinCallableParameterTableModel {
             return when (descriptor.kind) {
-                JetMethodDescriptor.Kind.FUNCTION -> JetFunctionParameterTableModel(descriptor, defaultValueContext)
-                JetMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR -> JetPrimaryConstructorParameterTableModel(descriptor, defaultValueContext)
-                JetMethodDescriptor.Kind.SECONDARY_CONSTRUCTOR -> JetSecondaryConstructorParameterTableModel(descriptor, defaultValueContext)
+                KotlinMethodDescriptor.Kind.FUNCTION -> KotlinFunctionParameterTableModel(descriptor, defaultValueContext)
+                KotlinMethodDescriptor.Kind.PRIMARY_CONSTRUCTOR -> KotlinPrimaryConstructorParameterTableModel(descriptor, defaultValueContext)
+                KotlinMethodDescriptor.Kind.SECONDARY_CONSTRUCTOR -> KotlinSecondaryConstructorParameterTableModel(descriptor, defaultValueContext)
             }
         }
 
-        private fun createReturnTypeCodeFragment(project: Project, method: JetMethodDescriptor) =
+        private fun createReturnTypeCodeFragment(project: Project, method: KotlinMethodDescriptor) =
                 KtPsiFactory(project).createTypeCodeFragment(method.renderOriginalReturnType(), method.baseDeclaration)
 
         public fun createRefactoringProcessorForSilentChangeSignature(project: Project,
                                                                       commandName: String,
-                                                                      method: JetMethodDescriptor,
+                                                                      method: KotlinMethodDescriptor,
                                                                       defaultValueContext: PsiElement): BaseRefactoringProcessor {
             val parameterTableModel = createParametersInfoModel(method, defaultValueContext)
             parameterTableModel.setParameterInfos(method.getParameters())
@@ -397,15 +397,15 @@ public class JetChangeSignatureDialog(
                                                 method.getVisibility(),
                                                 method.getName(),
                                                 defaultValueContext)
-            return JetChangeSignatureProcessor(project, changeInfo, commandName)
+            return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 
-        private fun evaluateChangeInfo(parametersModel: JetCallableParameterTableModel,
+        private fun evaluateChangeInfo(parametersModel: KotlinCallableParameterTableModel,
                                        returnTypeCodeFragment: PsiCodeFragment?,
-                                       methodDescriptor: JetMethodDescriptor,
+                                       methodDescriptor: KotlinMethodDescriptor,
                                        visibility: Visibility?,
                                        methodName: String,
-                                       defaultValueContext: PsiElement): JetChangeInfo {
+                                       defaultValueContext: PsiElement): KotlinChangeInfo {
             val parameters = parametersModel.getItems().map { parameter ->
                 val parameterInfo = parameter.parameter
 
@@ -422,14 +422,14 @@ public class JetChangeSignatureDialog(
             val returnTypeText = if (returnTypeCodeFragment != null) returnTypeCodeFragment.getText().trim() else ""
             //TODO return the actual type
             val returnType = if (hasTypeReference(returnTypeCodeFragment)) methodDescriptor.baseDescriptor.builtIns.anyType else null
-            return JetChangeInfo(methodDescriptor.original,
-                                 methodName,
-                                 returnType,
-                                 returnTypeText,
+            return KotlinChangeInfo(methodDescriptor.original,
+                                    methodName,
+                                    returnType,
+                                    returnTypeText,
                                  visibility ?: Visibilities.DEFAULT_VISIBILITY,
-                                 parameters,
-                                 parametersModel.getReceiver(),
-                                 defaultValueContext)
+                                    parameters,
+                                    parametersModel.getReceiver(),
+                                    defaultValueContext)
         }
 
         private fun hasTypeReference(codeFragment: PsiCodeFragment?): Boolean

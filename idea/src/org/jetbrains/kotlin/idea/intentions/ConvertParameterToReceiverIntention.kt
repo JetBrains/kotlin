@@ -20,8 +20,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -38,9 +38,9 @@ public class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtPara
         return function.getValueParameterList() == element.getParent() && function.getReceiverTypeReference() == null
     }
 
-    private fun configureChangeSignature(parameterIndex: Int): JetChangeSignatureConfiguration {
-        return object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
+    private fun configureChangeSignature(parameterIndex: Int): KotlinChangeSignatureConfiguration {
+        return object : KotlinChangeSignatureConfiguration {
+            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify { it.receiver = originalDescriptor.getParameters()[parameterIndex] }
             }
 

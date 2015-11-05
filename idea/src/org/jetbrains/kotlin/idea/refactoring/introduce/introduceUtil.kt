@@ -25,8 +25,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -37,7 +37,7 @@ fun showErrorHint(project: Project, editor: Editor, message: String, title: Stri
 }
 
 fun showErrorHintByKey(project: Project, editor: Editor, messageKey: String, title: String) {
-    showErrorHint(project, editor, JetRefactoringBundle.message(messageKey), title)
+    showErrorHint(project, editor, KotlinRefactoringBundle.message(messageKey), title)
 }
 
 fun selectElementsWithTargetSibling(
@@ -113,7 +113,7 @@ fun selectElementsWithTargetParent(
     }
 
     fun selectSingleExpression() {
-        JetRefactoringUtil.selectExpression(editor, file, false) { expr ->
+        KotlinRefactoringUtil.selectExpression(editor, file, false) { expr ->
             if (expr != null) {
                 selectTargetContainer(listOf(expr))
             }

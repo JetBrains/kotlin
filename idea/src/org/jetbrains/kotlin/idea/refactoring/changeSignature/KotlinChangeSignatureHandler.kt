@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZE
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class JetChangeSignatureHandler : ChangeSignatureHandler {
+public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
 
     override fun findTargetMember(file: PsiFile, editor: Editor) =
             file.findElementAt(editor.getCaretModel().getOffset())?.let { findTargetMember(it) }
@@ -72,7 +72,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
     }
 
     override fun getTargetNotFoundMessage() =
-            JetRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name")
+            KotlinRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name")
 
     companion object {
         public fun findTargetForRefactoring(element: PsiElement): PsiElement? {
@@ -149,7 +149,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
                 return
             }
 
-            runChangeSignature(project, callableDescriptor, JetChangeSignatureConfiguration.Empty, context, null)
+            runChangeSignature(project, callableDescriptor, KotlinChangeSignatureConfiguration.Empty, context, null)
         }
 
         private fun getDescriptor(bindingContext: BindingContext, element: PsiElement): DeclarationDescriptor? {
@@ -168,13 +168,13 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
             return when (descriptor) {
                 is FunctionDescriptor -> {
                     if (descriptor.getValueParameters().any { it.varargElementType != null }) {
-                        val message = JetRefactoringBundle.message("error.cant.refactor.vararg.functions")
+                        val message = KotlinRefactoringBundle.message("error.cant.refactor.vararg.functions")
                         CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
                         return null
                     }
 
                     if (descriptor.getKind() === SYNTHESIZED) {
-                        val message = JetRefactoringBundle.message("cannot.refactor.synthesized.function", descriptor.getName())
+                        val message = KotlinRefactoringBundle.message("cannot.refactor.synthesized.function", descriptor.getName())
                         CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
                         return null
                     }
@@ -185,7 +185,7 @@ public class JetChangeSignatureHandler : ChangeSignatureHandler {
                 is PropertyDescriptor, is ValueParameterDescriptor -> descriptor as CallableDescriptor
 
                 else -> {
-                    val message = RefactoringBundle.getCannotRefactorMessage(JetRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name"))
+                    val message = RefactoringBundle.getCannotRefactorMessage(KotlinRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name"))
                     CommonRefactoringUtil.showErrorHint(project, editor, message, ChangeSignatureHandler.REFACTORING_NAME, HelpID.CHANGE_SIGNATURE)
                     null
                 }

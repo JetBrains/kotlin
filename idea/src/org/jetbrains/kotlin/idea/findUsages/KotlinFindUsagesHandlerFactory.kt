@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesH
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindMemberUsagesHandler
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinTypeParameterFindUsagesHandler
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.plugin.findUsages.handlers.KotlinFindUsagesHandlerDecorator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
@@ -108,7 +108,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
                     return KotlinFindMemberUsagesHandler.getInstance(declaration, factory = this)
                 }
 
-                val declarationsToSearch = JetRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")
+                val declarationsToSearch = KotlinRefactoringUtil.checkSuperMethods(declaration, null, "super.methods.action.key.find.usages")
                 return handlerForMultiple(declaration, declarationsToSearch)
             }
 

@@ -21,7 +21,7 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 
-public class JetUsagesViewDescriptor(private val element: PsiElement, private val elementsHeader: String) : UsageViewDescriptor {
+public class KotlinUsagesViewDescriptor(private val element: PsiElement, private val elementsHeader: String) : UsageViewDescriptor {
     override fun getElements(): Array<PsiElement> = arrayOf(element)
 
     override fun getProcessedElementsHeader(): String = elementsHeader

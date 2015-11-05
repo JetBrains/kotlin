@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -36,14 +36,14 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-public class JetParameterInfo @JvmOverloads constructor (
+public class KotlinParameterInfo @JvmOverloads constructor (
         val callableDescriptor: CallableDescriptor,
         val originalIndex: Int = -1,
         private var name: String,
         type: KotlinType? = null,
         var defaultValueForParameter: KtExpression? = null,
         var defaultValueForCall: KtExpression? = null,
-        var valOrVar: JetValVar = JetValVar.None,
+        var valOrVar: KotlinValVar = KotlinValVar.None,
         val modifierList: KtModifierList? = null
 ): ParameterInfo {
     val originalType: KotlinType? = type
@@ -150,14 +150,14 @@ public class JetParameterInfo @JvmOverloads constructor (
         throw UnsupportedOperationException()
     }
 
-    public fun renderType(parameterIndex: Int, inheritedCallable: JetCallableDefinitionUsage<*>): String {
+    public fun renderType(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return currentTypeText
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return currentTypeText
         val parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType()
         return parameterType.renderTypeWithSubstitution(typeSubstitutor, currentTypeText, true)
     }
 
-    public fun getInheritedName(inheritedCallable: JetCallableDefinitionUsage<*>): String {
+    public fun getInheritedName(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         if (!inheritedCallable.isInherited) return name
 
         val baseFunction = inheritedCallable.baseFunction
@@ -178,7 +178,7 @@ public class JetParameterInfo @JvmOverloads constructor (
         }
     }
 
-    public fun requiresExplicitType(inheritedCallable: JetCallableDefinitionUsage<*>): Boolean {
+    public fun requiresExplicitType(inheritedCallable: KotlinCallableDefinitionUsage<*>): Boolean {
         val inheritedFunctionDescriptor = inheritedCallable.originalCallableDescriptor
         if (inheritedFunctionDescriptor !is AnonymousFunctionDescriptor) return true
 
@@ -189,14 +189,14 @@ public class JetParameterInfo @JvmOverloads constructor (
         return parameter.getTypeReference() != null
     }
 
-    public fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: JetCallableDefinitionUsage<*>): String {
+    public fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val buffer = StringBuilder()
 
         if (modifierList != null) {
             buffer.append(modifierList.getText()).append(' ')
         }
 
-        if (valOrVar != JetValVar.None) {
+        if (valOrVar != KotlinValVar.None) {
             buffer.append(valOrVar).append(' ')
         }
 

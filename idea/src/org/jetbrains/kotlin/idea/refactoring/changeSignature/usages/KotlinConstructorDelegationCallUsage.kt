@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
-public class JetConstructorDelegationCallUsage(
+public class KotlinConstructorDelegationCallUsage(
         call: KtConstructorDelegationCall,
-        changeInfo: JetChangeInfo
-) : JetUsageInfo<KtConstructorDelegationCall>(call) {
-    val delegate = JetFunctionCallUsage(call, changeInfo.methodDescriptor.originalPrimaryCallable)
+        changeInfo: KotlinChangeInfo
+) : KotlinUsageInfo<KtConstructorDelegationCall>(call) {
+    val delegate = KotlinFunctionCallUsage(call, changeInfo.methodDescriptor.originalPrimaryCallable)
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: KtConstructorDelegationCall, allUsages: Array<out UsageInfo>): Boolean {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtConstructorDelegationCall, allUsages: Array<out UsageInfo>): Boolean {
         val isThisCall = element.isCallToThis()
 
         var elementToWorkWith = element

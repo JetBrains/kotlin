@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -30,14 +30,14 @@ import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
 // Explicit reference to function parameter or outer this
-public abstract class JetExplicitReferenceUsage<T : KtElement>(element: T) : JetUsageInfo<T>(element) {
-    abstract fun getReplacementText(changeInfo: JetChangeInfo): String
+public abstract class KotlinExplicitReferenceUsage<T : KtElement>(element: T) : KotlinUsageInfo<T>(element) {
+    abstract fun getReplacementText(changeInfo: KotlinChangeInfo): String
 
     protected open fun processReplacedElement(element: KtElement) {
 
     }
 
-    override fun processUsage(changeInfo: JetChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean {
         val newElement = KtPsiFactory(element.getProject()).createExpression(getReplacementText(changeInfo))
         val elementToReplace = (element.getParent() as? KtThisExpression) ?: element
         processReplacedElement(elementToReplace.replace(newElement) as KtElement)
@@ -45,18 +45,18 @@ public abstract class JetExplicitReferenceUsage<T : KtElement>(element: T) : Jet
     }
 }
 
-public class JetParameterUsage(
+public class KotlinParameterUsage(
         element: KtElement,
-        private val parameterInfo: JetParameterInfo,
-        val containingCallable: JetCallableDefinitionUsage<*>
-) : JetExplicitReferenceUsage<KtElement>(element) {
+        private val parameterInfo: KotlinParameterInfo,
+        val containingCallable: KotlinCallableDefinitionUsage<*>
+) : KotlinExplicitReferenceUsage<KtElement>(element) {
     override fun processReplacedElement(element: KtElement) {
         val qualifiedExpression = element.getParent() as? KtQualifiedExpression
         val elementToShorten = if (qualifiedExpression?.getReceiverExpression() == element) qualifiedExpression!! else element
         elementToShorten.addToShorteningWaitSet(Options(removeThis = true, removeThisLabels = true))
     }
 
-    override fun getReplacementText(changeInfo: JetChangeInfo): String {
+    override fun getReplacementText(changeInfo: KotlinChangeInfo): String {
         if (changeInfo.receiverParameterInfo != parameterInfo) return parameterInfo.getInheritedName(containingCallable)
 
         val newName = changeInfo.getNewName()
@@ -66,13 +66,13 @@ public class JetParameterUsage(
     }
 }
 
-public class JetNonQualifiedOuterThisUsage(
+public class KotlinNonQualifiedOuterThisUsage(
         element: KtThisExpression,
         val targetDescriptor: DeclarationDescriptor
-) : JetExplicitReferenceUsage<KtThisExpression>(element) {
+) : KotlinExplicitReferenceUsage<KtThisExpression>(element) {
     override fun processReplacedElement(element: KtElement) {
         element.addToShorteningWaitSet(Options(removeThisLabels = true))
     }
 
-    override fun getReplacementText(changeInfo: JetChangeInfo): String = "this@${targetDescriptor.getName().asString()}"
+    override fun getReplacementText(changeInfo: KotlinChangeInfo): String = "this@${targetDescriptor.getName().asString()}"
 }
