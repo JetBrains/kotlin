@@ -17,10 +17,7 @@
 package kotlin.jvm.internal;
 
 import kotlin.jvm.KotlinReflectionNotSupportedError;
-import kotlin.reflect.KCallable;
-import kotlin.reflect.KDeclarationContainer;
-import kotlin.reflect.KParameter;
-import kotlin.reflect.KType;
+import kotlin.reflect.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
@@ -32,7 +29,11 @@ import java.util.Map;
  *
  * All methods from reflection API should be implemented here to throw informative exceptions (see KotlinReflectionNotSupportedError)
  */
+@SuppressWarnings({"unchecked", "NullableProblems"})
 public abstract class CallableReference implements KCallable {
+    protected KCallable reflected;
+
+    protected abstract KCallable computeReflected();
 
     // The following methods provide the information identifying this callable, which is used by the reflection implementation.
     // They are supposed to be overridden in each subclass (each anonymous class generated for a callable reference).
@@ -41,7 +42,7 @@ public abstract class CallableReference implements KCallable {
      * @return the class or package where the callable should be located, usually specified on the LHS of the '::' operator
      */
     public KDeclarationContainer getOwner() {
-        throw error();
+        throw new AbstractMethodError();
     }
 
     /**
@@ -49,7 +50,7 @@ public abstract class CallableReference implements KCallable {
      */
     @Override
     public String getName() {
-        throw error();
+        throw new AbstractMethodError();
     }
 
     /**
@@ -61,7 +62,7 @@ public abstract class CallableReference implements KCallable {
      * but only as a unique and unambiguous way to map a function/property descriptor to a string.
      */
     public String getSignature() {
-        throw error();
+        throw new AbstractMethodError();
     }
 
     // The following methods are the stub implementations of reflection functions.
@@ -69,30 +70,41 @@ public abstract class CallableReference implements KCallable {
 
     @Override
     public List<KParameter> getParameters() {
-        throw error();
+        return getReflected().getParameters();
     }
 
     @Override
     public KType getReturnType() {
-        throw error();
+        return getReflected().getReturnType();
     }
 
     @Override
     public List<Annotation> getAnnotations() {
-        throw error();
+        return getReflected().getAnnotations();
     }
 
     @Override
     public Object call(@NotNull Object... args) {
-        throw error();
+        return getReflected().call(args);
     }
 
     @Override
     public Object callBy(@NotNull Map args) {
-        throw error();
+        return getReflected().callBy(args);
     }
 
-    protected static Error error() {
-        throw new KotlinReflectionNotSupportedError();
+    public KCallable compute() {
+        if (reflected == null) {
+            reflected = computeReflected();
+        }
+        return reflected;
+    }
+
+    protected KCallable getReflected() {
+        compute();
+        if (reflected == this) {
+            throw new KotlinReflectionNotSupportedError();
+        }
+        return reflected;
     }
 }

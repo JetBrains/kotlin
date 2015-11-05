@@ -33,6 +33,8 @@ internal interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
 
     val container: KDeclarationContainerImpl
 
+    val signature: String
+
     override val getter: Getter<R>
 
     override val descriptor: PropertyDescriptor

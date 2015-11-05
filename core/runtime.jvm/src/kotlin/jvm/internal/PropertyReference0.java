@@ -16,16 +16,22 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty0;
 
 public class PropertyReference0 extends PropertyReference implements KProperty0 {
     @Override
+    protected KCallable computeReflected() {
+        return Reflection.property0(this);
+    }
+
+    @Override
     public Object get() {
-        throw error();
+        return ((KProperty0) getReflected()).get();
     }
 
     @Override
     public KProperty0.Getter getGetter() {
-        throw error();
+        return ((KProperty0) getReflected()).getGetter();
     }
 }

@@ -22,12 +22,17 @@ public abstract class PropertyReference extends CallableReference implements KPr
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
-        if (!(obj instanceof PropertyReference)) return false;
-
-        PropertyReference other = (PropertyReference) obj;
-        return getOwner().equals(other.getOwner()) &&
-               getName().equals(other.getName()) &&
-               getSignature().equals(other.getSignature());
+        if (obj instanceof PropertyReference) {
+            PropertyReference other = (PropertyReference) obj;
+            return getOwner().equals(other.getOwner()) &&
+                   getName().equals(other.getName()) &&
+                   getSignature().equals(other.getSignature());
+        }
+        if (obj instanceof KProperty) {
+            compute();
+            return obj.equals(reflected);
+        }
+        return false;
     }
 
     @Override
@@ -37,6 +42,11 @@ public abstract class PropertyReference extends CallableReference implements KPr
 
     @Override
     public String toString() {
+        compute();
+        if (reflected != this) {
+            return reflected.toString();
+        }
+
         return "property " + getName() + Reflection.REFLECTION_NOT_AVAILABLE;
     }
 }

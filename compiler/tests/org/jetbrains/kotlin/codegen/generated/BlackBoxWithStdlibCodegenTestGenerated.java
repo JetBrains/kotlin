@@ -3912,6 +3912,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("callableReferencesEqualToCallablesFromAPI.kt")
+            public void testCallableReferencesEqualToCallablesFromAPI() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/callableReferencesEqualToCallablesFromAPI.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("classToString.kt")
             public void testClassToString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/methodsFromAny/classToString.kt");
