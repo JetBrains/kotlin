@@ -155,7 +155,7 @@ public abstract class KtWrappingLightClass extends AbstractLightClass implements
     @Override
     public String getText() {
         KtClassOrObject origin = getOrigin();
-        return origin == null ? null : origin.getText();
+        return origin == null ? "" : origin.getText();
     }
 
     @NotNull

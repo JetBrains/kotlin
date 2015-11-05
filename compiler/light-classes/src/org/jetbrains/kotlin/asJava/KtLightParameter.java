@@ -135,4 +135,9 @@ public class KtLightParameter extends LightParameter implements KtLightElement<K
     public KtLightMethod getMethod() {
         return method;
     }
+
+    @Override
+    public String getText() {
+        return "";
+    }
 }

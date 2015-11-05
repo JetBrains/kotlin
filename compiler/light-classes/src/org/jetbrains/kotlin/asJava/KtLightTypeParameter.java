@@ -80,6 +80,11 @@ public class KtLightTypeParameter
         }
     }
 
+    @Override
+    public String getText() {
+        return "";
+    }
+
     @Nullable
     @Override
     public String getName() {

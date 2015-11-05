@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.core.JavaCoreBundle
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.psi.scope.PsiScopeProcessor
@@ -68,6 +69,8 @@ sealed class KtLightMethodImpl(
     override fun getDelegate() = delegate
     override fun getOrigin() = origin
     override fun getParent(): PsiElement? = containingClass
+    override fun getText() = origin?.text ?: ""
+    override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE 
 
     override fun accept(visitor: PsiElementVisitor) {
         if (visitor is JavaElementVisitor) {
@@ -140,7 +143,7 @@ sealed class KtLightMethodImpl(
     override fun hashCode(): Int = ((name.hashCode() * 31 + (origin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + delegate.hashCode()
 
     override fun toString(): String = "${this.javaClass.simpleName}:$name"
-
+    
     private class KtLightMethodForDeclaration(
             delegate: PsiMethod, origin: KtDeclaration?, containingClass: KtLightClass
     ) : KtLightMethodImpl(delegate, origin, containingClass)

@@ -27,4 +27,6 @@ public class KotlinLightTypeParameterListBuilder(manager: PsiManager): LightType
     override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
         return getTypeParameters().all { processor.execute(it, state) }
     }
+
+    override fun getText(): String? = ""
 }
