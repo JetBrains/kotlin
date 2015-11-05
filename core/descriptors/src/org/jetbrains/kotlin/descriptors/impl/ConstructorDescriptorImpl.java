@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -90,6 +91,12 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return (ConstructorDescriptor) super.getOriginal();
     }
 
+    @NotNull
+    @Override
+    public ConstructorDescriptor substitute(@NotNull TypeSubstitutor originalSubstitutor) {
+        return (ConstructorDescriptor) super.substitute(originalSubstitutor);
+    }
+
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitConstructorDescriptor(this, data);
@@ -126,7 +133,6 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
                                             "newOwner: " + newOwner + "\n" +
                                             "kind: " + kind);
         }
-        assert original != null : "Attempt to create copy of constructor without preserving original: " + this;
         assert newName == null : "Attempt to rename constructor: " + this;
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
@@ -141,6 +147,10 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     @NotNull
     @Override
     public ConstructorDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
-        throw new UnsupportedOperationException("Constructors should not be copied for overriding");
+        return (ConstructorDescriptor) doSubstitute(
+                TypeSubstitutor.EMPTY, newOwner, modality, visibility,
+                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                null, copyOverrides, kind
+        );
     }
 }
