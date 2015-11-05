@@ -848,6 +848,10 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
+    if (this is Collection) {
+        if (size <= 1) return this.toArrayList()
+        return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
+    }
     return toArrayList().apply { sort() }
 }
 
@@ -876,6 +880,10 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
+    if (this is Collection) {
+       if (size <= 1) return this.toArrayList()
+       return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
+    }
     return toArrayList().apply { sortWith(comparator) }
 }
 

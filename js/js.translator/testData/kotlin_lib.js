@@ -999,17 +999,15 @@
             mutableList.sort(boundComparator);
         }
 
-        //TODO: should be deleted when List will be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
-        var array = [];
-        var it = mutableList.iterator();
-        while (it.hasNext()) {
-            array.push(it.next());
-        }
+        if (mutableList.size > 1) {
+            //TODO: should be deleted when List will be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
+            var array = Kotlin.copyToArray(mutableList);
 
-        array.sort(boundComparator);
+            array.sort(boundComparator);
 
-        for (var i = 0, n = array.length; i < n; i++) {
-            mutableList.set_vux3hl$(i, array[i]);
+            for (var i = 0, n = array.length; i < n; i++) {
+                mutableList.set_vux3hl$(i, array[i]);
+            }
         }
     };
 
