@@ -516,6 +516,33 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/writeFlags/function/withDefaultArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithDefaultArguments extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInWithDefaultArguments() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/withDefaultArguments"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("funInClass.kt")
+            public void testFunInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/funInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("funInClassObject.kt")
+            public void testFunInClassObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/funInClassObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelFun.kt")
+            public void testTopLevelFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/topLevelFun.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/writeFlags/hidden")

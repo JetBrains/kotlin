@@ -669,7 +669,7 @@ public class FunctionCodegen {
                     getDeprecatedAccessFlag(functionDescriptor) |
                     ACC_SYNTHETIC;
         if (!(functionDescriptor instanceof ConstructorDescriptor)) {
-            flags |= ACC_STATIC;
+            flags |= ACC_STATIC | ACC_BRIDGE;
         }
         // $default methods are never private to be accessible from other class files (e.g. inner) without the need of synthetic accessors
         flags &= ~ACC_PRIVATE;
