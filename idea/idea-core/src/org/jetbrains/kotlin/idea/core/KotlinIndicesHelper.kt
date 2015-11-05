@@ -24,11 +24,14 @@ import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.Processor
 import com.intellij.util.indexing.IdFilter
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -161,12 +164,13 @@ public class KotlinIndicesHelper(
         return result
     }
 
-    public fun getJvmClassesByName(name: String): Collection<ClassifierDescriptor>
-            = PsiShortNamesCache.getInstance(project).getClassesByName(name, scope)
-            .map { resolutionFacade.psiClassToDescriptor(it) }
-            .filterNotNull()
-            .filter(descriptorFilter)
-            .toSet()
+    public fun getJvmClassesByName(name: String): Collection<ClassDescriptor> {
+        return PsiShortNamesCache.getInstance(project).getClassesByName(name, scope)
+                .map { it.resolveToDescriptor(resolutionFacade) }
+                .filterNotNull()
+                .filter(descriptorFilter)
+                .toSet()
+    }
 
     public fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
         return KotlinFullClassNameIndex.getInstance().getAllKeys(project).asSequence()

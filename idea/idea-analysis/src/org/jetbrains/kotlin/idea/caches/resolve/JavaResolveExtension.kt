@@ -66,17 +66,17 @@ fun PsiMember.getJavaMemberDescriptor(resolutionFacade: ResolutionFacade? = null
     }
 }
 
-fun ResolutionFacade.psiClassToDescriptor(
-        psiClass: PsiClass,
+fun PsiClass.resolveToDescriptor(
+        resolutionFacade: ResolutionFacade,
         declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
 ): ClassDescriptor? {
-    return if (psiClass is KtLightClass && psiClass !is KtLightClassForDecompiledDeclaration) {
-        val origin = psiClass.getOrigin() ?: return null
+    return if (this is KtLightClass && this !is KtLightClassForDecompiledDeclaration) {
+        val origin = this.getOrigin() ?: return null
         val declaration = declarationTranslator(origin) ?: return null
-        resolveToDescriptor(declaration)
+        resolutionFacade.resolveToDescriptor(declaration)
     }
     else {
-        psiClass.getJavaClassDescriptor(this)
+        getJavaClassDescriptor(resolutionFacade)
     } as? ClassDescriptor
 }
 
