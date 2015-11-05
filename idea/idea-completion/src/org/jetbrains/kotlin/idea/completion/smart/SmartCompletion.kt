@@ -83,9 +83,9 @@ class SmartCompletion(
         SmartCastCalculator(bindingContext, resolutionFacade.moduleDescriptor, expression, resolutionFacade)
     }
 
-    public val descriptorFilter: ((DeclarationDescriptor, LookupElementFactory) -> Collection<LookupElement>)? =
-            { descriptor: DeclarationDescriptor, lookupElementFactory: LookupElementFactory ->
-                filterDescriptor(descriptor, lookupElementFactory).map { postProcess(it) }
+    public val descriptorFilter: ((DeclarationDescriptor, AbstractLookupElementFactory) -> Collection<LookupElement>)? =
+            { descriptor: DeclarationDescriptor, factory: AbstractLookupElementFactory ->
+                filterDescriptor(descriptor, factory).map { postProcess(it) }
             }.check { expectedInfos.isNotEmpty() }
 
     public fun additionalItems(lookupElementFactory: LookupElementFactory): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
@@ -154,7 +154,7 @@ class SmartCompletion(
         return@lazy emptySet()
     }
 
-    private fun filterDescriptor(descriptor: DeclarationDescriptor, lookupElementFactory: LookupElementFactory): Collection<LookupElement> {
+    private fun filterDescriptor(descriptor: DeclarationDescriptor, lookupElementFactory: AbstractLookupElementFactory): Collection<LookupElement> {
         val callType = callTypeAndReceiver.callType
         if (descriptor in descriptorsToSkip) return emptyList()
 
@@ -322,7 +322,7 @@ class SmartCompletion(
         return null
     }
 
-    private fun MutableCollection<LookupElement>.addCallableReferenceLookupElements(descriptor: DeclarationDescriptor, lookupElementFactory: LookupElementFactory) {
+    private fun MutableCollection<LookupElement>.addCallableReferenceLookupElements(descriptor: DeclarationDescriptor, lookupElementFactory: AbstractLookupElementFactory) {
         if (callableTypeExpectedInfo.isEmpty()) return
 
         fun toLookupElement(descriptor: CallableDescriptor): LookupElement? {

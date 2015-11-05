@@ -42,6 +42,18 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+interface AbstractLookupElementFactory {
+    fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement>
+
+    fun createLookupElement(
+            descriptor: DeclarationDescriptor,
+            useReceiverTypes: Boolean,
+            qualifyNestedClasses: Boolean = false,
+            includeClassTypeArguments: Boolean = true,
+            parametersAndTypeGrayed: Boolean = false
+    ): LookupElement?
+}
+
 data /* we need copy() */
 class LookupElementFactory(
         val basicFactory: BasicLookupElementFactory,
@@ -50,7 +62,7 @@ class LookupElementFactory(
         private val inDescriptor: DeclarationDescriptor,
         private val contextVariablesProvider: ContextVariablesProvider,
         private val standardLookupElementsPostProcessor: (LookupElement) -> LookupElement = { it }
-) {
+) : AbstractLookupElementFactory {
     companion object {
         fun hasSingleFunctionTypeParameter(descriptor: FunctionDescriptor): Boolean {
             val parameter = descriptor.original.valueParameters.singleOrNull() ?: return false
@@ -69,7 +81,7 @@ class LookupElementFactory(
                 .toSet()
     }
 
-    public fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
+    override fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
         val result = SmartList<LookupElement>()
 
         val isNormalCall = callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE || callType == CallType.SUPER_MEMBERS
@@ -197,12 +209,12 @@ class LookupElementFactory(
         }
     }
 
-    public fun createLookupElement(
+    override fun createLookupElement(
             descriptor: DeclarationDescriptor,
             useReceiverTypes: Boolean,
-            qualifyNestedClasses: Boolean = false,
-            includeClassTypeArguments: Boolean = true,
-            parametersAndTypeGrayed: Boolean = false
+            qualifyNestedClasses: Boolean,
+            includeClassTypeArguments: Boolean,
+            parametersAndTypeGrayed: Boolean
     ): LookupElement {
         var element = basicFactory.createLookupElement(descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
 

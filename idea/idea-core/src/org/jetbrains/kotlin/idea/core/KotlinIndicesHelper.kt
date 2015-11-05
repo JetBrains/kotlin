@@ -230,7 +230,7 @@ public class KotlinIndicesHelper(
             for (method in shortNamesCache.getMethodsByName(name, scope)) {
                 if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (!visibilityFilterMayIncludeAccessible && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
-                val descriptor = method.getJavaMethodDescriptor() ?: continue
+                val descriptor = method.getJavaMethodDescriptor(resolutionFacade) ?: continue
                 val container = descriptor.containingDeclaration as? ClassDescriptor ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     result.add(descriptor)

@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
@@ -44,6 +45,16 @@ fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
     return when {
         method.isConstructor() -> resolver?.resolveConstructor(JavaConstructorImpl(method))
         else -> resolver?.resolveMethod(JavaMethodImpl(method))
+    }
+}
+
+fun PsiMethod.getJavaMethodDescriptor(resolutionFacade: ResolutionFacade): FunctionDescriptor? {
+    val method = originalElement as? PsiMethod ?: return null
+    if (method.containingClass == null || !Name.isValidIdentifier(method.name)) return null
+    val resolver = resolutionFacade.getFrontendService(method, JavaDescriptorResolver::class.java)
+    return when {
+        method.isConstructor -> resolver.resolveConstructor(JavaConstructorImpl(method))
+        else -> resolver.resolveMethod(JavaMethodImpl(method))
     }
 }
 

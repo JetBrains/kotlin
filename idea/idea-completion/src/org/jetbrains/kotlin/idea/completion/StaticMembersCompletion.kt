@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 class StaticMembersCompletion(
-        private val collector: LookupElementsCollector,
         private val prefixMatcher: PrefixMatcher,
         private val resolutionFacade: ResolutionFacade,
         private val lookupElementFactory: LookupElementFactory,
@@ -44,8 +44,24 @@ class StaticMembersCompletion(
         if (it is ImportedFromObjectCallableDescriptor<*>) it.callableFromObject else it
     }
 
-    //TODO: include it in smart completion?
-    fun completeFromImports(file: KtFile) {
+    fun decoratedLookupElementFactory(itemPriority: ItemPriority): AbstractLookupElementFactory {
+        return object : AbstractLookupElementFactory {
+            override fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
+                if (!useReceiverTypes) return emptyList()
+                return lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
+                        .decorateAsStaticMember(descriptor, classNameAsLookupString = false)
+                        ?.assignPriority(itemPriority)
+                        ?.suppressAutoInsertion()
+                        .singletonOrEmptyList()
+            }
+
+            override fun createLookupElement(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean,
+                                             qualifyNestedClasses: Boolean, includeClassTypeArguments: Boolean,
+                                             parametersAndTypeGrayed: Boolean) = null
+        }
+    }
+
+    fun membersFromImports(file: KtFile): Collection<DeclarationDescriptor> {
         val containers = file.importDirectives
                 .filter { !it.isAllUnder }
                 .map {
@@ -54,42 +70,46 @@ class StaticMembersCompletion(
                 .filterNotNull()
                 .toSet()
 
+        val result = ArrayList<DeclarationDescriptor>()
         for (container in containers) {
             val memberScope = if (container.kind == ClassKind.OBJECT) container.unsubstitutedMemberScope else container.staticScope
             val members = memberScope.getDescriptorsFiltered(DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions, prefixMatcher.asNameFilter())
-            for (member in members) {
-                if (member is CallableDescriptor) {
-                    addFromDescriptor(member, ItemPriority.STATIC_MEMBER_FROM_IMPORTS)
-                }
-            }
+            members.filterTo(result) { it is CallableDescriptor && it !in alreadyAdded } //TODO: substitution
         }
+        return result
     }
 
     //TODO: filter out those that are accessible from SmartCompletion.additionalItems
     //TODO: what about enum members?
     //TODO: better presentation for lookup elements from imports too
     //TODO: from the same file
-    fun completeFromIndices(indicesHelper: KotlinIndicesHelper) {
+
+    fun membersFromIndices(indicesHelper: KotlinIndicesHelper): Collection<DeclarationDescriptor> {
         val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
         val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
 
+        val result = ArrayList<DeclarationDescriptor>()
+
         if (isJvmModule) {
-            indicesHelper.getJavaStaticMembers(descriptorKindFilter, nameFilter).forEach { addFromDescriptor(it, ItemPriority.STATIC_MEMBER) }
+            indicesHelper.getJavaStaticMembers(descriptorKindFilter, nameFilter).filterTo(result) { it !in alreadyAdded }  //TODO: substitution
         }
 
-        indicesHelper.getObjectMembers(descriptorKindFilter, nameFilter).forEach { addFromDescriptor(it, ItemPriority.STATIC_MEMBER) }
+        indicesHelper.getObjectMembers(descriptorKindFilter, nameFilter).filterTo(result) { it !in alreadyAdded }  //TODO: substitution
+
+        return result
     }
 
-    private fun addFromDescriptor(member: CallableDescriptor, itemPriority: ItemPriority) {
-        if (member !in alreadyAdded) { //TODO: substitution
-            collector.addElement(createLookupElement(member, itemPriority) ?: return)
-        }
+    fun completeFromImports(file: KtFile, collector: LookupElementsCollector) {
+        val factory = decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER_FROM_IMPORTS)
+        membersFromImports(file)
+                .flatMap { factory.createStandardLookupElementsForDescriptor(it, useReceiverTypes = true) }
+                .forEach { collector.addElement(it) }
     }
 
-    private fun createLookupElement(descriptor: CallableDescriptor, itemPriority: ItemPriority): LookupElement? {
-        return lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
-                .decorateAsStaticMember(descriptor, classNameAsLookupString = false)
-                ?.assignPriority(itemPriority)
-                ?.suppressAutoInsertion()
+    fun completeFromIndices(indicesHelper: KotlinIndicesHelper, collector: LookupElementsCollector) {
+        val factory = decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER)
+        membersFromIndices(indicesHelper)
+                .flatMap { factory.createStandardLookupElementsForDescriptor(it, useReceiverTypes = true) }
+                .forEach { collector.addElement(it) }
     }
 }

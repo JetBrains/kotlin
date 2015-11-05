@@ -107,6 +107,18 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             flushToResultSet()
 
             if (filter != null) {
+                val staticMembersCompletion: StaticMembersCompletion?
+                if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
+                    staticMembersCompletion = StaticMembersCompletion(prefixMatcher, resolutionFacade, lookupElementFactory, referenceVariants!!.imported, isJvmModule)
+                    val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER_FROM_IMPORTS)
+                    staticMembersCompletion.membersFromImports(file)
+                            .flatMap { filter(it, decoratedFactory) }
+                            .forEach { collector.addElement(it) }
+                }
+                else {
+                    staticMembersCompletion = null
+                }
+
                 if (shouldCompleteTopLevelCallablesFromIndex()) {
                     getTopLevelCallables().forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
                     flushToResultSet()
@@ -121,6 +133,13 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                         variants.notImportedExtensions.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }, notImported = true) }
                         flushToResultSet()
                     }
+                }
+
+                if (staticMembersCompletion != null && configuration.completeStaticMembers) {
+                    val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER)
+                    staticMembersCompletion.membersFromIndices(indicesHelper(false))
+                            .flatMap { filter(it, decoratedFactory) }
+                            .forEach { collector.addElement(it) }
                 }
             }
         }

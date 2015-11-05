@@ -75,7 +75,7 @@ abstract class CompletionSession(
         resultSet: CompletionResultSet
 ) {
     protected val position = parameters.getPosition()
-    private val file = position.getContainingFile() as KtFile
+    protected val file = position.getContainingFile() as KtFile
     protected val resolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor = resolutionFacade.moduleDescriptor
     protected val project = position.getProject()

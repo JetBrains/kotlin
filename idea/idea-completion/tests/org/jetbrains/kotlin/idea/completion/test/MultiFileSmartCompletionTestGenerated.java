@@ -136,4 +136,16 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/NoObjectDuplication/");
         doTest(fileName);
     }
+
+    @TestMetadata("StaticMembers1")
+    public void testStaticMembers1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/StaticMembers1/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMembers2")
+    public void testStaticMembers2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/StaticMembers2/");
+        doTest(fileName);
+    }
 }

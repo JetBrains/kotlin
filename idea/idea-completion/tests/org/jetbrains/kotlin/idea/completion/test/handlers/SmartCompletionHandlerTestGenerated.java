@@ -491,6 +491,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("JavaStaticMethod2.kt")
+    public void testJavaStaticMethod2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/JavaStaticMethod2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaStaticMethodInsertsImport.kt")
     public void testJavaStaticMethodInsertsImport() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/JavaStaticMethodInsertsImport.kt");
