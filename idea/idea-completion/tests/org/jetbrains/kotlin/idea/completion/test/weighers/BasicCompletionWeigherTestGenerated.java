@@ -49,7 +49,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
 
     @TestMetadata("DelegateToOtherObject.kt")
     public void testDelegateToOtherObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/DelegateToOtherObject.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/DelegateToOtherObject.kt");
         doTest(fileName);
     }
 
@@ -151,7 +151,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
 
     @TestMetadata("SuperMembers.kt")
     public void testSuperMembers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/SuperMembers.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/SuperMembers.kt");
         doTest(fileName);
     }
 
