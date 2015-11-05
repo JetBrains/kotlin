@@ -22,11 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.kotlin.utils.Printer;
-
-import java.util.List;
 
 public final class JetScopeUtils {
     private JetScopeUtils() {}
@@ -42,85 +38,41 @@ public final class JetScopeUtils {
         });
     }
 
-    public static LexicalScope makeScopeForPropertyAccessor(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope parentScope,
-            @NotNull BindingTrace trace
+    public static LexicalScope makeScopeForPropertyHeader(
+            @NotNull LexicalScope parent,
+            @NotNull final PropertyDescriptor propertyDescriptor
     ) {
-        LexicalScope propertyDeclarationInnerScope =
-                getPropertyDeclarationInnerScope(propertyDescriptor, parentScope,
-                                                 propertyDescriptor.getTypeParameters(),
-                                                 propertyDescriptor.getExtensionReceiverParameter(), trace);
-        return new LexicalScopeImpl(propertyDeclarationInnerScope, parentScope.getOwnerDescriptor(), false, null, LexicalScopeKind.UNSORTED);
-    }
-
-    public static LexicalScope getPropertyDeclarationInnerScope(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope outerScope,
-            @NotNull RedeclarationHandler redeclarationHandler
-    ) {
-        return getPropertyDeclarationInnerScope(propertyDescriptor,
-                                                outerScope,
-                                                propertyDescriptor.getTypeParameters(),
-                                                propertyDescriptor.getExtensionReceiverParameter(),
-                                                redeclarationHandler,
-                                                true);
-    }
-
-    public static LexicalScope getPropertyDeclarationInnerScope(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope outerScope,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver,
-            BindingTrace trace
-    ) {
-        return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, trace, true);
-    }
-
-    public static LexicalScope getPropertyDeclarationInnerScopeForInitializer(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope outerScope,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver,
-            BindingTrace trace
-    ) {
-        return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, trace, false);
-    }
-
-    private static LexicalScope getPropertyDeclarationInnerScope(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope outerScope,
-            @NotNull List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver,
-            BindingTrace trace,
-            boolean addLabelForProperty
-    ) {
-        TraceBasedRedeclarationHandler redeclarationHandler = new TraceBasedRedeclarationHandler(trace);
-        return getPropertyDeclarationInnerScope(propertyDescriptor, outerScope, typeParameters, receiver, redeclarationHandler,
-                                                addLabelForProperty);
+        return new LexicalScopeImpl(parent, propertyDescriptor, false, null, LexicalScopeKind.PROPERTY_HEADER,
+                                    // redeclaration on type parameters should be reported early. see: DescriptorResolver.resolvePropertyDescriptor()
+                                    RedeclarationHandler.DO_NOTHING,
+                                    new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                                        @Override
+                                        public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                                            for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
+                                                handler.addClassifierDescriptor(typeParameterDescriptor);
+                                            }
+                                            return Unit.INSTANCE$;
+                                        }
+                                    });
     }
 
     @NotNull
-    private static LexicalScope getPropertyDeclarationInnerScope(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope outerScope,
-            @NotNull final List<? extends TypeParameterDescriptor> typeParameters,
-            @Nullable ReceiverParameterDescriptor receiver,
-            @NotNull RedeclarationHandler redeclarationHandler,
-            boolean addLabelForProperty
+    public static LexicalScope makeScopeForPropertyInitializer(
+            @NotNull LexicalScope propertyHeader,
+            @NotNull PropertyDescriptor propertyDescriptor
     ) {
-        return new LexicalScopeImpl(
-                outerScope, propertyDescriptor, addLabelForProperty, receiver,
-                LexicalScopeKind.UNSORTED,
-                redeclarationHandler, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
-            @Override
-            public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    handler.addClassifierDescriptor(typeParameterDescriptor);
-                }
-                return Unit.INSTANCE$;
-            }
-        });
+        return new LexicalScopeImpl(propertyHeader, propertyDescriptor, false, null, LexicalScopeKind.PROPERTY_INITIALIZER_OR_DELEGATE);
+    }
+
+    @NotNull
+    public static LexicalScope makeScopeForDelegateConventionFunctions(
+            @NotNull LexicalScope parent,
+            @NotNull PropertyDescriptor propertyDescriptor
+    ) {
+        // todo: very strange scope!
+        return new LexicalScopeImpl(parent, propertyDescriptor, true, propertyDescriptor.getExtensionReceiverParameter(),
+                                    LexicalScopeKind.PROPERTY_DELEGATE_METHOD
+        );
     }
 
     @TestOnly

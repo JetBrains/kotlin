@@ -167,9 +167,7 @@ public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: De
                                                          descriptor, RedeclarationHandler.DO_NOTHING)
 
         is PropertyDescriptor ->
-            JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
-                                                           getOuterScope(descriptor, resolutionFacade),
-                                                           RedeclarationHandler.DO_NOTHING)
+            JetScopeUtils.makeScopeForPropertyHeader(getOuterScope(descriptor, resolutionFacade), descriptor)
 
         is DeclarationDescriptorNonRoot ->
             getOuterScope(descriptor, resolutionFacade)

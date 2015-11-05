@@ -576,9 +576,8 @@ public class BodyResolver {
                                     });
     }
 
-    private void resolveProperty(
+    public void resolveProperty(
             @NotNull BodiesResolveContext c,
-            @Nullable LexicalScope parentScope,
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
@@ -586,18 +585,16 @@ public class BodyResolver {
 
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(property, trace);
         KtExpression initializer = property.getInitializer();
-        LexicalScope propertyScope = getScopeForProperty(c, property);
-        if (parentScope == null) {
-            parentScope = propertyScope;
-        }
+        LexicalScope propertyHeaderScope = JetScopeUtils.makeScopeForPropertyHeader(getScopeForProperty(c, property), propertyDescriptor);
+
         if (initializer != null) {
-            resolvePropertyInitializer(c.getOuterDataFlowInfo(), property, propertyDescriptor, initializer, propertyScope);
+            resolvePropertyInitializer(c.getOuterDataFlowInfo(), property, propertyDescriptor, initializer, propertyHeaderScope);
         }
 
         KtExpression delegateExpression = property.getDelegateExpression();
         if (delegateExpression != null) {
             assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
-            resolvePropertyDelegate(c.getOuterDataFlowInfo(), property, propertyDescriptor, delegateExpression, parentScope, propertyScope);
+            resolvePropertyDelegate(c.getOuterDataFlowInfo(), property, propertyDescriptor, delegateExpression, propertyHeaderScope);
         }
 
         resolvePropertyAccessors(c, property, propertyDescriptor);
@@ -616,7 +613,7 @@ public class BodyResolver {
                 PropertyDescriptor propertyDescriptor = c.getProperties().get(property);
                 assert propertyDescriptor != null;
 
-                resolveProperty(c, classDescriptor.getScopeForMemberDeclarationResolution(), property, propertyDescriptor);
+                resolveProperty(c, property, propertyDescriptor);
                 processed.add(property);
             }
         }
@@ -628,19 +625,21 @@ public class BodyResolver {
 
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
-            resolveProperty(c, null, property, propertyDescriptor);
+            resolveProperty(c, property, propertyDescriptor);
         }
     }
 
-    private LexicalScope makeScopeForPropertyAccessor(
+    private static LexicalScope makeScopeForPropertyAccessor(
             @NotNull BodiesResolveContext c, @NotNull KtPropertyAccessor accessor, @NotNull PropertyDescriptor descriptor
     ) {
         LexicalScope accessorDeclaringScope = c.getDeclaringScope(accessor);
         assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
-        return JetScopeUtils.makeScopeForPropertyAccessor(descriptor, accessorDeclaringScope, trace);
+        LexicalScope headerScope = JetScopeUtils.makeScopeForPropertyHeader(accessorDeclaringScope, descriptor);
+        return new LexicalScopeImpl(headerScope, descriptor, true, descriptor.getExtensionReceiverParameter(),
+                                    LexicalScopeKind.PROPERTY_ACCESSOR);
     }
 
-    public void resolvePropertyAccessors(
+    private void resolvePropertyAccessors(
             @NotNull BodiesResolveContext c,
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor
@@ -683,54 +682,51 @@ public class BodyResolver {
         });
     }
 
-    public void resolvePropertyDelegate(
+    private void resolvePropertyDelegate(
             @NotNull DataFlowInfo outerDataFlowInfo,
-            @NotNull KtProperty jetProperty,
+            @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull KtExpression delegateExpression,
-            @NotNull LexicalScope parentScopeForAccessor,
-            @NotNull LexicalScope propertyScope
+            @NotNull LexicalScope propertyHeaderScope
     ) {
-        KtPropertyAccessor getter = jetProperty.getGetter();
+        KtPropertyAccessor getter = property.getGetter();
         if (getter != null && getter.hasBody()) {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(getter));
         }
 
-        KtPropertyAccessor setter = jetProperty.getSetter();
+        KtPropertyAccessor setter = property.getSetter();
         if (setter != null && setter.hasBody()) {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
 
-        LexicalScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
-                propertyDescriptor, propertyScope, propertyDescriptor.getTypeParameters(), null, trace);
-        LexicalScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(
-                propertyDescriptor, parentScopeForAccessor, trace);
+        LexicalScope delegateFunctionsScope = JetScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, propertyDescriptor);
+
+        LexicalScope initializerScope = JetScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, propertyDescriptor);
 
         KotlinType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
-                delegateExpression, jetProperty, propertyDescriptor, propertyDeclarationInnerScope, accessorScope, trace,
+                delegateExpression, property, propertyDescriptor, initializerScope, trace,
                 outerDataFlowInfo);
 
         delegatedPropertyResolver.resolveDelegatedPropertyGetMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                    trace, accessorScope);
+                                                                    trace, delegateFunctionsScope);
 
-        if (jetProperty.isVar()) {
+        if (property.isVar()) {
             delegatedPropertyResolver.resolveDelegatedPropertySetMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                        trace, accessorScope);
+                                                                        trace, delegateFunctionsScope);
         }
 
         delegatedPropertyResolver.resolveDelegatedPropertyPDMethod(propertyDescriptor, delegateExpression, delegateType,
-                                                                   trace, accessorScope);
+                                                                   trace, delegateFunctionsScope);
     }
 
-    public void resolvePropertyInitializer(
+    private void resolvePropertyInitializer(
             @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull KtExpression initializer,
-            @NotNull LexicalScope scope
+            @NotNull LexicalScope propertyHeader
     ) {
-        LexicalScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
-                propertyDescriptor, scope, propertyDescriptor.getTypeParameters(), null, trace);
+        LexicalScope propertyDeclarationInnerScope = JetScopeUtils.makeScopeForPropertyInitializer(propertyHeader, propertyDescriptor);
         KotlinType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         if (propertyDescriptor.getCompileTimeInitializer() == null) {
             expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer,

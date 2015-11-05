@@ -54,8 +54,6 @@ interface LexicalScope: HierarchicalScope {
 }
 
 enum class LexicalScopeKind {
-    @Deprecated("Temporary")
-    UNSORTED,
     EMPTY,
 
     CLASS_HEADER,
@@ -67,9 +65,9 @@ enum class LexicalScopeKind {
     CLASS_INITIALIZER,
 
     PROPERTY_HEADER,
-    PROPERTY_INITIALIZER,
-    PROPERTY_DELEGATE,
+    PROPERTY_INITIALIZER_OR_DELEGATE,
     PROPERTY_ACCESSOR,
+    PROPERTY_DELEGATE_METHOD,
 
     FUNCTION_HEADER,
     FUNCTION_INNER_SCOPE,

@@ -413,28 +413,19 @@ public class ResolveElementCache(
 
     private fun propertyAdditionalResolve(resolveSession: ResolveSession, property: KtProperty, file: KtFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(property)
-        val propertyResolutionScope = resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(property)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         val descriptor = resolveSession.resolveToDescriptor(property) as PropertyDescriptor
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        val propertyInitializer = property.getInitializer()
-        if (propertyInitializer != null) {
-            bodyResolver.resolvePropertyInitializer(DataFlowInfo.EMPTY, property, descriptor, propertyInitializer, propertyResolutionScope)
-        }
-
-        val propertyDelegate = property.getDelegateExpression()
-        if (propertyDelegate != null) {
-            bodyResolver.resolvePropertyDelegate(DataFlowInfo.EMPTY, property, descriptor, propertyDelegate, propertyResolutionScope, propertyResolutionScope)
-        }
-
         val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, { declaration ->
-            assert(declaration.getParent() == property) { "Must be called only for property accessors, but called for $declaration" }
+            assert(declaration.getParent() == property || declaration == property) {
+                "Must be called only for property accessors or for property, but called for $declaration"
+            }
             resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(declaration)
         })
 
-        bodyResolver.resolvePropertyAccessors(bodyResolveContext, property, descriptor)
+        bodyResolver.resolveProperty(bodyResolveContext, property, descriptor)
 
         forceResolveAnnotationsInside(property)
 
