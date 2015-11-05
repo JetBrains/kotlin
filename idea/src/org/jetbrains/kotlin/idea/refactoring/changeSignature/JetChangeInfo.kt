@@ -148,6 +148,11 @@ public open class JetChangeInfo(
         }
     }
 
+    public fun clearParameters() {
+        newParameters.clear()
+        receiverParameterInfo = null
+    }
+
     public fun hasParameter(parameterInfo: JetParameterInfo): Boolean =
             parameterInfo in newParameters
 
