@@ -157,7 +157,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
 
     @TestMetadata("StaticMembers.kt")
     public void testStaticMembers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/StaticMembers.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/StaticMembers.kt");
         doTest(fileName);
     }
 

@@ -283,7 +283,7 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
 
     @TestMetadata("ObjectMembers")
     public void testObjectMembers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ObjectMembers/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ObjectMembers/");
         doTest(fileName);
     }
 
