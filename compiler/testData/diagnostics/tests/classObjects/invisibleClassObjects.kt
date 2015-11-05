@@ -40,9 +40,9 @@ fun test() {
     f(<!INVISIBLE_MEMBER!>D<!>)
 
     A.foo()
-    B.<!INVISIBLE_MEMBER!>bar<!>()
+    <!INVISIBLE_REFERENCE!>B<!>.<!INVISIBLE_MEMBER!>bar<!>()
     C.<!INVISIBLE_MEMBER!>baz<!>()
-    D.<!INVISIBLE_MEMBER!>quux<!>()
+    <!INVISIBLE_REFERENCE!>D<!>.<!INVISIBLE_MEMBER!>quux<!>()
 
     a.A.foo()
     a.C.<!INVISIBLE_MEMBER!>baz<!>()

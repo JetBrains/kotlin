@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
@@ -36,8 +35,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -102,9 +99,9 @@ class ClassifierQualifierWithEmptyScope(
         override val classifier: ClassifierDescriptor
 ) : ClassifierQualifier(referenceExpression) {
 
-    override fun getNestedClassesAndPackageMembersScope(): MemberScope = scope
+    override fun getNestedClassesAndPackageMembersScope(): MemberScope = MemberScope.Empty
 
-    override val scope: MemberScope = MemberScope.empty(classifier)
+    override val scope: MemberScope = MemberScope.Empty
 }
 
 class ClassQualifier(

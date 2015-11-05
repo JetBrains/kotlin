@@ -133,23 +133,4 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
-
-  <problem>
-    <file>platforrmType2.kt</file>
-    <line>5</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="platforrmType2.kt" />
-    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Type arguments are unnecessary</problem_class>
-    <description>Remove explicit type arguments</description>
-  </problem>
-
-
-  <problem>
-    <file>platforrmType1.kt</file>
-    <line>5</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="platforrmType1.kt" />
-    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Type arguments are unnecessary</problem_class>
-    <description>Remove explicit type arguments</description>
-  </problem>
 </problems>

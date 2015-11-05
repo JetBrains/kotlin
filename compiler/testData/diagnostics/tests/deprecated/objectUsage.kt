@@ -15,13 +15,13 @@ fun first() {
 }
 
 fun useObject() {
-    <!DEPRECATION!>Obsolete<!>.use()
+    <!DEPRECATION, DEPRECATION!>Obsolete<!>.use()
     val <!UNUSED_VARIABLE!>x<!> = <!DEPRECATION!>Obsolete<!>
 }
 
 fun useCompanion() {
     val <!UNUSED_VARIABLE!>d<!> = <!DEPRECATION!>Another<!>
     val <!UNUSED_VARIABLE!>x<!> = Another.<!DEPRECATION!>Companion<!>
-    Another.<!DEPRECATION!>Companion<!>.use()
+    Another.<!DEPRECATION, DEPRECATION!>Companion<!>.use()
     <!DEPRECATION!>Another<!>.use()
 }

@@ -20,21 +20,27 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.CallExpressionElement
 import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.utils.containsFunctionOrVariable
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
+import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
+import java.util.*
 
 public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator) {
 
@@ -78,7 +84,8 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val (qualifierPartList, hasError) = userType.asQualifierPartList()
         if (hasError) {
             val descriptor = resolveToPackageOrClass(
-                    qualifierPartList, module, trace, scope.ownerDescriptor, scope, inImport = false) as? ClassifierDescriptor
+                    qualifierPartList, module, trace, scope.ownerDescriptor, scope, position = QualifierPosition.TYPE
+            ) as? ClassifierDescriptor
             return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
         assert(qualifierPartList.size() >= 1) {
@@ -87,7 +94,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
         val qualifier = resolveToPackageOrClass(
                 qualifierPartList.subList(0, qualifierPartList.size() - 1), module,
-                trace, scope.ownerDescriptor, scope.check { !userType.startWithPackage }, inImport = false
+                trace, scope.ownerDescriptor, scope.check { !userType.startWithPackage }, position = QualifierPosition.TYPE
         ) ?: return TypeQualifierResolutionResult(qualifierPartList, null)
 
         val lastPart = qualifierPartList.last()
@@ -150,7 +157,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             return processSingleImport(moduleDescriptor, trace, importDirective, path, lastPart, packageFragmentForCheck)
         }
         val packageOrClassDescriptor = resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForCheck,
-                                                               scopeForFirstPart = null, inImport = true) ?: return null
+                                                               scopeForFirstPart = null, position = QualifierPosition.IMPORT) ?: return null
         if (packageOrClassDescriptor is ClassDescriptor && packageOrClassDescriptor.kind.isSingleton) {
             trace.report(Errors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON.on(lastPart.expression, packageOrClassDescriptor)) // todo report on star
         }
@@ -164,13 +171,13 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val aliasName = KtPsiUtil.getAliasName(importDirective)
         if (aliasName == null) {
             // import kotlin.
-            resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForVisibilityCheck, scopeForFirstPart = null, inImport = true)
+            resolveToPackageOrClass(path, moduleDescriptor, trace, packageFragmentForVisibilityCheck, scopeForFirstPart = null, position = QualifierPosition.IMPORT)
             return null
         }
 
         val packageOrClassDescriptor = resolveToPackageOrClass(
                 path.subList(0, path.size() - 1), moduleDescriptor, trace,
-                packageFragmentForVisibilityCheck, scopeForFirstPart = null, inImport = true
+                packageFragmentForVisibilityCheck, scopeForFirstPart = null, position = QualifierPosition.IMPORT
         ) ?: return null
 
         val candidates = collectCandidateDescriptors(lastPart, packageOrClassDescriptor)
@@ -284,7 +291,13 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             val expression: KtSimpleNameExpression,
             val typeArguments: KtTypeArgumentList? = null
     ) {
+        constructor (expression: KtSimpleNameExpression) : this(expression.getReferencedNameAsName(), expression)
+
         val location = KotlinLookupLocation(expression)
+    }
+
+    private enum class QualifierPosition {
+        IMPORT, TYPE, EXPRESSION
     }
 
     private fun resolveToPackageOrClass(
@@ -293,48 +306,169 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             trace: BindingTrace,
             shouldBeVisibleFrom: DeclarationDescriptor?,
             scopeForFirstPart: LexicalScope?,
-            inImport: Boolean
+            position: QualifierPosition
     ): DeclarationDescriptor? {
+        val (packageOrClassDescriptor, endIndex) =
+                resolveToPackageOrClassPrefix(path, moduleDescriptor, trace, shouldBeVisibleFrom, scopeForFirstPart, position)
+
+        if (endIndex != path.size) {
+            return null
+        }
+
+        return packageOrClassDescriptor
+    }
+
+    private fun resolveToPackageOrClassPrefix(
+            path: List<QualifierPart>,
+            moduleDescriptor: ModuleDescriptor,
+            trace: BindingTrace,
+            shouldBeVisibleFrom: DeclarationDescriptor?,
+            scopeForFirstPart: LexicalScope?,
+            position: QualifierPosition
+    ): Pair<DeclarationDescriptor?, Int> {
         if (path.isEmpty()) {
-            return moduleDescriptor.getPackage(FqName.ROOT)
+            return Pair(moduleDescriptor.getPackage(FqName.ROOT), 0)
         }
 
-        val firstDescriptor = scopeForFirstPart?.let {
-                val firstPart = path.first()
-                it.findClassifier(firstPart.name, firstPart.location)?.apply {
-                    storeResult(trace, firstPart.expression, this, shouldBeVisibleFrom, inImport)
-                }
+        val inImport = position == QualifierPosition.IMPORT
+
+        val firstPart = path.first()
+
+        if (position == QualifierPosition.EXPRESSION) {
+            // In expression position, value wins against classifier (and package).
+            // If we see a function or variable (possibly ambiguous),
+            // tell resolver we have no qualifier and let it perform the context-dependent resolution.
+            if (scopeForFirstPart != null && scopeForFirstPart.containsFunctionOrVariable(firstPart.name, firstPart.location)) {
+                return Pair(null, 0)
             }
+        }
 
+        val classifierDescriptor = scopeForFirstPart?.let {
+            it.findClassifier(firstPart.name, firstPart.location)
+        }
 
-        val (currentDescriptor, currentIndex) = firstDescriptor?.let { Pair(it, 1) } ?: moduleDescriptor.quickResolveToPackage(path, trace, inImport)
+        if (classifierDescriptor != null) {
+            storeResult(trace, firstPart.expression, classifierDescriptor, shouldBeVisibleFrom, inImport)
+        }
 
-        return path.subList(currentIndex, path.size()).fold<QualifierPart, DeclarationDescriptor?>(currentDescriptor) {
-            descriptor, qualifierPart ->
-            // report unresolved reference only for first unresolved qualifier
-            if (descriptor == null) return@fold null
+        val (prefixDescriptor, nextIndexAfterPrefix) =
+                if (classifierDescriptor != null)
+                    Pair(classifierDescriptor, 1)
+                else
+                    moduleDescriptor.quickResolveToPackage(path, trace, inImport)
 
-            val nextDescriptor = when (descriptor) {
-                // TODO: support inner classes which captured type parameter from outer class
-                is ClassDescriptor ->
-                    descriptor.unsubstitutedInnerClassesScope.getContributedClassifier(qualifierPart.name, qualifierPart.location)
-                is PackageViewDescriptor -> {
-                    val packageView = if (qualifierPart.typeArguments == null) {
-                        moduleDescriptor.getPackage(descriptor.fqName.child(qualifierPart.name))
-                    } else null
+        var currentDescriptor: DeclarationDescriptor? = prefixDescriptor
+        for (qualifierPartIndex in nextIndexAfterPrefix .. path.size - 1) {
+            val qualifierPart = path[qualifierPartIndex]
 
-
-                    if (packageView != null && !packageView.isEmpty()) {
-                        packageView
-                    } else {
-                        descriptor.memberScope.getContributedClassifier(qualifierPart.name, qualifierPart.location)
+            val nextPackageOrClassDescriptor =
+                    when (currentDescriptor) {
+                        is ClassDescriptor ->
+                            currentDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(qualifierPart.name, qualifierPart.location)
+                        is PackageViewDescriptor -> {
+                            val packageView =
+                                    if (qualifierPart.typeArguments == null) {
+                                        moduleDescriptor.getPackage(currentDescriptor.fqName.child(qualifierPart.name))
+                                    }
+                                    else null
+                            if (packageView != null && !packageView.isEmpty()) {
+                                packageView
+                            }
+                            else {
+                                currentDescriptor.memberScope.getContributedClassifier(qualifierPart.name, qualifierPart.location)
+                            }
+                        }
+                        else ->
+                            null
                     }
-                }
-                else -> null
+
+            // If we are in expression, this name can denote a value (not a package or class).
+            if (!(position == QualifierPosition.EXPRESSION && nextPackageOrClassDescriptor == null)) {
+                storeResult(trace, qualifierPart.expression, nextPackageOrClassDescriptor, shouldBeVisibleFrom, inImport)
             }
-            storeResult(trace, qualifierPart.expression, nextDescriptor, shouldBeVisibleFrom, inImport)
-            nextDescriptor
+
+            if (nextPackageOrClassDescriptor == null) {
+                return Pair(currentDescriptor, qualifierPartIndex)
+            }
+
+            currentDescriptor = nextPackageOrClassDescriptor
         }
+
+        return Pair(currentDescriptor, path.size)
+    }
+
+
+    public fun resolveQualifierInExpressionAndUnroll(
+            expression: KtQualifiedExpression,
+            context: ExpressionTypingContext
+    ): List<CallExpressionElement> {
+        val qualifiedExpressions = unrollToLeftMostQualifiedExpression(expression)
+        val maxPossibleQualifierPrefix = getMaxPossibleQualifierPrefix(qualifiedExpressions)
+
+        val (packageOrClassDescriptor, nextIndexAfterPrefix) = resolveToPackageOrClassPrefix(
+                path = maxPossibleQualifierPrefix,
+                moduleDescriptor = context.scope.ownerDescriptor.module,
+                trace = context.trace,
+                shouldBeVisibleFrom = context.scope.ownerDescriptor,
+                scopeForFirstPart = context.scope,
+                position = QualifierPosition.EXPRESSION
+        )
+
+        if (nextIndexAfterPrefix > 0) {
+            val qualifierReferenceExpression = maxPossibleQualifierPrefix[nextIndexAfterPrefix - 1].expression
+            val qualifier =
+                    when (packageOrClassDescriptor) {
+                        is PackageViewDescriptor ->
+                            PackageQualifier(qualifierReferenceExpression, packageOrClassDescriptor)
+                        is ClassDescriptor ->
+                            ClassQualifier(qualifierReferenceExpression, packageOrClassDescriptor)
+                        else ->
+                            null
+                    }
+            if (qualifier != null) {
+                context.trace.record(BindingContext.QUALIFIER, qualifier.expression, qualifier)
+            }
+        }
+
+        return qualifiedExpressions.map { CallExpressionElement(it) }
+    }
+
+    private fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression): List<KtQualifiedExpression> {
+        val unrolled = arrayListOf<KtQualifiedExpression>()
+
+        var finger = expression
+        while (true) {
+            unrolled.add(finger)
+            val receiver = finger.receiverExpression
+            if (receiver !is KtQualifiedExpression) {
+                break
+            }
+            finger = receiver
+        }
+
+        Collections.reverse(unrolled)
+        return unrolled
+    }
+
+    private fun getMaxPossibleQualifierPrefix(qualifiedExpressions: List<KtQualifiedExpression>) : List<QualifierPart> {
+        if (qualifiedExpressions.isEmpty()) return emptyList()
+
+        val first = qualifiedExpressions.first()
+        if (first.operationSign != KtTokens.DOT) return emptyList()
+        val firstReceiver = first.receiverExpression
+        if (firstReceiver !is KtSimpleNameExpression) return emptyList()
+
+        val qualifierParts = arrayListOf<QualifierPart>()
+        qualifierParts.add(QualifierPart(firstReceiver))
+
+        for (qualifiedExpression in qualifiedExpressions.dropLast(1)) {
+            if (qualifiedExpression.operationSign != KtTokens.DOT) break
+            val selector = qualifiedExpression.selectorExpression
+            if (selector !is KtSimpleNameExpression) break
+            qualifierParts.add(QualifierPart(selector))
+        }
+
+        return qualifierParts
     }
 
     private fun ModuleDescriptor.quickResolveToPackage(
@@ -516,13 +650,15 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             context: ExpressionTypingContext,
             selector: DeclarationDescriptor?
     ): DeclarationDescriptor {
-        if (qualifier is ClassQualifier && qualifier.classifier is TypeParameterDescriptor) {
+        if (qualifier is ClassifierQualifier && qualifier.classifier is TypeParameterDescriptor) {
             return qualifier.classifier
         }
 
         val selectorContainer = when (selector) {
-            is ConstructorDescriptor -> selector.containingDeclaration.containingDeclaration
-            else -> selector?.containingDeclaration
+            is ConstructorDescriptor ->
+                selector.containingDeclaration.containingDeclaration
+            else ->
+                selector?.containingDeclaration
         }
 
         if (qualifier is PackageQualifier &&

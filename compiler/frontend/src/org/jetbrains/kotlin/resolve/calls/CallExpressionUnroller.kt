@@ -32,7 +32,7 @@ internal fun unroll(root: KtQualifiedExpression): Deque<CallExpressionElement> {
     return result
 }
 
-internal data class CallExpressionElement(val qualified: KtQualifiedExpression) {
+public data class CallExpressionElement internal constructor (val qualified: KtQualifiedExpression) {
 
     val receiver: KtExpression
         get() = qualified.receiverExpression

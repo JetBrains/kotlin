@@ -69,7 +69,8 @@ public class TaskPrioritizer(
         when (explicitReceiver) {
             is QualifierReceiver -> {
                 val qualifierReceiver: QualifierReceiver = explicitReceiver
-                val receiverScope = qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsImportingScope()
+                val receiverScope = LexicalScope.empty(qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsImportingScope(),
+                                                       qualifierReceiver.descriptor)
                 doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(receiverScope))
                 computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
             }
