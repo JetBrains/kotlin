@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -62,9 +63,10 @@ class LookupElementFactory(
 
     private val superFunctions: Set<FunctionDescriptor> by lazy {
         inDescriptor.parentsWithSelf
+                .takeWhile { it !is ClassDescriptor }
                 .filterIsInstance<FunctionDescriptor>()
                 .toList()
-                .flatMap { it.overriddenDescriptors }
+                .flatMap { it.findOriginalTopMostOverriddenDescriptors() }
                 .toSet()
     }
 
@@ -155,7 +157,7 @@ class LookupElementFactory(
 
     private fun createSuperFunctionCallWithArguments(descriptor: FunctionDescriptor): LookupElement? {
         if (descriptor.valueParameters.isEmpty()) return null
-        if (descriptor !in superFunctions) return null
+        if (descriptor.findOriginalTopMostOverriddenDescriptors().none { it in superFunctions }) return null
 
         val argumentText = descriptor.valueParameters.map {
             (if (it.varargElementType != null) "*" else "") + it.name.render()

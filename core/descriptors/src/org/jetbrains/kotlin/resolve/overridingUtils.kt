@@ -17,8 +17,27 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.utils.DFS
 import java.util.*
 
-fun CallableDescriptor.getOriginalTopmostOverriddenDescriptors(): Set<CallableDescriptor> {
-    return OverridingUtil.getTopmostOverridenDescriptors(this).mapTo(LinkedHashSet()) { it.original }
+fun <TDescriptor : CallableDescriptor> TDescriptor.findTopMostOverriddenDescriptors(): List<TDescriptor> {
+    return DFS.dfs(
+            listOf(this),
+            { current -> current.overriddenDescriptors },
+            object : DFS.CollectingNodeHandler<CallableDescriptor, CallableDescriptor, ArrayList<TDescriptor>>(ArrayList<TDescriptor>()) {
+                override fun afterChildren(current: CallableDescriptor) {
+                    if (current.overriddenDescriptors.isEmpty()) {
+                        @Suppress("UNCHECKED_CAST")
+                        result.add(current as TDescriptor)
+                    }
+                }
+            })
+}
+
+
+fun <TDescriptor : CallableDescriptor> TDescriptor.findOriginalTopMostOverriddenDescriptors(): Set<TDescriptor> {
+    return findTopMostOverriddenDescriptors().mapTo(LinkedHashSet<TDescriptor>()) {
+        @Suppress("UNCHECKED_CAST")
+        (it.original as TDescriptor)
+    }
 }

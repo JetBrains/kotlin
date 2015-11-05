@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.getOriginalTopmostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
@@ -251,7 +251,7 @@ class PreferContextElementsWeigher(private val context: DeclarationDescriptor) :
     private val contextElements = context.parentsWithSelf
             .takeWhile { it !is PackageFragmentDescriptor }
             .toList()
-            .flatMap { if (it is CallableDescriptor) it.getOriginalTopmostOverriddenDescriptors() else listOf(it) }
+            .flatMap { if (it is CallableDescriptor) it.findOriginalTopMostOverriddenDescriptors() else listOf(it) }
             .toSet()
     private val contextElementNames = contextElements.map { it.name }.toSet()
 
