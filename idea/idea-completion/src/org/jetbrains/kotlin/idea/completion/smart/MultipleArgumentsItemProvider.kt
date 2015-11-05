@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.idea.completion.ArgumentPositionData
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.completion.Tail
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.getVariableFromImplicitReceivers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.Call
@@ -88,7 +88,7 @@ class MultipleArgumentsItemProvider(
         compoundIcon.setIcon(firstIcon, 1, 0, 0)
 
         return LookupElementBuilder
-                .create(variables.map { it.getName().render() }.joinToString(", "))
+                .create(variables.map { it.getName().render() }.joinToString(", ")) //TODO: use code formatting settings
                 .withInsertHandler { context, lookupElement ->
                     if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
                         val offset = context.getOffsetMap().getOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)

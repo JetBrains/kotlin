@@ -161,7 +161,7 @@ class LookupElementFactory(
 
         val argumentText = descriptor.valueParameters.map {
             (if (it.varargElementType != null) "*" else "") + it.name.render()
-        }.joinToString(", ")
+        }.joinToString(", ") //TODO: use code formatting settings
 
         val lookupElement = createFunctionCallElementWithArguments(descriptor, argumentText, true)
         lookupElement.assignPriority(ItemPriority.SUPER_METHOD_WITH_ARGUMENTS)
