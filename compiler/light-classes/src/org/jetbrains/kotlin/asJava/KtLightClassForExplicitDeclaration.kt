@@ -350,15 +350,7 @@ public open class KtLightClassForExplicitDeclaration(
         return this
     }
 
-    override fun toString(): String {
-        try {
-            return javaClass<KtLightClass>().simpleName + ":" + qualifiedName
-        }
-        catch (e: Throwable) {
-            return javaClass<KtLightClass>().simpleName + ":" + e.toString()
-        }
-
-    }
+    override fun toString() = "${KtLightClass::class.java.simpleName}:$classFqName"
 
     override fun getOwnInnerClasses(): List<PsiClass> {
         return getDelegate().innerClasses
