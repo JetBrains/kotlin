@@ -14,1617 +14,1445 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.changeSignature;
+package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.codeInsight.TargetElementUtilBase;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor;
-import com.intellij.refactoring.changeSignature.ParameterInfoImpl;
-import com.intellij.refactoring.changeSignature.ThrownExceptionInfo;
-import com.intellij.refactoring.util.CanonicalTypes;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.VisibilityUtil;
-import junit.framework.ComparisonFailure;
-import kotlin.ArraysKt;
-import kotlin.CollectionsKt;
-import kotlin.SetsKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.Visibilities;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode;
-import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex;
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex;
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import com.intellij.codeInsight.TargetElementUtil
+import com.intellij.codeInsight.TargetElementUtil.ELEMENT_NAME_ACCEPTED
+import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiType
+import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor
+import com.intellij.refactoring.changeSignature.ParameterInfoImpl
+import com.intellij.refactoring.changeSignature.ThrownExceptionInfo
+import com.intellij.refactoring.util.CanonicalTypes
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.ArrayUtil
+import com.intellij.util.VisibilityUtil
+import junit.framework.ComparisonFailure
+import junit.framework.TestCase
+import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
+import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
+import java.util.*
 
-import java.io.File;
-import java.util.*;
-
-public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
-
-    private static final KotlinBuiltIns BUILT_INS = JvmPlatform.INSTANCE$.getBuiltIns();
-
-    public void testBadSelection() throws Exception {
-        configureByFile(getTestName(false) + "Before.kt");
-        Editor editor = getEditor();
-        PsiFile file = getFile();
-        assertNull(new JetChangeSignatureHandler().findTargetMember(file, editor));
+class JetChangeSignatureTest : KotlinCodeInsightTestCase() {
+    fun testBadSelection() {
+        configureByFile(getTestName(false) + "Before.kt")
+        TestCase.assertNull(JetChangeSignatureHandler().findTargetMember(file, editor))
     }
 
-    public void testRenameFunction() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewName("after");
-        doTest(changeInfo);
+    fun testRenameFunction() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newName = "after"
+        doTest(changeInfo)
     }
 
-    public void testChangeReturnType() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewReturnTypeText("Float");
-        doTest(changeInfo);
+    fun testChangeReturnType() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newReturnTypeText = "Float"
+        doTest(changeInfo)
     }
 
-    public void testAddReturnType() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewReturnTypeText("Float");
-        doTest(changeInfo);
+    fun testAddReturnType() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newReturnTypeText = "Float"
+        doTest(changeInfo)
     }
 
-    public void testRemoveReturnType() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewReturnTypeText("Unit");
-        doTest(changeInfo);
+    fun testRemoveReturnType() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newReturnTypeText = "Unit"
+        doTest(changeInfo)
     }
 
-    public void testChangeConstructorVisibility() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testChangeConstructorVisibility() {
+        val changeInfo = getChangeInfo()
 
-        changeInfo.setNewVisibility(Visibilities.PROTECTED);
-        doTest(changeInfo);
+        changeInfo.newVisibility = Visibilities.PROTECTED
+        doTest(changeInfo)
     }
 
-    public void testSynthesized() throws Exception {
+    fun testSynthesized() {
         try {
-            getChangeInfo();
+            getChangeInfo()
         }
-        catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
-            assertEquals(JetRefactoringBundle.message("cannot.refactor.synthesized.function", DataClassUtilsKt.createComponentName(1).asString()), e.getMessage());
-            return;
+        catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+            TestCase.assertEquals(JetRefactoringBundle.message("cannot.refactor.synthesized.function", createComponentName(1).asString()), e.message)
+            return
         }
-        fail();
+
+        TestCase.fail()
     }
 
-    public void testPreferContainedInClass() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        assertEquals("param", changeInfo.getNewParameters()[0].getName());
+    fun testPreferContainedInClass() {
+        val changeInfo = getChangeInfo()
+        TestCase.assertEquals("param", changeInfo.newParameters[0].name)
     }
 
-    public void testAddConstructorVisibility() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewVisibility(Visibilities.PROTECTED);
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "x", BUILT_INS.getAnyType(),
-                                                             null, psiFactory.createExpression("12"), JetValVar.Val, null);
-        changeInfo.addParameter(newParameter);
-        doTest(changeInfo);
+    fun testAddConstructorVisibility() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newVisibility = Visibilities.PROTECTED
+        val psiFactory = KtPsiFactory(project)
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "x", BUILT_INS.anyType,
+                                            null, psiFactory.createExpression("12"), JetValVar.Val, null)
+        changeInfo.addParameter(newParameter)
+        doTest(changeInfo)
     }
 
-    public void testConstructor() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewVisibility(Visibilities.PUBLIC);
-        changeInfo.getNewParameters()[0].setValOrVar(JetValVar.Var);
-        changeInfo.getNewParameters()[1].setValOrVar(JetValVar.None);
-        changeInfo.getNewParameters()[2].setValOrVar(JetValVar.Val);
-        changeInfo.getNewParameters()[0].setName("_x1");
-        changeInfo.getNewParameters()[1].setName("_x2");
-        changeInfo.getNewParameters()[2].setName("_x3");
-        changeInfo.getNewParameters()[1].setCurrentTypeText("Float?");
-        doTest(changeInfo);
+    fun testConstructor() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newVisibility = Visibilities.PUBLIC
+        changeInfo.newParameters[0].valOrVar = JetValVar.Var
+        changeInfo.newParameters[1].valOrVar = JetValVar.None
+        changeInfo.newParameters[2].valOrVar = JetValVar.Val
+        changeInfo.newParameters[0].name = "_x1"
+        changeInfo.newParameters[1].name = "_x2"
+        changeInfo.newParameters[2].name = "_x3"
+        changeInfo.newParameters[1].currentTypeText = "Float?"
+        doTest(changeInfo)
     }
 
-    public void testGenericConstructor() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewVisibility(Visibilities.PUBLIC);
-        changeInfo.getNewParameters()[0].setValOrVar(JetValVar.Var);
-        changeInfo.getNewParameters()[1].setValOrVar(JetValVar.None);
-        changeInfo.getNewParameters()[2].setValOrVar(JetValVar.Val);
-        changeInfo.getNewParameters()[0].setName("_x1");
-        changeInfo.getNewParameters()[1].setName("_x2");
-        changeInfo.getNewParameters()[2].setName("_x3");
-        changeInfo.getNewParameters()[1].setCurrentTypeText("Double?");
-        doTest(changeInfo);
+    fun testGenericConstructor() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newVisibility = Visibilities.PUBLIC
+        changeInfo.newParameters[0].valOrVar = JetValVar.Var
+        changeInfo.newParameters[1].valOrVar = JetValVar.None
+        changeInfo.newParameters[2].valOrVar = JetValVar.Val
+        changeInfo.newParameters[0].name = "_x1"
+        changeInfo.newParameters[1].name = "_x2"
+        changeInfo.newParameters[2].name = "_x3"
+        changeInfo.newParameters[1].currentTypeText = "Double?"
+        doTest(changeInfo)
     }
 
-    public void testConstructorSwapArguments() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.getNewParameters()[0].setName("_x1");
-        changeInfo.getNewParameters()[1].setName("_x2");
-        JetParameterInfo param = changeInfo.getNewParameters()[0];
-        changeInfo.setNewParameter(0, changeInfo.getNewParameters()[2]);
-        changeInfo.setNewParameter(2, param);
-        doTest(changeInfo);
+    fun testConstructorSwapArguments() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newParameters[0].name = "_x1"
+        changeInfo.newParameters[1].name = "_x2"
+        val param = changeInfo.newParameters[0]
+        changeInfo.setNewParameter(0, changeInfo.newParameters[2])
+        changeInfo.setNewParameter(2, param)
+        doTest(changeInfo)
     }
 
-    public void testFunctions() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewVisibility(Visibilities.PUBLIC);
-        changeInfo.getNewParameters()[0].setName("_x1");
-        changeInfo.getNewParameters()[1].setName("_x2");
-        changeInfo.getNewParameters()[2].setName("_x3");
-        changeInfo.getNewParameters()[1].setCurrentTypeText("Float?");
-        doTest(changeInfo);
+    fun testFunctions() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newVisibility = Visibilities.PUBLIC
+        changeInfo.newParameters[0].name = "_x1"
+        changeInfo.newParameters[1].name = "_x2"
+        changeInfo.newParameters[2].name = "_x3"
+        changeInfo.newParameters[1].currentTypeText = "Float?"
+        doTest(changeInfo)
     }
 
-    public void testGenericFunctions() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewVisibility(Visibilities.PUBLIC);
-        changeInfo.getNewParameters()[0].setName("_x1");
-        changeInfo.getNewParameters()[1].setName("_x2");
-        changeInfo.getNewParameters()[2].setName("_x3");
-        changeInfo.getNewParameters()[1].setCurrentTypeText("Double?");
-        doTest(changeInfo);
+    fun testGenericFunctions() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newVisibility = Visibilities.PUBLIC
+        changeInfo.newParameters[0].name = "_x1"
+        changeInfo.newParameters[1].name = "_x2"
+        changeInfo.newParameters[2].name = "_x3"
+        changeInfo.newParameters[1].currentTypeText = "Double?"
+        doTest(changeInfo)
     }
 
-    public void testExpressionFunction() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.getNewParameters()[0].setName("x1");
-        changeInfo.addParameter(new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                     -1, "y1", BUILT_INS.getIntType(), null, null, JetValVar.None, null));
-        doTest(changeInfo);
+    fun testExpressionFunction() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newParameters[0].name = "x1"
+        changeInfo.addParameter(JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                                 -1, "y1", BUILT_INS.intType, null, null, JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testFunctionsAddRemoveArguments() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewVisibility(Visibilities.INTERNAL);
-        changeInfo.setNewParameter(2, changeInfo.getNewParameters()[1]);
-        changeInfo.setNewParameter(1, changeInfo.getNewParameters()[0]);
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo newParameter =
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "x0", BUILT_INS.getNullableAnyType(), null, psiFactory.createExpression("null"), JetValVar.None, null);
-        changeInfo.setNewParameter(0, newParameter);
-        doTest(changeInfo);
+    fun testFunctionsAddRemoveArguments() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newVisibility = Visibilities.INTERNAL
+        changeInfo.setNewParameter(2, changeInfo.newParameters[1])
+        changeInfo.setNewParameter(1, changeInfo.newParameters[0])
+        val psiFactory = KtPsiFactory(project)
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "x0", BUILT_INS.nullableAnyType, null, psiFactory.createExpression("null"), JetValVar.None, null)
+        changeInfo.setNewParameter(0, newParameter)
+        doTest(changeInfo)
     }
 
-    public void testFakeOverride() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "i", BUILT_INS.getIntType(), null, null, JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
-        doTest(changeInfo);
+    fun testFakeOverride() {
+        val changeInfo = getChangeInfo()
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "i", BUILT_INS.intType, null, null, JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
+        doTest(changeInfo)
     }
 
-    public void testFunctionLiteral() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.getNewParameters()[1].setName("y1");
-        changeInfo.addParameter(new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                     -1, "x", BUILT_INS.getAnyType(), null, null, JetValVar.None, null));
-        changeInfo.setNewReturnTypeText("Int");
-        doTest(changeInfo);
+    fun testFunctionLiteral() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newParameters[1].name = "y1"
+        changeInfo.addParameter(JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                                 -1, "x", BUILT_INS.anyType, null, null, JetValVar.None, null))
+        changeInfo.newReturnTypeText = "Int"
+        doTest(changeInfo)
     }
 
-    public void testVarargs() throws Exception {
+    fun testVarargs() {
         try {
-            getChangeInfo();
+            getChangeInfo()
         }
-        catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
-            assertEquals("Can't refactor the function with variable arguments", e.getMessage());
-            return;
+        catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+            TestCase.assertEquals("Can't refactor the function with variable arguments", e.message)
+            return
         }
 
-        fail("Exception expected");
+        TestCase.fail("Exception expected")
     }
 
-    public void testUnmodifiableFromLibrary() throws Exception {
-        doTestUnmodifiableCheck();
+    fun testUnmodifiableFromLibrary() {
+        doTestUnmodifiableCheck()
     }
 
 
-    public void testUnmodifiableFromBuiltins() throws Exception {
-        doTestUnmodifiableCheck();
+    fun testUnmodifiableFromBuiltins() {
+        doTestUnmodifiableCheck()
     }
 
-    private void doTestUnmodifiableCheck() throws Exception {
+    private fun doTestUnmodifiableCheck() {
         try {
-            JetChangeInfo changeInfo = getChangeInfo();
-            KtElement method = (KtElement) changeInfo.getMethod();
-            JetChangeSignatureConfiguration empty = new JetChangeSignatureConfiguration() {
-                @NotNull
-                @Override
-                public JetMethodDescriptor configure(@NotNull JetMethodDescriptor originalDescriptor) {
-                    return originalDescriptor;
-                }
+            val changeInfo = getChangeInfo()
+            val method = changeInfo.method as KtElement
+            val empty = object : JetChangeSignatureConfiguration {
+                override fun configure(originalDescriptor: JetMethodDescriptor) = originalDescriptor
 
-                @Override
-                public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
-                    return true;
-                }
+                override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
 
-                @Override
-                public boolean forcePerformForSelectedFunctionOnly() {
-                    return false;
-                }
-            };
+                override fun forcePerformForSelectedFunctionOnly() = false
+            }
 
-            JetChangeSignatureKt
-                    .runChangeSignature(getProject(), JetChangeInfoKt.getOriginalBaseFunctionDescriptor(changeInfo), empty, method, "test");
+            runChangeSignature(project, changeInfo.originalBaseFunctionDescriptor, empty, method, "test")
         }
-        catch (RuntimeException e) {
-            assertTrue(e.getMessage().startsWith("Refactoring cannot be"));
-            return;
+        catch (e: RuntimeException) {
+            TestCase.assertTrue(e.message!!.startsWith("Refactoring cannot be"))
+            return
         }
-        fail("Exception expected");
+
+        TestCase.fail("Exception expected")
     }
 
-    public void testInnerFunctionsConflict() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewName("inner2");
-        changeInfo.getNewParameters()[0].setName("y");
-        doTestConflict(changeInfo);
+    fun testInnerFunctionsConflict() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newName = "inner2"
+        changeInfo.newParameters[0].name = "y"
+        doTestConflict(changeInfo)
     }
 
-    public void testMemberFunctionsConflict() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewName("inner2");
-        changeInfo.getNewParameters()[0].setName("y");
-        doTestConflict(changeInfo);
+    fun testMemberFunctionsConflict() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newName = "inner2"
+        changeInfo.newParameters[0].name = "y"
+        doTestConflict(changeInfo)
     }
 
-    public void testTopLevelFunctionsConflict() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewName("fun2");
-        doTestConflict(changeInfo);
+    fun testTopLevelFunctionsConflict() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newName = "fun2"
+        doTestConflict(changeInfo)
     }
 
-    public void testConstructorsConflict() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.getNewParameters()[0].setName("_x");
-        changeInfo.getNewParameters()[1].setName("_y");
-        changeInfo.getNewParameters()[2].setName("_z");
-        doTestConflict(changeInfo);
+    fun testConstructorsConflict() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newParameters[0].name = "_x"
+        changeInfo.newParameters[1].name = "_y"
+        changeInfo.newParameters[2].name = "_z"
+        doTestConflict(changeInfo)
     }
 
-    public void testNoDefaultValuesInOverrides() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
-        changeInfo.setNewParameter(0, newParameters[1]);
-        changeInfo.setNewParameter(1, newParameters[0]);
-        doTest(changeInfo);
+    fun testNoDefaultValuesInOverrides() {
+        val changeInfo = getChangeInfo()
+        val newParameters = changeInfo.newParameters
+        changeInfo.setNewParameter(0, newParameters[1])
+        changeInfo.setNewParameter(1, newParameters[0])
+        doTest(changeInfo)
     }
 
-    public void testOverridesInEnumEntries() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "s", BUILT_INS.getStringType(), null, null, JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
-        doTest(changeInfo);
+    fun testOverridesInEnumEntries() {
+        val changeInfo = getChangeInfo()
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "s", BUILT_INS.stringType, null, null, JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
+        doTest(changeInfo)
     }
 
-    public void testEnumEntriesWithoutSuperCalls() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo newParameter =
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "n", BUILT_INS.getIntType(), null, psiFactory.createExpression("1"), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
-        doTest(changeInfo);
+    fun testEnumEntriesWithoutSuperCalls() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "n", BUILT_INS.intType, null, psiFactory.createExpression("1"), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
+        doTest(changeInfo)
     }
 
-    public void testParameterChangeInOverrides() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo parameterInfo = changeInfo.getNewParameters()[0];
-        parameterInfo.setName("n");
-        parameterInfo.setCurrentTypeText("Int");
-        doTest(changeInfo);
+    fun testParameterChangeInOverrides() {
+        val changeInfo = getChangeInfo()
+        val parameterInfo = changeInfo.newParameters[0]
+        parameterInfo.name = "n"
+        parameterInfo.currentTypeText = "Int"
+        doTest(changeInfo)
     }
 
-    public void testConstructorJavaUsages() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo newParameter =
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"abc\""), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
-        doTest(changeInfo);
+    fun testConstructorJavaUsages() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "s", BUILT_INS.stringType, null, psiFactory.createExpression("\"abc\""), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
+        doTest(changeInfo)
     }
 
-    public void testFunctionJavaUsagesAndOverridesAddParam() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
+    fun testFunctionJavaUsagesAndOverridesAddParam() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
         changeInfo.addParameter(
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"abc\""),
-                                     JetValVar.None, null)
-        );
+                JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                 -1, "s", BUILT_INS.stringType, null, psiFactory.createExpression("\"abc\""),
+                                 JetValVar.None, null))
         changeInfo.addParameter(
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "o", BUILT_INS.getNullableAnyType(), null,
-                                     psiFactory.createExpression("\"def\""), JetValVar.None, null)
-        );
-        doTest(changeInfo);
+                JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                 -1, "o", BUILT_INS.nullableAnyType, null,
+                                 psiFactory.createExpression("\"def\""), JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testFunctionJavaUsagesAndOverridesChangeNullability() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testFunctionJavaUsagesAndOverridesChangeNullability() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
-        newParameters[1].setCurrentTypeText("String?");
-        newParameters[2].setCurrentTypeText("Any");
+        val newParameters = changeInfo.newParameters
+        newParameters[1].currentTypeText = "String?"
+        newParameters[2].currentTypeText = "Any"
 
-        changeInfo.setNewReturnTypeText("String?");
+        changeInfo.newReturnTypeText = "String?"
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testFunctionJavaUsagesAndOverridesChangeTypes() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testFunctionJavaUsagesAndOverridesChangeTypes() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
-        newParameters[0].setCurrentTypeText("String?");
-        newParameters[1].setCurrentTypeText("Int");
-        newParameters[2].setCurrentTypeText("Long?");
+        val newParameters = changeInfo.newParameters
+        newParameters[0].currentTypeText = "String?"
+        newParameters[1].currentTypeText = "Int"
+        newParameters[2].currentTypeText = "Long?"
 
-        changeInfo.setNewReturnTypeText("Any?");
+        changeInfo.newReturnTypeText = "Any?"
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testGenericsWithOverrides() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testGenericsWithOverrides() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
-        newParameters[0].setCurrentTypeText("List<C>");
-        newParameters[1].setCurrentTypeText("A?");
-        newParameters[2].setCurrentTypeText("U<B>");
+        val newParameters = changeInfo.newParameters
+        newParameters[0].currentTypeText = "List<C>"
+        newParameters[1].currentTypeText = "A?"
+        newParameters[2].currentTypeText = "U<B>"
 
-        changeInfo.setNewReturnTypeText("U<C>?");
+        changeInfo.newReturnTypeText = "U<C>?"
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testAddReceiverToGenericsWithOverrides() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testAddReceiverToGenericsWithOverrides() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo parameterInfo = changeInfo.getNewParameters()[0];
-        parameterInfo.setCurrentTypeText("U<A>");
-        changeInfo.setReceiverParameterInfo(parameterInfo);
+        val parameterInfo = changeInfo.newParameters[0]
+        parameterInfo.currentTypeText = "U<A>"
+        changeInfo.receiverParameterInfo = parameterInfo
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testJavaMethodKotlinUsages() throws Exception {
+    fun testJavaMethodKotlinUsages() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    String getNewName(@NotNull PsiMethod method) {
-                        return "bar";
+                object : JavaRefactoringProvider() {
+                    override fun getNewName(method: PsiMethod): String {
+                        return "bar"
                     }
 
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        return ArrayUtil.remove(super.getNewParameters(method), 1);
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        return ArrayUtil.remove(super.getNewParameters(method), 1)
+                    }
+                })
+    }
+
+    fun testJavaConstructorKotlinUsages() {
+        doJavaTest(
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        return ArrayUtil.remove(super.getNewParameters(method), 1)
+                    }
+                })
+    }
+
+    fun testSAMAddToEmptyParamList() {
+        doJavaTest(
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        val paramType = PsiType.getJavaLangString(psiManager, GlobalSearchScope.allScope(project))
+                        return arrayOf(ParameterInfoImpl(-1, "s", paramType))
+                    }
+                })
+    }
+
+    fun testSAMAddToSingletonParamList() {
+        doJavaTest(
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        val parameter = method.parameterList.parameters[0]
+                        val originalParameter = ParameterInfoImpl(0, parameter.name, parameter.type)
+                        val newParameter = ParameterInfoImpl(-1, "n", PsiType.INT)
+
+                        return arrayOf(newParameter, originalParameter)
+                    }
+                })
+    }
+
+    fun testSAMAddToNonEmptyParamList() {
+        doJavaTest(
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        val originalParameters = super.getNewParameters(method)
+                        val newParameters = Arrays.copyOf(originalParameters, originalParameters.size + 1)
+
+                        val paramType = PsiType.getJavaLangObject(psiManager, GlobalSearchScope.allScope(project))
+                        newParameters[originalParameters.size] = ParameterInfoImpl(-1, "o", paramType)
+
+                        return newParameters
+                    }
+                })
+    }
+
+    fun testSAMRemoveSingletonParamList() {
+        doJavaTest(
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> = arrayOf()
+                }
+        )
+    }
+
+    fun testSAMRemoveParam() {
+        doJavaTest(
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        return ArrayUtil.remove(super.getNewParameters(method), 0)
                     }
                 }
-        );
+        )
     }
 
-    public void testJavaConstructorKotlinUsages() throws Exception {
+    fun testSAMRenameParam() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        return ArrayUtil.remove(super.getNewParameters(method), 1);
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        val newParameters = super.getNewParameters(method)
+                        newParameters[0].name = "p"
+                        return newParameters
                     }
-                }
-        );
+                })
     }
 
-    public void testSAMAddToEmptyParamList() throws Exception {
+    fun testSAMChangeParamType() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        PsiType paramType = PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
-                        return new ParameterInfoImpl[] {new ParameterInfoImpl(-1, "s", paramType)};
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        val newParameters = super.getNewParameters(method)
+                        newParameters[0].setType(PsiType.getJavaLangObject(psiManager, GlobalSearchScope.allScope(project)))
+                        return newParameters
                     }
-                }
-        );
+                })
     }
 
-    public void testSAMAddToSingletonParamList() throws Exception {
+    fun testSAMRenameMethod() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        PsiParameter parameter = method.getParameterList().getParameters()[0];
-                        ParameterInfoImpl originalParameter = new ParameterInfoImpl(0, parameter.getName(), parameter.getType());
-                        ParameterInfoImpl newParameter = new ParameterInfoImpl(-1, "n", PsiType.INT);
-
-                        return new ParameterInfoImpl[] {newParameter, originalParameter};
+                object : JavaRefactoringProvider() {
+                    override fun getNewName(method: PsiMethod): String {
+                        return "bar"
                     }
-                }
-        );
+                })
     }
 
-    public void testSAMAddToNonEmptyParamList() throws Exception {
+    fun testSAMChangeMethodReturnType() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        ParameterInfoImpl[] originalParameters = super.getNewParameters(method);
-                        ParameterInfoImpl[] newParameters = Arrays.copyOf(originalParameters, originalParameters.length + 1);
-
-                        PsiType paramType = PsiType.getJavaLangObject(getPsiManager(), GlobalSearchScope.allScope(getProject()));
-                        newParameters[originalParameters.length] = new ParameterInfoImpl(-1, "o", paramType);
-
-                        return newParameters;
+                object : JavaRefactoringProvider() {
+                    override fun getNewReturnType(method: PsiMethod): PsiType {
+                        return PsiType.getJavaLangObject(psiManager, GlobalSearchScope.allScope(project))
                     }
-                }
-        );
+                })
     }
 
-    public void testSAMRemoveSingletonParamList() throws Exception {
+    fun testGenericsWithSAMConstructors() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        return new ParameterInfoImpl[0];
-                    }
-                }
-        );
-    }
+                object : JavaRefactoringProvider() {
+                    internal val factory = JavaPsiFacade.getInstance(project).elementFactory
 
-    public void testSAMRemoveParam() throws Exception {
-        doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        return ArrayUtil.remove(super.getNewParameters(method), 0);
-                    }
-                }
-        );
-    }
-
-    public void testSAMRenameParam() throws Exception {
-        doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
-                        newParameters[0].setName("p");
-                        return newParameters;
-                    }
-                }
-        );
-    }
-
-    public void testSAMChangeParamType() throws Exception {
-        doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
-                        newParameters[0].setType(PsiType.getJavaLangObject(getPsiManager(), GlobalSearchScope.allScope(getProject())));
-                        return newParameters;
-                    }
-                }
-        );
-    }
-
-    public void testSAMRenameMethod() throws Exception {
-        doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    String getNewName(@NotNull PsiMethod method) {
-                        return "bar";
-                    }
-                }
-        );
-    }
-
-    public void testSAMChangeMethodReturnType() throws Exception {
-        doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    PsiType getNewReturnType(@NotNull PsiMethod method) {
-                        return PsiType.getJavaLangObject(getPsiManager(), GlobalSearchScope.allScope(getProject()));
-                    }
-                }
-        );
-    }
-
-    public void testGenericsWithSAMConstructors() throws Exception {
-        doJavaTest(
-                new JavaRefactoringProvider() {
-                    final PsiElementFactory factory = JavaPsiFacade.getInstance(getProject()).getElementFactory();
-
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
-                        newParameters[0].setType(factory.createTypeFromText("java.util.List<X<B>>", method.getParameterList()));
-                        newParameters[1].setType(factory.createTypeFromText("X<java.util.Set<A>>", method.getParameterList()));
-                        return newParameters;
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        val newParameters = super.getNewParameters(method)
+                        newParameters[0].setType(factory.createTypeFromText("java.util.List<X<B>>", method.parameterList))
+                        newParameters[1].setType(factory.createTypeFromText("X<java.util.Set<A>>", method.parameterList))
+                        return newParameters
                     }
 
-                    @NotNull
-                    @Override
-                    PsiType getNewReturnType(@NotNull PsiMethod method) {
-                        return factory.createTypeFromText("X<java.util.List<A>>", method);
+                    override fun getNewReturnType(method: PsiMethod): PsiType {
+                        return factory.createTypeFromText("X<java.util.List<A>>", method)
                     }
-                }
-        );
+                })
     }
 
-    public void testFunctionRenameJavaUsages() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewName("bar");
-        doTest(changeInfo);
+    fun testFunctionRenameJavaUsages() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newName = "bar"
+        doTest(changeInfo)
     }
 
-    public void testParameterModifiers() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.addParameter(new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                     -1, "n", BUILT_INS.getIntType(), null, null, JetValVar.None, null));
-        doTest(changeInfo);
+    fun testParameterModifiers() {
+        val changeInfo = getChangeInfo()
+        changeInfo.addParameter(JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                                 -1, "n", BUILT_INS.intType, null, null, JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testFqNameShortening() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo parameterInfo = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                              -1, "s", BUILT_INS.getAnyType(), null, null, JetValVar.None, null);
-        parameterInfo.setCurrentTypeText("kotlin.String");
-        changeInfo.addParameter(parameterInfo);
-        doTest(changeInfo);
+    fun testFqNameShortening() {
+        val changeInfo = getChangeInfo()
+        val parameterInfo = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                             -1, "s", BUILT_INS.anyType, null, null, JetValVar.None, null)
+        parameterInfo.currentTypeText = "kotlin.String"
+        changeInfo.addParameter(parameterInfo)
+        doTest(changeInfo)
     }
 
-    public void testObjectMember() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.removeParameter(0);
-        doTest(changeInfo);
+    fun testObjectMember() {
+        val changeInfo = getChangeInfo()
+        changeInfo.removeParameter(0)
+        doTest(changeInfo)
     }
 
-    public void testParameterListAddParam() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.addParameter(new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                     -1, "l", BUILT_INS.getLongType(), null, null, JetValVar.None, null));
-        doTest(changeInfo);
+    fun testParameterListAddParam() {
+        val changeInfo = getChangeInfo()
+        changeInfo.addParameter(JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                                 -1, "l", BUILT_INS.longType, null, null, JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testParameterListRemoveParam() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.removeParameter(changeInfo.getNewParametersCount() - 1);
-        doTest(changeInfo);
+    fun testParameterListRemoveParam() {
+        val changeInfo = getChangeInfo()
+        changeInfo.removeParameter(changeInfo.getNewParametersCount() - 1)
+        doTest(changeInfo)
     }
 
-    public void testParameterListRemoveAllParams() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        for (int i = changeInfo.getNewParametersCount() - 1; i >= 0; i--) {
-            changeInfo.removeParameter(i);
+    fun testParameterListRemoveAllParams() {
+        val changeInfo = getChangeInfo()
+        for (i in changeInfo.getNewParametersCount() - 1 downTo 0) {
+            changeInfo.removeParameter(i)
         }
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testAddNewReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo parameterInfo =
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "_", BUILT_INS.getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
-        parameterInfo.setCurrentTypeText("X");
-        changeInfo.setReceiverParameterInfo(parameterInfo);
-        doTest(changeInfo);
+    fun testAddNewReceiver() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
+        val parameterInfo = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                             -1, "_", BUILT_INS.anyType, null, psiFactory.createExpression("X(0)"), JetValVar.None, null)
+        parameterInfo.currentTypeText = "X"
+        changeInfo.receiverParameterInfo = parameterInfo
+        doTest(changeInfo)
     }
 
-    public void testAddNewReceiverForMember() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo parameterInfo =
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "_", BUILT_INS.getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
-        parameterInfo.setCurrentTypeText("X");
-        changeInfo.setReceiverParameterInfo(parameterInfo);
-        doTest(changeInfo);
+    fun testAddNewReceiverForMember() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
+        val parameterInfo = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                             -1, "_", BUILT_INS.anyType, null, psiFactory.createExpression("X(0)"), JetValVar.None, null)
+        parameterInfo.currentTypeText = "X"
+        changeInfo.receiverParameterInfo = parameterInfo
+        doTest(changeInfo)
     }
 
-    public void testAddNewReceiverForMemberConflict() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo parameterInfo =
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "_", BUILT_INS.getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
-        parameterInfo.setCurrentTypeText("X");
-        changeInfo.setReceiverParameterInfo(parameterInfo);
-        doTestConflict(changeInfo);
+    fun testAddNewReceiverForMemberConflict() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
+        val parameterInfo = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                             -1, "_", BUILT_INS.anyType, null, psiFactory.createExpression("X(0)"), JetValVar.None, null)
+        parameterInfo.currentTypeText = "X"
+        changeInfo.receiverParameterInfo = parameterInfo
+        doTestConflict(changeInfo)
     }
 
-    public void testAddNewReceiverConflict() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo parameterInfo =
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "_", BUILT_INS.getAnyType(), null, psiFactory.createExpression("X(0)"), JetValVar.None, null);
-        parameterInfo.setCurrentTypeText("X");
-        changeInfo.setReceiverParameterInfo(parameterInfo);
-        doTestConflict(changeInfo);
+    fun testAddNewReceiverConflict() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
+        val parameterInfo = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                             -1, "_", BUILT_INS.anyType, null, psiFactory.createExpression("X(0)"), JetValVar.None, null)
+        parameterInfo.currentTypeText = "X"
+        changeInfo.receiverParameterInfo = parameterInfo
+        doTestConflict(changeInfo)
     }
 
-    public void testRemoveReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.removeParameter(0);
-        doTest(changeInfo);
+    fun testRemoveReceiver() {
+        val changeInfo = getChangeInfo()
+        changeInfo.removeParameter(0)
+        doTest(changeInfo)
     }
 
-    public void testRemoveReceiverForMember() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.removeParameter(0);
-        doTest(changeInfo);
+    fun testRemoveReceiverForMember() {
+        val changeInfo = getChangeInfo()
+        changeInfo.removeParameter(0)
+        doTest(changeInfo)
     }
 
-    public void testConvertParameterToReceiver1() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
-        doTest(changeInfo);
+    fun testConvertParameterToReceiver1() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[0]
+        doTest(changeInfo)
     }
 
-    public void testConvertParameterToReceiver2() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[1]);
-        doTest(changeInfo);
+    fun testConvertParameterToReceiver2() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[1]
+        doTest(changeInfo)
     }
 
-    public void testConvertReceiverToParameter1() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testConvertReceiverToParameter1() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testConvertReceiverToParameter2() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        JetParameterInfo[] parameters = changeInfo.getNewParameters();
-        changeInfo.setNewParameter(0, parameters[1]);
-        changeInfo.setNewParameter(1, parameters[0]);
-        doTest(changeInfo);
+    fun testConvertReceiverToParameter2() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        val parameters = changeInfo.newParameters
+        changeInfo.setNewParameter(0, parameters[1])
+        changeInfo.setNewParameter(1, parameters[0])
+        doTest(changeInfo)
     }
 
-    public void testConvertParameterToReceiverForMember1() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
-        doTest(changeInfo);
+    fun testConvertParameterToReceiverForMember1() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[0]
+        doTest(changeInfo)
     }
 
-    public void testConvertParameterToReceiverForMember2() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[1]);
-        doTest(changeInfo);
+    fun testConvertParameterToReceiverForMember2() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[1]
+        doTest(changeInfo)
     }
 
-    public void testConvertParameterToReceiverForMemberConflict() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
-        doTestConflict(changeInfo);
+    fun testConvertParameterToReceiverForMemberConflict() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[0]
+        doTestConflict(changeInfo)
     }
 
-    public void testConvertReceiverToParameterForMember1() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testConvertReceiverToParameterForMember1() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testConvertReceiverToParameterForMember2() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        JetParameterInfo[] parameters = changeInfo.getNewParameters();
-        changeInfo.setNewParameter(0, parameters[1]);
-        changeInfo.setNewParameter(1, parameters[0]);
-        doTest(changeInfo);
+    fun testConvertReceiverToParameterForMember2() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        val parameters = changeInfo.newParameters
+        changeInfo.setNewParameter(0, parameters[1])
+        changeInfo.setNewParameter(1, parameters[0])
+        doTest(changeInfo)
     }
 
-    public void testConvertReceiverToParameterWithNameClash() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testConvertReceiverToParameterWithNameClash() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testConvertReceiverToParameterAndChangeName() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        changeInfo.getNewParameters()[0].setName("abc");
-        doTest(changeInfo);
+    fun testConvertReceiverToParameterAndChangeName() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        changeInfo.newParameters[0].name = "abc"
+        doTest(changeInfo)
     }
 
-    public void testChangeReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[1]);
-        doTest(changeInfo);
+    fun testChangeReceiver() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[1]
+        doTest(changeInfo)
     }
 
-    public void testChangeReceiverForMember() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[1]);
-        doTest(changeInfo);
+    fun testChangeReceiverForMember() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[1]
+        doTest(changeInfo)
     }
 
-    public void testChangeParameterTypeWithImport() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.getNewParameters()[0].setCurrentTypeText("a.Bar");
-        doTest(changeInfo);
+    fun testChangeParameterTypeWithImport() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newParameters[0].currentTypeText = "a.Bar"
+        doTest(changeInfo)
     }
 
-    public void testSecondaryConstructor() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
+    fun testSecondaryConstructor() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
         changeInfo.addParameter(
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""),
-                                     JetValVar.None, null));
-        doTest(changeInfo);
+                JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                 -1, "s", BUILT_INS.stringType, null, psiFactory.createExpression("\"foo\""),
+                                 JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testJavaConstructorInDelegationCall() throws Exception {
+    fun testJavaConstructorInDelegationCall() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
-                        newParameters = Arrays.copyOf(newParameters, newParameters.length + 1);
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        var newParameters = super.getNewParameters(method)
+                        newParameters = Arrays.copyOf(newParameters, newParameters.size + 1)
 
-                        PsiType paramType = PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
-                        newParameters[newParameters.length - 1] = new ParameterInfoImpl(-1, "s", paramType, "\"foo\"");
+                        val paramType = PsiType.getJavaLangString(psiManager, GlobalSearchScope.allScope(project))
+                        newParameters[newParameters.size - 1] = ParameterInfoImpl(-1, "s", paramType, "\"foo\"")
 
-                        return newParameters;
+                        return newParameters
                     }
-                }
-        );
+                })
     }
 
-    public void testPrimaryConstructorByThisRef() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
+    fun testPrimaryConstructorByThisRef() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
         changeInfo.addParameter(
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
-        );
-        doTest(changeInfo);
+                JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                 -1, "s", BUILT_INS.stringType, null, psiFactory.createExpression("\"foo\""), JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testPrimaryConstructorBySuperRef() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
+    fun testPrimaryConstructorBySuperRef() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
         changeInfo.addParameter(
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
-        );
-        doTest(changeInfo);
+                JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                 -1, "s", BUILT_INS.stringType, null, psiFactory.createExpression("\"foo\""), JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testSecondaryConstructorByThisRef() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
+    fun testSecondaryConstructorByThisRef() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
         changeInfo.addParameter(
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
-        );
-        doTest(changeInfo);
+                JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                 -1, "s", BUILT_INS.stringType, null, psiFactory.createExpression("\"foo\""), JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testSecondaryConstructorBySuperRef() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
+    fun testSecondaryConstructorBySuperRef() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
         changeInfo.addParameter(
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", BUILT_INS.getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null)
-        );
-        doTest(changeInfo);
+                JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                 -1, "s", BUILT_INS.stringType, null, psiFactory.createExpression("\"foo\""), JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testJavaConstructorBySuperRef() throws Exception {
+    fun testJavaConstructorBySuperRef() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
-                        newParameters = Arrays.copyOf(newParameters, newParameters.length + 1);
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        var newParameters = super.getNewParameters(method)
+                        newParameters = Arrays.copyOf(newParameters, newParameters.size + 1)
 
-                        PsiType paramType = PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
-                        newParameters[newParameters.length - 1] = new ParameterInfoImpl(-1, "s", paramType, "\"foo\"");
+                        val paramType = PsiType.getJavaLangString(psiManager, GlobalSearchScope.allScope(project))
+                        newParameters[newParameters.size - 1] = ParameterInfoImpl(-1, "s", paramType, "\"foo\"")
 
-                        return newParameters;
+                        return newParameters
                     }
-                }
-        );
+                })
     }
 
-    public void testNoConflictWithReceiverName() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
+    fun testNoConflictWithReceiverName() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
         changeInfo.addParameter(
-                new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "i", BUILT_INS.getIntType(), null, psiFactory.createExpression("0"), JetValVar.None, null)
-        );
-        doTest(changeInfo);
+                JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                 -1, "i", BUILT_INS.intType, null, psiFactory.createExpression("0"), JetValVar.None, null))
+        doTest(changeInfo)
     }
 
-    public void testRemoveParameterBeforeLambda() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.removeParameter(1);
-        doTest(changeInfo);
+    fun testRemoveParameterBeforeLambda() {
+        val changeInfo = getChangeInfo()
+        changeInfo.removeParameter(1)
+        doTest(changeInfo)
     }
 
-    public void testMoveLambdaParameter() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
-        changeInfo.setNewParameter(1, newParameters[2]);
-        changeInfo.setNewParameter(2, newParameters[1]);
-        doTest(changeInfo);
+    fun testMoveLambdaParameter() {
+        val changeInfo = getChangeInfo()
+        val newParameters = changeInfo.newParameters
+        changeInfo.setNewParameter(1, newParameters[2])
+        changeInfo.setNewParameter(2, newParameters[1])
+        doTest(changeInfo)
     }
 
-    public void testConvertLambdaParameterToReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[2]);
-        doTest(changeInfo);
+    fun testConvertLambdaParameterToReceiver() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[2]
+        doTest(changeInfo)
     }
 
-    public void testRemoveLambdaParameter() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.removeParameter(2);
-        doTest(changeInfo);
+    fun testRemoveLambdaParameter() {
+        val changeInfo = getChangeInfo()
+        changeInfo.removeParameter(2)
+        doTest(changeInfo)
     }
 
-    public void testRemoveEnumConstructorParameter() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.removeParameter(1);
-        doTest(changeInfo);
+    fun testRemoveEnumConstructorParameter() {
+        val changeInfo = getChangeInfo()
+        changeInfo.removeParameter(1)
+        doTest(changeInfo)
     }
 
-    public void testRemoveAllEnumConstructorParameters() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        for (int i = changeInfo.getNewParametersCount() - 1; i >= 0; i--) {
-            changeInfo.removeParameter(i);
+    fun testRemoveAllEnumConstructorParameters() {
+        val changeInfo = getChangeInfo()
+        for (i in changeInfo.getNewParametersCount() - 1 downTo 0) {
+            changeInfo.removeParameter(i)
         }
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testDoNotApplyPrimarySignatureToSecondaryCalls() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo[] newParameters = changeInfo.getNewParameters();
-        changeInfo.setNewParameter(0, newParameters[1]);
-        changeInfo.setNewParameter(1, newParameters[0]);
-        doTest(changeInfo);
+    fun testDoNotApplyPrimarySignatureToSecondaryCalls() {
+        val changeInfo = getChangeInfo()
+        val newParameters = changeInfo.newParameters
+        changeInfo.setNewParameter(0, newParameters[1])
+        changeInfo.setNewParameter(1, newParameters[0])
+        doTest(changeInfo)
     }
 
-    public void testConvertToExtensionAndRename() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
-        changeInfo.setNewName("foo1");
-        doTest(changeInfo);
+    fun testConvertToExtensionAndRename() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[0]
+        changeInfo.newName = "foo1"
+        doTest(changeInfo)
     }
 
-    public void testRenameExtensionParameter() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.getNewParameters()[1].setName("b");
-        doTest(changeInfo);
+    fun testRenameExtensionParameter() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newParameters[1].name = "b"
+        doTest(changeInfo)
     }
 
-    public void testConvertParameterToReceiverAddParens() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
-        doTest(changeInfo);
+    fun testConvertParameterToReceiverAddParens() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[0]
+        doTest(changeInfo)
     }
 
-    public void testThisReplacement() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testThisReplacement() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testPrimaryConstructorByRef() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtPsiFactory psiFactory = new KtPsiFactory(getProject());
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", BUILT_INS.getIntType(), null,
-                                                             psiFactory.createExpression("1"), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
-        doTest(changeInfo);
+    fun testPrimaryConstructorByRef() {
+        val changeInfo = getChangeInfo()
+        val psiFactory = KtPsiFactory(project)
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "n", BUILT_INS.intType, null,
+                                            psiFactory.createExpression("1"), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
+        doTest(changeInfo)
     }
 
-    public void testReceiverToParameterExplicitReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testReceiverToParameterExplicitReceiver() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testReceiverToParameterImplicitReceivers() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testReceiverToParameterImplicitReceivers() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testParameterToReceiverExplicitReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
-        doTest(changeInfo);
+    fun testParameterToReceiverExplicitReceiver() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[0]
+        doTest(changeInfo)
     }
 
-    public void testParameterToReceiverImplicitReceivers() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
-        doTest(changeInfo);
+    fun testParameterToReceiverImplicitReceivers() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = changeInfo.newParameters[0]
+        doTest(changeInfo)
     }
 
-    public void testJavaMethodOverridesReplaceParam() throws Exception {
+    fun testJavaMethodOverridesReplaceParam() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    PsiType getNewReturnType(@NotNull PsiMethod method) {
-                        return PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                object : JavaRefactoringProvider() {
+                    override fun getNewReturnType(method: PsiMethod): PsiType {
+                        return PsiType.getJavaLangString(psiManager, GlobalSearchScope.allScope(project))
                     }
 
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
-                        newParameters[0] = new ParameterInfoImpl(-1, "x", PsiType.INT, "1");
-                        return newParameters;
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        val newParameters = super.getNewParameters(method)
+                        newParameters[0] = ParameterInfoImpl(-1, "x", PsiType.INT, "1")
+                        return newParameters
                     }
-                }
-        );
+                })
     }
 
-    public void testJavaMethodOverridesChangeParam() throws Exception {
+    fun testJavaMethodOverridesChangeParam() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    PsiType getNewReturnType(@NotNull PsiMethod method) {
-                        return PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                object : JavaRefactoringProvider() {
+                    override fun getNewReturnType(method: PsiMethod): PsiType {
+                        return PsiType.getJavaLangString(psiManager, GlobalSearchScope.allScope(project))
                     }
 
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
-                        newParameters[0].setName("x");
-                        newParameters[0].setType(PsiType.INT);
-                        return newParameters;
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        val newParameters = super.getNewParameters(method)
+                        newParameters[0].name = "x"
+                        newParameters[0].setType(PsiType.INT)
+                        return newParameters
                     }
-                }
-        );
+                })
     }
 
-    public void testChangeProperty() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewName("s");
-        changeInfo.setNewReturnTypeText("String");
-        doTest(changeInfo);
+    fun testChangeProperty() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newName = "s"
+        changeInfo.newReturnTypeText = "String"
+        doTest(changeInfo)
     }
 
-    public void testAddPropertyReceiverConflict() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "receiver", BUILT_INS.getStringType(), null,
-                                                             new KtPsiFactory(getProject()).createExpression("\"\""), JetValVar.None, null);
-        changeInfo.setReceiverParameterInfo(newParameter);
-        doTestConflict(changeInfo);
+    fun testAddPropertyReceiverConflict() {
+        val changeInfo = getChangeInfo()
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "receiver", BUILT_INS.stringType, null,
+                                            KtPsiFactory(project).createExpression("\"\""), JetValVar.None, null)
+        changeInfo.receiverParameterInfo = newParameter
+        doTestConflict(changeInfo)
     }
 
-    public void testAddPropertyReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "receiver", BUILT_INS.getStringType(), null,
-                                                             new KtPsiFactory(getProject()).createExpression("\"\""), JetValVar.None, null);
-        changeInfo.setReceiverParameterInfo(newParameter);
-        doTest(changeInfo);
+    fun testAddPropertyReceiver() {
+        val changeInfo = getChangeInfo()
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "receiver", BUILT_INS.stringType, null,
+                                            KtPsiFactory(project).createExpression("\"\""), JetValVar.None, null)
+        changeInfo.receiverParameterInfo = newParameter
+        doTest(changeInfo)
     }
 
-    public void testChangePropertyReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testChangePropertyReceiver() {
+        val changeInfo = getChangeInfo()
         //noinspection ConstantConditions
-        changeInfo.getReceiverParameterInfo().setCurrentTypeText("Int");
-        doTest(changeInfo);
+        changeInfo.receiverParameterInfo!!.currentTypeText = "Int"
+        doTest(changeInfo)
     }
 
-    public void testRemovePropertyReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testRemovePropertyReceiver() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testAddTopLevelPropertyReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "receiver", null, null,
-                                                             new KtPsiFactory(getProject()).createExpression("A()"), JetValVar.None, null);
-        newParameter.setCurrentTypeText("test.A");
-        changeInfo.setReceiverParameterInfo(newParameter);
-        doTest(changeInfo);
+    fun testAddTopLevelPropertyReceiver() {
+        val changeInfo = getChangeInfo()
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "receiver", null, null,
+                                            KtPsiFactory(project).createExpression("A()"), JetValVar.None, null)
+        newParameter.currentTypeText = "test.A"
+        changeInfo.receiverParameterInfo = newParameter
+        doTest(changeInfo)
     }
 
-    public void testChangeTopLevelPropertyReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testChangeTopLevelPropertyReceiver() {
+        val changeInfo = getChangeInfo()
         //noinspection ConstantConditions
-        changeInfo.getReceiverParameterInfo().setCurrentTypeText("String");
-        doTest(changeInfo);
+        changeInfo.receiverParameterInfo!!.currentTypeText = "String"
+        doTest(changeInfo)
     }
 
-    public void testRemoveTopLevelPropertyReceiver() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testRemoveTopLevelPropertyReceiver() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testChangeClassParameter() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewName("s");
-        changeInfo.setNewReturnTypeText("String");
-        doTest(changeInfo);
+    fun testChangeClassParameter() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newName = "s"
+        changeInfo.newReturnTypeText = "String"
+        doTest(changeInfo)
     }
 
-    public void testParameterPropagation() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testParameterPropagation() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo newParameter1 = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                              -1, "n", null, null,
-                                                              new KtPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
-        newParameter1.setCurrentTypeText("kotlin.Int");
-        changeInfo.addParameter(newParameter1);
+        val newParameter1 = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                             -1, "n", null, null,
+                                             KtPsiFactory(project).createExpression("1"), JetValVar.None, null)
+        newParameter1.currentTypeText = "kotlin.Int"
+        changeInfo.addParameter(newParameter1)
 
-        JetParameterInfo newParameter2 = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                              -1, "s", null, null,
-                                                              new KtPsiFactory(getProject()).createExpression("\"abc\""), JetValVar.None, null);
-        newParameter2.setCurrentTypeText("kotlin.String");
-        changeInfo.addParameter(newParameter2);
+        val newParameter2 = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                             -1, "s", null, null,
+                                             KtPsiFactory(project).createExpression("\"abc\""), JetValVar.None, null)
+        newParameter2.currentTypeText = "kotlin.String"
+        changeInfo.addParameter(newParameter2)
 
-        KtClassOrObject classA =
-                KotlinFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
-                        .iterator().next();
-        KtDeclaration functionBar = CollectionsKt.first(
-                classA.getDeclarations(),
-                new Function1<KtDeclaration, Boolean>() {
-                    @Override
-                    public Boolean invoke(KtDeclaration declaration) {
-                        return declaration instanceof KtNamedFunction && "bar".equals(declaration.getName());
-                    }
-                }
-        );
-        KtNamedFunction functionTest =
-                KotlinTopLevelFunctionFqnNameIndex.getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
-                        .iterator().next();
+        val classA = KotlinFullClassNameIndex.getInstance().get("A", project, GlobalSearchScope.allScope(project)).iterator().next()
+        val functionBar = classA.declarations.first { it is KtNamedFunction && it.name == "bar" }
+        val functionTest = KotlinTopLevelFunctionFqnNameIndex.getInstance().get("test", project, GlobalSearchScope.allScope(project)).iterator().next()
 
-        changeInfo.setPrimaryPropagationTargets(Arrays.asList(functionBar, functionTest));
+        changeInfo.primaryPropagationTargets = Arrays.asList<KtDeclaration>(functionBar, functionTest)
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testJavaParameterPropagation() throws Exception {
+    fun testJavaParameterPropagation() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        return new ParameterInfoImpl[] {
-                                new ParameterInfoImpl(-1, "n", PsiType.INT, "1"),
-                                new ParameterInfoImpl(-1,
-                                                      "s",
-                                                      PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject())),
-                                                      "\"abc\"")
-                        };
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+                        return arrayOf(
+                                ParameterInfoImpl(-1, "n", PsiType.INT, "1"),
+                                ParameterInfoImpl(-1, "s", PsiType.getJavaLangString(psiManager, GlobalSearchScope.allScope(project)), "\"abc\"")
+                        )
                     }
 
-                    @NotNull
-                    @Override
-                    Set<PsiMethod> getParameterPropagationTargets(@NotNull PsiMethod method) {
-                        PsiClass classA = CollectionsKt.first(
-                                JavaFullClassNameIndex.getInstance()
-                                        .get("A".hashCode(), getProject(), GlobalSearchScope.allScope(getProject())),
-                                new Function1<PsiClass, Boolean>() {
-                                    @Override
-                                    public Boolean invoke(PsiClass aClass) {
-                                        return "A".equals(aClass.getName());
-                                    }
-                                }
-                        );
-                        PsiMethod methodBar = ArraysKt.first(
-                                classA.getMethods(),
-                                new Function1<PsiMethod, Boolean>() {
-                                    @Override
-                                    public Boolean invoke(PsiMethod method) {
-                                        return "bar".equals(method.getName());
-                                    }
-                                }
-                        );
-                        KtNamedFunction functionTest =
-                                KotlinTopLevelFunctionFqnNameIndex
-                                        .getInstance().get("test", getProject(), GlobalSearchScope.allScope(getProject()))
-                                        .iterator().next();
-
-                        return SetsKt.setOf(methodBar, LightClassUtilsKt.getRepresentativeLightMethod(functionTest));
+                    override fun getParameterPropagationTargets(method: PsiMethod): Set<PsiMethod> {
+                        val classA = JavaFullClassNameIndex.getInstance()
+                                .get("A".hashCode(), project, GlobalSearchScope.allScope(project))
+                                .first { it.name == "A" }
+                        val methodBar = classA.methods.first { it.name == "bar" }
+                        val functionTest = KotlinTopLevelFunctionFqnNameIndex.getInstance()
+                                .get("test", project, GlobalSearchScope.allScope(project))
+                                .first()
+                        return setOf(methodBar, functionTest.getRepresentativeLightMethod()!!)
                     }
-                }
-        );
+                })
     }
 
-    public void testPropagateWithParameterDuplication() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testPropagateWithParameterDuplication() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", BUILT_INS.getIntType(), null,
-                                                             new KtPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "n", BUILT_INS.intType, null,
+                                            KtPsiFactory(project).createExpression("1"), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
 
-        KtNamedFunction functionBar =
-                KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
-                        .iterator().next();
+        val functionBar = KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, GlobalSearchScope.allScope(project)).iterator().next()
 
-        changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
+        changeInfo.primaryPropagationTargets = listOf(functionBar)
 
-        doTestConflict(changeInfo);
+        doTestConflict(changeInfo)
     }
 
-    public void testPropagateWithVariableDuplication() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testPropagateWithVariableDuplication() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", BUILT_INS.getIntType(), null,
-                                                             new KtPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "n", BUILT_INS.intType, null,
+                                            KtPsiFactory(project).createExpression("1"), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
 
-        KtNamedFunction functionBar =
-                KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
-                        .iterator().next();
+        val functionBar = KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, GlobalSearchScope.allScope(project)).iterator().next()
 
-        changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
+        changeInfo.primaryPropagationTargets = listOf(functionBar)
 
-        doTestConflict(changeInfo);
+        doTestConflict(changeInfo)
     }
 
-    public void testPropagateWithThisQualificationInClassMember() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testPropagateWithThisQualificationInClassMember() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", BUILT_INS.getIntType(), null,
-                                                             new KtPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "n", BUILT_INS.intType, null,
+                                            KtPsiFactory(project).createExpression("1"), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
 
-        KtClassOrObject classA =
-                KotlinFullClassNameIndex.getInstance().get("A", getProject(), GlobalSearchScope.allScope(getProject()))
-                        .iterator().next();
-        KtDeclaration functionBar = CollectionsKt.first(
-                classA.getDeclarations(),
-                new Function1<KtDeclaration, Boolean>() {
-                    @Override
-                    public Boolean invoke(KtDeclaration declaration) {
-                        return declaration instanceof KtNamedFunction && "bar".equals(declaration.getName());
-                    }
-                }
-        );
-        changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
+        val classA = KotlinFullClassNameIndex.getInstance().get("A", project, GlobalSearchScope.allScope(project)).iterator().next()
+        val functionBar = classA.declarations.first { it is KtNamedFunction && it.name == "bar" }
+        changeInfo.primaryPropagationTargets = listOf<KtDeclaration>(functionBar)
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testPropagateWithThisQualificationInExtension() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testPropagateWithThisQualificationInExtension() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", BUILT_INS.getIntType(), null,
-                                                             new KtPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "n", BUILT_INS.intType, null,
+                                            KtPsiFactory(project).createExpression("1"), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
 
-        KtNamedFunction functionBar =
-                KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", getProject(), GlobalSearchScope.allScope(getProject()))
-                        .iterator().next();
+        val functionBar = KotlinTopLevelFunctionFqnNameIndex.getInstance().get("bar", project, GlobalSearchScope.allScope(project)).iterator().next()
 
-        changeInfo.setPrimaryPropagationTargets(Collections.singletonList(functionBar));
+        changeInfo.primaryPropagationTargets = listOf(functionBar)
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testJavaConstructorParameterPropagation() throws Exception {
+    fun testJavaConstructorParameterPropagation() {
         doJavaTest(
-                new JavaRefactoringProvider() {
-                    @NotNull
-                    @Override
-                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-                        return new ParameterInfoImpl[] { new ParameterInfoImpl(-1, "n", PsiType.INT, "1") };
-                    }
+                object : JavaRefactoringProvider() {
+                    override fun getNewParameters(method: PsiMethod) = arrayOf(ParameterInfoImpl(-1, "n", PsiType.INT, "1"))
 
-                    @NotNull
-                    @Override
-                    Set<PsiMethod> getParameterPropagationTargets(@NotNull PsiMethod method) {
-                        return findCallers(method);
-                    }
+                    override fun getParameterPropagationTargets(method: PsiMethod) = findCallers(method)
                 }
-        );
+        )
     }
 
-    public void testPrimaryConstructorParameterPropagation() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testPrimaryConstructorParameterPropagation() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", BUILT_INS.getIntType(), null,
-                                                             new KtPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "n", BUILT_INS.intType, null,
+                                            KtPsiFactory(project).createExpression("1"), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
 
-        PsiMethod constructor = LightClassUtilsKt.getRepresentativeLightMethod(changeInfo.getMethod());
-        assert constructor != null;
-        changeInfo.setPrimaryPropagationTargets(findCallers(constructor));
+        val constructor = changeInfo.method.getRepresentativeLightMethod()
+        assert(constructor != null)
+        changeInfo.primaryPropagationTargets = findCallers(constructor!!)
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testSecondaryConstructorParameterPropagation() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
+    fun testSecondaryConstructorParameterPropagation() {
+        val changeInfo = getChangeInfo()
 
-        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                                             -1, "n", BUILT_INS.getIntType(), null,
-                                                             new KtPsiFactory(getProject()).createExpression("1"), JetValVar.None, null);
-        changeInfo.addParameter(newParameter);
+        val newParameter = JetParameterInfo(changeInfo.methodDescriptor.baseDescriptor,
+                                            -1, "n", BUILT_INS.intType, null,
+                                            KtPsiFactory(project).createExpression("1"), JetValVar.None, null)
+        changeInfo.addParameter(newParameter)
 
-        PsiMethod constructor = LightClassUtilsKt.getRepresentativeLightMethod(changeInfo.getMethod());
-        assert constructor != null;
-        changeInfo.setPrimaryPropagationTargets(findCallers(constructor));
+        val constructor = changeInfo.method.getRepresentativeLightMethod()
+        assert(constructor != null)
+        changeInfo.primaryPropagationTargets = findCallers(constructor!!)
 
-        doTest(changeInfo);
+        doTest(changeInfo)
     }
 
-    public void testJavaMethodOverridesOmitUnitType() throws Exception {
-        doJavaTest(new JavaRefactoringProvider());
+    fun testJavaMethodOverridesOmitUnitType() {
+        doJavaTest(JavaRefactoringProvider())
     }
 
-    public void testOverrideInAnonymousObjectWithTypeParameters() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewName("bar");
-        doTest(changeInfo);
+    fun testOverrideInAnonymousObjectWithTypeParameters() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newName = "bar"
+        doTest(changeInfo)
     }
 
-    public void testMakePrimaryConstructorPrivateNoParams() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewVisibility(Visibilities.PRIVATE);
-        doTest(changeInfo);
+    fun testMakePrimaryConstructorPrivateNoParams() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newVisibility = Visibilities.PRIVATE
+        doTest(changeInfo)
     }
 
-    public void testMakePrimaryConstructorPublic() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.setNewVisibility(Visibilities.PUBLIC);
-        doTest(changeInfo);
+    fun testMakePrimaryConstructorPublic() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newVisibility = Visibilities.PUBLIC
+        doTest(changeInfo)
     }
 
-    public void testRenameExtensionParameterWithNamedArgs() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.getNewParameters()[2].setName("bb");
-        doTest(changeInfo);
+    fun testRenameExtensionParameterWithNamedArgs() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newParameters[2].name = "bb"
+        doTest(changeInfo)
     }
 
-    public void testImplicitThisToParameterWithChangedType() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        //noinspection ConstantConditions
-        changeInfo.getReceiverParameterInfo().setCurrentTypeText("Older");
-        changeInfo.setReceiverParameterInfo(null);
-        doTest(changeInfo);
+    fun testImplicitThisToParameterWithChangedType() {
+        val changeInfo = getChangeInfo()
+        changeInfo.receiverParameterInfo!!.currentTypeText = "Older"
+        changeInfo.receiverParameterInfo = null
+        doTest(changeInfo)
     }
 
-    public void testJvmOverloadedRenameParameter() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.getNewParameters()[0].setName("aa");
-        doTest(changeInfo);
+    fun testJvmOverloadedRenameParameter() {
+        val changeInfo = getChangeInfo()
+        changeInfo.newParameters[0].name = "aa"
+        doTest(changeInfo)
     }
 
-    public void testJvmOverloadedSwapParams1() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo param = changeInfo.getNewParameters()[1];
-        changeInfo.setNewParameter(1, changeInfo.getNewParameters()[2]);
-        changeInfo.setNewParameter(2, param);
-        doTest(changeInfo);
+    fun testJvmOverloadedSwapParams1() {
+        val changeInfo = getChangeInfo()
+        val param = changeInfo.newParameters[1]
+        changeInfo.setNewParameter(1, changeInfo.newParameters[2])
+        changeInfo.setNewParameter(2, param)
+        doTest(changeInfo)
     }
 
-    public void testJvmOverloadedSwapParams2() throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        JetParameterInfo param = changeInfo.getNewParameters()[0];
-        changeInfo.setNewParameter(0, changeInfo.getNewParameters()[2]);
-        changeInfo.setNewParameter(2, param);
-        doTest(changeInfo);
+    fun testJvmOverloadedSwapParams2() {
+        val changeInfo = getChangeInfo()
+        val param = changeInfo.newParameters[0]
+        changeInfo.setNewParameter(0, changeInfo.newParameters[2])
+        changeInfo.setNewParameter(2, param)
+        doTest(changeInfo)
     }
 
-    private void doTestJvmOverloadedAddDefault(int index) throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtExpression defaultValue = new KtPsiFactory(getProject()).createExpression("2");
-        CallableDescriptor descriptor = changeInfo.getMethodDescriptor().getBaseDescriptor();
-        changeInfo.addParameter(new JetParameterInfo(descriptor, -1, "n", BUILT_INS.getIntType(), defaultValue, defaultValue), index);
-        doTest(changeInfo);
+    private fun doTestJvmOverloadedAddDefault(index: Int) {
+        val changeInfo = getChangeInfo()
+        val defaultValue = KtPsiFactory(project).createExpression("2")
+        val descriptor = changeInfo.methodDescriptor.baseDescriptor
+        changeInfo.addParameter(JetParameterInfo(descriptor, -1, "n", BUILT_INS.intType, defaultValue, defaultValue), index)
+        doTest(changeInfo)
     }
 
-    private void doTestJvmOverloadedAddNonDefault(int index) throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        KtExpression defaultValue = new KtPsiFactory(getProject()).createExpression("2");
-        CallableDescriptor descriptor = changeInfo.getMethodDescriptor().getBaseDescriptor();
-        changeInfo.addParameter(new JetParameterInfo(descriptor, -1, "n", BUILT_INS.getIntType(), null, defaultValue), index);
-        doTest(changeInfo);
+    private fun doTestJvmOverloadedAddNonDefault(index: Int) {
+        val changeInfo = getChangeInfo()
+        val defaultValue = KtPsiFactory(project).createExpression("2")
+        val descriptor = changeInfo.methodDescriptor.baseDescriptor
+        changeInfo.addParameter(JetParameterInfo(descriptor, -1, "n", BUILT_INS.intType, null, defaultValue), index)
+        doTest(changeInfo)
     }
 
-    private void doTestRemoveAt(int index) throws Exception {
-        JetChangeInfo changeInfo = getChangeInfo();
-        changeInfo.removeParameter(index >= 0 ? index : changeInfo.getNewParametersCount() - 1);
-        doTest(changeInfo);
+    private fun doTestRemoveAt(index: Int) {
+        val changeInfo = getChangeInfo()
+        changeInfo.removeParameter(if (index >= 0) index else changeInfo.getNewParametersCount() - 1)
+        doTest(changeInfo)
     }
 
-    public void testJvmOverloadedAddDefault1() throws Exception {
-        doTestJvmOverloadedAddDefault(0);
+    fun testJvmOverloadedAddDefault1() {
+        doTestJvmOverloadedAddDefault(0)
     }
 
-    public void testJvmOverloadedAddDefault2() throws Exception {
-        doTestJvmOverloadedAddDefault(1);
+    fun testJvmOverloadedAddDefault2() {
+        doTestJvmOverloadedAddDefault(1)
     }
 
-    public void testJvmOverloadedAddDefault3() throws Exception {
-        doTestJvmOverloadedAddDefault(-1);
+    fun testJvmOverloadedAddDefault3() {
+        doTestJvmOverloadedAddDefault(-1)
     }
 
-    public void testJvmOverloadedAddNonDefault1() throws Exception {
-        doTestJvmOverloadedAddNonDefault(0);
+    fun testJvmOverloadedAddNonDefault1() {
+        doTestJvmOverloadedAddNonDefault(0)
     }
 
-    public void testJvmOverloadedAddNonDefault2() throws Exception {
-        doTestJvmOverloadedAddNonDefault(1);
+    fun testJvmOverloadedAddNonDefault2() {
+        doTestJvmOverloadedAddNonDefault(1)
     }
 
-    public void testJvmOverloadedAddNonDefault3() throws Exception {
-        doTestJvmOverloadedAddNonDefault(-1);
+    fun testJvmOverloadedAddNonDefault3() {
+        doTestJvmOverloadedAddNonDefault(-1)
     }
 
-    public void testJvmOverloadedRemoveDefault1() throws Exception {
-        doTestRemoveAt(0);
+    fun testJvmOverloadedRemoveDefault1() {
+        doTestRemoveAt(0)
     }
 
-    public void testJvmOverloadedRemoveDefault2() throws Exception {
-        doTestRemoveAt(1);
+    fun testJvmOverloadedRemoveDefault2() {
+        doTestRemoveAt(1)
     }
 
-    public void testJvmOverloadedRemoveDefault3() throws Exception {
-        doTestRemoveAt(-1);
+    fun testJvmOverloadedRemoveDefault3() {
+        doTestRemoveAt(-1)
     }
 
-    public void testJvmOverloadedRemoveNonDefault1() throws Exception {
-        doTestRemoveAt(0);
+    fun testJvmOverloadedRemoveNonDefault1() {
+        doTestRemoveAt(0)
     }
 
-    public void testJvmOverloadedRemoveNonDefault2() throws Exception {
-        doTestRemoveAt(1);
+    fun testJvmOverloadedRemoveNonDefault2() {
+        doTestRemoveAt(1)
     }
 
-    public void testJvmOverloadedRemoveNonDefault3() throws Exception {
-        doTestRemoveAt(-1);
+    fun testJvmOverloadedRemoveNonDefault3() {
+        doTestRemoveAt(-1)
     }
 
-    public void testJvmOverloadedConstructorSwapParams() throws Exception {
-        testJvmOverloadedSwapParams1();
+    fun testJvmOverloadedConstructorSwapParams() {
+        testJvmOverloadedSwapParams1()
     }
 
-    private List<Editor> editors = null;
+    private var editors: MutableList<Editor>? = null
 
-    private static final String[] EXTENSIONS = {".kt", ".java"};
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        editors = new ArrayList<Editor>();
-        ConfigLibraryUtil.configureKotlinRuntime(getModule());
+    override fun setUp() {
+        super.setUp()
+        editors = ArrayList<Editor>()
+        ConfigLibraryUtil.configureKotlinRuntime(module)
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        ConfigLibraryUtil.unConfigureKotlinRuntime(getModule());
-        editors.clear();
-        editors = null;
-        super.tearDown();
+    override fun tearDown() {
+        ConfigLibraryUtil.unConfigureKotlinRuntime(module)
+        editors!!.clear()
+        editors = null
+        super.tearDown()
     }
 
-    @NotNull
-    private LinkedHashSet<PsiMethod> findCallers(@NotNull PsiMethod method) {
-        KotlinMethodNode rootNode =
-                new KotlinMethodNode(method,
-                                     new HashSet<PsiElement>(),
-                                     getProject(),
-                                     new Runnable() {
-                                         @Override
-                                         public void run() {
+    private fun findCallers(method: PsiMethod): LinkedHashSet<PsiMethod> {
+        val rootNode = KotlinMethodNode(method,
+                                        HashSet<PsiElement>(),
+                                        project,
+                                        object : Runnable {
+                                            override fun run() {
 
-                                         }
-                                     });
-        LinkedHashSet<PsiMethod> callers = new LinkedHashSet<PsiMethod>();
-        for (int i = 0; i < rootNode.getChildCount(); i++) {
-            PsiElement element = ((KotlinMethodNode) rootNode.getChildAt(i)).getMethod();
-            callers.addAll(LightClassUtilsKt.toLightMethods(element));
+                                            }
+                                        })
+        val callers = LinkedHashSet<PsiMethod>()
+        for (i in 0..rootNode.childCount - 1) {
+            val element = (rootNode.getChildAt(i) as KotlinMethodNode).method
+            callers.addAll(element.toLightMethods())
         }
-        return callers;
+        return callers
     }
 
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), "/refactoring/changeSignature").getPath() + File.separator;
+    override fun getTestDataPath(): String {
+        return File(PluginTestCaseBase.getTestDataPathBase(), "/refactoring/changeSignature").path + File.separator
     }
 
-    private void configureFiles() throws Exception {
-        editors.clear();
+    private fun configureFiles() {
+        editors!!.clear()
 
-        indexLoop:
-        for (int i = 0; ; i++) {
-            for (String extension : EXTENSIONS) {
-                String extraFileName = getTestName(false) + "Before" + (i > 0 ? "." + i : "") + extension;
-                File extraFile = new File(getTestDataPath() + extraFileName);
+        var i = 0
+        indexLoop@ while (true) {
+            for (extension in EXTENSIONS) {
+                val extraFileName = getTestName(false) + "Before" + (if (i > 0) "." + i else "") + extension
+                val extraFile = File(testDataPath + extraFileName)
                 if (extraFile.exists()) {
-                    configureByFile(extraFileName);
-                    editors.add(getEditor());
-                    continue indexLoop;
+                    configureByFile(extraFileName)
+                    editors!!.add(editor)
+                    i++
+                    continue@indexLoop
                 }
             }
-            break;
+            break
         }
 
-        setActiveEditor(editors.get(0));
+        setActiveEditor(editors!![0])
     }
 
-    private JetChangeInfo getChangeInfo() throws Exception {
-        configureFiles();
+    private fun getChangeInfo(): JetChangeInfo {
+        configureFiles()
 
-        Editor editor = getEditor();
-        PsiFile file = getFile();
-        Project project = getProject();
+        val editor = editor
+        val file = file
+        val project = project
 
-        KtElement element = (KtElement) new JetChangeSignatureHandler().findTargetMember(file, editor);
-        assertNotNull("Target element is null", element);
+        val element = JetChangeSignatureHandler().findTargetMember(file, editor) as KtElement?
+        TestCase.assertNotNull("Target element is null", element)
 
-        BindingContext bindingContext = ResolutionUtils.analyze(element, BodyResolveMode.FULL);
-        PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
-        assertNotNull(context);
+        val bindingContext = element!!.analyze(BodyResolveMode.FULL)
+        val context = file.findElementAt(editor.caretModel.offset)
+        TestCase.assertNotNull(context)
 
-        CallableDescriptor callableDescriptor = JetChangeSignatureHandler.Companion.findDescriptor(element, project, editor, bindingContext);
-        assertNotNull(callableDescriptor);
+        val callableDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext)
+        TestCase.assertNotNull(callableDescriptor)
 
-        return JetChangeSignatureKt.createChangeInfo(
-                project, callableDescriptor, JetChangeSignatureConfiguration.Empty.INSTANCE$, context
-        );
+        return createChangeInfo(project, callableDescriptor!!, JetChangeSignatureConfiguration.Empty, context!!)!!
     }
 
-    private class JavaRefactoringProvider {
-        @NotNull
-        String getNewName(@NotNull PsiMethod method) {
-            return method.getName();
-        }
+    private open inner class JavaRefactoringProvider {
+        open fun getNewName(method: PsiMethod) = method.name
 
-        @NotNull
-        PsiType getNewReturnType(@NotNull PsiMethod method) {
-            PsiType type = method.getReturnType();
-            return type != null ? type : PsiType.VOID;
-        }
+        open fun getNewReturnType(method: PsiMethod) = method.returnType ?: PsiType.VOID
 
-        @NotNull
-        ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
-            PsiParameter[] parameters = method.getParameterList().getParameters();
-            ParameterInfoImpl[] parameterInfos = new ParameterInfoImpl[parameters.length];
-            for (int i = 0; i < parameters.length; i++) {
-                PsiParameter parameter = parameters[i];
-                parameterInfos[i] = new ParameterInfoImpl(i, parameter.getName(), parameter.getType());
+        open fun getNewParameters(method: PsiMethod): Array<ParameterInfoImpl> {
+            val parameters = method.parameterList.parameters
+            return Array(parameters.size) { i ->
+                val parameter = parameters[i]
+                ParameterInfoImpl(i, parameter.name, parameter.type)
             }
-            return parameterInfos;
         }
 
-        @NotNull
-        Set<PsiMethod> getParameterPropagationTargets(@NotNull PsiMethod method) {
-            return Collections.emptySet();
-        }
+        open fun getParameterPropagationTargets(method: PsiMethod) = emptySet<PsiMethod>()
 
-        @NotNull
-        final ChangeSignatureProcessor getProcessor(@NotNull PsiMethod method) {
-            return new ChangeSignatureProcessor(
-                    getProject(),
+        fun getProcessor(method: PsiMethod): ChangeSignatureProcessor {
+            return ChangeSignatureProcessor(
+                    project,
                     method,
                     false,
-                    VisibilityUtil.getVisibilityModifier(method.getModifierList()),
+                    VisibilityUtil.getVisibilityModifier(method.modifierList),
                     getNewName(method),
                     CanonicalTypes.createTypeWrapper(getNewReturnType(method)),
                     getNewParameters(method),
-                    new ThrownExceptionInfo[0],
+                    arrayOfNulls<ThrownExceptionInfo>(0),
                     getParameterPropagationTargets(method),
-                    Collections.<PsiMethod>emptySet());
+                    emptySet<PsiMethod>()
+            )
         }
     }
 
-    private void doJavaTest(JavaRefactoringProvider provider) throws Exception {
-        configureFiles();
+    private fun doJavaTest(provider: JavaRefactoringProvider) {
+        configureFiles()
 
-        PsiElement targetElement = TargetElementUtilBase.findTargetElement(
-                getEditor(),
-                TargetElementUtilBase.ELEMENT_NAME_ACCEPTED | TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED
-        );
-        assertTrue("<caret> is not on method name", targetElement instanceof PsiMethod);
+        val targetElement = TargetElementUtil.findTargetElement(editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)
+        TestCase.assertTrue("<caret> is not on method name", targetElement is PsiMethod)
 
-        provider.getProcessor((PsiMethod)targetElement).run();
+        provider.getProcessor(targetElement as PsiMethod).run()
 
-        compareEditorsWithExpectedData();
+        compareEditorsWithExpectedData()
     }
 
-    private void doTest(JetChangeInfo changeInfo) throws Exception {
-        new JetChangeSignatureProcessor(getProject(), changeInfo, "Change signature").run();
-        compareEditorsWithExpectedData();
+    private fun doTest(changeInfo: JetChangeInfo) {
+        JetChangeSignatureProcessor(project, changeInfo, "Change signature").run()
+        compareEditorsWithExpectedData()
     }
 
-    private void compareEditorsWithExpectedData() throws Exception {
+    private fun compareEditorsWithExpectedData() {
         //noinspection ConstantConditions
-        boolean checkErrorsAfter = InTextDirectivesUtils.isDirectiveDefined(getPsiFile(editors.get(0).getDocument()).getText(),
-                                                                            "// CHECK_ERRORS_AFTER");
-        for (Editor editor : editors) {
-            setActiveEditor(editor);
-            PsiFile currentFile = getFile();
-            String afterFilePath = currentFile.getName().replace("Before.", "After.");
+        val checkErrorsAfter = InTextDirectivesUtils.isDirectiveDefined(getPsiFile(editors!![0].document)!!.text,
+                                                                        "// CHECK_ERRORS_AFTER")
+        for (editor in editors!!) {
+            setActiveEditor(editor)
+            val currentFile = file
+            val afterFilePath = currentFile.name.replace("Before.", "After.")
             try {
-                checkResultByFile(afterFilePath);
+                checkResultByFile(afterFilePath)
             }
-            catch (ComparisonFailure e) {
-                KotlinTestUtils.assertEqualsToFile(new File(getTestDataPath() + afterFilePath), getEditor());
+            catch (e: ComparisonFailure) {
+                KotlinTestUtils.assertEqualsToFile(File(testDataPath + afterFilePath), getEditor())
             }
-            if (checkErrorsAfter && currentFile instanceof KtFile) {
-                DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) currentFile);
+
+            if (checkErrorsAfter && currentFile is KtFile) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors(currentFile)
             }
         }
     }
 
-    private void doTestConflict(JetChangeInfo changeInfo) throws Exception {
+    private fun doTestConflict(changeInfo: JetChangeInfo) {
         try {
-            new JetChangeSignatureProcessor(getProject(), changeInfo, "Change signature").run();
+            JetChangeSignatureProcessor(project, changeInfo, "Change signature").run()
         }
-        catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
-            List<String> messages = new ArrayList<String>(e.getMessages());
-            Collections.sort(messages);
-            File conflictsFile = new File(getTestDataPath() + getTestName(false) + "Messages.txt");
-            assertSameLinesWithFile(conflictsFile.getAbsolutePath(), StringUtil.join(messages, "\n"));
-            return;
+        catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+            val messages = ArrayList(e.messages)
+            Collections.sort(messages)
+            val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, StringUtil.join(messages, "\n"))
+            return
         }
 
-        fail("No conflicts found");
+        TestCase.fail("No conflicts found")
     }
 
-    @Override
-    protected Sdk getTestProjectJdk() {
-        return PluginTestCaseBase.mockJdk();
+    override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
+
+    companion object {
+        private val BUILT_INS = JvmPlatform.builtIns
+        private val EXTENSIONS = arrayOf(".kt", ".java")
     }
 }
