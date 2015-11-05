@@ -123,21 +123,6 @@ public class KtLightClassForFacade private constructor(
 
     override fun getImplementsListTypes() = PsiClassType.EMPTY_ARRAY
 
-    // TODO: Find a way to return just Object
-    override fun getExtendsList() = super<KtWrappingLightClass>.getExtendsList()
-
-    // TODO see getExtendsList()
-    override fun getExtendsListTypes() = super<KtWrappingLightClass>.getExtendsListTypes()
-
-    // TODO see getExtendsList()
-    override fun getSuperClass(): PsiClass? = super<KtWrappingLightClass>.getSuperClass()
-
-    // TODO see getExtendsList()
-    override fun getSupers(): Array<PsiClass> = super<KtWrappingLightClass>.getSupers()
-
-    // TODO see getExtendsList()
-    override fun getSuperTypes() = super<KtWrappingLightClass>.getSuperTypes()
-
     override fun getInterfaces() = PsiClass.EMPTY_ARRAY
 
     override fun getInnerClasses() = PsiClass.EMPTY_ARRAY
@@ -199,14 +184,7 @@ public class KtLightClassForFacade private constructor(
         return true
     }
 
-    override fun toString(): String {
-        try {
-            return javaClass<KtLightClassForFacade>().getSimpleName() + ":" + getQualifiedName()
-        }
-        catch (e: Throwable) {
-            return javaClass<KtLightClassForFacade>().getSimpleName() + ":" + e.toString()
-        }
-    }
+    override fun toString() = "${KtLightClassForFacade::class.java.simpleName}:$facadeClassFqName"
 
     companion object Factory {
         public fun createForFacade(
