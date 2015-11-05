@@ -33,7 +33,7 @@ import kotlin.reflect.jvm.internal.KTypeImpl
  * or `null` if the property has no backing field.
  */
 public val KProperty<*>.javaField: Field?
-    get() = (this as KPropertyImpl<*>).javaField
+    get() = (this as? KPropertyImpl<*>)?.javaField
 
 /**
  * Returns a Java [Method] instance corresponding to the getter of the given property,
