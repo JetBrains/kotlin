@@ -119,4 +119,3 @@ class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), Loo
         fileToId.files.forEach { addFile(it) }
     }
 }
-
