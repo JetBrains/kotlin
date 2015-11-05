@@ -32,7 +32,4 @@ class FileToIdMap(file: File) : BasicMap<File, Int>(file, FileKeyDescriptor, Int
     public fun remove(file: File) {
         storage.remove(file)
     }
-
-    public val files: Collection<File>
-        get() = storage.keys
 }

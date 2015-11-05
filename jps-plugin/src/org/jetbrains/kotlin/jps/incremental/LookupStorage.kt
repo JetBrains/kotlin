@@ -16,31 +16,20 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.jps.builders.storage.StorageProvider
+import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.jps.incremental.storage.BasicMapsOwner
-import org.jetbrains.kotlin.jps.incremental.storage.FileToIdMap
-import org.jetbrains.kotlin.jps.incremental.storage.IdToFileMap
-import org.jetbrains.kotlin.jps.incremental.storage.LookupMap
+import org.jetbrains.kotlin.jps.incremental.storage.*
 import java.io.File
+import java.util.*
 
-object LOOKUP_TRACKER_STORAGE_PROVIDER : StorageProvider<LookupTrackerImpl>() {
-    override fun createStorage(targetDataDir: File): LookupTrackerImpl = LookupTrackerImpl(targetDataDir)
+object LOOKUP_TRACKER_STORAGE_PROVIDER : StorageProvider<LookupStorage>() {
+    override fun createStorage(targetDataDir: File): LookupStorage = LookupStorage(targetDataDir)
 }
 
-interface LookupStorage {
-    fun removeLookupsFrom(file: File)
-
-    companion object {
-        val DO_NOTHING: LookupStorage = object : LookupStorage {
-            override fun removeLookupsFrom(file: File) {}
-        }
-    }
-}
-
-class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), LookupTracker, LookupStorage {
-
+class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
         private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
@@ -64,13 +53,14 @@ class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), Loo
         }
     }
 
-    override fun record(lookupContainingFile: String, lookupLine: Int?, lookupColumn: Int?, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        val file = File(lookupContainingFile)
-        val fileId = fileToId[file] ?: addFile(file)
-        lookupMap.add(name, scopeFqName, fileId)
+    public fun add(lookupSymbol: LookupSymbol, containingFiles: Collection<File>) {
+        val key = lookupSymbol.toHashPair()
+        val fileIds = containingFiles.map { addFileIfNeeded(it) }.toHashSet()
+        fileIds.addAll(lookupMap[key] ?: emptySet())
+        lookupMap[key] = fileIds
     }
 
-    override fun removeLookupsFrom(file: File) {
+    public fun removeLookupsFrom(file: File) {
         val id = fileToId[file] ?: return
         idToFile.remove(id)
         fileToId.remove(file)
@@ -91,31 +81,72 @@ class LookupTrackerImpl(private val targetDataDir: File) : BasicMapsOwner(), Loo
     override fun flush(memoryCachesOnly: Boolean) {
         try {
             removeGarbageIfNeeded()
-            countersFile.writeText("$size\n$deletedCount")
+
+            if (size > 0) {
+                if (!countersFile.exists()) {
+                    countersFile.parentFile.mkdirs()
+                    countersFile.createNewFile()
+                }
+
+                countersFile.writeText("$size\n$deletedCount")
+            }
         }
         finally {
             super.flush(memoryCachesOnly)
         }
     }
 
-    private fun addFile(file: File): Int {
+    private fun addFileIfNeeded(file: File): Int {
+        val existing = fileToId[file]
+        if (existing != null) return existing
+
         val id = size++
         fileToId[file] = id
         idToFile[id] = file
         return id
     }
 
-    private fun removeGarbageIfNeeded() {
-        if (size <= MINIMUM_GARBAGE_COLLECTIBLE_SIZE && deletedCount.toDouble() / size <= DELETED_TO_SIZE_TRESHOLD) return
+    private fun removeGarbageIfNeeded(force: Boolean = false) {
+        if (!force && size <= MINIMUM_GARBAGE_COLLECTIBLE_SIZE && deletedCount.toDouble() / size <= DELETED_TO_SIZE_TRESHOLD) return
 
         for (hash in lookupMap.keys) {
             lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
         }
 
+        val oldFileToId = fileToId.copyAsMap()
+        val oldIdToNewId = HashMap<Int, Int>(oldFileToId.size)
+        idToFile.clean()
+        fileToId.clean()
         size = 0
         deletedCount = 0
-        idToFile.clean()
 
-        fileToId.files.forEach { addFile(it) }
+        for ((file, oldId) in oldFileToId.entries) {
+            val newId = addFileIfNeeded(file)
+            oldIdToNewId[oldId] = newId
+        }
+
+        for (lookup in lookupMap.keys) {
+            val fileIds = lookupMap[lookup]!!.map { oldIdToNewId[it] }.filterNotNull().toSet()
+
+            if (fileIds.isEmpty()) {
+                lookupMap.remove(lookup)
+            }
+            else {
+                lookupMap[lookup] = fileIds
+            }
+        }
     }
 }
+
+class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
+    val lookups = MultiMap<LookupSymbol, File>()
+
+    override fun record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+        lookups.putValue(LookupSymbol(name, scopeFqName), File(locationInfo.filePath))
+        delegate.record(locationInfo, scopeFqName, scopeKind, name)
+    }
+}
+
+data class LookupSymbol(val name: String, val scope: String)
+
+fun LookupSymbol.toHashPair() = LookupHashPair(name, scope)

@@ -33,6 +33,10 @@ class LookupMap(storage: File) : BasicMap<LookupHashPair, Set<Int>>(storage, Loo
         storage.set(key, fileIds)
     }
 
+    public fun remove(key: LookupHashPair) {
+        storage.remove(key)
+    }
+
     public val keys: Collection<LookupHashPair>
         get() = storage.keys
 }
