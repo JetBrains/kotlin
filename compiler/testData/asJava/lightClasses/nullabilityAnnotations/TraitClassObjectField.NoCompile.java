@@ -22,7 +22,4 @@ public interface TraitClassObjectField {
 
         private Companion() { /* compiled code */ }
     }
-
-    final class DefaultImpls {
-    }
 }

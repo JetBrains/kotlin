@@ -1,5 +1,5 @@
 public interface Primitives {
-    int $$int /* Real name is 'int' */(int x);
+    int $$int /* Real name is 'int' */(int i);
 
     @org.jetbrains.annotations.Nullable
     java.lang.Boolean getNullableBool();
@@ -40,7 +40,4 @@ public interface Primitives {
     float getFloat();
 
     double getDouble();
-
-    final class DefaultImpls {
-    }
 }

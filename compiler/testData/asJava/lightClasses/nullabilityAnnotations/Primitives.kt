@@ -1,7 +1,7 @@
 // Primitives
 
 interface Primitives {
-    fun int(x: Int): Int
+    fun int(i: Int): Int
 
     val nullableBool: Boolean?
     val nullableByte: Byte?
