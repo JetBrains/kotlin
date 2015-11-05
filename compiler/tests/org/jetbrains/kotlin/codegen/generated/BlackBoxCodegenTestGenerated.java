@@ -2712,24 +2712,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Convention extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInConvention() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/convention"), Pattern.compile("^(.+)\\.kt$"), true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/convention"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("incWithDefaultInGetter.kt")
             public void testIncWithDefaultInGetter() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/incWithDefaultInGetter.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/incWithDefaultInGetter.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("kt9140.kt")
             public void testKt9140() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/kt9140.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/kt9140.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("plusAssignWithDefaultInGetter.kt")
             public void testPlusAssignWithDefaultInGetter() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/plusAssignWithDefaultInGetter.kt");
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/convention/plusAssignWithDefaultInGetter.kt");
                 doTest(fileName);
             }
         }
@@ -6427,18 +6427,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Private extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInPrivate() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/private"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/private"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("arrayConvention.kt")
         public void testArrayConvention() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/private/arrayConvention.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/private/arrayConvention.kt");
             doTest(fileName);
         }
 
         @TestMetadata("kt9855.kt")
         public void testKt9855() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/private/kt9855.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/private/kt9855.kt");
             doTest(fileName);
         }
     }
