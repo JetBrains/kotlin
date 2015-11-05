@@ -46,7 +46,9 @@ fun Project.initKapt(
         val stubsDir = File(getBuildDir(), "tmp/kapt/$variantName/classFileStubs")
         kotlinTask.extensions.extraProperties.set("kaptStubsDir", stubsDir)
 
-        javaTask.classpath += files(stubsDir)
+        javaTask.doFirst {
+            javaTask.classpath += files(stubsDir)
+        }
 
         kotlinTask.doFirst {
             kotlinAfterJavaTask.source(kotlinTask.source)

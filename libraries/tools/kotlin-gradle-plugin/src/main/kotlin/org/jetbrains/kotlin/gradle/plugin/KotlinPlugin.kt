@@ -134,8 +134,9 @@ class Kotlin2JvmSourceSetProcessor(
 
         if (javaTask != null) {
             javaTask.dependsOn(kotlinTaskName)
-            val javacClassPath = javaTask.getClasspath() + project.files(kotlinDestinationDir);
-            javaTask.setClasspath(javacClassPath)
+            javaTask.doFirst {
+                javaTask.classpath += project.files(kotlinDestinationDir)
+            }
         }
 
         val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
