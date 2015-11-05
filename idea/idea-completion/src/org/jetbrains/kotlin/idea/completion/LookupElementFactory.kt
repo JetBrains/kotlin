@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -46,7 +45,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 data /* we need copy() */
 class LookupElementFactory(
         val basicFactory: BasicLookupElementFactory,
-        private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<KotlinType>?,
         private val callType: CallType<*>?,
         private val inDescriptor: DeclarationDescriptor,
