@@ -50,7 +50,7 @@ public class KtLightClassForFacade private constructor(
         private inner class FacadeCacheData {
             val cache = object : SLRUCache<StubCacheKey, CachedValue<KotlinFacadeLightClassData>>(20, 30) {
                 override fun createValue(key: StubCacheKey): CachedValue<KotlinFacadeLightClassData> {
-                    val stubProvider = KotlinJavaFileStubProvider.createForFacadeClass(project, key.fqName, key.searchScope)
+                    val stubProvider = LightClassDataProviderForFileFacade(project, key.fqName, key.searchScope)
                     return CachedValuesManager.getManager(project).createCachedValue<KotlinFacadeLightClassData>(stubProvider, /*trackValue = */false)
                 }
             }

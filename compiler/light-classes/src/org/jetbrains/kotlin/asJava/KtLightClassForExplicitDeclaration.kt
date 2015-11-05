@@ -429,7 +429,7 @@ public open class KtLightClassForExplicitDeclaration(
             var value = outermostClassOrObject.getUserData(JAVA_API_STUB)
             if (value == null) {
                 value = CachedValuesManager.getManager(classOrObject.project).createCachedValue(
-                        KotlinJavaFileStubProvider.createForDeclaredClass(outermostClassOrObject), false)
+                        LightClassDataProviderForClassOrObject(outermostClassOrObject), false)
                 value = outermostClassOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)!!
             }
             return value

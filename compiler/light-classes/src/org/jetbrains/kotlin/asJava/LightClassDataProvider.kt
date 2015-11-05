@@ -56,19 +56,27 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.sure
 
-class KotlinJavaFileStubProvider<T : WithFileStubAndExtraDiagnostics> private constructor(
-        private val project: Project,
-        private val local: Boolean,
-        private val stubGenerationStrategy: StubGenerationStrategy<T>
+abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
+        private val project: Project
 ) : CachedValueProvider<T> {
 
+    abstract val files: Collection<KtFile>
+    abstract val packageFqName: FqName
+
+    abstract fun getContext(files: Collection<KtFile>): LightClassConstructionContext
+    abstract fun createLightClassData(javaFileStub: PsiJavaFileStub, bindingContext: BindingContext, extraDiagnostics: Diagnostics): T
+
+    abstract val generateClassFilter: GenerationState.GenerateClassFilter
+    abstract fun generate(state: GenerationState, files: Collection<KtFile>)
+    abstract val isLocal: Boolean
+
     override fun compute(): CachedValueProvider.Result<T>? {
-        val packageFqName = stubGenerationStrategy.packageFqName
-        val files = stubGenerationStrategy.files
+        val packageFqName = packageFqName
+        val files = files
 
         checkForBuiltIns(packageFqName, files)
 
-        val context = stubGenerationStrategy.getContext(files)
+        val context = getContext(files)
 
         val javaFileStub = createJavaFileStub(packageFqName, files)
         val bindingContext: BindingContext
@@ -84,7 +92,7 @@ class KotlinJavaFileStubProvider<T : WithFileStubAndExtraDiagnostics> private co
                     context.bindingContext,
                     Lists.newArrayList(files),
                     /*disable not-null assertions*/false, false,
-                    /*generateClassFilter=*/stubGenerationStrategy.generateClassFilter,
+                    /*generateClassFilter=*/generateClassFilter,
                     /*disableInline=*/false,
                     /*disableOptimization=*/false,
                     /*useTypeTableInSerializer=*/false,
@@ -93,7 +101,7 @@ class KotlinJavaFileStubProvider<T : WithFileStubAndExtraDiagnostics> private co
 
             bindingContext = state.bindingContext
 
-            stubGenerationStrategy.generate(state, files)
+            generate(state, files)
 
             val pop = stubStack.pop()
             if (pop !== javaFileStub) {
@@ -110,8 +118,8 @@ class KotlinJavaFileStubProvider<T : WithFileStubAndExtraDiagnostics> private co
 
         val extraDiagnostics = forExtraDiagnostics.bindingContext.diagnostics
         return CachedValueProvider.Result.create(
-                stubGenerationStrategy.createLightClassData(javaFileStub, bindingContext, extraDiagnostics),
-                if (local) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                createLightClassData(javaFileStub, bindingContext, extraDiagnostics),
+                if (isLocal) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
         )
     }
 
@@ -162,39 +170,17 @@ class KotlinJavaFileStubProvider<T : WithFileStubAndExtraDiagnostics> private co
     }
 
     companion object {
-        fun createForDeclaredClass(classOrObject: KtClassOrObject): KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData> {
-            return KotlinJavaFileStubProvider(
-                    classOrObject.project,
-                    classOrObject.isLocal(),
-                    StubGenerationStrategyForDeclaredClass(classOrObject)
-            )
-        }
-
-        fun createForFacadeClass(
-                project: Project,
-                facadeFqName: FqName,
-                searchScope: GlobalSearchScope): CachedValueProvider<KotlinFacadeLightClassData> {
-            return KotlinJavaFileStubProvider(project, false, StubGenerationStrategyForFacadeClass(project, facadeFqName, searchScope))
-        }
-
-        private val LOG = Logger.getInstance(KotlinJavaFileStubProvider::class.java)
+        private val LOG = Logger.getInstance(LightClassDataProvider::class.java)
     }
 }
 
-private interface StubGenerationStrategy<T : WithFileStubAndExtraDiagnostics> {
-    val files: Collection<KtFile>
-    val packageFqName: FqName
+class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassOrObject) :
+        LightClassDataProvider<OutermostKotlinClassLightClassData>(classOrObject.project) {
 
-    fun getContext(files: Collection<KtFile>): LightClassConstructionContext
-    fun createLightClassData(javaFileStub: PsiJavaFileStub, bindingContext: BindingContext, extraDiagnostics: Diagnostics): T
-
-    val generateClassFilter: GenerationState.GenerateClassFilter
-    fun generate(state: GenerationState, files: Collection<KtFile>)
-}
-
-private class StubGenerationStrategyForDeclaredClass(private val classOrObject: KtClassOrObject) : StubGenerationStrategy<OutermostKotlinClassLightClassData> {
     private val file: KtFile
         get() = classOrObject.getContainingKtFile()
+
+    override val isLocal: Boolean get() = classOrObject.isLocal()
 
     override fun getContext(files: Collection<KtFile>): LightClassConstructionContext {
         return LightClassGenerationSupport.getInstance(classOrObject.project).getContextForClassOrObject(classOrObject)
@@ -302,18 +288,20 @@ private class StubGenerationStrategyForDeclaredClass(private val classOrObject: 
     }
 
     override fun toString(): String {
-        return StubGenerationStrategy::class.java.name + " for explicit class " + classOrObject.name
+        return this.javaClass.name + " for " + classOrObject.name
     }
 }
 
-private class StubGenerationStrategyForFacadeClass(
+class LightClassDataProviderForFileFacade(
         private val project: Project, private val facadeFqName: FqName, private val searchScope: GlobalSearchScope
-) : StubGenerationStrategy<KotlinFacadeLightClassData> {
+) : LightClassDataProvider<KotlinFacadeLightClassData>(project) {
     override val files: Collection<KtFile>
         get() = LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
 
     override val packageFqName: FqName
         get() = facadeFqName.parent()
+
+    override val isLocal: Boolean get() = false
 
     override fun getContext(files: Collection<KtFile>): LightClassConstructionContext {
         return LightClassGenerationSupport.getInstance(project).getContextForFacade(files)
@@ -363,6 +351,6 @@ private class StubGenerationStrategyForFacadeClass(
     }
 
     override fun toString(): String {
-        return StubGenerationStrategy::class.java.name + " for facade class"
+        return this.javaClass.name + " for $facadeFqName"
     }
 }
