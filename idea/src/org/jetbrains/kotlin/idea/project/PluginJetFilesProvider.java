@@ -31,7 +31,7 @@ public class PluginJetFilesProvider  {
     @NotNull
     public static Collection<KtFile> allFilesInProject(@NotNull Project project) {
         Collection<KtFile> result = new ArrayList<KtFile>();
-        GlobalSearchScope scope = KotlinSourceFilterScope.kotlinSources(GlobalSearchScope.allScope(project), project);
+        GlobalSearchScope scope = KotlinSourceFilterScope.sources(GlobalSearchScope.allScope(project), project);
         for (String packageWithFiles : KotlinExactPackagesIndex.getInstance().getAllKeys(project)) {
             result.addAll(KotlinExactPackagesIndex.getInstance().get(packageWithFiles, project, scope));
         }

@@ -26,7 +26,7 @@ public class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() :
     override fun getKey() = KEY
 
     override fun get(s: String, project: Project, scope: GlobalSearchScope)
-            = super.get(s, project, KotlinSourceFilterScope.kotlinSourcesAndLibraries(scope, project))
+            = super.get(s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project))
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey<String, KtCallableDeclaration>(javaClass<KotlinTopLevelExtensionsByReceiverTypeIndex>())

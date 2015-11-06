@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.stubindex.*
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope.kotlinSourceAndClassFiles
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope.sourceAndClassFiles
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -116,11 +116,11 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
-        return KotlinFullClassNameIndex.getInstance().get(fqName.asString(), project, kotlinSourceAndClassFiles(searchScope, project))
+        return KotlinFullClassNameIndex.getInstance().get(fqName.asString(), project, sourceAndClassFiles(searchScope, project))
     }
 
     override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return PackageIndexUtil.findFilesWithExactPackage(fqName, kotlinSourceAndClassFiles(searchScope, project), project)
+        return PackageIndexUtil.findFilesWithExactPackage(fqName, sourceAndClassFiles(searchScope, project), project)
     }
 
     override fun findClassOrObjectDeclarationsInPackage(
@@ -128,15 +128,15 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
             searchScope: GlobalSearchScope
     ): Collection<KtClassOrObject> {
         return KotlinTopLevelClassByPackageIndex.getInstance().get(
-                packageFqName.asString(), project, kotlinSourceAndClassFiles(searchScope, project))
+                packageFqName.asString(), project, sourceAndClassFiles(searchScope, project))
     }
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean {
-        return PackageIndexUtil.packageExists(fqName, kotlinSourceAndClassFiles(scope, project), project)
+        return PackageIndexUtil.packageExists(fqName, sourceAndClassFiles(scope, project), project)
     }
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> {
-        return PackageIndexUtil.getSubPackageFqNames(fqn, kotlinSourceAndClassFiles(scope, project), project, MemberScope.ALL_NAME_FILTER)
+        return PackageIndexUtil.getSubPackageFqNames(fqn, sourceAndClassFiles(scope, project), project, MemberScope.ALL_NAME_FILTER)
     }
 
     override fun getPsiClass(classOrObject: KtClassOrObject): PsiClass? {

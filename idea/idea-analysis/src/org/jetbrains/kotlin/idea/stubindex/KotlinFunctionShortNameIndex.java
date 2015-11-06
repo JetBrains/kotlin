@@ -45,6 +45,6 @@ public class KotlinFunctionShortNameIndex extends StringStubIndexExtension<KtNam
     @NotNull
     @Override
     public Collection<KtNamedFunction> get(@NotNull String s, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return super.get(s, project, KotlinSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
+        return super.get(s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project));
     }
 }

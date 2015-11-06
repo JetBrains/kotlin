@@ -32,5 +32,5 @@ public class PluginDeclarationProviderFactoryService : DeclarationProviderFactor
             syntheticFiles: Collection<KtFile>,
             filesScope: GlobalSearchScope
     ): DeclarationProviderFactory =
-        PluginDeclarationProviderFactory(project, KotlinSourceFilterScope.kotlinSources(filesScope, project), storageManager, syntheticFiles)
+        PluginDeclarationProviderFactory(project, KotlinSourceFilterScope.sources(filesScope, project), storageManager, syntheticFiles)
 }

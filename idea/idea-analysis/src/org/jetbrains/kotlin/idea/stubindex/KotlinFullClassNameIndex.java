@@ -46,6 +46,6 @@ public class KotlinFullClassNameIndex extends StringStubIndexExtension<KtClassOr
     @NotNull
     @Override
     public Collection<KtClassOrObject> get(@NotNull String fqName, @NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return super.get(fqName, project, KotlinSourceFilterScope.kotlinSourcesAndLibraries(scope, project));
+        return super.get(fqName, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project));
     }
 }

@@ -67,7 +67,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                 object : Task.Modal(project, "Applying '$text'", true) {
                     override fun run(indicator: ProgressIndicator) {
                         val usages = runReadAction {
-                            val searchScope = KotlinSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
+                            val searchScope = KotlinSourceFilterScope.sources(GlobalSearchScope.projectScope(project), project)
                             ReferencesSearch.search(psiElement, searchScope)
                                     .filterIsInstance<KtSimpleNameReference>()
                                     .map { ref -> ref.expression }

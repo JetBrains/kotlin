@@ -91,7 +91,7 @@ public final class DecompiledNavigationUtils {
         ClassId containerClassId = getContainerClassId(project, referencedDescriptor);
         if (containerClassId == null) return null;
 
-        GlobalSearchScope scopeToSearchIn = KotlinSourceFilterScope.kotlinSourceAndClassFiles(GlobalSearchScope.allScope(project), project);
+        GlobalSearchScope scopeToSearchIn = KotlinSourceFilterScope.sourceAndClassFiles(GlobalSearchScope.allScope(project), project);
 
         VirtualFileFinderFactory virtualFileFinderFactory;
         if (isFromKotlinJavasriptMetadata(referencedDescriptor)) {

@@ -92,7 +92,7 @@ public fun ResolutionFacade.resolveImportReference(
 // see com.intellij.psi.impl.file.impl.ResolveScopeManagerImpl.getInherentResolveScope
 public fun getResolveScope(file: KtFile): GlobalSearchScope {
     if (file is KtCodeFragment) {
-        file.forcedResolveScope?.let { return KotlinSourceFilterScope.kotlinSourceAndClassFiles(it, file.project) }
+        file.forcedResolveScope?.let { return KotlinSourceFilterScope.sourceAndClassFiles(it, file.project) }
     }
 
     return when (file.getModuleInfo()) {

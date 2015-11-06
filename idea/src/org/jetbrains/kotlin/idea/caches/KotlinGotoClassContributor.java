@@ -63,7 +63,7 @@ public class KotlinGotoClassContributor implements GotoClassContributor {
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
         GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
         Collection<KtClassOrObject> classesOrObjects =
-                KotlinClassShortNameIndex.getInstance().get(name, project, KotlinSourceFilterScope.kotlinSourceAndClassFiles(scope, project));
+                KotlinClassShortNameIndex.getInstance().get(name, project, KotlinSourceFilterScope.sourceAndClassFiles(scope, project));
 
         if (classesOrObjects.isEmpty()) {
             return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY;

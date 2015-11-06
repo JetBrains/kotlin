@@ -193,7 +193,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                         object : Task.Modal(project, "Searching for imports to delete", true) {
                             override fun run(indicator: ProgressIndicator) {
                                 val importsToDelete = runReadAction {
-                                    val searchScope = KotlinSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
+                                    val searchScope = KotlinSourceFilterScope.sources(GlobalSearchScope.projectScope(project), project)
                                     ReferencesSearch.search(declaration, searchScope)
                                             .filterIsInstance<KtSimpleNameReference>()
                                             .map { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }

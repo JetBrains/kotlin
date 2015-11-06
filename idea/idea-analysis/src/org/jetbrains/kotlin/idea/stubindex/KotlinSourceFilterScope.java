@@ -28,27 +28,27 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 
 public class KotlinSourceFilterScope extends DelegatingGlobalSearchScope {
     @NotNull
-    public static GlobalSearchScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+    public static GlobalSearchScope sourcesAndLibraries(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
         return create(delegate, true, true, true, project);
     }
 
     @NotNull
-    public static GlobalSearchScope kotlinSourceAndClassFiles(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+    public static GlobalSearchScope sourceAndClassFiles(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
         return create(delegate, true, false, true, project);
     }
 
     @NotNull
-    public static GlobalSearchScope kotlinSources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+    public static GlobalSearchScope sources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
         return create(delegate, true, false, false, project);
     }
 
     @NotNull
-    public static GlobalSearchScope kotlinLibrarySources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+    public static GlobalSearchScope librarySources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
         return create(delegate, false, true, false, project);
     }
 
     @NotNull
-    public static GlobalSearchScope kotlinLibraryClassFiles(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+    public static GlobalSearchScope libraryClassFiles(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
         return create(delegate, false, false, true, project);
     }
 

@@ -47,7 +47,7 @@ public class KotlinGotoSymbolContributor implements ChooseByNameContributor {
     @Override
     public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
         GlobalSearchScope baseScope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
-        GlobalSearchScope noLibrarySourceScope = KotlinSourceFilterScope.kotlinSourceAndClassFiles(baseScope, project);
+        GlobalSearchScope noLibrarySourceScope = KotlinSourceFilterScope.sourceAndClassFiles(baseScope, project);
 
         Collection<? extends NavigationItem> functions = KotlinFunctionShortNameIndex.getInstance().get(name, project, noLibrarySourceScope);
         Collection<? extends NavigationItem> properties = KotlinPropertyShortNameIndex.getInstance().get(name, project, noLibrarySourceScope);

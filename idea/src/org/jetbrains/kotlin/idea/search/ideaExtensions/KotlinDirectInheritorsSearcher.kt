@@ -45,7 +45,7 @@ public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass,
         if (scope == null) return
 
         runReadAction {
-            val noLibrarySourceScope = KotlinSourceFilterScope.kotlinSourceAndClassFiles(scope, baseClass.getProject())
+            val noLibrarySourceScope = KotlinSourceFilterScope.sourceAndClassFiles(scope, baseClass.getProject())
             KotlinSuperClassIndex.getInstance().get(name, baseClass.getProject(), noLibrarySourceScope).asSequence()
                     .map { candidate -> SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate)}
                     .filterNotNull()

@@ -26,7 +26,7 @@ public class KotlinFileFacadeFqNameIndex private constructor() : StringStubIndex
     override fun getKey(): StubIndexKey<String, KtFile> = KEY
 
     override fun get(key: String, project: Project, scope: GlobalSearchScope) =
-            super.get(key, project, KotlinSourceFilterScope.kotlinSourcesAndLibraries(scope, project))
+            super.get(key, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project))
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(KotlinFileFacadeFqNameIndex::class.java)
