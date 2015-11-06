@@ -323,6 +323,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("NoAssertFailsWith.kt")
+    public void testNoAssertFailsWith() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NoAssertFailsWith.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoExtensionMethodFromClassObject.kt")
     public void testNoExtensionMethodFromClassObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NoExtensionMethodFromClassObject.kt");
