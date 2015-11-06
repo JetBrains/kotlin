@@ -22,6 +22,7 @@ import kotlin.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -153,6 +154,7 @@ public class SmartCastManager {
             @NotNull DataFlowValue dataFlowValue,
             boolean recordExpressionType
     ) {
+        if (KotlinBuiltIns.isNullableNothing(type)) return;
         if (dataFlowValue.isPredictable()) {
             trace.record(SMARTCAST, expression, type);
             if (recordExpressionType) {
