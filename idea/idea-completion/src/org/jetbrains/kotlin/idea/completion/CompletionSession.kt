@@ -158,7 +158,7 @@ abstract class CompletionSession(
 
     protected fun indicesHelper(mayIncludeInaccessible: Boolean): KotlinIndicesHelper {
         val filter = if (mayIncludeInaccessible) isVisibleFilter else isVisibleFilterCheckAlways
-        return KotlinIndicesHelper(resolutionFacade, searchScope, filter, visibilityFilterMayIncludeAccessible = mayIncludeInaccessible)
+        return KotlinIndicesHelper(resolutionFacade, searchScope, filter, filterOutPrivate = !mayIncludeInaccessible)
     }
 
     protected val toFromOriginalFileMapper: ToFromOriginalFileMapper
@@ -394,9 +394,10 @@ abstract class CompletionSession(
         return callTypeAndReceiver.receiver == null
     }
 
-    protected fun getTopLevelCallables(): Collection<DeclarationDescriptor> {
-        return indicesHelper(true).getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
-                .filterShadowedNonImported()
+    protected fun getTopLevelCallables(): Collection<CallableDescriptor> {
+        val result = LinkedHashSet<CallableDescriptor>()
+        indicesHelper(true).processTopLevelCallables({ prefixMatcher.prefixMatches(it) }) { result.add(it) }
+        return result.filterShadowedNonImported()
     }
 
     protected fun CallTypeAndReceiver<*, *>.shouldCompleteCallableExtensions(): Boolean {

@@ -62,7 +62,7 @@ public class KotlinIndicesHelper(
         private val scope: GlobalSearchScope,
         visibilityFilter: (DeclarationDescriptor) -> Boolean,
         applyExcludeSettings: Boolean = true,
-        private val visibilityFilterMayIncludeAccessible: Boolean = false
+        private val filterOutPrivate: Boolean = true
 ) {
 
     private val moduleDescriptor = resolutionFacade.moduleDescriptor
@@ -91,16 +91,26 @@ public class KotlinIndicesHelper(
         index.get(name, project, scope).filterTo(this) { it.getParent() is KtFile && it.getReceiverTypeReference() == null }
     }
 
-    public fun getTopLevelCallables(nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
-        return (KotlinTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).asSequence() +
-                KotlinTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).asSequence())
-                .map { FqName(it) }
-                .filter {
-                    ProgressManager.checkCanceled()
-                    nameFilter(it.shortName().asString())
+    public fun processTopLevelCallables(nameFilter: (String) -> Boolean, processor: (CallableDescriptor) -> Unit) {
+        fun processIndex(index: StringStubIndexExtension<out KtCallableDeclaration>) {
+            for (key in index.getAllKeys(project)) {
+                ProgressManager.checkCanceled()
+                if (!nameFilter(key.substringAfterLast('.', key))) continue
+
+                for (declaration in index.get(key, project, scope)) {
+                    if (declaration.receiverTypeReference != null) continue
+                    if (filterOutPrivate && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
+
+                    for (descriptor in declaration.resolveToDescriptorsWithHack()) {
+                        if (descriptorFilter(descriptor)) {
+                            processor(descriptor)
+                        }
+                    }
                 }
-                .toSet()
-                .flatMap { findTopLevelCallables(it).filter(descriptorFilter) }
+            }
+        }
+        processIndex(KotlinTopLevelFunctionFqnNameIndex.getInstance())
+        processIndex(KotlinTopLevelPropertyFqnNameIndex.getInstance())
     }
 
     public fun getCallableTopLevelExtensions(
@@ -211,7 +221,7 @@ public class KotlinIndicesHelper(
                 for (declaration in index.get(name, project, scope)) {
                     val objectDeclaration = declaration.parent.parent as? KtObjectDeclaration ?: continue
                     if (objectDeclaration.isObjectLiteral()) continue
-                    if (!visibilityFilterMayIncludeAccessible && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
+                    if (filterOutPrivate && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
                     if (!filter(declaration, objectDeclaration)) continue
                     for (descriptor in declaration.resolveToDescriptorsWithHack()) {
                         if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
@@ -244,7 +254,7 @@ public class KotlinIndicesHelper(
 
             for (method in shortNamesCache.getMethodsByName(name, scope)) {
                 if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
-                if (!visibilityFilterMayIncludeAccessible && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
+                if (filterOutPrivate && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
                 if (method.containingClass?.parent !is PsiFile) continue // only top-level classes
                 val descriptor = method.getJavaMethodDescriptor(resolutionFacade) ?: continue
                 val container = descriptor.containingDeclaration as? ClassDescriptor ?: continue
@@ -268,7 +278,7 @@ public class KotlinIndicesHelper(
 
             for (field in shortNamesCache.getFieldsByName(name, scope)) {
                 if (!field.hasModifierProperty(PsiModifier.STATIC)) continue
-                if (!visibilityFilterMayIncludeAccessible && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
+                if (filterOutPrivate && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
                 val descriptor = field.getJavaFieldDescriptor() ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     processor(descriptor)
@@ -277,12 +287,6 @@ public class KotlinIndicesHelper(
             true
         }
         shortNamesCache.processAllFieldNames(fieldNamesProcessor, scope, idFilter)
-    }
-
-    private fun findTopLevelCallables(fqName: FqName): Collection<CallableDescriptor> {
-        return resolutionFacade.resolveImportReference(moduleDescriptor, fqName)
-                .filterIsInstance<CallableDescriptor>()
-                .filter { it.getExtensionReceiverParameter() == null }
     }
 
     private fun isExcludedFromAutoImport(descriptor: DeclarationDescriptor): Boolean {
