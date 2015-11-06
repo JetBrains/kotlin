@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.OffsetKey
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.*
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
@@ -155,11 +156,11 @@ class SmartCompletion(
     }
 
     private fun filterDescriptor(descriptor: DeclarationDescriptor, lookupElementFactory: AbstractLookupElementFactory): Collection<LookupElement> {
-        val callType = callTypeAndReceiver.callType
+        ProgressManager.checkCanceled()
         if (descriptor in descriptorsToSkip) return emptyList()
 
         val result = SmartList<LookupElement>()
-        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callType, resolutionFacade)
+        val types = descriptor.fuzzyTypesForSmartCompletion(smartCastCalculator, callTypeAndReceiver.callType, resolutionFacade)
         val infoMatcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
 
         result.addLookupElements(descriptor, expectedInfos, infoMatcher, noNameSimilarityForReturnItself = callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) { descriptor ->
