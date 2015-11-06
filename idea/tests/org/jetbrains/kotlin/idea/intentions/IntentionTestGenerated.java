@@ -5112,6 +5112,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FromCompanionObject.kt")
+        public void testFromCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/FromCompanionObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoTarget.kt")
         public void testNoTarget() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/NoTarget.kt");
