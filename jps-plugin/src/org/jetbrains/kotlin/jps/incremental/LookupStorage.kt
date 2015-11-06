@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.util.*
 
-object LOOKUP_TRACKER_STORAGE_PROVIDER : StorageProvider<LookupStorage>() {
+object LookupStorageProvider : StorageProvider<LookupStorage>() {
     override fun createStorage(targetDataDir: File): LookupStorage = LookupStorage(targetDataDir)
 }
 
@@ -55,9 +55,9 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
         }
     }
 
-    public fun add(lookupSymbol: LookupSymbol, containingFiles: Collection<File>) {
-        val key = lookupSymbol.toHashPair()
-        val fileIds = containingFiles.map { addFileIfNeeded(it) }.toHashSet()
+    public fun add(lookupSymbol: LookupSymbol, containingPaths: Collection<String>) {
+        val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
+        val fileIds = containingPaths.map { addFileIfNeeded(File(it)) }.toHashSet()
         fileIds.addAll(lookupMap[key] ?: emptySet())
         lookupMap[key] = fileIds
     }
@@ -115,7 +115,7 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
             lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
         }
 
-        val oldFileToId = fileToId.copyAsMap()
+        val oldFileToId = fileToId.toMap()
         val oldIdToNewId = HashMap<Int, Int>(oldFileToId.size)
         idToFile.clean()
         fileToId.clean()
@@ -151,10 +151,11 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
 
         val sb = StringBuilder()
         val p = Printer(sb)
-        val lookupsStrings = lookupSymbols.groupBy { LookupHashPair(it.name, it.scope) }
-        val lookups = lookupMap.copyAsMap()
+        val lookupsStrings = lookupSymbols.groupBy { LookupSymbolKey(it.name, it.scope) }
 
-        for ((lookup, fileIds) in lookups.entries.sortedBy { it.key }) {
+        for (lookup in lookupMap.keys.sorted()) {
+            val fileIds = lookupMap[lookup]!!
+
             val key = if (lookup in lookupsStrings) {
                 lookupsStrings[lookup]!!.map { "${it.scope}#${it.name}" }.sorted().joinToString(", ")
             }
@@ -171,14 +172,12 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
 }
 
 class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
-    val lookups = MultiMap<LookupSymbol, File>()
+    val lookups = MultiMap<LookupSymbol, String>()
 
     override fun record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        lookups.putValue(LookupSymbol(name, scopeFqName), File(locationInfo.filePath))
+        lookups.putValue(LookupSymbol(name, scopeFqName), locationInfo.filePath)
         delegate.record(locationInfo, scopeFqName, scopeKind, name)
     }
 }
 
 data class LookupSymbol(val name: String, val scope: String)
-
-fun LookupSymbol.toHashPair() = LookupHashPair(name, scope)

@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.jps.incremental.storage
 
 import com.intellij.openapi.util.io.FileUtil
 
-data class LookupHashPair(val nameHash: Int, val scopeHash: Int) : Comparable<LookupHashPair> {
+data class LookupSymbolKey(val nameHash: Int, val scopeHash: Int) : Comparable<LookupSymbolKey> {
     public constructor(name: String, scope: String) : this(name.hashCode(), scope.hashCode())
 
-    override fun compareTo(other: LookupHashPair): Int {
+    override fun compareTo(other: LookupSymbolKey): Int {
         val nameCmp = nameHash.compareTo(other.nameHash)
 
         if (nameCmp != 0) return nameCmp

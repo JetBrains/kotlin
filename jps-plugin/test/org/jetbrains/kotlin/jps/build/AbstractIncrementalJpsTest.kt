@@ -46,8 +46,8 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.build.classFilesComparison.assertEqualDirectories
-import org.jetbrains.kotlin.jps.incremental.LOOKUP_TRACKER_STORAGE_PROVIDER
-import org.jetbrains.kotlin.jps.incremental.LOOKUP_TRACKER_TARGET
+import org.jetbrains.kotlin.jps.incremental.LookupStorageProvider
+import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.incremental.LookupSymbol
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -355,7 +355,7 @@ public abstract class AbstractIncrementalJpsTest(
         p.println("Begin of Lookup Maps")
         p.println()
 
-        val lookupStorage = project.dataManager.getStorage(LOOKUP_TRACKER_TARGET, LOOKUP_TRACKER_STORAGE_PROVIDER)
+        val lookupStorage = project.dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
         lookupStorage.forceGC()
         p.print(lookupStorage.dump(lookupsDuringTest))
 
