@@ -60,7 +60,10 @@ internal abstract class BasicMap<K : Comparable<K>, V>(
         }.toString()
     }
 
+    @TestOnly
     protected abstract fun dumpKey(key: K): String
+
+    @TestOnly
     protected abstract fun dumpValue(value: V): String
 }
 

@@ -41,6 +41,12 @@ public class ExperimentalIncrementalLazyCachesTestGenerated extends AbstractExpe
         doTest(fileName);
     }
 
+    @TestMetadata("classInheritance")
+    public void testClassInheritance() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/classInheritance/");
+        doTest(fileName);
+    }
+
     @TestMetadata("constant")
     public void testConstant() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/constant/");
