@@ -1,5 +1,5 @@
 fun foo(){
-    val l : java.lang.Thread = Thread.currentThread()<caret>
+    val l: java.lang.Thread = Thread.currentThread()<caret>
 }
 
-// ELEMENT: currentThread
+// ELEMENT_TEXT: Thread.currentThread

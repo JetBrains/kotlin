@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
 class CompletionSessionConfiguration(
-        val completeNonImportedDeclarations: Boolean,
+        val completeNonImportedClasses: Boolean,
         val completeNonAccessibleDeclarations: Boolean,
         val filterOutJavaGettersAndSetters: Boolean,
         val completeJavaClassesNotToBeUsed: Boolean,
@@ -62,7 +62,7 @@ class CompletionSessionConfiguration(
 )
 
 fun CompletionSessionConfiguration(parameters: CompletionParameters) = CompletionSessionConfiguration(
-        completeNonImportedDeclarations = parameters.invocationCount >= 2,
+        completeNonImportedClasses = parameters.invocationCount >= 2,
         completeNonAccessibleDeclarations = parameters.invocationCount >= 2,
         filterOutJavaGettersAndSetters = parameters.invocationCount < 2,
         completeJavaClassesNotToBeUsed = parameters.invocationCount >= 2,
@@ -389,8 +389,8 @@ abstract class CompletionSession(
         return result
     }
 
-    protected fun shouldCompleteTopLevelCallablesFromIndex(): Boolean {
-        if (!configuration.completeNonImportedDeclarations) return false
+    protected open fun shouldCompleteTopLevelCallablesFromIndex(): Boolean {
+        if (nameExpression == null) return false
         if ((descriptorKindFilter?.kindMask ?: 0).and(DescriptorKindFilter.CALLABLES_MASK) == 0) return false
         if (callTypeAndReceiver is CallTypeAndReceiver.IMPORT_DIRECTIVE) return false
         return callTypeAndReceiver.receiver == null

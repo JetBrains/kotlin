@@ -1,7 +1,7 @@
 package dependency
 
-fun topLevelFun(){}
+fun xxx_topLevelFun(){}
 
-val topLevelVal: Int = 1
+val xxx_topLevelVal: Int = 1
 
-fun CharSequence.extFun(){}
+fun CharSequence.xxx_extFun(){}

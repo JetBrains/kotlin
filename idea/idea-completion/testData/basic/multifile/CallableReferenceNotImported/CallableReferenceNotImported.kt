@@ -1,8 +1,7 @@
 fun String.foo() {
-    val v = ::<caret>
+    val v = ::xxx_<caret>
 }
 
-// INVOCATION_COUNT: 2
-// EXIST: topLevelFun
-// EXIST: topLevelVal
-// ABSENT: extFun
+// EXIST: xxx_topLevelFun
+// EXIST: xxx_topLevelVal
+// ABSENT: xxx_extFun

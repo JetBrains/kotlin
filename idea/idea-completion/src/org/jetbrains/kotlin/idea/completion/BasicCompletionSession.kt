@@ -108,9 +108,11 @@ class BasicCompletionSession(
         return ALL
     }
 
-    public fun shouldDisableAutoPopup(): Boolean {
-        return completionKind.shouldDisableAutoPopup()
-    }
+    fun shouldDisableAutoPopup(): Boolean
+            = completionKind.shouldDisableAutoPopup()
+
+    override fun shouldCompleteTopLevelCallablesFromIndex()
+            = super.shouldCompleteTopLevelCallablesFromIndex() && prefix.isNotEmpty()
 
     override fun doComplete() {
         assert(parameters.completionType == CompletionType.BASIC)
@@ -255,7 +257,7 @@ class BasicCompletionSession(
                 else -> classKindFilter = null
             }
             if (classKindFilter != null) {
-                if (configuration.completeNonImportedDeclarations) {
+                if (configuration.completeNonImportedClasses) {
                     addClassesFromIndex(classKindFilter)
                 }
                 else {
