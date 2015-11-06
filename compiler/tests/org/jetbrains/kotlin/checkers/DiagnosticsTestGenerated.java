@@ -12819,6 +12819,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noThis.kt")
+            public void testNoThis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/noThis.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OrphanStarProjection.kt")
             public void testOrphanStarProjection() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/OrphanStarProjection.kt");
