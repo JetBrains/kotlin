@@ -52,6 +52,12 @@
           <element id="artifact" artifact-name="KotlinJpsPlugin" />
         </element>
         <element id="library" level="project" name="markdown" />
+        <element id="archive" name="kotlin-android-extensions-plugin.jar">
+          <element id="module-output" name="android-idea-plugin" />
+        </element>
+        <element id="archive" name="kotlin-android-extensions-compiler-plugin.jar">
+          <element id="module-output" name="android-compiler-plugin" />
+        </element>
       </element>
       <element id="directory" name="kotlinc">
         <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />

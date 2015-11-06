@@ -23,6 +23,7 @@
       <element id="module-output" name="rmi-interface" />
       <element id="module-output" name="deserialization" />
       <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/native-platform-uberjar.jar" path-in-jar="/" />
+      <element id="module-output" name="android-jps-plugin" />
     </root>
   </artifact>
 </component>
