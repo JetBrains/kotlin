@@ -135,37 +135,3 @@ internal class LongProgressionIterator(start: Long, end: Long, val increment: Lo
     }
 }
 
-/**
- * An iterator over a progression of values of type `Float`.
- * @property increment the number by which the value is incremented on each step.
- */
-@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
-internal class FloatProgressionIterator(start: Float, val end: Float, val increment: Float) : FloatIterator() {
-    private var next = start
-
-    override fun hasNext(): Boolean = if (increment > 0) next <= end else next >= end
-
-    override fun nextFloat(): Float {
-        val value = next
-        next += increment
-        return value
-    }
-}
-
-/**
- * An iterator over a progression of values of type `Double`.
- * @property increment the number by which the value is incremented on each step.
- */
-@Deprecated("This progression implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)
-internal class DoubleProgressionIterator(start: Double, val end: Double, val increment: Double) : DoubleIterator() {
-    private var next = start
-
-    override fun hasNext(): Boolean = if (increment > 0) next <= end else next >= end
-
-    override fun nextDouble(): Double {
-        val value = next
-        next += increment
-        return value
-    }
-}
-

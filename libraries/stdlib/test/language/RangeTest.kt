@@ -251,12 +251,9 @@ public class RangeTest {
 
         assertTrue(1 downTo 2 == 2 downTo 3)
         assertTrue(-1L downTo 0L == -2L downTo -1L)
-        assertEquals(-1f downTo 1f, -2f downTo 2f)
-        assertEquals(-4.0 downTo -3.0, -2.0 downTo -1.0)
         assertEquals('j'..'a' step 4, 'u'..'q' step 2)
 
         assertFalse(0..1 == IntRange.EMPTY)
-        assertFalse(1f downTo 2f == 2f downTo 1f)
 
         assertEquals("range".."progression", "hashcode".."equals")
         assertFalse(("aa".."bb") == ("aaa".."bbb"))
@@ -276,7 +273,6 @@ public class RangeTest {
 
         assertEquals((1 downTo 2).hashCode(), (2 downTo 3).hashCode())
         assertEquals((1L downTo 2L).hashCode(), (2L downTo 3L).hashCode())
-        assertEquals((1.0 downTo 2.0).hashCode(), (2.0 downTo 3.0).hashCode())
         assertEquals(('a' downTo 'b').hashCode(), ('c' downTo 'd').hashCode())
 
         assertEquals(("range".."progression").hashCode(), ("hashcode".."equals").hashCode())

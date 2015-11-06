@@ -84,7 +84,7 @@ class GenerateProgressionIterators(out: PrintWriter) : BuiltInsSourceGenerator(o
                 out.println(integerProgressionIterator(kind))
             }
             else {
-                out.println(floatingPointProgressionIterator(kind))
+                continue
             }
             out.println()
         }

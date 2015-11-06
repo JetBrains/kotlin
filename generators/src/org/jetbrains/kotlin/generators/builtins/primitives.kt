@@ -123,6 +123,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val returnType =
                 maxByDomainCapacity(thisKind, otherKind)
                 .let { if (it == PrimitiveType.CHAR) it else maxByDomainCapacity(it, PrimitiveType.INT) }
+            if (returnType == PrimitiveType.DOUBLE || returnType == PrimitiveType.FLOAT)
+                continue
             out.println("     /** Creates a range from this value to the specified [other] value. */")
             out.println("    public operator fun rangeTo(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
         }

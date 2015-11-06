@@ -79,7 +79,6 @@ fun comparables(): List<GenericFunction> {
             @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
             """
         }
-        deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
         body {
             """
             if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: ${'$'}range.")

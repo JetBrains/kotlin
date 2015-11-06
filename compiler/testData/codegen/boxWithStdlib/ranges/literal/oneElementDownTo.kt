@@ -47,23 +47,5 @@ fun box(): String {
         return "Wrong elements for 'k' downTo 'k': $list5"
     }
 
-    val list6 = ArrayList<Double>()
-    for (i in 5.0 downTo 5.0) {
-        list6.add(i)
-        if (list6.size() > 23) break
-    }
-    if (list6 != listOf<Double>(5.0)) {
-        return "Wrong elements for 5.0 downTo 5.0: $list6"
-    }
-
-    val list7 = ArrayList<Float>()
-    for (i in 5.0.toFloat() downTo 5.0.toFloat()) {
-        list7.add(i)
-        if (list7.size() > 23) break
-    }
-    if (list7 != listOf<Float>(5.0.toFloat())) {
-        return "Wrong elements for 5.0.toFloat() downTo 5.0.toFloat(): $list7"
-    }
-
     return "OK"
 }

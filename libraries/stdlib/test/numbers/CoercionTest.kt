@@ -72,7 +72,7 @@ class CoercionTest {
         expect(1.0) { 5.0.coerceAtMost(1.0) }
         expect(1.0) { 1.0.coerceAtMost(5.0) }
 
-        for (value in 0.0..10.0) {
+        for (value in (0..10).map { it.toDouble() }) {
             expect(value) { value.coerceIn(null, null) }
             val min = 2.0
             val max = 5.0

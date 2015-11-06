@@ -7,6 +7,7 @@ fun ranges(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     val rangePrimitives = listOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Char)
+    val floatingPointPrimitives = listOf(PrimitiveType.Double, PrimitiveType.Float)
     fun rangeElementType(fromType: PrimitiveType, toType: PrimitiveType)
             = maxByCapacity(fromType, toType).let { if (it == PrimitiveType.Char) it else maxByCapacity(it, PrimitiveType.Int) }
 
@@ -27,7 +28,7 @@ fun ranges(): List<GenericFunction> {
 
     templates add f("reversed()") {
         only(RangesOfPrimitives, ProgressionsOfPrimitives)
-        only(defaultPrimitives - PrimitiveType.Boolean - rangePrimitives)
+        only(defaultPrimitives - PrimitiveType.Boolean - rangePrimitives - floatingPointPrimitives)
         doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range in the opposite direction with the same step." }
         doc(RangesOfPrimitives) { "Returns a progression that goes over this range in reverse direction." }
         returns("TProgression")
@@ -67,7 +68,7 @@ fun ranges(): List<GenericFunction> {
         infix(true)
 
         only(RangesOfPrimitives, ProgressionsOfPrimitives)
-        only(defaultPrimitives - PrimitiveType.Boolean - rangePrimitives)
+        only(defaultPrimitives - PrimitiveType.Boolean - rangePrimitives - floatingPointPrimitives)
         doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range with the given step." }
         doc(RangesOfPrimitives) { "Returns a progression that goes over this range with given step." }
         returns("TProgression")
@@ -132,8 +133,9 @@ fun ranges(): List<GenericFunction> {
     val numericPrimitives = PrimitiveType.numericPrimitives
     val numericPermutations = numericPrimitives.flatMap { fromType -> numericPrimitives.map { toType -> fromType to toType }}
     val primitivePermutations = numericPermutations + (PrimitiveType.Char to PrimitiveType.Char)
+    val integralPermutations = primitivePermutations.filter { it.first.isIntegral() && it.second.isIntegral() }
 
-    templates addAll primitivePermutations.map { downTo(it.first, it.second) }
+    templates addAll integralPermutations.map { downTo(it.first, it.second) }
 
     fun until(fromType: PrimitiveType, toType: PrimitiveType) = f("until(to: $toType)") {
         infix(true)
@@ -178,20 +180,18 @@ fun ranges(): List<GenericFunction> {
         }
     }
 
-    templates addAll primitivePermutations
-            .filter { it.first.isIntegral() && it.second.isIntegral() }
-            .map { until(it.first, it.second) }
+    templates addAll integralPermutations.map { until(it.first, it.second) }
 
     fun contains(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(item: $itemType)") {
         operator(true)
 
-        if (!rangeType.isIntegral()) {
-            deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
-            annotations("""@Suppress("DEPRECATION_ERROR")""")
-        }
-        else if (rangeType !in rangePrimitives) {
-            deprecate(Deprecation("This range will be removed soon.", level = DeprecationLevel.WARNING))
-        }
+//        if (!rangeType.isIntegral()) {
+//            deprecate(Deprecation("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING))
+//            annotations("""@Suppress("DEPRECATION_ERROR")""")
+//        }
+//        else if (rangeType !in rangePrimitives) {
+//            deprecate(Deprecation("This range will be removed soon.", level = DeprecationLevel.WARNING))
+//        }
 
         check(rangeType.isNumeric() == itemType.isNumeric()) { "Required rangeType and itemType both to be numeric or both not, got: $rangeType, $itemType" }
         only(Ranges)

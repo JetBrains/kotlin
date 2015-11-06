@@ -17,31 +17,6 @@ import kotlin.test.*
 // Test data for codegen is generated from this class. If you change it, rerun GenerateTests
 public class RangeIterationJVMTest : RangeIterationTestBase() {
 
-    @test fun infiniteSteps() {
-        doTest(0.0..5.0 step java.lang.Double.POSITIVE_INFINITY, 0.0, 5.0, java.lang.Double.POSITIVE_INFINITY, listOf(0.0))
-        doTest(0.0.toFloat()..5.0.toFloat() step java.lang.Float.POSITIVE_INFINITY, 0.0.toFloat(), 5.0.toFloat(), java.lang.Float.POSITIVE_INFINITY,
-               listOf<Float>(0.0.toFloat()))
-        doTest(5.0 downTo 0.0 step java.lang.Double.POSITIVE_INFINITY, 5.0, 0.0, java.lang.Double.NEGATIVE_INFINITY, listOf(5.0))
-        doTest(5.0.toFloat() downTo 0.0.toFloat() step java.lang.Float.POSITIVE_INFINITY, 5.0.toFloat(), 0.0.toFloat(), java.lang.Float.NEGATIVE_INFINITY,
-               listOf<Float>(5.0.toFloat()))
-    }
-
-    @test fun nanEnds() {
-        doTest(java.lang.Double.NaN..5.0, java.lang.Double.NaN, 5.0, 1.0, listOf())
-        doTest(java.lang.Float.NaN.toFloat()..5.0.toFloat(), java.lang.Float.NaN, 5.0.toFloat(), 1.0.toFloat(), listOf())
-        doTest(java.lang.Double.NaN downTo 0.0, java.lang.Double.NaN, 0.0, -1.0, listOf())
-        doTest(java.lang.Float.NaN.toFloat() downTo 0.0.toFloat(), java.lang.Float.NaN, 0.0.toFloat(), -1.0.toFloat(), listOf())
-
-        doTest(0.0..java.lang.Double.NaN, 0.0, java.lang.Double.NaN, 1.0, listOf())
-        doTest(0.0.toFloat()..java.lang.Float.NaN, 0.0.toFloat(), java.lang.Float.NaN, 1.0.toFloat(), listOf())
-        doTest(5.0 downTo java.lang.Double.NaN, 5.0, java.lang.Double.NaN, -1.0, listOf())
-        doTest(5.0.toFloat() downTo java.lang.Float.NaN, 5.0.toFloat(), java.lang.Float.NaN, -1.0.toFloat(), listOf())
-
-        doTest(java.lang.Double.NaN..java.lang.Double.NaN, java.lang.Double.NaN, java.lang.Double.NaN, 1.0, listOf())
-        doTest(java.lang.Float.NaN..java.lang.Float.NaN, java.lang.Float.NaN, java.lang.Float.NaN, 1.0.toFloat(), listOf())
-        doTest(java.lang.Double.NaN downTo java.lang.Double.NaN, java.lang.Double.NaN, java.lang.Double.NaN, -1.0, listOf())
-        doTest(java.lang.Float.NaN downTo java.lang.Float.NaN, java.lang.Float.NaN, java.lang.Float.NaN, -1.0.toFloat(), listOf())
-    }
 
     @test fun maxValueToMaxValue() {
         doTest(MaxI..MaxI, MaxI, MaxI, 1, listOf(MaxI))

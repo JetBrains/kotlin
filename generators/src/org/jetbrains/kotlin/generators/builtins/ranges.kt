@@ -65,8 +65,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val toString = "\"\$start..\$endInclusive\""
 
             if (kind == FLOAT || kind == DOUBLE) {
-                out.println("""@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)""")
-                out.println("""@Suppress("DEPRECATION_ERROR")""")
+                continue
             }
             if (kind == SHORT || kind == BYTE) {
                 out.println("""@Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)""")
