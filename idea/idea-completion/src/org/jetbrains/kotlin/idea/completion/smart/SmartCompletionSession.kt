@@ -137,9 +137,12 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
 
                 if (staticMembersCompletion != null && configuration.completeStaticMembers) {
                     val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER)
-                    staticMembersCompletion.membersFromIndices(indicesHelper(false))
-                            .flatMap { filter(it, decoratedFactory) }
-                            .forEach { collector.addElement(it) }
+                    staticMembersCompletion.processMembersFromIndices(indicesHelper(false)) {
+                        filter(it, decoratedFactory).forEach {
+                            collector.addElement(it)
+                            flushToResultSet()
+                        }
+                    }
                 }
             }
         }

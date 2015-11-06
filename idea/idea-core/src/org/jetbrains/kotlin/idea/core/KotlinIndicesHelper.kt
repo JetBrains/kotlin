@@ -197,14 +197,13 @@ public class KotlinIndicesHelper(
                 .filter(descriptorFilter)
     }
 
-    public fun getObjectMembers(
+    public fun processObjectMembers(
             descriptorKindFilter: DescriptorKindFilter,
             nameFilter: (String) -> Boolean,
-            filter: (KtCallableDeclaration, KtObjectDeclaration) -> Boolean
-    ): Collection<CallableDescriptor> {
-        val result = LinkedHashSet<CallableDescriptor>()
-
-        fun addFromIndex(index: StringStubIndexExtension<out KtCallableDeclaration>) {
+            filter: (KtCallableDeclaration, KtObjectDeclaration) -> Boolean,
+            processor: (DeclarationDescriptor) -> Unit
+    ) {
+        fun processIndex(index: StringStubIndexExtension<out KtCallableDeclaration>) {
             for (name in index.getAllKeys(project)) {
                 ProgressManager.checkCanceled()
                 if (!nameFilter(name)) continue
@@ -214,24 +213,28 @@ public class KotlinIndicesHelper(
                     if (objectDeclaration.isObjectLiteral()) continue
                     if (!visibilityFilterMayIncludeAccessible && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
                     if (!filter(declaration, objectDeclaration)) continue
-                    declaration.resolveToDescriptorsWithHack().filterTo(result) { descriptorKindFilter.accepts(it) && descriptorFilter(it) }
+                    for (descriptor in declaration.resolveToDescriptorsWithHack()) {
+                        if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
+                            processor(descriptor)
+                        }
+                    }
                 }
             }
         }
 
         if (descriptorKindFilter.kindMask.and(DescriptorKindFilter.FUNCTIONS_MASK) != 0) {
-            addFromIndex(KotlinFunctionShortNameIndex.getInstance())
+            processIndex(KotlinFunctionShortNameIndex.getInstance())
         }
         if (descriptorKindFilter.kindMask.and(DescriptorKindFilter.VARIABLES_MASK) != 0) {
-            addFromIndex(KotlinPropertyShortNameIndex.getInstance())
+            processIndex(KotlinPropertyShortNameIndex.getInstance())
         }
-
-        return result
     }
 
-    public fun getJavaStaticMembers(descriptorKindFilter: DescriptorKindFilter, nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
-        val result = LinkedHashSet<CallableDescriptor>()
-
+    public fun processJavaStaticMembers(
+            descriptorKindFilter: DescriptorKindFilter,
+            nameFilter: (String) -> Boolean,
+            processor: (DeclarationDescriptor) -> Unit
+    ) {
         val idFilter = IdFilter.getProjectIdFilter(resolutionFacade.project, false)
         val shortNamesCache = PsiShortNamesCache.getInstance(project)
 
@@ -246,12 +249,13 @@ public class KotlinIndicesHelper(
                 val descriptor = method.getJavaMethodDescriptor(resolutionFacade) ?: continue
                 val container = descriptor.containingDeclaration as? ClassDescriptor ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
-                    result.add(descriptor)
+                    processor(descriptor)
 
-                    val samAdapter = container.staticScope.getContributedFunctions(descriptor.name, NoLookupLocation.FROM_IDE)
+                    // SAM-adapter
+                    container.staticScope.getContributedFunctions(descriptor.name, NoLookupLocation.FROM_IDE)
                             .filterIsInstance<SamAdapterDescriptor<*>>()
                             .firstOrNull { it.originForSam.original == descriptor.original }
-                    result.addIfNotNull(samAdapter)
+                            ?.let { processor(it) }
                 }
             }
             true
@@ -267,14 +271,12 @@ public class KotlinIndicesHelper(
                 if (!visibilityFilterMayIncludeAccessible && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
                 val descriptor = field.getJavaFieldDescriptor() ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
-                    result.add(descriptor)
+                    processor(descriptor)
                 }
             }
             true
         }
         shortNamesCache.processAllFieldNames(fieldNamesProcessor, scope, idFilter)
-
-        return result
     }
 
     private fun findTopLevelCallables(fqName: FqName): Collection<CallableDescriptor> {

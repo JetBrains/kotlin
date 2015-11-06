@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -87,23 +88,26 @@ class StaticMembersCompletion(
     //TODO: better presentation for lookup elements from imports too
     //TODO: from the same file
 
-    fun membersFromIndices(indicesHelper: KotlinIndicesHelper): Collection<DeclarationDescriptor> {
+    fun processMembersFromIndices(indicesHelper: KotlinIndicesHelper, processor: (DeclarationDescriptor) -> Unit) {
         val descriptorKindFilter = DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions
         val nameFilter: (String) -> Boolean = { prefixMatcher.prefixMatches(it) }
 
-        val result = ArrayList<DeclarationDescriptor>()
+        val filter = { declaration: KtCallableDeclaration, objectDeclaration: KtObjectDeclaration ->
+            !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) && objectDeclaration.isTopLevelOrCompanion()
+        }
+        indicesHelper.processObjectMembers(descriptorKindFilter, nameFilter, filter) {
+            if (it !in alreadyAdded) { //TODO: substitution
+                processor(it)
+            }
+        }
 
         if (isJvmModule) {
-            indicesHelper.getJavaStaticMembers(descriptorKindFilter, nameFilter).filterTo(result) { it !in alreadyAdded }  //TODO: substitution
+            indicesHelper.processJavaStaticMembers(descriptorKindFilter, nameFilter){
+                if (it !in alreadyAdded) { //TODO: substitution
+                    processor(it)
+                }
+            }
         }
-
-        indicesHelper.getObjectMembers(descriptorKindFilter, nameFilter) filter@ { declaration, objectDeclaration ->
-            !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) && objectDeclaration.isTopLevelOrCompanion()
-        }.filterTo(result) {
-            it !in alreadyAdded //TODO: substitution
-        }
-
-        return result
     }
 
     private fun KtObjectDeclaration.isTopLevelOrCompanion(): Boolean {
@@ -125,8 +129,9 @@ class StaticMembersCompletion(
 
     fun completeFromIndices(indicesHelper: KotlinIndicesHelper, collector: LookupElementsCollector) {
         val factory = decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER)
-        membersFromIndices(indicesHelper)
-                .flatMap { factory.createStandardLookupElementsForDescriptor(it, useReceiverTypes = true) }
-                .forEach { collector.addElement(it) }
+        processMembersFromIndices(indicesHelper) {
+            factory.createStandardLookupElementsForDescriptor(it, useReceiverTypes = true).forEach { collector.addElement(it) }
+            collector.flushToResultSet()
+        }
     }
 }
