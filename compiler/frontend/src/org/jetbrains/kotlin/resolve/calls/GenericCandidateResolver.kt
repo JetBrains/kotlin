@@ -56,17 +56,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val candidate = candidateCall.candidateDescriptor
 
         val builder = ConstraintSystemBuilderImpl()
-
-        // If the call is recursive, e.g.
-        //   fun foo<T>(t : T) : T = foo(t)
-        // we can't use same descriptor objects for T's as actual type values and same T's as unknowns,
-        // because constraints become trivial (T :< T), and inference fails
-        //
-        // Thus, we replace the parameters of our descriptor with fresh objects (perform alpha-conversion)
-        val candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidate)
-
-        val conversionToOriginal = candidateWithFreshVariables.typeParameters.zip(candidate.typeParameters).toMap()
-        builder.registerTypeVariables(candidateWithFreshVariables.typeParameters, { conversionToOriginal[it]!! })
+        builder.registerTypeVariables(candidate.typeParameters)
 
         val substituteDontCare = makeConstantSubstitutor(candidate.typeParameters, DONT_CARE)
 

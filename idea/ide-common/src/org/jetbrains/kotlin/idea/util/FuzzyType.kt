@@ -115,12 +115,19 @@ class FuzzyType(
         }
 
         val builder = ConstraintSystemBuilderImpl()
-        builder.registerTypeVariables(freeParameters)
-        builder.registerTypeVariables(otherType.freeParameters)
+        val typeVariableSubstitutor = builder.registerTypeVariables(freeParameters + otherType.freeParameters)
 
         when (matchKind) {
-            MatchKind.IS_SUBTYPE -> builder.addSubtypeConstraint(type, otherType.type, ConstraintPositionKind.RECEIVER_POSITION.position())
-            MatchKind.IS_SUPERTYPE -> builder.addSubtypeConstraint(otherType.type, type, ConstraintPositionKind.RECEIVER_POSITION.position())
+            MatchKind.IS_SUBTYPE -> builder.addSubtypeConstraint(
+                    typeVariableSubstitutor.substitute(type, Variance.INVARIANT),
+                    otherType.type,
+                    ConstraintPositionKind.RECEIVER_POSITION.position()
+            )
+            MatchKind.IS_SUPERTYPE -> builder.addSubtypeConstraint(
+                    typeVariableSubstitutor.substitute(otherType.type, Variance.INVARIANT),
+                    type,
+                    ConstraintPositionKind.RECEIVER_POSITION.position()
+            )
         }
 
         builder.fixVariables()

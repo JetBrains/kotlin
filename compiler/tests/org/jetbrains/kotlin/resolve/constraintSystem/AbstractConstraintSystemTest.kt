@@ -81,16 +81,20 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
         val variables = parseVariables(constraintsFileText)
         val fixVariables = constraintsFileText.contains("FIX_VARIABLES")
         val typeParameterDescriptors = variables.map { testDeclarations.getParameterDescriptor(it) }
-        builder.registerTypeVariables(typeParameterDescriptors)
+        val substitutor = builder.registerTypeVariables(typeParameterDescriptors)
 
         val constraints = parseConstraints(constraintsFileText)
-        fun KotlinType.assertNotError(): KotlinType {
-            assert(!ErrorUtils.containsErrorType(this)) { "Type $this is resolved to or contains error type" }
-            return this
+
+        fun getType(typeString: String): KotlinType {
+            val type = testDeclarations.getType(typeString).apply {
+                assert(!ErrorUtils.containsErrorType(this)) { "Type $this is resolved to or contains error type" }
+            }
+            return substitutor.substitute(type, Variance.INVARIANT) ?: error("Failed to substitute $type")
         }
+
         for (constraint in constraints) {
-            val firstType = testDeclarations.getType(constraint.firstType).assertNotError()
-            val secondType = testDeclarations.getType(constraint.secondType).assertNotError()
+            val firstType = getType(constraint.firstType)
+            val secondType = getType(constraint.secondType)
             val context = ConstraintContext(SPECIAL.position(), initial = true)
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> builder.addSubtypeConstraint(firstType, secondType, context.position)
@@ -118,8 +122,7 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
     }
 
     class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String)
-    enum class MyConstraintKind
-    private constructor(val token: String) {
+    enum class MyConstraintKind(val token: String) {
         SUBTYPE("<:"), SUPERTYPE(">:"), EQUAL(":=")
     }
 
@@ -132,8 +135,8 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
     }
 
     private fun parseConstraints(lines: List<String>): List<MyConstraint> {
-        val kindsMap = MyConstraintKind.values().map { it.token to it }.toMap()
-        val kinds = kindsMap.keySet()
+        val kindsMap = MyConstraintKind.values.map { it.token to it }.toMap()
+        val kinds = kindsMap.keys
         val linesWithConstraints = lines.filter { line -> kinds.any { kind -> line.contains(kind) } }
         return linesWithConstraints.map {
             line ->
