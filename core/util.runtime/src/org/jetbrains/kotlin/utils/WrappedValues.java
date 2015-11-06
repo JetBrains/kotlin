@@ -26,6 +26,7 @@ public class WrappedValues {
             return "NULL_VALUE";
         }
     };
+    public static volatile boolean throwWrappedProcessCanceledException = false;
 
     private final static class ThrowableWrapper {
         private final Throwable throwable;
@@ -74,10 +75,23 @@ public class WrappedValues {
     @Nullable
     public static <V> V unescapeThrowable(@Nullable Object value) {
         if (value instanceof ThrowableWrapper) {
-            throw ExceptionUtilsKt.rethrow(((ThrowableWrapper) value).getThrowable());
+            Throwable originThrowable = ((ThrowableWrapper) value).getThrowable();
+
+            if (throwWrappedProcessCanceledException &&
+                    originThrowable.getClass().getName().equals("com.intellij.openapi.progress.ProcessCanceledException")) {
+                throw new WrappedProcessCanceledException(originThrowable);
+            }
+
+            throw ExceptionUtilsKt.rethrow(originThrowable);
         }
 
         //noinspection unchecked
         return (V) value;
+    }
+
+    public static class WrappedProcessCanceledException extends RuntimeException {
+        public WrappedProcessCanceledException(Throwable cause) {
+            super("Rethrow stored exception", cause);
+        }
     }
 }
