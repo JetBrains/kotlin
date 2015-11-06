@@ -87,9 +87,11 @@ public class KtLightClassForFacade private constructor(
     private val implementsList: LightEmptyImplementsList =
             LightEmptyImplementsList(manager)
 
-    private val packageClsFile = FakeFileForLightClass(packageFqName, files.first().virtualFile!!, myManager, this) {
-        lightClassDataCache.value.javaFileStub
-    }
+    private val packageClsFile = FakeFileForLightClass(
+            packageFqName, files.first().virtualFile!!, myManager,
+            lightClass = { this },
+            stub = { lightClassDataCache.value.javaFileStub }
+    )
 
     override fun getOrigin(): KtClassOrObject? = null
 

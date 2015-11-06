@@ -126,7 +126,7 @@ public open class KtLightClassForExplicitDeclaration(
     private val _parent: PsiElement? by lazy {
         if (classOrObject.isLocal())
             getLocalClassParent()
-        else if (classOrObject.parent === classOrObject.containingFile)
+        else if (classOrObject.isTopLevel())
             containingFile
         else
             containingClass
@@ -178,7 +178,11 @@ public open class KtLightClassForExplicitDeclaration(
         val virtualFile = classOrObject.containingFile.virtualFile
         assert(virtualFile != null) { "No virtual file for " + classOrObject.text }
 
-        object : FakeFileForLightClass(classOrObject.getContainingKtFile().packageFqName, virtualFile, myManager, this, { getJavaFileStub() }) {
+        object : FakeFileForLightClass(
+                classOrObject.getContainingKtFile().packageFqName, virtualFile, myManager,
+                { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
+                { getJavaFileStub() }
+        ) {
             override fun processDeclarations(
                     processor: PsiScopeProcessor,
                     state: ResolveState,
