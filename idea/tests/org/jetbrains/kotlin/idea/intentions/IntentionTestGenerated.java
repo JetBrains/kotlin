@@ -5135,6 +5135,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/StaticJavaMethod.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("TopLevelFun.kt")
+        public void testTopLevelFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/TopLevelFun.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/infixCallToOrdinary")
