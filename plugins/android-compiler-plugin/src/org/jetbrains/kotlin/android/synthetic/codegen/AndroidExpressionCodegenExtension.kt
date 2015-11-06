@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.android.synthetic.codegen
 
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
+import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFunction
+import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
@@ -26,7 +29,6 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -109,12 +111,12 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         else null
     }
 
-    override fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): Boolean {
+    override fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
         val resultingDescriptor = resolvedCall.resultingDescriptor
         return if (resultingDescriptor is FunctionDescriptor) {
             return generateSyntheticFunctionCall(receiver, resolvedCall, c, resultingDescriptor)
         }
-        else false
+        else null
     }
 
     private fun generateSyntheticFunctionCall(
@@ -122,22 +124,22 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             resolvedCall: ResolvedCall<*>,
             c: ExpressionCodegenExtension.Context,
             descriptor: FunctionDescriptor
-    ): Boolean {
-        if (descriptor.getAndroidPackage() == null) return false
-        if (descriptor.name.asString() != AndroidConst.CLEAR_FUNCTION_NAME) return false
+    ): StackValue? {
+        if (descriptor !is AndroidSyntheticFunction) return null
+        if (descriptor.name.asString() != AndroidConst.CLEAR_FUNCTION_NAME) return null
 
-        val declarationDescriptor = resolvedCall.getReceiverDeclarationDescriptor() ?: return false
-        if (!isCacheSupported(declarationDescriptor)) return true
+        val declarationDescriptor = resolvedCall.getReceiverDeclarationDescriptor() ?: return null
+        if (!isCacheSupported(declarationDescriptor)) return StackValue.functionCall(Type.VOID_TYPE) {}
 
         val androidClassType = AndroidClassType.getClassType(declarationDescriptor)
-        if (androidClassType == AndroidClassType.UNKNOWN) return false
+        if (androidClassType == AndroidClassType.UNKNOWN) return null
 
-        val bytecodeClassName = c.typeMapper.mapType(declarationDescriptor).internalName
+        return StackValue.functionCall(Type.VOID_TYPE) {
+            val bytecodeClassName = c.typeMapper.mapType(declarationDescriptor).internalName
 
-        receiver.put(c.typeMapper.mapType(declarationDescriptor), c.v)
-        c.v.invokevirtual(bytecodeClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
-
-        return true
+            receiver.put(c.typeMapper.mapType(declarationDescriptor), it)
+            it.invokevirtual(bytecodeClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
+        }
     }
 
     private fun generateSyntheticPropertyCall(
@@ -146,7 +148,9 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             c: ExpressionCodegenExtension.Context,
             descriptor: PropertyDescriptor
     ): StackValue? {
-        val androidPackage = descriptor.getAndroidPackage() ?: return null
+        if (descriptor !is AndroidSyntheticProperty) return null
+        val packageFragment = descriptor.containingDeclaration as? AndroidSyntheticPackageFragmentDescriptor ?: return null
+        val androidPackage = packageFragment.packageData.moduleData.module.applicationPackage
         val declarationDescriptor = resolvedCall.getReceiverDeclarationDescriptor() ?: return null
         val androidClassType = AndroidClassType.getClassType(declarationDescriptor)
 
@@ -222,10 +226,6 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         fun getResourceId(v: InstructionAdapter) {
             v.getstatic(androidPackage.replace(".", "/") + "/R\$id", descriptor.name.asString(), "I")
         }
-    }
-
-    private fun CallableDescriptor.getAndroidPackage(): String? {
-        return DescriptorToSourceUtils.getContainingFile(this)?.getUserData(AndroidConst.ANDROID_USER_PACKAGE)
     }
 
     private fun ResolvedCall<*>.getReceiverDeclarationDescriptor(): ClassifierDescriptor? {

@@ -33,6 +33,9 @@ public class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
             MAP.put(ErrorsAndroid.SYNTHETIC_UNRESOLVED_WIDGET_TYPE,
                     "Widget has an unresolved type ''{0}'', and thus it was upcasted to ''android.view.View''",
                     Renderers.TO_STRING)
+
+            MAP.put(ErrorsAndroid.SYNTHETIC_DEPRECATED_PACKAGE,
+                    "Use properties from the build variant packages")
         }
     }
 

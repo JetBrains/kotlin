@@ -16,7 +16,17 @@
 
 package org.jetbrains.kotlin.android.synthetic.res
 
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 
 class AndroidVariant(val name: String, val resDirectories: List<String>) {
     val packageName: String = name
@@ -28,61 +38,52 @@ class AndroidVariant(val name: String, val resDirectories: List<String>) {
     }
 }
 
-public class AndroidModule(val applicationPackage: String, val variants: List<AndroidVariant>) {
+class AndroidModule(val applicationPackage: String, val variants: List<AndroidVariant>) {
     override fun equals(other: Any?) = other is AndroidModule && applicationPackage == other.applicationPackage
     override fun hashCode() = applicationPackage.hashCode()
 }
 
-public abstract class AndroidResource(val id: String) {
-    public abstract val className: String
-    public open val supportClassName: String
-        get() = className
+sealed class AndroidResource(val id: String, val sourceElement: PsiElement?) {
+    open fun sameClass(other: AndroidResource): Boolean = false
 
-    public abstract val mainProperties: List<Pair<String, String>>
-    public open val mainPropertiesForSupportV4: List<Pair<String, String>> = listOf()
-    public open val viewProperties: List<Pair<String, String>> = listOf()
-
-    public open fun sameClass(other: AndroidResource): Boolean = false
-}
-
-public class AndroidWidget(
-        id: String,
-        override val className: String,
-        val invalidType: String? = null // When widget type is invalid, this value is the widget tag name
-) : AndroidResource(id) {
-    private companion object {
-        val MAIN_PROPERTIES = listOf(
-                AndroidConst.ACTIVITY_FQNAME to "findViewById(0)",
-                AndroidConst.FRAGMENT_FQNAME to "getView().findViewById(0)")
-
-        val MAIN_PROPERTIES_SUPPORT_V4 = listOf(AndroidConst.SUPPORT_FRAGMENT_FQNAME to "getView().findViewById(0)")
-
-        val VIEW_PROPERTIES = listOf(AndroidConst.VIEW_FQNAME to "findViewById(0)")
+    class Widget(
+            id: String,
+            val xmlType: String,
+            sourceElement: PsiElement?
+    ) : AndroidResource(id, sourceElement) {
+        override fun sameClass(other: AndroidResource) = other is Widget
     }
 
-    override val mainProperties = MAIN_PROPERTIES
-    override val mainPropertiesForSupportV4 = MAIN_PROPERTIES_SUPPORT_V4
-    override val viewProperties = VIEW_PROPERTIES
-
-    override fun sameClass(other: AndroidResource) = other is AndroidWidget
+    class Fragment(id: String, sourceElement: PsiElement?) : AndroidResource(id, sourceElement) {
+        override fun sameClass(other: AndroidResource) = other is Fragment
+    }
 }
 
-public class AndroidFragment(id: String) : AndroidResource(id) {
-    private companion object {
-        val MAIN_PROPERTIES = listOf(
-                AndroidConst.ACTIVITY_FQNAME to "getFragmentManager().findFragmentById(0)",
-                AndroidConst.FRAGMENT_FQNAME to "getFragmentManager().findFragmentById(0)")
+fun <T> cachedValue(project: Project, result: () -> CachedValueProvider.Result<T>): CachedValue<T> {
+    return CachedValuesManager.getManager(project).createCachedValue(result, false)
+}
 
-        val MAIN_PROPERTIES_SUPPORT_V4 = listOf(
-                AndroidConst.SUPPORT_FRAGMENT_FQNAME to "getFragmentManager().findFragmentById(0)",
-                AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME to "getSupportFragmentManager().findFragmentById(0)")
+class ResolvedWidget(val widget: AndroidResource.Widget, val viewClassDescriptor: ClassDescriptor?) {
+    val isErrorType: Boolean
+        get() = viewClassDescriptor == null
+
+    val errorType: String?
+        get() = if (isErrorType) widget.xmlType else null
+}
+
+fun AndroidResource.Widget.resolve(module: ModuleDescriptor): ResolvedWidget {
+    fun resolve(fqName: String) = module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName(fqName)))
+
+    if ('.' in xmlType) {
+        return ResolvedWidget(this, resolve(xmlType))
     }
 
-    override val className = AndroidConst.FRAGMENT_FQNAME
-    override val supportClassName = AndroidConst.SUPPORT_FRAGMENT_FQNAME
+    for (packageName in AndroidConst.FQNAME_RESOLVE_PACKAGES) {
+        val classDescriptor = resolve("$packageName.$xmlType")
+        if (classDescriptor != null) {
+            return ResolvedWidget(this, classDescriptor)
+        }
+    }
 
-    override val mainProperties = MAIN_PROPERTIES
-    override val mainPropertiesForSupportV4 = MAIN_PROPERTIES_SUPPORT_V4
-
-    override fun sameClass(other: AndroidResource) = other is AndroidFragment
+    return ResolvedWidget(this, null)
 }

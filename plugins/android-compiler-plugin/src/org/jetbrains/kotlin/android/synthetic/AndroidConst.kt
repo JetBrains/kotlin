@@ -16,19 +16,18 @@
 
 package org.jetbrains.kotlin.android.synthetic
 
-import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
 public object AndroidConst {
-    val ANDROID_USER_PACKAGE: Key<String> = Key.create<String>("ANDROID_USER_PACKAGE")
-
-    val SYNTHETIC_FILENAME_PREFIX: String = "ANDROIDXML_"
-    val LAYOUT_POSTFIX: String = "_LAYOUT"
-    val VIEW_LAYOUT_POSTFIX: String = "_VIEW"
-
     val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
     val SYNTHETIC_PACKAGE_PATH_LENGTH = SYNTHETIC_PACKAGE.count { it == '.' } + 1
+
+    val SYNTHETIC_SUBPACKAGES: List<String> = SYNTHETIC_PACKAGE.split('.').fold(arrayListOf<String>()) { list, segment ->
+        val prevSegment = list.lastOrNull()?.let { "$it." } ?: ""
+        list += "$prevSegment$segment"
+        list
+    }
 
     val ANDROID_NAMESPACE: String = "android"
     val ID_ATTRIBUTE_NO_NAMESPACE: String = "id"
@@ -40,6 +39,9 @@ public object AndroidConst {
     val XML_ID_PREFIXES = arrayOf(ID_DECLARATION_PREFIX, ID_USAGE_PREFIX)
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
+
+
+    //TODO FqName / ClassId
 
     val VIEW_FQNAME = "android.view.View"
     val ACTIVITY_FQNAME = "android.app.Activity"
@@ -56,8 +58,6 @@ public object AndroidConst {
     val FQNAME_RESOLVE_PACKAGES = listOf("android.widget", "android.webkit", "android.view")
 }
 
-public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name
-
 public fun idToName(id: String): String? {
     for (prefix in AndroidConst.XML_ID_PREFIXES) {
         if (id.startsWith(prefix)) return escapeAndroidIdentifier(id.replace(prefix, ""))
@@ -71,4 +71,13 @@ public fun isWidgetTypeIgnored(xmlType: String): Boolean {
 
 fun escapeAndroidIdentifier(id: String): String {
     return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
+}
+
+internal fun <T> List<T>.forEachUntilLast(operation: (T) -> Unit) {
+    val lastIndex = lastIndex
+    forEachIndexed { i, t ->
+        if (i < lastIndex) {
+            operation(t)
+        }
+    }
 }

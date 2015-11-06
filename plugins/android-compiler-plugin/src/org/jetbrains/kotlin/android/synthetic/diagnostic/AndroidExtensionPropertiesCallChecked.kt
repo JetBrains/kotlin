@@ -16,32 +16,42 @@
 
 package org.jetbrains.kotlin.android.synthetic.diagnostic
 
-import org.jetbrains.kotlin.android.synthetic.AndroidConst
-import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid.*
+import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
+import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.psi.KtExpression
 
 public class AndroidExtensionPropertiesCallChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         val expression = context.call.calleeExpression ?: return
 
         val propertyDescriptor = resolvedCall.resultingDescriptor as? PropertyDescriptor ?: return
-        val syntheticPackage = propertyDescriptor.containingDeclaration as? PackageFragmentDescriptor ?: return
-        if (!syntheticPackage.fqName.asString().startsWith("${AndroidConst.SYNTHETIC_PACKAGE}.")) return
+        val containingPackage = propertyDescriptor.containingDeclaration as? AndroidSyntheticPackageFragmentDescriptor ?: return
+        val androidSyntheticProperty = propertyDescriptor as? AndroidSyntheticProperty ?: return
 
-        val invalidWidgetTypeAnnotation = propertyDescriptor.annotations.findAnnotation(
-                SyntheticFileGenerator.INVALID_WIDGET_TYPE_ANNOTATION_FQNAME) ?: return
-
-        val type = invalidWidgetTypeAnnotation.allValueArguments.filterKeys {
-            it.name.asString() == SyntheticFileGenerator.INVALID_WIDGET_TYPE_ANNOTATION_TYPE_PARAMETER
-        }.values().firstOrNull() as? StringValue ?: return
-
-        val erroneousType = type.value
-        val warning = if (erroneousType.contains('.')) SYNTHETIC_UNRESOLVED_WIDGET_TYPE else SYNTHETIC_INVALID_WIDGET_TYPE
-        context.trace.report(warning.on(expression, erroneousType))
+        with (context.trace) {
+            checkUnresolvedWidgetType(expression, androidSyntheticProperty)
+            checkDeprecated(expression, containingPackage)
+        }
     }
+
+    private fun DiagnosticSink.checkDeprecated(expression: KtExpression, packageDescriptor: AndroidSyntheticPackageFragmentDescriptor) {
+        if (packageDescriptor.packageData.isDeprecated) {
+            report(SYNTHETIC_DEPRECATED_PACKAGE.on(expression))
+        }
+    }
+
+    private fun DiagnosticSink.checkUnresolvedWidgetType(expression: KtExpression, property: AndroidSyntheticProperty) {
+        if (!property.isErrorType) return
+        val type = property.errorType ?: return
+
+        val warning = if (type.contains('.')) SYNTHETIC_UNRESOLVED_WIDGET_TYPE else SYNTHETIC_INVALID_WIDGET_TYPE
+        report(warning.on(expression, type))
+    }
+
 }

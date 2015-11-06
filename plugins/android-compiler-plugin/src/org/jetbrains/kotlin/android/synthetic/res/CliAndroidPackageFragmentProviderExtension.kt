@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android.synthetic
+package org.jetbrains.kotlin.android.synthetic.res
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.Computable
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 
-fun isAndroidSyntheticFile(f: PsiFile?): Boolean {
-    return f?.getUserData(AndroidConst.ANDROID_USER_PACKAGE) != null
-}
-
-public fun isAndroidSyntheticElement(element: PsiElement?): Boolean {
-    return isAndroidSyntheticFile(ApplicationManager.getApplication().runReadAction(Computable {
-        element?.containingFile
-    }))
+class CliAndroidPackageFragmentProviderExtension : AndroidPackageFragmentProviderExtension() {
+    override fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager? {
+        return ServiceManager.getService(project, AndroidLayoutXmlFileManager::class.java)
+    }
 }

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.mock.MockProject
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
@@ -37,10 +34,9 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 public object AndroidConfigurationKeys {
@@ -73,13 +69,6 @@ public class AndroidCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-public class CliAndroidDeclarationsProvider(private val project: Project) : ExternalDeclarationsProvider {
-    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<KtFile> {
-        val parser = ServiceManager.getService(project, SyntheticFileGenerator::class.java) as? CliSyntheticFileGenerator
-        return parser?.getSyntheticFiles() ?: listOf()
-    }
-}
-
 public class AndroidComponentRegistrar : ComponentRegistrar {
 
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
@@ -87,18 +76,14 @@ public class AndroidComponentRegistrar : ComponentRegistrar {
         val variants = configuration.get(AndroidConfigurationKeys.VARIANT)?.map { parseVariant(it) }?.filterNotNull() ?: emptyList()
 
         if (variants.isNotEmpty() && !applicationPackage.isNullOrBlank()) {
-            val xmlProcessor = CliSyntheticFileGenerator(project, applicationPackage!!, variants)
-
-            project.registerService(SyntheticFileGenerator::class.java, xmlProcessor)
-
-            val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage, variants)
+            val layoutXmlFileManager = CliAndroidLayoutXmlFileManager(project, applicationPackage!!, variants)
             project.registerService(AndroidLayoutXmlFileManager::class.java, layoutXmlFileManager)
 
-            ExternalDeclarationsProvider.registerExtension(project, CliAndroidDeclarationsProvider(project))
             ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
             StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
             Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesAndroid())
             ClassBuilderInterceptorExtension.registerExtension(project, AndroidOnDestroyClassBuilderInterceptorExtension())
+            PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension())
         }
     }
 

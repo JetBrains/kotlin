@@ -16,7 +16,12 @@
 
 package org.jetbrains.kotlin.android.synthetic.res
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import java.io.ByteArrayInputStream
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
@@ -25,10 +30,32 @@ public class CliAndroidLayoutXmlFileManager(
         private val applicationPackage: String,
         private val variants: List<AndroidVariant>
 ) : AndroidLayoutXmlFileManager(project) {
+    private companion object {
+        val LOG = Logger.getInstance(CliAndroidLayoutXmlFileManager::class.java)
+    }
 
-    override val androidModule by lazy { AndroidModule(applicationPackage, variants) }
+    override val androidModule = AndroidModule(applicationPackage, variants)
 
-    val saxParser: SAXParser = initSAX()
+    private val saxParser: SAXParser = initSAX()
+
+    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
+        val resources = arrayListOf<AndroidResource>()
+
+        val handler = AndroidXmlHandler { id, tag ->
+            resources += parseAndroidResource(id, tag, null)
+        }
+
+        for (file in files) {
+            try {
+                val inputStream = ByteArrayInputStream(file.virtualFile.contentsToByteArray())
+                saxParser.parse(inputStream, handler)
+            } catch (e: Throwable) {
+                LOG.error(e)
+            }
+        }
+
+        return resources
+    }
 
     protected fun initSAX(): SAXParser {
         val saxFactory = SAXParserFactory.newInstance()

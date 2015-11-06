@@ -24,6 +24,9 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtProperty
 import java.util.*
 
@@ -38,9 +41,9 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
     public abstract val androidModule: AndroidModule?
 
-    public open fun propertyToXmlAttributes(property: KtProperty): List<PsiElement> = listOf()
+    public open fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> = listOf()
 
-    public fun getLayoutXmlFiles(): AndroidModuleData {
+    open fun getModuleData(): AndroidModuleData {
         val androidModule = androidModule ?: return AndroidModuleData.EMPTY
         return AndroidModuleData(androidModule, androidModule.variants.map { getVariantData(it) })
     }
@@ -81,6 +84,45 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
         return AndroidVariantData(variant, layoutNameToXmlFiles)
     }
+
+    fun extractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
+        return filterDuplicates(doExtractResources(files, module))
+    }
+
+    protected abstract fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource>
+
+    protected fun parseAndroidResource(id: String, tag: String, sourceElement: PsiElement?): AndroidResource {
+        return when (tag) {
+            "fragment" -> AndroidResource.Fragment(id, sourceElement)
+            "include" -> AndroidResource.Widget(id, AndroidConst.VIEW_FQNAME, sourceElement)
+            else -> AndroidResource.Widget(id, tag, sourceElement)
+        }
+    }
+
+    private fun filterDuplicates(resources: List<AndroidResource>): List<AndroidResource> {
+        val resourceMap = linkedMapOf<String, AndroidResource>()
+        val resourcesToExclude = hashSetOf<String>()
+
+        for (res in resources) {
+            if (resourceMap.contains(res.id)) {
+                val existing = resourceMap[res.id]!!
+
+                if (!res.sameClass(existing)) {
+                    resourcesToExclude.add(res.id)
+                }
+                else if (res is AndroidResource.Widget && existing is AndroidResource.Widget) {
+                    // Widgets with the same id but different types exist.
+                    if (res.xmlType != existing.xmlType && existing.xmlType != AndroidConst.VIEW_FQNAME) {
+                        resourceMap.put(res.id, AndroidResource.Widget(res.id, AndroidConst.VIEW_FQNAME, res.sourceElement))
+                    }
+                }
+            }
+            else resourceMap.put(res.id, res)
+        }
+        resourcesToExclude.forEach { resourceMap.remove(it) }
+        return resourceMap.values.toList()
+    }
+
 
     companion object {
         public fun getInstance(module: Module): AndroidLayoutXmlFileManager? {
