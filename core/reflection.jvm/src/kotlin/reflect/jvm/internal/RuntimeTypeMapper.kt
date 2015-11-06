@@ -209,7 +209,7 @@ internal object RuntimeTypeMapper {
         val parameters = function.valueParameters
 
         when (function.name.asString()) {
-            "equals" -> if (parameters.size() == 1 && KotlinBuiltIns.isNullableAny(parameters.single().type)) {
+            "equals" -> if (parameters.size == 1 && KotlinBuiltIns.isNullableAny(parameters.single().type)) {
                 return JvmFunctionSignature.BuiltInFunction.Predefined("equals(Ljava/lang/Object;)Z",
                                                                        Any::class.java.getDeclaredMethod("equals", Any::class.java))
             }
@@ -240,7 +240,7 @@ internal object RuntimeTypeMapper {
         }
 
         val classId = klass.classId
-        if (!classId.isLocal()) {
+        if (!classId.isLocal) {
             JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(classId.asSingleFqName())?.let { return it.classId }
         }
 
@@ -248,5 +248,5 @@ internal object RuntimeTypeMapper {
     }
 
     private val Class<*>.primitiveType: PrimitiveType?
-        get() = if (isPrimitive()) JvmPrimitiveType.get(getSimpleName()).getPrimitiveType() else null
+        get() = if (isPrimitive) JvmPrimitiveType.get(simpleName).primitiveType else null
 }

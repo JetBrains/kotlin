@@ -99,7 +99,7 @@ internal open class KFunctionImpl protected constructor(
     }
 
     override fun getArity(): Int {
-        return descriptor.valueParameters.size() +
+        return descriptor.valueParameters.size +
                (if (descriptor.dispatchReceiverParameter != null) 1 else 0) +
                (if (descriptor.extensionReceiverParameter != null) 1 else 0)
     }

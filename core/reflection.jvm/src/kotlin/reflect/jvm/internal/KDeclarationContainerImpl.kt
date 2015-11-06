@@ -56,9 +56,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     fun getMembers(scope: MemberScope, declaredOnly: Boolean, nonExtensions: Boolean, extensions: Boolean): Sequence<KCallable<*>> {
         val visitor = object : DeclarationDescriptorVisitorEmptyBodies<KCallable<*>?, Unit>() {
             private fun skipCallable(descriptor: CallableMemberDescriptor): Boolean {
-                if (declaredOnly && !descriptor.getKind().isReal()) return true
+                if (declaredOnly && !descriptor.kind.isReal) return true
 
-                val isExtension = descriptor.getExtensionReceiverParameter() != null
+                val isExtension = descriptor.extensionReceiverParameter != null
                 if (isExtension && !extensions) return true
                 if (!isExtension && !nonExtensions) return true
 
@@ -80,7 +80,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
         return scope.getContributedDescriptors().asSequence()
                 .filter { descriptor ->
-                    descriptor !is MemberDescriptor || descriptor.getVisibility() != Visibilities.INVISIBLE_FAKE
+                    descriptor !is MemberDescriptor || descriptor.visibility != Visibilities.INVISIBLE_FAKE
                 }
                 .map { descriptor ->
                     descriptor.accept(visitor, Unit)
@@ -115,11 +115,11 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                     RuntimeTypeMapper.mapPropertySignature(descriptor).asString() == signature
                 }
 
-        if (properties.size() != 1) {
+        if (properties.size != 1) {
             val debugText = "'$name' (JVM signature: $signature)"
             throw KotlinReflectionInternalError(
                     if (properties.isEmpty()) "Property $debugText not resolved in $this"
-                    else "${properties.size()} properties $debugText resolved in $this: $properties"
+                    else "${properties.size} properties $debugText resolved in $this: $properties"
             )
         }
 
@@ -132,11 +132,11 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                     RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
                 }
 
-        if (functions.size() != 1) {
+        if (functions.size != 1) {
             val debugText = "'$name' (JVM signature: $signature)"
             throw KotlinReflectionInternalError(
                     if (functions.isEmpty()) "Function $debugText not resolved in $this"
-                    else "${functions.size()} functions $debugText resolved in $this: $functions"
+                    else "${functions.size} functions $debugText resolved in $this: $functions"
             )
         }
 
@@ -197,7 +197,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String) {
         val valueParameters = loadParameterTypes(desc)
         result.addAll(valueParameters)
-        repeat((valueParameters.size() + Integer.SIZE - 1) / Integer.SIZE) {
+        repeat((valueParameters.size + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
         }
     }
@@ -251,7 +251,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     ): Field? {
         val owner = implClassForCallable(nameResolver, proto) ?:
                 if (proto.hasExtension(JvmProtoBuf.propertySignature) &&
-                        proto.getExtension(JvmProtoBuf.propertySignature).let { it.hasField() && it.field.getIsStaticInOuter() }) {
+                        proto.getExtension(JvmProtoBuf.propertySignature).let { it.hasField() && it.field.isStaticInOuter }) {
                     jClass.enclosingClass ?: throw KotlinReflectionInternalError("Inconsistent metadata for field $name in $jClass")
                 } else jClass
 

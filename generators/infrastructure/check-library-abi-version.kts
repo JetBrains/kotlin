@@ -67,7 +67,7 @@ fun loadVersion(library: File): IntArray {
 }
 
 fun main(args: Array<String>) {
-    if (args.size() != 2) {
+    if (args.size != 2) {
         error("Usage: kotlinc -script check-library-abi-version.kts <jar-1> <jar-2>")
     }
     

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -45,7 +46,7 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
 
     @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
-            scope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION) as Collection<PropertyDescriptor>
+            scope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
             scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
@@ -57,8 +58,8 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
             jClass.hashCode()
 
     override fun toString(): String {
-        val name = jClass.getName()
-        return "package " + if (jClass.isAnnotationPresent(javaClass<KotlinPackage>())) {
+        val name = jClass.name
+        return "package " + if (jClass.isAnnotationPresent(KotlinPackage::class.java)) {
             if (name == "_DefaultPackage") "<default>" else name.substringBeforeLast(".")
         }
         else name

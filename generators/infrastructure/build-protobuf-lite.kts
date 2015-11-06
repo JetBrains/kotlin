@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     val INCLUDE_END = ".java</include>"
     val POM_PATH = "META-INF/maven/com.google.protobuf/protobuf-java/pom.xml"
 
-    if (args.size() != 2) {
+    if (args.size != 2) {
         error("Usage: kotlinc -script build-protobuf-lite.kts <path-to-protobuf-jar> <output-path>")
     }
 

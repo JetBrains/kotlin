@@ -27,11 +27,11 @@ import kotlin.reflect.KotlinReflectionInternalError
 internal class KFunctionFromReferenceImpl(
         val reference: FunctionReference
 ): KFunctionImpl(
-        reference.getOwner() as? KDeclarationContainerImpl ?: EmptyContainerForLocal,
+        reference.owner as? KDeclarationContainerImpl ?: EmptyContainerForLocal,
         reference.name,
-        reference.getSignature()
+        reference.signature
 ) {
-    override fun getArity() = reference.getArity()
+    override fun getArity() = reference.arity
 
     override val name = reference.name
 

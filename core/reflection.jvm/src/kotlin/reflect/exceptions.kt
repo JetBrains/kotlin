@@ -24,7 +24,7 @@ package kotlin.reflect
  *
  * @see [kotlin.reflect.jvm.isAccessible]
  */
-public class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause.getMessage()) {
+public class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause.message) {
     init {
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         (this as java.lang.Throwable).initCause(cause)

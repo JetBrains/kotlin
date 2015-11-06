@@ -42,7 +42,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         val classId = classId
 
         val descriptor =
-                if (classId.isLocal()) moduleData.localClassResolver.resolveLocalClass(classId)
+                if (classId.isLocal) moduleData.localClassResolver.resolveLocalClass(classId)
                 else moduleData.module.findClassAcrossModuleDependencies(classId)
 
         descriptor ?: throw KotlinReflectionInternalError("Class not resolved: $jClass")
@@ -67,8 +67,8 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
             val descriptor = descriptor
-            if (descriptor.getKind() == ClassKind.CLASS || descriptor.getKind() == ClassKind.ENUM_CLASS) {
-                return descriptor.getConstructors()
+            if (descriptor.kind == ClassKind.CLASS || descriptor.kind == ClassKind.ENUM_CLASS) {
+                return descriptor.constructors
             }
             return emptyList()
         }
@@ -76,39 +76,39 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
     @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
             (memberScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION) +
-             staticScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION)) as Collection<PropertyDescriptor>
+             staticScope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION))
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
             memberScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION) +
             staticScope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override val simpleName: String? get() {
-        if (jClass.isAnonymousClass()) return null
+        if (jClass.isAnonymousClass) return null
 
         val classId = classId
         return when {
-            classId.isLocal() -> calculateLocalClassName(jClass)
-            else -> classId.getShortClassName().asString()
+            classId.isLocal -> calculateLocalClassName(jClass)
+            else -> classId.shortClassName.asString()
         }
     }
 
     private fun calculateLocalClassName(jClass: Class<*>): String {
-        val name = jClass.getSimpleName()
-        jClass.getEnclosingMethod()?.let { method ->
-            return name.substringAfter(method.getName() + "$")
+        val name = jClass.simpleName
+        jClass.enclosingMethod?.let { method ->
+            return name.substringAfter(method.name + "$")
         }
-        jClass.getEnclosingConstructor()?.let { constructor ->
-            return name.substringAfter(constructor.getName() + "$")
+        jClass.enclosingConstructor?.let { constructor ->
+            return name.substringAfter(constructor.name + "$")
         }
         return name.substringAfter('$')
     }
 
     override val qualifiedName: String? get() {
-        if (jClass.isAnonymousClass()) return null
+        if (jClass.isAnonymousClass) return null
 
         val classId = classId
         return when {
-            classId.isLocal() -> null
+            classId.isLocal -> null
             else -> classId.asSingleFqName().asString()
         }
     }
@@ -165,9 +165,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
     override fun toString(): String {
         return "class " + classId.let { classId ->
-            val packageFqName = classId.getPackageFqName()
-            val packagePrefix = if (packageFqName.isRoot()) "" else packageFqName.asString() + "."
-            val classSuffix = classId.getRelativeClassName().asString().replace('.', '$')
+            val packageFqName = classId.packageFqName
+            val packagePrefix = if (packageFqName.isRoot) "" else packageFqName.asString() + "."
+            val classSuffix = classId.relativeClassName.asString().replace('.', '$')
             packagePrefix + classSuffix
         }
     }
