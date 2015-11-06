@@ -214,22 +214,28 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
-        val marker = ChangesProcessor(context, chunk, allCompiledFiles, caches)
-        marker.processChanges(changesInfo)
+        processChanges(context, chunk, allCompiledFiles, caches, changesInfo)
         return ADDITIONAL_PASS_REQUIRED
     }
 
-    class ChangesProcessor(
-            val context: CompileContext,
-            val chunk: ModuleChunk,
-            val allCompiledFiles: MutableSet<File>,
-            val caches: List<IncrementalCacheImpl>
+    fun processChanges(
+            context: CompileContext,
+            chunk: ModuleChunk,
+            allCompiledFiles: MutableSet<File>,
+            caches: List<IncrementalCacheImpl>,
+            changesInfo: ChangesInfo
     ) {
-        fun processChanges(changesInfo: ChangesInfo) {
-            changesInfo.doProcessChanges()
+        fun recompileInlined() {
+            for (cache in caches) {
+                val filesToReinline = cache.getFilesToReinline()
+
+                filesToReinline.forEach {
+                    FSOperations.markDirty(context, CompilationRound.NEXT, it)
+                }
+            }
         }
 
-        private fun ChangesInfo.doProcessChanges() {
+        fun ChangesInfo.doProcessChanges() {
             fun isKotlin(file: File) = KotlinSourceFileCollector.isKotlinSourceFile(file)
             fun isNotCompiled(file: File) = file !in allCompiledFiles
 
@@ -253,15 +259,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             }
         }
 
-        private fun recompileInlined() {
-            for (cache in caches) {
-                val filesToReinline = cache.getFilesToReinline()
-
-                filesToReinline.forEach {
-                    FSOperations.markDirty(context, CompilationRound.NEXT, it)
-                }
-            }
-        }
+        changesInfo.doProcessChanges()
     }
 
     private fun doCompileModuleChunk(
