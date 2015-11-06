@@ -61,6 +61,30 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("defaultParameterAdded")
+        public void testDefaultParameterAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterAdded/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultParameterAddedForTopLevelFun")
+        public void testDefaultParameterAddedForTopLevelFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterAddedForTopLevelFun/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultParameterRemoved")
+        public void testDefaultParameterRemoved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterRemoved/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultParameterRemovedForTopLevelFun")
+        public void testDefaultParameterRemovedForTopLevelFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/defaultParameterRemovedForTopLevelFun/");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineFunctionInlined")
         public void testInlineFunctionInlined() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/inlineFunctionInlined/");
