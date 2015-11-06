@@ -78,7 +78,7 @@ class StaticMembersCompletion(
         for (container in containers) {
             val memberScope = if (container.kind == ClassKind.OBJECT) container.unsubstitutedMemberScope else container.staticScope
             val members = memberScope.getDescriptorsFiltered(DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions, prefixMatcher.asNameFilter())
-            members.filterTo(result) { it is CallableDescriptor && it !in alreadyAdded } //TODO: substitution
+            members.filterTo(result) { it is CallableDescriptor && it !in alreadyAdded }
         }
         return result
     }
@@ -96,14 +96,14 @@ class StaticMembersCompletion(
             !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) && objectDeclaration.isTopLevelOrCompanion()
         }
         indicesHelper.processObjectMembers(descriptorKindFilter, nameFilter, filter) {
-            if (it !in alreadyAdded) { //TODO: substitution
+            if (it !in alreadyAdded) {
                 processor(it)
             }
         }
 
         if (isJvmModule) {
             indicesHelper.processJavaStaticMembers(descriptorKindFilter, nameFilter){
-                if (it !in alreadyAdded) { //TODO: substitution
+                if (it !in alreadyAdded) {
                     processor(it)
                 }
             }
