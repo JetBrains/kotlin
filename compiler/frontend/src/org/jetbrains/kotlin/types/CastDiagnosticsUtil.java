@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.types;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import kotlin.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -29,10 +32,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CastDiagnosticsUtil {
 
@@ -166,20 +166,21 @@ public class CastDiagnosticsUtil {
         // in this case it will be Collection<T>
         KotlinType supertypeWithVariables = TypeCheckingProcedure.findCorrespondingSupertype(subtypeWithVariables, supertype);
 
-        final List<TypeParameterDescriptor> variables = subtypeWithVariables.getConstructor().getParameters();
+        List<TypeParameterDescriptor> variables = subtypeWithVariables.getConstructor().getParameters();
+        Set<TypeConstructor> variableConstructors = CollectionsKt.toSet(
+                CollectionsKt.map(variables, new Function1<TypeParameterDescriptor, TypeConstructor>() {
+                    @Override
+                    public TypeConstructor invoke(TypeParameterDescriptor descriptor) {
+                        return descriptor.getTypeConstructor();
+                    }
+                }));
 
         Map<TypeConstructor, TypeProjection> substitution;
         if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
             TypeUnifier.UnificationResult solution = TypeUnifier.unify(
                     new TypeProjectionImpl(supertype), new TypeProjectionImpl(supertypeWithVariables),
-                    new Predicate<TypeConstructor>() {
-                        @Override
-                        public boolean apply(TypeConstructor typeConstructor) {
-                            ClassifierDescriptor descriptor = typeConstructor.getDeclarationDescriptor();
-                            return descriptor instanceof TypeParameterDescriptor && variables.contains(descriptor);
-                        }
-                    });
+                    Predicates.in(variableConstructors));
             substitution = Maps.newHashMap(solution.getSubstitution());
         }
         else {
