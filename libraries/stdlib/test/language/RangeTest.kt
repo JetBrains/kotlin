@@ -22,6 +22,9 @@ public class RangeTest {
         
         assertFalse(range.isEmpty())
 
+        assertTrue(9 in (range as ClosedRange<Int>))
+        assertFalse((range as ClosedRange<Int>).isEmpty())
+
         assertTrue(1.toShort() in range)
         assertTrue(1.toByte() in range)
         assertTrue(1.toLong() in range)
@@ -122,6 +125,9 @@ public class RangeTest {
         
         assertFalse(range.isEmpty())
 
+        assertTrue(9 in (range as ClosedRange<Long>))
+        assertFalse((range as ClosedRange<Long>).isEmpty())
+
         assertTrue(1.toByte() in range)
         assertTrue(1.toShort() in range)
         assertTrue(1.toInt() in range)
@@ -154,6 +160,9 @@ public class RangeTest {
         assertFalse('\u1000' in range)
         
         assertFalse(range.isEmpty())
+
+        assertTrue('v' in (range as ClosedRange<Char>))
+        assertFalse((range as ClosedRange<Char>).isEmpty())
 
         val openRange = 'A' until 'Z'
         assertTrue('Y' in openRange)
@@ -239,6 +248,7 @@ public class RangeTest {
         assertTrue(IntRange.EMPTY == IntRange.EMPTY)
         assertEquals(IntRange.EMPTY, IntRange.EMPTY)
         assertEquals(0L..42L, 0L..42L)
+        assertEquals(0L..4200000042000000L, 0L..4200000042000000L)
         assertEquals(3 downTo 0, 3 downTo 0)
 
         assertEquals(2..1, 1..0)

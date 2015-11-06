@@ -24,6 +24,10 @@ public final class RangeTest extends SingleFileTranslationTest {
         super("range/");
     }
 
+    public void testCreatingProgressions() throws Exception {
+        fooBoxTest();
+    }
+
     public void testExplicitRange() throws Exception {
         fooBoxTest();
     }

@@ -790,53 +790,128 @@
         var classObject = this.constructor;
         if (this instanceof classObject && other instanceof classObject) {
             return this.isEmpty() && other.isEmpty() ||
-                (this.start === other.start && this.end === other.end && this.increment === other.increment);
+                (this.first === other.first && this.last === other.last && this.increment === other.increment);
         }
         return false;
     }
 
-    Kotlin.NumberRange = Kotlin.createClassNow(null,
-        function (start, end) {
+    function isSameLongRanges(other) {
+        var classObject = this.constructor;
+        if (this instanceof classObject && other instanceof classObject) {
+            return this.isEmpty() && other.isEmpty() ||
+                   (this.first.equals_za3rmp$(other.first) && this.last.equals_za3rmp$(other.last) && this.increment.equals_za3rmp$(other.increment));
+        }
+        return false;
+    }
+
+    // reference implementation in core/builtins/src/kotlin/internal/progressionUtil.kt
+    function getProgressionFinalElement(start, end, increment) {
+        function mod(a, b) {
+            var mod = a % b;
+            return mod >= 0 ? mod : mod + b;
+        }
+        function differenceModulo(a, b, c) {
+            return mod(mod(a, c) - mod(b, c), c);
+        }
+
+        if (increment > 0) {
+            return end - differenceModulo(end, start, increment);
+        }
+        else if (increment < 0) {
+            return end + differenceModulo(start, end, -increment);
+        }
+        else {
+            throw new Kotlin.IllegalArgumentException('Increment is zero.');
+        }
+    }
+
+    // reference implementation in core/builtins/src/kotlin/internal/progressionUtil.kt
+    function getProgressionFinalElementLong(start, end, increment) {
+        function mod(a, b) {
+            var mod = a.modulo(b);
+            return !mod.isNegative() ? mod : mod.add(b);
+        }
+        function differenceModulo(a, b, c) {
+            return mod(mod(a, c).subtract(mod(b, c)), c);
+        }
+
+        var diff;
+        if (increment.compareTo_za3rmp$(Kotlin.Long.ZERO) > 0) {
+            diff = differenceModulo(end, start, increment);
+            return diff.isZero() ? end : end.subtract(diff);
+        }
+        else if (increment.compareTo_za3rmp$(Kotlin.Long.ZERO) < 0) {
+            diff = differenceModulo(start, end, increment.unaryMinus());
+            return diff.isZero() ? end : end.add(diff);
+        }
+        else {
+            throw new Kotlin.IllegalArgumentException('Increment is zero.');
+        }
+    }
+
+    lazyInitClasses.NumberProgression = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['builtins'].kotlin.Iterable];
+        },
+        function (start, end, increment) {
             this.start = start;
-            this.end = end;
-            this.increment = 1;
+            this.endInclusive = end;
+            this.first = start;
+            this.last = getProgressionFinalElement(start, end, increment);
+            this.increment = increment;
+            if (this.increment === 0)
+                throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
         }, {
-            contains: function (number) {
-                return this.start <= number && number <= this.end;
-            },
+            end: { get: function () {
+                return this.endInclusive;
+            }},
             iterator: function () {
-                return new Kotlin.RangeIterator(this.start, this.end, this.increment);
+                return new Kotlin.RangeIterator(this.first, this.last, this.increment);
             },
             isEmpty: function () {
-                return this.start > this.end;
+                return this.increment > 0 ? this.first > this.last : this.first < this.last;
             },
-            hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * this.start|0 + this.end|0);
+            hashCode: function () {
+                return this.isEmpty() ? -1 : 31 * (31 * this.first + this.last) + this.increment;
             },
-            equals_za3rmp$: isSameNotNullRanges
+            equals_za3rmp$: isSameNotNullRanges,
+            toString: function () {
+                return this.increment > 0 ? this.first.toString() + '..' + this.last + ' step ' + this.increment : this.first.toString() + ' downTo ' + this.last + ' step ' + -this.increment;
+            }
+        });
+
+    lazyInitClasses.NumberRange = Kotlin.createClass(
+        function() {
+            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.NumberProgression]
+        },
+        function $fun(start, endInclusive) {
+            $fun.baseInitializer.call(this, start, endInclusive, 1);
+            this.start = start;
+            this.endInclusive = endInclusive;
+        }, {
+            end: { get: function () {
+                return this.endInclusive;
+            }},
+            contains_htax2k$: function (item) {
+                return this.start <= item && item <= this.endInclusive;
+            },
+            isEmpty: function () {
+                return this.start > this.endInclusive;
+            },
+            hashCode: function () {
+                return this.isEmpty() ? -1 : 31 * this.start + this.endInclusive;
+            },
+            equals_za3rmp$: isSameNotNullRanges,
+            toString: function () {
+                return this.start.toString() + '..' + this.endInclusive;
+            }
         }, {
             object_initializer$: function () {
                 return { EMPTY : new this(1, 0) };
             }
     });
 
-    Kotlin.NumberProgression = Kotlin.createClassNow(null,
-        function (start, end, increment) {
-            this.start = start;
-            this.end = end;
-            this.increment = increment;
-        }, {
-        iterator: function () {
-            return new Kotlin.RangeIterator(this.start, this.end, this.increment);
-        },
-        isEmpty: function() {
-            return this.increment > 0 ? this.start > this.end : this.start < this.end;
-        },
-        hashCode: function() {
-            return this.isEmpty() ? -1 : (31 * (31 * this.start|0 + this.end|0) + this.increment|0);
-        },
-        equals_za3rmp$: isSameNotNullRanges
-    });
+
 
     lazyInitClasses.LongRangeIterator = Kotlin.createClass(
         function () {
@@ -861,48 +936,69 @@
              }
          });
 
-    Kotlin.LongRange = Kotlin.createClassNow(null,
-       function (start, end) {
-           this.start = start;
-           this.end = end;
-           this.increment = Kotlin.Long.ONE;
-       }, {
-           contains: function (number) {
-               return this.start.compare(number) <= 0 && number.compare(this.end) <= 0;
-           },
-           iterator: function () {
-               return new Kotlin.LongRangeIterator(this.start, this.end, this.increment);
-           },
-           isEmpty: function () {
-               return this.start.compare(this.end) > 0;
-           },
-            hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * this.start.toInt() + this.end.toInt());
+    lazyInitClasses.LongProgression = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['builtins'].kotlin.Iterable];
+        },
+        function (start, end, increment) {
+            this.start = start;
+            this.endInclusive = end;
+            this.first = start;
+            this.last = getProgressionFinalElementLong(start, end, increment);
+            this.increment = increment;
+            if (this.increment.isZero())
+                throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
+        }, {
+            end: { get: function () {
+                return this.endInclusive;
+            }},
+            iterator: function () {
+                return new Kotlin.LongRangeIterator(this.first, this.last, this.increment);
             },
-            equals_za3rmp$: isSameNotNullRanges
+            isEmpty: function() {
+                return this.increment.isNegative() ? this.first.compare(this.last) < 0 : this.first.compare(this.last) > 0;
+            },
+            hashCode: function() {
+                return this.isEmpty() ? -1 : (31 * (31 * this.first.toInt() + this.last.toInt()) + this.increment.toInt());
+            },
+            equals_za3rmp$: isSameLongRanges,
+            toString: function () {
+                return !this.increment.isNegative() ? this.first.toString() + '..' + this.last + ' step ' + this.increment : this.first.toString() + ' downTo ' + this.last + ' step ' + this.increment.unaryMinus();
+            }
+        });
+
+    lazyInitClasses.LongRange = Kotlin.createClass(
+        function () {
+            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.LongProgression];
+        },
+        function $fun(start, endInclusive) {
+            $fun.baseInitializer.call(this, start, endInclusive, Kotlin.Long.ONE);
+            this.start = start;
+            this.endInclusive = endInclusive;
+        }, {
+            end: { get: function () {
+                return this.endInclusive;
+            }},
+            contains_htax2k$: function (item) {
+                return this.start.compareTo_za3rmp$(item) <= 0 && item.compareTo_za3rmp$(this.endInclusive) <= 0;
+            },
+            isEmpty: function () {
+                return this.start.compare(this.endInclusive) > 0;
+            },
+            hashCode: function() {
+                return this.isEmpty() ? -1 : (31 * this.start.toInt() + this.endInclusive.toInt());
+            },
+            equals_za3rmp$: isSameLongRanges,
+            toString: function () {
+                return this.start.toString() + '..' + this.endInclusive;
+            }
        }, {
            object_initializer$: function () {
                return { EMPTY : new this(Kotlin.Long.ONE, Kotlin.Long.ZERO) };
            }
    });
 
-    Kotlin.LongProgression = Kotlin.createClassNow(null,
-         function (start, end, increment) {
-             this.start = start;
-             this.end = end;
-             this.increment = increment;
-         }, {
-             iterator: function () {
-                 return new Kotlin.LongRangeIterator(this.start, this.end, this.increment);
-             },
-             isEmpty: function() {
-                 return this.increment.isNegative() ? this.start.compare(this.end) < 0 : this.start.compare(this.end) > 0;
-             },
-            hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * (31 * this.start.toInt() + this.end.toInt()) + this.increment.toInt());
-            },
-            equals_za3rmp$: isSameNotNullRanges
-        });
+
 
     lazyInitClasses.CharRangeIterator = Kotlin.createClass(
         function () {
@@ -918,52 +1014,71 @@
             }
     });
 
-    Kotlin.CharRange = Kotlin.createClassNow(null,
-        function (start, end) {
+    lazyInitClasses.CharProgression = Kotlin.createClassNow(
+        function () {
+            return [Kotlin.modules['builtins'].kotlin.Iterable];
+        },
+        function (start, end, increment) {
             this.start = start;
+            this.endInclusive = end;
+            this.first = start;
             this.startCode = start.charCodeAt(0);
-            this.end = end;
-            this.endCode = end.charCodeAt(0);
-            this.increment = 1;
+            this.endCode = getProgressionFinalElement(this.startCode, end.charCodeAt(0), increment);
+            this.last = String.fromCharCode(this.endCode);
+            this.increment = increment;
+            if (this.increment === 0)
+                throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
         }, {
-            contains: function (char) {
-                return this.start <= char && char <= this.end;
-            },
+            end: { get: function () {
+                return this.endInclusive;
+            }},
             iterator: function () {
                 return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.increment);
             },
+            isEmpty: function() {
+                return this.increment > 0 ? this.startCode > this.endCode : this.startCode < this.endCode;
+            },
+            hashCode: function() {
+                return this.isEmpty() ? -1 : (31 * (31 * this.startCode|0 + this.endCode|0) + this.increment|0);
+            },
+            equals_za3rmp$: isSameNotNullRanges,
+            toString: function () {
+                return this.increment > 0 ? this.first.toString() + '..' + this.last + ' step ' + this.increment : this.first.toString() + ' downTo ' + this.last + ' step ' + -this.increment;
+            }
+    });
+
+
+    lazyInitClasses.CharRange = Kotlin.createClass(
+        function() {
+            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.CharProgression]
+        },
+        function $fun(start, endInclusive) {
+            $fun.baseInitializer.call(this, start, endInclusive, 1);
+            this.start = start;
+            this.endInclusive = endInclusive;
+        }, {
+            end: { get: function () {
+                return this.endInclusive;
+            }},
+            contains_htax2k$: function (item) {
+                return this.start <= item && item <= this.endInclusive;
+            },
             isEmpty: function () {
-                return this.start > this.end;
+                return this.start > this.endInclusive;
             },
             hashCode: function() {
                 return this.isEmpty() ? -1 : (31 * this.startCode|0 + this.endCode|0);
             },
-            equals_za3rmp$: isSameNotNullRanges
+            equals_za3rmp$: isSameNotNullRanges,
+            toString: function () {
+                return this.start.toString() + '..' + this.endInclusive;
+            }
         }, {
             object_initializer$: function () {
                 return { EMPTY : new this(Kotlin.toChar(1), Kotlin.toChar(0)) };
             }
     });
 
-    Kotlin.CharProgression = Kotlin.createClassNow(null,
-        function (start, end, increment) {
-            this.start = start;
-            this.startCode = start.charCodeAt(0);
-            this.end = end;
-            this.endCode = end.charCodeAt(0);
-            this.increment = increment;
-        }, {
-        iterator: function () {
-            return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.increment);
-        },
-        isEmpty: function() {
-            return this.increment > 0 ? this.start > this.end : this.start < this.end;
-        },
-        hashCode: function() {
-            return this.isEmpty() ? -1 : (31 * (31 * this.startCode|0 + this.endCode|0) + this.increment|0);
-        },
-        equals_za3rmp$: isSameNotNullRanges
-    });
 
     /**
      * @interface
