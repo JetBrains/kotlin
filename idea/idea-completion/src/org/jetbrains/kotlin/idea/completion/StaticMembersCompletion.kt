@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -94,9 +97,23 @@ class StaticMembersCompletion(
             indicesHelper.getJavaStaticMembers(descriptorKindFilter, nameFilter).filterTo(result) { it !in alreadyAdded }  //TODO: substitution
         }
 
-        indicesHelper.getObjectMembers(descriptorKindFilter, nameFilter).filterTo(result) { it !in alreadyAdded }  //TODO: substitution
+        indicesHelper.getObjectMembers(descriptorKindFilter, nameFilter) filter@ { declaration, objectDeclaration ->
+            !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) && objectDeclaration.isTopLevelOrCompanion()
+        }.filterTo(result) {
+            it !in alreadyAdded //TODO: substitution
+        }
 
         return result
+    }
+
+    private fun KtObjectDeclaration.isTopLevelOrCompanion(): Boolean {
+        if (isCompanion()) {
+            val owner = parent.parent as? KtClass ?: return false
+            return owner.isTopLevel()
+        }
+        else {
+            return isTopLevel()
+        }
     }
 
     fun completeFromImports(file: KtFile, collector: LookupElementsCollector) {

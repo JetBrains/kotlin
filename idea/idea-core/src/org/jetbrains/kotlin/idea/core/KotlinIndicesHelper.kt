@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
@@ -196,7 +197,11 @@ public class KotlinIndicesHelper(
                 .filter(descriptorFilter)
     }
 
-    public fun getObjectMembers(descriptorKindFilter: DescriptorKindFilter, nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
+    public fun getObjectMembers(
+            descriptorKindFilter: DescriptorKindFilter,
+            nameFilter: (String) -> Boolean,
+            filter: (KtCallableDeclaration, KtObjectDeclaration) -> Boolean
+    ): Collection<CallableDescriptor> {
         val result = LinkedHashSet<CallableDescriptor>()
 
         fun addFromIndex(index: StringStubIndexExtension<out KtCallableDeclaration>) {
@@ -205,8 +210,10 @@ public class KotlinIndicesHelper(
                 if (!nameFilter(name)) continue
 
                 for (declaration in index.get(name, project, scope)) {
-                    if (declaration.parent.parent !is KtObjectDeclaration) continue
+                    val objectDeclaration = declaration.parent.parent as? KtObjectDeclaration ?: continue
+                    if (objectDeclaration.isObjectLiteral()) continue
                     if (!visibilityFilterMayIncludeAccessible && declaration.hasModifier(KtTokens.PRIVATE_KEYWORD)) continue
+                    if (!filter(declaration, objectDeclaration)) continue
                     declaration.resolveToDescriptorsWithHack().filterTo(result) { descriptorKindFilter.accepts(it) && descriptorFilter(it) }
                 }
             }
@@ -235,6 +242,7 @@ public class KotlinIndicesHelper(
             for (method in shortNamesCache.getMethodsByName(name, scope)) {
                 if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (!visibilityFilterMayIncludeAccessible && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
+                if (method.containingClass?.parent !is PsiFile) continue // only top-level classes
                 val descriptor = method.getJavaMethodDescriptor(resolutionFacade) ?: continue
                 val container = descriptor.containingDeclaration as? ClassDescriptor ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
