@@ -21,7 +21,6 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 
 internal abstract class BasicMap<K : Comparable<K>, V>(
@@ -42,8 +41,6 @@ internal abstract class BasicMap<K : Comparable<K>, V>(
     fun close() {
         storage.close()
     }
-
-    public fun copyAsMap(): Map<K, V> = storage.keys.keysToMap { storage[it]!! }
 
     @TestOnly
     fun dump(): String {

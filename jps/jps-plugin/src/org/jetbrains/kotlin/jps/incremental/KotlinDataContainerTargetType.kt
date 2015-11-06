@@ -24,20 +24,21 @@ import org.jetbrains.jps.indices.ModuleExcludeIndex
 import org.jetbrains.jps.model.JpsModel
 import java.io.File
 
-private val KOTLIN_LOOKUP_TRACKER = "kotlin-lookup-tracker"
+private val KOTLIN_DATA_CONTAINER = "kotlin-data-container"
 
-object LOOKUP_TRACKER_TARGET_TYPE : BuildTargetType<LOOKUP_TRACKER_TARGET>(KOTLIN_LOOKUP_TRACKER) {
-    override fun computeAllTargets(model: JpsModel): List<LOOKUP_TRACKER_TARGET> = listOf(LOOKUP_TRACKER_TARGET)
+object KotlinDataContainerTargetType : BuildTargetType<KotlinDataContainerTarget>(KOTLIN_DATA_CONTAINER) {
+    override fun computeAllTargets(model: JpsModel): List<KotlinDataContainerTarget> = listOf(KotlinDataContainerTarget)
 
-    override fun createLoader(model: JpsModel): BuildTargetLoader<LOOKUP_TRACKER_TARGET> =
-            object : BuildTargetLoader<LOOKUP_TRACKER_TARGET>() {
-                override fun createTarget(targetId: String): LOOKUP_TRACKER_TARGET? = LOOKUP_TRACKER_TARGET
+    override fun createLoader(model: JpsModel): BuildTargetLoader<KotlinDataContainerTarget> =
+            object : BuildTargetLoader<KotlinDataContainerTarget>() {
+                override fun createTarget(targetId: String): KotlinDataContainerTarget? = KotlinDataContainerTarget
             }
 }
 
-object LOOKUP_TRACKER_TARGET : BuildTarget<BuildRootDescriptor>(LOOKUP_TRACKER_TARGET_TYPE) {
-    override fun getId(): String? = KOTLIN_LOOKUP_TRACKER
-    override fun getPresentableName(): String = KOTLIN_LOOKUP_TRACKER
+// Fake target to store data per project for incremental compilation
+object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataContainerTargetType) {
+    override fun getId(): String? = KOTLIN_DATA_CONTAINER
+    override fun getPresentableName(): String = KOTLIN_DATA_CONTAINER
 
     override fun computeRootDescriptors(
             model: JpsModel?,
@@ -49,7 +50,7 @@ object LOOKUP_TRACKER_TARGET : BuildTarget<BuildRootDescriptor>(LOOKUP_TRACKER_T
     override fun getOutputRoots(context: CompileContext): Collection<File> {
         val dataManager = context.projectDescriptor.dataManager
         val storageRoot = dataManager.dataPaths.dataStorageRoot
-        return listOf(File(storageRoot, KOTLIN_LOOKUP_TRACKER))
+        return listOf(File(storageRoot, KOTLIN_DATA_CONTAINER))
     }
 
     override fun findRootDescriptor(rootId: String?, rootIndex: BuildRootIndex?): BuildRootDescriptor? = null
