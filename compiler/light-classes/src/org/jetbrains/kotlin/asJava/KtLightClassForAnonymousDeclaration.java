@@ -47,6 +47,12 @@ class KtLightClassForAnonymousDeclaration extends KtLightClassForExplicitDeclara
         return JavaPsiFacade.getElementFactory(getClassOrObject().getProject()).createReferenceElementByType(getBaseClassType());
     }
 
+    @Nullable
+    @Override
+    public PsiClass getContainingClass() {
+        return getDelegate().getContainingClass();
+    }
+
     @NotNull
     private String getFirstSupertypeFQName() {
         ClassDescriptor descriptor = getDescriptor();

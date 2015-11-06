@@ -137,6 +137,12 @@ public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSou
         doTest(fileName);
     }
 
+    @TestMetadata("NestedNoImport.java")
+    public void testNestedNoImport() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/NestedNoImport.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedObjectInstance.java")
     public void testNestedObjectInstance() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/NestedObjectInstance.java");

@@ -46,4 +46,6 @@ public open class KtLightClassForInterfaceDefaultImpls(
     override fun setName(name: String): PsiElement {
         throw IncorrectOperationException("Impossible to rename DefaultImpls")
     }
+
+    override fun getContainingClass() = KtLightClassForExplicitDeclaration.create(classOrObject)
 }

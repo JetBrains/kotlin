@@ -230,6 +230,13 @@ public open class KtLightClassForExplicitDeclaration(
 
     override fun getContainingClass(): PsiClass? {
         if (classOrObject.parent === classOrObject.containingFile) return null
+
+        val containingClassOrObject = (classOrObject.parent as? KtClassBody)?.parent as? KtClassOrObject
+        if (containingClassOrObject != null) {
+            return create(containingClassOrObject)
+        }
+
+        // TODO: should return null
         return super.getContainingClass()
     }
 
