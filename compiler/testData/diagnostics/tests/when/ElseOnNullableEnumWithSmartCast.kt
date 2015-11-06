@@ -6,6 +6,6 @@ fun foo(e: E, something: Any?): Int {
     return when (e) {
         E.A -> 1
         E.B -> 2
-        something -> 3
+        <!ALWAYS_NULL!>something<!> -> 3
     }
 }

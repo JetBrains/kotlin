@@ -97,12 +97,28 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         super(facade);
     }
 
+    private static boolean isLValue(@NotNull KtSimpleNameExpression expression) {
+        PsiElement parent = PsiTreeUtil.skipParentsOfType(expression, KtParenthesizedExpression.class);
+        if (!(parent instanceof KtBinaryExpression)) return false;
+        KtBinaryExpression binaryExpression = (KtBinaryExpression) parent;
+        if (!KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.getOperationToken())) return false;
+        return PsiTreeUtil.isAncestor(binaryExpression.getLeft(), expression, false);
+    }
+
     @Override
     public KotlinTypeInfo visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
         CallExpressionResolver callExpressionResolver = components.callExpressionResolver;
         KotlinTypeInfo typeInfo = callExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
+        if (typeInfo.getType() != null && !typeInfo.getType().isError() && !isLValue(expression)) {
+            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, typeInfo.getType(), context);
+            Nullability nullability = context.dataFlowInfo.getPredictableNullability(dataFlowValue);
+            if (!nullability.canBeNonNull() && nullability.canBeNull()) {
+                context.trace.report(ALWAYS_NULL.on(expression));
+            }
+        }
+
         return components.dataFlowAnalyzer.checkType(typeInfo, expression, context); // TODO : Extensions to this
     }
 

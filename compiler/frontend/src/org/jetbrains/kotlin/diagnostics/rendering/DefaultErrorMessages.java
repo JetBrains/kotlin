@@ -481,6 +481,7 @@ public class DefaultErrorMessages {
         }, DECLARATION_NAME);
         MAP.put(SMARTCAST_IMPOSSIBLE,
                 "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}", RENDER_TYPE, STRING, STRING);
+        MAP.put(ALWAYS_NULL, "The result of the expression is always null");
 
         MAP.put(MISSING_CONSTRUCTOR_KEYWORD, "Use 'constructor' keyword after modifiers of primary constructor");
 

@@ -50,7 +50,7 @@ object SenselessComparisonChecker {
         val nullability = getNullability(value)
 
         val expressionIsAlways =
-                if (nullability == Nullability.NULL) equality
+                if (nullability == Nullability.NULL) return
                 else if (nullability == Nullability.NOT_NULL) !equality
                 else if (nullability == Nullability.IMPOSSIBLE) false
                 else return

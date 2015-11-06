@@ -9,5 +9,5 @@ fun test() {
 
 fun <T> dynamic(body: dynamic.() -> T): T {
     val topLevel = null
-    return topLevel.body()
+    return <!ALWAYS_NULL!>topLevel<!>.body()
 }

@@ -14367,6 +14367,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("alwaysNull.kt")
+            public void testAlwaysNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/alwaysNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classObjectMember.kt")
             public void testClassObjectMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/classObjectMember.kt");
@@ -14460,6 +14466,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("fieldPlus.kt")
             public void testFieldPlus() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/fieldPlus.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("incDecToNull.kt")
+            public void testIncDecToNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/incDecToNull.kt");
                 doTest(fileName);
             }
 
