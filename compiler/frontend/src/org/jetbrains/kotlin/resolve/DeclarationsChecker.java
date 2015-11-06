@@ -202,15 +202,12 @@ public class DeclarationsChecker {
             @NotNull ClassifierDescriptor classifierDescriptor,
             @NotNull PsiElement sourceElement
     ) {
-        Multimap<TypeConstructor, TypeProjection> multimap =
+        Multimap<TypeParameterDescriptor, TypeProjection> multimap =
                 SubstitutionUtils.buildDeepSubstitutionMultimap(classifierDescriptor.getDefaultType());
-        for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
+        for (Map.Entry<TypeParameterDescriptor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
             Collection<TypeProjection> projections = entry.getValue();
             if (projections.size() > 1) {
-                TypeConstructor typeConstructor = entry.getKey();
-                DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
-                assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
-                TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
+                TypeParameterDescriptor typeParameterDescriptor = entry.getKey();
 
                 // Immediate arguments of supertypes cannot be projected
                 Set<KotlinType> conflictingTypes = Sets.newLinkedHashSet();

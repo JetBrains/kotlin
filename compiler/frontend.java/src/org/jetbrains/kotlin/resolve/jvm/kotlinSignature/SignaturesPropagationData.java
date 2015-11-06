@@ -526,7 +526,7 @@ public class SignaturesPropagationData {
         // #1 of Baz ->  A
         // #0 of Foo ->  A (mapped to itself)
         // #1 of Foo ->  B (mapped to itself)
-        Multimap<TypeConstructor, TypeProjection> substitution = SubstitutionUtils.buildDeepSubstitutionMultimap(
+        Multimap<TypeParameterDescriptor, TypeProjection> substitution = SubstitutionUtils.buildDeepSubstitutionMultimap(
                 TypeUtils.makeUnsubstitutedType(klass, ErrorUtils.createErrorScope("Do not access this scope", true)));
 
         // for each parameter of klass, hold arguments in corresponding supertypes
@@ -547,7 +547,7 @@ public class SignaturesPropagationData {
                 // 4. typeFromSuper = Baz<Boolean, CharSequence>,  parameter = "#1 of Baz",  argument = CharSequence
 
                 // if it is mapped to klass' parameter, then store it into map
-                for (TypeProjection projection : substitution.get(parameter.getTypeConstructor())) {
+                for (TypeProjection projection : substitution.get(parameter)) {
                     // 1. projection = A
                     // 2. projection = List<B>
                     // 3. projection = Boolean
