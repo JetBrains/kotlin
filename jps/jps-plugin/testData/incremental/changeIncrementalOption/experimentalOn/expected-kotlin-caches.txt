@@ -16,6 +16,8 @@ Module 'module2' production
     package-parts.tab
     proto.tab
     source-to-classes.tab
+    subtypes.tab
+    supertypes.tab
 Module 'module2' tests
 Module 'module3' production
     experimental-format-version.txt
