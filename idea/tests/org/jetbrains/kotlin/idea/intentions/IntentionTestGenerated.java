@@ -5098,6 +5098,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/importMember")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImportMember extends AbstractIntentionTest {
+        public void testAllFilesPresentInImportMember() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/importMember"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("EnumMember.kt")
+        public void testEnumMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/EnumMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoTarget.kt")
+        public void testNoTarget() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/NoTarget.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ObjectMethod.kt")
+        public void testObjectMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/ObjectMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticJavaField.kt")
+        public void testStaticJavaField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/StaticJavaField.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticJavaMethod.kt")
+        public void testStaticJavaMethod() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/StaticJavaMethod.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/infixCallToOrdinary")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
