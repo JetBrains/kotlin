@@ -79,23 +79,27 @@ public class ShadowedDeclarationsFilter(
                 .flatMap { group -> filterEqualSignatureGroup(group) }
     }
 
-    public fun <TDescriptor : DeclarationDescriptor> filterNonImported(
-            declarations: Collection<TDescriptor>,
+    public fun <TDescriptor : DeclarationDescriptor> createNonImportedDeclarationsFilter(
             importedDeclarations: Collection<DeclarationDescriptor>
-    ): Collection<TDescriptor> {
+    ): (Collection<TDescriptor>) -> Collection<TDescriptor> {
         val importedDeclarationsSet = importedDeclarations.toSet()
-        val nonImportedDeclarations = declarations.filter { it !in importedDeclarationsSet }
-
         val importedDeclarationsBySignature = importedDeclarationsSet.groupBy { signature(it) }
 
-        val notShadowed = HashSet<DeclarationDescriptor>()
-        // same signature non-imported declarations from different packages do not shadow each other
-        for ((pair, group) in nonImportedDeclarations.groupBy { signature(it) to packageName(it) }) {
-            val imported = importedDeclarationsBySignature[pair.first]
-            val all = if (imported != null) group + imported else group
-            notShadowed.addAll(filterEqualSignatureGroup(all, descriptorsToImport = group))
+        return filter@ { declarations ->
+            // optimization
+            if (declarations.size == 1 && importedDeclarationsBySignature[signature(declarations.single())] == null) return@filter declarations
+
+            val nonImportedDeclarations = declarations.filter { it !in importedDeclarationsSet }
+
+            val notShadowed = HashSet<DeclarationDescriptor>()
+            // same signature non-imported declarations from different packages do not shadow each other
+            for ((pair, group) in nonImportedDeclarations.groupBy { signature(it) to packageName(it) }) {
+                val imported = importedDeclarationsBySignature[pair.first]
+                val all = if (imported != null) group + imported else group
+                notShadowed.addAll(filterEqualSignatureGroup(all, descriptorsToImport = group))
+            }
+            declarations.filter { it in notShadowed }
         }
-        return declarations.filter { it in notShadowed }
     }
 
     private fun signature(descriptor: DeclarationDescriptor): Any {

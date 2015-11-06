@@ -120,8 +120,10 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                 }
 
                 if (shouldCompleteTopLevelCallablesFromIndex()) {
-                    getTopLevelCallables().forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
-                    flushToResultSet()
+                    processTopLevelCallables {
+                        collector.addElements(filter(it, lookupElementFactory), notImported = true)
+                        flushToResultSet()
+                    }
                 }
 
                 if (position.getContainingFile() is KtCodeFragment) {

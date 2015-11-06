@@ -242,7 +242,10 @@ class BasicCompletionSession(
 
         private fun completeNonImported(lookupElementFactory: LookupElementFactory) {
             if (shouldCompleteTopLevelCallablesFromIndex()) {
-                collector.addDescriptorElements(getTopLevelCallables(), lookupElementFactory, notImported = true)
+                processTopLevelCallables {
+                    collector.addDescriptorElements(it, lookupElementFactory, notImported = true)
+                    flushToResultSet()
+                }
             }
 
             val classKindFilter: ((ClassKind) -> Boolean)?

@@ -337,7 +337,9 @@ abstract class CompletionSession(
 
         if (shadowedDeclarationsFilter != null) {
             variants = shadowedDeclarationsFilter.filter(variants)
-            notImportedExtensions = shadowedDeclarationsFilter.filterNonImported(notImportedExtensions, variants)
+            notImportedExtensions = shadowedDeclarationsFilter
+                    .createNonImportedDeclarationsFilter<CallableDescriptor>(importedDeclarations = variants)
+                    .invoke(notImportedExtensions)
         }
 
         if (configuration.filterOutJavaGettersAndSetters) {
@@ -394,20 +396,22 @@ abstract class CompletionSession(
         return callTypeAndReceiver.receiver == null
     }
 
-    protected fun getTopLevelCallables(): Collection<CallableDescriptor> {
-        val result = LinkedHashSet<CallableDescriptor>()
-        indicesHelper(true).processTopLevelCallables({ prefixMatcher.prefixMatches(it) }) { result.add(it) }
-        return result.filterShadowedNonImported()
+    protected fun processTopLevelCallables(processor: (CallableDescriptor) -> Unit) {
+        val shadowedFilter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
+                ?.createNonImportedDeclarationsFilter<CallableDescriptor>(referenceVariants!!.imported)
+        indicesHelper(true).processTopLevelCallables({ prefixMatcher.prefixMatches(it) }) {
+            if (shadowedFilter != null) {
+                shadowedFilter(listOf(it)).singleOrNull()?.let(processor)
+            }
+            else {
+                processor(it)
+            }
+        }
     }
 
     protected fun CallTypeAndReceiver<*, *>.shouldCompleteCallableExtensions(): Boolean {
         return callType.descriptorKindFilter.kindMask.and(DescriptorKindFilter.CALLABLES_MASK) != 0
                && this !is CallTypeAndReceiver.IMPORT_DIRECTIVE
-    }
-
-    private fun Collection<CallableDescriptor>.filterShadowedNonImported(): Collection<CallableDescriptor> {
-        val filter = ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression!!, callTypeAndReceiver)
-        return if (filter != null) filter.filterNonImported(this, referenceVariants!!.imported) else this
     }
 
     protected fun addClassesFromIndex(kindFilter: (ClassKind) -> Boolean) {
