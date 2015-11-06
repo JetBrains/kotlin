@@ -1,4 +1,4 @@
-package com.myapp
+package test
 
 import android.app.Fragment
 import kotlinx.android.synthetic.main.layout.*

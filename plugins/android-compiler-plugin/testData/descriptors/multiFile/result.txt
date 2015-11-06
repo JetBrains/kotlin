@@ -1,0 +1,93 @@
+kotlinx
+
+
+kotlinx.android
+
+
+kotlinx.android.synthetic
+
+    public fun android.app.Activity.clearFindViewByIdCache(): kotlin.Unit
+    public fun android.app.Fragment.clearFindViewByIdCache(): kotlin.Unit
+
+
+kotlinx.android.synthetic.main
+
+
+kotlinx.android.synthetic.main.test
+
+    public val android.app.Activity.item_detail_container: android.widget.FrameLayout!
+    public val android.app.Fragment.item_detail_container: android.widget.FrameLayout!
+    public val android.app.Activity.textView1: android.widget.TextView!
+    public val android.app.Fragment.textView1: android.widget.TextView!
+    public val android.app.Activity.password: android.widget.EditText!
+    public val android.app.Fragment.password: android.widget.EditText!
+    public val android.app.Activity.login: android.widget.Button!
+    public val android.app.Fragment.login: android.widget.Button!
+
+
+kotlinx.android.synthetic.main.test.view
+
+    public val android.view.View.item_detail_container: android.widget.FrameLayout!
+    public val android.view.View.textView1: android.widget.TextView!
+    public val android.view.View.password: android.widget.EditText!
+    public val android.view.View.login: android.widget.Button!
+
+
+kotlinx.android.synthetic.main.test1
+
+    public val android.app.Activity.frameLayout: android.widget.FrameLayout!
+    public val android.app.Fragment.frameLayout: android.widget.FrameLayout!
+    public val android.app.Activity.passwordField: android.widget.TextView!
+    public val android.app.Fragment.passwordField: android.widget.TextView!
+    public val android.app.Activity.passwordCaption: android.widget.EditText!
+    public val android.app.Fragment.passwordCaption: android.widget.EditText!
+    public val android.app.Activity.loginButton: android.widget.Button!
+    public val android.app.Fragment.loginButton: android.widget.Button!
+
+
+kotlinx.android.synthetic.main.test1.view
+
+    public val android.view.View.frameLayout: android.widget.FrameLayout!
+    public val android.view.View.passwordField: android.widget.TextView!
+    public val android.view.View.passwordCaption: android.widget.EditText!
+    public val android.view.View.loginButton: android.widget.Button!
+
+
+kotlinx.android.synthetic.test
+
+    public val android.app.Activity.item_detail_container: android.widget.FrameLayout!
+    public val android.app.Fragment.item_detail_container: android.widget.FrameLayout!
+    public val android.app.Activity.textView1: android.widget.TextView!
+    public val android.app.Fragment.textView1: android.widget.TextView!
+    public val android.app.Activity.password: android.widget.EditText!
+    public val android.app.Fragment.password: android.widget.EditText!
+    public val android.app.Activity.login: android.widget.Button!
+    public val android.app.Fragment.login: android.widget.Button!
+
+
+kotlinx.android.synthetic.test.view
+
+    public val android.view.View.item_detail_container: android.widget.FrameLayout!
+    public val android.view.View.textView1: android.widget.TextView!
+    public val android.view.View.password: android.widget.EditText!
+    public val android.view.View.login: android.widget.Button!
+
+
+kotlinx.android.synthetic.test1
+
+    public val android.app.Activity.frameLayout: android.widget.FrameLayout!
+    public val android.app.Fragment.frameLayout: android.widget.FrameLayout!
+    public val android.app.Activity.passwordField: android.widget.TextView!
+    public val android.app.Fragment.passwordField: android.widget.TextView!
+    public val android.app.Activity.passwordCaption: android.widget.EditText!
+    public val android.app.Fragment.passwordCaption: android.widget.EditText!
+    public val android.app.Activity.loginButton: android.widget.Button!
+    public val android.app.Fragment.loginButton: android.widget.Button!
+
+
+kotlinx.android.synthetic.test1.view
+
+    public val android.view.View.frameLayout: android.widget.FrameLayout!
+    public val android.view.View.passwordField: android.widget.TextView!
+    public val android.view.View.passwordCaption: android.widget.EditText!
+    public val android.view.View.loginButton: android.widget.Button!

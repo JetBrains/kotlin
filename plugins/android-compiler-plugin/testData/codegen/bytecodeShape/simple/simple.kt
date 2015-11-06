@@ -1,4 +1,4 @@
-package com.myapp
+package test
 
 import android.app.Activity
 import android.os.Bundle
@@ -11,6 +11,6 @@ public class MyActivity : Activity() {
 
 // 1 public _\$_findCachedViewById
 // 1 public _\$_clearFindViewByIdCache
-// 1 GETSTATIC com/myapp/R\$id\.login
-// 1 INVOKEVIRTUAL com/myapp/MyActivity\._\$_findCachedViewById
+// 1 GETSTATIC test/R\$id\.login
+// 1 INVOKEVIRTUAL test/MyActivity\._\$_findCachedViewById
 // 1 CHECKCAST android/widget/Button

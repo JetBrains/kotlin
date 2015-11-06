@@ -112,7 +112,7 @@ import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.load.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
@@ -926,9 +926,8 @@ fun main(args: Array<String>) {
     }
 
     testGroup("plugins/android-compiler-plugin/tests", "plugins/android-compiler-plugin/testData") {
-        testClass<AbstractAndroidXml2KConversionTest>() {
-            model("android/converter/simple", recursive = false, extension = null)
-            model("android/converter/exceptions", recursive = false, extension = null, testMethod = "doNoManifestTest")
+        testClass<AbstractAndroidSyntheticPropertyDescriptorTest>() {
+            model("descriptors", recursive = false, extension = null)
         }
 
         testClass<AbstractAndroidBoxTest>() {
@@ -948,10 +947,6 @@ fun main(args: Array<String>) {
     }
 
     testGroup("plugins/android-idea-plugin/tests", "plugins/android-idea-plugin/testData") {
-        testClass<AbstractParserResultEqualityTest>() {
-            model("android/parserResultEquality", recursive = false, extension = null)
-        }
-
         testClass<AbstractAndroidCompletionTest>() {
             model("android/completion", recursive = false, extension = null)
         }

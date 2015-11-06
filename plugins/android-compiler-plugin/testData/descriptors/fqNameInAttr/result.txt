@@ -1,0 +1,35 @@
+kotlinx
+
+
+kotlinx.android
+
+
+kotlinx.android.synthetic
+
+    public fun android.app.Activity.clearFindViewByIdCache(): kotlin.Unit
+    public fun android.app.Fragment.clearFindViewByIdCache(): kotlin.Unit
+
+
+kotlinx.android.synthetic.main
+
+
+kotlinx.android.synthetic.main.test
+
+    public val android.app.Activity.MyKeyboardView: android.inputmethodservice.KeyboardView!
+    public val android.app.Fragment.MyKeyboardView: android.inputmethodservice.KeyboardView!
+
+
+kotlinx.android.synthetic.main.test.view
+
+    public val android.view.View.MyKeyboardView: android.inputmethodservice.KeyboardView!
+
+
+kotlinx.android.synthetic.test
+
+    public val android.app.Activity.MyKeyboardView: android.inputmethodservice.KeyboardView!
+    public val android.app.Fragment.MyKeyboardView: android.inputmethodservice.KeyboardView!
+
+
+kotlinx.android.synthetic.test.view
+
+    public val android.view.View.MyKeyboardView: android.inputmethodservice.KeyboardView!

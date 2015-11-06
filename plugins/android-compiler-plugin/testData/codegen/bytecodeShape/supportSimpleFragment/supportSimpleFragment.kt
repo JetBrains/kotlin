@@ -17,6 +17,6 @@ public class MyFragment : Fragment() {
 // 2 public _\$_findCachedViewById
 // 2 public _\$_clearFindViewByIdCache
 // 1 INVOKEVIRTUAL android/support/v4/app/MyFragment\.getView
-// 1 GETSTATIC com/myapp/R\$id\.login
+// 1 GETSTATIC test/R\$id\.login
 // 1 INVOKEVIRTUAL android/support/v4/app/MyFragment\._\$_findCachedViewById
 // 1 CHECKCAST android/widget/Button

@@ -1,1 +1,0 @@
-Plugin should work even if "layout" directory is missing.

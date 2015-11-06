@@ -1,4 +1,4 @@
-package com.myapp
+package test
 
 import android.app.Fragment
 import java.io.File
@@ -10,7 +10,7 @@ public class MyFragment : Fragment() {
 
 // 1 public _\$_findCachedViewById
 // 1 public _\$_clearFindViewByIdCache
-// 1 INVOKEVIRTUAL com/myapp/MyFragment\.getView
-// 1 GETSTATIC com/myapp/R\$id\.login
-// 1 INVOKEVIRTUAL com/myapp/MyFragment\._\$_findCachedViewById
+// 1 INVOKEVIRTUAL test/MyFragment\.getView
+// 1 GETSTATIC test/R\$id\.login
+// 1 INVOKEVIRTUAL test/MyFragment\._\$_findCachedViewById
 // 1 CHECKCAST android/widget/Button

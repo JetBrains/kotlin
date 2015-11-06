@@ -16,69 +16,39 @@
 
 package org.jetbrains.kotlin.lang.resolve.android.test
 
-import com.intellij.openapi.project.Project
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.analyzer.ModuleInfo
+import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
 import org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFile
+import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
-import org.jetbrains.kotlin.android.synthetic.res.CliSyntheticFileGenerator
+import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import java.io.File
 
-private class AndroidTestExternalDeclarationsProvider(
-        val project: Project,
-        val resPaths: List<String>,
-        val manifestPath: String,
-        val supportV4: Boolean
-) : ExternalDeclarationsProvider {
-    override fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<KtFile> {
-        val parser = CliSyntheticFileGeneratorForConversionTest(project, manifestPath, resPaths, supportV4)
-        return parser.getSyntheticFiles()
-    }
-}
-
-class CliSyntheticFileGeneratorForConversionTest(
-        project: Project,
-        manifestPath: String,
-        resDirectories: List<String>,
-        private val supportV4: Boolean
-) : CliSyntheticFileGenerator(project, manifestPath, listOf(AndroidVariant.createMainVariant(resDirectories))) {
-
-    fun gen() = generateSyntheticFiles(false, supportV4)
-
-    public override fun generateSyntheticFiles(generateCommonFiles: Boolean, supportV4: Boolean): List<AndroidSyntheticFile> {
-        return super.generateSyntheticFiles(generateCommonFiles, this.supportV4)
-    }
-}
-
-fun UsefulTestCase.createAndroidTestEnvironment(
-        configuration: CompilerConfiguration,
-        resPaths: List<String>,
-        manifestPath: String,
-        supportV4: Boolean
-): KotlinCoreEnvironment {
-    configuration.put(AndroidConfigurationKeys.VARIANT, resPaths)
-    configuration.put(AndroidConfigurationKeys.PACKAGE, manifestPath)
+fun UsefulTestCase.createAndroidTestEnvironment(configuration: CompilerConfiguration, resDirectories: List<String>): KotlinCoreEnvironment {
+    configuration.put(AndroidConfigurationKeys.VARIANT, resDirectories)
+    configuration.put(AndroidConfigurationKeys.PACKAGE, "test")
 
     val myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val project = myEnvironment.project
 
-    val declarationsProvider = AndroidTestExternalDeclarationsProvider(project, resPaths, manifestPath, supportV4)
-    ExternalDeclarationsProvider.registerExtension(project, declarationsProvider)
+    val variants = listOf(AndroidVariant.createMainVariant(resDirectories))
+    project.registerServiceInstance(AndroidLayoutXmlFileManager::class.java, CliAndroidLayoutXmlFileManager(project, "test", variants))
+
     ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
     StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
     ClassBuilderInterceptorExtension.registerExtension(project, AndroidOnDestroyClassBuilderInterceptorExtension())
+    PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension())
 
     return myEnvironment
 }

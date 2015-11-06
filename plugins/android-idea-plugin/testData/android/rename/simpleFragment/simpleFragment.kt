@@ -6,6 +6,6 @@ import kotlinx.android.synthetic.main.layout.*
 
 public class MyFragment : Fragment() {
     override fun onResume() {}
-    val button = login<caret>
+    val button = <caret>login
 }
 

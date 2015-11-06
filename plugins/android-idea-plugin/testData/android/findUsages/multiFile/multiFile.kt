@@ -1,4 +1,4 @@
-package com.myapp
+package test
 
 import android.app.Activity
 import kotlinx.android.synthetic.main.layout.*
