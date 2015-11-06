@@ -19,22 +19,47 @@ package org.jetbrains.kotlin.android.synthetic.idea.res
 import com.android.builder.model.SourceProvider
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
-import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.AndroidModule
-import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
-import org.jetbrains.kotlin.android.synthetic.res.AndroidVariantData
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.android.synthetic.AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH
+import org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor
+import org.jetbrains.kotlin.android.synthetic.res.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
-
     override val androidModule: AndroidModule? by lazy { module.androidFacet?.toAndroidModuleInfo() }
 
-    override fun propertyToXmlAttributes(property: KtProperty): List<PsiElement> {
-        val fqPath = property.fqName?.pathSegments() ?: return listOf()
+    private val moduleData: CachedValue<AndroidModuleData> by lazy {
+        cachedValue(project) {
+            CachedValueProvider.Result.create(super.getModuleData(), getPsiTreeChangePreprocessor())
+        }
+    }
+
+    override fun getModuleData() = moduleData.value
+
+    private fun getPsiTreeChangePreprocessor(): PsiTreeChangePreprocessor {
+        return project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
+    }
+
+    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
+        val widgets = arrayListOf<AndroidResource>()
+        val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
+            widgets += parseAndroidResource(id, widgetType, attribute.valueElement)
+        }
+
+        files.forEach { it.accept(visitor) }
+        return widgets
+    }
+
+
+    override fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> {
+        val fqPath = propertyDescriptor.fqNameUnsafe.pathSegments()
         if (fqPath.size <= SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
 
         fun handle(variantData: AndroidVariantData, defaultVariant: Boolean = false): List<PsiElement>? {
@@ -44,7 +69,7 @@ public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutX
             val layoutFiles = variantData[layoutName] ?: return null
             if (layoutFiles.isEmpty()) return null
 
-            val propertyName = property.name
+            val propertyName = propertyDescriptor.name.asString()
 
             val attributes = arrayListOf<PsiElement>()
             val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
@@ -55,7 +80,7 @@ public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutX
             return attributes
         }
 
-        for (variantData in getLayoutXmlFiles()) {
+        for (variantData in getModuleData()) {
             if (variantData.variant.isMainVariant && fqPath.size == SYNTHETIC_PACKAGE_PATH_LENGTH + 2) {
                 handle(variantData, true)?.let { return it }
             }

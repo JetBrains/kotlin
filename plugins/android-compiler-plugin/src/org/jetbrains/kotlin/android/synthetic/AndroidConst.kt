@@ -52,25 +52,20 @@ public object AndroidConst {
 
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "blink")
 
-    val ESCAPED_IDENTIFIERS = (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types)
-            .map { it as? KtKeywordToken }.filterNotNull().map { it.value }.toSet()
-
     val FQNAME_RESOLVE_PACKAGES = listOf("android.widget", "android.webkit", "android.view")
 }
 
-public fun idToName(id: String): String? {
+public fun androidIdToName(id: String): String? {
     for (prefix in AndroidConst.XML_ID_PREFIXES) {
-        if (id.startsWith(prefix)) return escapeAndroidIdentifier(id.replace(prefix, ""))
+        if (id.startsWith(prefix)) {
+            return id.substring(prefix.length)
+        }
     }
     return null
 }
 
 public fun isWidgetTypeIgnored(xmlType: String): Boolean {
     return (xmlType.isEmpty() || xmlType in AndroidConst.IGNORED_XML_WIDGET_TYPES)
-}
-
-fun escapeAndroidIdentifier(id: String): String {
-    return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
 }
 
 internal fun <T> List<T>.forEachUntilLast(operation: (T) -> Unit) {

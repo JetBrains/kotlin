@@ -23,29 +23,42 @@ import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.xml.XmlAttribute
-import org.jetbrains.kotlin.android.synthetic.res.SyntheticFileGenerator
+import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
 
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
         if (sourceElement is LeafPsiElement && sourceElement.parent is KtSimpleNameExpression) {
-            val resolved = KtSimpleNameReference(sourceElement.parent as KtSimpleNameExpression).resolve()
-            val property = resolved as? KtProperty ?: return null
+            val simpleNameExpression = sourceElement.parent as? KtSimpleNameExpression ?: return null
+            val layoutManager = getLayoutManager(sourceElement) ?: return null
+            val propertyDescriptor = resolvePropertyDescriptor(simpleNameExpression) ?: return null
 
-            val moduleInfo = sourceElement.getModuleInfo()
-            if (moduleInfo !is ModuleSourceInfo) return null
-
-            val parser = ModuleServiceManager.getService(moduleInfo.module, SyntheticFileGenerator::class.java)!!
-            val psiElements = parser.layoutXmlFileManager.propertyToXmlAttributes(property)
+            val psiElements = layoutManager.propertyToXmlAttributes(propertyDescriptor)
             val valueElements = psiElements.map { (it as? XmlAttribute)?.valueElement as? PsiElement }.filterNotNull()
             if (valueElements.isNotEmpty()) return valueElements.toTypedArray()
         }
+
         return null
+    }
+
+    private fun resolvePropertyDescriptor(simpleNameExpression: KtSimpleNameExpression): PropertyDescriptor? {
+        val bindingContext = simpleNameExpression.analyze(BodyResolveMode.PARTIAL)
+        val call = bindingContext[BindingContext.CALL, simpleNameExpression]
+        val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call]
+        return resolvedCall?.resultingDescriptor as? PropertyDescriptor
+    }
+
+    private fun getLayoutManager(sourceElement: PsiElement): AndroidLayoutXmlFileManager? {
+        val moduleInfo = sourceElement.getModuleInfo()
+        if (moduleInfo !is ModuleSourceInfo) return null
+        return ModuleServiceManager.getService(moduleInfo.module, AndroidLayoutXmlFileManager::class.java)
     }
 
     override fun getActionText(context: DataContext?): String? {

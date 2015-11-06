@@ -35,7 +35,7 @@ class AndroidXmlHandler(private val elementCallback: (String, String) -> Unit) :
         val attributesMap = attributes.toMap()
         val idAttribute = attributesMap[AndroidConst.ID_ATTRIBUTE_NO_NAMESPACE]
         val widgetType = attributesMap[AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE] ?: localName
-        val name = idAttribute?.let { idToName(idAttribute) }
+        val name = idAttribute?.let { androidIdToName(idAttribute) }
         if (name != null) elementCallback(name, widgetType)
     }
 

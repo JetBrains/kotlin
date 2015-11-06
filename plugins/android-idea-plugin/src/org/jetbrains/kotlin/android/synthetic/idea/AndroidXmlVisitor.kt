@@ -22,7 +22,7 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
-import org.jetbrains.kotlin.android.synthetic.idToName
+import org.jetbrains.kotlin.android.synthetic.androidIdToName
 import org.jetbrains.kotlin.android.synthetic.isWidgetTypeIgnored
 
 class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> Unit) : XmlElementVisitor() {
@@ -47,7 +47,7 @@ class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> U
             val idAttributeValue = idAttribute.value
             if (idAttributeValue != null) {
                 val xmlType = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.value ?: localName
-                val name = idToName(idAttributeValue)
+                val name = androidIdToName(idAttributeValue)
                 if (name != null) elementCallback(name, xmlType, idAttribute)
             }
         }

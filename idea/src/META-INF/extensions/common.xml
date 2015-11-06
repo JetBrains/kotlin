@@ -23,6 +23,9 @@
         <extensionPoint name="classBuilderFactoryInterceptorExtension"
                         interface="org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="packageFragmentProviderExtension"
+                        interface="org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension"
+                        area="IDEA_PROJECT"/>
         <extensionPoint name="quickFixContributor"
                         interface="org.jetbrains.kotlin.idea.quickfix.QuickFixContributor"/>
         <extensionPoint name="storageComponentContainerContributor"
