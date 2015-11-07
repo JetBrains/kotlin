@@ -790,7 +790,7 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
- * Reverses elements in the collection in-place.
+ * Reverses elements in the list in-place.
  */
 public fun <T> MutableList<T>.reverse(): Unit {
     java.util.Collections.reverse(this)
@@ -807,21 +807,21 @@ public fun <T> Iterable<T>.reversed(): List<T> {
 }
 
 /**
- * Sorts elements in the collection in-place according to natural sort order of the value returned by specified [selector] function.
+ * Sorts elements in the list in-place according to natural sort order of the value returned by specified [selector] function.
  */
 public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
 }
 
 /**
- * Sorts elements in the collection in-place descending according to natural sort order of the value returned by specified [selector] function.
+ * Sorts elements in the list in-place descending according to natural sort order of the value returned by specified [selector] function.
  */
 public inline fun <T, R : Comparable<R>> MutableList<T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))
 }
 
 /**
- * Sorts elements in the collection in-place descending according to their natural sort order.
+ * Sorts elements in the list in-place descending according to their natural sort order.
  */
 public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
     sortWith(reverseOrder())
