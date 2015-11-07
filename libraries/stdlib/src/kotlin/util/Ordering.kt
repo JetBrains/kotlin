@@ -19,9 +19,6 @@ package kotlin
 
 import java.util.Comparator
 
-@Deprecated("Use compareValuesBy", ReplaceWith("compareValuesBy(a, b, *selectors)"), level = DeprecationLevel.HIDDEN)
-public fun <T> compareValuesByNullable(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int = compareValuesBy(a, b, *selectors)
-
 /**
  * Compares two values using the specified functions [selectors] to calculate the result of the comparison.
  * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]

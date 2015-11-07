@@ -5,7 +5,7 @@ package kotlin
 
 private object _Assertions
 
-@Deprecated("Must be public to make assert() inlinable")
+@Deprecated("Not supposed to be used directly, exposed to make assert() inlinable.")
 public val ASSERTIONS_ENABLED: Boolean = _Assertions.javaClass.desiredAssertionStatus()
 
 /**
@@ -22,6 +22,7 @@ public fun assert(value: Boolean) {
 */
 @Deprecated("Use assert with lazy message instead.", ReplaceWith("assert(value) { message }"))
 public fun assert(value: Boolean, message: Any = "Assertion failed") {
+    @Suppress("DEPRECATION")
     if (ASSERTIONS_ENABLED) {
         if (!value) {
             throw AssertionError(message)
@@ -34,6 +35,7 @@ public fun assert(value: Boolean, message: Any = "Assertion failed") {
  * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
  */
 public inline fun assert(value: Boolean, lazyMessage: () -> Any) {
+    @Suppress("DEPRECATION")
     if (ASSERTIONS_ENABLED) {
         if (!value) {
             val message = lazyMessage()

@@ -25,7 +25,7 @@ import kotlin.reflect.KClass
  * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
  */
 @Retention(AnnotationRetention.SOURCE)
-@Deprecated("Use 'kotlin.jvm.Throws' instead", ReplaceWith("kotlin.jvm.Throws"))
+@Deprecated("Use 'kotlin.jvm.Throws' instead", ReplaceWith("kotlin.jvm.Throws"), DeprecationLevel.ERROR)
 public annotation class throws(public vararg val exceptionClasses: KClass<out Throwable>)
 
 /**
