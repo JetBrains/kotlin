@@ -178,6 +178,7 @@ fun mapping(): List<GenericFunction> {
             """
         }
         deprecate(Strings) { forBinaryCompatibility }
+        deprecate(Maps) { Deprecation("Use entries.mapIndexedTo instead.", replaceWith = "this.entries.mapIndexedTo(destination, transform)") }
         include(Maps, CharSequences, Strings)
     }
 
