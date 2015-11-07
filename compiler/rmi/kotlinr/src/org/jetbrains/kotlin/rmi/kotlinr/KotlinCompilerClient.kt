@@ -254,8 +254,8 @@ public object KotlinCompilerClient {
 
 
     private fun String.extractPortFromRunFilename(digest: String): Int =
-        makeRunFilenameString(timestamp = "[0-9TZ:\\.\\+-]+", digest = digest, port = "(\\d+)", escapeSequence = "\\").toRegex()
-            .match(this)
+            makeRunFilenameString(timestamp = "[0-9TZ:\\.\\+-]+", digest = digest, port = "(\\d+)", escapeSequence = "\\").toRegex()
+                    .find(this)
             ?.groups?.get(1)
             ?.value?.toInt()
             ?: 0
