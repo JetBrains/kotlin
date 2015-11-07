@@ -136,6 +136,15 @@ public inline fun <K, V> Map<K, V>.values(): Collection<V> = values
 public fun <K, V> MutableMap<K, V>.values(): MutableCollection<V> = values
 
 /**
+ * Adds this object to the specified [collection].
+ *
+ * Can be used with safe call: `nullableValue?.addTo(collectionOfNonNullables)`.
+ */
+public fun <T> T.addTo(collection: MutableCollection<in T>) {
+    collection.add(this)
+}
+
+/**
  * Adds the specified [element] to this mutable collection.
  */
 public operator fun <T> MutableCollection<in T>.plusAssign(element: T) {
