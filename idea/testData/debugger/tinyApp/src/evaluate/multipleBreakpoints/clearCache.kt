@@ -31,12 +31,12 @@ fun primitiveTypes() {
         val b = 1
     }
 
-    for (i in 5.0..6.0) {
+    for (i in 'a'..'b') {
         // EXPRESSION: i
-        // RESULT: 5.0: D
+        // RESULT: 97: C
 
         // EXPRESSION: i
-        // RESULT: 6.0: D
+        // RESULT: 98: C
 
         //Breakpoint!
         val b = 1
