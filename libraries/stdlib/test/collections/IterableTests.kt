@@ -245,6 +245,16 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     }
 
     @Test
+    fun mapNotNull() {
+        assertEquals(listOf('o'), data.mapNotNull { it.firstOrNull { c -> c in "oui" } })
+    }
+
+    @Test
+    fun mapIndexedNotNull() {
+        assertEquals(listOf('b'), data.mapIndexedNotNull { index, s -> s.getOrNull(index - 1) })
+    }
+
+    @Test
     fun max() {
         expect("foo") { data.max() }
         expect("bar") { data.maxBy { it.last() } }

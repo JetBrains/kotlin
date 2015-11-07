@@ -980,14 +980,16 @@ public inline fun <K> String.groupByTo(map: MutableMap<K, MutableList<Char>>, to
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each character of the original char sequence.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each character in the original char sequence.
  */
 public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
     return mapTo(ArrayList<R>(length()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each character of the original string.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each character in the original string.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <R> String.map(transform: (Char) -> R): List<R> {
@@ -995,14 +997,16 @@ public inline fun <R> String.map(transform: (Char) -> R): List<R> {
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each character and its index in the original char sequence.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each character and its index in the original char sequence.
  */
 public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(length()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each character and its index in the original string.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each character and its index in the original string.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <R> String.mapIndexed(transform: (Int, Char) -> R): List<R> {
@@ -1010,8 +1014,25 @@ public inline fun <R> String.mapIndexed(transform: (Int, Char) -> R): List<R> {
 }
 
 /**
- * Appends transformed characters and their indices in the original char sequence using the given [transform] function
- * to the given [destination].
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each character and its index in the original char sequence.
+ */
+public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (Int, Char) -> R?): List<R> {
+    return mapIndexedNotNullTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Applies the given [transform] function to each character and its index in the original char sequence
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexedNotNullTo(destination: C, transform: (Int, Char) -> R?): C {
+    forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each character and its index in the original char sequence
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
     var index = 0
@@ -1021,8 +1042,8 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(des
 }
 
 /**
- * Appends transformed characters and their indices in the original string using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each character and its index in the original string
+ * and appends the results to the given [destination].
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <R, C : MutableCollection<in R>> String.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
@@ -1033,8 +1054,25 @@ public inline fun <R, C : MutableCollection<in R>> String.mapIndexedTo(destinati
 }
 
 /**
- * Appends transformed characters of the original char sequence using the given [transform] function
- * to the given [destination].
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each character in the original char sequence.
+ */
+public inline fun <R : Any> CharSequence.mapNotNull(transform: (Char) -> R?): List<R> {
+    return mapNotNullTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Applies the given [transform] function to each character in the original char sequence
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapNotNullTo(destination: C, transform: (Char) -> R?): C {
+    forEach { element -> transform(element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each character of the original char sequence
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> CharSequence.mapTo(destination: C, transform: (Char) -> R): C {
     for (item in this)
@@ -1043,8 +1081,8 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.mapTo(destinatio
 }
 
 /**
- * Appends transformed characters of the original string using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each character of the original string
+ * and appends the results to the given [destination].
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, transform: (Char) -> R): C {

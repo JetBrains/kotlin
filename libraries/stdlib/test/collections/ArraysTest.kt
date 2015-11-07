@@ -763,6 +763,27 @@ class ArraysTest {
         expect(listOf("a"), { arrayOf("a", null).filterNotNull() })
     }
 
+    @test fun map() {
+        assertEquals(listOf(1, 2, 4), arrayOf("a", "bc", "test").map { it.length })
+        assertEquals(listOf('a', 'b', 'c'), intArrayOf(1, 2, 3).map { 'a' + it - 1 })
+        assertEquals(listOf(1, 2, 3), longArrayOf(1000, 2000, 3000).map { (it / 1000).toInt() })
+        assertEquals(listOf(1.0, 0.5, 0.4, 0.2, 0.1), doubleArrayOf(1.0, 2.0, 2.5, 5.0, 10.0).map { 1 / it })
+    }
+
+    @test fun mapIndexed() {
+        assertEquals(listOf(1, 1, 2), arrayOf("a", "bc", "test").mapIndexed { index, s -> s.length - index })
+        assertEquals(listOf(0, 2, 2), intArrayOf(3, 2, 1).mapIndexed { index, i -> i * index })
+        assertEquals(listOf("0;20", "1;21", "2;22"), longArrayOf(20, 21, 22).mapIndexed { index, it -> "$index;$it" })
+    }
+
+    @test fun mapNotNull() {
+        assertEquals(listOf(2, 3), arrayOf("", "bc", "def").mapNotNull { if (it.isEmpty()) null else it.length })
+    }
+
+    @test fun mapIndexedNotNull() {
+        assertEquals(listOf(2), arrayOf("a", null, "test").mapIndexedNotNull { index, it -> it?.run { if (index != 0) length / index else null  } })
+    }
+
     @test fun asListPrimitives() {
         // Array of primitives
         val arr = intArrayOf(1, 2, 3, 4, 2, 5)

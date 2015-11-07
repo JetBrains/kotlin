@@ -6,15 +6,8 @@ import java.util.*
 
 fun fibonacci(): Sequence<Int> {
     // fibonacci terms
-    var index = 0;
-    var a = 0;
-    var b = 1
-    return sequence {
-        when (index++) { 0 -> a; 1 -> b; else -> {
-            val result = a + b; a = b; b = result; result
-        }
-        }
-    }
+    // 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, ...
+    return sequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first }
 }
 
 public class SequenceTest {
@@ -67,20 +60,20 @@ public class SequenceTest {
         assertEquals(listOf("foo", "bar"), filtered.toList())
     }
 
-    /*
-    @test fun mapNotNull() {
-        val data = sequenceOf(null, "foo", null, "bar")
-        val foo = data.mapNotNull { it.length() }
-        assertEquals(listOf(3, 3), foo.toList())
-
-        assertTrue {
-            foo is Sequence<Int>
-        }
-    }
-    */
-
     @test fun mapIndexed() {
         assertEquals(listOf(0, 1, 2, 6, 12), fibonacci().mapIndexed { index, value -> index * value }.takeWhile { i: Int -> i < 20 }.toList())
+    }
+
+    @test fun mapNotNull() {
+        assertEquals(listOf(0, 10, 110, 1220), fibonacci().mapNotNull { if (it % 5 == 0) it * 2 else null }.take(4).toList())
+    }
+
+    @test fun mapIndexedNotNull() {
+        // find which terms are divisible by their index
+        assertEquals(listOf("1/1", "5/5", "144/12", "46368/24", "75025/25"),
+                fibonacci().mapIndexedNotNull { index, value ->
+                    if (index > 0 && (value % index) == 0) "$value/$index" else null
+                }.take(5).toList())
     }
 
 
@@ -91,7 +84,6 @@ public class SequenceTest {
     @test fun withIndex() {
         val data = sequenceOf("foo", "bar")
         val indexed = data.withIndex().map { it.value.substring(0..it.index) }.toList()
-        assertEquals(2, indexed.size())
         assertEquals(listOf("f", "ba"), indexed)
     }
 

@@ -6668,134 +6668,169 @@ public inline fun <K> ShortArray.groupByTo(map: MutableMap<K, MutableList<Short>
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> CharArray.map(transform: (Char) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> FloatArray.map(transform: (Float) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> IntArray.map(transform: (Int) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> LongArray.map(transform: (Long) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> ShortArray.map(transform: (Short) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <T, R> Array<out T>.mapIndexed(transform: (Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> BooleanArray.mapIndexed(transform: (Int, Boolean) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> ByteArray.mapIndexed(transform: (Int, Byte) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> CharArray.mapIndexed(transform: (Int, Char) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> DoubleArray.mapIndexed(transform: (Int, Double) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> FloatArray.mapIndexed(transform: (Int, Float) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> IntArray.mapIndexed(transform: (Int, Int) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> LongArray.mapIndexed(transform: (Int, Long) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> ShortArray.mapIndexed(transform: (Int, Short) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ */
+public inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (Int, T) -> R?): List<R> {
+    return mapIndexedNotNullTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C {
+    forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
     var index = 0
@@ -6805,8 +6840,8 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (Int, Boolean) -> R): C {
     var index = 0
@@ -6816,8 +6851,8 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(des
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (Int, Byte) -> R): C {
     var index = 0
@@ -6827,8 +6862,8 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destin
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
     var index = 0
@@ -6838,8 +6873,8 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destin
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (Int, Double) -> R): C {
     var index = 0
@@ -6849,8 +6884,8 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(dest
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (Int, Float) -> R): C {
     var index = 0
@@ -6860,8 +6895,8 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(desti
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (Int, Int) -> R): C {
     var index = 0
@@ -6871,8 +6906,8 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destina
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (Int, Long) -> R): C {
     var index = 0
@@ -6882,8 +6917,8 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destin
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (Int, Short) -> R): C {
     var index = 0
@@ -6893,8 +6928,25 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(desti
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): List<R> {
+    return mapNotNullTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotNullTo(destination: C, transform: (T) -> R?): C {
+    forEach { element -> transform(element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
@@ -6903,8 +6955,8 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destina
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destination: C, transform: (Boolean) -> R): C {
     for (item in this)
@@ -6913,8 +6965,8 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destinatio
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: C, transform: (Byte) -> R): C {
     for (item in this)
@@ -6923,8 +6975,8 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: C, transform: (Char) -> R): C {
     for (item in this)
@@ -6933,8 +6985,8 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination: C, transform: (Double) -> R): C {
     for (item in this)
@@ -6943,8 +6995,8 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination: C, transform: (Float) -> R): C {
     for (item in this)
@@ -6953,8 +7005,8 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination:
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C, transform: (Int) -> R): C {
     for (item in this)
@@ -6963,8 +7015,8 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: C, transform: (Long) -> R): C {
     for (item in this)
@@ -6973,8 +7025,8 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination: C, transform: (Short) -> R): C {
     for (item in this)
