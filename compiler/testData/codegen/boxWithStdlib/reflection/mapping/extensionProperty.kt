@@ -19,9 +19,9 @@ fun box(): String {
     assertEquals(setter, Class.forName("ExtensionPropertyKt").getMethod("setExt", javaClass<K>(), javaClass<Double>()))
 
     val k = K(42L)
-    assert(getter.invoke(null, k) == 42.0, "Fail k getter")
+    assert(getter.invoke(null, k) == 42.0) { "Fail k getter" }
     setter.invoke(null, k, -239.0)
-    assert(getter.invoke(null, k) == -239.0, "Fail k setter")
+    assert(getter.invoke(null, k) == -239.0) { "Fail k setter" }
 
     return "OK"
 }
