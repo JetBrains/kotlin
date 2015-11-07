@@ -746,6 +746,15 @@ class StringTest {
         assertContentEquals("abcd", arg1("a1b2c3d4").filterNot { it.isAsciiDigit() })
     }
 
+    @test fun filterIndexed() {
+        val data = "abedcf"
+        assertEquals("abdf", data.filterIndexed { index, c -> c == 'a' + index })
+    }
+
+    @test fun filterIndexedCharSequence() = withOneCharSequenceArg("abedcf") { data ->
+        assertContentEquals("abdf", data.filterIndexed { index, c -> c == 'a' + index })
+    }
+
     @test fun all() = withOneCharSequenceArg("AbCd") { data ->
         assertTrue {
             data.all { it.isAsciiLetter() }

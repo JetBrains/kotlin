@@ -356,10 +356,28 @@ public fun <T> Sequence<T>.dropWhile(predicate: (T) -> Boolean): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing all elements matching the given [predicate].
+ * Returns a sequence containing only elements matching the given [predicate].
  */
 public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
     return FilteringSequence(this, true, predicate)
+}
+
+/**
+ * Returns a sequence containing only elements matching the given [predicate].
+ */
+public fun <T> Sequence<T>.filterIndexed(predicate: (Int, T) -> Boolean): Sequence<T> {
+    // TODO: Rewrite with generalized MapFilterIndexingSequence
+    return TransformingSequence(FilteringSequence(IndexingSequence(this), true, { predicate(it.index, it.value) }), { it.value })
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
 }
 
 /**
@@ -393,7 +411,7 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterNotTo(desti
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)

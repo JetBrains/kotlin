@@ -45,6 +45,10 @@ public class SequenceTest {
         }
     }
 
+    @test fun filterIndexed() {
+        assertEquals(listOf(1, 2, 5, 13, 34), fibonacci().filterIndexed { index, value -> index % 2 == 1 }.take(5).toList())
+    }
+
     @test fun filterNullable() {
         val data = sequenceOf(null, "foo", null, "bar")
         val filtered = data.filter { it == null || it == "foo" }

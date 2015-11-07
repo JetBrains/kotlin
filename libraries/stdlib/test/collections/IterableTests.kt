@@ -146,6 +146,11 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertEquals(listOf("foo"), foo)
     }
 
+    @Test fun filterIndexed() {
+        val result = data.filterIndexed { index, value -> value.first() == ('a' + index) }
+        assertEquals(listOf("bar"), result)
+    }
+
     @Test
     fun drop() {
         val foo = data.drop(1)

@@ -518,6 +518,30 @@ public inline fun String.filter(predicate: (Char) -> Boolean): String {
 }
 
 /**
+ * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
+ */
+public inline fun CharSequence.filterIndexed(predicate: (Int, Char) -> Boolean): CharSequence {
+    return filterIndexedTo(StringBuilder(), predicate)
+}
+
+/**
+ * Returns a string containing only those characters from the original string that match the given [predicate].
+ */
+public inline fun String.filterIndexed(predicate: (Int, Char) -> Boolean): String {
+    return filterIndexedTo(StringBuilder(), predicate).toString()
+}
+
+/**
+ * Appends all characters matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (Int, Char) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.append(element)
+    }
+    return destination
+}
+
+/**
  * Returns a char sequence containing only those characters from the original char sequence that do not match the given [predicate].
  */
 public inline fun CharSequence.filterNot(predicate: (Char) -> Boolean): CharSequence {
@@ -560,7 +584,7 @@ public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predica
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all characters matching the given [predicate] to the given [destination].
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (Char) -> Boolean): C {

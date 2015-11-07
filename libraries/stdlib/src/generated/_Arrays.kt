@@ -2986,66 +2986,219 @@ public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Shor
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean): List<T> {
     return filterTo(ArrayList<T>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun BooleanArray.filter(predicate: (Boolean) -> Boolean): List<Boolean> {
     return filterTo(ArrayList<Boolean>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun ByteArray.filter(predicate: (Byte) -> Boolean): List<Byte> {
     return filterTo(ArrayList<Byte>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Char> {
     return filterTo(ArrayList<Char>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun DoubleArray.filter(predicate: (Double) -> Boolean): List<Double> {
     return filterTo(ArrayList<Double>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun FloatArray.filter(predicate: (Float) -> Boolean): List<Float> {
     return filterTo(ArrayList<Float>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun IntArray.filter(predicate: (Int) -> Boolean): List<Int> {
     return filterTo(ArrayList<Int>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun LongArray.filter(predicate: (Long) -> Boolean): List<Long> {
     return filterTo(ArrayList<Long>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun ShortArray.filter(predicate: (Short) -> Boolean): List<Short> {
     return filterTo(ArrayList<Short>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun <T> Array<out T>.filterIndexed(predicate: (Int, T) -> Boolean): List<T> {
+    return filterIndexedTo(ArrayList<T>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun BooleanArray.filterIndexed(predicate: (Int, Boolean) -> Boolean): List<Boolean> {
+    return filterIndexedTo(ArrayList<Boolean>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun ByteArray.filterIndexed(predicate: (Int, Byte) -> Boolean): List<Byte> {
+    return filterIndexedTo(ArrayList<Byte>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun CharArray.filterIndexed(predicate: (Int, Char) -> Boolean): List<Char> {
+    return filterIndexedTo(ArrayList<Char>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun DoubleArray.filterIndexed(predicate: (Int, Double) -> Boolean): List<Double> {
+    return filterIndexedTo(ArrayList<Double>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun FloatArray.filterIndexed(predicate: (Int, Float) -> Boolean): List<Float> {
+    return filterIndexedTo(ArrayList<Float>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun IntArray.filterIndexed(predicate: (Int, Int) -> Boolean): List<Int> {
+    return filterIndexedTo(ArrayList<Int>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun LongArray.filterIndexed(predicate: (Int, Long) -> Boolean): List<Long> {
+    return filterIndexedTo(ArrayList<Long>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun ShortArray.filterIndexed(predicate: (Int, Short) -> Boolean): List<Short> {
+    return filterIndexedTo(ArrayList<Short>(), predicate)
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (Int, Boolean) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (Int, Byte) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (Int, Char) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (Int, Double) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (Int, Float) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (Int, Int) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (Int, Long) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (Int, Short) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
 }
 
 /**
@@ -3199,7 +3352,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(desti
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3207,7 +3360,7 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destina
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(destination: C, predicate: (Boolean) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3215,7 +3368,7 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(dest
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destination: C, predicate: (Byte) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3223,7 +3376,7 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destinatio
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3231,7 +3384,7 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destinatio
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destination: C, predicate: (Double) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3239,7 +3392,7 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destin
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destination: C, predicate: (Float) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3247,7 +3400,7 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destinat
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination: C, predicate: (Int) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3255,7 +3408,7 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination:
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destination: C, predicate: (Long) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3263,7 +3416,7 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destinatio
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destination: C, predicate: (Short) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)

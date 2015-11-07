@@ -668,10 +668,27 @@ public inline fun <T> Iterable<T>.dropWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
     return filterTo(ArrayList<T>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun <T> Iterable<T>.filterIndexed(predicate: (Int, T) -> Boolean): List<T> {
+    return filterIndexedTo(ArrayList<T>(), predicate)
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
 }
 
 /**
@@ -705,7 +722,7 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(desti
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
