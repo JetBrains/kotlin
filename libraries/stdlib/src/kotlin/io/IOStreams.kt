@@ -61,10 +61,7 @@ public fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStrea
  * @param bufferSize the buffer size to use.
  */
 public fun InputStream.buffered(bufferSize: Int = defaultBufferSize): InputStream
-        = if (this is BufferedInputStream)
-    this
-else
-    BufferedInputStream(this, bufferSize)
+        = if (this is BufferedInputStream) this else BufferedInputStream(this, bufferSize)
 
 /** Creates a reader on this input stream using UTF-8 or the specified [charset]. */
 public fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = InputStreamReader(this, charset)

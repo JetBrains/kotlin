@@ -44,9 +44,8 @@ class MapJVMTest {
     @test fun getOrPutFailsOnConcurrentMap() {
         val map = ConcurrentHashMap<String, Int>()
 
-        assertFails {
-            map.getOrPut("x") { 1 }
-        }
+        // now this is an error
+        // map.getOrPut("x") { 1 }
         expect(1) {
             map.concurrentGetOrPut("x") { 1 }
         }

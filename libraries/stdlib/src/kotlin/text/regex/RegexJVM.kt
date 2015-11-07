@@ -117,7 +117,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
     public fun containsMatchIn(input: CharSequence): Boolean = nativePattern.matcher(input).find()
 
-    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"))
+    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"), DeprecationLevel.ERROR)
     public fun hasMatch(input: CharSequence): Boolean = containsMatchIn(input)
 
     /**
@@ -128,7 +128,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      */
     public fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
 
-    @Deprecated("Use find() instead.", ReplaceWith("find(input, startIndex)"))
+    @Deprecated("Use find() instead.", ReplaceWith("find(input, startIndex)"), DeprecationLevel.ERROR)
     public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = find(input, startIndex)
 
     /**
@@ -136,7 +136,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      */
     public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = sequence({ find(input, startIndex) }, { match -> match.next() })
 
-    @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"))
+    @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"), DeprecationLevel.ERROR)
     public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = findAll(input, startIndex)
 
     /**

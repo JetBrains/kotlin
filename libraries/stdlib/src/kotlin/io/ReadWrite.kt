@@ -48,12 +48,6 @@ public fun String.reader(): StringReader = StringReader(this)
  */
 public fun BufferedReader.lineSequence(): Sequence<String> = LinesSequence(this).constrainOnce()
 
-@Deprecated("Use lineSequence() instead to avoid conflict with JDK8 lines() method.", ReplaceWith("lineSequence()"))
-public fun BufferedReader.lines(): Sequence<String> = lineSequence()
-
-@Deprecated("Use lineSequence() function which returns Sequence<String>")
-public fun BufferedReader.lineIterator(): Iterator<String> = lineSequence().iterator()
-
 private class LinesSequence(private val reader: BufferedReader) : Sequence<String> {
     override public fun iterator(): Iterator<String> {
         return object : Iterator<String> {
