@@ -42,7 +42,7 @@ internal fun Sequence<String>.ifNotContainsSequence(patternsIter: Iterator<LineP
                    { acc, line ->
                        when {
                            !acc.iter.isValid() -> return@fold acc
-                           acc.iter.value.regex.match(line)?.let { acc.iter.value.matchCheck(it) } ?: false -> acc.nextLineAndPattern()
+                           acc.iter.value.regex.find(line)?.let { acc.iter.value.matchCheck(it) } ?: false -> acc.nextLineAndPattern()
                            else -> acc.nextLine()
                        }
                    }

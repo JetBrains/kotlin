@@ -171,7 +171,7 @@ public object TypeIntrinsics {
      */
     private fun getFunctionTypeArity(jetType: KotlinType): Int {
         val classFqName = getClassFqName(jetType) ?: return -1
-        val match = KOTLIN_FUNCTION_INTERFACE_REGEX.match(classFqName) ?: return -1
+        val match = KOTLIN_FUNCTION_INTERFACE_REGEX.find(classFqName) ?: return -1
         return Integer.valueOf(match.groups[1]!!.value)
     }
 
