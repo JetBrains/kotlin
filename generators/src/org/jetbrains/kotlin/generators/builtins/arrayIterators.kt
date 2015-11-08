@@ -24,7 +24,7 @@ class GenerateArrayIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun getPackage() = "kotlin.jvm.internal"
 
     override fun generateBody() {
-        for (kind in PrimitiveType.values()) {
+        for (kind in PrimitiveType.values) {
             val s = kind.capitalized
             out.println("private class Array${s}Iterator(private val array: ${s}Array) : ${s}Iterator() {")
             out.println("    private var index = 0")
@@ -33,9 +33,9 @@ class GenerateArrayIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println("}")
             out.println()
         }
-        for (kind in PrimitiveType.values()) {
+        for (kind in PrimitiveType.values) {
             val s = kind.capitalized
-            out.println("public operator fun iterator(array: ${s}Array): ${s}Iterator = Array${s}Iterator(array)")
+            out.println("public fun iterator(array: ${s}Array): ${s}Iterator = Array${s}Iterator(array)")
         }
     }
 }
