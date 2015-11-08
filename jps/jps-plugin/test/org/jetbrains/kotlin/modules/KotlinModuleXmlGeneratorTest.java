@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.modules;
 
 import junit.framework.TestCase;
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
+import org.jetbrains.kotlin.jps.build.JvmSourceRoot;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
@@ -30,7 +31,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
-                Collections.singletonList(new File("java")),
+                Collections.singletonList(new JvmSourceRoot(new File("java"), null)),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.<File>emptySet()
@@ -43,7 +44,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
-                Collections.<File>emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
@@ -57,7 +58,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
-                Collections.<File>emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
@@ -66,7 +67,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name2",
                 "output2",
                 Arrays.asList(new File("s12"), new File("s22")),
-                Collections.<File>emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp12"), new File("cp22")),
                 JavaModuleBuildTargetType.TEST,
                 Collections.singleton(new File("cp12"))
