@@ -1,5 +1,6 @@
 package test.collections
 
+import test.collections.behaviors.listBehavior
 import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
@@ -443,12 +444,12 @@ class ArraysTest {
     }
 
     @test fun asList() {
-        assertEquals(listOf(1, 2, 3), intArrayOf(1, 2, 3).asList())
-        assertEquals(listOf<Byte>(1, 2, 3), byteArrayOf(1, 2, 3).asList())
-        assertEquals(listOf(true, false), booleanArrayOf(true, false).asList())
+        compare(listOf(1, 2, 3), intArrayOf(1, 2, 3).asList()) { listBehavior() }
+        compare(listOf<Byte>(1, 2, 3), byteArrayOf(1, 2, 3).asList()) { listBehavior() }
+        compare(listOf(true, false), booleanArrayOf(true, false).asList()) { listBehavior() }
 
-        assertEquals(listOf(1, 2, 3), arrayOf(1, 2, 3).asList())
-        assertEquals(listOf("abc", "def"), arrayOf("abc", "def").asList())
+        compare(listOf(1, 2, 3), arrayOf(1, 2, 3).asList()) { listBehavior() }
+        compare(listOf("abc", "def"), arrayOf("abc", "def").asList()) { listBehavior() }
 
         val ints = intArrayOf(1, 5, 7)
         val intsAsList = ints.asList()
