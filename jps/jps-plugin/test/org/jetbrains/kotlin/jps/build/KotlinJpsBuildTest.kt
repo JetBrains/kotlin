@@ -225,6 +225,19 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "Test1Kt"))
     }
 
+    public fun testSourcePackagePrefix() {
+        doTest()
+    }
+    
+    public fun testSourcePackageLongPrefix() {
+        initProject()
+        val buildResult = makeAll()
+        buildResult.assertSuccessful()
+        val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
+        assertEquals("Warning about invalid package prefix in module 2 is expected: $warnings", 2, warnings.size)
+        assertEquals("Invalid package prefix name is ignored: invalid-prefix.test", warnings.first().messageText)
+    }
+
     public fun testKotlinJavaScriptProject() {
         initProject()
         addKotlinJavaScriptStdlibDependency()
