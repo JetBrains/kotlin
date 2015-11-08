@@ -59,7 +59,8 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         val rootIndices = IntArrayList()
     }
 
-    // root "Cache" object corresponds to DefaultPackage which exists in every root
+    // root "Cache" object corresponds to DefaultPackage which exists in every root. Roots with non-default fqname are also listed here but
+    // they will be ignored on requests with invalid fqname prefix.
     private val rootCache: Cache by lazy {
         with(Cache()) {
             roots.indices.forEach {
@@ -208,10 +209,23 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
             return null
         }
 
-        var currentFile = roots[rootIndex].file
+        val pathRoot = roots[rootIndex]
+        val prefixPathSegments = pathRoot.prefixFqName?.pathSegments()
+
+        var currentFile = pathRoot.file
+
         for (pathIndex in packagesPath.indices) {
             val subPackageName = packagesPath[pathIndex]
-            currentFile = currentFile.findChild(subPackageName) ?: return null
+            if (prefixPathSegments != null && pathIndex < prefixPathSegments.size) {
+                // Traverse prefix first instead of traversing real directories
+                if (prefixPathSegments[pathIndex].identifier != subPackageName) {
+                    return null
+                }
+            }
+            else {
+                currentFile = currentFile.findChild(subPackageName) ?: return null
+            }
+
             val correspondingCacheIndex = pathIndex + 1
             if (correspondingCacheIndex > fillCachesAfter) {
                 // subPackageName exists in this root
