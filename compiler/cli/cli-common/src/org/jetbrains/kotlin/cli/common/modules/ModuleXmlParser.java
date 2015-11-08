@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.cli.common.modules;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil;
+import org.jetbrains.kotlin.modules.JavaRootPath;
 import org.jetbrains.kotlin.modules.Module;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -47,6 +49,7 @@ public class ModuleXmlParser {
     public static final String OUTPUT_DIR = "outputDir";
     public static final String SOURCES = "sources";
     public static final String JAVA_SOURCE_ROOTS = "javaSourceRoots";
+    public static final String JAVA_SOURCE_PACKAGE_PREFIX = "packagePrefix";
     public static final String PATH = "path";
     public static final String CLASSPATH = "classpath";
 
@@ -165,7 +168,8 @@ public class ModuleXmlParser {
             }
             else if (JAVA_SOURCE_ROOTS.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);
-                moduleBuilder.addJavaSourceRoot(path);
+                String packagePrefix = getNullableAttribute(attributes, JAVA_SOURCE_PACKAGE_PREFIX);
+                moduleBuilder.addJavaSourceRoot(new JavaRootPath(path, packagePrefix));
             }
             else {
                 throw createError(qName);
@@ -188,6 +192,12 @@ public class ModuleXmlParser {
         }
         return name;
     }
+
+    @Nullable
+    private static String getNullableAttribute(Attributes attributes, String qName) throws SAXException {
+        return attributes.getValue(qName);
+    }
+
 
     private static SAXException createError(String qName) throws SAXException {
         return new SAXException("Unexpected tag: " + qName);

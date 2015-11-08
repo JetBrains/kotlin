@@ -75,6 +75,8 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.psi.KtFile
@@ -167,12 +169,24 @@ public class KotlinCoreEnvironment private constructor(
             val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
 
             projectEnvironment.addSourcesToClasspath(virtualFile)
+
+            val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
+                if (isValidJavaFqName(it)) {
+                    FqName(it)
+                }
+                else {
+                    report(WARNING, "Invalid package prefix name is ignored: $it")
+                    null
+                }
+            }
+
             val rootType = when (javaRoot) {
                 is JavaSourceRoot -> JavaRoot.RootType.SOURCE
                 is JvmClasspathRoot -> JavaRoot.RootType.BINARY
                 else -> throw IllegalStateException()
             }
-            javaRoots.add(JavaRoot(virtualFile, rootType))
+
+            javaRoots.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
         }
     }
 

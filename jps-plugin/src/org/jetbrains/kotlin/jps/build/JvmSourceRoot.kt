@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.modules
+package org.jetbrains.kotlin.jps.build
 
-public interface Module {
-    public fun getModuleName(): String
+import java.io.File
 
-    public fun getModuleType(): String
-
-    public fun getOutputDirectory(): String
-
-    public fun getSourceFiles(): List<String>
-
-    public fun getClasspathRoots(): List<String>
-
-    public fun getJavaSourceRoots(): List<JavaRootPath>
-}
-
-data class JavaRootPath(val path: String, val packagePrefix: String? = null)
+data class JvmSourceRoot(val file: File, val packagePrefix: String? = null)

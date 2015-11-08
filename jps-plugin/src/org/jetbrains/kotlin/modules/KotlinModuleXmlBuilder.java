@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.modules;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
+import org.jetbrains.kotlin.jps.build.JvmSourceRoot;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
@@ -43,7 +44,7 @@ public class KotlinModuleXmlBuilder {
             String moduleName,
             String outputDir,
             List<File> sourceFiles,
-            List<File> javaSourceRoots,
+            List<JvmSourceRoot> javaSourceRoots,
             Collection<File> classpathRoots,
             JavaModuleBuildTargetType targetType,
             Set<File> directoriesToFilterOut
@@ -100,10 +101,18 @@ public class KotlinModuleXmlBuilder {
         }
     }
 
-    private void processJavaSourceRoots(@NotNull List<File> files) {
+    private void processJavaSourceRoots(@NotNull List<JvmSourceRoot> roots) {
         p.println("<!-- Java source roots -->");
-        for (File file : files) {
-            p.println("<", JAVA_SOURCE_ROOTS, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
+        for (JvmSourceRoot root : roots) {
+            p.print("<");
+            p.printWithNoIndent(JAVA_SOURCE_ROOTS, " ", PATH, "=\"", getEscapedPath(root.getFile()), "\"");
+
+            if (root.getPackagePrefix() != null) {
+                p.printWithNoIndent(" ", JAVA_SOURCE_PACKAGE_PREFIX, "=\"", root.getPackagePrefix(), "\"");
+            }
+
+            p.printWithNoIndent("/>");
+            p.println();
         }
     }
 

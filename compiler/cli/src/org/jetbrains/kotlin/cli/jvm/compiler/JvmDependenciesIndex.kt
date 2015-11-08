@@ -24,7 +24,7 @@ import java.util.ArrayList
 import java.util.EnumSet
 import java.util.HashMap
 
-public data class JavaRoot(public val file: VirtualFile, public val type: JavaRoot.RootType) {
+public data class JavaRoot(public val file: VirtualFile, public val type: JavaRoot.RootType, public val prefixFqName: FqName? = null) {
     public enum class RootType {
         SOURCE,
         BINARY
@@ -45,7 +45,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
     private val roots: List<JavaRoot> by lazy { _roots.toList() }
 
     private val maxIndex: Int
-        get() = roots.size()
+        get() = roots.size
 
     // each "Cache" object corresponds to a package
     private class Cache {
@@ -112,10 +112,12 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         if (request !is FindClassRequest || lastClassSearch == null) {
             return doSearch()
         }
+        
         val (cachedRequest, cachedResult) = lastClassSearch!!
         if (cachedRequest.classId != request.classId) {
             return doSearch()
         }
+        
         when (cachedResult) {
             is SearchResult.NotFound -> {
                 val limitedRootTypes = request.acceptedRootTypes.toHashSet()
@@ -165,7 +167,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         }
 
         // a list of package sub names, ["org", "jb", "kotlin"]
-        val packagesPath = request.packageFqName.pathSegments().map { it.getIdentifier() }
+        val packagesPath = request.packageFqName.pathSegments().map { it.identifier }
         // a list of caches corresponding to packages, [default, "org", "org.jb", "org.jb.kotlin"]
         val caches = cachesPath(packagesPath)
 
@@ -190,6 +192,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
             }
             processedRootsUpTo = cache.rootIndices.lastOrNull() ?: processedRootsUpTo
         }
+        
         return notFound()
     }
 
@@ -197,7 +200,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
     // possibly filling "Cache" objects with new information
     private fun travelPath(rootIndex: Int, packagesPath: List<String>, fillCachesAfter: Int, cachesPath: List<Cache>): VirtualFile? {
         if (rootIndex >= maxIndex) {
-            for (i in (fillCachesAfter + 1)..cachesPath.size() - 1) {
+            for (i in (fillCachesAfter + 1)..(cachesPath.size - 1)) {
                 // we all know roots that contain this package by now
                 cachesPath[i].rootIndices.add(maxIndex)
                 cachesPath[i].rootIndices.trimToSize()
@@ -215,6 +218,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
                 cachesPath[correspondingCacheIndex].rootIndices.add(rootIndex)
             }
         }
+
         return currentFile
     }
 
@@ -231,7 +235,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
 
     private data class FindClassRequest(val classId: ClassId, override val acceptedRootTypes: Set<JavaRoot.RootType>) : SearchRequest {
         override val packageFqName: FqName
-            get() = classId.getPackageFqName()
+            get() = classId.packageFqName
     }
 
     private data class TraverseRequest(
@@ -251,5 +255,5 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
     }
 }
 
-private fun IntArrayList.lastOrNull() = if (isEmpty()) null else get(size() - 1)
-private val IntArrayList.indices: IntRange get() = 0..size()-1
+private fun IntArrayList.lastOrNull() = if (isEmpty) null else get(size() - 1)
+private val IntArrayList.indices: IntRange get() = 0..(size() - 1)

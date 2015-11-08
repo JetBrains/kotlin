@@ -23,7 +23,7 @@ import java.io.File
 
 public data class JvmClasspathRoot(public override val file: File): JvmContentRoot
 
-public data class JavaSourceRoot(public override val file: File): JvmContentRoot
+public data class JavaSourceRoot(public override val file: File, public val packagePrefix: String?): JvmContentRoot
 
 public interface JvmContentRoot : ContentRoot {
     public val file: File
@@ -40,8 +40,10 @@ public val CompilerConfiguration.jvmClasspathRoots: List<File>
         return get(CommonConfigurationKeys.CONTENT_ROOTS)?.filterIsInstance<JvmClasspathRoot>()?.map { it.file } ?: emptyList()
     }
 
-public fun CompilerConfiguration.addJavaSourceRoot(file: File) {
-    add(CommonConfigurationKeys.CONTENT_ROOTS, JavaSourceRoot(file))
+@JvmOverloads
+public fun CompilerConfiguration.addJavaSourceRoot(file: File, packagePrefix: String? = null) {
+    add(CommonConfigurationKeys.CONTENT_ROOTS, JavaSourceRoot(file, packagePrefix))
 }
 
-public fun CompilerConfiguration.addJavaSourceRoots(files: List<File>): Unit = files.forEach { addJavaSourceRoot(it) }
+@JvmOverloads
+public fun CompilerConfiguration.addJavaSourceRoots(files: List<File>, packagePrefix: String? = null): Unit = files.forEach { addJavaSourceRoot(it, packagePrefix) }

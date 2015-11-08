@@ -127,13 +127,14 @@ public class KotlinBuilderModuleScriptGenerator {
     }
 
     @NotNull
-    private static List<File> findSourceRoots(@NotNull CompileContext context, @NotNull ModuleBuildTarget target) {
+    private static List<JvmSourceRoot> findSourceRoots(@NotNull CompileContext context, @NotNull ModuleBuildTarget target) {
         List<JavaSourceRootDescriptor> roots = context.getProjectDescriptor().getBuildRootIndex().getTargetRoots(target, context);
-        List<File> result = ContainerUtil.newArrayList();
+        List<JvmSourceRoot> result = ContainerUtil.newArrayList();
         for (JavaSourceRootDescriptor root : roots) {
             File file = root.getRootFile();
+            String prefix = root.getPackagePrefix();
             if (file.exists()) {
-                result.add(file);
+                result.add(new JvmSourceRoot(file, prefix.isEmpty() ? null : prefix));
             }
         }
         return result;
