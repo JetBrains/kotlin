@@ -771,12 +771,12 @@ public abstract class StackValue {
         private final boolean isGetter;
         private final ExpressionCodegen codegen;
         private final ArgumentGenerator argumentGenerator;
-        final List<ResolvedValueArgument> valueArguments;
+        private final List<ResolvedValueArgument> valueArguments;
         private final FrameMap frame;
         private final StackValue receiver;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
-        DefaultCallMask mask;
+        private DefaultCallMask mask;
 
         public CollectionElementReceiver(
                 @NotNull Callable callable,
@@ -1423,6 +1423,11 @@ public abstract class StackValue {
 
             currentExtensionReceiver
                     .moveToTopOfStack(hasExtensionReceiver ? type : currentExtensionReceiver.type, v, dispatchReceiver.type.getSize());
+        }
+
+        @Override
+        public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
+            AsmUtil.dup(v, extensionReceiver.type, dispatchReceiver.type);
         }
     }
 

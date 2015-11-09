@@ -2299,6 +2299,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("kt9897_static.kt")
+        public void testKt9897_static() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/kt9897_static.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("postfixInc.kt")
         public void testPostfixInc() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/jvmStatic/postfixInc.kt");

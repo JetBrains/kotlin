@@ -3883,6 +3883,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt9897.kt")
+        public void testKt9897() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/kt9897.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt9897_topLevel.kt")
+        public void testKt9897_topLevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/kt9897_topLevel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("topLevel.kt")
         public void testTopLevel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/extensionProperties/topLevel.kt");
