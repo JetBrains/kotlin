@@ -42,9 +42,30 @@ public object KotlinCompilerClient {
     val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
 
 
-    // TODO: remove jvmStatic after all use sites will switch to kotlin
-    @JvmStatic
     public fun connectToCompileService(compilerId: CompilerId,
+                                       daemonJVMOptions: DaemonJVMOptions,
+                                       daemonOptions: DaemonOptions,
+                                       reportingTargets: DaemonReportingTargets,
+                                       autostart: Boolean = true,
+                                       checkId: Boolean = true
+    ): CompileService? {
+        fun newFlagFile(): File {
+            val flagFile = File.createTempFile("kotlin-compiler-client-", "-is-running")
+            flagFile.deleteOnExit()
+            return flagFile
+        }
+
+        val flagFile = System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
+                     ?.let { it.trimQuotes() }
+                     ?.ifOrNull { !isBlank() }
+                     ?.let { File(it) }
+                     ?.ifOrNull { exists() }
+                     ?: newFlagFile()
+        return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart, checkId)
+    }
+
+    public fun connectToCompileService(compilerId: CompilerId,
+                                       clientAliveFlagFile: File,
                                        daemonJVMOptions: DaemonJVMOptions,
                                        daemonOptions: DaemonOptions,
                                        reportingTargets: DaemonReportingTargets,
@@ -60,6 +81,7 @@ public object KotlinCompilerClient {
                 val service = tryFindDaemon(File(daemonOptions.runFilesPath), compilerId, reportingTargets)
                 if (service != null) {
                     if (!checkId || service.checkCompilerId(compilerId)) {
+                        service.registerClient(clientAliveFlagFile.absolutePath)
                         reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
                         return service
                     }
@@ -112,6 +134,7 @@ public object KotlinCompilerClient {
 
 
     public fun compile(compilerService: CompileService,
+                       sessionId: Int,
                        targetPlatform: CompileService.TargetPlatform,
                        args: Array<out String>,
                        out: OutputStream,
@@ -119,11 +142,12 @@ public object KotlinCompilerClient {
                        operationsTracer: RemoteOperationsTracer? = null
     ): Int {
         val outStrm = RemoteOutputStreamServer(out, port = port)
-        return compilerService.remoteCompile(targetPlatform, args, CompilerCallbackServicesFacadeServer(port = port), outStrm, CompileService.OutputFormat.PLAIN, outStrm, operationsTracer)
+        return compilerService.remoteCompile(sessionId, targetPlatform, args, CompilerCallbackServicesFacadeServer(port = port), outStrm, CompileService.OutputFormat.PLAIN, outStrm, operationsTracer).get()
     }
 
 
     public fun incrementalCompile(compileService: CompileService,
+                                  sessionId: Int,
                                   targetPlatform: CompileService.TargetPlatform,
                                   args: Array<out String>,
                                   callbackServices: CompilationServices,
@@ -134,6 +158,7 @@ public object KotlinCompilerClient {
                                   operationsTracer: RemoteOperationsTracer? = null
     ): Int = profiler.withMeasure(this) {
             compileService.remoteIncrementalCompile(
+                    sessionId,
                     targetPlatform,
                     args,
                     CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
@@ -142,7 +167,7 @@ public object KotlinCompilerClient {
                     RemoteOutputStreamServer(compilerOut, port),
                     CompileService.OutputFormat.XML,
                     RemoteOutputStreamServer(daemonOut, port),
-                    operationsTracer)
+                    operationsTracer).get()
     }
 
     public val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
@@ -211,14 +236,14 @@ public object KotlinCompilerClient {
                 val outStrm = RemoteOutputStreamServer(System.out)
                 val servicesFacade = CompilerCallbackServicesFacadeServer()
                 try {
-                    val memBefore = daemon.getUsedMemory() / 1024
+                    val memBefore = daemon.getUsedMemory().get() / 1024
                     val startTime = System.nanoTime()
 
-                    val res = daemon.remoteCompile(CompileService.TargetPlatform.JVM, filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm, null)
+                    val res = daemon.remoteCompile(CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm, null)
 
                     val endTime = System.nanoTime()
                     println("Compilation result code: $res")
-                    val memAfter = daemon.getUsedMemory() / 1024
+                    val memAfter = daemon.getUsedMemory().get() / 1024
                     println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
                     println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
                 }
@@ -430,3 +455,4 @@ internal fun isProcessAlive(process: Process) =
             true
         }
 
+internal fun<T> T.ifOrNull(pred: T.() -> Boolean): T? = if (this.pred()) this else null

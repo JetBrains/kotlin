@@ -130,7 +130,7 @@ public object KotlinCompilerRunner {
 
     }
 
-    internal class DaemonConnection(public val daemon: CompileService?)
+    internal class DaemonConnection(public val daemon: CompileService?, public val sessionId: Int = CompileService.NO_SESSION)
 
     internal object getDaemonConnection {
         private @Volatile var connection: DaemonConnection? = null
@@ -151,9 +151,13 @@ public object KotlinCompilerRunner {
                 val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
 
                 profiler.withMeasure(null) {
-                    connection = DaemonConnection(
-                            KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
-                    )
+                    fun newFlagFile(): File {
+                        val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running")
+                        flagFile.deleteOnExit()
+                        return flagFile
+                    }
+                    val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
+                    connection = DaemonConnection(daemon, daemon?.leaseCompileSession(newFlagFile().absolutePath)?.get() ?:CompileService.NO_SESSION)
                 }
 
                 for (msg in daemonReportMessages) {
@@ -191,7 +195,7 @@ public object KotlinCompilerRunner {
                     K2JS_COMPILER -> CompileService.TargetPlatform.JS
                     else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
                 }
-                val res = KotlinCompilerClient.incrementalCompile(connection!!.daemon!!, targetPlatform, argsArray, services, compilerOut, daemonOut)
+                val res = KotlinCompilerClient.incrementalCompile(connection!!.daemon!!, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
 
                 processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {

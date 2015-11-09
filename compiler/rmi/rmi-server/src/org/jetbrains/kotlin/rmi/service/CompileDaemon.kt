@@ -33,7 +33,6 @@ import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
-import kotlin.concurrent.timer
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
 
@@ -101,6 +100,8 @@ public object CompileDaemon {
         val daemonOptions = DaemonOptions()
 
         try {
+            val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
+
             val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
             if (filteredArgs.any()) {
@@ -120,18 +121,6 @@ public object CompileDaemon {
             //            setDaemonPermissions(daemonOptions.port)
 
             val (registry, port) = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
-            val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
-            runFileDir.mkdirs()
-            val runFile = File(runFileDir,
-                               makeRunFilenameString(timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                                                     digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
-                                                     port = port.toString()))
-            try {
-                if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
-            } catch (e: Exception) {
-                throw IllegalStateException("Unable to create run file '${runFile.absolutePath}'", e)
-            }
-            runFile.deleteOnExit()
 
             val compilerSelector = object : CompilerSelector {
                 private val jvm by lazy { K2JVMCompiler() }
@@ -141,27 +130,31 @@ public object CompileDaemon {
                     CompileService.TargetPlatform.JS -> js
                 }
             }
-            val compilerService = CompileServiceImpl(registry, compilerSelector, compilerId, daemonOptions, port,
+            // timer with a daemon thread, meaning it should not prevent JVM to exit normally
+            val timer = Timer(true)
+            val compilerService = CompileServiceImpl(registry = registry,
+                                                     compiler = compilerSelector,
+                                                     compilerId = compilerId,
+                                                     daemonOptions = daemonOptions,
+                                                     daemonJVMOptions = daemonJVMOptions,
+                                                     port = port,
+                                                     timer = timer,
                                                      onShutdown = {
-                                                         if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE) {
+                                                         if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
                                                              // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
-                                                             // the watcher is a daemon thread, meaning it should not prevent JVM to exit normally
-                                                             Timer(true).schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
+                                                             timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
+                                                                 cancel()
                                                                  log.info("force JVM shutdown")
                                                                  System.exit(0)
                                                              }
+                                                         }
+                                                         else {
+                                                             timer.cancel()
                                                          }
                                                      })
 
             if (daemonOptions.runFilesPath.isNotEmpty())
                 println(daemonOptions.runFilesPath)
-
-            daemonOptions.clientAliveFlagPath?.let {
-                if (!File(it).exists()) {
-                    log.info("Client alive flag $it do not exist, disable watching it")
-                    daemonOptions.clientAliveFlagPath = null
-                }
-            }
 
             // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
             // TODO: implement more reliable scheme
@@ -170,33 +163,6 @@ public object CompileDaemon {
 
             System.setErr(PrintStream(LogStream("stderr")))
             System.setOut(PrintStream(LogStream("stdout")))
-
-            fun shutdownCondition(check: () -> Boolean, message: String): Boolean {
-                val res = check()
-                if (res) {
-                    log.info(message)
-                }
-                return res
-            }
-
-            // stopping daemon if any shutdown condition is met
-            timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS, daemon = true) {
-                try {
-                    val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
-                    if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
-                        shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && idleSeconds > daemonOptions.autoshutdownIdleSeconds },
-                                          "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
-                        shutdownCondition({ daemonOptions.clientAliveFlagPath?.let { !File(it).exists() } ?: false },
-                                          "Client alive flag ${daemonOptions.clientAliveFlagPath} removed, shutting down")) {
-                        cancel()
-                        compilerService.shutdown()
-                    }
-                }
-                catch (e: Exception) {
-                    System.err.println("Exception in timer thread: " + e.getMessage())
-                    e.printStackTrace(System.err)
-                }
-            }
         }
         catch (e: Exception) {
             System.err.println("Exception: " + e.getMessage())
