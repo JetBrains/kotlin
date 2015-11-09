@@ -1,8 +1,8 @@
 // FILE: KotlinFile.kt
 fun Any.foo(): Int {
     if (this is JavaClass) {
-        something++
-        return x
+        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>something<!>++
+        return <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>x<!>
     }
     return 0
 }

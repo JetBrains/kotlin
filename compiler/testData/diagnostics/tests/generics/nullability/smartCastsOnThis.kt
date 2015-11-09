@@ -25,7 +25,7 @@ fun <T : String?> T.foo() {
     <!UNSAFE_CALL!>length<!>
 
     if (this is String) {
-        length
+        <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>length<!>
         this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         bar1()

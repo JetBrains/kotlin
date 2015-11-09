@@ -155,6 +155,12 @@ public class CheckerTestUtil {
                 debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.SMARTCAST));
             }
         }
+        //noinspection TestOnlyProblems
+        for (KtExpression expression : bindingContext.getSliceContents(BindingContext.IMPLICIT_RECEIVER_SMARTCAST).keySet()) {
+            if (PsiTreeUtil.isAncestor(root, expression, false)) {
+                debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.IMPLICIT_RECEIVER_SMARTCAST));
+            }
+        }
         return debugAnnotations;
     }
 
@@ -510,6 +516,7 @@ public class CheckerTestUtil {
 
     public static class DebugInfoDiagnosticFactory extends DiagnosticFactory<DebugInfoDiagnostic> {
         public static final DebugInfoDiagnosticFactory SMARTCAST = new DebugInfoDiagnosticFactory("SMARTCAST");
+        public static final DebugInfoDiagnosticFactory IMPLICIT_RECEIVER_SMARTCAST = new DebugInfoDiagnosticFactory("IMPLICIT_RECEIVER_SMARTCAST");
         public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
         public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");

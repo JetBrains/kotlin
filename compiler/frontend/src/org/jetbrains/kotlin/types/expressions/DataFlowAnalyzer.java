@@ -252,7 +252,7 @@ public class DataFlowAnalyzer {
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
-        SmartCastResult result = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, false);
+        SmartCastResult result = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, null, false);
         return result != null ? result.getResultType() : null;
     }
 

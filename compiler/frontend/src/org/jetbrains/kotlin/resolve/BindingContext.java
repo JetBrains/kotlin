@@ -131,6 +131,7 @@ public interface BindingContext {
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_SET = Slices.createSimpleSlice();
 
     WritableSlice<KtExpression, KotlinType> SMARTCAST = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, KotlinType> IMPLICIT_RECEIVER_SMARTCAST = Slices.createSimpleSlice();
 
     WritableSlice<KtWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
 

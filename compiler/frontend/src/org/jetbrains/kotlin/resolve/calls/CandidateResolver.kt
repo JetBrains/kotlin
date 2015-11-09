@@ -451,7 +451,7 @@ public class CandidateResolver(
             val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
 
             val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
-                    dataFlowValue, expectedReceiverParameterType, expression, this, /*recordType =*/ true
+                    dataFlowValue, expectedReceiverParameterType, expression, this, candidateCall.call.calleeExpression, /*recordType =*/true
             )
 
             if (smartCastResult == null) {

@@ -14586,6 +14586,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("falseReceiverSmartCast.kt")
+            public void testFalseReceiverSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/falseReceiverSmartCast.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("fieldExclExcl.kt")
             public void testFieldExclExcl() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/fieldExclExcl.kt");
@@ -14601,6 +14607,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("fieldPlus.kt")
             public void testFieldPlus() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/fieldPlus.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitReceiver.kt")
+            public void testImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/implicitReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitToGrandSon.kt")
+            public void testImplicitToGrandSon() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/implicitToGrandSon.kt");
                 doTest(fileName);
             }
 

@@ -1,0 +1,20 @@
+package
+
+public final class Foo : SuperFoo {
+    public constructor Foo()
+    public final override /*1*/ /*fake_override*/ fun bar(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun baz(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun superFoo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SuperFoo {
+    public constructor SuperFoo()
+    public final fun bar(): kotlin.String
+    public final fun baz(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

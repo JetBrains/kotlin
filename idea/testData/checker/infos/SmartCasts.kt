@@ -1,5 +1,9 @@
 <info descr="null">open</info> class A() {
-  fun foo() {}
+  fun foo() {
+      if (this is B) {
+          <info descr="Implicit receiver smart cast to B">bar</info>()
+      }
+  }
 }
 
 class B() : A() {
