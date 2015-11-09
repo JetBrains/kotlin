@@ -53,7 +53,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
         val listFiles = dir.listFiles()
         assertNotNull(listFiles)
 
-        val children = listFiles!!.sortedWith(compareBy ({ it.directory }, { it.name } ))
+        val children = listFiles!!.sortedWith(compareBy ({ it.isDirectory }, { it.name } ))
         for (child in children) {
             if (child.isDirectory()) {
                 p.println(child.name)
