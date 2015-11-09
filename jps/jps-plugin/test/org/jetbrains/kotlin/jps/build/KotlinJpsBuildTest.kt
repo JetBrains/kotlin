@@ -228,7 +228,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     public fun testSourcePackagePrefix() {
         doTest()
     }
-    
+
     public fun testSourcePackageLongPrefix() {
         initProject()
         val buildResult = makeAll()
@@ -236,6 +236,14 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
         assertEquals("Warning about invalid package prefix in module 2 is expected: $warnings", 2, warnings.size)
         assertEquals("Invalid package prefix name is ignored: invalid-prefix.test", warnings.first().messageText)
+    }
+
+    public fun testSourcePackagePrefixKnownIssueWithInnerClasses() {
+        initProject()
+        val buildResult = makeAll()
+        buildResult.assertFailed()
+        val errors = buildResult.getMessages(BuildMessage.Kind.ERROR).map { it.messageText }
+        assertTrue("Message wasn't found. $errors", errors.first().contains("class xxx.JavaWithInner.TextRenderer, unresolved supertypes: TableRow"))
     }
 
     public fun testKotlinJavaScriptProject() {
