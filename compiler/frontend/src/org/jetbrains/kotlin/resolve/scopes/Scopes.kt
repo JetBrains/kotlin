@@ -53,43 +53,44 @@ interface LexicalScope: HierarchicalScope {
     }
 }
 
-enum class LexicalScopeKind {
-    EMPTY,
+enum class LexicalScopeKind(val local: Boolean) {
+    EMPTY(false),
 
-    CLASS_HEADER,
-    CLASS_INHERITANCE,
-    CONSTRUCTOR_HEADER,
-    PRIMARY_CONSTRUCTOR_DEFAULT_VALUE,
-    CLASS_STATIC_SCOPE,
-    CLASS_MEMBER_SCOPE,
-    CLASS_INITIALIZER,
+    CLASS_HEADER(false),
+    CLASS_INHERITANCE(false),
+    CONSTRUCTOR_HEADER(false),
+    CLASS_STATIC_SCOPE(false),
+    CLASS_MEMBER_SCOPE(false),
+    CLASS_INITIALIZER(true),
 
-    PROPERTY_HEADER,
-    PROPERTY_INITIALIZER_OR_DELEGATE,
-    PROPERTY_ACCESSOR,
-    PROPERTY_DELEGATE_METHOD,
+    DEFAULT_VALUE(true),
 
-    FUNCTION_HEADER,
-    FUNCTION_INNER_SCOPE,
+    PROPERTY_HEADER(false),
+    PROPERTY_INITIALIZER_OR_DELEGATE(true),
+    PROPERTY_ACCESSOR(true),
+    PROPERTY_DELEGATE_METHOD(false),
 
-    CODE_BLOCK,
+    FUNCTION_HEADER(false),
+    FUNCTION_INNER_SCOPE(true),
 
-    LEFT_BOOLEAN_EXPRESSION,
-    RIGHT_BOOLEAN_EXPRESSION,
+    CODE_BLOCK(true),
 
-    THEN,
-    ELSE,
-    DO_WHILE,
-    CATCH,
-    FOR,
-    WHILE,
-    WHEN,
+    LEFT_BOOLEAN_EXPRESSION(true),
+    RIGHT_BOOLEAN_EXPRESSION(true),
 
-    FILE,
-    CALLABLE_REFERENCE,
+    THEN(true),
+    ELSE(true),
+    DO_WHILE(true),
+    CATCH(true),
+    FOR(true),
+    WHILE(true),
+    WHEN(true),
+
+    FILE(false),
+    CALLABLE_REFERENCE(false),
 
     // for tests, KDoc & IDE
-    SYNTHETIC
+    SYNTHETIC(false)
 }
 
 interface ImportingScope : HierarchicalScope {

@@ -563,7 +563,7 @@ public class BodyResolver {
             final ConstructorDescriptor unsubstitutedPrimaryConstructor
     ) {
         return new LexicalScopeImpl(originalScope, unsubstitutedPrimaryConstructor, false, null,
-                                    LexicalScopeKind.PRIMARY_CONSTRUCTOR_DEFAULT_VALUE, RedeclarationHandler.DO_NOTHING,
+                                    LexicalScopeKind.DEFAULT_VALUE, RedeclarationHandler.DO_NOTHING,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override
                                         public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
@@ -787,9 +787,7 @@ public class BodyResolver {
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
         valueParameterResolver.resolveValueParameters(
-                valueParameters, valueParameterDescriptors,
-                ExpressionTypingContext.newContext(
-                        trace, innerScope, outerDataFlowInfo, NO_EXPECTED_TYPE, callChecker)
+                valueParameters, valueParameterDescriptors, innerScope, outerDataFlowInfo, trace, callChecker
         );
 
         // Synthetic "field" creation

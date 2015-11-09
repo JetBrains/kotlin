@@ -22,36 +22,36 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.types.TypeUtils
 
 public class ValueParameterResolver(
         private val expressionTypingServices: ExpressionTypingServices,
         private val constantExpressionEvaluator: ConstantExpressionEvaluator
 ) {
+
+    @JvmOverloads
     public fun resolveValueParameters(
             valueParameters: List<KtParameter>,
             valueParameterDescriptors: List<ValueParameterDescriptor>,
             declaringScope: LexicalScope,
             dataFlowInfo: DataFlowInfo,
-            trace: BindingTrace
+            trace: BindingTrace,
+            callChecker: CallChecker = CallChecker.DoNothing
     ) {
-        resolveValueParameters(valueParameters, valueParameterDescriptors,
-                               ExpressionTypingContext.newContext(trace, declaringScope, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE)
-        )
-    }
+        val scopeForDefaultValue = LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
 
-    public fun resolveValueParameters(
-            valueParameters: List<KtParameter>,
-            valueParameterDescriptors: List<ValueParameterDescriptor>,
-            context: ExpressionTypingContext
-    ) {
+        val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, callChecker)
+
         for ((descriptor, parameter) in valueParameterDescriptors zip valueParameters) {
             ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())
-            resolveDefaultValue(descriptor, parameter, context)
+            resolveDefaultValue(descriptor, parameter, contextForDefaultValue)
         }
     }
 
