@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.load.kotlin.getSourceElement
 import org.jetbrains.kotlin.load.kotlin.isContainedByCompiledPartOfOurModule
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.util.ModuleVisibilityHelper
@@ -44,37 +42,37 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
             }
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(project)
-
-        fun findModule(kotlinFile: KtFile): Module? = moduleVisibilityManager.chunk.firstOrNull { it.getSourceFiles().containsRaw(kotlinFile.virtualFile.path) }
-
-        val whatSource = getSourceElement(what)
-        if (whatSource is KotlinSourceElement) {
-            if (moduleVisibilityManager.chunk.size > 1 && fromSource is KotlinSourceElement) {
-                val fromSourceKotlinFile = fromSource.psi.getContainingKtFile()
-                val whatSourceKotlinFile = whatSource.psi.getContainingKtFile()
-                return findModule(whatSourceKotlinFile) === findModule(fromSourceKotlinFile)
-            }
-
-            return true
-        }
-
         moduleVisibilityManager.friendPaths.forEach {
             if (isContainedByCompiledPartOfOurModule(what, File(it))) return true
         }
 
         val modules = moduleVisibilityManager.chunk
 
-        val outputDirectories = modules.map { File(it.getOutputDirectory()) }
-        if (outputDirectories.isEmpty()) return isContainedByCompiledPartOfOurModule(what, null)
+        val whatSource = getSourceElement(what)
+        if (whatSource is KotlinSourceElement) {
+            if (modules.size > 1 && fromSource is KotlinSourceElement) {
+                return findModule(what, modules) === findModule(from, modules)
+            }
 
-        outputDirectories.forEach {
-            if (isContainedByCompiledPartOfOurModule(what, it)) return true
+            return true
         }
 
-        // Hack in order to allow access to internal elements in production code from tests
-        if (modules.singleOrNull()?.getModuleType() == ModuleXmlParser.TYPE_TEST) return true
+        if (modules.isEmpty()) return false
 
-        return false
+        return findModule(from, modules) === findModule(what, modules)
+    }
+
+    private fun findModule(descriptor: DeclarationDescriptor, modules: Collection<Module>): Module? {
+        val sourceElement = getSourceElement(descriptor)
+        if (sourceElement is KotlinSourceElement) {
+            return modules.singleOrNull() ?: modules.firstOrNull { sourceElement.psi.getContainingKtFile().virtualFile.path in it.getSourceFiles() }
+        }
+        else {
+            return modules.firstOrNull { module ->
+                isContainedByCompiledPartOfOurModule(descriptor, File(module.getOutputDirectory())) ||
+                module.getFriendPaths().any { isContainedByCompiledPartOfOurModule(descriptor, File(it))}
+            }
+        }
     }
 }
 

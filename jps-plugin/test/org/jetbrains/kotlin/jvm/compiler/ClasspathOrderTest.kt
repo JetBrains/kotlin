@@ -47,7 +47,8 @@ public class ClasspathOrderTest : TestCaseWithTmpdir() {
                 listOf(JvmSourceRoot(sourceDir)),
                 listOf(PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()),
                 JavaModuleBuildTargetType.PRODUCTION,
-                setOf()
+                setOf(),
+                emptyList()
         ).asText().toString()
 
         val xml = File(tmpdir, "module.xml")

@@ -28,6 +28,7 @@ public class ModuleBuilder(
     private val sourceFiles = ArrayList<String>()
     private val classpathRoots = ArrayList<String>()
     private val javaSourceRoots = ArrayList<JavaRootPath>()
+    private val friendDirs = ArrayList<String>()
 
     public fun addSourceFiles(pattern: String) {
         sourceFiles.add(pattern)
@@ -41,7 +42,12 @@ public class ModuleBuilder(
         javaSourceRoots.add(rootPath)
     }
 
+    public fun addFriendDir(friendDir: String) {
+        friendDirs.add(friendDir)
+    }
+
     override fun getOutputDirectory(): String = outputDir
+    override fun getFriendPaths(): List<String> = friendDirs
     override fun getJavaSourceRoots(): List<JavaRootPath> = javaSourceRoots
     override fun getSourceFiles(): List<String> = sourceFiles
     override fun getClasspathRoots(): List<String> = classpathRoots

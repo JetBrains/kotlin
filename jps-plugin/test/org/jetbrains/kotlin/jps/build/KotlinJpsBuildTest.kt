@@ -503,6 +503,21 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
     }
 
+    public fun testCircularDependenciesSamePackageWithTests() {
+        initProject()
+        val result = makeAll()
+        result.assertSuccessful()
+
+        // Check that outputs are located properly
+        val facadeWithA = findFileInOutputDir(findModule("module1"), "test/AKt.class")
+        val facadeWithB = findFileInOutputDir(findModule("module2"), "test/BKt.class")
+        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "funA", "getA")
+        UsefulTestCase.assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
+
+        checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
+        checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
+    }
+
     public fun testInternalFromAnotherModule() {
         initProject()
         val result = makeAll()
@@ -511,6 +526,13 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     public fun testCircularDependenciesInternalFromAnotherModule() {
+        initProject()
+        val result = makeAll()
+        result.assertFailed()
+        result.checkErrors()
+    }
+
+    public fun testCircularDependenciesWrongInternalFromTests() {
         initProject()
         val result = makeAll()
         result.assertFailed()

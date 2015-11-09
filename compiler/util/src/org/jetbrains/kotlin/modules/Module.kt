@@ -23,6 +23,8 @@ public interface Module {
 
     public fun getOutputDirectory(): String
 
+    public fun getFriendPaths(): List<String>
+
     public fun getSourceFiles(): List<String>
 
     public fun getClasspathRoots(): List<String>
