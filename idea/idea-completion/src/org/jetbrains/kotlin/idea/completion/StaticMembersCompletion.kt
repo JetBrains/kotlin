@@ -69,7 +69,10 @@ class StaticMembersCompletion(
         val containers = file.importDirectives
                 .filter { !it.isAllUnder }
                 .map {
-                    it.targetDescriptors(resolutionFacade).map { it.containingDeclaration }.distinct().singleOrNull() as? ClassDescriptor
+                    it.targetDescriptors(resolutionFacade)
+                            .map { it.containingDeclaration }
+                            .distinct()
+                            .singleOrNull() as? ClassDescriptor
                 }
                 .filterNotNull()
                 .toSet()
