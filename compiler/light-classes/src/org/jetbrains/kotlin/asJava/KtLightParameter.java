@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import java.util.List;
 
@@ -75,7 +75,7 @@ public class KtLightParameter extends LightParameter implements KtLightElement<K
         KtDeclaration declaration = method.getOrigin();
         if (declaration == null) return null;
 
-        int jetIndex = JetPsiUtilKt.isExtensionDeclaration(declaration) ? index - 1 : index;
+        int jetIndex = KtPsiUtilKt.isExtensionDeclaration(declaration) ? index - 1 : index;
         if (jetIndex < 0) return null;
 
         if (declaration instanceof KtFunction) {

@@ -95,7 +95,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
                     }
                     is KtLightClassForExplicitDeclaration -> {
                         val jetClass = psiClass.getOrigin()
-                        createBreakpointIfPropertyExists(jetClass, jetClass.getContainingJetFile(), className, fieldName)
+                        createBreakpointIfPropertyExists(jetClass, jetClass.getContainingKtFile(), className, fieldName)
                     }
                     else -> null
                 }

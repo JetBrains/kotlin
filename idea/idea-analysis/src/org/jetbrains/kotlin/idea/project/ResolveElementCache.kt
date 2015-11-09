@@ -114,7 +114,7 @@ public class ResolveElementCache(
             = getElementAdditionalResolve(function, function, BodyResolveMode.FULL)
 
     public fun resolvePrimaryConstructorParametersDefaultValues(ktClass: KtClass): BindingContext {
-        return constructorAdditionalResolve(resolveSession, ktClass, ktClass.getContainingJetFile()).bindingContext
+        return constructorAdditionalResolve(resolveSession, ktClass, ktClass.getContainingKtFile()).bindingContext
     }
 
     fun getElementAdditionalResolve(resolveElement: KtElement, contextElement: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
@@ -142,7 +142,7 @@ public class ResolveElementCache(
                     return getElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.FULL)
                 }
 
-                val file = resolveElement.getContainingJetFile()
+                val file = resolveElement.getContainingKtFile()
                 val statementToResolve = PartialBodyResolveFilter.findStatementToResolve(contextElement, resolveElement)
                 val partialResolveMap = partialBodyResolveCache.value
                 partialResolveMap[statementToResolve ?: resolveElement]
@@ -243,7 +243,7 @@ public class ResolveElementCache(
     }
 
     private fun performElementAdditionalResolve(resolveElement: KtElement, contextElement: KtElement, bodyResolveMode: BodyResolveMode): Pair<BindingContext, StatementFilter> {
-        val file = resolveElement.getContainingJetFile()
+        val file = resolveElement.getContainingKtFile()
 
         var statementFilterUsed = StatementFilter.NONE
 
@@ -273,7 +273,7 @@ public class ResolveElementCache(
             is KtInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as KtEnumEntry, file)
 
             is KtImportList -> {
-                val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingJetFile())
+                val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingKtFile())
                 resolver.forceResolveAllImports()
                 resolveSession.trace
             }
@@ -355,10 +355,10 @@ public class ResolveElementCache(
         else {
             val fileAnnotationList = ktAnnotationEntry.getParentOfType<KtFileAnnotationList>(true)
             if (fileAnnotationList != null) {
-                doResolveAnnotations(resolveSession.getFileAnnotations(fileAnnotationList.getContainingJetFile()))
+                doResolveAnnotations(resolveSession.getFileAnnotations(fileAnnotationList.getContainingKtFile()))
             }
             if (modifierList != null && modifierList.getParent() is KtFile) {
-                doResolveAnnotations(resolveSession.getDanglingAnnotations(modifierList.getContainingJetFile()))
+                doResolveAnnotations(resolveSession.getDanglingAnnotations(modifierList.getContainingKtFile()))
             }
         }
 

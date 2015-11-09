@@ -240,7 +240,7 @@ public class JetFlowInformationProvider {
                 }
 
                 @Override
-                public void visitJetElement(@NotNull KtElement element) {
+                public void visitKtElement(@NotNull KtElement element) {
                     if (!(element instanceof KtExpression || element instanceof KtWhenCondition)) return;
 
                     if (blockBody && !noExpectedType(expectedReturnType)

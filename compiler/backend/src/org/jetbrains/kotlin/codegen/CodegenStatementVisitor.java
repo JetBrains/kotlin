@@ -27,7 +27,7 @@ public class CodegenStatementVisitor extends KtVisitor<StackValue, StackValue> {
     }
 
     @Override
-    public StackValue visitJetElement(@NotNull KtElement element, StackValue receiver) {
+    public StackValue visitKtElement(@NotNull KtElement element, StackValue receiver) {
         return element.accept(codegen, receiver);
     }
 

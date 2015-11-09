@@ -117,7 +117,7 @@ public class DebuggerUtils {
         toProcess.add(file);
 
         for (KtElement collectedElement : analyzedElements) {
-            KtFile containingFile = collectedElement.getContainingJetFile();
+            KtFile containingFile = collectedElement.getContainingKtFile();
             toProcess.add(containingFile);
         }
 

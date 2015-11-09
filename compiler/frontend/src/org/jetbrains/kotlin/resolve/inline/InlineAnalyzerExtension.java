@@ -48,8 +48,8 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
         KtVisitorVoid visitor = new KtVisitorVoid() {
             @Override
-            public void visitJetElement(@NotNull KtElement element) {
-                super.visitJetElement(element);
+            public void visitKtElement(@NotNull KtElement element) {
+                super.visitKtElement(element);
                 element.acceptChildren(this);
             }
 

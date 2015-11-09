@@ -42,11 +42,11 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
 
     private val LOG = Logger.getInstance(this.javaClass)
 
-    override fun visitJetFile(file: KtFile, data: Unit?): String? {
+    override fun visitKtFile(file: KtFile, data: Unit?): String? {
         return "STUB file: ${file.getName()}"
     }
 
-    override fun visitJetElement(element: KtElement, data: Unit?): String? {
+    override fun visitKtElement(element: KtElement, data: Unit?): String? {
         if (element is KtElementImplStub<*>) {
             LOG.error("getDebugText() is not defined for ${element.javaClass}")
         }

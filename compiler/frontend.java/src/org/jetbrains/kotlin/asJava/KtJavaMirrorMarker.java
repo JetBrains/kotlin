@@ -16,5 +16,5 @@
 
 package org.jetbrains.kotlin.asJava;
 
-public interface JetJavaMirrorMarker {
+public interface KtJavaMirrorMarker {
 }

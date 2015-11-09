@@ -388,8 +388,8 @@ private fun findInternalUsagesOfParametersAndReceiver(
                         }
                     }
 
-                    override fun visitJetElement(element: KtElement) {
-                        super.visitJetElement(element)
+                    override fun visitKtElement(element: KtElement) {
+                        super.visitKtElement(element)
 
                         val bindingContext = element.analyze()
                         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
@@ -469,7 +469,7 @@ public open class KotlinIntroduceLambdaParameterHandler(
                     is KtClass -> targetParent.getBody()
                     else -> null
                 } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
-        val extractionData = ExtractionData(expression.getContainingJetFile(),
+        val extractionData = ExtractionData(expression.getContainingKtFile(),
                                             expression.toRange(),
                                             targetParent,
                                             duplicateContainer,

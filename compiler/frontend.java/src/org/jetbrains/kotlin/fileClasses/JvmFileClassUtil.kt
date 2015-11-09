@@ -129,6 +129,6 @@ public val KtFile.javaFileFacadeFqName: FqName
     }
 
 public fun KtDeclaration.isInsideJvmMultifileClassFile() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
-        getContainingJetFile(),
+        getContainingKtFile(),
         JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
 ) != null

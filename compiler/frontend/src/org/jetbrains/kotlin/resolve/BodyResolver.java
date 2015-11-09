@@ -361,7 +361,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitJetElement(@NotNull KtElement element) {
+            public void visitKtElement(@NotNull KtElement element) {
                 throw new UnsupportedOperationException(element.getText() + " : " + element);
             }
         };

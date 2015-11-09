@@ -54,7 +54,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             KtNodeTypes.FOR,
             KtNodeTypes.WHILE);
 
-    private boolean jetLTTyped;
+    private boolean kotlinLTTyped;
 
     @Override
     public Result beforeCharTyped(char c, Project project, Editor editor, PsiFile file, FileType fileType) {
@@ -64,13 +64,13 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
 
         switch (c) {
             case '<':
-                jetLTTyped = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET &&
-                             LtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
+                kotlinLTTyped = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET &&
+                                LtGtTypingUtils.shouldAutoCloseAngleBracket(editor.getCaretModel().getOffset(), editor);
                 return Result.CONTINUE;
 
             case '>':
                 if (CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) {
-                    if (LtGtTypingUtils.handleJetGTInsert(editor)) {
+                    if (LtGtTypingUtils.handleKotlinGTInsert(editor)) {
                         return Result.STOP;
                     }
                 }
@@ -207,9 +207,9 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             return Result.CONTINUE;
         }
 
-        if (jetLTTyped) {
-            jetLTTyped = false;
-            LtGtTypingUtils.handleJetAutoCloseLT(editor);
+        if (kotlinLTTyped) {
+            kotlinLTTyped = false;
+            LtGtTypingUtils.handleKotlinAutoCloseLT(editor);
             return Result.STOP;
         }
 

@@ -1465,7 +1465,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public KotlinTypeInfo visitJetElement(@NotNull KtElement element, ExpressionTypingContext context) {
+    public KotlinTypeInfo visitKtElement(@NotNull KtElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
         return TypeInfoFactoryKt.noTypeInfo(context);
     }

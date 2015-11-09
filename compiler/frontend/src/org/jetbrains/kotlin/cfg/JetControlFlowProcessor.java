@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -169,7 +169,7 @@ public class JetControlFlowProcessor {
             }
 
             @Override
-            public void visitJetElement(@NotNull KtElement element) {
+            public void visitKtElement(@NotNull KtElement element) {
                 throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
             }
         };
@@ -467,7 +467,7 @@ public class JetControlFlowProcessor {
             Map<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
             AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE$;
             if (left instanceof KtSimpleNameExpression || left instanceof KtQualifiedExpression) {
-                accessTarget = getResolvedCallAccessTarget(JetPsiUtilKt.getQualifiedElementSelector(left));
+                accessTarget = getResolvedCallAccessTarget(KtPsiUtilKt.getQualifiedElementSelector(left));
                 if (accessTarget instanceof AccessTarget.Call) {
                     receiverValues = getReceiverValues(((AccessTarget.Call) accessTarget).getResolvedCall());
                 }
@@ -1210,7 +1210,7 @@ public class JetControlFlowProcessor {
                 }
             }
             else {
-                visitJetElement(expression);
+                visitKtElement(expression);
                 createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, left);
             }
         }
@@ -1451,7 +1451,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitJetFile(@NotNull KtFile file) {
+        public void visitKtFile(@NotNull KtFile file) {
             for (KtDeclaration declaration : file.getDeclarations()) {
                 if (declaration instanceof KtProperty) {
                     generateInstructions(declaration);
@@ -1466,7 +1466,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitJetElement(@NotNull KtElement element) {
+        public void visitKtElement(@NotNull KtElement element) {
             createNonSyntheticValue(element, MagicKind.UNSUPPORTED_ELEMENT);
         }
 

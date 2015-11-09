@@ -16,26 +16,18 @@
 
 package org.jetbrains.kotlin.idea.editor
 
-import org.jetbrains.kotlin.idea.editor.fixers.*
 import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiFile
-import com.intellij.util.text.CharArrayUtil
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtIfExpression
-import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.tree.TokenSet
+import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.psi.KtLoopExpression
+import org.jetbrains.kotlin.idea.editor.fixers.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
@@ -67,7 +59,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
         while (atCaret != null) {
             when {
-                atCaret.isJetStatement() == true -> return atCaret
+                atCaret.isKotlinStatement() == true -> return atCaret
                 atCaret.getParent() is KtFunctionLiteral -> return atCaret
                 atCaret is KtDeclaration -> {
                     val declaration = atCaret
@@ -121,7 +113,7 @@ public class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
         }
     }
 
-    private fun PsiElement.isJetStatement() = when {
+    private fun PsiElement.isKotlinStatement() = when {
         getParent() is KtBlockExpression && getNode()?.getElementType() !in BRACES -> true
         getParent()?.getNode()?.getElementType() in BRANCH_CONTAINERS && this !is KtBlockExpression -> true
         else -> false

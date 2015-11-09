@@ -58,7 +58,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtF
         this.type = type;
         functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
 
-        AnalysisResult analysisResult = ResolutionUtils.analyzeFullyAndGetResult(functionLiteralExpression.getContainingJetFile());
+        AnalysisResult analysisResult = ResolutionUtils.analyzeFullyAndGetResult(functionLiteralExpression.getContainingKtFile());
         BindingContext context = analysisResult.getBindingContext();
         KotlinType functionLiteralType = context.getType(functionLiteralExpression);
         assert functionLiteralType != null : "Type of function literal not available in binding context";

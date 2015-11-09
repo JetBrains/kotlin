@@ -53,8 +53,8 @@ import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.modules.TargetIdKt;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.parsing.JetScriptDefinition;
-import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
@@ -148,7 +148,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         for (Module module : chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            List<KtFile> jetFiles = CompileEnvironmentUtil.getJetFiles(
+            List<KtFile> jetFiles = CompileEnvironmentUtil.getKtFiles(
                     environment.getProject(), getAbsolutePaths(directory, module), new Function1<String, Unit>() {
                         @Override
                         public Unit invoke(String s) {
@@ -276,8 +276,8 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         List<AnalyzerScriptParameter> scriptParameters = environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS);
         if (!scriptParameters.isEmpty()) {
-            JetScriptDefinitionProvider.getInstance(environment.getProject()).addScriptDefinition(
-                    new JetScriptDefinition(".kts", scriptParameters)
+            KotlinScriptDefinitionProvider.getInstance(environment.getProject()).addScriptDefinition(
+                    new KotlinScriptDefinition(".kts", scriptParameters)
             );
         }
         GenerationState state = analyzeAndGenerate(environment);

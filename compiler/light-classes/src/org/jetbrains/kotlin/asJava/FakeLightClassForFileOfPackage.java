@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.KtFile;
  * <p/>
  * See {@link LineBreakpoint#findClassCandidatesInSourceContent} for the primary usage this was introduced
  */
-public class FakeLightClassForFileOfPackage extends AbstractLightClass implements KtLightClass, JetJavaMirrorMarker {
+public class FakeLightClassForFileOfPackage extends AbstractLightClass implements KtLightClass, KtJavaMirrorMarker {
     private final KtLightClassForFacade delegate;
     private final KtFile file;
 

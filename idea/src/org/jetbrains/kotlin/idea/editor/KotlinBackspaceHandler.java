@@ -39,7 +39,7 @@ public class KotlinBackspaceHandler extends BackspaceHandlerDelegate {
         char c1 = chars.charAt(offset);
         if (c == '<' && deleteGt) {
             if (c1 == '>') {
-                LtGtTypingUtils.handleJetLTDeletion(editor, offset);
+                LtGtTypingUtils.handleKotlinLTDeletion(editor, offset);
             }
             return true;
         }

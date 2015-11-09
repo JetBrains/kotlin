@@ -345,7 +345,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val generateClassFilter = object : GenerationState.GenerateClassFilter() {
                     override fun shouldGeneratePackagePart(jetFile: KtFile) = jetFile == jetFile
                     override fun shouldAnnotateClass(classOrObject: KtClassOrObject) = true
-                    override fun shouldGenerateClass(classOrObject: KtClassOrObject) = classOrObject.getContainingJetFile() == jetFile
+                    override fun shouldGenerateClass(classOrObject: KtClassOrObject) = classOrObject.getContainingKtFile() == jetFile
                     override fun shouldGenerateScript(script: KtScript) = false
                 }
 
@@ -456,7 +456,7 @@ package packageForDebugger
 private fun createFileForDebugger(codeFragment: KtCodeFragment,
                                   extractedFunction: KtNamedFunction
 ): KtFile {
-    val containingContextFile = (codeFragment.context as? KtElement)?.getContainingJetFile()
+    val containingContextFile = (codeFragment.context as? KtElement)?.getContainingKtFile()
     val importsFromContextFile = containingContextFile?.importList?.let { it.text + "\n" } ?: ""
     val packageFromContextFile = containingContextFile?.packageName?.let {
         if (it.isNotBlank()) "import $it.*\n" else null
@@ -473,7 +473,7 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
     assert(extractedFunctionText != null) { "Text of extracted function shouldn't be null" }
     fileText = fileText.replace("!FUNCTION!", extractedFunction.text!!)
 
-    val jetFile = codeFragment.createJetFile("debugFile.kt", fileText)
+    val jetFile = codeFragment.createKtFile("debugFile.kt", fileText)
     jetFile.suppressDiagnosticsInDebugMode = true
 
     val list = jetFile.declarations
@@ -491,7 +491,7 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
 }
 
 private fun PsiElement.createFlexibleTypesFile(): KtFile {
-    return createJetFile(
+    return createKtFile(
             "FLEXIBLE_TYPES.kt",
             """
                 package ${Flexibility.FLEXIBLE_TYPE_CLASSIFIER.packageFqName}
@@ -500,7 +500,7 @@ private fun PsiElement.createFlexibleTypesFile(): KtFile {
     )
 }
 
-private fun PsiElement.createJetFile(fileName: String, fileText: String): KtFile {
+private fun PsiElement.createKtFile(fileName: String, fileText: String): KtFile {
     // Not using KtPsiFactory because we need a virtual file attached to the JetFile
     val virtualFile = LightVirtualFile(fileName, KotlinLanguage.INSTANCE, fileText)
     virtualFile.charset = CharsetToolkit.UTF8_CHARSET

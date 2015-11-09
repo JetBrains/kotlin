@@ -373,7 +373,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Override
-    public KotlinTypeInfo visitJetElement(@NotNull KtElement element, ExpressionTypingContext context) {
+    public KotlinTypeInfo visitKtElement(@NotNull KtElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, "in a block"));
         return TypeInfoFactoryKt.noTypeInfo(context);
     }

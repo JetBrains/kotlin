@@ -50,8 +50,8 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
         val whatSource = getSourceElement(what)
         if (whatSource is KotlinSourceElement) {
             if (moduleVisibilityManager.chunk.size > 1 && fromSource is KotlinSourceElement) {
-                val fromSourceKotlinFile = fromSource.psi.getContainingJetFile()
-                val whatSourceKotlinFile = whatSource.psi.getContainingJetFile()
+                val fromSourceKotlinFile = fromSource.psi.getContainingKtFile()
+                val whatSourceKotlinFile = whatSource.psi.getContainingKtFile()
                 return findModule(whatSourceKotlinFile) === findModule(fromSourceKotlinFile)
             }
 

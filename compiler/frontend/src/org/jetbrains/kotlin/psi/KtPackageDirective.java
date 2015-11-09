@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -80,7 +80,7 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         KtExpression nameExpression = getPackageNameExpression();
         if (nameExpression == null) return null;
 
-        return (KtSimpleNameExpression) JetPsiUtilKt.getQualifiedElementSelector(nameExpression);
+        return (KtSimpleNameExpression) KtPsiUtilKt.getQualifiedElementSelector(nameExpression);
     }
 
     @Nullable

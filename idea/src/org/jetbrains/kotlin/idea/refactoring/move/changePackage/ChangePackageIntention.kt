@@ -43,7 +43,7 @@ public class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtP
             throw UnsupportedOperationException("Do not call applyTo() in the test mode")
         }
 
-        val file = element.getContainingJetFile()
+        val file = element.getContainingKtFile()
         val project = file.getProject()
 
         val nameExpression = element.getPackageNameExpression()!!

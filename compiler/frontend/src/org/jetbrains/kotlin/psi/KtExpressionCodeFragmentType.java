@@ -23,7 +23,7 @@ import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.parsing.JetParser;
+import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType;
 
 public class KtExpressionCodeFragmentType extends KtFileElementType {
@@ -44,6 +44,6 @@ public class KtExpressionCodeFragmentType extends KtFileElementType {
         Project project = psi.getProject();
         Language languageForParser = getLanguageForParser(psi);
         PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
-        return JetParser.parseExpressionCodeFragment(builder).getFirstChildNode();
+        return KotlinParser.parseExpressionCodeFragment(builder).getFirstChildNode();
     }
 }

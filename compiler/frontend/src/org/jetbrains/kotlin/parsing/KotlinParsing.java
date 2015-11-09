@@ -31,10 +31,10 @@ import java.util.Map;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
-import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.*;
+import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.*;
 
-public class JetParsing extends AbstractJetParsing {
-    private static final Logger LOG = Logger.getInstance(JetParsing.class);
+public class KotlinParsing extends AbstractKotlinParsing {
+    private static final Logger LOG = Logger.getInstance(KotlinParsing.class);
 
     // TODO: token sets to constants, including derived methods
     public static final Map<String, IElementType> MODIFIER_KEYWORD_MAP = new HashMap<String, IElementType>();
@@ -66,16 +66,16 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet ANNOTATION_TARGETS = TokenSet.create(
             FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD, RECEIVER_KEYWORD, PARAM_KEYWORD, SETPARAM_KEYWORD);
 
-    static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
-        JetParsing jetParsing = new JetParsing(builder);
-        jetParsing.myExpressionParsing = new JetExpressionParsing(builder, jetParsing);
+    static KotlinParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
+        KotlinParsing jetParsing = new KotlinParsing(builder);
+        jetParsing.myExpressionParsing = new KotlinExpressionParsing(builder, jetParsing);
         return jetParsing;
     }
 
-    private static JetParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
+    private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
         final SemanticWhitespaceAwarePsiBuilderForByClause builderForByClause = new SemanticWhitespaceAwarePsiBuilderForByClause(builder);
-        JetParsing jetParsing = new JetParsing(builderForByClause);
-        jetParsing.myExpressionParsing = new JetExpressionParsing(builderForByClause, jetParsing) {
+        KotlinParsing jetParsing = new KotlinParsing(builderForByClause);
+        jetParsing.myExpressionParsing = new KotlinExpressionParsing(builderForByClause, jetParsing) {
             @Override
             protected boolean parseCallWithClosure() {
                 if (builderForByClause.getStackSize() > 0) {
@@ -85,16 +85,16 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             @Override
-            protected JetParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
+            protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
                 return createForByClause(builder);
             }
         };
         return jetParsing;
     }
 
-    private JetExpressionParsing myExpressionParsing;
+    private KotlinExpressionParsing myExpressionParsing;
 
-    private JetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
+    private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         super(builder);
     }
 
@@ -112,7 +112,7 @@ public class JetParsing extends AbstractJetParsing {
             parseTopLevelDeclaration();
         }
 
-        fileMarker.done(JET_FILE);
+        fileMarker.done(KT_FILE);
     }
 
     void parseTypeCodeFragment() {
@@ -166,7 +166,7 @@ public class JetParsing extends AbstractJetParsing {
 
         blockMarker.done(BLOCK);
         scriptMarker.done(SCRIPT);
-        fileMarker.done(JET_FILE);
+        fileMarker.done(KT_FILE);
     }
 
     private void checkForUnexpectedSymbols() {
@@ -1946,7 +1946,7 @@ public class JetParsing extends AbstractJetParsing {
             recoverOnParenthesizedWordForPlatformTypes(0, "Mutable", true);
 
             if (expect(IDENTIFIER, "Expecting type name",
-                       TokenSet.orSet(JetExpressionParsing.EXPRESSION_FIRST, JetExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST))) {
+                       TokenSet.orSet(KotlinExpressionParsing.EXPRESSION_FIRST, KotlinExpressionParsing.EXPRESSION_FOLLOW, DECLARATION_FIRST))) {
                 reference.done(REFERENCE_EXPRESSION);
             }
             else {
@@ -2240,7 +2240,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     @Override
-    protected JetParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
+    protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
         return createForTopLevel(builder);
     }
 

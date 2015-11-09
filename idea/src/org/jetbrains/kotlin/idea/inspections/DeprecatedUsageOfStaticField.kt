@@ -62,7 +62,7 @@ class DeprecatedUsageOfStaticFieldInspection : LocalInspectionTool(), CleanupLoc
 
 
     private fun createFixes(containingObject: KtObjectDeclaration, property: KtProperty?): List<LocalQuickFix> {
-        if (containingObject.getContainingJetFile().isCompiled) return listOf(ReplaceWithGetterInvocationFix())
+        if (containingObject.getContainingKtFile().isCompiled) return listOf(ReplaceWithGetterInvocationFix())
 
         // order matters here, 'cleanup' applies fixes in this order
         val fixes = ArrayList<LocalQuickFix>()

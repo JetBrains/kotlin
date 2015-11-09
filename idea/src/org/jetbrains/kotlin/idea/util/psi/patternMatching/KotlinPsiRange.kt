@@ -66,7 +66,7 @@ public interface KotlinPsiRange {
         val matches = ArrayList<Match>()
         scope.accept(
                 object: KtTreeVisitorVoid() {
-                    override fun visitJetElement(element: KtElement) {
+                    override fun visitKtElement(element: KtElement) {
                         val range = element
                                 .siblings()
                                 .filter(SIGNIFICANT_FILTER)
@@ -81,7 +81,7 @@ public interface KotlinPsiRange {
                         }
                         else {
                             val matchCountSoFar = matches.size()
-                            super.visitJetElement(element)
+                            super.visitKtElement(element)
                             if (result is UnificationResult.WeaklyMatched && matches.size() == matchCountSoFar) {
                                 matches.add(Match(range, result))
                             }

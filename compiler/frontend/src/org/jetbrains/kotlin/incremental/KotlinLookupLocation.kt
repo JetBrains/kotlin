@@ -27,7 +27,7 @@ class KotlinLookupLocation(val element: KtElement) : LookupLocation {
 
     override val location: LocationInfo?
         get() {
-            val containingJetFile = element.getContainingJetFile()
+            val containingJetFile = element.getContainingKtFile()
 
             if (containingJetFile.doNotAnalyze != null) return null
 

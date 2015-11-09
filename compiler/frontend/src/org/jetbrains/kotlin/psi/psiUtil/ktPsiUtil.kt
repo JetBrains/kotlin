@@ -294,8 +294,8 @@ private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnn
 // Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
 public inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): KtVisitorVoid {
     return object : KtTreeVisitorVoid() {
-        override fun visitJetElement(element: KtElement) {
-            super.visitJetElement(element)
+        override fun visitKtElement(element: KtElement) {
+            super.visitKtElement(element)
             if (element is T) {
                 block(element)
             }

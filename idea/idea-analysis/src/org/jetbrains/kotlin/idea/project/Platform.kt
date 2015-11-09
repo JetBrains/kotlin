@@ -20,4 +20,4 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 val KtElement.platform: TargetPlatform
-    get() = TargetPlatformDetector.getPlatform(getContainingJetFile())
+    get() = TargetPlatformDetector.getPlatform(getContainingKtFile())

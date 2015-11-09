@@ -635,7 +635,7 @@ private class ConstantExpressionEvaluatorVisitor(
         return constants
     }
 
-    override fun visitJetElement(element: KtElement, expectedType: KotlinType?): CompileTimeConstant<*>? {
+    override fun visitKtElement(element: KtElement, expectedType: KotlinType?): CompileTimeConstant<*>? {
         return null
     }
 

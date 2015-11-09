@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.parsing.JetScriptDefinition;
-import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -49,14 +49,14 @@ import java.util.List;
 public class ScriptTest {
     @Test
     public void testScript() throws Exception {
-        Class<?> aClass = compileScript("fib.kts", numIntParam(), Collections.<JetScriptDefinition>emptyList());
+        Class<?> aClass = compileScript("fib.kts", numIntParam(), Collections.<KotlinScriptDefinition>emptyList());
         Assert.assertNotNull(aClass);
         aClass.getConstructor(int.class).newInstance(4);
     }
 
     @Test
     public void testScriptWithPackage() throws Exception {
-        Class<?> aClass = compileScript("fib.pkg.kts", numIntParam(), Collections.<JetScriptDefinition>emptyList());
+        Class<?> aClass = compileScript("fib.pkg.kts", numIntParam(), Collections.<KotlinScriptDefinition>emptyList());
         Assert.assertNotNull(aClass);
         aClass.getConstructor(int.class).newInstance(4);
     }
@@ -64,7 +64,7 @@ public class ScriptTest {
     @Test
     public void testScriptWithScriptDefinition() throws Exception {
         Class<?> aClass = compileScript("fib.fib.kt", null,
-                                        Collections.singletonList(new JetScriptDefinition(".fib.kt", numIntParam())));
+                                        Collections.singletonList(new KotlinScriptDefinition(".fib.kt", numIntParam())));
         Assert.assertNotNull(aClass);
         aClass.getConstructor(int.class).newInstance(4);
     }
@@ -73,7 +73,7 @@ public class ScriptTest {
     private static Class<?> compileScript(
             @NotNull String scriptPath,
             @Nullable List<AnalyzerScriptParameter> scriptParameters,
-            @NotNull List<JetScriptDefinition> scriptDefinitions
+            @NotNull List<KotlinScriptDefinition> scriptDefinitions
     ) {
         KotlinPaths paths = PathUtil.getKotlinPathsForDistDirectory();
         MessageCollector messageCollector = PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR;
@@ -91,7 +91,7 @@ public class ScriptTest {
                     KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
             try {
-                JetScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
+                KotlinScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
                 return KotlinToJVMBytecodeCompiler.compileScript(configuration, paths, environment);
             }
             catch (CompilationException e) {

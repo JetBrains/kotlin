@@ -35,8 +35,8 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
         fun getElementToValueMap(pseudocode: PseudocodeImpl): Map<KtElement, PseudoValue> {
             val elementToValues = LinkedHashMap<KtElement, PseudoValue>()
             pseudocode.getCorrespondingElement().accept(object : KtTreeVisitorVoid() {
-                override fun visitJetElement(element: KtElement) {
-                    super.visitJetElement(element)
+                override fun visitKtElement(element: KtElement) {
+                    super.visitKtElement(element)
 
                     val value = pseudocode.getElementValue(element)
                     if (value != null) {

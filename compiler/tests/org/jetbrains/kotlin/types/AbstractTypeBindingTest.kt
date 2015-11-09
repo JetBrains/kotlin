@@ -97,7 +97,7 @@ abstract class AbstractTypeBindingTest : KotlinLiteFixture() {
             }
 
             println("psi: ${binding.psiElement.getText()}")
-            println("type: ${binding.jetType.render()}")
+            println("type: ${binding.kotlinType.render()}")
 
             printCollection(binding.getArgumentBindings()) {
                 print(it)

@@ -62,11 +62,11 @@ class KotlinPullUpHelper(
     private fun KtExpression.isMovable(): Boolean {
         return accept(
                 object: KtVisitor<Boolean, Nothing?>() {
-                    override fun visitJetElement(element: KtElement, arg: Nothing?): Boolean {
+                    override fun visitKtElement(element: KtElement, arg: Nothing?): Boolean {
                         return element.allChildren.all { (it as? KtElement)?.accept(this, arg) ?: true }
                     }
 
-                    override fun visitJetFile(file: KtFile, data: Nothing?) = false
+                    override fun visitKtFile(file: KtFile, data: Nothing?) = false
 
                     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, arg: Nothing?): Boolean {
                         val resolvedCall = expression.getResolvedCall(data.resolutionFacade.analyze(expression)) ?: return true

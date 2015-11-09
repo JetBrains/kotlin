@@ -75,8 +75,8 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.parsing.JetParserDefinition
-import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -119,7 +119,7 @@ public class KotlinCoreEnvironment private constructor(
         val index = JvmDependenciesIndex(javaRoots)
         (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
 
-        sourceFiles.addAll(CompileEnvironmentUtil.getJetFiles(project, getSourceRootsCheckingForDuplicates(), {
+        sourceFiles.addAll(CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), {
             message ->
             report(ERROR, message)
         }))
@@ -129,7 +129,7 @@ public class KotlinCoreEnvironment private constructor(
             }
         })
 
-        JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
+        KotlinScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
 
         project.registerService(javaClass<JvmVirtualFileFinderFactory>(), JvmCliVirtualFileFinderFactory(index))
 
@@ -356,8 +356,8 @@ public class KotlinCoreEnvironment private constructor(
         public fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
             with(applicationEnvironment) {
                 registerFileType(KotlinFileType.INSTANCE, "kt")
-                registerFileType(KotlinFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX)
-                registerParserDefinition(JetParserDefinition())
+                registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
+                registerParserDefinition(KotlinParserDefinition())
                 getApplication().registerService(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())
                 getApplication().registerService(javaClass<JavaClassSupers>(), javaClass<JavaClassSupersImpl>())
             }
@@ -372,7 +372,7 @@ public class KotlinCoreEnvironment private constructor(
         @JvmStatic
         public fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.getProject()) {
-                registerService(javaClass<JetScriptDefinitionProvider>(), JetScriptDefinitionProvider())
+                registerService(javaClass<KotlinScriptDefinitionProvider>(), KotlinScriptDefinitionProvider())
                 registerService(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(this))
                 registerService(javaClass<KtLightClassForFacade.FacadeStubCache>(), KtLightClassForFacade.FacadeStubCache(this))
             }

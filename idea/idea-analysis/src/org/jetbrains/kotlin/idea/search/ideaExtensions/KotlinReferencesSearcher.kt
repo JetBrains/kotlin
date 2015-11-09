@@ -171,7 +171,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
     }
 
     companion object {
-        public fun processJetClassOrObject(element: KtClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
+        public fun processKtClassOrObject(element: KtClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
             val className = element.getName()
             if (className != null) {
                 val lightClass = runReadAction { LightClassUtil.getPsiClass(element) }
@@ -239,7 +239,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         private fun searchLightElements(queryParameters: ReferencesSearch.SearchParameters, element: PsiElement) {
             when (element) {
-                is KtClassOrObject -> processJetClassOrObject(element, queryParameters)
+                is KtClassOrObject -> processKtClassOrObject(element, queryParameters)
                 is KtNamedFunction, is KtSecondaryConstructor -> {
                     val function = element as KtFunction
                     val name = runReadAction { function.getName() }

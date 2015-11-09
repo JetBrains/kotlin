@@ -133,7 +133,7 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
         val dummyElement = KtPsiFactory(getEnvironment().project).createType("Int")
 
         init {
-            dummyElement.getContainingJetFile().doNotAnalyze = null
+            dummyElement.getContainingKtFile().doNotAnalyze = null
         }
 
         override fun getFactory() = unimplemented()

@@ -111,7 +111,7 @@ public class DefaultModalityModifiersTest extends KotlinLiteFixture {
             ResolveSession resolveSession = createLazyResolveSession(
                     moduleContext,
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(),
-                                                            Collections.singleton(aClass.getContainingJetFile())),
+                                                            Collections.singleton(aClass.getContainingKtFile())),
                     new BindingTraceContext(),
                     TargetPlatform.Default.INSTANCE$
             );

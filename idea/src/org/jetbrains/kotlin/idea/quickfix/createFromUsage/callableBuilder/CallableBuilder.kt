@@ -65,7 +65,8 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -260,7 +261,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             if (containingElement is KtElement) {
-                jetFileToEdit = containingElement.getContainingJetFile()
+                jetFileToEdit = containingElement.getContainingKtFile()
                 if (jetFileToEdit != config.currentFile) {
                     containingFileEditor = FileEditorManager.getInstance(project).getSelectedTextEditor()!!
                 }

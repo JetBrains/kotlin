@@ -48,7 +48,7 @@ public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtC
         val descriptor = element.resolveToDescriptor()
         val containingClass = descriptor.getContainingDeclaration() as ClassDescriptor
 
-        val file = element.getContainingJetFile()
+        val file = element.getContainingKtFile()
         val outermostParent = KtPsiUtil.getOutermostParent(element, file, false)
 
         val typeParameterList = newTypeParameterList(element)

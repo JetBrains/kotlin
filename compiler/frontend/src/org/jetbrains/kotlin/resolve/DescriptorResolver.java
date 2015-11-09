@@ -383,7 +383,7 @@ public class DescriptorResolver {
 
     @NotNull
     private KotlinType getVarargParameterType(@NotNull KotlinType elementType) {
-        KotlinType primitiveArrayType = builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
+        KotlinType primitiveArrayType = builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType);
         if (primitiveArrayType != null) {
             return primitiveArrayType;
         }

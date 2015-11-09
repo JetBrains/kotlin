@@ -30,15 +30,15 @@ final class LtGtTypingUtils {
     private LtGtTypingUtils() {
     }
 
-    static void handleJetAutoCloseLT(Editor editor) {
+    static void handleKotlinAutoCloseLT(Editor editor) {
         JavaTypedHandler.handleAfterJavaLT(editor, KtTokens.LT, KtTokens.GT, INVALID_INSIDE_REFERENCE);
     }
 
-    static boolean handleJetGTInsert(Editor editor) {
+    static boolean handleKotlinGTInsert(Editor editor) {
         return JavaTypedHandler.handleJavaGT(editor, KtTokens.LT, KtTokens.GT, INVALID_INSIDE_REFERENCE);
     }
 
-    static void handleJetLTDeletion(Editor editor, int offset) {
+    static void handleKotlinLTDeletion(Editor editor, int offset) {
         JavaBackspaceHandler.handleLTDeletion(editor, offset, KtTokens.LT, KtTokens.GT, INVALID_INSIDE_REFERENCE);
     }
 

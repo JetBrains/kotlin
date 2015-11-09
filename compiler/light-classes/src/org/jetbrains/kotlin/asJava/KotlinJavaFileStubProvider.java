@@ -165,7 +165,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                 classOrObject.isLocal(),
                 new StubGenerationStrategy<OutermostKotlinClassLightClassData>() {
                     private KtFile getFile() {
-                        return classOrObject.getContainingJetFile();
+                        return classOrObject.getContainingKtFile();
                     }
 
                     @NotNull
@@ -292,7 +292,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     @Override
                     public void generate(@NotNull GenerationState state, @NotNull Collection<KtFile> files) {
                         PackageCodegen packageCodegen = state.getFactory().forPackage(getPackageFqName(), files);
-                        KtFile file = classOrObject.getContainingJetFile();
+                        KtFile file = classOrObject.getContainingKtFile();
                         Type packagePartType = FileClasses.getFileClassType(state.getFileClassesProvider(), file);
                         PackageContext context = state.getRootContext().intoPackagePart(packageCodegen.getPackageFragment(), packagePartType, file);
                         packageCodegen.generateClassOrObject(classOrObject, context);

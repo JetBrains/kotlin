@@ -27,7 +27,7 @@ public class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndepen
         KtPackageDirective::class.java, "", "Change file's package to match directory"
 ) {
     override fun isApplicableTo(element: KtPackageDirective): Boolean {
-        val file = element.getContainingJetFile()
+        val file = element.getContainingKtFile()
         if (file.packageMatchesDirectory()) return false
 
         val fqNameByDirectory = file.getFqNameByDirectory()
@@ -44,7 +44,7 @@ public class ChangePackageToMatchDirectoryIntention : SelfTargetingOffsetIndepen
     }
 
     override fun applyTo(element: KtPackageDirective, editor: Editor) {
-        val file = element.getContainingJetFile()
+        val file = element.getContainingKtFile()
         val newFqName = file.getFqNameByDirectory()
         if (!newFqName.toUnsafe().hasIdentifiersOnly()) return
         KotlinChangePackageRefactoring(file).run(newFqName)

@@ -72,7 +72,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
         val descriptors = ArrayList<DeclarationDescriptor>()
 
         psiFile.accept(object : KtVisitorVoid() {
-            override fun visitJetFile(file: KtFile) {
+            override fun visitKtFile(file: KtFile) {
                 val fqName = file.getPackageFqName()
                 if (!fqName.isRoot()) {
                     val packageDescriptor = context.module.getPackage(fqName)
@@ -126,7 +126,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 element.acceptChildren(this)
             }
 
-            override fun visitJetElement(element: KtElement) {
+            override fun visitKtElement(element: KtElement) {
                 element.acceptChildren(this)
             }
 

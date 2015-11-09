@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRangeKt;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
@@ -469,7 +469,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
                 KtExpression replacement = psiFactory.createExpression(nameSuggestion);
                 KtExpression result;
-                if (JetPsiUtilKt.isFunctionLiteralOutsideParentheses(replace)) {
+                if (KtPsiUtilKt.isFunctionLiteralOutsideParentheses(replace)) {
                     KtFunctionLiteralArgument functionLiteralArgument =
                             PsiTreeUtil.getParentOfType(replace, KtFunctionLiteralArgument.class);
                     KtCallExpression newCallExpression = PsiModificationUtilsKt

@@ -55,7 +55,7 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
 
     @NotNull
     @Override
-    public KtFile getContainingJetFile() {
+    public KtFile getContainingKtFile() {
         PsiFile file = getContainingFile();
         assert file instanceof KtFile : "JetElement not inside JetFile: " + file + " " + file.getText();
         return (KtFile) file;
@@ -68,7 +68,7 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitJetElement(this, data);
+        return visitor.visitKtElement(this, data);
     }
 
     @Override

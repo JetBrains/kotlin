@@ -214,7 +214,7 @@ public class LazyDeclarationResolver {
             }
 
             @Override
-            public DeclarationDescriptor visitJetElement(@NotNull KtElement element, Void data) {
+            public DeclarationDescriptor visitKtElement(@NotNull KtElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
                                                    PsiUtilsKt.getElementTextWithContext(element));
             }

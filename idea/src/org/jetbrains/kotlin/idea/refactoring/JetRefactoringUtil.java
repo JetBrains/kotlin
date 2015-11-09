@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.string.StringUtilKt;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -314,7 +314,7 @@ public class JetRefactoringUtil {
     }
 
     private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, @NotNull PsiParameter parameter) {
-        int parameterIndex = JetPsiUtilKt.parameterIndex(LightClassUtilsKt.getUnwrapped(parameter));
+        int parameterIndex = KtPsiUtilKt.parameterIndex(LightClassUtilsKt.getUnwrapped(parameter));
 
         if (method instanceof KtLightMethod) {
             KtDeclaration declaration = ((KtLightMethod) method).getOrigin();

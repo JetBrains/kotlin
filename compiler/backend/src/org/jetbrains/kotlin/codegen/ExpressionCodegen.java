@@ -2324,7 +2324,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         final Type asmType =
-                state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingJetFile(), getParentCodegen());
+                state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingKtFile(), getParentCodegen());
 
         return StackValue.operation(asmType, new Function1<InstructionAdapter, Unit>() {
             @Override

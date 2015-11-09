@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public interface KtNodeTypes {
-    IFileElementType JET_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
+    IFileElementType KT_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
 
     IElementType CLASS     = KtStubElementTypes.CLASS;
     IElementType FUN       = KtStubElementTypes.FUNCTION;

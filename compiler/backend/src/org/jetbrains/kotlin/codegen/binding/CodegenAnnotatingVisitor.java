@@ -153,13 +153,13 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @Override
-    public void visitJetElement(@NotNull KtElement element) {
-        super.visitJetElement(element);
+    public void visitKtElement(@NotNull KtElement element) {
+        super.visitKtElement(element);
         element.acceptChildren(this);
     }
 
     @Override
-    public void visitJetFile(@NotNull KtFile file) {
+    public void visitKtFile(@NotNull KtFile file) {
         if (file.isScript()) {
             // TODO: replace with visitScript override
             //noinspection ConstantConditions
@@ -518,7 +518,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         super.visitWhenExpression(expression);
         if (!isWhenWithEnums(expression)) return;
 
-        String currentClassName = getCurrentTopLevelClassOrPackagePartInternalName(expression.getContainingJetFile());
+        String currentClassName = getCurrentTopLevelClassOrPackagePartInternalName(expression.getContainingKtFile());
 
         if (bindingContext.get(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName) == null) {
             bindingTrace.record(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName, new ArrayList<WhenByEnumsMapping>(1));

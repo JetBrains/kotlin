@@ -24,12 +24,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-public class JetParser implements PsiParser {
+public class KotlinParser implements PsiParser {
 
-    private final JetScriptDefinitionProvider scriptDefinitionProvider;
+    private final KotlinScriptDefinitionProvider scriptDefinitionProvider;
 
-    public JetParser(Project project) {
-        scriptDefinitionProvider = JetScriptDefinitionProvider.getInstance(project);
+    public KotlinParser(Project project) {
+        scriptDefinitionProvider = KotlinScriptDefinitionProvider.getInstance(project);
     }
 
     @Override
@@ -41,9 +41,9 @@ public class JetParser implements PsiParser {
     // we need this method because we need psiFile
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder, PsiFile psiFile) {
-        JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        KotlinParsing jetParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
         if (scriptDefinitionProvider != null && scriptDefinitionProvider.isScript(psiFile)
-            || psiFile.getName().endsWith(JetParserDefinition.STD_SCRIPT_EXT)) {
+            || psiFile.getName().endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)) {
             jetParsing.parseScript();
         }
         else {
@@ -54,21 +54,21 @@ public class JetParser implements PsiParser {
 
     @NotNull
     public static ASTNode parseTypeCodeFragment(PsiBuilder psiBuilder) {
-        JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        KotlinParsing jetParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
         jetParsing.parseTypeCodeFragment();
         return psiBuilder.getTreeBuilt();
     }
 
     @NotNull
     public static ASTNode parseExpressionCodeFragment(PsiBuilder psiBuilder) {
-        JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        KotlinParsing jetParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
         jetParsing.parseExpressionCodeFragment();
         return psiBuilder.getTreeBuilt();
     }
 
     @NotNull
     public static ASTNode parseBlockCodeFragment(PsiBuilder psiBuilder) {
-        JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        KotlinParsing jetParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
         jetParsing.parseBlockCodeFragment();
         return psiBuilder.getTreeBuilt();
     }

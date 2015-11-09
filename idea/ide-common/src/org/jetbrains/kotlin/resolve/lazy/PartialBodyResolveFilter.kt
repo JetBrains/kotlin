@@ -430,7 +430,7 @@ class PartialBodyResolveFilter(
      * Recursively visits code but does not enter constructs that may not affect smart casts/control flow
      */
     private abstract class ControlFlowVisitor : KtVisitorVoid() {
-        override fun visitJetElement(element: KtElement) {
+        override fun visitKtElement(element: KtElement) {
             if (element.noControlFlowInside()) return
             element.acceptChildren(this)
         }

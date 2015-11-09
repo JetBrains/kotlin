@@ -98,7 +98,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
     private val elementsToMove = options.elementsToMove.filter { e -> e.getContainingFile() != options.moveTarget.getTargetPsiIfExists(e) }
     private val kotlinToLightElementsBySourceFile = elementsToMove
-            .groupBy { it.getContainingJetFile() }
+            .groupBy { it.getContainingKtFile() }
             .mapValues { it.value.keysToMap { it.toLightElements() } }
     private val conflicts = MultiMap<PsiElement, String>()
 
@@ -299,7 +299,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                         continue
                     }
 
-                    oldToNewElementsMapping[sourceFile] = newDeclaration.getContainingJetFile()
+                    oldToNewElementsMapping[sourceFile] = newDeclaration.getContainingKtFile()
 
                     getTransaction()!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
                     for ((oldElement, newElement) in oldLightElements.asSequence() zip newDeclaration.toLightElements().asSequence()) {

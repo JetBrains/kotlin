@@ -156,7 +156,7 @@ public class KotlinFindClassUsagesHandler(
             val klass = companionObject.getStrictParentOfType<KtClass>() ?: return@runReadAction
             val companionObjectDescriptor = companionObject.descriptor
             klass.acceptChildren(object : KtVisitorVoid() {
-                override fun visitJetElement(element: KtElement) {
+                override fun visitKtElement(element: KtElement) {
                     if (element == companionObject) return // skip companion object itself
                     if (stop) return
                     element.acceptChildren(this)

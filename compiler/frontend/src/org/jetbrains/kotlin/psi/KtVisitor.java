@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
 public class KtVisitor<R, D> extends PsiElementVisitor {
-    public R visitJetElement(@NotNull KtElement element, D data) {
+    public R visitKtElement(@NotNull KtElement element, D data) {
         visitElement(element);
         return null;
     }
@@ -69,7 +69,7 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(typedef, data);
     }
 
-    public R visitJetFile(@NotNull KtFile file, D data) {
+    public R visitKtFile(@NotNull KtFile file, D data) {
         visitFile(file);
         return null;
     }
@@ -79,43 +79,43 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitImportDirective(@NotNull KtImportDirective importDirective, D data) {
-        return visitJetElement(importDirective, data);
+        return visitKtElement(importDirective, data);
     }
 
     public R visitImportList(@NotNull KtImportList importList, D data) {
-        return visitJetElement(importList, data);
+        return visitKtElement(importList, data);
     }
 
     public R visitFileAnnotationList(@NotNull KtFileAnnotationList fileAnnotationList, D data) {
-        return visitJetElement(fileAnnotationList, data);
+        return visitKtElement(fileAnnotationList, data);
     }
 
     public R visitClassBody(@NotNull KtClassBody classBody, D data) {
-        return visitJetElement(classBody, data);
+        return visitKtElement(classBody, data);
     }
 
     public R visitModifierList(@NotNull KtModifierList list, D data) {
-        return visitJetElement(list, data);
+        return visitKtElement(list, data);
     }
 
     public R visitAnnotation(@NotNull KtAnnotation annotation, D data) {
-        return visitJetElement(annotation, data);
+        return visitKtElement(annotation, data);
     }
 
     public R visitAnnotationEntry(@NotNull KtAnnotationEntry annotationEntry, D data) {
-        return visitJetElement(annotationEntry, data);
+        return visitKtElement(annotationEntry, data);
     }
 
     public R visitAnnotationUseSiteTarget(@NotNull KtAnnotationUseSiteTarget annotationTarget, D data) {
-        return visitJetElement(annotationTarget, data);
+        return visitKtElement(annotationTarget, data);
     }
 
     public R visitConstructorCalleeExpression(@NotNull KtConstructorCalleeExpression constructorCalleeExpression, D data) {
-        return visitJetElement(constructorCalleeExpression, data);
+        return visitKtElement(constructorCalleeExpression, data);
     }
 
     public R visitTypeParameterList(@NotNull KtTypeParameterList list, D data) {
-        return visitJetElement(list, data);
+        return visitKtElement(list, data);
     }
 
     public R visitTypeParameter(@NotNull KtTypeParameter parameter, D data) {
@@ -127,7 +127,7 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitParameterList(@NotNull KtParameterList list, D data) {
-        return visitJetElement(list, data);
+        return visitKtElement(list, data);
     }
 
     public R visitParameter(@NotNull KtParameter parameter, D data) {
@@ -135,11 +135,11 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitDelegationSpecifierList(@NotNull KtDelegationSpecifierList list, D data) {
-        return visitJetElement(list, data);
+        return visitKtElement(list, data);
     }
 
     public R visitDelegationSpecifier(@NotNull KtDelegationSpecifier specifier, D data) {
-        return visitJetElement(specifier, data);
+        return visitKtElement(specifier, data);
     }
 
     public R visitDelegationByExpressionSpecifier(@NotNull KtDelegatorByExpressionSpecifier specifier, D data) {
@@ -155,27 +155,27 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call, D data) {
-        return visitJetElement(call, data);
+        return visitKtElement(call, data);
     }
 
     public R visitPropertyDelegate(@NotNull KtPropertyDelegate delegate, D data) {
-        return visitJetElement(delegate, data);
+        return visitKtElement(delegate, data);
     }
 
     public R visitTypeReference(@NotNull KtTypeReference typeReference, D data) {
-        return visitJetElement(typeReference, data);
+        return visitKtElement(typeReference, data);
     }
 
     public R visitValueArgumentList(@NotNull KtValueArgumentList list, D data) {
-        return visitJetElement(list, data);
+        return visitKtElement(list, data);
     }
 
     public R visitArgument(@NotNull KtValueArgument argument, D data) {
-        return visitJetElement(argument, data);
+        return visitKtElement(argument, data);
     }
 
     public R visitExpression(@NotNull KtExpression expression, D data) {
-        return visitJetElement(expression, data);
+        return visitKtElement(expression, data);
     }
 
     public R visitLoopExpression(@NotNull KtLoopExpression loopExpression, D data) {
@@ -311,15 +311,15 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitCatchSection(@NotNull KtCatchClause catchClause, D data) {
-        return visitJetElement(catchClause, data);
+        return visitKtElement(catchClause, data);
     }
 
     public R visitFinallySection(@NotNull KtFinallySection finallySection, D data) {
-        return visitJetElement(finallySection, data);
+        return visitKtElement(finallySection, data);
     }
 
     public R visitTypeArgumentList(@NotNull KtTypeArgumentList typeArgumentList, D data) {
-        return visitJetElement(typeArgumentList, data);
+        return visitKtElement(typeArgumentList, data);
     }
 
     public R visitThisExpression(@NotNull KtThisExpression expression, D data) {
@@ -335,7 +335,7 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitInitializerList(@NotNull KtInitializerList list, D data) {
-        return visitJetElement(list, data);
+        return visitKtElement(list, data);
     }
 
     public R visitAnonymousInitializer(@NotNull KtClassInitializer initializer, D data) {
@@ -347,15 +347,15 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitTypeConstraintList(@NotNull KtTypeConstraintList list, D data) {
-        return visitJetElement(list, data);
+        return visitKtElement(list, data);
     }
 
     public R visitTypeConstraint(@NotNull KtTypeConstraint constraint, D data) {
-        return visitJetElement(constraint, data);
+        return visitKtElement(constraint, data);
     }
 
     private R visitTypeElement(@NotNull KtTypeElement type, D data) {
-        return visitJetElement(type, data);
+        return visitKtElement(type, data);
     }
 
     public R visitUserType(@NotNull KtUserType type, D data) {
@@ -391,11 +391,11 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitTypeProjection(@NotNull KtTypeProjection typeProjection, D data) {
-        return visitJetElement(typeProjection, data);
+        return visitKtElement(typeProjection, data);
     }
 
     public R visitWhenEntry(@NotNull KtWhenEntry jetWhenEntry, D data) {
-        return visitJetElement(jetWhenEntry, data);
+        return visitKtElement(jetWhenEntry, data);
     }
 
     public R visitIsExpression(@NotNull KtIsExpression expression, D data) {
@@ -403,19 +403,19 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitWhenConditionIsPattern(@NotNull KtWhenConditionIsPattern condition, D data) {
-        return visitJetElement(condition, data);
+        return visitKtElement(condition, data);
     }
 
     public R visitWhenConditionInRange(@NotNull KtWhenConditionInRange condition, D data) {
-        return visitJetElement(condition, data);
+        return visitKtElement(condition, data);
     }
 
     public R visitWhenConditionWithExpression(@NotNull KtWhenConditionWithExpression condition, D data) {
-        return visitJetElement(condition, data);
+        return visitKtElement(condition, data);
     }
 
     public R visitStringTemplateEntry(@NotNull KtStringTemplateEntry entry, D data) {
-        return visitJetElement(entry, data);
+        return visitKtElement(entry, data);
     }
 
     public R visitStringTemplateEntryWithExpression(@NotNull KtStringTemplateEntryWithExpression entry, D data) {
@@ -439,6 +439,6 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitPackageDirective(@NotNull KtPackageDirective directive, D data) {
-        return visitJetElement(directive, data);
+        return visitKtElement(directive, data);
     }
 }

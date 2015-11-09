@@ -134,9 +134,9 @@ private class VariablesCollector(
         private val myExpressions: MutableSet<TextWithImports>
 ) : KtTreeVisitorVoid() {
 
-    override fun visitJetElement(element: KtElement) {
+    override fun visitKtElement(element: KtElement) {
         if (element.isInRange()) {
-            super.visitJetElement(element)
+            super.visitKtElement(element)
         }
     }
 

@@ -51,7 +51,7 @@ public class MappingsClassesForWhenByEnum {
 
             Type mappingsClassType = Type.getObjectType(mapping.getMappingsClassInternalName());
 
-            mappingsCodegen.generate(mappings, mappingsClassType, expression.getContainingJetFile());
+            mappingsCodegen.generate(mappings, mappingsClassType, expression.getContainingKtFile());
             generatedMappingClasses.add(mapping.getMappingsClassInternalName());
         }
     }

@@ -267,7 +267,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         if (decompiledClassOrObject is KtEnumEntry) {
             return null
         }
-        val containingJetFile = decompiledClassOrObject.getContainingJetFile()
+        val containingJetFile = decompiledClassOrObject.getContainingKtFile()
         if (!containingJetFile.isCompiled) {
             return null
         }
@@ -282,12 +282,12 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         val relativeFqName = getClassRelativeName(decompiledClassOrObject)
         val iterator = relativeFqName.pathSegments().iterator()
         val base = iterator.next()
-        assert(rootLightClassForDecompiledFile.name == base.asString()) { "Light class for file:\n" + decompiledClassOrObject.getContainingJetFile().virtualFile.canonicalPath + "\nwas expected to have name: " + base.asString() + "\n Actual: " + rootLightClassForDecompiledFile.name }
+        assert(rootLightClassForDecompiledFile.name == base.asString()) { "Light class for file:\n" + decompiledClassOrObject.getContainingKtFile().virtualFile.canonicalPath + "\nwas expected to have name: " + base.asString() + "\n Actual: " + rootLightClassForDecompiledFile.name }
         var current = rootLightClassForDecompiledFile
         while (iterator.hasNext()) {
             val name = iterator.next()
             val innerClass = current.findInnerClassByName(name.asString(), false).sure {
-                "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" + "File: " + decompiledClassOrObject.getContainingJetFile().virtualFile.name
+                "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" + "File: " + decompiledClassOrObject.getContainingKtFile().virtualFile.name
             }
             current = innerClass
         }

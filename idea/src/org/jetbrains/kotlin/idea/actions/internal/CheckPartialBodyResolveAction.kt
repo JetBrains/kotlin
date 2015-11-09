@@ -109,7 +109,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
         val resolutionFacade = file.getResolutionFacade()
         val document = FileDocumentManager.getInstance().getDocument(file.getVirtualFile())!!
         file.acceptChildren(object : KtVisitorVoid(){
-            override fun visitJetElement(element: KtElement) {
+            override fun visitKtElement(element: KtElement) {
                 ProgressManager.checkCanceled()
                 element.acceptChildren(this)
             }

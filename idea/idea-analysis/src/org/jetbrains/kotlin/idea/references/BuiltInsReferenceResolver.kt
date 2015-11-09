@@ -61,7 +61,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
     private fun initialize() {
         assert(moduleDescriptor == null) { "Attempt to initialize twice" }
 
-        val jetBuiltInsFiles = getJetBuiltInsFiles()
+        val jetBuiltInsFiles = getBuiltInsKtFiles()
 
         runReadAction {
             val newModuleContext = ContextForNewModule(project, Name.special("<built-ins resolver module>"), TargetPlatform.Default)
@@ -85,7 +85,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         }
     }
 
-    private fun getJetBuiltInsFiles(): Set<KtFile> {
+    private fun getBuiltInsKtFiles(): Set<KtFile> {
         return getBuiltInsDirUrls().flatMapTo(hashSetOf<KtFile>()) { getBuiltInSourceFiles(it) }
     }
 

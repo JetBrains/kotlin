@@ -109,7 +109,7 @@ abstract public class KtClassOrObject :
     public override fun delete() {
         CheckUtil.checkWritable(this);
 
-        val file = getContainingJetFile();
+        val file = getContainingKtFile();
         if (!isTopLevel() || file.getDeclarations().size() > 1) {
             CodeEditUtil.removeChild(getParent().getNode(), getNode());
         }

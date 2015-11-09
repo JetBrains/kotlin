@@ -20,9 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
@@ -41,13 +39,13 @@ public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun substituteElementToRename(element: PsiElement, editor: Editor?): PsiElement? {
-        return getJetClassOrObject(element, true, editor)
+        return getKtClassOrObject(element, true, editor)
     }
 
     override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>) {
-        val classOrObject = getJetClassOrObject(element, false, null) ?: return
+        val classOrObject = getKtClassOrObject(element, false, null) ?: return
 
-        val file = classOrObject.getContainingJetFile()
+        val file = classOrObject.getContainingKtFile()
 
         val virtualFile = file.virtualFile
         if (virtualFile != null) {
@@ -73,7 +71,7 @@ public class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
         return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element] != null
     }
 
-    private fun getJetClassOrObject(element: PsiElement?, showErrors: Boolean, editor: Editor?): KtClassOrObject? = when (element) {
+    private fun getKtClassOrObject(element: PsiElement?, showErrors: Boolean, editor: Editor?): KtClassOrObject? = when (element) {
         is KtLightClass ->
             if (element is KtLightClassForExplicitDeclaration) {
                 element.getOrigin()

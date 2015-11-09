@@ -148,7 +148,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
             RedundantSamConstructorInspection.replaceSamConstructorCall(callExpression)
         }
         else {
-            ShortenReferences.DEFAULT.process(replaced.getContainingJetFile(), replaced.startOffset, callee.endOffset)
+            ShortenReferences.DEFAULT.process(replaced.getContainingKtFile(), replaced.startOffset, callee.endOffset)
         }
     }
 

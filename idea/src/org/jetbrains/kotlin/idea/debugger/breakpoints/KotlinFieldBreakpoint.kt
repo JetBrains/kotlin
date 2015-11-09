@@ -103,7 +103,7 @@ class KotlinFieldBreakpoint(
             setFieldName(property.getName()!!)
 
             if (property is KtProperty && property.isTopLevel()) {
-                getProperties().myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingJetFile()).fileClassFqName.asString()
+                getProperties().myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
             }
             else {
                 val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, javaClass())

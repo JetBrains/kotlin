@@ -71,7 +71,7 @@ public final class PsiCodegenPredictor {
             }
         }
         else {
-            KtFile containingFile = declaration.getContainingJetFile();
+            KtFile containingFile = declaration.getContainingKtFile();
 
             if (declaration instanceof KtNamedFunction) {
                 Name name = ((KtNamedFunction) declaration).getNameAsName();

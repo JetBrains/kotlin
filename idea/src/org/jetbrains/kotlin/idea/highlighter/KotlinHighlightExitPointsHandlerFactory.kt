@@ -63,7 +63,7 @@ public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFact
         override fun computeUsages(targets: MutableList<PsiElement>?) {
             val relevantFunction = target.getRelevantFunction()
             relevantFunction?.accept(object : KtVisitorVoid() {
-                override fun visitJetElement(element: KtElement) {
+                override fun visitKtElement(element: KtElement) {
                     element.acceptChildren(this)
                 }
 

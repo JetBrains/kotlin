@@ -56,7 +56,7 @@ internal fun createSingleImportAction(project: Project,
                              editor: Editor,
                              element: KtElement,
                              descriptors: Collection<DeclarationDescriptor>): KotlinAddImportAction {
-    val prioritizer = Prioritizer(element.getContainingJetFile())
+    val prioritizer = Prioritizer(element.getContainingKtFile())
     val variants = descriptors
             .groupBy { it.importableFqName!! }
             .map {
@@ -75,7 +75,7 @@ internal fun createGroupedImportsAction(project: Project,
                                element: KtElement,
                                autoImportDescription: String,
                                descriptors: Collection<DeclarationDescriptor>): KotlinAddImportAction {
-    val prioritizer = DescriptorGroupPrioritizer(element.getContainingJetFile())
+    val prioritizer = DescriptorGroupPrioritizer(element.getContainingKtFile())
 
     val variants = descriptors
             .groupBy { it.importableFqName!!.parentOrNull() ?: FqName.ROOT }
@@ -170,7 +170,7 @@ class KotlinAddImportAction internal constructor(
         project.executeWriteCommand(QuickFixBundle.message("add.import")) {
             if (!element.isValid) return@executeWriteCommand
 
-            val file = element.getContainingJetFile()
+            val file = element.getContainingKtFile()
 
             variant.declarationToImport(project)?.let {
                 val location = ProximityLocation(element, ModuleUtilCore.findModuleForPsiElement(element))

@@ -24,11 +24,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class JetScriptDefinition {
+public class KotlinScriptDefinition {
     private final String extension;
     private final List<AnalyzerScriptParameter> parameters;
 
-    public JetScriptDefinition(String extension, List<AnalyzerScriptParameter> scriptParameters) {
+    public KotlinScriptDefinition(String extension, List<AnalyzerScriptParameter> scriptParameters) {
         this.extension = extension;
         parameters = scriptParameters == null ? Collections.<AnalyzerScriptParameter>emptyList() : scriptParameters;
     }
@@ -41,7 +41,7 @@ public class JetScriptDefinition {
         return paths;
     }
 
-    public JetScriptDefinition(String extension, AnalyzerScriptParameter... scriptParameters) {
+    public KotlinScriptDefinition(String extension, AnalyzerScriptParameter... scriptParameters) {
         this(extension, Arrays.asList(scriptParameters));
     }
 

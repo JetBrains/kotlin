@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import javax.swing.*;
 
@@ -90,7 +90,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         //noinspection ConstantConditions
         javaClass.getModifierList().setModifierProperty(
                 PsiModifier.FINAL,
-                !(classOrObject instanceof KtClass && JetPsiUtilKt.isInheritable((KtClass) classOrObject))
+                !(classOrObject instanceof KtClass && KtPsiUtilKt.isInheritable((KtClass) classOrObject))
         );
 
         javaClass.putUserData(ORIGINAL_CLASS, classOrObject);

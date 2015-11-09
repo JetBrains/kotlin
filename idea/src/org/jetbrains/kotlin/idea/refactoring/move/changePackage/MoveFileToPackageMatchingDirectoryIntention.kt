@@ -33,7 +33,7 @@ public class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIn
         javaClass(), "", "Move file to package-matching directory"
 ) {
     override fun isApplicableTo(element: KtPackageDirective): Boolean {
-        if (element.getContainingJetFile().packageMatchesDirectory()) return false
+        if (element.getContainingKtFile().packageMatchesDirectory()) return false
 
         val qualifiedName = element.getQualifiedName()
         val dirName = if (qualifiedName.isEmpty()) "source root" else "'${qualifiedName.replace('.', '/')}'"
@@ -42,7 +42,7 @@ public class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIn
     }
 
     override fun applyTo(element: KtPackageDirective, editor: Editor) {
-        val file = element.getContainingJetFile()
+        val file = element.getContainingKtFile()
         val project = file.getProject()
         val targetDirectory = MoveClassesOrPackagesUtil.chooseDestinationPackage(
                 project,

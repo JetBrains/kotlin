@@ -39,9 +39,9 @@ public abstract class CalleeReferenceVisitorBase extends KtTreeVisitorVoid {
     protected abstract void processDeclaration(KtSimpleNameExpression reference, PsiElement declaration);
 
     @Override
-    public void visitJetElement(@NotNull KtElement element) {
+    public void visitKtElement(@NotNull KtElement element) {
         if (deepTraversal || !(element instanceof KtClassOrObject || element instanceof KtNamedFunction)) {
-            super.visitJetElement(element);
+            super.visitKtElement(element);
         }
     }
 

@@ -23,7 +23,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     // methods with parameter
 
     public void visitJetElementVoid(@NotNull KtElement element, P data) {
-        super.visitJetElement(element, data);
+        super.visitKtElement(element, data);
     }
 
     public void visitDeclarationVoid(@NotNull KtDeclaration dcl, P data) {
@@ -63,7 +63,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     public void visitJetFileVoid(@NotNull KtFile file, P data) {
-        super.visitJetFile(file, data);
+        super.visitKtFile(file, data);
     }
 
     public void visitScriptVoid(@NotNull KtScript script, P data) {
@@ -424,7 +424,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
 
     // hidden methods
     @Override
-    public final Void visitJetElement(@NotNull KtElement element, P data) {
+    public final Void visitKtElement(@NotNull KtElement element, P data) {
         visitJetElementVoid(element, data);
     	return null;
     }
@@ -478,7 +478,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitJetFile(@NotNull KtFile file, P data) {
+    public final Void visitKtFile(@NotNull KtFile file, P data) {
         visitJetFileVoid(file, data);
         return null;
     }

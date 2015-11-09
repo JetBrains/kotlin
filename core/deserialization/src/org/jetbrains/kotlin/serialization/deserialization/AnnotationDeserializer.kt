@@ -100,7 +100,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
                 val actualArrayType =
                         if (arrayElements.isNotEmpty()) {
                             val actualElementType = resolveArrayElementType(arrayElements.first(), nameResolver)
-                            builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(actualElementType) ?:
+                            builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(actualElementType) ?:
                             builtIns.getArrayType(Variance.INVARIANT, actualElementType)
                         }
                         else {

@@ -317,7 +317,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 return implementationOwnerType;
             }
             else {
-                return FileClasses.getFileClassType(fileClassesProvider, element.getContainingJetFile());
+                return FileClasses.getFileClassType(fileClassesProvider, element.getContainingKtFile());
             }
         }
         /*disabled cause of KT-7775

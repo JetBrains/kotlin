@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.KtNodeType;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.parsing.JetParsing.NameParsingMode;
+import org.jetbrains.kotlin.parsing.KotlinParsing.NameParsingMode;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,9 +33,9 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
-import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.DEFAULT;
+import static org.jetbrains.kotlin.parsing.KotlinParsing.AnnotationParsingMode.DEFAULT;
 
-public class JetExpressionParsing extends AbstractJetParsing {
+public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET_WITH_ARROW = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD, ARROW, DOT);
 
@@ -140,20 +140,20 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // annotations
 
             @Override
-            public void parseHigherPrecedence(JetExpressionParsing parser) {
+            public void parseHigherPrecedence(KotlinExpressionParsing parser) {
                 throw new IllegalStateException("Don't call this method");
             }
         },
 
         AS(AS_KEYWORD, AS_SAFE) {
             @Override
-            public KtNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+            public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 parser.myJetParsing.parseTypeRef();
                 return BINARY_WITH_TYPE;
             }
 
             @Override
-            public void parseHigherPrecedence(JetExpressionParsing parser) {
+            public void parseHigherPrecedence(KotlinExpressionParsing parser) {
                 parser.parsePrefixExpression();
             }
         },
@@ -165,7 +165,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         ELVIS(KtTokens.ELVIS),
         IN_OR_IS(IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS) {
             @Override
-            public KtNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+            public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
                 if (operation == IS_KEYWORD || operation == NOT_IS) {
                     parser.myJetParsing.parseTypeRef();
                     return IS_EXPRESSION;
@@ -197,7 +197,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             this.operations = TokenSet.create(operations);
         }
 
-        public void parseHigherPrecedence(JetExpressionParsing parser) {
+        public void parseHigherPrecedence(KotlinExpressionParsing parser) {
             assert higher != null;
             parser.parseBinaryExpression(higher);
         }
@@ -208,7 +208,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
          * @param parser the parser object
          * @return node type of the result
          */
-        public KtNodeType parseRightHandSide(IElementType operation, JetExpressionParsing parser) {
+        public KtNodeType parseRightHandSide(IElementType operation, KotlinExpressionParsing parser) {
             parseHigherPrecedence(parser);
             return BINARY_EXPRESSION;
         }
@@ -257,9 +257,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
 
-    private final JetParsing myJetParsing;
+    private final KotlinParsing myJetParsing;
 
-    public JetExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, JetParsing jetParsing) {
+    public KotlinExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, KotlinParsing jetParsing) {
         super(builder);
         myJetParsing = jetParsing;
     }
@@ -1023,7 +1023,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decl = mark();
-        JetParsing.ModifierDetector detector = new JetParsing.ModifierDetector();
+        KotlinParsing.ModifierDetector detector = new KotlinParsing.ModifierDetector();
         myJetParsing.parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
         IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected());
@@ -1767,7 +1767,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     @Override
-    protected JetParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
+    protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
         return myJetParsing.create(builder);
     }
 

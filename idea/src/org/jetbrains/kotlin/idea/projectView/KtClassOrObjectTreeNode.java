@@ -61,7 +61,7 @@ public class KtClassOrObjectTreeNode extends AbstractPsiBasedNode<KtClassOrObjec
             data.setPresentableText(classOrObject.getName());
 
             AbstractTreeNode parent = getParent();
-            if (KotlinIconProvider.getMainClass(classOrObject.getContainingJetFile()) != null) {
+            if (KotlinIconProvider.getMainClass(classOrObject.getContainingKtFile()) != null) {
                 if (parent instanceof KtFileTreeNode) {
                     update(parent.getParent());
                 }

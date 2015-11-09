@@ -32,7 +32,7 @@ import java.util.Map;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
-/*package*/ abstract class AbstractJetParsing {
+/*package*/ abstract class AbstractKotlinParsing {
     private static final Map<String, KtKeywordToken> SOFT_KEYWORD_TEXTS = new HashMap<String, KtKeywordToken>();
 
     static {
@@ -52,7 +52,7 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
     protected final SemanticWhitespaceAwarePsiBuilder myBuilder;
 
-    public AbstractJetParsing(SemanticWhitespaceAwarePsiBuilder builder) {
+    public AbstractKotlinParsing(SemanticWhitespaceAwarePsiBuilder builder) {
         this.myBuilder = builder;
     }
 
@@ -362,9 +362,9 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
                                          TrailingCommentsBinder.INSTANCE$);
     }
 
-    protected abstract JetParsing create(SemanticWhitespaceAwarePsiBuilder builder);
+    protected abstract KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder);
 
-    protected JetParsing createTruncatedBuilder(int eofPosition) {
+    protected KotlinParsing createTruncatedBuilder(int eofPosition) {
         return create(new TruncatedSemanticWhitespaceAwarePsiBuilder(myBuilder, eofPosition));
     }
 

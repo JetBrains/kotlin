@@ -25,17 +25,18 @@ import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 
 import java.util.*;
 
-public class JetScriptDefinitionProvider {
-    private final Map<String, JetScriptDefinition> scripts = new HashMap<String, JetScriptDefinition>();
+public class KotlinScriptDefinitionProvider {
+    private final Map<String, KotlinScriptDefinition> scripts = new HashMap<String, KotlinScriptDefinition>();
     private final Set<PsiFile> scriptsFiles = new HashSet<PsiFile>();
 
-    private static final JetScriptDefinition standardScript = new JetScriptDefinition(JetParserDefinition.STD_SCRIPT_EXT, Collections.<AnalyzerScriptParameter>emptyList());
+    private static final KotlinScriptDefinition
+            standardScript = new KotlinScriptDefinition(KotlinParserDefinition.STD_SCRIPT_EXT, Collections.<AnalyzerScriptParameter>emptyList());
 
-    public static JetScriptDefinitionProvider getInstance(Project project) {
-        return ServiceManager.getService(project, JetScriptDefinitionProvider.class);
+    public static KotlinScriptDefinitionProvider getInstance(Project project) {
+        return ServiceManager.getService(project, KotlinScriptDefinitionProvider.class);
     }
 
-    public JetScriptDefinitionProvider() {
+    public KotlinScriptDefinitionProvider() {
         // .kts will take analyzer parameters explicitly specified on compilation
         addScriptDefinition(standardScript);
     }
@@ -44,11 +45,11 @@ public class JetScriptDefinitionProvider {
         scriptsFiles.add(file);
     }
 
-    public JetScriptDefinition findScriptDefinition(PsiFile psiFile) {
+    public KotlinScriptDefinition findScriptDefinition(PsiFile psiFile) {
         boolean force = scriptsFiles.contains(psiFile);
 
         String name = psiFile.getName();
-        for (Map.Entry<String, JetScriptDefinition> e : scripts.entrySet()) {
+        for (Map.Entry<String, KotlinScriptDefinition> e : scripts.entrySet()) {
             if (name.endsWith(e.getKey())) {
                 return e.getValue();
             }
@@ -63,12 +64,12 @@ public class JetScriptDefinitionProvider {
         return findScriptDefinition(psiFile) != null;
     }
 
-    public void addScriptDefinition(@NotNull JetScriptDefinition scriptDefinition) {
+    public void addScriptDefinition(@NotNull KotlinScriptDefinition scriptDefinition) {
         scripts.put(scriptDefinition.getExtension(), scriptDefinition);
     }
 
-    public void addScriptDefinitions(List<JetScriptDefinition> definitions) {
-        for (JetScriptDefinition definition : definitions) {
+    public void addScriptDefinitions(List<KotlinScriptDefinition> definitions) {
+        for (KotlinScriptDefinition definition : definitions) {
             addScriptDefinition(definition);
         }
     }

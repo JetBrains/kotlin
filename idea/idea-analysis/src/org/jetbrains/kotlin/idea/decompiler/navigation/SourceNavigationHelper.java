@@ -92,7 +92,7 @@ public class SourceNavigationHelper {
             @NotNull KtNamedDeclaration declaration,
             @NotNull NavigationKind navigationKind
     ) {
-        KtFile containingFile = declaration.getContainingJetFile();
+        KtFile containingFile = declaration.getContainingKtFile();
         VirtualFile libraryFile = containingFile.getVirtualFile();
         if (libraryFile == null) return GlobalSearchScope.EMPTY_SCOPE;
 
@@ -365,7 +365,7 @@ public class SourceNavigationHelper {
 
     @Nullable
     public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull KtClassOrObject classOrObject) {
-        if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
+        if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(classOrObject.getContainingKtFile())) {
             FqName fqName = classOrObject.getFqName();
             if (fqName != null) {
                 ClassId javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName.toUnsafe());
@@ -389,7 +389,7 @@ public class SourceNavigationHelper {
         }
         String fqName = JvmClassName.byInternalName(internalName).getFqNameForClassNameWithoutDollars().asString();
 
-        KtFile file = classOrObject.getContainingJetFile();
+        KtFile file = classOrObject.getContainingKtFile();
 
         VirtualFile vFile = file.getVirtualFile();
         Project project = file.getProject();
@@ -444,10 +444,10 @@ public class SourceNavigationHelper {
 
         switch (navigationKind) {
             case CLASS_FILES_TO_SOURCES:
-                if (!from.getContainingJetFile().isCompiled()) return from;
+                if (!from.getContainingKtFile().isCompiled()) return from;
                 break;
             case SOURCES_TO_CLASS_FILES:
-                if (from.getContainingJetFile().isCompiled()) return from;
+                if (from.getContainingKtFile().isCompiled()) return from;
                 if (!ProjectRootsUtil.isInContent(from, false, true, false)) return from;
                 if (KtPsiUtil.isLocal(from)) return from;
                 break;

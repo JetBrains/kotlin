@@ -33,7 +33,7 @@ fun isInsideInlineArgument(inlineArgument: KtFunction, location: Location, debug
 }
 
 private fun lambdaOrdinalIndex(elementAt: KtFunction): Int {
-    val typeMapper = KotlinPositionManager.createTypeMapper(elementAt.getContainingJetFile())
+    val typeMapper = KotlinPositionManager.createTypeMapper(elementAt.getContainingKtFile())
 
     val type = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, elementAt)
     return type.className.substringAfterLast("$").toInt()

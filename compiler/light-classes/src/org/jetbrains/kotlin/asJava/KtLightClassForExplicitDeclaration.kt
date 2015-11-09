@@ -51,7 +51,7 @@ public open class KtLightClassForExplicitDeclaration(
         manager: PsiManager,
         protected val classFqName: FqName, // FqName of (possibly inner) class
         protected val classOrObject: KtClassOrObject)
-: KtWrappingLightClass(manager), JetJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+: KtWrappingLightClass(manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private var delegate: PsiClass? = null
 
     private fun getLocalClassParent(): PsiElement? {
@@ -179,7 +179,7 @@ public open class KtLightClassForExplicitDeclaration(
         val virtualFile = classOrObject.containingFile.virtualFile
         assert(virtualFile != null) { "No virtual file for " + classOrObject.text }
 
-        object : FakeFileForLightClass(classOrObject.getContainingJetFile().packageFqName, virtualFile, myManager, this, { getJavaFileStub() }) {
+        object : FakeFileForLightClass(classOrObject.getContainingKtFile().packageFqName, virtualFile, myManager, this, { getJavaFileStub() }) {
             override fun processDeclarations(
                     processor: PsiScopeProcessor,
                     state: ResolveState,
@@ -391,7 +391,7 @@ public open class KtLightClassForExplicitDeclaration(
                 classOrObject: KtClassOrObject,
                 psiClass: PsiClass? = null
         ): KtLightClassForExplicitDeclaration? {
-            if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
+            if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingKtFile())) {
                 return null
             }
 

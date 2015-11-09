@@ -66,8 +66,8 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
             val annotationFQN = annClass.getQualifiedName()
             assert(annotationFQN != null)
 
-            for (elt in getJetAnnotationCandidates(annClass, useScope)) {
-                if (notJetAnnotationEntry(elt)) continue
+            for (elt in getKotlinAnnotationCandidates(annClass, useScope)) {
+                if (notKtAnnotationEntry(elt)) continue
 
                 val result = runReadAction(fun(): Boolean {
                     val declaration = elt.getStrictParentOfType<KtDeclaration>() ?: return true
@@ -91,7 +91,7 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
         }
 
         /* Return all elements annotated with given annotation name. Aliases don't work now. */
-        private fun getJetAnnotationCandidates(annClass: PsiClass, useScope: SearchScope): Collection<PsiElement> {
+        private fun getKotlinAnnotationCandidates(annClass: PsiClass, useScope: SearchScope): Collection<PsiElement> {
             return runReadAction(fun(): Collection<PsiElement> {
                 if (useScope is GlobalSearchScope) {
                     val name = annClass.getName() ?: return emptyList()
@@ -102,7 +102,7 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
             })
         }
 
-        private fun notJetAnnotationEntry(found: PsiElement): Boolean {
+        private fun notKtAnnotationEntry(found: PsiElement): Boolean {
             if (found is KtAnnotationEntry) return false
 
             val faultyContainer = PsiUtilCore.getVirtualFile(found)

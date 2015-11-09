@@ -287,7 +287,7 @@ public class TypeResolver(
                 c.trace.report(UNSUPPORTED.on(type, "Self-types are not supported"))
             }
 
-            override fun visitJetElement(element: KtElement) {
+            override fun visitKtElement(element: KtElement) {
                 c.trace.report(UNSUPPORTED.on(element, "Self-types are not supported yet"))
             }
 

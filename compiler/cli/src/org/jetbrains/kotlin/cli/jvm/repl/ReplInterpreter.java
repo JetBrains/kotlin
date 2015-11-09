@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.parsing.JetParserDefinition;
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.*;
@@ -270,7 +270,7 @@ public class ReplInterpreter {
         }
         fullText.append(line);
 
-        LightVirtualFile virtualFile = new LightVirtualFile("line" + lineNumber + JetParserDefinition.STD_SCRIPT_EXT, KotlinLanguage.INSTANCE, fullText.toString());
+        LightVirtualFile virtualFile = new LightVirtualFile("line" + lineNumber + KotlinParserDefinition.STD_SCRIPT_EXT, KotlinLanguage.INSTANCE, fullText.toString());
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         KtFile psiFile = (KtFile) psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
         assert psiFile != null : "Script file not analyzed at line " + lineNumber + ": " + fullText;
@@ -459,8 +459,8 @@ public class ReplInterpreter {
         state.beforeCompile();
         KotlinCodegenFacade.generatePackage(
                 state,
-                script.getContainingJetFile().getPackageFqName(),
-                Collections.singleton(script.getContainingJetFile()),
+                script.getContainingKtFile().getPackageFqName(),
+                Collections.singleton(script.getContainingKtFile()),
                 errorHandler
         );
     }

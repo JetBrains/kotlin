@@ -81,7 +81,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 return null;
             }
 
-            KtFile file = location.getJetFile();
+            KtFile file = location.getKFile();
             if (file == null || !ProjectRootsUtil.isInProjectSource(file)) {
                 return null;
             }
@@ -105,7 +105,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         @NotNull
         @Override
         protected String processRequest(@NotNull Location location) {
-            KtFile jetFile = location.getJetFile();
+            KtFile jetFile = location.getKFile();
             assert jetFile != null;
 
             return getBytecodeForFile(jetFile, enableInline.isSelected(), enableAssertions.isSelected(), enableOptimization.isSelected());
@@ -222,12 +222,12 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
                 @Override
                 public boolean shouldGenerateClass(KtClassOrObject classOrObject) {
-                    return classOrObject.getContainingJetFile() == jetFile;
+                    return classOrObject.getContainingKtFile() == jetFile;
                 }
 
                 @Override
                 public boolean shouldGenerateScript(KtScript script) {
-                    return script.getContainingJetFile() == jetFile;
+                    return script.getContainingKtFile() == jetFile;
                 }
             };
 

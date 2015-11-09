@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.parsing.JetScriptDefinition;
-import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -30,15 +29,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class ScriptGenTest extends CodegenTestCase {
-    private static final JetScriptDefinition FIB_SCRIPT_DEFINITION =
-            new JetScriptDefinition(".lang.kt",
-                                    new AnalyzerScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()));
+    private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
+            new KotlinScriptDefinition(".lang.kt",
+                                       new AnalyzerScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()));
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
+        KotlinScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
     }
 
     public void testLanguage() throws Exception {

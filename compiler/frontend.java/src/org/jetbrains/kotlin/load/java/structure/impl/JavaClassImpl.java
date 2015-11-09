@@ -22,7 +22,7 @@ import kotlin.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.JetJavaMirrorMarker;
+import org.jetbrains.kotlin.asJava.KtJavaMirrorMarker;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
@@ -163,7 +163,7 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @NotNull
     public OriginKind getOriginKind() {
         PsiClass psiClass = getPsi();
-        if (psiClass instanceof JetJavaMirrorMarker) {
+        if (psiClass instanceof KtJavaMirrorMarker) {
             return OriginKind.KOTLIN_LIGHT_CLASS;
         }
         else if (psiClass instanceof PsiCompiledElement) {

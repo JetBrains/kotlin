@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.parsing.JetExpressionParsing
-import org.jetbrains.kotlin.parsing.JetExpressionParsing.Precedence.POSTFIX
-import org.jetbrains.kotlin.parsing.JetExpressionParsing.Precedence.PREFIX
+import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
+import org.jetbrains.kotlin.parsing.KotlinExpressionParsing.Precedence.POSTFIX
+import org.jetbrains.kotlin.parsing.KotlinExpressionParsing.Precedence.PREFIX
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
@@ -31,7 +31,7 @@ public object PsiPrecedences {
     private val precedence: Map<IElementType, Int>
     init {
         val builder = HashMap<IElementType, Int>()
-        for ((i, record) in JetExpressionParsing.Precedence.values().withIndex()) {
+        for ((i, record) in KotlinExpressionParsing.Precedence.values().withIndex()) {
             for (elementType in record.getOperations().getTypes()) {
                 builder[elementType] = i
             }

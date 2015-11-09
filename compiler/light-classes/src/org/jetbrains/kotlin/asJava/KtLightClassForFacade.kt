@@ -42,7 +42,7 @@ public class KtLightClassForFacade private constructor(
         private val lightClassDataCache: CachedValue<KotlinFacadeLightClassData>,
         files: Collection<KtFile>,
         private val deprecated: Boolean
-) : KtWrappingLightClass(manager), JetJavaMirrorMarker {
+) : KtWrappingLightClass(manager), KtJavaMirrorMarker {
 
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
 

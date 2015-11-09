@@ -84,7 +84,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         override fun visitPackageDirective(directive: KtPackageDirective) {
         }
 
-        override fun visitJetElement(element: KtElement) {
+        override fun visitKtElement(element: KtElement) {
             for (reference in element.references) {
                 if (reference !is KtReference) continue
 
@@ -112,7 +112,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
             }
 
-            super.visitJetElement(element)
+            super.visitKtElement(element)
         }
 
         private fun isAccessibleAsMember(target: DeclarationDescriptor, place: KtElement, bindingContext: BindingContext): Boolean {

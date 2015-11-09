@@ -150,7 +150,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         new Function1<KtNamedDeclaration, KtFile>() {
                             @Override
                             public KtFile invoke(KtNamedDeclaration declaration) {
-                                return declaration.getContainingJetFile();
+                                return declaration.getContainingKtFile();
                             }
                         }
                 )
@@ -395,7 +395,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 new Function1<KtNamedDeclaration, KtFile>() {
                     @Override
                     public KtFile invoke(KtNamedDeclaration declaration) {
-                        return declaration.getContainingJetFile();
+                        return declaration.getContainingKtFile();
                     }
                 }
         );

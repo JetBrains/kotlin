@@ -137,7 +137,7 @@ public class CompileEnvironmentUtil {
     }
 
     @NotNull
-    public static List<KtFile> getJetFiles(
+    public static List<KtFile> getKtFiles(
             @NotNull final Project project,
             @NotNull Collection<String> sourceRoots,
             @NotNull Function1<String, Unit> reportError

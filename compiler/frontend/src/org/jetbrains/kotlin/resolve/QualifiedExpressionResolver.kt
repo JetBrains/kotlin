@@ -126,7 +126,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val lastPart = path.lastOrNull() ?: return null
         val packageFragmentForCheck =
                 if (packageFragmentForVisibilityCheck is DeclarationDescriptorWithSource && packageFragmentForVisibilityCheck.source == SourceElement.NO_SOURCE) {
-                    PackageFragmentWithCustomSource(packageFragmentForVisibilityCheck, KotlinSourceElement(importDirective.getContainingJetFile()))
+                    PackageFragmentWithCustomSource(packageFragmentForVisibilityCheck, KotlinSourceElement(importDirective.getContainingKtFile()))
                 }
 
                 else {
@@ -411,7 +411,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         if (descriptor is DeclarationDescriptorWithVisibility) {
             val fromToCheck =
                 if (shouldBeVisibleFrom is PackageFragmentDescriptor && shouldBeVisibleFrom.source == SourceElement.NO_SOURCE) {
-                    PackageFragmentWithCustomSource(shouldBeVisibleFrom, KotlinSourceElement(referenceExpression.getContainingJetFile()))
+                    PackageFragmentWithCustomSource(shouldBeVisibleFrom, KotlinSourceElement(referenceExpression.getContainingKtFile()))
                 }
                 else {
                     shouldBeVisibleFrom

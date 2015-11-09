@@ -630,7 +630,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     val declaration = createDeclaration().let { if (shouldInsert) insertDeclaration(it, anchor) else it }
     adjustDeclarationBody(declaration)
 
-    if (declaration is KtNamedFunction && declaration.getContainingJetFile().suppressDiagnosticsInDebugMode) {
+    if (declaration is KtNamedFunction && declaration.getContainingKtFile().suppressDiagnosticsInDebugMode) {
         declaration.receiverTypeReference?.debugTypeInfo = descriptor.receiverParameter?.getParameterType(true)
 
         for ((i, param) in declaration.valueParameters.withIndex()) {

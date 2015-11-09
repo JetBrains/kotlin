@@ -53,7 +53,7 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
                 var used = false
                 callableDeclaration.acceptChildren(object : KtVisitorVoid() {
-                    override fun visitJetElement(element: KtElement) {
+                    override fun visitKtElement(element: KtElement) {
                         if (used) return
                         element.acceptChildren(this)
 

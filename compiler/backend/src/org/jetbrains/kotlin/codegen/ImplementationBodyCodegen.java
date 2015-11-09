@@ -1191,7 +1191,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         KtVisitorVoid visitor = new KtVisitorVoid() {
             @Override
-            public void visitJetElement(@NotNull KtElement e) {
+            public void visitKtElement(@NotNull KtElement e) {
                 e.acceptChildren(this);
             }
 

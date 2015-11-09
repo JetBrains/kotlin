@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ScriptBodyResolver
@@ -45,7 +45,7 @@ public class LazyScriptDescriptor(
         private val jetScript: KtScript,
         private val priority: Int
 ) : ScriptDescriptor, LazyEntity, DeclarationDescriptorNonRootImpl(
-        jetScript.getContainingJetFile().getPackageFqName().let {
+        jetScript.getContainingKtFile().getPackageFqName().let {
             fqName ->
             resolveSession.getPackageFragment(fqName).sure { "Package not found $fqName" }
         },
@@ -70,8 +70,8 @@ public class LazyScriptDescriptor(
     private val scriptCodeDescriptor = resolveSession.storageManager.createLazyValue {
         val result = ScriptCodeDescriptor(this)
 
-        val file = jetScript.getContainingJetFile()
-        val scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file)
+        val file = jetScript.getContainingKtFile()
+        val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file)
 
         result.initialize(
                 implicitReceiver,
@@ -86,7 +86,7 @@ public class LazyScriptDescriptor(
                 },
                 DeferredType.create(resolveSession.storageManager, resolveSession.trace) {
                     val scope = LexicalScopeImpl(
-                            resolveSession.fileScopeProvider.getFileResolutionScope(jetScript.getContainingJetFile()),
+                            resolveSession.fileScopeProvider.getFileResolutionScope(jetScript.getContainingKtFile()),
                             this, false, implicitReceiver, "Scope for body resolution for $this"
                     ) {
                         for (valueParameterDescriptor in result.valueParameters) {

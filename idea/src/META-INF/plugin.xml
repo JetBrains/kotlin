@@ -224,8 +224,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer"
                     serviceImplementation="org.jetbrains.kotlin.resolve.DummyCodeAnalyzerInitializer"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"
-                    serviceImplementation="org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider"
+                    serviceImplementation="org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"
                     serviceImplementation="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"/>
@@ -298,7 +298,7 @@
 
     <lang.syntaxHighlighterFactory key="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinSyntaxHighlighterFactory"/>
     <lang.braceMatcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinPairMatcher"/>
-    <lang.parserDefinition language="kotlin" implementationClass="org.jetbrains.kotlin.parsing.JetParserDefinition"/>
+    <lang.parserDefinition language="kotlin" implementationClass="org.jetbrains.kotlin.parsing.KotlinParserDefinition"/>
     <lang.commenter language="kotlin" implementationClass="org.jetbrains.kotlin.idea.KotlinCommenter"/>
     <lang.psiStructureViewFactory language="kotlin" implementationClass="org.jetbrains.kotlin.idea.structureView.KotlinStructureViewFactory"/>
     <structureViewBuilder order="first" key="CLASS" factoryClass="org.jetbrains.kotlin.idea.structureView.KtClsStructureViewBuilderProvider"/>

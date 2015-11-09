@@ -297,7 +297,7 @@ public class KotlinIndicesHelper(
     }
 
     private fun KtCallableDeclaration.resolveToDescriptorsWithHack(): Collection<CallableDescriptor> {
-        if (getContainingJetFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
+        if (getContainingKtFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
             return resolutionFacade.resolveImportReference(moduleDescriptor, fqName!!).filterIsInstance<CallableDescriptor>()
         }
         else {

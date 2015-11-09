@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.parsing.JetScriptDefinition;
-import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
@@ -156,8 +156,8 @@ public class CodegenTestFiles {
                 scriptParameterValues.add(value);
             }
 
-            JetScriptDefinitionProvider.getInstance(project).addScriptDefinition(
-                    new JetScriptDefinition(
+            KotlinScriptDefinitionProvider.getInstance(project).addScriptDefinition(
+                    new KotlinScriptDefinition(
                             ".kts",
                             scriptParameterTypes
                     )

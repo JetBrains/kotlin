@@ -47,7 +47,7 @@ public abstract class AbstractParsingTest extends ParsingTestCase {
     }
 
     public AbstractParsingTest() {
-        super(".", "kt", new JetParserDefinition());
+        super(".", "kt", new KotlinParserDefinition());
     }
 
     private static void checkPsiGetters(KtElement elem) throws Throwable {
@@ -83,7 +83,7 @@ public abstract class AbstractParsingTest extends ParsingTestCase {
     }
 
     protected void doParsingTest(@NotNull String filePath) throws Exception {
-        doBaseTest(filePath, KtNodeTypes.JET_FILE);
+        doBaseTest(filePath, KtNodeTypes.KT_FILE);
     }
 
     protected void doExpressionCodeFragmentParsingTest(@NotNull String filePath) throws Exception {
@@ -100,7 +100,7 @@ public abstract class AbstractParsingTest extends ParsingTestCase {
 
         myFile.acceptChildren(new KtVisitorVoid() {
             @Override
-            public void visitJetElement(@NotNull KtElement element) {
+            public void visitKtElement(@NotNull KtElement element) {
                 element.acceptChildren(this);
                 try {
                     checkPsiGetters(element);

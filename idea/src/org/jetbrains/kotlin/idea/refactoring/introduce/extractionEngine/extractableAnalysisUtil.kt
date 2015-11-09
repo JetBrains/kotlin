@@ -1056,12 +1056,12 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
                     }
                 }
 
-                override fun visitJetElement(element: KtElement) {
+                override fun visitKtElement(element: KtElement) {
                     if (element == body) {
                         validateBody()
                         return
                     }
-                    super.visitJetElement(element)
+                    super.visitKtElement(element)
                 }
             }
     )

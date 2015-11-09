@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.parsing.JetExpressionParsing;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.parsing.KotlinExpressionParsing;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.StatementFilterKt;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -115,7 +115,7 @@ public class KtPsiUtil {
         final Set<KtElement> shadowedElements = new HashSet<KtElement>();
         KtVisitorVoid shadowAllChildren = new KtVisitorVoid() {
             @Override
-            public void visitJetElement(@NotNull KtElement element) {
+            public void visitKtElement(@NotNull KtElement element) {
                 if (shadowedElements.add(element)) {
                     element.acceptChildren(this);
                 }
@@ -263,12 +263,12 @@ public class KtPsiUtil {
 
     @Nullable
     public static KtSimpleNameExpression getLastReference(@NotNull KtExpression importedReference) {
-        KtElement selector = JetPsiUtilKt.getQualifiedElementSelector(importedReference);
+        KtElement selector = KtPsiUtilKt.getQualifiedElementSelector(importedReference);
         return selector instanceof KtSimpleNameExpression ? (KtSimpleNameExpression) selector : null;
     }
 
     public static boolean isSelectorInQualified(@NotNull KtSimpleNameExpression nameExpression) {
-        KtElement qualifiedElement = JetPsiUtilKt.getQualifiedElement(nameExpression);
+        KtElement qualifiedElement = KtPsiUtilKt.getQualifiedElement(nameExpression);
         return qualifiedElement instanceof KtQualifiedExpression
                || ((qualifiedElement instanceof KtUserType) && ((KtUserType) qualifiedElement).getQualifier() != null);
     }
@@ -426,7 +426,7 @@ public class KtPsiUtil {
 
 
     private static int getPriority(@NotNull KtExpression expression) {
-        int maxPriority = JetExpressionParsing.Precedence.values().length + 1;
+        int maxPriority = KotlinExpressionParsing.Precedence.values().length + 1;
 
         // same as postfix operations
         if (expression instanceof KtPostfixExpression ||
@@ -439,7 +439,7 @@ public class KtPsiUtil {
         if (expression instanceof KtPrefixExpression || expression instanceof KtLabeledExpression) return maxPriority - 2;
 
         if (expression instanceof KtIfExpression) {
-            return JetExpressionParsing.Precedence.ASSIGNMENT.ordinal();
+            return KotlinExpressionParsing.Precedence.ASSIGNMENT.ordinal();
         }
 
         if (expression instanceof KtSuperExpression) {
@@ -451,8 +451,8 @@ public class KtPsiUtil {
         }
 
         IElementType operation = getOperation(expression);
-        for (JetExpressionParsing.Precedence precedence : JetExpressionParsing.Precedence.values()) {
-            if (precedence != JetExpressionParsing.Precedence.PREFIX && precedence != JetExpressionParsing.Precedence.POSTFIX &&
+        for (KotlinExpressionParsing.Precedence precedence : KotlinExpressionParsing.Precedence.values()) {
+            if (precedence != KotlinExpressionParsing.Precedence.PREFIX && precedence != KotlinExpressionParsing.Precedence.POSTFIX &&
                 precedence.getOperations().contains(operation)) {
                 return maxPriority - precedence.ordinal() - 1;
             }
@@ -498,7 +498,7 @@ public class KtPsiUtil {
 
         if (parentExpression instanceof KtCallExpression && currentInner == ((KtCallExpression) parentExpression).getCalleeExpression()) {
             if (innerExpression instanceof KtSimpleNameExpression) return false;
-            if (JetPsiUtilKt.getQualifiedExpressionForSelector(parentExpression) != null) return true;
+            if (KtPsiUtilKt.getQualifiedExpressionForSelector(parentExpression) != null) return true;
             return !(innerExpression instanceof KtThisExpression
                      || innerExpression instanceof KtArrayAccessExpression
                      || innerExpression instanceof KtConstantExpression
@@ -649,7 +649,7 @@ public class KtPsiUtil {
         root.accept(
                 new KtVisitorVoid() {
                     @Override
-                    public void visitJetElement(@NotNull KtElement element) {
+                    public void visitKtElement(@NotNull KtElement element) {
                         if (predicate.apply(element)) {
                             //noinspection unchecked
                             results.add(element);
@@ -709,7 +709,7 @@ public class KtPsiUtil {
 
     @Nullable
     public static String getPackageName(@NotNull KtElement element) {
-        KtFile file = element.getContainingJetFile();
+        KtFile file = element.getContainingKtFile();
         KtPackageDirective header = PsiTreeUtil.findChildOfType(file, KtPackageDirective.class);
 
         return header != null ? header.getQualifiedName() : null;

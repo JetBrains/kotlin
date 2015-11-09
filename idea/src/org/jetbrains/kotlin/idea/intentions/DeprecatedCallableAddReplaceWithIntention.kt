@@ -160,7 +160,7 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
                 }
             }
 
-            override fun visitJetElement(element: KtElement) {
+            override fun visitKtElement(element: KtElement) {
                 element.acceptChildren(this)
             }
         })
@@ -193,7 +193,7 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
     }
 
     private fun extractImports(expression: KtExpression): Collection<String> {
-        val file = expression.getContainingJetFile()
+        val file = expression.getContainingKtFile()
         val currentPackageFqName = file.getPackageFqName()
         val importHelper = ImportInsertHelper.getInstance(expression.getProject())
 
@@ -213,7 +213,7 @@ public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeInten
                 }
             }
 
-            override fun visitJetElement(element: KtElement) {
+            override fun visitKtElement(element: KtElement) {
                 element.acceptChildren(this)
             }
         })

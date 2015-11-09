@@ -236,7 +236,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             }
 
             @Override
-            public void visitJetElement(@NotNull KtElement element) {
+            public void visitKtElement(@NotNull KtElement element) {
                 context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
             }
         });

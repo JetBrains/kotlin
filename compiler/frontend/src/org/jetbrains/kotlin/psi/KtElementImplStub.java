@@ -63,7 +63,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
 
     @NotNull
     @Override
-    public KtFile getContainingJetFile() {
+    public KtFile getContainingKtFile() {
         PsiFile file = getContainingFile();
         assert file instanceof KtFile : "JetElement not inside JetFile: " + file + " " + file.getText();
         return (KtFile) file;
@@ -82,7 +82,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitJetElement(this, data);
+        return visitor.visitKtElement(this, data);
     }
 
     @Override

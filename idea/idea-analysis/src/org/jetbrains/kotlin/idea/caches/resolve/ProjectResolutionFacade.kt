@@ -71,7 +71,7 @@ internal class ProjectResolutionFacade(
         }
         val results = elements.map {
             val perFileCache = synchronized(slruCache) {
-                slruCache[it.getContainingJetFile()]
+                slruCache[it.getContainingKtFile()]
             }
             perFileCache.getAnalysisResults(it)
         }

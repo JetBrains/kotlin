@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 public class KtVisitorVoid extends KtVisitor<Void, Void> {
     // methods with void return
 
-    public void visitJetElement(@NotNull KtElement element) {
-        super.visitJetElement(element, null);
+    public void visitKtElement(@NotNull KtElement element) {
+        super.visitKtElement(element, null);
     }
 
     public void visitDeclaration(@NotNull KtDeclaration dcl) {
@@ -65,8 +65,8 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitTypedef(typedef, null);
     }
 
-    public void visitJetFile(@NotNull KtFile file) {
-        super.visitJetFile(file, null);
+    public void visitKtFile(@NotNull KtFile file) {
+        super.visitKtFile(file, null);
     }
 
     public void visitScript(@NotNull KtScript script) {
@@ -431,8 +431,8 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
 
     // hidden methods
     @Override
-    public final Void visitJetElement(@NotNull KtElement element, Void data) {
-        visitJetElement(element);
+    public final Void visitKtElement(@NotNull KtElement element, Void data) {
+        visitKtElement(element);
         return null;
     }
 
@@ -497,8 +497,8 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
-    public final Void visitJetFile(@NotNull KtFile file, Void data) {
-        visitJetFile(file);
+    public final Void visitKtFile(@NotNull KtFile file, Void data) {
+        visitKtFile(file);
         return null;
     }
 

@@ -42,11 +42,11 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class JetParserDefinition implements ParserDefinition {
+public class KotlinParserDefinition implements ParserDefinition {
     public static final String STD_SCRIPT_SUFFIX = "kts";
     public static final String STD_SCRIPT_EXT = "." + STD_SCRIPT_SUFFIX;
 
-    public JetParserDefinition() {
+    public KotlinParserDefinition() {
         //todo: ApplicationManager.getApplication() is null during JetParsingTest setting up
 
         /*if (!ApplicationManager.getApplication().isCommandLine()) {
@@ -54,8 +54,8 @@ public class JetParserDefinition implements ParserDefinition {
     }
 
     @NotNull
-    public static JetParserDefinition getInstance() {
-        return (JetParserDefinition)LanguageParserDefinitions.INSTANCE.forLanguage(KotlinLanguage.INSTANCE);
+    public static KotlinParserDefinition getInstance() {
+        return (KotlinParserDefinition)LanguageParserDefinitions.INSTANCE.forLanguage(KotlinLanguage.INSTANCE);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class JetParserDefinition implements ParserDefinition {
 
     @Override
     public PsiParser createParser(Project project) {
-        return new JetParser(project);
+        return new KotlinParser(project);
     }
 
     @Override
