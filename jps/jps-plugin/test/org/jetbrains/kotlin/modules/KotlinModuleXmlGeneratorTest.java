@@ -34,7 +34,8 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.singletonList(new JvmSourceRoot(new File("java"), null)),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
-                Collections.<File>emptySet()
+                Collections.<File>emptySet(),
+                Collections.<File>emptyList()
         ).asText().toString();
         KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
     }
@@ -47,7 +48,8 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
-                Collections.singleton(new File("cp1"))
+                Collections.singleton(new File("cp1")),
+                Collections.<File>emptyList()
         ).asText().toString();
         KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
     }
@@ -61,7 +63,8 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
-                Collections.singleton(new File("cp1"))
+                Collections.singleton(new File("cp1")),
+                Collections.<File>emptyList()
         );
         builder.addModule(
                 "name2",
@@ -70,7 +73,8 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp12"), new File("cp22")),
                 JavaModuleBuildTargetType.TEST,
-                Collections.singleton(new File("cp12"))
+                Collections.singleton(new File("cp12")),
+                Collections.<File>emptyList()
         );
         String actual = builder.asText().toString();
         KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
