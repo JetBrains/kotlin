@@ -117,7 +117,7 @@ public class InlineCodegenUtil {
             }
         }, ClassReader.SKIP_FRAMES | (GENERATE_SMAP ? 0 : ClassReader.SKIP_DEBUG));
 
-        SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classId.toString(), lines[0], lines[1]);
+        SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classId.asString(), lines[0], lines[1]);
         return new SMAPAndMethodNode(node[0], smap);
     }
 

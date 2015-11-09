@@ -1225,6 +1225,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             doTestMultiFileWithInlineCheck(fileName);
         }
 
+        @TestMetadata("classFromDefaultPackage.1.kt")
+        public void testClassFromDefaultPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/classFromDefaultPackage.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
         @TestMetadata("oneFile.1.kt")
         public void testOneFile() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/smap/oneFile.1.kt");
