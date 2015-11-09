@@ -570,8 +570,8 @@ private class DelegatingParameter(
 
 internal class ParametersInfo {
     var errorMessage: ErrorMessage? = null
-    val replacementMap: MutableMap<Int, Replacement> = HashMap()
-    val originalRefToParameter: MutableMap<KtSimpleNameExpression, MutableParameter> = HashMap()
+    val replacementMap: MultiMap<Int, Replacement> = MultiMap.create()
+    val originalRefToParameter: MultiMap<KtSimpleNameExpression, MutableParameter> = MultiMap.create()
     val parameters: MutableSet<MutableParameter> = HashSet()
     val typeParameters: MutableSet<TypeParameter> = HashSet()
     val nonDenotableTypes: MutableSet<KotlinType> = HashSet()
@@ -688,7 +688,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     controlFlow.jumpOutputValue?.elementToInsertAfterCall?.accept(
             object : KtTreeVisitorVoid() {
                 override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-                    paramsInfo.originalRefToParameter[expression]?.let { it.refCount-- }
+                    paramsInfo.originalRefToParameter[expression].firstOrNull()?.let { it.refCount-- }
                 }
             }
     )
@@ -773,46 +773,50 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     val body = result.declaration.getGeneratedBody()
     val bindingContext = body.analyzeFully()
 
+    fun processReference(resolveResult: ResolveResult, currentRefExpr: KtReferenceExpression) {
+        if (currentRefExpr.parent is KtThisExpression) return
+
+        val diagnostics = bindingContext.diagnostics.forElement(currentRefExpr)
+
+        val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
+        val currentTarget =
+                currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
+        if (currentTarget is KtParameter && currentTarget.parent == valueParameterList) return
+        if (currentTarget is KtTypeParameter && currentTarget.parent == typeParameterList) return
+        if (currentDescriptor is LocalVariableDescriptor
+            && parameters.any { it.mirrorVarName == currentDescriptor.name.asString() }) return
+
+        if (diagnostics.any { it.factory in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS }
+            || (currentDescriptor != null
+                && !ErrorUtils.isError(currentDescriptor)
+                && !compareDescriptors(extractionData.project, currentDescriptor, resolveResult.descriptor))) {
+            conflicts.putValue(
+                    resolveResult.originalRefExpr,
+                    getDeclarationMessage(resolveResult.declaration, "0.will.no.longer.be.accessible.after.extraction")
+            )
+            return
+        }
+
+        diagnostics.firstOrNull { it.factory in Errors.INVISIBLE_REFERENCE_DIAGNOSTICS }?.let {
+            val message = when (it.factory) {
+                Errors.INVISIBLE_SETTER ->
+                    getDeclarationMessage(resolveResult.declaration, "setter.of.0.will.become.invisible.after.extraction", false)
+                else ->
+                    getDeclarationMessage(resolveResult.declaration, "0.will.become.invisible.after.extraction")
+            }
+            conflicts.putValue(resolveResult.originalRefExpr, message)
+        }
+    }
+
     fun validateBody() {
         for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
             if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
 
-            val currentRefExpr = result.nameByOffset[originalOffset]?.let {
+            val currentRefExprs = result.nameByOffset[originalOffset].map {
                 (it as? KtThisExpression)?.instanceReference ?: it as? KtSimpleNameExpression
-            } ?: continue
+            }.filterNotNull()
 
-            if (currentRefExpr.parent is KtThisExpression) continue
-
-            val diagnostics = bindingContext.diagnostics.forElement(currentRefExpr)
-
-            val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
-            val currentTarget =
-                    currentDescriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(extractionData.project, it) } as? PsiNamedElement
-            if (currentTarget is KtParameter && currentTarget.parent == valueParameterList) continue
-            if (currentTarget is KtTypeParameter && currentTarget.parent == typeParameterList) continue
-            if (currentDescriptor is LocalVariableDescriptor
-                && parameters.any { it.mirrorVarName == currentDescriptor.name.asString() }) continue
-
-            if (diagnostics.any { it.factory in Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS }
-                || (currentDescriptor != null
-                    && !ErrorUtils.isError(currentDescriptor)
-                    && !compareDescriptors(extractionData.project, currentDescriptor, resolveResult.descriptor))) {
-                conflicts.putValue(
-                        resolveResult.originalRefExpr,
-                        getDeclarationMessage(resolveResult.declaration, "0.will.no.longer.be.accessible.after.extraction")
-                )
-                continue
-            }
-
-            diagnostics.firstOrNull { it.factory in Errors.INVISIBLE_REFERENCE_DIAGNOSTICS }?.let {
-                val message = when (it.factory) {
-                    Errors.INVISIBLE_SETTER ->
-                        getDeclarationMessage(resolveResult.declaration, "setter.of.0.will.become.invisible.after.extraction", false)
-                    else ->
-                        getDeclarationMessage(resolveResult.declaration, "0.will.become.invisible.after.extraction")
-                }
-                conflicts.putValue(resolveResult.originalRefExpr, message)
-            }
+            currentRefExprs.forEach { processReference(resolveResult, it) }
         }
     }
 

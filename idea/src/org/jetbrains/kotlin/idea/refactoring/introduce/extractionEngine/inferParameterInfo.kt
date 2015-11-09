@@ -165,7 +165,7 @@ private fun extractReceiver(
         )) return
 
         if (referencedClassifierDescriptor is ClassDescriptor) {
-            info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe)
+            info.replacementMap.putValue(refInfo.offsetInBody, FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe))
         }
     }
     else {
@@ -230,7 +230,7 @@ private fun extractReceiver(
             }
 
             parameter.refCount++
-            info.originalRefToParameter[originalRef] = parameter
+            info.originalRefToParameter.putValue(originalRef, parameter)
 
             parameter.addDefaultType(parameterType)
 
@@ -251,11 +251,11 @@ private fun extractReceiver(
                 }
             }
 
-            info.replacementMap[refInfo.offsetInBody] =
+            info.replacementMap.putValue(refInfo.offsetInBody,
                     when {
                         hasThisReceiver && extractThis -> AddPrefixReplacement(parameter)
                         else -> RenameReplacement(parameter)
-                    }
+                    })
         }
     }
 }

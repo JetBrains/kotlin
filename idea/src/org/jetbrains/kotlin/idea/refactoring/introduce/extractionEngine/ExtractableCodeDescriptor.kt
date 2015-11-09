@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
@@ -49,7 +47,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import java.util.Collections
+import java.util.*
 
 interface Parameter {
     val argumentText: String
@@ -326,7 +324,7 @@ data class ExtractableCodeDescriptor(
         val parameters: List<Parameter>,
         val receiverParameter: Parameter?,
         val typeParameters: List<TypeParameter>,
-        val replacementMap: Map<Int, Replacement>,
+        val replacementMap: MultiMap<Int, Replacement>,
         val controlFlow: ControlFlow,
         val returnType: KotlinType
 ) {
@@ -424,7 +422,7 @@ data class ExtractionResult(
         val config: ExtractionGeneratorConfiguration,
         val declaration: KtNamedDeclaration,
         val duplicateReplacers: Map<KotlinPsiRange, () -> Unit>,
-        val nameByOffset: Map<Int, KtElement>
+        val nameByOffset: MultiMap<Int, KtElement>
 )
 
 class AnalysisResult (
