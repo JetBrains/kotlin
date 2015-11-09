@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -70,19 +68,22 @@ public class CallExpressionResolver {
     @NotNull private final DataFlowAnalyzer dataFlowAnalyzer;
     @NotNull private final KotlinBuiltIns builtIns;
     @NotNull private final QualifiedExpressionResolver qualifiedExpressionResolver;
+    @NotNull private final SymbolUsageValidator symbolUsageValidator;
 
     public CallExpressionResolver(
             @NotNull CallResolver callResolver,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull DataFlowAnalyzer dataFlowAnalyzer,
             @NotNull KotlinBuiltIns builtIns,
-            @NotNull QualifiedExpressionResolver qualifiedExpressionResolver
+            @NotNull QualifiedExpressionResolver qualifiedExpressionResolver,
+            @NotNull SymbolUsageValidator symbolUsageValidator
     ) {
         this.callResolver = callResolver;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.dataFlowAnalyzer = dataFlowAnalyzer;
         this.builtIns = builtIns;
         this.qualifiedExpressionResolver = qualifiedExpressionResolver;
+        this.symbolUsageValidator = symbolUsageValidator;
     }
 
     private ExpressionTypingServices expressionTypingServices;
@@ -95,7 +96,7 @@ public class CallExpressionResolver {
 
     @Nullable
     public ResolvedCall<FunctionDescriptor> getResolvedCallForFunction(
-            @NotNull Call call, @NotNull KtExpression callExpression,
+            @NotNull Call call,
             @NotNull ResolutionContext context, @NotNull CheckArgumentTypesMode checkArguments,
             @NotNull boolean[] result
     ) {
@@ -138,7 +139,7 @@ public class CallExpressionResolver {
         if (qualifier != null) {
             result[0] = true;
             if (!isLHSOfDot) {
-                qualifiedExpressionResolver.resolveAsStandaloneExpression(qualifier, context);
+                QualifiedExpressionResolveUtilKt.resolveAsStandaloneExpression(qualifier, context, symbolUsageValidator);
             }
             return null;
         }
@@ -179,7 +180,7 @@ public class CallExpressionResolver {
                 context, "trace to resolve as function", nameExpression);
         ResolutionContext newContext = context.replaceTraceAndCache(temporaryForFunction);
         ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
-                call, nameExpression, newContext, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, result);
+                call, newContext, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
             temporaryForFunction.commit();
@@ -220,7 +221,7 @@ public class CallExpressionResolver {
         TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
                 context, "trace to resolve as function call", callExpression);
         ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
-                call, callExpression,
+                call,
                 // It's possible start of a call so we should reset safe call chain
                 context.replaceTraceAndCache(temporaryForFunction).replaceInsideCallChain(false),
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, result);
@@ -425,7 +426,7 @@ public class CallExpressionResolver {
                 calleeExpression instanceof KtReferenceExpression
                 ? context.trace.get(BindingContext.REFERENCE_TARGET, (KtReferenceExpression) calleeExpression) : null;
 
-        qualifiedExpressionResolver.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, selectorDescriptor);
+        QualifiedExpressionResolveUtilKt.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, selectorDescriptor, symbolUsageValidator);
     }
 
     private static void checkNestedClassAccess(

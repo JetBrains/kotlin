@@ -25,16 +25,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallExpressionElement
-import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.createClassifierQualifier
 import org.jetbrains.kotlin.resolve.scopes.utils.containsFunctionOrVariable
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
-import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
-import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
@@ -598,96 +597,6 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         }
         return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, shouldBeVisibleFrom)
     }
-
-    public fun resolveAsReceiverInQualifiedExpression(
-            qualifier: QualifierReceiver,
-            context: ExpressionTypingContext,
-            selector: DeclarationDescriptor?
-    ) {
-        resolveAndRecordReferenceTarget(qualifier, context, selector)
-
-        if (qualifier is ClassifierQualifier) {
-            val classifier = qualifier.classifier
-            if (classifier is TypeParameterDescriptor) {
-                context.trace.report(Errors.TYPE_PARAMETER_ON_LHS_OF_DOT.on(qualifier.referenceExpression, classifier))
-            }
-            else if (classifier is ClassDescriptor && classifier.hasClassObjectType) {
-                context.trace.recordType(qualifier.expression, classifier.classObjectType)
-            }
-        }
-    }
-
-    public fun resolveAsStandaloneExpression(qualifier: QualifierReceiver, context: ExpressionTypingContext) {
-        resolveAndRecordReferenceTarget(qualifier, context, selector = null)
-
-        if (qualifier is ClassifierQualifier) {
-            val classifier = qualifier.classifier
-            if (classifier is TypeParameterDescriptor) {
-                context.trace.report(Errors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(qualifier.referenceExpression, classifier))
-            }
-            else if (classifier is ClassDescriptor && !classifier.hasClassObjectType) {
-                context.trace.report(Errors.NO_COMPANION_OBJECT.on(qualifier.referenceExpression, classifier))
-            }
-        }
-        else if (qualifier is PackageQualifier) {
-            context.trace.report(Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND.on(qualifier.referenceExpression))
-        }
-    }
-
-    // TODO refactor
-    private fun resolveAndRecordReferenceTarget(
-            qualifier: QualifierReceiver,
-            context: ExpressionTypingContext,
-            selector: DeclarationDescriptor?
-    ) {
-        qualifier.resultingDescriptor = resolveReferenceTarget(qualifier, context, selector)
-        context.trace.record(BindingContext.REFERENCE_TARGET, qualifier.referenceExpression, qualifier.resultingDescriptor)
-    }
-
-    // TODO refactor
-    private fun resolveReferenceTarget(
-            qualifier: QualifierReceiver,
-            context: ExpressionTypingContext,
-            selector: DeclarationDescriptor?
-    ): DeclarationDescriptor {
-        if (qualifier is ClassifierQualifier && qualifier.classifier is TypeParameterDescriptor) {
-            return qualifier.classifier
-        }
-
-        val selectorContainer = when (selector) {
-            is ConstructorDescriptor ->
-                selector.containingDeclaration.containingDeclaration
-            else ->
-                selector?.containingDeclaration
-        }
-
-        if (qualifier is PackageQualifier &&
-            (selectorContainer is PackageFragmentDescriptor || selectorContainer is PackageViewDescriptor) &&
-            DescriptorUtils.getFqName(qualifier.packageView) == DescriptorUtils.getFqName(selectorContainer)
-        ) {
-            return qualifier.packageView
-        }
-
-        if (qualifier is ClassQualifier) {
-            symbolUsageValidator.validateTypeUsage(qualifier.classifier, context.trace, qualifier.referenceExpression)
-
-            if (selector is CallableDescriptor &&
-                (selector.dispatchReceiverParameter != null || selector.extensionReceiverParameter != null) &&
-                qualifier.classifier is ClassDescriptor &&
-                qualifier.classifier.hasClassObjectType
-            ) {
-                val companionObjectDescriptor = qualifier.classifier.companionObjectDescriptor
-                if (companionObjectDescriptor != null) {
-                    context.trace.record(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, qualifier.referenceExpression, qualifier.classifier)
-                    symbolUsageValidator.validateTypeUsage(companionObjectDescriptor, context.trace, qualifier.referenceExpression)
-                    return companionObjectDescriptor
-                }
-            }
-        }
-
-        return qualifier.descriptor
-    }
-
 }
 
 /*
