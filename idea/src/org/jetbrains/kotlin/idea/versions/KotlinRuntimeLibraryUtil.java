@@ -122,8 +122,8 @@ public class KotlinRuntimeLibraryUtil {
                         updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR);
                         updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR);
 
-                        if (kJvmConfigurator.changeOldSourcesPathIfNeeded(library)) {
-                            kJvmConfigurator.copySourcesToPathFromLibrary(library);
+                        if (kJvmConfigurator.changeOldSourcesPathIfNeeded(project, library)) {
+                            kJvmConfigurator.copySourcesToPathFromLibrary(project, library);
                         }
                         else {
                             updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR);
@@ -132,8 +132,8 @@ public class KotlinRuntimeLibraryUtil {
                     else if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
                         updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR);
 
-                        if (kJsConfigurator.changeOldSourcesPathIfNeeded(library)) {
-                            kJsConfigurator.copySourcesToPathFromLibrary(library);
+                        if (kJsConfigurator.changeOldSourcesPathIfNeeded(project, library)) {
+                            kJsConfigurator.copySourcesToPathFromLibrary(project, library);
                         }
                         else {
                             updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR);

@@ -113,7 +113,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
 
         Library.ModifiableModel model = library.getModifiableModel();
         try {
-            deferredCopyFileRequests.performRequests(ProjectStructureUtilKt.getModuleDir(module), model);
+            deferredCopyFileRequests.performRequests(module.getProject(), ProjectStructureUtilKt.getModuleDir(module), model);
         }
         finally {
             model.commit();
@@ -128,13 +128,13 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
             this.configurator = configurator;
         }
 
-        public void performRequests(@NotNull String relativePath, Library.ModifiableModel model) {
+        public void performRequests(@NotNull Project project, @NotNull String relativePath, Library.ModifiableModel model) {
             for (CopyFileRequest request : copyFilesRequests) {
                 String destinationPath = FileUtil.isAbsolute(request.toDir) ?
                                          request.toDir :
                                          new File(relativePath, request.toDir).getPath();
 
-                File resultFile = configurator.copyFileToDir(request.file, destinationPath);
+                File resultFile = configurator.copyFileToDir(project, request.file, destinationPath);
 
                 if (request.replaceInLib) {
                     ProjectStructureUtilKt.replaceFileRoot(model, request.file, resultFile);

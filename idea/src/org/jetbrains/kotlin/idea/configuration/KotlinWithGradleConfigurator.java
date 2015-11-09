@@ -189,7 +189,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
         VirtualFile virtualFile = groovyFile.getVirtualFile();
         if (virtualFile != null) {
-            showInfoNotification(virtualFile.getPath() + " was modified");
+            showInfoNotification(groovyFile.getProject(), virtualFile.getPath() + " was modified");
         }
     }
 

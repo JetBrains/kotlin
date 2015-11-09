@@ -61,13 +61,13 @@ public class AddReflectionQuickFix(element: KtElement) : KotlinQuickFixAction<Kt
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(reflectIoFile), OrderRootType.CLASSES)
             }
             else {
-                val copied = configurator.copyFileToDir(pluginReflectJar, libFilesDir)!!
+                val copied = configurator.copyFileToDir(project, pluginReflectJar, libFilesDir)!!
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(copied), OrderRootType.CLASSES)
             }
 
             model.commit()
 
-            ConfigureKotlinInProjectUtils.showInfoNotification(
+            ConfigureKotlinInProjectUtils.showInfoNotification(project,
                     "${PathUtil.KOTLIN_JAVA_REFLECT_JAR} was added to the library ${library.getName()}"
             )
         }

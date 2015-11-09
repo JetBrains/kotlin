@@ -131,7 +131,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         FileState sourcesState = getJarState(project, files.getRuntimeSourcesDestination(dirToCopySourcesJar), OrderRootType.SOURCES,
                                              pathFromDialog == null);
 
-        configureModuleWithLibrarySources(library, sourcesState, dirToCopySourcesJar);
+        configureModuleWithLibrarySources(project, library, sourcesState, dirToCopySourcesJar);
     }
 
     protected void configureModuleWithLibraryClasses(
@@ -152,9 +152,9 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                         break;
                     }
                     case COPY: {
-                        copyFileToDir(runtimeJar, dirToCopyJarTo);
+                        copyFileToDir(project, runtimeJar, dirToCopyJarTo);
                         if (reflectJar != null) {
-                            copyFileToDir(reflectJar, dirToCopyJarTo);
+                            copyFileToDir(project, reflectJar, dirToCopyJarTo);
                         }
                         break;
                     }
@@ -174,7 +174,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                     }
                     case COPY: {
                         addJarsToExistingLibrary(
-                                project, copyFileToDir(runtimeJar, dirToCopyJarTo), copyFileToDir(reflectJar, dirToCopyJarTo)
+                                project, copyFileToDir(project, runtimeJar, dirToCopyJarTo), copyFileToDir(project, reflectJar, dirToCopyJarTo)
                         );
                         break;
                     }
@@ -193,7 +193,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                         break;
                     }
                     case COPY: {
-                        addJarsToNewLibrary(project, copyFileToDir(runtimeJar, dirToCopyJarTo), copyFileToDir(reflectJar, dirToCopyJarTo));
+                        addJarsToNewLibrary(project, copyFileToDir(project, runtimeJar, dirToCopyJarTo), copyFileToDir(project, reflectJar, dirToCopyJarTo));
                         break;
                     }
                     case DO_NOT_COPY: {
@@ -208,6 +208,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     }
 
     protected void configureModuleWithLibrarySources(
+            @NotNull Project project,
             @NotNull Library library,
             @NotNull FileState jarState,
             @Nullable String dirToCopyJarTo
@@ -217,18 +218,18 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         switch (jarState) {
             case EXISTS: {
                 if (dirToCopyJarTo != null) {
-                    addSourcesToLibraryIfNeeded(library, files.getRuntimeSourcesDestination(dirToCopyJarTo));
+                    addSourcesToLibraryIfNeeded(project, library, files.getRuntimeSourcesDestination(dirToCopyJarTo));
                 }
                 break;
             }
             case COPY: {
                 assert dirToCopyJarTo != null : "Path to copy should be non-null";
-                File file = copyFileToDir(runtimeSourcesJar, dirToCopyJarTo);
-                addSourcesToLibraryIfNeeded(library, file);
+                File file = copyFileToDir(project, runtimeSourcesJar, dirToCopyJarTo);
+                addSourcesToLibraryIfNeeded(project, library, file);
                 break;
             }
             case DO_NOT_COPY: {
-                addSourcesToLibraryIfNeeded(library, runtimeSourcesJar);
+                addSourcesToLibraryIfNeeded(project, library, runtimeSourcesJar);
                 break;
             }
         }
@@ -250,14 +251,14 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return null;
     }
 
-    @Contract("!null, _ -> !null")
+    @Contract("_, !null, _ -> !null")
     @Nullable
-    public File copyFileToDir(@Nullable File file, @NotNull String toDir) {
+    public File copyFileToDir(@NotNull Project project, @Nullable File file, @NotNull String toDir) {
         if (file == null) return null;
 
         File copy = FileUIUtils.copyWithOverwriteDialog(getMessageForOverrideDialog(), toDir, file);
         if (copy != null) {
-            showInfoNotification(file.getName() + " was copied to " + toDir);
+            showInfoNotification(project, file.getName() + " was copied to " + toDir);
         }
         return copy;
     }
@@ -285,7 +286,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return parentDir;
     }
 
-    protected static boolean addSourcesToLibraryIfNeeded(@NotNull Library library, @NotNull File file) {
+    protected static boolean addSourcesToLibraryIfNeeded(@NotNull Project project, @NotNull Library library, @NotNull File file) {
         String[] librarySourceRoots = library.getUrls(OrderRootType.SOURCES);
         String librarySourceRoot = VfsUtil.getUrlForLibraryRoot(file);
         for (String sourceRoot : librarySourceRoots) {
@@ -302,7 +303,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             }
         });
 
-        showInfoNotification("Source root '" + librarySourceRoot + "' was added to " + library.getName() + " library");
+        showInfoNotification(project, "Source root '" + librarySourceRoot + "' was added to " + library.getName() + " library");
         return true;
     }
 
@@ -314,7 +315,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             assert library != null : "Kotlin project library should exists";
 
             ModuleRootModificationUtil.addDependency(module, library, expectedDependencyScope, false);
-            showInfoNotification(library.getName() + " library was added to module " + module.getName());
+            showInfoNotification(module.getProject(), library.getName() + " library was added to module " + module.getName());
         }
         else {
             LibraryOrderEntry libraryEntry = findLibraryOrderEntry(ModuleRootManager.getInstance(module).getOrderEntries(), kotlinLibrary);
@@ -323,7 +324,8 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                 if (!expectedDependencyScope.equals(libraryDependencyScope)) {
                     libraryEntry.setScope(expectedDependencyScope);
 
-                    showInfoNotification(kotlinLibrary.getName() + " library scope has changed from " + libraryDependencyScope +
+                    showInfoNotification(module.getProject(),
+                                         kotlinLibrary.getName() + " library scope has changed from " + libraryDependencyScope +
                                          " to " + expectedDependencyScope + " for module " + module.getName());
                 }
             }
@@ -366,7 +368,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             }
         });
 
-        showInfoNotification(library.getName() + " library was configured");
+        showInfoNotification(project, library.getName() + " library was configured");
     }
 
     private void addJarsToNewLibrary(
@@ -389,7 +391,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             }
         });
 
-        showInfoNotification(library.get().getName() + " library was created");
+        showInfoNotification(project, library.get().getName() + " library was created");
     }
 
     private boolean isProjectLibraryWithoutPathsPresent(@NotNull Project project) {
@@ -515,25 +517,25 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
         return file;
     }
 
-    public void copySourcesToPathFromLibrary(@NotNull Library library) {
+    public void copySourcesToPathFromLibrary(@NotNull Project project, @NotNull Library library) {
         String dirToJarFromLibrary = getPathFromLibrary(library, OrderRootType.SOURCES);
         assert dirToJarFromLibrary != null : "Directory to file from library should be non null";
 
-        copyFileToDir(getExistingJarFiles().getRuntimeSourcesJar(), dirToJarFromLibrary);
+        copyFileToDir(project, getExistingJarFiles().getRuntimeSourcesJar(), dirToJarFromLibrary);
     }
 
-    public boolean changeOldSourcesPathIfNeeded(@NotNull Library library) {
-        if (!removeOldSourcesRootIfNeeded(library)) {
+    public boolean changeOldSourcesPathIfNeeded(@NotNull Project project, @NotNull Library library) {
+        if (!removeOldSourcesRootIfNeeded(project, library)) {
             return false;
         }
 
         String parentDir = getPathFromLibrary(library, OrderRootType.CLASSES);
         assert parentDir != null : "Parent dir for classes jar should exists for Kotlin library";
 
-        return addSourcesToLibraryIfNeeded(library, getExistingJarFiles().getRuntimeSourcesDestination(parentDir));
+        return addSourcesToLibraryIfNeeded(project, library, getExistingJarFiles().getRuntimeSourcesDestination(parentDir));
     }
 
-    protected boolean removeOldSourcesRootIfNeeded(@NotNull Library library) {
+    protected boolean removeOldSourcesRootIfNeeded(@NotNull Project project, @NotNull Library library) {
         String oldLibrarySourceRoot = getOldSourceRootUrl(library);
 
         String[] librarySourceRoots = library.getUrls(OrderRootType.SOURCES);
@@ -548,7 +550,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                     }
                 });
 
-                showInfoNotification("Source root '" + oldLibrarySourceRoot + "' was removed for " + library.getName() + " library");
+                showInfoNotification(project, "Source root '" + oldLibrarySourceRoot + "' was removed for " + library.getName() + " library");
                 return true;
             }
         }

@@ -157,7 +157,7 @@ public class ConfigureKotlinInProjectUtils {
     private ConfigureKotlinInProjectUtils() {
     }
 
-    public static void showInfoNotification(@NotNull String message) {
-        Notifications.Bus.notify(new Notification("Configure Kotlin: info notification", "Configure Kotlin", message, NotificationType.INFORMATION));
+    public static void showInfoNotification(@NotNull Project project, @NotNull String message) {
+        Notifications.Bus.notify(new Notification("Configure Kotlin: info notification", "Configure Kotlin", message, NotificationType.INFORMATION), project);
     }
 }
