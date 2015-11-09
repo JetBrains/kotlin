@@ -54,6 +54,7 @@ import java.util.*
 class BasicCompletionSession(
         configuration: CompletionSessionConfiguration,
         parameters: CompletionParameters,
+        toFromOriginalFileMapper: ToFromOriginalFileMapper,
         resultSet: CompletionResultSet
 ) : CompletionSession(configuration, parameters, resultSet) {
 

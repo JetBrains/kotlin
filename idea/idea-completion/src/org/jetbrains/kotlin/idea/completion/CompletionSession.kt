@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -161,9 +162,6 @@ abstract class CompletionSession(
         return KotlinIndicesHelper(resolutionFacade, searchScope, filter, filterOutPrivate = !mayIncludeInaccessible)
     }
 
-    protected val toFromOriginalFileMapper: ToFromOriginalFileMapper
-            = ToFromOriginalFileMapper(parameters.originalFile as KtFile, position.containingFile as KtFile, parameters.offset)
-
     // excludes top-level extensions except for ones declared in the current file - those that are fetched from indices
     protected val topLevelExtensionsExclude = object : DescriptorKindExclude() {
         val extensionsFromThisFile = file.declarations
@@ -240,6 +238,10 @@ abstract class CompletionSession(
         doComplete()
         flushToResultSet()
         return !collector.isResultEmpty
+    }
+
+    public fun addLookupElementPostProcessor(processor: (LookupElement) -> LookupElement) {
+        collector.addLookupElementPostProcessor(processor)
     }
 
     protected abstract fun doComplete()
