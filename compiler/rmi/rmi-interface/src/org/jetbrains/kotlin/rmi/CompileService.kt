@@ -16,32 +16,71 @@
 
 package org.jetbrains.kotlin.rmi
 
+import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
 
 public interface CompileService : Remote {
 
-    public enum class OutputFormat : java.io.Serializable {
+    public enum class OutputFormat : Serializable {
         PLAIN,
         XML
     }
 
-    public enum class TargetPlatform : java.io.Serializable {
+    public enum class TargetPlatform : Serializable {
         JVM,
         JS
     }
 
+    companion object {
+        public val NO_SESSION: Int = 0
+    }
+
+    public sealed class CallResult<R> : Serializable {
+        class Good<R>(val result: R) : CallResult<R>()
+        class Ok : CallResult<Nothing>()
+        class Dying : CallResult<Nothing>()
+        class Error(val message: String) : CallResult<Nothing>()
+        fun get(): R = when (this) {
+            is Good<R> -> this.result
+            is Dying -> throw IllegalStateException("Service is dying")
+            is Error -> throw IllegalStateException(this.message)
+            else -> throw IllegalStateException("Unknown state")
+        }
+    }
+
+    // TODO: remove!
     @Throws(RemoteException::class)
-    public fun checkCompilerId(compilerId: CompilerId): Boolean
+    public fun checkCompilerId(expectedCompilerId: CompilerId): Boolean
 
     @Throws(RemoteException::class)
-    public fun getUsedMemory(): Long
+    public fun getUsedMemory(): CallResult<Long>
 
     @Throws(RemoteException::class)
-    public fun shutdown()
+    public fun getDaemonOptions(): CallResult<DaemonOptions>
+
+    @Throws(RemoteException::class)
+    public fun getDaemonJVMOptions(): CallResult<DaemonJVMOptions>
+
+    @Throws(RemoteException::class)
+    public fun registerClient(aliveFlagPath: String?): CallResult<Nothing>
+
+    // TODO: consider adding another client alive checking mechanism, e.g. socket/port
+
+    @Throws(RemoteException::class)
+    public fun leaseCompileSession(aliveFlagPath: String?): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    public fun releaseCompileSession(sessionId: Int): Unit
+
+    @Throws(RemoteException::class)
+    public fun shutdown(): Unit
+
+    // TODO: consider adding async version of shutdown and release
 
     @Throws(RemoteException::class)
     public fun remoteCompile(
+            sessionId: Int,
             targetPlatform: TargetPlatform,
             args: Array<out String>,
             servicesFacade: CompilerCallbackServicesFacade,
@@ -49,10 +88,11 @@ public interface CompileService : Remote {
             outputFormat: OutputFormat,
             serviceOutputStream: RemoteOutputStream,
             operationsTracer: RemoteOperationsTracer?
-    ): Int
+    ): CallResult<Int>
 
     @Throws(RemoteException::class)
     public fun remoteIncrementalCompile(
+            sessionId: Int,
             targetPlatform: TargetPlatform,
             args: Array<out String>,
             servicesFacade: CompilerCallbackServicesFacade,
@@ -60,5 +100,5 @@ public interface CompileService : Remote {
             compilerOutputFormat: OutputFormat,
             serviceOutputStream: RemoteOutputStream,
             operationsTracer: RemoteOperationsTracer?
-    ): Int
+    ): CallResult<Int>
 }
