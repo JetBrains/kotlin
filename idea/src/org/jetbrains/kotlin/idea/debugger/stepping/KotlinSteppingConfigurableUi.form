@@ -14,7 +14,7 @@
         </constraints>
         <properties>
           <selected value="false"/>
-          <text resource-bundle="org.jetbrains.kotlin.idea/JetBundle" key="debugger.filter.ignore.internal.classes"/>
+          <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="debugger.filter.ignore.internal.classes"/>
         </properties>
       </component>
       <vspacer id="c37da">

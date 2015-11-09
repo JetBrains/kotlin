@@ -27,7 +27,7 @@
             </constraints>
             <properties>
               <selected value="false"/>
-              <text resource-bundle="org/jetbrains/kotlin/idea/JetBundle" key="kotlin.compiler.option.generate.no.warnings"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.generate.no.warnings"/>
             </properties>
           </component>
           <component id="ba279" class="javax.swing.JLabel" binding="additionalArgsLabel">
@@ -35,7 +35,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/JetBundle" key="kotlin.compiler.option.additional.command.line.parameters"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters"/>
             </properties>
           </component>
           <component id="7a827" class="com.intellij.ui.RawCommandLineEditor" binding="additionalArgsOptionsField">
@@ -45,7 +45,7 @@
               </grid>
             </constraints>
             <properties>
-              <dialogCaption resource-bundle="org/jetbrains/kotlin/idea/JetBundle" key="kotlin.compiler.option.additional.command.line.parameters.dialog.title"/>
+              <dialogCaption resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters.dialog.title"/>
             </properties>
           </component>
           <component id="c45a6" class="javax.swing.JCheckBox" binding="keepAliveCheckBox">
@@ -69,7 +69,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/JetBundle" title-key="kotlin.compiler.jvm.option.panel.title"/>
+        <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" title-key="kotlin.compiler.jvm.option.panel.title"/>
         <children>
           <component id="c6928" class="javax.swing.JCheckBox" binding="incrementalCompilationCheckBox">
             <constraints>
@@ -92,14 +92,14 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/JetBundle" title-key="kotlin.compiler.js.option.panel.title"/>
+        <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" title-key="kotlin.compiler.js.option.panel.title"/>
         <children>
           <component id="1fbe0" class="javax.swing.JCheckBox" binding="generateSourceMapsCheckBox" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/JetBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
             </properties>
           </component>
           <component id="3ac8f" class="javax.swing.JLabel" binding="labelForOutputPrefixFile">
@@ -109,7 +109,7 @@
               </grid>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/JetBundle" key="kotlin.compiler.js.option.output.prefix"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.prefix"/>
             </properties>
           </component>
           <component id="2d5b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPrefixFile">
@@ -125,7 +125,7 @@
               </grid>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/JetBundle" key="kotlin.compiler.js.option.output.postfix"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.postfix"/>
             </properties>
           </component>
           <component id="1292b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPostfixFile">
@@ -139,7 +139,7 @@
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/JetBundle" key="kotlin.compiler.js.option.output.copy.dir"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.copy.dir"/>
             </properties>
           </component>
           <component id="f1f6b" class="javax.swing.JTextField" binding="outputDirectory">
@@ -157,7 +157,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/JetBundle" key="kotlin.compiler.js.option.output.copy.files"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.copy.files"/>
             </properties>
           </component>
         </children>
