@@ -644,14 +644,25 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
     if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, Collections.emptyMap(), nameByOffset)
 
-    makeCall(descriptor, declaration, descriptor.controlFlow, descriptor.extractionData.originalRange, descriptor.parameters.map { it.argumentText })
+    val replaceInitialOccurrence = {
+        val arguments = descriptor.parameters.map { it.argumentText }
+        makeCall(descriptor, declaration, descriptor.controlFlow, descriptor.extractionData.originalRange, arguments)
+    }
+
+    if (!generatorOptions.delayInitialOccurrenceReplacement) replaceInitialOccurrence()
+
     if (shouldInsert) {
         ShortenReferences.DEFAULT.process(declaration)
     }
 
     if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, emptyMap(), nameByOffset)
 
-    val duplicateReplacers = duplicates.map { it.range to { makeCall(descriptor, declaration, it.controlFlow, it.range, it.arguments) } }.toMap()
+    val duplicateReplacers = HashMap<KotlinPsiRange, () -> Unit>().apply {
+        if (generatorOptions.delayInitialOccurrenceReplacement) {
+            put(descriptor.extractionData.originalRange, replaceInitialOccurrence)
+        }
+        putAll(duplicates.map { it.range to { makeCall(descriptor, declaration, it.controlFlow, it.range, it.arguments) } })
+    }
 
     if (descriptor.typeParameters.isNotEmpty()) {
         for (ref in ReferencesSearch.search(declaration, LocalSearchScope(descriptor.getOccurrenceContainer()!!))) {

@@ -45,7 +45,8 @@ public class KotlinIntroducePropertyHandler(
             val descriptor = descriptorWithConflicts.descriptor
             val target = propertyTargets.filter { it.isAvailable(descriptor) }.firstOrNull()
             if (target != null) {
-                doRefactor(ExtractionGeneratorConfiguration(descriptor, ExtractionGeneratorOptions.DEFAULT.copy(target = target)), onFinish)
+                val options = ExtractionGeneratorOptions.DEFAULT.copy(target = target, delayInitialOccurrenceReplacement = true)
+                doRefactor(ExtractionGeneratorConfiguration(descriptor, options), onFinish)
             }
             else {
                 showErrorHint(project, editor, "Can't introduce property for this expression", INTRODUCE_PROPERTY)

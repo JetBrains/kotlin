@@ -219,7 +219,7 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
                     doRefactor(
                             ExtractionGeneratorConfiguration(
                                     descriptorWithConflicts.descriptor,
-                                    ExtractionGeneratorOptions.DEFAULT.copy(target = extractionTarget)
+                                    ExtractionGeneratorOptions.DEFAULT.copy(target = extractionTarget, delayInitialOccurrenceReplacement = true)
                             ),
                             onFinish
                     )

@@ -407,7 +407,8 @@ data class ExtractionGeneratorOptions(
         val target: ExtractionTarget = ExtractionTarget.FUNCTION,
         val flexibleTypesAllowed: Boolean = false,
         val allowDummyName: Boolean = false,
-        val allowExpressionBody: Boolean = true
+        val allowExpressionBody: Boolean = true,
+        val delayInitialOccurrenceReplacement: Boolean = false
 ) {
     companion object {
         val DEFAULT = ExtractionGeneratorOptions()

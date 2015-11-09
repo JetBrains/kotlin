@@ -137,7 +137,6 @@ public class KotlinInplacePropertyIntroducer(
             }
         }
 
-
         val occurrenceCount = extractionResult.duplicateReplacers.size() + 1
         if (occurrenceCount > 1) {
             addPanelControl(
@@ -161,10 +160,10 @@ public class KotlinInplacePropertyIntroducer(
         return myElementToRename.parentsWithSelf.first { it is KtClassOrObject || it is KtFile }
     }
 
-    override fun moveOffsetAfter(success: Boolean) {
-        super.moveOffsetAfter(success)
-        if (success && replaceAll) {
+    override fun performRefactoring(): Boolean {
+        if (replaceAll) {
             processDuplicatesSilently(extractionResult.duplicateReplacers, myProject)
         }
+        return true
     }
 }
