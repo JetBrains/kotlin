@@ -309,7 +309,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         return getClassRelativeName(parent).child(name)
     }
 
-    private fun createLightClassForDecompiledKotlinFile(file: KtFile): KtLightClassForDecompiledDeclaration? {
+    fun createLightClassForDecompiledKotlinFile(file: KtFile): KtLightClassForDecompiledDeclaration? {
         val virtualFile = file.virtualFile ?: return null
 
         val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
@@ -349,5 +349,23 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     companion object {
         private val LOG = Logger.getInstance(IDELightClassGenerationSupport::class.java)
+    }
+}
+
+class KtFileClassProviderImpl(val lightClassGenerationSupport: LightClassGenerationSupport) : KtFileClassProvider {
+    override fun getFileClasses(file: KtFile): Array<PsiClass> {
+        if (file.isCompiled) {
+            return arrayOf()
+        }
+
+        val result = arrayListOf<PsiClass>()
+        file.declarations.filterIsInstance<KtClassOrObject>().map { lightClassGenerationSupport.getPsiClass(it) }.filterNotNullTo(result)
+
+        val moduleInfo = file.getModuleInfo()
+        val fileClassFqName = file.javaFileFacadeFqName
+        lightClassGenerationSupport.getFacadeClasses(fileClassFqName, moduleInfo.contentScope()).filterTo(result) {
+            it is KtLightClassForFacade && file in it.files
+        }
+        return result.toTypedArray()
     }
 }
