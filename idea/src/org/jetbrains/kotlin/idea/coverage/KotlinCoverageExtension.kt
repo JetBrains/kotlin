@@ -16,32 +16,28 @@
 
 package org.jetbrains.kotlin.idea.coverage
 
-import com.intellij.coverage.JavaCoverageEngineExtension
-import com.intellij.execution.configurations.RunConfigurationBase
-import org.jetbrains.kotlin.idea.run.JetRunConfiguration
-import com.intellij.psi.PsiFile
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.coverage.CoverageSuitesBundle
-import java.io.File
-import org.jetbrains.kotlin.psi.KtFile
-import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.psi.PsiClass
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiNamedElement
+import com.intellij.coverage.JavaCoverageAnnotator
+import com.intellij.coverage.JavaCoverageEngineExtension
 import com.intellij.coverage.PackageAnnotator
+import com.intellij.execution.configurations.RunConfigurationBase
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.roots.CompilerModuleExtension
-import com.intellij.coverage.JavaCoverageAnnotator
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import com.intellij.openapi.vfs.LocalFileSystem
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiNamedElement
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.run.JetRunConfiguration
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import java.io.File
 
 public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     private val LOG = Logger.getInstance(javaClass<KotlinCoverageExtension>())
@@ -75,23 +71,6 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     override fun keepCoverageInfoForClassWithoutSource(bundle: CoverageSuitesBundle, classFile: File): Boolean {
         // TODO check scope and source roots
         return true  // keep everything, sort it out later
-    }
-
-    // Implements API added in IDEA 14.1
-    override fun ignoreCoverageForClass(bundle: CoverageSuitesBundle, classFile: File): Boolean {
-        // Ignore classes that only contain bridge methods delegating to package parts.
-        if (looksLikePackageFacade(classFile)) {
-            val classVFile = LocalFileSystem.getInstance().findFileByIoFile(classFile)
-            if (classVFile == null) return false
-            val header = KotlinBinaryClassCache.getKotlinBinaryClass(classVFile)?.getClassHeader()
-            return header != null && header.kind == KotlinClassHeader.Kind.PACKAGE_FACADE;
-        }
-        return false;
-    }
-
-    fun looksLikePackageFacade(classFile: File): Boolean {
-        val packageName = classFile.getParentFile().getName()
-        return classFile.getName() == StringUtil.capitalize(packageName) + PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + ".class"
     }
 
     override fun collectOutputFiles(srcFile: PsiFile,
@@ -182,7 +161,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
 
         private fun collectClassFilePrefixes(file: KtFile): Collection<String> {
             val result = file.getChildren().filter { it is KtClassOrObject }.map { (it as KtClassOrObject).getName()!! }
-            val packagePartFqName = PackagePartClassUtils.getPackagePartFqName(file)
+            val packagePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).fileClassFqName
             return result.union(arrayListOf(packagePartFqName.shortName().asString()))
         }
     }
