@@ -79,6 +79,12 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             doTest(fileName);
         }
 
+        @TestMetadata("InterfaceDefaultImpls.kt")
+        public void testInterfaceDefaultImpls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/InterfaceDefaultImpls.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("JvmOverloadsFunctions.kt")
         public void testJvmOverloadsFunctions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/JvmOverloadsFunctions.kt");
