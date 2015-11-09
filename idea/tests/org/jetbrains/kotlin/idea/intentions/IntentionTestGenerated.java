@@ -3088,6 +3088,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lambdaMultiStatementMessageInsideParentheses.kt")
+        public void testLambdaMultiStatementMessageInsideParentheses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertAssertToIf/lambdaMultiStatementMessageInsideParentheses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaMultiStatementMessageOutsideParentheses.kt")
+        public void testLambdaMultiStatementMessageOutsideParentheses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertAssertToIf/lambdaMultiStatementMessageOutsideParentheses.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambdaVariable.kt")
         public void testLambdaVariable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertAssertToIf/lambdaVariable.kt");

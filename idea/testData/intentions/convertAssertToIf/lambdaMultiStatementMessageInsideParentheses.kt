@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 fun foo() {
     <caret>assert(true, {
-        if (true) "text" else return
+        val value = 1
+        "text and $value"
     })
 }

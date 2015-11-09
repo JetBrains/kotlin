@@ -2,7 +2,8 @@
 fun foo() {
     if (!true) {
         throw AssertionError({
-            return
+            val value = 1
+            "text and $value"
         }())
     }
 }

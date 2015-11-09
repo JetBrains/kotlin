@@ -1,6 +1,7 @@
 // WITH_RUNTIME
 fun foo() {
     <caret>assert(true) {
-        return
+        if (false) return
+        "text"
     }
 }
