@@ -101,6 +101,12 @@ public class CompiledKotlinInJavaCompletionTestGenerated extends AbstractCompile
         doTest(fileName);
     }
 
+    @TestMetadata("InterfaceDefaultImplsNonImported.java")
+    public void testInterfaceDefaultImplsNonImported() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/InterfaceDefaultImplsNonImported.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultiFileFacade.java")
     public void testMultiFileFacade() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacade.java");

@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import java.util.*
 import javax.swing.Icon
 
 public open class KtLightClassForExplicitDeclaration(
@@ -364,12 +365,13 @@ public open class KtLightClassForExplicitDeclaration(
     override fun toString() = "${KtLightClass::class.java.simpleName}:$classFqName"
 
     override fun getOwnInnerClasses(): List<PsiClass> {
-        return getDelegate().innerClasses
-            .map {
-                val declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(it) as KtClassOrObject?
-                if (declaration != null) create(declaration, it) else null
-            }
-            .filterNotNull()
+        val result = ArrayList<PsiClass?>()
+        classOrObject.declarations.filterIsInstance<KtClassOrObject>().mapTo(result) { create(it) }
+
+        if (classOrObject.hasInterfaceDefaultImpls) {
+            result.add(KtLightClassForInterfaceDefaultImpls(classFqName.defaultImplsChild(), classOrObject))
+        }
+        return result.filterNotNull()
     }
 
     override fun getUseScope(): SearchScope = getOrigin().useScope
@@ -387,11 +389,7 @@ public open class KtLightClassForExplicitDeclaration(
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
-        @JvmOverloads
-        public fun create(
-                classOrObject: KtClassOrObject,
-                psiClass: PsiClass? = null
-        ): KtLightClassForExplicitDeclaration? {
+        public fun create(classOrObject: KtClassOrObject): KtLightClassForExplicitDeclaration? {
             if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingKtFile())) {
                 return null
             }
@@ -400,13 +398,6 @@ public open class KtLightClassForExplicitDeclaration(
 
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
                 return KtLightClassForAnonymousDeclaration(fqName, classOrObject)
-            }
-
-            if (classOrObject.hasInterfaceDefaultImpls) {
-                val implsFqName = fqName.defaultImplsChild()
-                if (implsFqName.asString() == psiClass?.qualifiedName) {
-                    return KtLightClassForInterfaceDefaultImpls(implsFqName, classOrObject)
-                }
             }
 
             return KtLightClassForExplicitDeclaration(fqName, classOrObject)

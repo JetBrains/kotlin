@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNamesUtilKt;
+import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtEnumEntry;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -146,7 +147,8 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         if (!qualifiedName.shortName().asString().equals(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)) return;
 
         for (KtClassOrObject classOrObject : lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
-            if (LightClassUtilsKt.getHasInterfaceDefaultImpls(classOrObject)) {
+            //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
+            if (classOrObject instanceof KtClass && ((KtClass) classOrObject).isInterface()) {
                 PsiClass interfaceClass = LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
                 if (interfaceClass != null) {
                     PsiClass implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false);

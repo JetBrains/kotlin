@@ -48,4 +48,6 @@ public open class KtLightClassForInterfaceDefaultImpls(
     }
 
     override fun getContainingClass() = KtLightClassForExplicitDeclaration.create(classOrObject)
+
+    override fun getOwnInnerClasses() = emptyList<PsiClass>()
 }
