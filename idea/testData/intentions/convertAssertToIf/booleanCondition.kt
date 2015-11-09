@@ -1,4 +1,4 @@
 // WITH_RUNTIME
 fun foo() {
-    <caret>assert(true && false, "text")
+    <caret>assert(true && false, { "text" })
 }

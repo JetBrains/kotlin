@@ -2,5 +2,5 @@
 fun foo() {
     val x = true
     val y = false
-    <caret>assert(x || y, "text")
+    <caret>assert(x || y) { "text" }
 }

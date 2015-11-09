@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 fun foo() {
     if (!true) {
-        throw AssertionError({ "text" }())
+        throw AssertionError(if (true) "text" else return)
     }
 }
