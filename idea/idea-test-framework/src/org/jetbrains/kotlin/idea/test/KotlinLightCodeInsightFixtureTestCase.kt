@@ -58,7 +58,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
         invalidateLibraryCache(project)
 
         LoggedErrorProcessor.setNewInstance(object : LoggedErrorProcessor() {
-            override fun processError(message: String?, t: Throwable?, details: Array<out String>?, logger: Logger) {
+            override fun processError(message: String?, t: Throwable?, details: Array<out String>?, logger: org.apache.log4j.Logger) {
                 exceptions.addIfNotNull(t)
                 super.processError(message, t, details, logger)
             }

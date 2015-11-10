@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
+import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
-public class KtClsFile(val provider: KotlinClassFileViewProviderBase) : KotlinClsFileBase(provider) {
+public class KtClsFile(provider: SingleRootFileViewProvider) : KtClsFileBase(provider) {
     protected override val decompiledText: LockedClearableLazyValue<DecompiledText> = LockedClearableLazyValue(Any()) {
         buildDecompiledText(getVirtualFile())
     }

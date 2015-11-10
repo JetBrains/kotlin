@@ -24,25 +24,25 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-public class JetClassFileViewProvider(
+public class KotlinClassFileViewProvider(
         manager: PsiManager,
         val file: VirtualFile,
         physical: Boolean,
         val isInternal: Boolean) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
 
-    val jetClsFile by lazy() {
+    val ktClsFile by lazy() {
         //TODO: check index that file is library file, as in ClassFileViewProvider
-        if (!isInternal) JetClsFile(this) else null
+        if (!isInternal) KtClsFile(this) else null
     }
 
     override fun getContents(): CharSequence {
-        return jetClsFile?.getText() ?: ""
+        return ktClsFile?.getText() ?: ""
     }
 
-    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? = jetClsFile
+    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? = ktClsFile
 
     override fun createCopy(copy: VirtualFile): SingleRootFileViewProvider {
-        return JetClassFileViewProvider(getManager(), copy, false, isInternal)
+        return KotlinClassFileViewProvider(getManager(), copy, false, isInternal)
     }
 }
 
@@ -52,16 +52,16 @@ public class KotlinJavascriptMetaFileViewProvider (
         physical: Boolean,
         val isInternal: Boolean) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
 
-    val jetJsMetaFile by lazy(this) {
+    val ktJsMetaFile by lazy(this) {
         //TODO: check index that file is library file, as in ClassFileViewProvider
         if (!isInternal) KotlinJavascriptMetaFile(this) else null
     }
 
     override fun getContents(): CharSequence {
-        return jetJsMetaFile?.getText() ?: ""
+        return ktJsMetaFile?.getText() ?: ""
     }
 
-    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? = jetJsMetaFile
+    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? = ktJsMetaFile
 
     override fun createCopy(copy: VirtualFile): SingleRootFileViewProvider {
         return KotlinJavascriptMetaFileViewProvider(getManager(), copy, false, isInternal)
