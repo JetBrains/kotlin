@@ -89,6 +89,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.USELESS_ELVIS,
             ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION,
             Errors.DEPRECATION,
+            Errors.DEPRECATION_ERROR,
             Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION,
             Errors.OPERATOR_MODIFIER_REQUIRED,
             Errors.DEPRECATED_UNARY_PLUS_MINUS,
