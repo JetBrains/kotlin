@@ -90,6 +90,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
                 classSuitesByClassName.getOrPut(className) { ClassExpectationsSuite(className) }
 
         fun check() {
+            Assert.assertTrue(classSuitesByClassName.isNotEmpty())
             classSuitesByClassName.values().forEach { it.check() }
         }
 
@@ -196,9 +197,6 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
                 if (kind == "class" && memberName != null) {
                     throw AssertionError("$ktFile:${lineNo+1}: use $className\$$memberName to denote inner class")
                 }
-                else if (memberName == null) {
-                    throw AssertionError("$ktFile:${lineNo+1}: '$kind' requires member name (after $className::)")
-                }
 
                 val jvmSignatureMatch = jvmSignatureRegex.matchExact(lines[lineNo+1])
                 val genericSignatureMatch = genericSignatureRegex.matchExact(lines[lineNo+2])
@@ -237,7 +235,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 // jvm signature: $jvmSignature
 // generic signature: $genericSignature"""
 
-        val expectationRegex = Regex("^// (class|method|field): *([^:]+)(::(.+)) *(//.*)?")
+        val expectationRegex = Regex("^// (class|method|field): *([^:]+)(::(.+))? *(//.*)?")
         val jvmSignatureRegex = Regex("^// jvm signature: *(.+) *(//.*)?")
         val genericSignatureRegex = Regex("^// generic signature: *(.+) *(//.*)?")
 
