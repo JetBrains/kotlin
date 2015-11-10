@@ -633,6 +633,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ImportAllMembersIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention</className>
       <category>Kotlin</category>
     </intentionAction>

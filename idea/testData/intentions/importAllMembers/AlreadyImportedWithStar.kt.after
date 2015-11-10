@@ -1,0 +1,17 @@
+// INTENTION_TEXT: "Import members from 'javax.swing.SwingUtilities'"
+// WITH_RUNTIME
+
+import javax.swing.SwingUtilities
+import javax.swing.SwingUtilities.*
+
+fun foo() {
+    <caret>invokeLater { }
+
+    val bottom = BOTTOM
+
+    invokeAndWait {
+        invokeLater { }
+    }
+
+    val horizontal = HORIZONTAL
+}

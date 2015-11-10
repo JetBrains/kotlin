@@ -1,0 +1,20 @@
+// INTENTION_TEXT: "Import members from 'javax.swing.SwingUtilities'"
+// WITH_RUNTIME
+// ERROR: Unresolved reference: unresolved
+
+import javax.swing.SwingUtilities
+import javax.swing.SwingUtilities.*
+
+fun foo() {
+    invokeLater { }
+
+    val bottom = <caret>BOTTOM
+
+    invokeAndWait {
+        invokeLater { }
+    }
+
+    val horizontal = HORIZONTAL
+
+    SwingUtilities.unresolved
+}

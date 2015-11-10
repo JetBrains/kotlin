@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
@@ -99,8 +99,15 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
     }
 
-    override fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor)
-            = Importer(file).importDescriptor(descriptor)
+    override fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor, forceAllUnderImport: Boolean): ImportDescriptorResult {
+        val importer = Importer(file)
+        if (forceAllUnderImport) {
+            return importer.importDescriptorWithStarImport(descriptor)
+        }
+        else {
+            return importer.importDescriptor(descriptor)
+        }
+    }
 
     private inner class Importer(
             private val file: KtFile
@@ -135,10 +142,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
             if (isAlreadyImported(target, topLevelScope, targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
 
-            val imports = if (file is KtCodeFragment)
-                file.importsAsImportList()?.getImports() ?: listOf()
-            else
-                file.getImportDirectives()
+            val imports = getImports(file)
 
             if (imports.any { !it.isAllUnder && it.importPath?.fqnPart() == targetFqName }) {
                 return ImportDescriptorResult.FAIL
@@ -159,9 +163,9 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             }
 
             val fqName = target.importableFqName!!
-            val packageFqName = fqName.parent()
+            val containerFqName = fqName.parent()
 
-            val tryStarImport = shouldTryStarImport(packageFqName, target, imports)
+            val tryStarImport = shouldTryStarImport(containerFqName, target, imports)
                                     && when (target) {
                                         // this check does not give a guarantee that import with * will import the class - for example,
                                         // there can be classes with conflicting name in more than one import with *
@@ -178,14 +182,31 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             return addExplicitImport(target)
         }
 
-        private fun shouldTryStarImport(containerFqName: FqName, target: DeclarationDescriptor, imports: Collection<KtImportDirective>): Boolean {
-            if (containerFqName.isRoot) return false
+        fun importDescriptorWithStarImport(descriptor: DeclarationDescriptor): ImportDescriptorResult {
+            val target = descriptor.getImportableDescriptor()
 
-            val container = target.containingDeclaration
-            if (container is ClassDescriptor && container.kind == ClassKind.OBJECT) return false // cannot import with '*' from object
+            val fqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
+            val containerFqName = fqName.parent()
+            val imports = getImports(file)
 
             val starImportPath = ImportPath(containerFqName, true)
-            if (imports.any { it.getImportPath() == starImportPath }) return false
+            if (imports.any { it.importPath == starImportPath }) {
+                return if (isAlreadyImported(target, resolutionFacade.getFileResolutionScope(file), fqName))
+                    ImportDescriptorResult.ALREADY_IMPORTED
+                else
+                    ImportDescriptorResult.FAIL
+            }
+
+            if (!canImportWithStar(containerFqName, target)) return ImportDescriptorResult.FAIL
+
+            return addStarImport(target)
+        }
+
+        private fun shouldTryStarImport(containerFqName: FqName, target: DeclarationDescriptor, imports: Collection<KtImportDirective>): Boolean {
+            if (!canImportWithStar(containerFqName, target)) return false
+
+            val starImportPath = ImportPath(containerFqName, true)
+            if (imports.any { it.importPath == starImportPath }) return false
 
             if (containerFqName.asString() in codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS) return true
 
@@ -193,11 +214,20 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 val path = it.getImportPath()
                 path != null && !path.isAllUnder() && !path.hasAlias() && path.fqnPart().parent() == containerFqName
             }
-            val nameCountToUseStar = if (container is ClassDescriptor)
+            val nameCountToUseStar = if (target.containingDeclaration is ClassDescriptor)
                 codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
             else
                 codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT
             return importsFromPackage + 1 >= nameCountToUseStar
+        }
+
+        private fun canImportWithStar(containerFqName: FqName, target: DeclarationDescriptor): Boolean {
+            if (containerFqName.isRoot) return false
+
+            val container = target.containingDeclaration
+            if (container is ClassDescriptor && container.kind == ClassKind.OBJECT) return false // cannot import with '*' from object
+
+            return true
         }
 
         private fun addStarImport(target: DeclarationDescriptor): ImportDescriptorResult {
@@ -396,5 +426,12 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 error("Trying to insert import $fqName into a file ${file.getName()} of type ${file.javaClass} with no import list.")
             }
         }
+    }
+
+    private fun getImports(file: KtFile): List<KtImportDirective> {
+        return if (file is KtCodeFragment)
+            file.importsAsImportList()?.imports ?: listOf()
+        else
+            file.importDirectives
     }
 }

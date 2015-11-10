@@ -5098,6 +5098,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/importAllMembers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImportAllMembers extends AbstractIntentionTest {
+        public void testAllFilesPresentInImportAllMembers() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/importAllMembers"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("AlreadyImported.kt")
+        public void testAlreadyImported() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/AlreadyImported.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AlreadyImportedWithStar.kt")
+        public void testAlreadyImportedWithStar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/AlreadyImportedWithStar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AmbiguousCalls.kt")
+        public void testAmbiguousCalls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/AmbiguousCalls.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("EnumMembers.kt")
+        public void testEnumMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/EnumMembers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotFromCompanionObject.kt")
+        public void testNotFromCompanionObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/NotFromCompanionObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotFromObject.kt")
+        public void testNotFromObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/NotFromObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("QualifiedName.kt")
+        public void testQualifiedName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/QualifiedName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("QualifiedName2.kt")
+        public void testQualifiedName2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/QualifiedName2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("RemoveSingleImports.kt")
+        public void testRemoveSingleImports() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/RemoveSingleImports.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StaticJavaMembers.kt")
+        public void testStaticJavaMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/StaticJavaMembers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnresolvedMember.kt")
+        public void testUnresolvedMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importAllMembers/UnresolvedMember.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/importMember")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

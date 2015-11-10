@@ -23,21 +23,21 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
-public abstract class ImportInsertHelper {
+abstract class ImportInsertHelper {
     /*TODO: implementation is not quite correct*/
-    public abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean
+    abstract fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean
 
-    public abstract fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean
+    abstract fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean
 
-    public abstract val importSortComparator: Comparator<ImportPath>
+    abstract val importSortComparator: Comparator<ImportPath>
 
-    public enum class ImportDescriptorResult {
+    enum class ImportDescriptorResult {
         FAIL,
         IMPORT_ADDED,
         ALREADY_IMPORTED
     }
 
-    public abstract fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor): ImportDescriptorResult
+    abstract fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor, forceAllUnderImport: Boolean = false): ImportDescriptorResult
 
     companion object {
         @JvmStatic
