@@ -7274,6 +7274,51 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/smartCasts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SmartCasts extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInSmartCasts() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/smartCasts"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("falseSmartCast.kt")
+        public void testFalseSmartCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/falseSmartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitExtensionReceiver.kt")
+        public void testImplicitExtensionReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/implicitExtensionReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitMemberReceiver.kt")
+        public void testImplicitMemberReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/implicitMemberReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitReceiver.kt")
+        public void testImplicitReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/implicitReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitReceiverInWhen.kt")
+        public void testImplicitReceiverInWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/implicitReceiverInWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitToGrandSon.kt")
+        public void testImplicitToGrandSon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/implicitToGrandSon.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/staticFields")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
