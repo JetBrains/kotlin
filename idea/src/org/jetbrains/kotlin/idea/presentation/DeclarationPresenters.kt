@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.idea.presentation
 
 import com.intellij.navigation.ColoredItemPresentation
+import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProvider
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.Iconable
 import org.jetbrains.kotlin.idea.KotlinIconProvider
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.*
 
 open class KotlinDefaultNamedDeclarationPresentation(private val declaration: KtNamedDeclaration) : ColoredItemPresentation {
 
@@ -57,4 +56,31 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
 
 class KtDefaultDeclarationPresenter : ItemPresentationProvider<KtNamedDeclaration> {
     override fun getPresentation(item: KtNamedDeclaration) = KotlinDefaultNamedDeclarationPresentation(item)
+}
+
+class KtFunctionPresenter : ItemPresentationProvider<KtFunction> {
+    override fun getPresentation(function: KtFunction): ItemPresentation? {
+        if (function is KtFunctionLiteral) return null
+
+        return object : KotlinDefaultNamedDeclarationPresentation(function) {
+            override fun getPresentableText(): String {
+                return buildString {
+                    function.name?.let { append(it) }
+
+                    append("(")
+                    append(function.valueParameters.joinToString { it.typeReference?.text ?: "" })
+                    append(")")
+                }
+            }
+
+            override fun getLocationString(): String? {
+                if (function is KtConstructor<*>) {
+                    val name = function.getContainingClassOrObject().fqName ?: return null
+                    return "(in $name)"
+                }
+
+                return super.getLocationString()
+            }
+        }
+    }
 }
