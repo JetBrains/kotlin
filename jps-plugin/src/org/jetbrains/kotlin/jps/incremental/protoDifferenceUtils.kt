@@ -44,6 +44,26 @@ public fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): Differenc
     return differenceObject.difference()
 }
 
+internal val MessageLite.isPrivate: Boolean
+    get() = Visibilities.isPrivate(Deserialization.visibility(
+            when (this) {
+                is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
+                is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
+                is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
+                else -> error("Unknown message: $this")
+            }))
+
+private fun MessageLite.name(nameResolver: NameResolver): String {
+    return when (this) {
+        is ProtoBuf.Constructor -> "<init>"
+        is ProtoBuf.Function -> nameResolver.getString(name)
+        is ProtoBuf.Property -> nameResolver.getString(name)
+        else -> error("Unknown message: $this")
+    }
+}
+
+internal fun List<MessageLite>.names(nameResolver: NameResolver): List<String> = map { it.name(nameResolver) }
+
 private abstract class DifferenceCalculator() {
     protected abstract val oldNameResolver: NameResolver
     protected abstract val newNameResolver: NameResolver
@@ -56,9 +76,6 @@ private abstract class DifferenceCalculator() {
 
     protected fun calcDifferenceForMembers(oldList: List<MessageLite>, newList: List<MessageLite>): Collection<String> {
         val result = hashSetOf<String>()
-
-        fun List<MessageLite>.names(nameResolver: NameResolver): List<String> =
-                map { it.name(nameResolver) }
 
         val oldMap =
                 oldList.groupBy { it.getHashCode({ compareObject.oldGetIndexOfString(it) }, { compareObject.oldGetIndexOfClassId(it) }) }
@@ -114,29 +131,11 @@ private abstract class DifferenceCalculator() {
         return HashSetUtil.symmetricDifference(oldNames, newNames)
     }
 
-    protected val MessageLite.isPrivate: Boolean
-        get() = Visibilities.isPrivate(Deserialization.visibility(
-                when (this) {
-                    is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
-                    is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
-                    is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
-                    else -> error("Unknown message: $this")
-                }))
-
     private fun MessageLite.getHashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
         return when (this) {
             is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes)
             is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes)
             is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes)
-            else -> error("Unknown message: $this")
-        }
-    }
-
-    private fun MessageLite.name(nameResolver: NameResolver): String {
-        return when (this) {
-            is ProtoBuf.Constructor -> "<init>"
-            is ProtoBuf.Function -> nameResolver.getString(name)
-            is ProtoBuf.Property -> nameResolver.getString(name)
             else -> error("Unknown message: $this")
         }
     }
