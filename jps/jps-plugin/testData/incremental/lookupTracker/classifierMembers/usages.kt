@@ -9,15 +9,15 @@ import bar.*
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A()./*c:foo.A*/d = "new value"
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A()./*c:foo.A*/foo()
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/B()./*c:foo.A.B*/a
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion*/B./*c:foo.A.B c:foo.A.B.CO*/bar(1)
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion*/B./*c:foo.A.B c:foo.A.B.CO*/CO./*c:foo.A.B.CO*/bar(1)
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/B./*c:foo.A.B c:foo.A.B.CO*/bar(1)
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/B./*c:foo.A.B*/CO./*c:foo.A.B.CO*/bar(1)
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion*/a
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion*/baz()
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/Companion
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion*/Companion./*c:foo.A.Companion*/baz()
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/Companion./*c:foo.A.Companion*/baz()
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/O
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion*/O./*c:foo.A.O*/v = "OK"
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A*/O./*c:foo.A.O*/v = "OK"
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io c:foo.A.Companion(getVala) c:foo.A.Companion(getVALA)*/vala
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/A./*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io c:foo.A.Companion(getVara) c:foo.A.Companion(getVARA)*/vara()
 
