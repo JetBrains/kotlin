@@ -57,8 +57,7 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
 
         val qualifiedExpressions = file.collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->
             val selector = qualifiedExpression.getQualifiedElementSelector() as? KtNameReferenceExpression
-                           ?: return@collectDescendantsOfType false
-            selector.getReferencedNameAsName() == fqName.shortName() && targetFqName(qualifiedExpression) == fqName
+            selector?.getReferencedNameAsName() == fqName.shortName() && targetFqName(qualifiedExpression) == fqName
         }
 
         //TODO: not deep
