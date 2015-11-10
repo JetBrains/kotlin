@@ -70,4 +70,16 @@ fun typed<T>() {
 fun <T : Cloneable> withTypeParameters() where T : Comparable<T> {
 }
 
-C() willBeInfix 1
+val x = C() willBeInfix 1
+
+class AAA {
+    val foo: BBB.() -> Unit get() = null!!
+}
+
+class BBB
+
+fun test(a: AAA, b: BBB) {
+    with(b) {
+        a.foo()
+    }
+}

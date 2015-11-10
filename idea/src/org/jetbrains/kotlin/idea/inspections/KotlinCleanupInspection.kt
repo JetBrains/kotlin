@@ -96,7 +96,8 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.INFIX_MODIFIER_REQUIRED,
             Errors.CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
             Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX,
-            Errors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
+            Errors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
+            Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {

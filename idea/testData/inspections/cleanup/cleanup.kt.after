@@ -61,7 +61,7 @@ class C {
 
     fun bar() = C::foo
 
-    fun willBeInfix(i: Int) {}
+    infix fun willBeInfix(i: Int) {}
 }
 
 fun <T> typed() {
@@ -70,4 +70,16 @@ fun <T> typed() {
 fun <T> withTypeParameters() where T : Cloneable, T : Comparable<T> {
 }
 
-C() willBeInfix 1
+val x = C() willBeInfix 1
+
+class AAA {
+    val foo: BBB.() -> Unit get() = null!!
+}
+
+class BBB
+
+fun test(a: AAA, b: BBB) {
+    with(b) {
+        (a.foo)()
+    }
+}
