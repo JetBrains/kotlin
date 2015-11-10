@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.presentation;
+package org.jetbrains.kotlin.idea.presentation
 
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.ItemPresentationProvider;
-import org.jetbrains.kotlin.psi.KtProperty;
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProvider
+import org.jetbrains.kotlin.psi.KtProperty
 
-public class KtPropertyPresenter implements ItemPresentationProvider<KtProperty> {
-    @Override
-    public ItemPresentation getPresentation(KtProperty item) {
-        return new KotlinDefaultNamedDeclarationPresentation(item);
+class KtPropertyPresenter : ItemPresentationProvider<KtProperty> {
+    override fun getPresentation(item: KtProperty): ItemPresentation {
+        return KotlinDefaultNamedDeclarationPresentation(item)
     }
 }
