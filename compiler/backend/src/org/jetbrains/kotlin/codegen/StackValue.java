@@ -1127,13 +1127,14 @@ public abstract class StackValue {
 
         @Override
         public void storeSelector(@NotNull Type topOfStackType, @NotNull InstructionAdapter v) {
-            coerceFrom(topOfStackType, v);
             if (setter == null) {
+                coerceFrom(topOfStackType, v);
                 assert fieldName != null : "Property should have either a setter or a field name: " + descriptor;
                 assert backingFieldOwner != null : "Property should have either a setter or a backingFieldOwner: " + descriptor;
                 v.visitFieldInsn(isStaticStore ? PUTSTATIC : PUTFIELD, backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
             }
             else {
+                coerce(topOfStackType, ArraysKt.last(setter.getParameterTypes()), v);
                 setter.genInvokeInstruction(v);
             }
         }
