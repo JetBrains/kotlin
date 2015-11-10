@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.state;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import kotlin.CollectionsKt;
+import kotlin.Pair;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -628,42 +629,88 @@ public class JetTypeMapper {
     private void writeGenericType(
             BothSignatureWriter signatureVisitor,
             Type asmType,
-            KotlinType jetType,
+            KotlinType type,
             Variance howThisTypeIsUsed,
             boolean projectionsAllowed
     ) {
         if (signatureVisitor != null) {
-            if (hasNothingInArguments(jetType)) {
+            if (hasNothingInArguments(type) || type.getArguments().isEmpty()) {
                 signatureVisitor.writeAsmType(asmType);
                 return;
             }
 
-            signatureVisitor.writeClassBegin(asmType);
+            PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
+            assert possiblyInnerType != null : "possiblyInnerType with arguments should not be null";
 
-            List<TypeProjection> arguments = jetType.getArguments();
-            for (TypeParameterDescriptor parameter : jetType.getConstructor().getParameters()) {
-                if (parameter.isCopyFromOuterDeclaration()) continue;
+            List<PossiblyInnerType> innerTypesAsList = possiblyInnerType.segments();
+            PossiblyInnerType outermostInnerType = innerTypesAsList.get(0);
+            ClassDescriptor outermostClass = outermostInnerType.getClassDescriptor();
 
-                TypeProjection argument = arguments.get(parameter.getIndex());
-
-                if (projectionsAllowed && argument.isStarProjection()) {
-                    signatureVisitor.writeUnboundedWildcard();
-                }
-                else {
-                    Variance projectionKind = projectionsAllowed
-                                              ? getEffectiveVariance(
-                            parameter.getVariance(),
-                            argument.getProjectionKind(),
-                            howThisTypeIsUsed
-                    )
-                                              : Variance.INVARIANT;
-                    signatureVisitor.writeTypeArgument(projectionKind);
-
-                    mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
-                    signatureVisitor.writeTypeArgumentEnd();
-                }
+            if (innerTypesAsList.size() == 1) {
+                signatureVisitor.writeClassBegin(asmType);
             }
+            else {
+                signatureVisitor.writeOuterClassBegin(
+                        asmType,
+                        mapType(outermostClass.getDefaultType()).getInternalName());
+            }
+
+            writeGenericArguments(
+                    signatureVisitor,
+                    outermostInnerType.getArguments(), outermostClass.getDeclaredTypeParameters(),
+                    howThisTypeIsUsed, projectionsAllowed);
+
+            for (PossiblyInnerType innerPart : innerTypesAsList.subList(1, innerTypesAsList.size())) {
+                ClassDescriptor classDescriptor = innerPart.getClassDescriptor();
+                signatureVisitor.writeInnerClass(getJvmShortName(classDescriptor));
+                writeGenericArguments(
+                        signatureVisitor, innerPart.getArguments(),
+                        classDescriptor.getDeclaredTypeParameters(),
+                        howThisTypeIsUsed, projectionsAllowed
+                );
+            }
+
             signatureVisitor.writeClassEnd();
+        }
+    }
+
+    @Nullable
+    private static String getJvmShortName(@NotNull ClassDescriptor klass) {
+        ClassId classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(klass));
+        if (classId != null) {
+            return classId.getShortClassName().asString();
+        }
+
+        return SpecialNames.safeIdentifier(klass.getName()).getIdentifier();
+    }
+
+    private void writeGenericArguments(
+            BothSignatureWriter signatureVisitor,
+            List<? extends TypeProjection> arguments,
+            List<? extends TypeParameterDescriptor> parameters,
+            Variance howThisTypeIsUsed,
+            boolean projectionsAllowed
+    ) {
+        for (Pair<? extends TypeParameterDescriptor, ? extends TypeProjection> item : CollectionsKt.zip(parameters, arguments)) {
+            TypeParameterDescriptor parameter = item.getFirst();
+            TypeProjection argument = item.getSecond();
+
+            if (projectionsAllowed && argument.isStarProjection()) {
+                signatureVisitor.writeUnboundedWildcard();
+            }
+            else {
+                Variance projectionKind = projectionsAllowed
+                                          ? getEffectiveVariance(
+                        parameter.getVariance(),
+                        argument.getProjectionKind(),
+                        howThisTypeIsUsed
+                )
+                                          : Variance.INVARIANT;
+                signatureVisitor.writeTypeArgument(projectionKind);
+
+                mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                signatureVisitor.writeTypeArgumentEnd();
+            }
         }
     }
 

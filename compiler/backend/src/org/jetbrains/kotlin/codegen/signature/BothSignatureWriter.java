@@ -118,6 +118,15 @@ public class BothSignatureWriter {
         writeAsmType0(asmType);
     }
 
+    public void writeOuterClassBegin(Type resultingAsmType, String outerInternalName) {
+        signatureVisitor().visitClassType(outerInternalName);
+        writeAsmType0(resultingAsmType);
+    }
+
+    public void writeInnerClass(String name) {
+        signatureVisitor().visitInnerClassType(name);
+    }
+
     public void writeClassEnd() {
         signatureVisitor().visitEnd();
     }
