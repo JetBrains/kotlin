@@ -6,7 +6,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.kotlin.lexer.KotlinLexerException;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.lexer.KtTokens;
 
 %%
 
@@ -51,9 +51,9 @@ import org.jetbrains.kotlin.lexer.JetTokens;
     private IElementType commentStateToTokenType(int state) {
         switch (state) {
             case BLOCK_COMMENT:
-                return JetTokens.BLOCK_COMMENT;
+                return KtTokens.BLOCK_COMMENT;
             case DOC_COMMENT:
-                return JetTokens.DOC_COMMENT;
+                return KtTokens.DOC_COMMENT;
             default:
                 throw new IllegalArgumentException("Unexpected state: " + state);
         }
@@ -121,56 +121,56 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 
 // String templates
 
-{THREE_QUO}                      { pushState(RAW_STRING); return JetTokens.OPEN_QUOTE; }
-<RAW_STRING> \n                  { return JetTokens.REGULAR_STRING_PART; }
-<RAW_STRING> \"                  { return JetTokens.REGULAR_STRING_PART; }
-<RAW_STRING> \\                  { return JetTokens.REGULAR_STRING_PART; }
+{THREE_QUO}                      { pushState(RAW_STRING); return KtTokens.OPEN_QUOTE; }
+<RAW_STRING> \n                  { return KtTokens.REGULAR_STRING_PART; }
+<RAW_STRING> \"                  { return KtTokens.REGULAR_STRING_PART; }
+<RAW_STRING> \\                  { return KtTokens.REGULAR_STRING_PART; }
 <RAW_STRING> {THREE_OR_MORE_QUO} {
                                     int length = yytext().length();
                                     if (length <= 3) { // closing """
                                         popState();
-                                        return JetTokens.CLOSING_QUOTE;
+                                        return KtTokens.CLOSING_QUOTE;
                                     }
                                     else { // some quotes at the end of a string, e.g. """ "foo""""
                                         yypushback(3); // return the closing quotes (""") to the stream
-                                        return JetTokens.REGULAR_STRING_PART;
+                                        return KtTokens.REGULAR_STRING_PART;
                                     }
                                  }
 
-\"                          { pushState(STRING); return JetTokens.OPEN_QUOTE; }
-<STRING> \n                 { popState(); yypushback(1); return JetTokens.DANGLING_NEWLINE; }
-<STRING> \"                 { popState(); return JetTokens.CLOSING_QUOTE; }
-<STRING> {ESCAPE_SEQUENCE}  { return JetTokens.ESCAPE_SEQUENCE; }
+\"                          { pushState(STRING); return KtTokens.OPEN_QUOTE; }
+<STRING> \n                 { popState(); yypushback(1); return KtTokens.DANGLING_NEWLINE; }
+<STRING> \"                 { popState(); return KtTokens.CLOSING_QUOTE; }
+<STRING> {ESCAPE_SEQUENCE}  { return KtTokens.ESCAPE_SEQUENCE; }
 
-<STRING, RAW_STRING> {REGULAR_STRING_PART}         { return JetTokens.REGULAR_STRING_PART; }
+<STRING, RAW_STRING> {REGULAR_STRING_PART}         { return KtTokens.REGULAR_STRING_PART; }
 <STRING, RAW_STRING> {SHORT_TEMPLATE_ENTRY}        {
                                                         pushState(SHORT_TEMPLATE_ENTRY);
                                                         yypushback(yylength() - 1);
-                                                        return JetTokens.SHORT_TEMPLATE_ENTRY_START;
+                                                        return KtTokens.SHORT_TEMPLATE_ENTRY_START;
                                                    }
 // Only *this* keyword is itself an expression valid in this position
 // *null*, *true* and *false* are also keywords and expression, but it does not make sense to put them
 // in a string template for it'd be easier to just type them in without a dollar
-<SHORT_TEMPLATE_ENTRY> "this"          { popState(); return JetTokens.THIS_KEYWORD; }
-<SHORT_TEMPLATE_ENTRY> {IDENTIFIER}    { popState(); return JetTokens.IDENTIFIER; }
+<SHORT_TEMPLATE_ENTRY> "this"          { popState(); return KtTokens.THIS_KEYWORD; }
+<SHORT_TEMPLATE_ENTRY> {IDENTIFIER}    { popState(); return KtTokens.IDENTIFIER; }
 
-<STRING, RAW_STRING> {LONELY_DOLLAR}               { return JetTokens.REGULAR_STRING_PART; }
-<STRING, RAW_STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return JetTokens.LONG_TEMPLATE_ENTRY_START; }
+<STRING, RAW_STRING> {LONELY_DOLLAR}               { return KtTokens.REGULAR_STRING_PART; }
+<STRING, RAW_STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return KtTokens.LONG_TEMPLATE_ENTRY_START; }
 
-<LONG_TEMPLATE_ENTRY> "{"              { lBraceCount++; return JetTokens.LBRACE; }
+<LONG_TEMPLATE_ENTRY> "{"              { lBraceCount++; return KtTokens.LBRACE; }
 <LONG_TEMPLATE_ENTRY> "}"              {
                                            if (lBraceCount == 0) {
                                              popState();
-                                             return JetTokens.LONG_TEMPLATE_ENTRY_END;
+                                             return KtTokens.LONG_TEMPLATE_ENTRY_END;
                                            }
                                            lBraceCount--;
-                                           return JetTokens.RBRACE;
+                                           return KtTokens.RBRACE;
                                        }
 
 // (Nested) comments
 
 "/**/" {
-    return JetTokens.BLOCK_COMMENT;
+    return KtTokens.BLOCK_COMMENT;
 }
 
 "/**" {
@@ -214,105 +214,105 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 
 // Mere mortals
 
-({WHITE_SPACE_CHAR})+ { return JetTokens.WHITE_SPACE; }
+({WHITE_SPACE_CHAR})+ { return KtTokens.WHITE_SPACE; }
 
-{EOL_COMMENT} { return JetTokens.EOL_COMMENT; }
+{EOL_COMMENT} { return KtTokens.EOL_COMMENT; }
 {SHEBANG_COMMENT} {
             if (zzCurrentPos == 0) {
-                return JetTokens.SHEBANG_COMMENT;
+                return KtTokens.SHEBANG_COMMENT;
             }
             else {
                 yypushback(yylength() - 1);
-                return JetTokens.HASH;
+                return KtTokens.HASH;
             }
           }
 
-{INTEGER_LITERAL}\.\. { yypushback(2); return JetTokens.INTEGER_LITERAL; }
-{INTEGER_LITERAL} { return JetTokens.INTEGER_LITERAL; }
+{INTEGER_LITERAL}\.\. { yypushback(2); return KtTokens.INTEGER_LITERAL; }
+{INTEGER_LITERAL} { return KtTokens.INTEGER_LITERAL; }
 
-{DOUBLE_LITERAL}     { return JetTokens.FLOAT_LITERAL; }
+{DOUBLE_LITERAL}     { return KtTokens.FLOAT_LITERAL; }
 
-{CHARACTER_LITERAL} { return JetTokens.CHARACTER_LITERAL; }
+{CHARACTER_LITERAL} { return KtTokens.CHARACTER_LITERAL; }
 
-"typealias"  { return JetTokens.TYPE_ALIAS_KEYWORD ;}
-"interface"  { return JetTokens.INTERFACE_KEYWORD ;}
-"continue"   { return JetTokens.CONTINUE_KEYWORD ;}
-"package"    { return JetTokens.PACKAGE_KEYWORD ;}
-"return"     { return JetTokens.RETURN_KEYWORD ;}
-"object"     { return JetTokens.OBJECT_KEYWORD ;}
-"while"      { return JetTokens.WHILE_KEYWORD ;}
-"break"      { return JetTokens.BREAK_KEYWORD ;}
-"class"      { return JetTokens.CLASS_KEYWORD ;}
-"throw"      { return JetTokens.THROW_KEYWORD ;}
-"false"      { return JetTokens.FALSE_KEYWORD ;}
-"super"      { return JetTokens.SUPER_KEYWORD ;}
-"when"       { return JetTokens.WHEN_KEYWORD ;}
-"true"       { return JetTokens.TRUE_KEYWORD ;}
-"this"       { return JetTokens.THIS_KEYWORD ;}
-"null"       { return JetTokens.NULL_KEYWORD ;}
-"else"       { return JetTokens.ELSE_KEYWORD ;}
-"This"       { return JetTokens.CAPITALIZED_THIS_KEYWORD ;}
-"try"        { return JetTokens.TRY_KEYWORD ;}
-"val"        { return JetTokens.VAL_KEYWORD ;}
-"var"        { return JetTokens.VAR_KEYWORD ;}
-"fun"        { return JetTokens.FUN_KEYWORD ;}
-"for"        { return JetTokens.FOR_KEYWORD ;}
-"is"         { return JetTokens.IS_KEYWORD ;}
-"in"         { return JetTokens.IN_KEYWORD ;}
-"if"         { return JetTokens.IF_KEYWORD ;}
-"do"         { return JetTokens.DO_KEYWORD ;}
-"as"         { return JetTokens.AS_KEYWORD ;}
+"typealias"  { return KtTokens.TYPE_ALIAS_KEYWORD ;}
+"interface"  { return KtTokens.INTERFACE_KEYWORD ;}
+"continue"   { return KtTokens.CONTINUE_KEYWORD ;}
+"package"    { return KtTokens.PACKAGE_KEYWORD ;}
+"return"     { return KtTokens.RETURN_KEYWORD ;}
+"object"     { return KtTokens.OBJECT_KEYWORD ;}
+"while"      { return KtTokens.WHILE_KEYWORD ;}
+"break"      { return KtTokens.BREAK_KEYWORD ;}
+"class"      { return KtTokens.CLASS_KEYWORD ;}
+"throw"      { return KtTokens.THROW_KEYWORD ;}
+"false"      { return KtTokens.FALSE_KEYWORD ;}
+"super"      { return KtTokens.SUPER_KEYWORD ;}
+"when"       { return KtTokens.WHEN_KEYWORD ;}
+"true"       { return KtTokens.TRUE_KEYWORD ;}
+"this"       { return KtTokens.THIS_KEYWORD ;}
+"null"       { return KtTokens.NULL_KEYWORD ;}
+"else"       { return KtTokens.ELSE_KEYWORD ;}
+"This"       { return KtTokens.CAPITALIZED_THIS_KEYWORD ;}
+"try"        { return KtTokens.TRY_KEYWORD ;}
+"val"        { return KtTokens.VAL_KEYWORD ;}
+"var"        { return KtTokens.VAR_KEYWORD ;}
+"fun"        { return KtTokens.FUN_KEYWORD ;}
+"for"        { return KtTokens.FOR_KEYWORD ;}
+"is"         { return KtTokens.IS_KEYWORD ;}
+"in"         { return KtTokens.IN_KEYWORD ;}
+"if"         { return KtTokens.IF_KEYWORD ;}
+"do"         { return KtTokens.DO_KEYWORD ;}
+"as"         { return KtTokens.AS_KEYWORD ;}
 
-{FIELD_IDENTIFIER} { return JetTokens.FIELD_IDENTIFIER; }
-{IDENTIFIER} { return JetTokens.IDENTIFIER; }
-\!in{IDENTIFIER_PART}        { yypushback(3); return JetTokens.EXCL; }
-\!is{IDENTIFIER_PART}        { yypushback(3); return JetTokens.EXCL; }
+{FIELD_IDENTIFIER} { return KtTokens.FIELD_IDENTIFIER; }
+{IDENTIFIER} { return KtTokens.IDENTIFIER; }
+\!in{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
+\!is{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 
-"==="        { return JetTokens.EQEQEQ    ; }
-"!=="        { return JetTokens.EXCLEQEQEQ; }
-"!in"        { return JetTokens.NOT_IN; }
-"!is"        { return JetTokens.NOT_IS; }
-"as?"        { return JetTokens.AS_SAFE; }
-"++"         { return JetTokens.PLUSPLUS  ; }
-"--"         { return JetTokens.MINUSMINUS; }
-"<="         { return JetTokens.LTEQ      ; }
-">="         { return JetTokens.GTEQ      ; }
-"=="         { return JetTokens.EQEQ      ; }
-"!="         { return JetTokens.EXCLEQ    ; }
-"&&"         { return JetTokens.ANDAND    ; }
-"||"         { return JetTokens.OROR      ; }
-"*="         { return JetTokens.MULTEQ    ; }
-"/="         { return JetTokens.DIVEQ     ; }
-"%="         { return JetTokens.PERCEQ    ; }
-"+="         { return JetTokens.PLUSEQ    ; }
-"-="         { return JetTokens.MINUSEQ   ; }
-"->"         { return JetTokens.ARROW     ; }
-"=>"         { return JetTokens.DOUBLE_ARROW; }
-".."         { return JetTokens.RANGE     ; }
-"::"         { return JetTokens.COLONCOLON; }
-"["          { return JetTokens.LBRACKET  ; }
-"]"          { return JetTokens.RBRACKET  ; }
-"{"          { return JetTokens.LBRACE    ; }
-"}"          { return JetTokens.RBRACE    ; }
-"("          { return JetTokens.LPAR      ; }
-")"          { return JetTokens.RPAR      ; }
-"."          { return JetTokens.DOT       ; }
-"*"          { return JetTokens.MUL       ; }
-"+"          { return JetTokens.PLUS      ; }
-"-"          { return JetTokens.MINUS     ; }
-"!"          { return JetTokens.EXCL      ; }
-"/"          { return JetTokens.DIV       ; }
-"%"          { return JetTokens.PERC      ; }
-"<"          { return JetTokens.LT        ; }
-">"          { return JetTokens.GT        ; }
-"?"          { return JetTokens.QUEST     ; }
-":"          { return JetTokens.COLON     ; }
-";;"          { return JetTokens.DOUBLE_SEMICOLON;}
-";"          { return JetTokens.SEMICOLON ; }
-"="          { return JetTokens.EQ        ; }
-","          { return JetTokens.COMMA     ; }
-"#"          { return JetTokens.HASH      ; }
-"@"          { return JetTokens.AT        ; }
+"==="        { return KtTokens.EQEQEQ    ; }
+"!=="        { return KtTokens.EXCLEQEQEQ; }
+"!in"        { return KtTokens.NOT_IN; }
+"!is"        { return KtTokens.NOT_IS; }
+"as?"        { return KtTokens.AS_SAFE; }
+"++"         { return KtTokens.PLUSPLUS  ; }
+"--"         { return KtTokens.MINUSMINUS; }
+"<="         { return KtTokens.LTEQ      ; }
+">="         { return KtTokens.GTEQ      ; }
+"=="         { return KtTokens.EQEQ      ; }
+"!="         { return KtTokens.EXCLEQ    ; }
+"&&"         { return KtTokens.ANDAND    ; }
+"||"         { return KtTokens.OROR      ; }
+"*="         { return KtTokens.MULTEQ    ; }
+"/="         { return KtTokens.DIVEQ     ; }
+"%="         { return KtTokens.PERCEQ    ; }
+"+="         { return KtTokens.PLUSEQ    ; }
+"-="         { return KtTokens.MINUSEQ   ; }
+"->"         { return KtTokens.ARROW     ; }
+"=>"         { return KtTokens.DOUBLE_ARROW; }
+".."         { return KtTokens.RANGE     ; }
+"::"         { return KtTokens.COLONCOLON; }
+"["          { return KtTokens.LBRACKET  ; }
+"]"          { return KtTokens.RBRACKET  ; }
+"{"          { return KtTokens.LBRACE    ; }
+"}"          { return KtTokens.RBRACE    ; }
+"("          { return KtTokens.LPAR      ; }
+")"          { return KtTokens.RPAR      ; }
+"."          { return KtTokens.DOT       ; }
+"*"          { return KtTokens.MUL       ; }
+"+"          { return KtTokens.PLUS      ; }
+"-"          { return KtTokens.MINUS     ; }
+"!"          { return KtTokens.EXCL      ; }
+"/"          { return KtTokens.DIV       ; }
+"%"          { return KtTokens.PERC      ; }
+"<"          { return KtTokens.LT        ; }
+">"          { return KtTokens.GT        ; }
+"?"          { return KtTokens.QUEST     ; }
+":"          { return KtTokens.COLON     ; }
+";;"          { return KtTokens.DOUBLE_SEMICOLON;}
+";"          { return KtTokens.SEMICOLON ; }
+"="          { return KtTokens.EQ        ; }
+","          { return KtTokens.COMMA     ; }
+"#"          { return KtTokens.HASH      ; }
+"@"          { return KtTokens.AT        ; }
 
 // error fallback
 .            { return TokenType.BAD_CHARACTER; }
