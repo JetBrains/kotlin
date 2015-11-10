@@ -6,7 +6,7 @@ package kotlin
 import java.io.Serializable
 import java.util.*
 
-private object EmptyMap : Map<Any, Nothing>, Serializable {
+private object EmptyMap : Map<Any?, Nothing>, Serializable {
     override fun equals(other: Any?): Boolean = other is Map<*,*> && other.isEmpty()
     override fun hashCode(): Int = 0
     override fun toString(): String = "{}"
@@ -14,11 +14,11 @@ private object EmptyMap : Map<Any, Nothing>, Serializable {
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
 
-    override fun containsKey(key: Any): Boolean = false
+    override fun containsKey(key: Any?): Boolean = false
     override fun containsValue(value: Nothing): Boolean = false
-    override fun get(key: Any): Nothing? = null
-    override val entries: Set<Map.Entry<Any, Nothing>> get() = EmptySet
-    override val keys: Set<Any> get() = EmptySet
+    override fun get(key: Any?): Nothing? = null
+    override val entries: Set<Map.Entry<Any?, Nothing>> get() = EmptySet
+    override val keys: Set<Any?> get() = EmptySet
     override val values: Collection<Nothing> get() = EmptyList
 
     private fun readResolve(): Any = EmptyMap
