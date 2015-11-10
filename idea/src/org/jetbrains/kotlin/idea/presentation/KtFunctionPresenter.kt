@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.idea.presentation
 
-import com.google.common.base.Function
-import com.google.common.collect.Collections2
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProvider
-import org.apache.commons.lang.StringUtils
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
@@ -34,34 +31,22 @@ class KtFunctionPresenter : ItemPresentationProvider<KtFunction> {
                 return buildString {
                     function.name?.let { append(it) }
 
-                    val paramsStrings = Collections2.transform(function.valueParameters, Function<org.jetbrains.kotlin.psi.KtParameter, kotlin.String> { parameter ->
-                        if (parameter != null) {
-                            val reference = parameter.typeReference
-                            if (reference != null) {
-                                val text = reference.text
-                                if (text != null) {
-                                    return@Function text
-                                }
-                            }
-                        }
-
-                        "?"
-                    })
-
-                    append("(").append(StringUtils.join(paramsStrings, ",")).append(")")
+                    append("(")
+                    append(function.valueParameters.joinToString { it.typeReference?.text ?: "" })
+                    append(")")
                 }
             }
 
-            override fun getLocationString(): String {
+            override fun getLocationString(): String? {
                 if (function is KtConstructor<*>) {
-                    val name = function.getContainingClassOrObject().fqName ?: return ""
+                    val name = function.getContainingClassOrObject().fqName ?: return null
                     return "(in $name)"
                 }
 
-                val name = function.fqName ?: return ""
+                val name = function.fqName ?: return null
                 val receiverTypeRef = function.receiverTypeReference
                 val extensionLocation = if (receiverTypeRef != null) "for " + receiverTypeRef.text + " " else ""
-                return "(%sin %s)".format(extensionLocation, name.parent())
+                return "(${extensionLocation}in ${name.parent()})"
             }
         }
     }

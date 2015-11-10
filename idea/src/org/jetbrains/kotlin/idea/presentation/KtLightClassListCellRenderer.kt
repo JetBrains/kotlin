@@ -21,22 +21,9 @@ import com.intellij.psi.presentation.java.ClassPresentationUtil
 import org.jetbrains.kotlin.asJava.KtLightClass
 
 class KtLightClassListCellRenderer : PsiElementListCellRenderer<KtLightClass>() {
-    override fun getElementText(element: KtLightClass): String {
-        return ClassPresentationUtil.getNameForClass(element, false)
-    }
+    override fun getElementText(element: KtLightClass) = ClassPresentationUtil.getNameForClass(element, false)
 
-    override fun getContainerText(element: KtLightClass, name: String): String? {
-        return getContainerTextStatic(element)
-    }
+    override fun getContainerText(element: KtLightClass, name: String) = "(" + element.getFqName().parent() + ")"
 
-    override fun getIconFlags(): Int {
-        return 0
-    }
-
-    companion object {
-
-        fun getContainerTextStatic(element: KtLightClass): String? {
-            return "(" + element.getFqName().parent() + ")"
-        }
-    }
+    override fun getIconFlags() = 0
 }

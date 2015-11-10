@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.idea.presentation
 
-import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProvider
 import org.jetbrains.kotlin.psi.KtProperty
 
 class KtPropertyPresenter : ItemPresentationProvider<KtProperty> {
-    override fun getPresentation(item: KtProperty): ItemPresentation {
-        return KotlinDefaultNamedDeclarationPresentation(item)
-    }
+    override fun getPresentation(item: KtProperty) = KotlinDefaultNamedDeclarationPresentation(item)
 }
