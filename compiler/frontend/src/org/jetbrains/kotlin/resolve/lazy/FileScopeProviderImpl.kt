@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.lazy
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportsFactory
@@ -64,10 +63,7 @@ public open class FileScopeProviderImpl(
         val debugName = "LazyFileScope for file " + file.getName()
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve")
 
-        val imports = if (file is KtCodeFragment)
-            file.importsAsImportList()?.getImports() ?: listOf()
-        else
-            file.getImportDirectives()
+        val imports = file.importDirectives
 
         val packageView = moduleDescriptor.getPackage(file.getPackageFqName())
         val packageFragment = topLevelDescriptorProvider.getPackageFragment(file.getPackageFqName())

@@ -143,7 +143,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val targetFqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
             if (isAlreadyImported(target, topLevelScope, targetFqName)) return ImportDescriptorResult.ALREADY_IMPORTED
 
-            val imports = getImports(file)
+            val imports = file.importDirectives
 
             if (imports.any { !it.isAllUnder && it.importPath?.fqnPart() == targetFqName }) {
                 return ImportDescriptorResult.FAIL
@@ -186,7 +186,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
             val fqName = target.importableFqName ?: return ImportDescriptorResult.FAIL
             val containerFqName = fqName.parent()
-            val imports = getImports(file)
+            val imports = file.importDirectives
 
             val starImportPath = ImportPath(containerFqName, true)
             if (imports.any { it.importPath == starImportPath }) {
@@ -425,12 +425,5 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 error("Trying to insert import $fqName into a file ${file.getName()} of type ${file.javaClass} with no import list.")
             }
         }
-    }
-
-    private fun getImports(file: KtFile): List<KtImportDirective> {
-        return if (file is KtCodeFragment)
-            file.importsAsImportList()?.imports ?: listOf()
-        else
-            file.importDirectives
     }
 }
