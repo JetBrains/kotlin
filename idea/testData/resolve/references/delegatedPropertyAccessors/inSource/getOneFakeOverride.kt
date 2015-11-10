@@ -6,4 +6,4 @@ interface Foo {
 
 class Baz: Foo
 
-// REF: (in Foo).getValue(Any?,Any?)
+// REF: (in Foo).getValue(Any?, Any?)

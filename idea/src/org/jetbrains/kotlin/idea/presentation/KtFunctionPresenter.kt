@@ -43,10 +43,7 @@ class KtFunctionPresenter : ItemPresentationProvider<KtFunction> {
                     return "(in $name)"
                 }
 
-                val name = function.fqName ?: return null
-                val receiverTypeRef = function.receiverTypeReference
-                val extensionLocation = if (receiverTypeRef != null) "for " + receiverTypeRef.text + " " else ""
-                return "(${extensionLocation}in ${name.parent()})"
+                return super.getLocationString()
             }
         }
     }

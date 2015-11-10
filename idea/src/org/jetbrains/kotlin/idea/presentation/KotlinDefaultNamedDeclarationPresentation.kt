@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.idea.presentation
 
 import com.intellij.navigation.ColoredItemPresentation
+import com.intellij.navigation.ItemPresentationProvider
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.Iconable
 import org.jetbrains.kotlin.idea.KotlinIconProvider
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
@@ -37,9 +39,22 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
 
     override fun getLocationString(): String? {
         val name = declaration.fqName ?: return null
-        return "(" + name.parent().asString() + ")"
+        val receiverTypeRef = (declaration as? KtCallableDeclaration)?.receiverTypeReference
+        if (receiverTypeRef != null) {
+            return "(for " + receiverTypeRef.text + " in " + name.parent() + ")"
+        }
+        else if (declaration.parent is KtFile) {
+            return "(" + name.parent() + ")"
+        }
+        else {
+            return "(in " + name.parent() + ")"
+        }
     }
 
     override fun getIcon(unused: Boolean)
             = KotlinIconProvider.INSTANCE.getIcon(declaration, Iconable.ICON_FLAG_VISIBILITY or Iconable.ICON_FLAG_READ_STATUS)
+}
+
+class KtDefaultDeclarationPresenter : ItemPresentationProvider<KtNamedDeclaration> {
+    override fun getPresentation(item: KtNamedDeclaration) = KotlinDefaultNamedDeclarationPresentation(item)
 }

@@ -4,5 +4,5 @@ class Foo
 
 fun Foo.getValue(_this: Any?, p: Any?): Int = 1
 
-// REF: (for Foo in <root>).getValue(Any?,Any?)
+// REF: (for Foo in <root>).getValue(Any?, Any?)
 

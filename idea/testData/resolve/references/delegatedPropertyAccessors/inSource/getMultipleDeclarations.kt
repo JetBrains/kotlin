@@ -15,6 +15,6 @@ interface Zoo {
 class Baz: Foo, Bar, Zoo
 
 // MULTIRESOLVE
-// REF: (in Bar).getValue(Any?,Any?)
-// REF: (in Foo).getValue(Any?,Any?)
-// REF: (in Zoo).setValue(Any?,Any?,Any?)
+// REF: (in Bar).getValue(Any?, Any?)
+// REF: (in Foo).getValue(Any?, Any?)
+// REF: (in Zoo).setValue(Any?, Any?, Any?)

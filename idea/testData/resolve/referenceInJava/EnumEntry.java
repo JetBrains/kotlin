@@ -4,4 +4,4 @@ public class EnumEntry {
     }
 }
 
-// REF: (k.EnumClass).ENTRY
+// REF: (in k.EnumClass).ENTRY
