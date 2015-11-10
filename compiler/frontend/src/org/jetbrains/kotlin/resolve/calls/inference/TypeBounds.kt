@@ -16,16 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
+import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.KotlinType
 
 public interface TypeBounds {
-    public val typeVariable: TypeParameterDescriptor
+    public val typeVariable: TypeVariable
 
     public val bounds: Collection<Bound>
 
@@ -41,13 +38,13 @@ public interface TypeBounds {
     }
 
     public class Bound(
-            public val typeVariable: TypeParameterDescriptor,
+            public val typeVariable: TypeVariable,
             public val constrainingType: KotlinType,
             public val kind: BoundKind,
             public val position: ConstraintPosition,
             public val isProper: Boolean,
             // to prevent infinite recursion in incorporation we store the variables that was substituted to derive this bound
-            public val derivedFrom: Set<TypeParameterDescriptor>
+            public val derivedFrom: Set<TypeVariable>
     ) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -65,7 +62,7 @@ public interface TypeBounds {
         }
 
         override fun hashCode(): Int {
-            var result = typeVariable.hashCode();
+            var result = typeVariable.hashCode()
             result = 31 * result + constrainingType.hashCode()
             result = 31 * result + kind.hashCode()
             result = 31 * result + if (position.isStrong()) 1 else 0

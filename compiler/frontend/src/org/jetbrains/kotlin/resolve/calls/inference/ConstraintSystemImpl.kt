@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.derivedFrom
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasInternalAnnotationForResolve
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isInternalAnnotationForResolve
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
@@ -35,17 +34,15 @@ import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
 internal class ConstraintSystemImpl(
-        private val allTypeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>,
-        private val externalTypeParameters: Set<TypeParameterDescriptor>,
-        private val usedInBounds: Map<TypeParameterDescriptor, MutableList<TypeBounds.Bound>>,
+        private val allTypeParameterBounds: Map<TypeVariable, TypeBoundsImpl>,
+        private val usedInBounds: Map<TypeVariable, MutableList<TypeBounds.Bound>>,
         private val errors: List<ConstraintError>,
         private val initialConstraints: List<ConstraintSystemBuilderImpl.Constraint>,
-        private val descriptorToVariable: Map<TypeParameterDescriptor, TypeParameterDescriptor>,
-        private val variableToDescriptor: Map<TypeParameterDescriptor, TypeParameterDescriptor>
+        private val descriptorToVariable: Map<TypeParameterDescriptor, TypeVariable>,
+        private val variableToDescriptor: Map<TypeVariable, TypeParameterDescriptor>
 ) : ConstraintSystem {
-    private val localTypeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>
-        get() = if (externalTypeParameters.isEmpty()) allTypeParameterBounds
-        else allTypeParameterBounds.filter { !externalTypeParameters.contains(it.key) }
+    private val localTypeParameterBounds: Map<TypeVariable, TypeBoundsImpl>
+        get() = allTypeParameterBounds.filterNot { it.key.isExternal }
 
     override val status = object : ConstraintSystemStatus {
         // for debug ConstraintsUtil.getDebugMessageForStatus might be used
@@ -84,14 +81,14 @@ internal class ConstraintSystemImpl(
     }
 
     private fun getParameterToInferredValueMap(
-            typeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>,
+            typeParameterBounds: Map<TypeVariable, TypeBoundsImpl>,
             getDefaultType: (TypeParameterDescriptor) -> KotlinType,
             substituteOriginal: Boolean
     ): Map<TypeParameterDescriptor, TypeProjection> {
         val substitutionContext = HashMap<TypeParameterDescriptor, TypeProjection>()
         for ((variable, typeBounds) in typeParameterBounds) {
             val value = typeBounds.value
-            val typeParameter = if (substituteOriginal) variableToDescriptor[variable]!! else variable
+            val typeParameter = if (substituteOriginal) variableToDescriptor[variable]!! else variable.freshTypeParameter
             val type =
                     if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) value
                     else getDefaultType(typeParameter)
@@ -112,16 +109,16 @@ internal class ConstraintSystemImpl(
     override val typeParameterDescriptors: Set<TypeParameterDescriptor>
         get() = descriptorToVariable.keys
 
-    override val typeVariables: Set<TypeParameterDescriptor>
+    override val typeVariables: Set<TypeVariable>
         get() = variableToDescriptor.keys
 
-    override fun descriptorToVariable(descriptor: TypeParameterDescriptor): TypeParameterDescriptor =
+    override fun descriptorToVariable(descriptor: TypeParameterDescriptor): TypeVariable =
             descriptorToVariable[descriptor] ?: throw IllegalArgumentException("Unknown descriptor: $descriptor")
 
-    override fun variableToDescriptor(typeVariable: TypeParameterDescriptor): TypeParameterDescriptor =
+    override fun variableToDescriptor(typeVariable: TypeVariable): TypeParameterDescriptor =
             variableToDescriptor[typeVariable] ?: throw IllegalArgumentException("Unknown type variable: $typeVariable")
 
-    override fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBoundsImpl {
+    override fun getTypeBounds(typeVariable: TypeVariable): TypeBoundsImpl {
         return allTypeParameterBounds[typeVariable] ?:
                throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $typeVariable")
     }
@@ -170,7 +167,6 @@ internal class ConstraintSystemImpl(
             val (variable, bounds) = it
             variable to bounds.filterTo(arrayListOf<TypeBounds.Bound>()) { filterConstraintPosition(it.position )}
         }.toMap())
-        result.externalTypeParameters.addAll(externalTypeParameters )
         result.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) })
 
         result.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) })

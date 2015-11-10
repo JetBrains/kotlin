@@ -381,7 +381,7 @@ public object Renderers {
             val renderedBound = arrow + renderer.renderType(bound.constrainingType) +  if (!bound.isProper) "*" else ""
             if (short) renderedBound else renderedBound + '(' + bound.position + ')'
         }
-        val typeVariableName = typeBounds.typeVariable.getName()
+        val typeVariableName = typeBounds.typeVariable.name
         return if (typeBounds.bounds.isEmpty()) {
             typeVariableName.asString()
         }

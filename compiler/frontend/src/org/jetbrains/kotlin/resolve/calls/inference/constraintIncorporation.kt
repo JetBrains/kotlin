@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
@@ -35,7 +34,7 @@ import java.util.*
 data class ConstraintContext(
         val position: ConstraintPosition,
         // see TypeBounds.Bound.derivedFrom
-        val derivedFrom: Set<TypeParameterDescriptor>? = null,
+        val derivedFrom: Set<TypeVariable>? = null,
         val initial: Boolean = false)
 
 fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {
@@ -54,7 +53,7 @@ fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {
     val constrainingType = newBound.constrainingType
     if (isMyTypeVariable(constrainingType)) {
         val context = ConstraintContext(newBound.position, newBound.derivedFrom)
-        addBound(getMyTypeVariable(constrainingType)!!, typeVariable.correspondingType, newBound.kind.reverse(), context)
+        addBound(getMyTypeVariable(constrainingType)!!, typeVariable.type, newBound.kind.reverse(), context)
         return
     }
 
@@ -92,7 +91,7 @@ private fun ConstraintSystemBuilderImpl.generateNewBound(bound: Bound, substitut
     }
 
     val newTypeProjection = TypeProjectionImpl(substitutedType)
-    val substitutor = TypeSubstitutor.create(mapOf(substitution.typeVariable.typeConstructor to newTypeProjection))
+    val substitutor = TypeSubstitutor.create(mapOf(substitution.typeVariable.type.constructor to newTypeProjection))
     val type = substitutor.substitute(bound.constrainingType, INVARIANT) ?: return
 
     val position = CompoundConstraintPosition(bound.position, substitution.position)

@@ -30,8 +30,8 @@ import java.util.*;
 
 public class ConstraintsUtil {
     @Nullable
-    public static TypeParameterDescriptor getFirstConflictingVariable(@NotNull ConstraintSystem constraintSystem) {
-        for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
+    public static TypeVariable getFirstConflictingVariable(@NotNull ConstraintSystem constraintSystem) {
+        for (TypeVariable typeVariable : constraintSystem.getTypeVariables()) {
             TypeBounds constraints = constraintSystem.getTypeBounds(typeVariable);
             if (constraints.getValues().size() > 1) {
                 return typeVariable;
@@ -42,7 +42,7 @@ public class ConstraintsUtil {
 
     @NotNull
     public static Collection<TypeSubstitutor> getSubstitutorsForConflictingParameters(@NotNull ConstraintSystem constraintSystem) {
-        TypeParameterDescriptor firstConflictingVariable = getFirstConflictingVariable(constraintSystem);
+        TypeVariable firstConflictingVariable = getFirstConflictingVariable(constraintSystem);
         if (firstConflictingVariable == null) return Collections.emptyList();
         TypeParameterDescriptor firstConflictingParameter = constraintSystem.variableToDescriptor(firstConflictingVariable);
 
@@ -55,7 +55,7 @@ public class ConstraintsUtil {
             substitutionContexts.add(context);
         }
 
-        for (TypeParameterDescriptor typeVariable : constraintSystem.getTypeVariables()) {
+        for (TypeVariable typeVariable : constraintSystem.getTypeVariables()) {
             if (typeVariable == firstConflictingVariable) continue;
 
             KotlinType safeType = getSafeValue(constraintSystem, typeVariable);
@@ -72,7 +72,7 @@ public class ConstraintsUtil {
     }
 
     @NotNull
-    private static KotlinType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeParameterDescriptor typeVariable) {
+    private static KotlinType getSafeValue(@NotNull ConstraintSystem constraintSystem, @NotNull TypeVariable typeVariable) {
         KotlinType type = constraintSystem.getTypeBounds(typeVariable).getValue();
         if (type != null) {
             return type;
