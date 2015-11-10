@@ -160,10 +160,10 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
                 assert(descriptor !in failedToImportDescriptors)
 
                 val result = helper.importDescriptor(file, descriptor)
-                if (result != ImportInsertHelper.ImportDescriptorResult.ALREADY_IMPORTED) {
+                if (result != ImportDescriptorResult.ALREADY_IMPORTED) {
                     anyChange = true
                 }
-                if (result == ImportInsertHelper.ImportDescriptorResult.FAIL) {
+                if (result == ImportDescriptorResult.FAIL) {
                     failedToImportDescriptors.add(descriptor)
                 }
             }

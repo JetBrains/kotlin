@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -49,7 +50,7 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtDotQualifiedExpressio
         val dummyFileText = (file.packageDirective?.text ?: "") + "\n" + (file.importList?.text ?: "")
         val dummyFile = KtPsiFactory(project).createAnalyzableFile("Dummy.kt", dummyFileText, file)
         val helper = ImportInsertHelper.getInstance(project)
-        if (helper.importDescriptor(dummyFile, target, forceAllUnderImport = true) == ImportInsertHelper.ImportDescriptorResult.FAIL) return false
+        if (helper.importDescriptor(dummyFile, target, forceAllUnderImport = true) == ImportDescriptorResult.FAIL) return false
 
         text = "Import members from '${targetFqName.parent().asString()}'"
         return true

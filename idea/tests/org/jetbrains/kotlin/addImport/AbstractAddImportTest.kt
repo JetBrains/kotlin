@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.AbstractImportsTest
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -48,7 +49,7 @@ public abstract class AbstractAddImportTest : AbstractImportsTest() {
                 error("Multiple descriptors found:\n    " + descriptors.map { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }.joinToString("\n    "))
 
             else -> {
-                val success = ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptors.single()) != ImportInsertHelper.ImportDescriptorResult.FAIL
+                val success = ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptors.single()) != ImportDescriptorResult.FAIL
                 if (!success) {
                     val document = PsiDocumentManager.getInstance(getProject()).getDocument(file)!!
                     document.replaceString(0, document.getTextLength(), "Failed to add import")

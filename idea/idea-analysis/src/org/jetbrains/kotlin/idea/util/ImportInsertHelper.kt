@@ -31,12 +31,6 @@ abstract class ImportInsertHelper {
 
     abstract val importSortComparator: Comparator<ImportPath>
 
-    enum class ImportDescriptorResult {
-        FAIL,
-        IMPORT_ADDED,
-        ALREADY_IMPORTED
-    }
-
     abstract fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor, forceAllUnderImport: Boolean = false): ImportDescriptorResult
 
     companion object {
@@ -45,3 +39,10 @@ abstract class ImportInsertHelper {
             = ServiceManager.getService<ImportInsertHelper>(project, javaClass<ImportInsertHelper>())
     }
 }
+
+enum class ImportDescriptorResult {
+    FAIL,
+    IMPORT_ADDED,
+    ALREADY_IMPORTED
+}
+

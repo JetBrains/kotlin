@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.name.FqName
@@ -52,7 +53,7 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
 
         val file = element.getContainingKtFile()
         val helper = ImportInsertHelper.getInstance(element.project)
-        if (helper.importDescriptor(file, targets.first()) == ImportInsertHelper.ImportDescriptorResult.FAIL) return
+        if (helper.importDescriptor(file, targets.first()) == ImportDescriptorResult.FAIL) return
 
         val qualifiedExpressions = file.collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->
             val selector = qualifiedExpression.getQualifiedElementSelector() as? KtNameReferenceExpression
