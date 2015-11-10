@@ -155,11 +155,9 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 is PackageViewDescriptor -> topLevelScope.findPackage(name)
                 else -> null
             }
-            if (conflict != null && imports.any {
-                !it.isAllUnder()
-                && it.getImportPath()?.fqnPart() == conflict.importableFqName
-                && it.getImportPath()?.getImportedName() == name
-            }) {
+            if (conflict != null
+                && imports.any { !it.isAllUnder && it.importPath?.fqnPart() == conflict.importableFqName && it.importPath?.importedName == name }
+            ) {
                 return ImportDescriptorResult.FAIL
             }
 
