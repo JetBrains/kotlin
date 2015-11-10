@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
+
 fun ClassDescriptor.computeConstructorTypeParameters(): List<TypeParameterDescriptor> {
     val declaredParameters = declaredTypeParameters
 
@@ -43,4 +46,31 @@ private class CapturedTypeParameterDescriptor(
     override fun getContainingDeclaration() = declarationDescriptor
     override fun getIndex() = declaredTypeParametersCount + originalDescriptor.index
     override fun toString() = originalDescriptor.toString() + "[inner-copy]"
+}
+
+class PossiblyInnerType(
+        val classDescriptor: ClassDescriptor,
+        val arguments: List<TypeProjection>,
+        val outerType: PossiblyInnerType?) {
+    fun segments(): List<PossiblyInnerType> = outerType?.segments().orEmpty() + this
+}
+
+fun KotlinType.buildPossiblyInnerType(): PossiblyInnerType?
+        = buildPossiblyInnerType(constructor.declarationDescriptor as? ClassDescriptor, 0)
+
+private fun KotlinType.buildPossiblyInnerType(classDescriptor: ClassDescriptor?, index: Int): PossiblyInnerType? {
+    if (classDescriptor == null) return null
+
+    val toIndex = classDescriptor.declaredTypeParameters.size + index
+    val argumentsSubList = arguments.subList(index, toIndex)
+
+    if (!classDescriptor.isInner) {
+        assert(toIndex == arguments.size) { "${arguments.size - toIndex} trailing arguments were found in $this type" }
+
+        return PossiblyInnerType(classDescriptor, argumentsSubList, null)
+    }
+
+    return PossiblyInnerType(
+            classDescriptor, argumentsSubList,
+            buildPossiblyInnerType(classDescriptor.containingDeclaration as? ClassDescriptor, toIndex))
 }

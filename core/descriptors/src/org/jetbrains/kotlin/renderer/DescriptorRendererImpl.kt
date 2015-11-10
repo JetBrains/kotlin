@@ -246,15 +246,6 @@ internal class DescriptorRendererImpl(
         }.toString()
     }
 
-    private fun renderTypeArgumentsForTypeConstructor(
-            type: KotlinType,
-            typeConstructor: TypeConstructor
-    ): String {
-        return type.arguments.zip(type.constructor.parameters).filter {
-            (it.second.original.containingDeclaration as? ClassifierDescriptor)?.typeConstructor == typeConstructor
-        }.map { it.first }.let { renderTypeArguments(it) }
-    }
-
     private fun renderDefaultType(type: KotlinType): String {
         val sb = StringBuilder()
 
@@ -278,26 +269,30 @@ internal class DescriptorRendererImpl(
             type: KotlinType,
             typeConstructor: TypeConstructor = type.constructor
     ): String =
-        StringBuilder().apply {
-            val classDescriptor = typeConstructor.declarationDescriptor as? ClassDescriptor
+        buildString {
 
-            if (classDescriptor is MissingDependencyErrorClass) {
+            val possiblyInnerType = type.buildPossiblyInnerType()
+            if (possiblyInnerType == null) {
                 append(renderTypeConstructor(typeConstructor))
                 append(renderTypeArguments(type.arguments))
-                return@apply
+                return@buildString
             }
 
-            if (classDescriptor != null && classDescriptor.isInner) {
-                append(renderTypeConstructorAndArguments(type, (classDescriptor.containingDeclaration as ClassDescriptor).typeConstructor))
-                append('.')
-                append(renderName(classDescriptor.name))
-            }
-            else {
-                append(renderTypeConstructor(typeConstructor))
-            }
-
-            append(renderTypeArgumentsForTypeConstructor(type, typeConstructor))
+            append(renderPossiblyInnerType(possiblyInnerType))
         }.toString()
+
+    private fun renderPossiblyInnerType(possiblyInnerType: PossiblyInnerType): String =
+        buildString {
+            possiblyInnerType.outerType?.let {
+                append(renderPossiblyInnerType(it))
+                append('.')
+                append(renderName(possiblyInnerType.classDescriptor.name))
+            } ?: append(renderTypeConstructor(possiblyInnerType.classDescriptor.typeConstructor))
+
+            append(renderTypeArguments(possiblyInnerType.arguments))
+        }
+
+
 
     override fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
         val cd = typeConstructor.getDeclarationDescriptor()
