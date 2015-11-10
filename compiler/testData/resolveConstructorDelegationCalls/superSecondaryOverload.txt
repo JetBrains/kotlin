@@ -8,6 +8,7 @@ class A : B, C {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: constructor B(x: String) defined in B

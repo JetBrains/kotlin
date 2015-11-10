@@ -3,6 +3,7 @@ fun bar(f: ()->Unit) {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: operator fun invoke(): Unit defined in kotlin.Function0

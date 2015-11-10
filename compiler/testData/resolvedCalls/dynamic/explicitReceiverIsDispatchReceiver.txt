@@ -3,6 +3,7 @@ fun bar(a: dynamic ) {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: fun foo(): dynamic defined in bar

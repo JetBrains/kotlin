@@ -7,6 +7,7 @@ fun test() {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: val baz: Int defined in Foo

@@ -9,6 +9,7 @@ fun bar(a: A, b: dynamic) {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: fun dynamic.foo(): Unit defined in A

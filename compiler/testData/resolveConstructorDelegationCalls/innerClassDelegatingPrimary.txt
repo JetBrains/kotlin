@@ -5,6 +5,7 @@ class A {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: constructor B(arg: String) defined in A.B

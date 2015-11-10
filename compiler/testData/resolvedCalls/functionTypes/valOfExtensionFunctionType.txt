@@ -7,6 +7,7 @@ interface A {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: val foo: Int.() -> Unit defined in A

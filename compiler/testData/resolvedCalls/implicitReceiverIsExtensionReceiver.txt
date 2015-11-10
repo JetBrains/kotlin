@@ -7,6 +7,7 @@ fun A.bar() {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: fun A.foo(): Unit defined in root package

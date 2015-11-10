@@ -9,6 +9,7 @@ fun test() {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: val baz: Foo defined in Foo.Companion

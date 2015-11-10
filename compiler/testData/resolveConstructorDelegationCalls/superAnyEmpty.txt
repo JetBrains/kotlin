@@ -3,6 +3,7 @@ class A {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: constructor Any() defined in kotlin.Any

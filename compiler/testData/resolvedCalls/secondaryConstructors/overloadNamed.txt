@@ -10,6 +10,7 @@ class A {
 val v = <caret>A(x=1.0)
 
 
+
 Resolved call:
 
 Resulting descriptor: constructor A(x: Double, y: String = ...) defined in A

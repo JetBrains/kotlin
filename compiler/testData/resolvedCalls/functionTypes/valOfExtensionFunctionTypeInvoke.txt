@@ -7,6 +7,7 @@ interface A {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: operator fun Int.invoke(): Unit defined in kotlin.Function1

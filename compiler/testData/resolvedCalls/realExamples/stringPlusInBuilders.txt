@@ -39,6 +39,7 @@ fun result() =
 val fail: Nothing get() = throw Exception()
 
 
+
 Resolved call:
 
 Resulting descriptor: fun String.plus(): Unit defined in Title

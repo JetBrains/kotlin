@@ -6,6 +6,7 @@ fun bar(a: Any) = a
 fun <T> bar(f: () -> T): T = f()
 
 
+
 Resolved call:
 
 Candidate descriptor: fun <T> bar(f: () -> T): T defined in root package

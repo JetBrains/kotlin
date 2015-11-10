@@ -5,6 +5,7 @@ class A<T1, T2> {
 }
 
 
+
 Resolved call:
 
 Candidate descriptor: constructor A<T1, T2>(x: T1, y: Int) defined in A

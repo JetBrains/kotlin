@@ -5,6 +5,7 @@ fun bar(f: Int.() -> Unit, i: Int) {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: operator fun Int.invoke(): Unit defined in kotlin.Function1
