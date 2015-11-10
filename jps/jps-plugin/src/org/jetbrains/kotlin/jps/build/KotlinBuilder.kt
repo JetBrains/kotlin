@@ -205,14 +205,17 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
-        processChanges(context, chunk, allCompiledFiles, caches, changesInfo)
+        processChanges(context, chunk, filesToCompile.values(), allCompiledFiles, dataManager, caches, changesInfo)
+
         return ADDITIONAL_PASS_REQUIRED
     }
 
-    fun processChanges(
+    private fun processChanges(
             context: CompileContext,
             chunk: ModuleChunk,
+            compiledFiles: Collection<File>,
             allCompiledFiles: MutableSet<File>,
+            dataManager: BuildDataManager,
             caches: List<IncrementalCacheImpl>,
             changesInfo: ChangesInfo
     ) {
@@ -250,7 +253,34 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             }
         }
 
-        changesInfo.doProcessChanges()
+        fun ChangesInfo.doProcessChangesUsingLookups() {
+            val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
+
+            // TODO group by fqName?
+            for (change in changes) {
+
+                if (change !is ChangeInfo.MembersChanged) continue
+
+                val files = change.names
+                        .flatMap { lookupStorage.get(LookupSymbol(it, change.fqName.asString())) }
+                        .asSequence()
+                        .map { File(it) }
+                        .filter { it !in compiledFiles && it.exists() }
+
+                files.forEach {
+                    FSOperations.markDirty(context, CompilationRound.NEXT, it)
+                }
+            }
+
+            caches.forEach { it.cleanDirtyInlineFunctions() }
+        }
+
+        if (IncrementalCompilation.isExperimental()) {
+            changesInfo.doProcessChangesUsingLookups()
+        }
+        else {
+            changesInfo.doProcessChanges()
+        }
     }
 
     private fun doCompileModuleChunk(
