@@ -82,12 +82,10 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ByteRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.IntRange
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -130,19 +128,28 @@ public abstract class ByteIterator : kotlin.Iterator<kotlin.Byte> {
     public abstract fun nextByte(): kotlin.Byte
 }
 
-public final class ByteProgression : kotlin.Progression<kotlin.Byte> {
-    /*primary*/ public constructor ByteProgression(/*0*/ start: kotlin.Byte, /*1*/ end: kotlin.Byte, /*2*/ increment: kotlin.Int)
-    public open override /*1*/ val end: kotlin.Byte
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use IntProgression instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression", imports = {})) public open class ByteProgression : kotlin.Progression<kotlin.Byte> {
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ByteProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ByteProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor ByteProgression(/*0*/ start: kotlin.Byte, /*1*/ endInclusive: kotlin.Byte, /*2*/ increment: kotlin.Int)
+    @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Byte
         public open override /*1*/ fun <get-end>(): kotlin.Byte
+    public final val first: kotlin.Byte
+        public final fun <get-first>(): kotlin.Byte
     public open override /*1*/ val increment: kotlin.Int
         public open override /*1*/ fun <get-increment>(): kotlin.Int
-    public open override /*1*/ val start: kotlin.Byte
+    public final val last: kotlin.Byte
+        public final fun <get-last>(): kotlin.Byte
+    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Byte
         public open override /*1*/ fun <get-start>(): kotlin.Byte
-    public final fun isEmpty(): kotlin.Boolean
+    public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ByteIterator
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final fun fromClosedRange(/*0*/ rangeStart: kotlin.Byte, /*1*/ rangeEnd: kotlin.Byte, /*2*/ step: kotlin.Int): kotlin.ByteProgression
+    }
 }
 
-public final class ByteProgressionIterator : kotlin.ByteIterator {
+internal final class ByteProgressionIterator : kotlin.ByteIterator {
     /*primary*/ public constructor ByteProgressionIterator(/*0*/ start: kotlin.Byte, /*1*/ end: kotlin.Byte, /*2*/ increment: kotlin.Int)
     private final val finalElement: kotlin.Byte
         private final fun <get-finalElement>(): kotlin.Byte
@@ -159,17 +166,23 @@ public final class ByteProgressionIterator : kotlin.ByteIterator {
     public open override /*1*/ fun nextByte(): kotlin.Byte
 }
 
-public final class ByteRange : kotlin.Range<kotlin.Byte>, kotlin.Progression<kotlin.Byte> {
-    /*primary*/ public constructor ByteRange(/*0*/ start: kotlin.Byte, /*1*/ end: kotlin.Byte)
-    public open override /*2*/ val end: kotlin.Byte
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use IntRange instead.", replaceWith = kotlin.ReplaceWith(expression = "IntRange", imports = {})) public final class ByteRange : kotlin.ByteProgression, kotlin.ClosedRange<kotlin.Byte> {
+    /*primary*/ public constructor ByteRange(/*0*/ start: kotlin.Byte, /*1*/ endInclusive: kotlin.Byte)
+    @kotlin.Deprecated(message = "Use endInclusive instead.", replaceWith = kotlin.ReplaceWith(expression = "endInclusive", imports = {})) public open override /*2*/ val end: kotlin.Byte
         public open override /*2*/ fun <get-end>(): kotlin.Byte
-    public open override /*1*/ val increment: kotlin.Int
-        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*1*/ val endInclusive: kotlin.Byte
+        public open override /*1*/ fun <get-endInclusive>(): kotlin.Byte
+    public final override /*1*/ /*fake_override*/ val first: kotlin.Byte
+        public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Byte
+    public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ val last: kotlin.Byte
+        public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Byte
     public open override /*2*/ val start: kotlin.Byte
         public open override /*2*/ fun <get-start>(): kotlin.Byte
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Byte): kotlin.Boolean
-    public open override /*1*/ fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.ByteIterator
+    public open override /*2*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.ByteIterator
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -217,19 +230,28 @@ public abstract class CharIterator : kotlin.Iterator<kotlin.Char> {
     public abstract fun nextChar(): kotlin.Char
 }
 
-public final class CharProgression : kotlin.Progression<kotlin.Char> {
-    /*primary*/ public constructor CharProgression(/*0*/ start: kotlin.Char, /*1*/ end: kotlin.Char, /*2*/ increment: kotlin.Int)
-    public open override /*1*/ val end: kotlin.Char
+public open class CharProgression : kotlin.Progression<kotlin.Char> {
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "CharProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor CharProgression(/*0*/ start: kotlin.Char, /*1*/ endInclusive: kotlin.Char, /*2*/ increment: kotlin.Int)
+    @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Char
         public open override /*1*/ fun <get-end>(): kotlin.Char
+    public final val first: kotlin.Char
+        public final fun <get-first>(): kotlin.Char
     public open override /*1*/ val increment: kotlin.Int
         public open override /*1*/ fun <get-increment>(): kotlin.Int
-    public open override /*1*/ val start: kotlin.Char
+    public final val last: kotlin.Char
+        public final fun <get-last>(): kotlin.Char
+    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Char
         public open override /*1*/ fun <get-start>(): kotlin.Char
-    public final fun isEmpty(): kotlin.Boolean
+    public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.CharIterator
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final fun fromClosedRange(/*0*/ rangeStart: kotlin.Char, /*1*/ rangeEnd: kotlin.Char, /*2*/ step: kotlin.Int): kotlin.CharProgression
+    }
 }
 
-public final class CharProgressionIterator : kotlin.CharIterator {
+internal final class CharProgressionIterator : kotlin.CharIterator {
     /*primary*/ public constructor CharProgressionIterator(/*0*/ start: kotlin.Char, /*1*/ end: kotlin.Char, /*2*/ increment: kotlin.Int)
     private final val finalElement: kotlin.Char
         private final fun <get-finalElement>(): kotlin.Char
@@ -246,17 +268,23 @@ public final class CharProgressionIterator : kotlin.CharIterator {
     public open override /*1*/ fun nextChar(): kotlin.Char
 }
 
-public final class CharRange : kotlin.Range<kotlin.Char>, kotlin.Progression<kotlin.Char> {
-    /*primary*/ public constructor CharRange(/*0*/ start: kotlin.Char, /*1*/ end: kotlin.Char)
-    public open override /*2*/ val end: kotlin.Char
+public final class CharRange : kotlin.CharProgression, kotlin.ClosedRange<kotlin.Char> {
+    /*primary*/ public constructor CharRange(/*0*/ start: kotlin.Char, /*1*/ endInclusive: kotlin.Char)
+    @kotlin.Deprecated(message = "Use endInclusive instead.", replaceWith = kotlin.ReplaceWith(expression = "endInclusive", imports = {})) public open override /*2*/ val end: kotlin.Char
         public open override /*2*/ fun <get-end>(): kotlin.Char
-    public open override /*1*/ val increment: kotlin.Int
-        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*1*/ val endInclusive: kotlin.Char
+        public open override /*1*/ fun <get-endInclusive>(): kotlin.Char
+    public final override /*1*/ /*fake_override*/ val first: kotlin.Char
+        public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Char
+    public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ val last: kotlin.Char
+        public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Char
     public open override /*2*/ val start: kotlin.Char
         public open override /*2*/ fun <get-start>(): kotlin.Char
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Char): kotlin.Boolean
-    public open override /*1*/ fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.CharIterator
+    public open override /*2*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.CharIterator
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -274,6 +302,17 @@ public interface CharSequence {
 
 public interface Cloneable {
     protected open fun clone(): kotlin.Any
+}
+
+public interface ClosedRange</*0*/ T : kotlin.Comparable<T>> : kotlin.Range<T> {
+    @kotlin.Deprecated(message = "Use endInclusive instead.", replaceWith = kotlin.ReplaceWith(expression = "endInclusive", imports = {})) public open override /*1*/ val end: T
+        public open override /*1*/ fun <get-end>(): T
+    public abstract val endInclusive: T
+        public abstract fun <get-endInclusive>(): T
+    public abstract override /*1*/ val start: T
+        public abstract override /*1*/ fun <get-start>(): T
+    public open override /*1*/ fun contains(/*0*/ item: T): kotlin.Boolean
+    public open override /*1*/ fun isEmpty(): kotlin.Boolean
 }
 
 public interface Collection</*0*/ out E> : kotlin.Iterable<E> {
@@ -355,12 +394,6 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Double
-    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.DoubleRange
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Double
@@ -407,51 +440,6 @@ public abstract class DoubleIterator : kotlin.Iterator<kotlin.Double> {
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Double
     public abstract fun nextDouble(): kotlin.Double
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
-    /*primary*/ public constructor DoubleProgression(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double, /*2*/ increment: kotlin.Double)
-    public open override /*1*/ val end: kotlin.Double
-        public open override /*1*/ fun <get-end>(): kotlin.Double
-    public open override /*1*/ val increment: kotlin.Double
-        public open override /*1*/ fun <get-increment>(): kotlin.Double
-    public open override /*1*/ val start: kotlin.Double
-        public open override /*1*/ fun <get-start>(): kotlin.Double
-    public final fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.DoubleIterator
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") public final class DoubleProgressionIterator : kotlin.DoubleIterator {
-    /*primary*/ public constructor DoubleProgressionIterator(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double, /*2*/ increment: kotlin.Double)
-    public final val end: kotlin.Double
-        public final fun <get-end>(): kotlin.Double
-    public final val increment: kotlin.Double
-        public final fun <get-increment>(): kotlin.Double
-    private final var next: kotlin.Double
-        private final fun <get-next>(): kotlin.Double
-        private final fun <set-next>(/*0*/ <set-?>: kotlin.Double): kotlin.Unit
-    public open override /*1*/ fun hasNext(): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Double
-    public open override /*1*/ fun nextDouble(): kotlin.Double
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression<kotlin.Double> {
-    /*primary*/ public constructor DoubleRange(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double)
-    public open override /*2*/ val end: kotlin.Double
-        public open override /*2*/ fun <get-end>(): kotlin.Double
-    public open override /*1*/ val increment: kotlin.Double
-        public open override /*1*/ fun <get-increment>(): kotlin.Double
-    public open override /*2*/ val start: kotlin.Double
-        public open override /*2*/ fun <get-start>(): kotlin.Double
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Double): kotlin.Boolean
-    public open override /*1*/ fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.DoubleIterator
-
-    public companion object Companion {
-        /*primary*/ private constructor Companion()
-        public final val EMPTY: kotlin.DoubleRange
-            public final fun <get-EMPTY>(): kotlin.DoubleRange
-    }
 }
 
 public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
@@ -506,12 +494,6 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Float
-    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.FloatRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.FloatRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.FloatRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.FloatRange
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -558,51 +540,6 @@ public abstract class FloatIterator : kotlin.Iterator<kotlin.Float> {
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Float
     public abstract fun nextFloat(): kotlin.Float
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class FloatProgression : kotlin.Progression<kotlin.Float> {
-    /*primary*/ public constructor FloatProgression(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float, /*2*/ increment: kotlin.Float)
-    public open override /*1*/ val end: kotlin.Float
-        public open override /*1*/ fun <get-end>(): kotlin.Float
-    public open override /*1*/ val increment: kotlin.Float
-        public open override /*1*/ fun <get-increment>(): kotlin.Float
-    public open override /*1*/ val start: kotlin.Float
-        public open override /*1*/ fun <get-start>(): kotlin.Float
-    public final fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.FloatIterator
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") public final class FloatProgressionIterator : kotlin.FloatIterator {
-    /*primary*/ public constructor FloatProgressionIterator(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float, /*2*/ increment: kotlin.Float)
-    public final val end: kotlin.Float
-        public final fun <get-end>(): kotlin.Float
-    public final val increment: kotlin.Float
-        public final fun <get-increment>(): kotlin.Float
-    private final var next: kotlin.Float
-        private final fun <get-next>(): kotlin.Float
-        private final fun <set-next>(/*0*/ <set-?>: kotlin.Float): kotlin.Unit
-    public open override /*1*/ fun hasNext(): kotlin.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Float
-    public open override /*1*/ fun nextFloat(): kotlin.Float
-}
-
-@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "This range implementation has unclear semantics and will be removed soon.") @kotlin.Suppress(names = {"DEPRECATION_ERROR"}) public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<kotlin.Float> {
-    /*primary*/ public constructor FloatRange(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float)
-    public open override /*2*/ val end: kotlin.Float
-        public open override /*2*/ fun <get-end>(): kotlin.Float
-    public open override /*1*/ val increment: kotlin.Float
-        public open override /*1*/ fun <get-increment>(): kotlin.Float
-    public open override /*2*/ val start: kotlin.Float
-        public open override /*2*/ fun <get-start>(): kotlin.Float
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Float): kotlin.Boolean
-    public open override /*1*/ fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.FloatIterator
-
-    public companion object Companion {
-        /*primary*/ private constructor Companion()
-        public final val EMPTY: kotlin.FloatRange
-            public final fun <get-EMPTY>(): kotlin.FloatRange
-    }
 }
 
 public interface FloatingPointConstants</*0*/ T> {
@@ -663,8 +600,6 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.IntRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.IntRange
@@ -714,19 +649,28 @@ public abstract class IntIterator : kotlin.Iterator<kotlin.Int> {
     public abstract fun nextInt(): kotlin.Int
 }
 
-public final class IntProgression : kotlin.Progression<kotlin.Int> {
-    /*primary*/ public constructor IntProgression(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int, /*2*/ increment: kotlin.Int)
-    public open override /*1*/ val end: kotlin.Int
+public open class IntProgression : kotlin.Progression<kotlin.Int> {
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor IntProgression(/*0*/ start: kotlin.Int, /*1*/ endInclusive: kotlin.Int, /*2*/ increment: kotlin.Int)
+    @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Int
         public open override /*1*/ fun <get-end>(): kotlin.Int
+    public final val first: kotlin.Int
+        public final fun <get-first>(): kotlin.Int
     public open override /*1*/ val increment: kotlin.Int
         public open override /*1*/ fun <get-increment>(): kotlin.Int
-    public open override /*1*/ val start: kotlin.Int
+    public final val last: kotlin.Int
+        public final fun <get-last>(): kotlin.Int
+    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Int
         public open override /*1*/ fun <get-start>(): kotlin.Int
-    public final fun isEmpty(): kotlin.Boolean
+    public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.IntIterator
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final fun fromClosedRange(/*0*/ rangeStart: kotlin.Int, /*1*/ rangeEnd: kotlin.Int, /*2*/ step: kotlin.Int): kotlin.IntProgression
+    }
 }
 
-public final class IntProgressionIterator : kotlin.IntIterator {
+internal final class IntProgressionIterator : kotlin.IntIterator {
     /*primary*/ public constructor IntProgressionIterator(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int, /*2*/ increment: kotlin.Int)
     private final val finalElement: kotlin.Int
         private final fun <get-finalElement>(): kotlin.Int
@@ -743,17 +687,23 @@ public final class IntProgressionIterator : kotlin.IntIterator {
     public open override /*1*/ fun nextInt(): kotlin.Int
 }
 
-public final class IntRange : kotlin.Range<kotlin.Int>, kotlin.Progression<kotlin.Int> {
-    /*primary*/ public constructor IntRange(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int)
-    public open override /*2*/ val end: kotlin.Int
+public final class IntRange : kotlin.IntProgression, kotlin.ClosedRange<kotlin.Int> {
+    /*primary*/ public constructor IntRange(/*0*/ start: kotlin.Int, /*1*/ endInclusive: kotlin.Int)
+    @kotlin.Deprecated(message = "Use endInclusive instead.", replaceWith = kotlin.ReplaceWith(expression = "endInclusive", imports = {})) public open override /*2*/ val end: kotlin.Int
         public open override /*2*/ fun <get-end>(): kotlin.Int
-    public open override /*1*/ val increment: kotlin.Int
-        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*1*/ val endInclusive: kotlin.Int
+        public open override /*1*/ fun <get-endInclusive>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ val first: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ val last: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Int
     public open override /*2*/ val start: kotlin.Int
         public open override /*2*/ fun <get-start>(): kotlin.Int
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Int): kotlin.Boolean
-    public open override /*1*/ fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.IntIterator
+    public open override /*2*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.IntIterator
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -840,8 +790,6 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Long
     public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.LongRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.LongRange
@@ -891,19 +839,28 @@ public abstract class LongIterator : kotlin.Iterator<kotlin.Long> {
     public abstract fun nextLong(): kotlin.Long
 }
 
-public final class LongProgression : kotlin.Progression<kotlin.Long> {
-    /*primary*/ public constructor LongProgression(/*0*/ start: kotlin.Long, /*1*/ end: kotlin.Long, /*2*/ increment: kotlin.Long)
-    public open override /*1*/ val end: kotlin.Long
+public open class LongProgression : kotlin.Progression<kotlin.Long> {
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "LongProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor LongProgression(/*0*/ start: kotlin.Long, /*1*/ endInclusive: kotlin.Long, /*2*/ increment: kotlin.Long)
+    @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Long
         public open override /*1*/ fun <get-end>(): kotlin.Long
+    public final val first: kotlin.Long
+        public final fun <get-first>(): kotlin.Long
     public open override /*1*/ val increment: kotlin.Long
         public open override /*1*/ fun <get-increment>(): kotlin.Long
-    public open override /*1*/ val start: kotlin.Long
+    public final val last: kotlin.Long
+        public final fun <get-last>(): kotlin.Long
+    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Long
         public open override /*1*/ fun <get-start>(): kotlin.Long
-    public final fun isEmpty(): kotlin.Boolean
+    public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.LongIterator
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final fun fromClosedRange(/*0*/ rangeStart: kotlin.Long, /*1*/ rangeEnd: kotlin.Long, /*2*/ step: kotlin.Long): kotlin.LongProgression
+    }
 }
 
-public final class LongProgressionIterator : kotlin.LongIterator {
+internal final class LongProgressionIterator : kotlin.LongIterator {
     /*primary*/ public constructor LongProgressionIterator(/*0*/ start: kotlin.Long, /*1*/ end: kotlin.Long, /*2*/ increment: kotlin.Long)
     private final val finalElement: kotlin.Long
         private final fun <get-finalElement>(): kotlin.Long
@@ -920,17 +877,23 @@ public final class LongProgressionIterator : kotlin.LongIterator {
     public open override /*1*/ fun nextLong(): kotlin.Long
 }
 
-public final class LongRange : kotlin.Range<kotlin.Long>, kotlin.Progression<kotlin.Long> {
-    /*primary*/ public constructor LongRange(/*0*/ start: kotlin.Long, /*1*/ end: kotlin.Long)
-    public open override /*2*/ val end: kotlin.Long
+public final class LongRange : kotlin.LongProgression, kotlin.ClosedRange<kotlin.Long> {
+    /*primary*/ public constructor LongRange(/*0*/ start: kotlin.Long, /*1*/ endInclusive: kotlin.Long)
+    @kotlin.Deprecated(message = "Use endInclusive instead.", replaceWith = kotlin.ReplaceWith(expression = "endInclusive", imports = {})) public open override /*2*/ val end: kotlin.Long
         public open override /*2*/ fun <get-end>(): kotlin.Long
-    public open override /*1*/ val increment: kotlin.Long
-        public open override /*1*/ fun <get-increment>(): kotlin.Long
+    public open override /*1*/ val endInclusive: kotlin.Long
+        public open override /*1*/ fun <get-endInclusive>(): kotlin.Long
+    public final override /*1*/ /*fake_override*/ val first: kotlin.Long
+        public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Long
+    public open override /*1*/ /*fake_override*/ val increment: kotlin.Long
+        public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Long
+    public final override /*1*/ /*fake_override*/ val last: kotlin.Long
+        public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Long
     public open override /*2*/ val start: kotlin.Long
         public open override /*2*/ fun <get-start>(): kotlin.Long
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Long): kotlin.Boolean
-    public open override /*1*/ fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.LongIterator
+    public open override /*2*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.LongIterator
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -1080,7 +1043,7 @@ public abstract class Number {
     public abstract fun toShort(): kotlin.Short
 }
 
-public interface Progression</*0*/ out N : kotlin.Any> : kotlin.Iterable<N> {
+@kotlin.Deprecated(message = "This generic progression interface is not of much use and will be removed soon. Use concrete progression implementation instead: IntProgression, LongProgression or CharProgression.") public interface Progression</*0*/ out N : kotlin.Any> : kotlin.Iterable<N> {
     public abstract val end: N
         public abstract fun <get-end>(): N
     public abstract val increment: kotlin.Number
@@ -1095,7 +1058,7 @@ public interface Progression</*0*/ out N : kotlin.Any> : kotlin.Iterable<N> {
         public abstract fun <get-name>(): kotlin.String
 }
 
-public interface Range</*0*/ T : kotlin.Comparable<T>> {
+@kotlin.Deprecated(message = "This range has unclear inclusiveness of end value. Use ClosedRange instead.", replaceWith = kotlin.ReplaceWith(expression = "ClosedRange<T>", imports = {})) public interface Range</*0*/ T : kotlin.Comparable<T>> {
     public abstract val end: T
         public abstract fun <get-end>(): T
     public abstract val start: T
@@ -1155,12 +1118,10 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun plus(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ShortRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
     public final operator fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
-    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
+    public final operator fun rangeTo(/*0*/ other: kotlin.Short): kotlin.IntRange
     public final operator fun times(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun times(/*0*/ other: kotlin.Float): kotlin.Float
@@ -1203,19 +1164,28 @@ public abstract class ShortIterator : kotlin.Iterator<kotlin.Short> {
     public abstract fun nextShort(): kotlin.Short
 }
 
-public final class ShortProgression : kotlin.Progression<kotlin.Short> {
-    /*primary*/ public constructor ShortProgression(/*0*/ start: kotlin.Short, /*1*/ end: kotlin.Short, /*2*/ increment: kotlin.Int)
-    public open override /*1*/ val end: kotlin.Short
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use IntProgression instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression", imports = {})) public open class ShortProgression : kotlin.Progression<kotlin.Short> {
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ShortProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ShortProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor ShortProgression(/*0*/ start: kotlin.Short, /*1*/ endInclusive: kotlin.Short, /*2*/ increment: kotlin.Int)
+    @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Short
         public open override /*1*/ fun <get-end>(): kotlin.Short
+    public final val first: kotlin.Short
+        public final fun <get-first>(): kotlin.Short
     public open override /*1*/ val increment: kotlin.Int
         public open override /*1*/ fun <get-increment>(): kotlin.Int
-    public open override /*1*/ val start: kotlin.Short
+    public final val last: kotlin.Short
+        public final fun <get-last>(): kotlin.Short
+    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Short
         public open override /*1*/ fun <get-start>(): kotlin.Short
-    public final fun isEmpty(): kotlin.Boolean
+    public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ShortIterator
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final fun fromClosedRange(/*0*/ rangeStart: kotlin.Short, /*1*/ rangeEnd: kotlin.Short, /*2*/ step: kotlin.Int): kotlin.ShortProgression
+    }
 }
 
-public final class ShortProgressionIterator : kotlin.ShortIterator {
+internal final class ShortProgressionIterator : kotlin.ShortIterator {
     /*primary*/ public constructor ShortProgressionIterator(/*0*/ start: kotlin.Short, /*1*/ end: kotlin.Short, /*2*/ increment: kotlin.Int)
     private final val finalElement: kotlin.Short
         private final fun <get-finalElement>(): kotlin.Short
@@ -1232,17 +1202,23 @@ public final class ShortProgressionIterator : kotlin.ShortIterator {
     public open override /*1*/ fun nextShort(): kotlin.Short
 }
 
-public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<kotlin.Short> {
-    /*primary*/ public constructor ShortRange(/*0*/ start: kotlin.Short, /*1*/ end: kotlin.Short)
-    public open override /*2*/ val end: kotlin.Short
+@kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use IntRange instead.", replaceWith = kotlin.ReplaceWith(expression = "IntRange", imports = {})) public final class ShortRange : kotlin.ShortProgression, kotlin.ClosedRange<kotlin.Short> {
+    /*primary*/ public constructor ShortRange(/*0*/ start: kotlin.Short, /*1*/ endInclusive: kotlin.Short)
+    @kotlin.Deprecated(message = "Use endInclusive instead.", replaceWith = kotlin.ReplaceWith(expression = "endInclusive", imports = {})) public open override /*2*/ val end: kotlin.Short
         public open override /*2*/ fun <get-end>(): kotlin.Short
-    public open override /*1*/ val increment: kotlin.Int
-        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*1*/ val endInclusive: kotlin.Short
+        public open override /*1*/ fun <get-endInclusive>(): kotlin.Short
+    public final override /*1*/ /*fake_override*/ val first: kotlin.Short
+        public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Short
+    public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ val last: kotlin.Short
+        public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Short
     public open override /*2*/ val start: kotlin.Short
         public open override /*2*/ fun <get-start>(): kotlin.Short
     public open override /*1*/ fun contains(/*0*/ item: kotlin.Short): kotlin.Boolean
-    public open override /*1*/ fun isEmpty(): kotlin.Boolean
-    public open override /*1*/ fun iterator(): kotlin.ShortIterator
+    public open override /*2*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.ShortIterator
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
