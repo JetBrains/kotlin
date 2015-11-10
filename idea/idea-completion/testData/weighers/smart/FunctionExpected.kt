@@ -12,4 +12,5 @@ fun bar(p: (String) -> Boolean) {
 // ORDER: {...}
 // ORDER: { String -> ... }
 // ORDER: ::x
+// ORDER: ::TODO
 // ORDER: ::error

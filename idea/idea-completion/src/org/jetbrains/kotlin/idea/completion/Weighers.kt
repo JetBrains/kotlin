@@ -282,3 +282,18 @@ class PreferContextElementsWeigher(private val context: DeclarationDescriptor) :
         return original in contextElements
     }
 }
+
+object ByNameAlphabeticalWeigher : LookupElementWeigher("kotlin.byNameAlphabetical") {
+    override fun weigh(element: LookupElement): String? {
+        val lookupObject = element.`object` as? DeclarationLookupObject ?: return null
+        return lookupObject.name?.asString()
+    }
+}
+
+object PreferLessParametersWeigher : LookupElementWeigher("kotlin.preferLessParameters") {
+    override fun weigh(element: LookupElement): Int? {
+        val lookupObject = element.`object` as? DeclarationLookupObject ?: return null
+        val function = lookupObject.descriptor as? FunctionDescriptor ?: return null
+        return function.valueParameters.size
+    }
+}

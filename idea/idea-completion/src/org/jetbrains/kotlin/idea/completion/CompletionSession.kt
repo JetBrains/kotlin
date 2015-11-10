@@ -272,6 +272,8 @@ abstract class CompletionSession(
 
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
+        sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
+
         return sorter
     }
 
