@@ -45,7 +45,7 @@ public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageF
         val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
         val file = element.containingFile as? KtFile ?: return emptyList()
         val call = element.getCall(context) ?: return emptyList()
-        val targetParent = getTargetParentByCall(call, file) ?: return emptyList()
+        val targetParent = getTargetParentByCall(call, file, context) ?: return emptyList()
 
         val classKind = if (inAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS
         val fullCallExpr = element.getQualifiedExpressionForSelectorOrThis()
@@ -77,7 +77,7 @@ public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageF
         val (context, moduleDescriptor) = callExpr.analyzeFullyAndGetResult()
 
         val call = callExpr.getCall(context) ?: return null
-        val targetParent = getTargetParentByCall(call, file) ?: return null
+        val targetParent = getTargetParentByCall(call, file, context) ?: return null
         val inner = isInnerClassExpected(call)
 
         val valueArguments = callExpr.valueArguments

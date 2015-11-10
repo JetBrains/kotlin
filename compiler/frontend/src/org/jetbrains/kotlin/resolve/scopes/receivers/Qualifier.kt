@@ -44,25 +44,22 @@ public interface Qualifier: Receiver {
 
     public val expression: KtExpression
 
+    public val referenceExpression: KtSimpleNameExpression
+
     public val name: Name
         get() = descriptor.name
 
     public val descriptor: DeclarationDescriptor
 
-    // package, classifier or companion object descriptor
-    public val resultingDescriptor: DeclarationDescriptor
-
     public val scope: MemberScope
 }
 
 abstract class QualifierReceiver(
-        val referenceExpression: KtSimpleNameExpression
+        override val referenceExpression: KtSimpleNameExpression
 ) : Qualifier {
 
     override val expression: KtExpression
         get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
-
-    override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
 
     abstract fun getNestedClassesAndPackageMembersScope(): MemberScope
 

@@ -74,9 +74,8 @@ private fun resolveAndRecordReferenceTarget(
         selector: DeclarationDescriptor?,
         symbolUsageValidator: SymbolUsageValidator
 ) {
-    // TODO get rid of QualifierReceiver::resultingDescriptor. REFERENCE_TARGET should be enough.
-    qualifier.resultingDescriptor = resolveReferenceTarget(qualifier, context, selector, symbolUsageValidator)
-    context.trace.record(BindingContext.REFERENCE_TARGET, qualifier.referenceExpression, qualifier.resultingDescriptor)
+    val resultingDescriptor = resolveReferenceTarget(qualifier, context, selector, symbolUsageValidator)
+    context.trace.record(BindingContext.REFERENCE_TARGET, qualifier.referenceExpression, resultingDescriptor)
 }
 
 private fun resolveReferenceTarget(
