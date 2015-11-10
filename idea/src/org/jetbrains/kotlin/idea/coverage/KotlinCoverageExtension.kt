@@ -124,7 +124,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
             if (existingClassFiles.isEmpty()) {
                 return null
             }
-            LOG.debug("Classfiles: [${existingClassFiles.map { it.getName() }.join()}]")
+            LOG.debug("Classfiles: [${existingClassFiles.map { it.getName() }.joinToString()}]")
             return existingClassFiles.map {
                 val relativePath = VfsUtilCore.getRelativePath(it, outputRoot!!)!!
                 StringUtil.trimEnd(relativePath, ".class").replace("/", ".")
@@ -159,7 +159,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
             if (packageOutputDir == null) return listOf()
 
             val prefixes = collectClassFilePrefixes(file)
-            LOG.debug("Classfile prefixes: [${prefixes.join(", ")}]")
+            LOG.debug("Classfile prefixes: [${prefixes.joinToString(", ")}]")
             return packageOutputDir.getChildren().filter {
                 file -> prefixes.any {
                 (file.getName().startsWith(it + "$") && FileUtilRt.getExtension(file.getName()) == "class") ||

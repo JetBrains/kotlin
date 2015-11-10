@@ -65,7 +65,8 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
                     name = "getValue",
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(propertyType, Variance.OUT_VARIANCE),
-                    parameterInfos = listOf(thisRefParam, metadataParam)
+                    parameterInfos = listOf(thisRefParam, metadataParam),
+                    isOperator = true
             )
             callableInfos.add(getterInfo)
         }
@@ -76,7 +77,8 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
                     name = "setValue",
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE),
-                    parameterInfos = listOf(thisRefParam, metadataParam, newValueParam)
+                    parameterInfos = listOf(thisRefParam, metadataParam, newValueParam),
+                    isOperator = true
             )
             callableInfos.add(setterInfo)
         }

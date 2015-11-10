@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
-public class IterateExpressionIntention : JetSelfTargetingIntention<KtExpression>(javaClass(), "Iterate over collection"), HighPriorityAction {
+public class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(javaClass(), "Iterate over collection"), HighPriorityAction {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
         if (element.getParent() !is KtBlockExpression) return false
         val range = element.getTextRange()

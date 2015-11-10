@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -47,8 +47,8 @@ import java.util.Set;
 public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final TypeConstructor typeConstructor;
     private final ConstructorDescriptor primaryConstructor;
-    private final KtScope scope;
-    private final KtScope staticScope = new StaticScopeForKotlinClass(this);
+    private final MemberScope scope;
+    private final MemberScope staticScope = new StaticScopeForKotlinClass(this);
     private final NotNullLazyValue<Collection<Name>> enumMemberNames;
 
     /**
@@ -93,13 +93,13 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public KtScope getUnsubstitutedMemberScope() {
+    public MemberScope getUnsubstitutedMemberScope() {
         return scope;
     }
 
     @NotNull
     @Override
-    public KtScope getStaticScope() {
+    public MemberScope getStaticScope() {
         return staticScope;
     }
 
@@ -172,7 +172,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         return "enum entry " + getName();
     }
 
-    private class EnumEntryScope extends KtScopeImpl {
+    private class EnumEntryScope extends MemberScopeImpl {
         private final MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> functions;
         private final MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> properties;
         private final NotNullLazyValue<Collection<DeclarationDescriptor>> allDescriptors;
@@ -201,30 +201,30 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        @SuppressWarnings("unchecked")
-        public Collection<VariableDescriptor> getProperties(@NotNull Name name, @NotNull LookupLocation location) {
-            return (Collection) properties.invoke(name);
+        @SuppressWarnings({"unchecked"}) // KT-9898 Impossible implement kotlin interface in java
+        public Collection getContributedVariables(@NotNull Name name, @NotNull LookupLocation location) {
+            return properties.invoke(name);
         }
 
         @NotNull
         @SuppressWarnings("unchecked")
         private Collection<PropertyDescriptor> computeProperties(@NotNull Name name) {
-            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getProperties(name, NoLookupLocation.UNSORTED));
+            return resolveFakeOverrides(name, (Collection) getSupertypeScope().getContributedVariables(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
         }
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getFunctions(@NotNull Name name, @NotNull LookupLocation location) {
+        public Collection<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
             return functions.invoke(name);
         }
 
         @NotNull
         private Collection<FunctionDescriptor> computeFunctions(@NotNull Name name) {
-            return resolveFakeOverrides(name, getSupertypeScope().getFunctions(name, NoLookupLocation.UNSORTED));
+            return resolveFakeOverrides(name, getSupertypeScope().getContributedFunctions(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
         }
 
         @NotNull
-        private KtScope getSupertypeScope() {
+        private MemberScope getSupertypeScope() {
             Collection<KotlinType> supertype = getTypeConstructor().getSupertypes();
             assert supertype.size() == 1 : "Enum entry and its companion object both should have exactly one supertype: " + supertype;
             return supertype.iterator().next().getMemberScope();
@@ -259,13 +259,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        public DeclarationDescriptor getContainingDeclaration() {
-            return EnumEntrySyntheticClassDescriptor.this;
-        }
-
-        @NotNull
-        @Override
-        public Collection<DeclarationDescriptor> getDescriptors(
+        public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter,
                 @NotNull Function1<? super Name, ? extends Boolean> nameFilter
         ) {
@@ -276,8 +270,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         private Collection<DeclarationDescriptor> computeAllDeclarations() {
             Collection<DeclarationDescriptor> result = new HashSet<DeclarationDescriptor>();
             for (Name name : enumMemberNames.invoke()) {
-                result.addAll(getFunctions(name, NoLookupLocation.UNSORTED));
-                result.addAll(getProperties(name, NoLookupLocation.UNSORTED));
+                result.addAll(getContributedFunctions(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
+                result.addAll(getContributedVariables(name, NoLookupLocation.FOR_NON_TRACKED_SCOPE));
             }
             return result;
         }

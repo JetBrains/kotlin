@@ -19,66 +19,92 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-private fun PsiElement.getJavaDescriptorResolver(): JavaDescriptorResolver? {
-    if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
-
-    @Suppress("DEPRECATION")
-    return KotlinCacheService.getInstance(project).getProjectService(JvmPlatform, this.getModuleInfo(), javaClass<JavaDescriptorResolver>())
-}
-
-fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? {
-    val method = getOriginalElement() as? PsiMethod ?: return null
-    if (method.containingClass == null || !Name.isValidIdentifier(method.getName())) return null
-    val resolver = method.getJavaDescriptorResolver()
+@JvmOverloads
+fun PsiMethod.getJavaMethodDescriptor(resolutionFacade: ResolutionFacade? = null): FunctionDescriptor? {
+    val method = originalElement as? PsiMethod ?: return null
+    if (method.containingClass == null || !Name.isValidIdentifier(method.name)) return null
+    val resolver = method.getJavaDescriptorResolver(resolutionFacade)
     return when {
-        method.isConstructor() -> resolver?.resolveConstructor(JavaConstructorImpl(method))
+        method.isConstructor -> resolver?.resolveConstructor(JavaConstructorImpl(method))
         else -> resolver?.resolveMethod(JavaMethodImpl(method))
     }
 }
 
-fun PsiClass.getJavaClassDescriptor(): ClassDescriptor? {
+@JvmOverloads
+fun PsiClass.getJavaClassDescriptor(resolutionFacade: ResolutionFacade? = null): ClassDescriptor? {
     val psiClass = originalElement as? PsiClass ?: return null
-    return psiClass.getJavaDescriptorResolver()?.resolveClass(JavaClassImpl(psiClass))
+    return psiClass.getJavaDescriptorResolver(resolutionFacade)?.resolveClass(JavaClassImpl(psiClass))
 }
 
-fun PsiField.getJavaFieldDescriptor(): PropertyDescriptor? {
+@JvmOverloads
+fun PsiField.getJavaFieldDescriptor(resolutionFacade: ResolutionFacade? = null): PropertyDescriptor? {
     val field = originalElement as? PsiField ?: return null
-    return field.getJavaDescriptorResolver()?.resolveField(JavaFieldImpl(field))
+    return field.getJavaDescriptorResolver(resolutionFacade)?.resolveField(JavaFieldImpl(field))
 }
 
-fun PsiMember.getJavaMemberDescriptor(): DeclarationDescriptor? {
+@JvmOverloads
+fun PsiMember.getJavaMemberDescriptor(resolutionFacade: ResolutionFacade? = null): DeclarationDescriptor? {
     return when (this) {
-        is PsiClass -> getJavaClassDescriptor()
-        is PsiMethod -> getJavaMethodDescriptor()
-        is PsiField -> getJavaFieldDescriptor()
+        is PsiClass -> getJavaClassDescriptor(resolutionFacade)
+        is PsiMethod -> getJavaMethodDescriptor(resolutionFacade)
+        is PsiField -> getJavaFieldDescriptor(resolutionFacade)
         else -> null
     }
 }
 
-public fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {
-    return getContainingScope(method)?.getFunctions(method.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(method)
+fun PsiClass.resolveToDescriptor(
+        resolutionFacade: ResolutionFacade,
+        declarationTranslator: (KtClassOrObject) -> KtClassOrObject? = { it }
+): ClassDescriptor? {
+    return if (this is KtLightClass && this !is KtLightClassForDecompiledDeclaration) {
+        val origin = this.getOrigin() ?: return null
+        val declaration = declarationTranslator(origin) ?: return null
+        resolutionFacade.resolveToDescriptor(declaration)
+    }
+    else {
+        getJavaClassDescriptor(resolutionFacade)
+    } as? ClassDescriptor
 }
 
-public fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
+private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFacade?): JavaDescriptorResolver? {
+    if (resolutionFacade != null) {
+        return resolutionFacade.getFrontendService(this, JavaDescriptorResolver::class.java)
+    }
+    else {
+        if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
+
+        @Suppress("DEPRECATION")
+        return KotlinCacheService.getInstance(project).getProjectService(JvmPlatform, this.getModuleInfo(), JavaDescriptorResolver::class.java)
+    }
+}
+
+private fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {
+    return getContainingScope(method)?.getContributedFunctions(method.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(method)
+}
+
+private fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
     return resolveClass(constructor.getContainingClass())?.getConstructors()?.findByJavaElement(constructor)
 }
 
-public fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
-    return getContainingScope(field)?.getProperties(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
+private fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
+    return getContainingScope(field)?.getContributedVariables(field.name, NoLookupLocation.FROM_IDE)?.findByJavaElement(field) as? PropertyDescriptor
 }
 
-private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): KtScope? {
+private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): MemberScope? {
     val containingClass = resolveClass(member.getContainingClass())
     return if (member.isStatic())
         containingClass?.getStaticScope()

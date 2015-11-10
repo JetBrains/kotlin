@@ -23,8 +23,9 @@ import kotlin.jvm.internal.KotlinFileFacade
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KCallableImpl
-import kotlin.reflect.jvm.internal.KPropertyImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
+import kotlin.reflect.jvm.internal.asKCallableImpl
+import kotlin.reflect.jvm.internal.asKPropertyImpl
 
 // Kotlin reflection -> Java reflection
 
@@ -33,7 +34,7 @@ import kotlin.reflect.jvm.internal.KTypeImpl
  * or `null` if the property has no backing field.
  */
 public val KProperty<*>.javaField: Field?
-    get() = (this as KPropertyImpl<*>).javaField
+    get() = this.asKPropertyImpl()?.javaField
 
 /**
  * Returns a Java [Method] instance corresponding to the getter of the given property,
@@ -55,7 +56,7 @@ public val KMutableProperty<*>.javaSetter: Method?
  * or `null` if this function is a constructor or cannot be represented by a Java [Method].
  */
 public val KFunction<*>.javaMethod: Method?
-    get() = (this as? KCallableImpl<*>)?.caller?.member as? Method
+    get() = this.asKCallableImpl()?.caller?.member as? Method
 
 /**
  * Returns a Java [Constructor] instance corresponding to the given Kotlin function,
@@ -63,7 +64,7 @@ public val KFunction<*>.javaMethod: Method?
  */
 @Suppress("UNCHECKED_CAST")
 public val <T> KFunction<T>.javaConstructor: Constructor<T>?
-    get() = (this as? KCallableImpl<T>)?.caller?.member as? Constructor<T>
+    get() = this.asKCallableImpl()?.caller?.member as? Constructor<T>
 
 
 /**

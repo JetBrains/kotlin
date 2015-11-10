@@ -30,7 +30,7 @@ import com.intellij.util.QueryExecutor
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.stubindex.JetAnnotationsIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -67,8 +67,8 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
             val annotationFQN = annClass.getQualifiedName()
             assert(annotationFQN != null)
 
-            for (elt in getJetAnnotationCandidates(annClass, useScope)) {
-                if (notJetAnnotationEntry(elt)) continue
+            for (elt in getKotlinAnnotationCandidates(annClass, useScope)) {
+                if (notKtAnnotationEntry(elt)) continue
 
                 val result = runReadAction(fun(): Boolean {
                     val declaration = elt.getStrictParentOfType<KtDeclaration>() ?: return true
@@ -92,18 +92,18 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
         }
 
         /* Return all elements annotated with given annotation name. Aliases don't work now. */
-        private fun getJetAnnotationCandidates(annClass: PsiClass, useScope: SearchScope): Collection<PsiElement> {
+        private fun getKotlinAnnotationCandidates(annClass: PsiClass, useScope: SearchScope): Collection<PsiElement> {
             return runReadAction(fun(): Collection<PsiElement> {
                 if (useScope is GlobalSearchScope) {
                     val name = annClass.getName() ?: return emptyList()
-                    return JetAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
+                    return KotlinAnnotationsIndex.getInstance().get(name, annClass.getProject(), useScope)
                 }
 
                 return (useScope as LocalSearchScope).scope.flatMap { it.collectDescendantsOfType<KtAnnotationEntry>() }
             })
         }
 
-        private fun notJetAnnotationEntry(found: PsiElement): Boolean {
+        private fun notKtAnnotationEntry(found: PsiElement): Boolean {
             if (found is KtAnnotationEntry) return false
 
             val faultyContainer = PsiUtilCore.getVirtualFile(found)

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,48 +32,48 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductionTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineSizeReduction/cases"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineSizeReduction/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("lastBreak.kt")
     public void testLastBreak() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/lastBreak.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/lastBreak.kt");
         doTest(fileName);
     }
 
     @TestMetadata("oneTopLevelReturn.kt")
     public void testOneTopLevelReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/oneTopLevelReturn.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/oneTopLevelReturn.kt");
         doTest(fileName);
     }
 
     @TestMetadata("returnInlineCall.kt")
     public void testReturnInlineCall() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/returnInlineCall.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/returnInlineCall.kt");
         doTest(fileName);
     }
 
     @TestMetadata("simpleReturnFunction.kt")
     public void testSimpleReturnFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/simpleReturnFunction.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/simpleReturnFunction.kt");
         doTest(fileName);
     }
 
     @TestMetadata("this.kt")
     public void testThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/this.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/this.kt");
         doTest(fileName);
     }
 
     @TestMetadata("valAssignment.kt")
     public void testValAssignment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/valAssignment.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/valAssignment.kt");
         doTest(fileName);
     }
 
     @TestMetadata("valDeclaration.kt")
     public void testValDeclaration() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/valDeclaration.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/valDeclaration.kt");
         doTest(fileName);
     }
 }

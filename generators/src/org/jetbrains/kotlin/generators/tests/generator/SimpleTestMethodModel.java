@@ -21,7 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
@@ -73,14 +73,14 @@ public class SimpleTestMethodModel implements TestMethodModel {
 
     @Override
     public void generateBody(@NotNull Printer p) {
-        String filePath = JetTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
-        p.println("String fileName = JetTestUtils.navigationMetadata(\"", filePath, "\");");
+        String filePath = KotlinTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
+        p.println("String fileName = KotlinTestUtils.navigationMetadata(\"", filePath, "\");");
         p.println(doTestMethodName, "(fileName);");
     }
 
     @Override
     public String getDataString() {
-        return JetTestUtils.getFilePath(new File(FileUtil.getRelativePath(rootDir, file)));
+        return KotlinTestUtils.getFilePath(new File(FileUtil.getRelativePath(rootDir, file)));
     }
 
     private boolean isIgnored() {
@@ -104,6 +104,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
         }
     }
 
+    @NotNull
     @Override
     public String getName() {
         Matcher matcher = filenamePattern.matcher(file.getName());
@@ -122,5 +123,10 @@ public class SimpleTestMethodModel implements TestMethodModel {
             unescapedName = relativePath + "-" + StringUtil.capitalize(extractedName);
         }
         return (isIgnored() ? "ignored" : "test") + StringUtil.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
+    }
+
+    @Override
+    public void generateSignature(@NotNull Printer p) {
+        TestMethodModel.DefaultImpls.generateSignature(this, p);
     }
 }

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import java.util.Collections;
 import java.util.List;
 
-public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> implements KtCallableDeclaration {
+public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> implements KtCallableDeclaration, KtValVarKeywordOwner {
 
     public KtParameter(@NotNull ASTNode node) {
         super(node);

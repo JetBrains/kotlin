@@ -21,70 +21,96 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
-import com.intellij.psi.PsiClass
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.utils.addIfNotNull
+
+interface AbstractLookupElementFactory {
+    fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement>
+
+    fun createLookupElement(
+            descriptor: DeclarationDescriptor,
+            useReceiverTypes: Boolean,
+            qualifyNestedClasses: Boolean = false,
+            includeClassTypeArguments: Boolean = true,
+            parametersAndTypeGrayed: Boolean = false
+    ): LookupElement?
+}
 
 data /* we need copy() */
 class LookupElementFactory(
-        private val resolutionFacade: ResolutionFacade,
+        val basicFactory: BasicLookupElementFactory,
         private val receiverTypes: Collection<KotlinType>?,
         private val callType: CallType<*>?,
-        private val isInStringTemplateAfterDollar: Boolean,
-        public val insertHandlerProvider: InsertHandlerProvider,
-        private val contextVariablesProvider: () -> Collection<VariableDescriptor>
-) {
-    private val basicFactory = BasicLookupElementFactory(resolutionFacade.project, insertHandlerProvider)
-
-    private val functionTypeContextVariables by lazy(LazyThreadSafetyMode.NONE) {
-        contextVariablesProvider().filter { KotlinBuiltIns.isFunctionOrExtensionFunctionType(it.type) }
+        private val inDescriptor: DeclarationDescriptor,
+        private val contextVariablesProvider: ContextVariablesProvider,
+        private val standardLookupElementsPostProcessor: (LookupElement) -> LookupElement = { it }
+) : AbstractLookupElementFactory {
+    companion object {
+        fun hasSingleFunctionTypeParameter(descriptor: FunctionDescriptor): Boolean {
+            val parameter = descriptor.original.valueParameters.singleOrNull() ?: return false
+            return KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.type)
+        }
     }
 
-    public fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
+    val insertHandlerProvider = basicFactory.insertHandlerProvider
+
+    private val superFunctions: Set<FunctionDescriptor> by lazy {
+        inDescriptor.parentsWithSelf
+                .takeWhile { it !is ClassDescriptor }
+                .filterIsInstance<FunctionDescriptor>()
+                .toList()
+                .flatMap { it.findOriginalTopMostOverriddenDescriptors() }
+                .toSet()
+    }
+
+    override fun createStandardLookupElementsForDescriptor(descriptor: DeclarationDescriptor, useReceiverTypes: Boolean): Collection<LookupElement> {
         val result = SmartList<LookupElement>()
 
-        val isNormalCall = callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE
+        val isNormalCall = callType == CallType.DEFAULT || callType == CallType.DOT || callType == CallType.SAFE || callType == CallType.SUPER_MEMBERS
 
-        var lookupElement = createLookupElement(descriptor, useReceiverTypes, parametersAndTypeGrayed = !isNormalCall && callType != CallType.INFIX)
-        if (isInStringTemplateAfterDollar && (descriptor is FunctionDescriptor || descriptor is ClassifierDescriptor)) {
-            lookupElement = lookupElement.withBracesSurrounding()
-        }
-        result.add(lookupElement)
+        result.add(createLookupElement(descriptor, useReceiverTypes, parametersAndTypeGrayed = !isNormalCall && callType != CallType.INFIX))
 
         // add special item for function with one argument of function type with more than one parameter
         if (descriptor is FunctionDescriptor && isNormalCall) {
-            result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
+            if (callType != CallType.SUPER_MEMBERS) {
+                result.addSpecialFunctionCallElements(descriptor, useReceiverTypes)
+            }
+            else if (useReceiverTypes) {
+                result.addIfNotNull(createSuperFunctionCallWithArguments(descriptor))
+            }
         }
 
-        return result
+        return result.map(standardLookupElementsPostProcessor)
     }
 
     private fun MutableCollection<LookupElement>.addSpecialFunctionCallElements(descriptor: FunctionDescriptor, useReceiverTypes: Boolean) {
         // check that all parameters except for the last one are optional
         val lastParameter = descriptor.valueParameters.lastOrNull() ?: return
         if (!descriptor.valueParameters.all { it == lastParameter || it.hasDefaultValue() }) return
-        val parameterType = lastParameter.type
-        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-            val isSingleParameter = descriptor.valueParameters.size() == 1
 
-            val functionParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+        if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(lastParameter.original.type)) {
+            val isSingleParameter = descriptor.valueParameters.size == 1
+
+            val parameterType = lastParameter.type
+            val functionParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size
             // we don't need special item inserting lambda for single functional parameter that does not need multiple arguments because the default item will be special in this case
             if (!isSingleParameter || functionParameterCount > 1) {
                 add(createFunctionCallElementWithLambda(descriptor, parameterType, functionParameterCount > 1, useReceiverTypes))
@@ -94,12 +120,9 @@ class LookupElementFactory(
                 //TODO: also ::function? at least for local functions
                 //TODO: order for them
                 val fuzzyParameterType = FuzzyType(parameterType, descriptor.typeParameters)
-                for (variable in functionTypeContextVariables) {
-                    val substitutor = variable.fuzzyReturnType()?.checkIsSubtypeOf(fuzzyParameterType)
-                    if (substitutor != null) {
-                        val substitutedDescriptor = descriptor.substitute(substitutor) ?: continue
-                        add(createFunctionCallElementWithArgument(substitutedDescriptor, variable.name.asString(), useReceiverTypes))
-                    }
+                for ((variable, substitutor) in contextVariablesProvider.functionTypeVariables(fuzzyParameterType)) {
+                    val substitutedDescriptor = descriptor.substitute(substitutor)
+                    add(createFunctionCallElementWithArguments(substitutedDescriptor, variable.name.render(), useReceiverTypes))
                 }
             }
         }
@@ -139,34 +162,38 @@ class LookupElementFactory(
             }
         }
 
-        if (isInStringTemplateAfterDollar) {
-            lookupElement = lookupElement.withBracesSurrounding()
-        }
-
         return lookupElement
     }
 
-    private fun createFunctionCallElementWithArgument(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
+    private fun createSuperFunctionCallWithArguments(descriptor: FunctionDescriptor): LookupElement? {
+        if (descriptor.valueParameters.isEmpty()) return null
+        if (descriptor.findOriginalTopMostOverriddenDescriptors().none { it in superFunctions }) return null
+
+        val argumentText = descriptor.valueParameters.map {
+            (if (it.varargElementType != null) "*" else "") + it.name.render()
+        }.joinToString(", ") //TODO: use code formatting settings
+
+        val lookupElement = createFunctionCallElementWithArguments(descriptor, argumentText, true)
+        lookupElement.assignPriority(ItemPriority.SUPER_METHOD_WITH_ARGUMENTS)
+        lookupElement.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+        return lookupElement
+    }
+
+    private fun createFunctionCallElementWithArguments(descriptor: FunctionDescriptor, argumentText: String, useReceiverTypes: Boolean): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
 
         val needTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
-        lookupElement = FunctionCallWithArgumentLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
-
-        if (isInStringTemplateAfterDollar) {
-            lookupElement = lookupElement.withBracesSurrounding()
-        }
-
-        return lookupElement
+        return FunctionCallWithArgumentsLookupElement(lookupElement, descriptor, argumentText, needTypeArguments)
     }
 
-    private inner class FunctionCallWithArgumentLookupElement(
+    private inner class FunctionCallWithArgumentsLookupElement(
             originalLookupElement: LookupElement,
             private val descriptor: FunctionDescriptor,
             private val argumentText: String,
             private val needTypeArguments: Boolean
     ) : LookupElementDecorator<LookupElement>(originalLookupElement) {
 
-        override fun equals(other: Any?) = other is FunctionCallWithArgumentLookupElement && delegate == other.delegate && argumentText == other.argumentText
+        override fun equals(other: Any?) = other is FunctionCallWithArgumentsLookupElement && delegate == other.delegate && argumentText == other.argumentText
         override fun hashCode() = delegate.hashCode() * 17 + argumentText.hashCode()
 
         override fun renderElement(presentation: LookupElementPresentation) {
@@ -182,12 +209,12 @@ class LookupElementFactory(
         }
     }
 
-    public fun createLookupElement(
+    override fun createLookupElement(
             descriptor: DeclarationDescriptor,
             useReceiverTypes: Boolean,
-            qualifyNestedClasses: Boolean = false,
-            includeClassTypeArguments: Boolean = true,
-            parametersAndTypeGrayed: Boolean = false
+            qualifyNestedClasses: Boolean,
+            includeClassTypeArguments: Boolean,
+            parametersAndTypeGrayed: Boolean
     ): LookupElement {
         var element = basicFactory.createLookupElement(descriptor, qualifyNestedClasses, includeClassTypeArguments, parametersAndTypeGrayed)
 
@@ -282,13 +309,5 @@ class LookupElementFactory(
         val receiverParameter = original.extensionReceiverParameter ?: return false
         val typeParameter = receiverParameter.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
         return typeParameter.containingDeclaration == original
-    }
-
-    public fun createLookupElementForJavaClass(psiClass: PsiClass, qualifyNestedClasses: Boolean = false, includeClassTypeArguments: Boolean = true): LookupElement {
-        return basicFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses, includeClassTypeArguments)
-    }
-
-    public fun createLookupElementForPackage(name: FqName): LookupElement {
-        return basicFactory.createLookupElementForPackage(name)
     }
 }

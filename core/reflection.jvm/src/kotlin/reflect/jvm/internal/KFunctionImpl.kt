@@ -30,7 +30,7 @@ import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
 internal open class KFunctionImpl protected constructor(
         private val container: KDeclarationContainerImpl,
         name: String,
-        signature: String,
+        private val signature: String,
         descriptorInitialValue: FunctionDescriptor?
 ) : KFunction<Any?>, KCallableImpl<Any?>, FunctionImpl() {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(container, name, signature, null)
@@ -61,7 +61,6 @@ internal open class KFunctionImpl protected constructor(
             is Constructor<*> -> FunctionCaller.Constructor(member)
             is Method -> when {
                 !Modifier.isStatic(member.modifiers) -> FunctionCaller.InstanceMethod(member)
-                descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null,
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
                     FunctionCaller.JvmStaticInObject(member)
 
@@ -90,7 +89,6 @@ internal open class KFunctionImpl protected constructor(
         when (member) {
             is Constructor<*> -> FunctionCaller.Constructor(member)
             is Method -> when {
-                descriptor.annotations.findAnnotation(PLATFORM_STATIC) != null,
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null ->
                     FunctionCaller.JvmStaticInObject(member)
 
@@ -101,16 +99,18 @@ internal open class KFunctionImpl protected constructor(
     }
 
     override fun getArity(): Int {
-        return descriptor.valueParameters.size() +
+        return descriptor.valueParameters.size +
                (if (descriptor.dispatchReceiverParameter != null) 1 else 0) +
                (if (descriptor.extensionReceiverParameter != null) 1 else 0)
     }
 
-    override fun equals(other: Any?): Boolean =
-            other is KFunctionImpl && descriptor == other.descriptor
+    override fun equals(other: Any?): Boolean {
+        val that = other.asKFunctionImpl() ?: return false
+        return container == that.container && name == that.name && signature == that.signature
+    }
 
     override fun hashCode(): Int =
-            descriptor.hashCode()
+            (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
 
     override fun toString(): String =
             ReflectionObjectRenderer.renderFunction(descriptor)

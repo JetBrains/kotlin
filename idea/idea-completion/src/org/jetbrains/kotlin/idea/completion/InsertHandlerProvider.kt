@@ -40,21 +40,24 @@ class InsertHandlerProvider(
         return when (descriptor) {
             is FunctionDescriptor -> {
                 when (callType) {
-                    is CallType.DEFAULT, is CallType.DOT, is CallType.SAFE -> {
+                    CallType.DEFAULT, CallType.DOT, CallType.SAFE, CallType.SUPER_MEMBERS -> {
                         val needTypeArguments = needTypeArguments(descriptor)
                         val parameters = descriptor.valueParameters
                         when (parameters.size()) {
                             0 -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false)
 
                             1 -> {
-                                val parameterType = parameters.single().getType()
-                                if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                                    val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
-                                    if (parameterCount <= 1) {
-                                        // otherwise additional item with lambda template is to be added
-                                        return KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                if (callType != CallType.SUPER_MEMBERS) { // for super call we don't suggest to generate "super.foo { ... }" (seems to be non-typical use)
+                                    val parameterType = parameters.single().getType()
+                                    if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+                                        val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                                        if (parameterCount <= 1) {
+                                            // otherwise additional item with lambda template is to be added
+                                            return KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
+                                        }
                                     }
                                 }
+
                                 KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = true)
                             }
 
@@ -62,7 +65,7 @@ class InsertHandlerProvider(
                         }
                     }
 
-                    is CallType.INFIX -> KotlinFunctionInsertHandler.Infix
+                    CallType.INFIX -> KotlinFunctionInsertHandler.Infix
 
                     else -> KotlinFunctionInsertHandler.OnlyName
                 }

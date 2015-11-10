@@ -27,8 +27,8 @@ import java.lang.ref.WeakReference;
     public static abstract class Val<T> {
         private static final Object NULL_VALUE = new Object() {};
 
-        @SuppressWarnings("UnusedParameters")
-        public T get(Object instance, Object metadata) {
+        @SuppressWarnings({"UnusedParameters", "unused"})
+        public final T getValue(Object instance, Object metadata) {
             return invoke();
         }
 

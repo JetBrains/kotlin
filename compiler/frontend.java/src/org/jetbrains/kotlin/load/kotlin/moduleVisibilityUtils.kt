@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import java.io.File
 
 interface ModuleVisibilityManager {
@@ -53,7 +54,12 @@ public fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescripto
         is KotlinJvmBinarySourceElement ->
             source.binaryClass
         is KotlinJvmBinaryPackageSourceElement ->
-            source.getRepresentativeBinaryClass()
+            if (descriptor is DeserializedCallableMemberDescriptor) {
+                source.getContainingBinaryClass(descriptor) ?: source.getRepresentativeBinaryClass()
+            }
+            else {
+                source.getRepresentativeBinaryClass()
+            }
         else ->
             null
     }

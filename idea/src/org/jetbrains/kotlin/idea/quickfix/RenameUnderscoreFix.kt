@@ -43,7 +43,7 @@ class RenameUnderscoreFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtD
     override fun getText(): String = "Rename"
     override fun getFamilyName(): String = getText()
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val declaration = diagnostic.psiElement.getNonStrictParentOfType<KtDeclaration>() ?: return null
             if (diagnostic.psiElement == (declaration as? PsiNameIdentifierOwner)?.nameIdentifier) {

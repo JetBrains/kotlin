@@ -559,11 +559,12 @@ public class JetFunctionCallUsage extends JetUsageInfo<KtCallElement> {
 
             if (argumentNameExpression != null) {
                 Integer oldParameterIndex = changeInfo.getOldParameterIndex(argumentNameExpression.getReferencedName());
+                if (oldParameterIndex == null) continue;
 
-                if (oldParameterIndex != null) {
-                    JetParameterInfo parameterInfo = changeInfo.getNewParameters()[oldParameterIndex];
-                    changeArgumentName(argumentNameExpression, parameterInfo);
-                }
+                JetParameterInfo parameterInfo = changeInfo.getNewParameters()[
+                        changeInfo.getReceiverParameterInfo() != null ? oldParameterIndex + 1 : oldParameterIndex
+                ];
+                changeArgumentName(argumentNameExpression, parameterInfo);
             }
         }
     }

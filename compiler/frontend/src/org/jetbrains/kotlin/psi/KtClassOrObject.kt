@@ -63,9 +63,6 @@ abstract public class KtClassOrObject :
 
     public fun getAnonymousInitializers(): List<KtClassInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
-    public fun getNameAsDeclaration(): KtObjectDeclarationName? =
-            findChildByType<PsiElement>(KtNodeTypes.OBJECT_DECLARATION_NAME) as KtObjectDeclarationName?
-
     public fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
 
     public fun getOrCreateBody(): KtClassBody = getBody() ?: add(KtPsiFactory(this).createEmptyClassBody()) as KtClassBody
@@ -112,7 +109,7 @@ abstract public class KtClassOrObject :
     public override fun delete() {
         CheckUtil.checkWritable(this);
 
-        val file = getContainingJetFile();
+        val file = getContainingKtFile();
         if (!isTopLevel() || file.getDeclarations().size() > 1) {
             CodeEditUtil.removeChild(getParent().getNode(), getNode());
         }

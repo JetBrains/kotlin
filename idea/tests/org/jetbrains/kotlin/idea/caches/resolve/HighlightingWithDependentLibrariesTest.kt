@@ -22,17 +22,17 @@ import com.intellij.openapi.roots.libraries.Library
 import java.io.File
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ContentEntry
 
-public class HighlightingWithDependentLibrariesTest : JetLightCodeInsightFixtureTestCase() {
+public class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTestCase() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/highlightingWithDependentLibraries"
 
-    override fun getProjectDescriptor() = object : JetLightProjectDescriptor() {
+    override fun getProjectDescriptor() = object : KotlinLightProjectDescriptor() {
         override fun configureModule(module: Module, model: ModifiableRootModel) {
             val compiledJar1 = MockLibraryUtil.compileLibraryToJar("$TEST_DATA_PATH/lib1", "lib1", false)
             val compiledJar2 = MockLibraryUtil.compileLibraryToJar("$TEST_DATA_PATH/lib2", "lib2", false, compiledJar1.canonicalPath)

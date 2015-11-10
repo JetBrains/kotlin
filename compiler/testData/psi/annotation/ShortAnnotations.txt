@@ -107,8 +107,7 @@ JetFile: ShortAnnotations.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('B')
+    PsiElement(IDENTIFIER)('B')
   PsiWhiteSpace('\n')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(IDENTIFIER)('foo')
@@ -404,8 +403,7 @@ JetFile: ShortAnnotations.kt
       OBJECT_DECLARATION
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('B')
+        PsiElement(IDENTIFIER)('B')
       PsiWhiteSpace('\n  ')
       PsiErrorElement:Expecting member declaration
         PsiElement(IDENTIFIER)('foo')

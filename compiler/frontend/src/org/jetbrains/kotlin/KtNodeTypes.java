@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public interface KtNodeTypes {
-    IFileElementType JET_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
+    IFileElementType KT_FILE = new IFileElementType(KotlinLanguage.INSTANCE);
 
     IElementType CLASS     = KtStubElementTypes.CLASS;
     IElementType FUN       = KtStubElementTypes.FUNCTION;
@@ -33,7 +33,6 @@ public interface KtNodeTypes {
 
     KtNodeType TYPEDEF    = new KtNodeType("TYPEDEF", KtTypedef.class);
     IElementType OBJECT_DECLARATION = KtStubElementTypes.OBJECT_DECLARATION;
-    KtNodeType OBJECT_DECLARATION_NAME = new KtNodeType("OBJECT_DECLARATION_NAME", KtObjectDeclarationName.class);
 
     IElementType ENUM_ENTRY            = KtStubElementTypes.ENUM_ENTRY;
     IElementType ANONYMOUS_INITIALIZER = KtStubElementTypes.ANONYMOUS_INITIALIZER;

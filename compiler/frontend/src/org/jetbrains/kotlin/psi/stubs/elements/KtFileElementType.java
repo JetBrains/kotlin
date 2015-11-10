@@ -28,7 +28,7 @@ import com.intellij.psi.tree.IStubFileElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.parsing.JetParser;
+import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 
 import java.io.IOException;
@@ -79,7 +79,7 @@ public class KtFileElementType extends IStubFileElementType<KotlinFileStub> {
         Project project = psi.getProject();
         Language languageForParser = getLanguageForParser(psi);
         PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
-        JetParser parser = (JetParser) LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser).createParser(project);
+        KotlinParser parser = (KotlinParser) LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser).createParser(project);
         return parser.parse(this, builder, psi.getContainingFile()).getFirstChildNode();
     }
 

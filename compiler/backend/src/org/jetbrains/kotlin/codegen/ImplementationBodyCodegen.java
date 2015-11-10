@@ -412,7 +412,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private boolean isGenericToArrayPresent() {
         Collection<FunctionDescriptor> functions =
-                descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("toArray"), NoLookupLocation.FROM_BACKEND);
+                descriptor.getDefaultType().getMemberScope().getContributedFunctions(Name.identifier("toArray"), NoLookupLocation.FROM_BACKEND);
         for (FunctionDescriptor function : functions) {
             if (CallResolverUtilKt.isOrOverridesSynthesized(function)) {
                 continue;
@@ -794,7 +794,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         Type type = typeMapper.mapType(DescriptorUtilsKt.getBuiltIns(descriptor).getArrayType(INVARIANT, descriptor.getDefaultType()));
 
         VariableDescriptor valuesProperty =
-                CollectionsKt.single(descriptor.getStaticScope().getProperties(ENUM_VALUES, NoLookupLocation.FROM_BACKEND), new Function1<VariableDescriptor, Boolean>() {
+                CollectionsKt.single(descriptor.getStaticScope().getContributedVariables(ENUM_VALUES, NoLookupLocation.FROM_BACKEND), new Function1<VariableDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(VariableDescriptor descriptor) {
                         return CodegenUtil.isEnumValuesProperty(descriptor);
@@ -814,7 +814,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateEnumValueOfMethod() {
         FunctionDescriptor valueOfFunction =
-                CollectionsKt.single(descriptor.getStaticScope().getFunctions(ENUM_VALUE_OF, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
+                CollectionsKt.single(descriptor.getStaticScope().getContributedFunctions(ENUM_VALUE_OF, NoLookupLocation.FROM_BACKEND), new Function1<FunctionDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(FunctionDescriptor descriptor) {
                         return CodegenUtil.isEnumValueOfMethod(descriptor);
@@ -957,7 +957,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
-        new DefaultParameterValueSubstitutor(state).generateConstructorOverloadsIfNeeded(constructorDescriptor, v, kind, myClass);
+        new DefaultParameterValueSubstitutor(state).generatePrimaryConstructorOverloadsIfNeeded(constructorDescriptor, v, kind, myClass);
 
         if (isCompanionObject(descriptor)) {
             context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);
@@ -969,8 +969,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
+        KtSecondaryConstructor constructor = (KtSecondaryConstructor) descriptorToDeclaration(constructorDescriptor);
+
         functionCodegen.generateMethod(
-                JvmDeclarationOriginKt.OtherOrigin(descriptorToDeclaration(constructorDescriptor), constructorDescriptor),
+                JvmDeclarationOriginKt.OtherOrigin(constructor, constructorDescriptor),
                 constructorDescriptor, constructorContext,
                 new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
                                            @Override
@@ -984,7 +986,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
         new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
-                myClass, constructorDescriptor, constructorDescriptor, kind, v
+                constructor, constructorDescriptor, constructorDescriptor, kind, v
         );
     }
 
@@ -1189,7 +1191,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         KtVisitorVoid visitor = new KtVisitorVoid() {
             @Override
-            public void visitJetElement(@NotNull KtElement e) {
+            public void visitKtElement(@NotNull KtElement e) {
                 e.acceptChildren(this);
             }
 
@@ -1433,11 +1435,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         String.format("Non-outer parameter incorrectly mapped to outer for %s: %s vs %s",
                                       constructorDescriptor, parameters, superParameters);
                 // Super constructor requires OUTER parameter, but our OUTER instance may be different from what is expected by the super
-                // constructor. We need to traverse our outer classes from the bottom up, to find the needed class
-                // TODO: isSuper should be "true" but this makes some tests on inner classes extending outer fail
-                // See innerExtendsOuter.kt, semantics of inner classes extending their outer should be changed to be as in Java
+                // constructor. We need to traverse our outer classes from the bottom up, to find the needed class. See innerExtendsOuter.kt
                 ClassDescriptor outerForSuper = (ClassDescriptor) superConstructor.getContainingDeclaration().getContainingDeclaration();
-                StackValue outer = codegen.generateThisOrOuter(outerForSuper, false);
+                StackValue outer = codegen.generateThisOrOuter(outerForSuper, true, true);
                 outer.put(outer.type, codegen.v);
                 superIndex++;
             }

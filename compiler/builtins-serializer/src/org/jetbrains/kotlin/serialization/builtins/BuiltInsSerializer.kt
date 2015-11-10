@@ -118,7 +118,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
         // DescriptorValidator.validate(packageView)
 
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getDescriptors(DescriptorKindFilter.CLASSIFIERS))
+        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
         val extension = BuiltInsSerializerExtension()
         serializeClasses(classifierDescriptors, extension) {
@@ -160,7 +160,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         val classProto = DescriptorSerializer.createTopLevel(serializer).classProto(classDescriptor).build()
         writeClass(classDescriptor, classProto)
 
-        serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getDescriptors(), serializer, writeClass)
+        serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(), serializer, writeClass)
     }
 
     private fun serializeClasses(

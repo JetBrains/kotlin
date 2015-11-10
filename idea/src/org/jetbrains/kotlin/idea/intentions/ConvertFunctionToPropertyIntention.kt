@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
-public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<KtNamedFunction>(javaClass(), "Convert function to property"), LowPriorityAction {
+public class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunction>(javaClass(), "Convert function to property"), LowPriorityAction {
     private var KtNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
 
     private inner class Converter(

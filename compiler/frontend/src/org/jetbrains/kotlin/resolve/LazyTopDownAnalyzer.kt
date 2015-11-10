@@ -69,7 +69,7 @@ public class LazyTopDownAnalyzer(
                     throw IllegalArgumentException("Unsupported declaration: " + dcl + " " + dcl.getText())
                 }
 
-                override fun visitJetFile(file: KtFile) {
+                override fun visitKtFile(file: KtFile) {
                     if (file.isScript()) {
                         val script = file.getScript() ?: throw AssertionError("getScript() is null for file: $file")
 
@@ -97,7 +97,7 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitImportDirective(importDirective: KtImportDirective) {
-                    val importResolver = fileScopeProvider.getImportResolver(importDirective.getContainingJetFile())
+                    val importResolver = fileScopeProvider.getImportResolver(importDirective.getContainingKtFile())
                     importResolver.forceResolveImport(importDirective)
                 }
 

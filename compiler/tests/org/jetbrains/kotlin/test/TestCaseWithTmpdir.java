@@ -26,6 +26,6 @@ public abstract class TestCaseWithTmpdir extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        tmpdir = JetTestUtils.tmpDirForTest(this);
+        tmpdir = KotlinTestUtils.tmpDirForTest(this);
     }
 }

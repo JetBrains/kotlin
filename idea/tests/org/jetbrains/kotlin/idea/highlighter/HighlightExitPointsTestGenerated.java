@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,96 +32,96 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class HighlightExitPointsTestGenerated extends AbstractHighlightExitPointsTest {
     public void testAllFilesPresentInExitPoints() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/exitPoints"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/exitPoints"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("inline1.kt")
     public void testInline1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/inline1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/inline1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("inline2.kt")
     public void testInline2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/inline2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/inline2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("inlineLocalReturn1.kt")
     public void testInlineLocalReturn1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/inlineLocalReturn1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/inlineLocalReturn1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("inlineLocalReturn2.kt")
     public void testInlineLocalReturn2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/inlineLocalReturn2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/inlineLocalReturn2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("inlineWithNoInlineParam.kt")
     public void testInlineWithNoInlineParam() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/inlineWithNoInlineParam.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/inlineWithNoInlineParam.kt");
         doTest(fileName);
     }
 
     @TestMetadata("invalidReturn.kt")
     public void testInvalidReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/invalidReturn.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/invalidReturn.kt");
         doTest(fileName);
     }
 
     @TestMetadata("invalidThrow.kt")
     public void testInvalidThrow() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/invalidThrow.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/invalidThrow.kt");
         doTest(fileName);
     }
 
     @TestMetadata("localFunction1.kt")
     public void testLocalFunction1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/localFunction1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/localFunction1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("localFunction2.kt")
     public void testLocalFunction2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/localFunction2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/localFunction2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("localFunctionThrow.kt")
     public void testLocalFunctionThrow() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/localFunctionThrow.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/localFunctionThrow.kt");
         doTest(fileName);
     }
 
     @TestMetadata("notInline1.kt")
     public void testNotInline1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/notInline1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/notInline1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("notInline2.kt")
     public void testNotInline2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/notInline2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/notInline2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/simple.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/simple.kt");
         doTest(fileName);
     }
 
     @TestMetadata("throw1.kt")
     public void testThrow1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/throw1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/throw1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("throw2.kt")
     public void testThrow2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/throw2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/exitPoints/throw2.kt");
         doTest(fileName);
     }
 }

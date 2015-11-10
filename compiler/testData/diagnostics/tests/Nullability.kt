@@ -4,7 +4,7 @@ fun test() {
     <!DEBUG_INFO_SMARTCAST!>a<!>.plus(1)
   }
   else {
-    a?.plus(1)
+    <!ALWAYS_NULL!>a<!>?.plus(1)
   }
 
   val out : java.io.PrintStream? = null
@@ -28,7 +28,7 @@ fun test() {
   }
 
   if (out == null) {
-    out?.println()
+    <!ALWAYS_NULL!>out<!>?.println()
   } else {
     <!DEBUG_INFO_SMARTCAST!>out<!>.println()
   }
@@ -88,7 +88,7 @@ fun test() {
   }
 
   if (out == null) {
-    out?.println()
+    <!ALWAYS_NULL!>out<!>?.println()
   } else {
     <!DEBUG_INFO_SMARTCAST!>out<!>.println()
   }
@@ -140,13 +140,13 @@ fun test() {
   while (out != null) {
     <!DEBUG_INFO_SMARTCAST!>out<!>.println();
   }
-  out?.println();
+  <!ALWAYS_NULL!>out<!>?.println();
 
   val out2 : java.io.PrintStream? = null
   
   while (out2 == null) {
-    out2?.println();
-    out2<!UNSAFE_CALL!>.<!>println();
+    <!ALWAYS_NULL!>out2<!>?.println();
+    <!ALWAYS_NULL!>out2<!><!UNSAFE_CALL!>.<!>println();
   }
   <!DEBUG_INFO_SMARTCAST!>out2<!>.println()
 
@@ -235,7 +235,7 @@ fun f7(s : String?, t : String?) {
   }
   s?.get(0)
   if (!(s != null)) {
-    s?.get(0)
+    <!ALWAYS_NULL!>s<!>?.get(0)
   }
   else {
     <!DEBUG_INFO_SMARTCAST!>s<!>.get(0)
@@ -245,7 +245,7 @@ fun f7(s : String?, t : String?) {
     <!DEBUG_INFO_SMARTCAST!>s<!>.get(0)
   }
   else {
-    s?.get(0)
+    <!ALWAYS_NULL!>s<!>?.get(0)
   }
   s?.get(0)
   t?.get(0)
@@ -264,7 +264,7 @@ fun f7(s : String?, t : String?) {
     t?.get(0)
   }
   else {
-    s?.get(0)
+    <!ALWAYS_NULL!>s<!>?.get(0)
     t?.get(0)
   }
 }

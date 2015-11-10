@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 
 public class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention())
 
-public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Simplify boolean expression") {
+public class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Simplify boolean expression") {
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         val topBinary = PsiTreeUtil.getTopmostParentOfType(element, javaClass<KtBinaryExpression>()) ?: element

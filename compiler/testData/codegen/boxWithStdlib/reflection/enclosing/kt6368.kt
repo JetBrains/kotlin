@@ -1,11 +1,10 @@
-import kotlin.properties.Delegates
 import java.util.HashMap
 
 interface R {
     fun result(): String
 }
 
-val a by Delegates.lazy {
+val a by lazy {
     with(HashMap<String, R>()) {
         put("result", object : R {
             override fun result(): String = "OK"

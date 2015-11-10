@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli.common.modules
 
 import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.modules.JavaRootPath
 import java.util.*
 
 public class ModuleBuilder(
@@ -26,7 +27,7 @@ public class ModuleBuilder(
 ) : Module {
     private val sourceFiles = ArrayList<String>()
     private val classpathRoots = ArrayList<String>()
-    private val javaSourceRoots = ArrayList<String>()
+    private val javaSourceRoots = ArrayList<JavaRootPath>()
 
     public fun addSourceFiles(pattern: String) {
         sourceFiles.add(pattern)
@@ -36,12 +37,12 @@ public class ModuleBuilder(
         classpathRoots.add(name)
     }
 
-    public fun addJavaSourceRoot(name: String) {
-        javaSourceRoots.add(name)
+    public fun addJavaSourceRoot(rootPath: JavaRootPath) {
+        javaSourceRoots.add(rootPath)
     }
 
     override fun getOutputDirectory(): String = outputDir
-    override fun getJavaSourceRoots(): List<String> = javaSourceRoots
+    override fun getJavaSourceRoots(): List<JavaRootPath> = javaSourceRoots
     override fun getSourceFiles(): List<String> = sourceFiles
     override fun getClasspathRoots(): List<String> = classpathRoots
     override fun getModuleName(): String = name

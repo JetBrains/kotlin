@@ -453,7 +453,7 @@ public class CandidateResolver(
             val expression = (receiverArgument as? ExpressionReceiver)?.expression
             val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
 
-            val smartCastResult = smartCastManager.checkAndRecordPossibleCast(
+            val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, expectedReceiverParameterType, expression, this, /*recordType =*/ true
             )
 
@@ -475,7 +475,7 @@ public class CandidateResolver(
 
         val bindingContext = trace.bindingContext
         val receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext, scope.ownerDescriptor)
-        if (safeAccess && !dataFlowInfo.getNullability(receiverValue).canBeNull()) {
+        if (safeAccess && !dataFlowInfo.getPredictableNullability(receiverValue).canBeNull()) {
             tracing.unnecessarySafeCall(trace, receiverArgument.type)
         }
 

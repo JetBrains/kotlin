@@ -58,7 +58,7 @@ public object RawTypeCapabilities : TypeCapabilities {
 
             if (!upperArgs.isNotEmpty()) return null
 
-            val newArgs = lowerArgs.map { "(raw) $it" }.join(", ")
+            val newArgs = lowerArgs.map { "(raw) $it" }.joinToString(", ")
             val newUpper =
                     if (lowerArgs.zip(upperArgs).all { onlyOutDiffers(it.first, it.second) })
                         upperRendered.replaceArgs(newArgs)

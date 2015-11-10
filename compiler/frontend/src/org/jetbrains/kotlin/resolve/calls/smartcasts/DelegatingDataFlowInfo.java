@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -111,7 +113,18 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @Override
     @NotNull
     public Nullability getNullability(@NotNull DataFlowValue key) {
-        if (!key.isPredictable()) return key.getImmanentNullability();
+        return getNullability(key, false);
+    }
+
+    @Override
+    @NotNull
+    public Nullability getPredictableNullability(@NotNull DataFlowValue key) {
+        return getNullability(key, true);
+    }
+
+    @NotNull
+    private Nullability getNullability(@NotNull DataFlowValue key, boolean predictableOnly) {
+        if (predictableOnly && !key.isPredictable()) return key.getImmanentNullability();
         Nullability nullability = nullabilityInfo.get(key);
         return nullability != null ? nullability :
                parent != null ? parent.getNullability(key) :
@@ -123,7 +136,6 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
             @NotNull DataFlowValue value,
             @NotNull Nullability nullability
     ) {
-        if (!value.isPredictable()) return false;
         map.put(value, nullability);
         return nullability != getNullability(value);
     }
@@ -175,7 +187,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         putNullability(nullability, a, nullabilityOfB);
 
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        Set<KotlinType> typesForB = collectTypesFromMeAndParents(b);
+        Set<KotlinType> typesForB = getPossibleTypes(b);
         // Own type of B must be recorded separately, e.g. for a constant
         // But if its type is the same as A or it's null, there is no reason to do it
         // because usually null type or own type are not saved in this set
@@ -206,6 +218,15 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
         newTypeInfo.putAll(a, collectTypesFromMeAndParents(b));
         newTypeInfo.putAll(b, collectTypesFromMeAndParents(a));
+        if (!a.getType().equals(b.getType())) {
+            // To avoid recording base types of own type
+            if (!TypeUtilsKt.isSubtypeOf(a.getType(), b.getType())) {
+                newTypeInfo.put(a, b.getType());
+            }
+            if (!TypeUtilsKt.isSubtypeOf(b.getType(), a.getType())) {
+                newTypeInfo.put(b, a.getType());
+            }
+        }
         changed |= !newTypeInfo.isEmpty();
 
         return !changed

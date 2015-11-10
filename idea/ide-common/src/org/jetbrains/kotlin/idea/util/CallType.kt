@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -27,10 +28,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.supertypesWithAny
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: DescriptorKindFilter) {
@@ -41,6 +45,8 @@ public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: D
     object DOT : CallType<KtExpression>(DescriptorKindFilter.ALL)
 
     object SAFE : CallType<KtExpression>(DescriptorKindFilter.ALL)
+
+    object SUPER_MEMBERS : CallType<KtSuperExpression>(DescriptorKindFilter.CALLABLES exclude DescriptorKindExclude.Extensions exclude AbstractMembersExclude)
 
     object INFIX : CallType<KtExpression>(DescriptorKindFilter.FUNCTIONS exclude NonInfixExclude)
 
@@ -90,6 +96,14 @@ public sealed class CallType<TReceiver : KtElement?>(val descriptorKindFilter: D
 
         override val fullyExcludedDescriptorKinds: Int get() = 0
     }
+
+    private object AbstractMembersExclude : DescriptorKindExclude() {
+        override fun excludes(descriptor: DeclarationDescriptor)
+                = descriptor is CallableMemberDescriptor && descriptor.modality == Modality.ABSTRACT
+
+        override val fullyExcludedDescriptorKinds: Int
+            get() = 0
+    }
 }
 
 public sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : CallType<TReceiver>>(
@@ -100,6 +114,7 @@ public sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : Call
     object DEFAULT : CallTypeAndReceiver<Nothing?, CallType.DEFAULT>(CallType.DEFAULT, null)
     class DOT(receiver: KtExpression) : CallTypeAndReceiver<KtExpression, CallType.DOT>(CallType.DOT, receiver)
     class SAFE(receiver: KtExpression) : CallTypeAndReceiver<KtExpression, CallType.SAFE>(CallType.SAFE, receiver)
+    class SUPER_MEMBERS(receiver: KtSuperExpression) : CallTypeAndReceiver<KtSuperExpression, CallType.SUPER_MEMBERS>(CallType.SUPER_MEMBERS, receiver)
     class INFIX(receiver: KtExpression) : CallTypeAndReceiver<KtExpression, CallType.INFIX>(CallType.INFIX, receiver)
     class OPERATOR(receiver: KtExpression) : CallTypeAndReceiver<KtExpression, CallType.OPERATOR>(CallType.OPERATOR, receiver)
     class CALLABLE_REFERENCE(receiver: KtTypeReference?) : CallTypeAndReceiver<KtTypeReference?, CallType.CALLABLE_REFERENCE>(CallType.CALLABLE_REFERENCE, receiver)
@@ -159,6 +174,10 @@ public sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : Call
                         return CallTypeAndReceiver.DEFAULT
                     }
 
+                    if (receiverExpression is KtSuperExpression) {
+                        return CallTypeAndReceiver.SUPER_MEMBERS(receiverExpression)
+                    }
+
                     return when (parent) {
                         is KtCallExpression -> {
                             if ((parent.parent as KtQualifiedExpression).operationSign == KtTokens.SAFE_ACCESS)
@@ -186,7 +205,7 @@ public sealed class CallTypeAndReceiver<TReceiver : KtElement?, TCallType : Call
 
 public fun CallTypeAndReceiver<*, *>.receiverTypes(
         bindingContext: BindingContext,
-        position: KtExpression,
+        contextElement: PsiElement,
         moduleDescriptor: ModuleDescriptor,
         resolutionFacade: ResolutionFacade,
         predictableSmartCastsOnly: Boolean
@@ -205,6 +224,18 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         is CallTypeAndReceiver.OPERATOR -> receiverExpression = receiver
         is CallTypeAndReceiver.DELEGATE -> receiverExpression = receiver
 
+        is CallTypeAndReceiver.SUPER_MEMBERS -> {
+            val qualifier = receiver.superTypeQualifier
+            if (qualifier != null) {
+                return bindingContext.getType(receiver).singletonOrEmptyList()
+            }
+            else {
+                val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
+                val classDescriptor = resolutionScope.ownerDescriptor.parentsWithSelf.firstIsInstanceOrNull<ClassDescriptor>() ?: return emptyList()
+                return classDescriptor.typeConstructor.supertypesWithAny()
+            }
+        }
+
         is CallTypeAndReceiver.IMPORT_DIRECTIVE,
         is CallTypeAndReceiver.PACKAGE_DIRECTIVE,
         is CallTypeAndReceiver.TYPE,
@@ -220,11 +251,11 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         expressionType?.let { listOf(ExpressionReceiver(receiverExpression, expressionType)) } ?: return emptyList()
     }
     else {
-        val resolutionScope = position.getResolutionScope(bindingContext, resolutionFacade)
+        val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
         resolutionScope.getImplicitReceiversWithInstance().map { it.value }
     }
 
-    val dataFlowInfo = bindingContext.getDataFlowInfo(position)
+    val dataFlowInfo = bindingContext.getDataFlowInfo(contextElement)
 
     return receiverValues.flatMap { receiverValue ->
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, bindingContext, moduleDescriptor)

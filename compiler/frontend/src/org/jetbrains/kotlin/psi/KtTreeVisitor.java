@@ -20,14 +20,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class KtTreeVisitor<D> extends KtVisitor<Void, D> {
     @Override
-    public Void visitJetElement(@NotNull KtElement element, D data) {
+    public Void visitKtElement(@NotNull KtElement element, D data) {
         element.acceptChildren(this, data);
         return null;
     }
 
     @Override
-    public Void visitJetFile(@NotNull KtFile file, D data) {
-        super.visitJetFile(file, data);
+    public Void visitKtFile(@NotNull KtFile file, D data) {
+        super.visitKtFile(file, data);
         file.acceptChildren(this, data);
         return null;
     }

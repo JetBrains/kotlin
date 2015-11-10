@@ -90,7 +90,7 @@ public fun <T> Iterable<T>.elementAt(index: Int): T {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this list.
  */
 public fun <T> List<T>.elementAt(index: Int): T {
     return get(index)
@@ -115,7 +115,7 @@ public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
 }
 
 /**
- * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
 public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
@@ -140,14 +140,14 @@ public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
 }
 
 /**
- * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  */
 public fun <T> List<T>.elementAtOrNull(index: Int): T? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found.
+ * Returns the first element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
     return firstOrNull(predicate)
@@ -190,7 +190,7 @@ public fun <T> Iterable<T>.first(): T {
 
 /**
  * Returns first element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * @throws [NoSuchElementException] if the list is empty.
  */
 public fun <T> List<T>.first(): T {
     if (isEmpty())
@@ -228,7 +228,7 @@ public fun <T> Iterable<T>.firstOrNull(): T? {
 }
 
 /**
- * Returns the first element, or `null` if the collection is empty.
+ * Returns the first element, or `null` if the list is empty.
  */
 public fun <T> List<T>.firstOrNull(): T? {
     return if (isEmpty()) null else this[0]
@@ -243,14 +243,14 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
  */
 public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
     return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
 }
 
 /**
- * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  */
 public fun <T> List<T>.getOrNull(index: Int): T? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -295,7 +295,7 @@ public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
+ * Returns index of the first element matching the given [predicate], or -1 if the list does not contain such element.
  */
 public inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     for (index in indices) {
@@ -321,7 +321,7 @@ public inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
+ * Returns index of the last element matching the given [predicate], or -1 if the list does not contain such element.
  */
 public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -342,7 +342,7 @@ public inline fun Iterable<*>.indexOfRaw(element: Any?): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element.
+ * Returns first index of [element], or -1 if the list does not contain element.
  * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -376,7 +376,7 @@ public fun <T> Iterable<T>.last(): T {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * @throws [NoSuchElementException] if the list is empty.
  */
 public fun <T> List<T>.last(): T {
     if (isEmpty())
@@ -451,7 +451,7 @@ public inline fun Iterable<*>.lastIndexOfRaw(element: Any?): Int {
 }
 
 /**
- * Returns last index of [element], or -1 if the collection does not contain element.
+ * Returns last index of [element], or -1 if the list does not contain element.
  * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
 @Suppress("NOTHING_TO_INLINE")
@@ -478,7 +478,7 @@ public fun <T> Iterable<T>.lastOrNull(): T? {
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty.
+ * Returns the last element, or `null` if the list is empty.
  */
 public fun <T> List<T>.lastOrNull(): T? {
     return if (isEmpty()) null else this[size() - 1]
@@ -533,7 +533,7 @@ public fun <T> Iterable<T>.single(): T {
 }
 
 /**
- * Returns the single element, or throws an exception if the collection is empty or has more than one element.
+ * Returns the single element, or throws an exception if the list is empty or has more than one element.
  */
 public fun <T> List<T>.single(): T {
     return when (size()) {
@@ -579,7 +579,7 @@ public fun <T> Iterable<T>.singleOrNull(): T? {
 }
 
 /**
- * Returns single element, or `null` if the collection is empty or has more than one element.
+ * Returns single element, or `null` if the list is empty or has more than one element.
  */
 public fun <T> List<T>.singleOrNull(): T? {
     return if (size() == 1) this[0] else null
@@ -790,6 +790,13 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
 }
 
 /**
+ * Reverses elements in the collection in-place.
+ */
+public fun <T> MutableList<T>.reverse(): Unit {
+    java.util.Collections.reverse(this)
+}
+
+/**
  * Returns a list with elements in reversed order.
  */
 public fun <T> Iterable<T>.reversed(): List<T> {
@@ -800,12 +807,31 @@ public fun <T> Iterable<T>.reversed(): List<T> {
 }
 
 /**
+ * Sorts elements in the collection in-place according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareBy(selector))
+}
+
+/**
+ * Sorts elements in the collection in-place descending according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> MutableList<T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareByDescending(selector))
+}
+
+/**
+ * Sorts elements in the collection in-place descending according to their natural sort order.
+ */
+public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
+    sortWith(reverseOrder())
+}
+
+/**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList)
-    return sortedList
+    return toArrayList().apply { sort() }
 }
 
 /**
@@ -826,16 +852,14 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.sortedByDescending(crossinl
  * Returns a list of all elements sorted descending according to their natural sort order.
  */
 public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
-    return sortedWith(comparator { x, y -> y.compareTo(x) })
+    return sortedWith(reverseOrder())
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
-    val sortedList = toArrayList()
-    java.util.Collections.sort(sortedList, comparator)
-    return sortedList
+    return toArrayList().apply { sortWith(comparator) }
 }
 
 /**
@@ -962,8 +986,9 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 /**
  * Returns a [LinkedList] containing all elements.
  */
+@Deprecated("Use toCollection(LinkedList()) instead.", ReplaceWith("toCollection(LinkedList())"))
 public fun <T> Iterable<T>.toLinkedList(): LinkedList<T> {
-    return toCollection(LinkedList<T>())
+    return toCollection(LinkedList())
 }
 
 /**
@@ -979,7 +1004,7 @@ public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given collection.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
@@ -992,7 +1017,8 @@ public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T)
 }
 
 /**
- * Returns Map containing the values from the given collection indexed by [selector].
+ * Returns Map containing the elements from the given collection indexed by the key
+ * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K> Iterable<T>.toMapBy(selector: (T) -> K): Map<K, T> {
@@ -1063,42 +1089,20 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index of the original collection.
+ * Returns a list containing the results of applying the given [transform] function to each element and its index in the original collection.
  */
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
 /**
- * Appends transformed elements and their indices of the original collection using the given [transform] function
+ * Appends transformed elements and their indices in the original collection using the given [transform] function
  * to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
     var index = 0
     for (item in this)
         destination.add(transform(index++, item))
-    return destination
-}
-
-/**
- * Returns a list containing the results of applying the given [transform] function to each non-null element of the original collection.
- */
-@Deprecated("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().map {} instead.", ReplaceWith("filterNotNull().map(transform)"))
-public inline fun <T : Any, R> Iterable<T?>.mapNotNull(transform: (T) -> R): List<R> {
-    return mapNotNullTo(ArrayList<R>(), transform)
-}
-
-/**
- * Appends transformed non-null elements of original collection using the given [transform] function
- * to the given [destination].
- */
-@Deprecated("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().mapTo(destination) {} instead.", ReplaceWith("filterNotNull().mapTo(destination, transform)"))
-public inline fun <T : Any, R, C : MutableCollection<in R>> Iterable<T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
-    for (element in this) {
-        if (element != null) {
-            destination.add(transform(element))
-        }
-    }
     return destination
 }
 
@@ -1331,7 +1335,7 @@ public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(f: (T) -> R): T
 }
 
 /**
- * Returns `true` if collection has no elements.
+ * Returns `true` if the collection has no elements.
  */
 public fun <T> Iterable<T>.none(): Boolean {
     for (element in this) return false
@@ -1373,7 +1377,7 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection.
+ * Returns the sum of all values produced by [transform] function applied to each element in the collection.
  */
 public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -1384,7 +1388,7 @@ public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection.
+ * Returns the sum of all values produced by [transform] function applied to each element in the collection.
  */
 public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -1416,16 +1420,6 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
         }
     }
     return this as List<T>
-}
-
-@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(array, transform)"))
-public inline fun <T, R, V> Iterable<T>.merge(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    return zip(array, transform)
-}
-
-@Deprecated("Use zip() with transform instead.", ReplaceWith("zip(other, transform)"))
-public inline fun <T, R, V> Iterable<T>.merge(other: Iterable<R>, transform: (T, R) -> V): List<V> {
-    return zip(other, transform)
 }
 
 /**
@@ -1467,9 +1461,9 @@ public operator fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
 }
 
 /**
- * Splits the original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded `true`,
- * while *second* collection contains elements for which [predicate] yielded `false`.
+ * Splits the original collection into pair of lists,
+ * where *first* list contains elements for which [predicate] yielded `true`,
+ * while *second* list contains elements for which [predicate] yielded `false`.
  */
 public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
@@ -1619,14 +1613,16 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
-public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
+public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) {
-            val text = if (transform != null) transform(element) else if (element == null) "null" else element.toString()
-            buffer.append(text)
+            if (transform != null)
+                buffer.append(transform(element))
+            else
+                buffer.append(if (element == null) "null" else element.toString())
         } else break
     }
     if (limit >= 0 && count > limit) buffer.append(truncated)
@@ -1634,11 +1630,21 @@ public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String =
     return buffer
 }
 
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun <T, A : Appendable> Iterable<T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
+    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
+}
+
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
+public fun <T> Iterable<T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
+    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }

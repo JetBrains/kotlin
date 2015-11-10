@@ -153,7 +153,7 @@ private fun performCallReplacement(
     val wrappedExpression = callKindHandler.wrapGeneratedExpression(wrapper.expression)
     var result = elementToBeReplaced.replace(wrappedExpression) as KtElement
 
-    val file = result.getContainingJetFile()
+    val file = result.getContainingKtFile()
     replacement.fqNamesToImport
             .flatMap { file.resolveImportReference(it) }
             .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }

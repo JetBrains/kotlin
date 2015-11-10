@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTaskHolder
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
@@ -61,14 +61,13 @@ class LazyOperationsLog(
 
     public fun getText(): String {
         val groupedByOwner = records.groupByTo(IdentityHashMap()) {
-            val owner = it.data.fieldOwner
-            if (owner is KtScope) owner.getContainingDeclaration() else owner
+            it.data.fieldOwner
         }.map { Pair(it.getKey(), it.getValue()) }
 
         return groupedByOwner.map {
             val (owner, records) = it
             renderOwner(owner, records)
-        }.sortedBy(stringSanitizer).join("\n").renumberObjects()
+        }.sortedBy(stringSanitizer).joinToString("\n").renumberObjects()
     }
 
     /**
@@ -113,12 +112,12 @@ class LazyOperationsLog(
         sb.append(data.field?.getName() ?: "in ${data.lambdaCreatedIn.getDeclarationName()}")
 
         if (!data.arguments.isEmpty()) {
-            sb.append(data.arguments.map { render(it) }.join(", ", "(", ")"))
+            data.arguments.joinTo(sb, ", ", "(", ")") { render(it) }
         }
 
         sb.append(" = ${render(data.result)}")
 
-        if (data.fieldOwner is KtScope) {
+        if (data.fieldOwner is MemberScope) {
             sb.append(" // through ${render(data.fieldOwner)}")
         }
 
@@ -177,10 +176,8 @@ class LazyOperationsLog(
                     sb.append("[empty]")
                 }
                 else {
-                    val size = o.size()
-                    sb.append("[$size] { ").append(o.take(3).map { render(it) }.join(", "))
-                    if (o.size() > 3) sb.append(", ...")
-                    sb.append(" }")
+                    sb.append("[${o.size}] ")
+                    o.joinTo(sb, ", ", prefix = "{", postfix = "}", limit = 3) { render(it) }
                 }
             }
             o is KotlinTypeImpl -> {

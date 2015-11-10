@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetLiteFixture;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinLiteFixture;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
+public abstract class AbstractDiagnosticMessageTest extends KotlinLiteFixture {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
     private static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
     private static final String MESSAGE_TYPE_DIRECTIVE = "MESSAGE_TYPE";
@@ -82,8 +82,8 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
         File file = new File(filePath);
         String fileName = file.getName();
 
-        String fileData = JetTestUtils.doLoadFile(file);
-        Map<String,String> directives = JetTestUtils.parseDirectives(fileData);
+        String fileData = KotlinTestUtils.doLoadFile(file);
+        Map<String,String> directives = KotlinTestUtils.parseDirectives(fileData);
         int diagnosticNumber = getDiagnosticNumber(directives);
         final Set<DiagnosticFactory<?>> diagnosticFactories = getDiagnosticFactories(directives);
         MessageType messageType = getMessageTypeDirective(directives);

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -108,7 +108,7 @@ public object KotlinJavascriptSerializationUtil {
         val serializerExtension = KotlinJavascriptSerializerExtension()
         val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
 
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getDescriptors(DescriptorKindFilter.CLASSIFIERS))
+        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
         ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
             override fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class) {
@@ -146,7 +146,7 @@ public object KotlinJavascriptSerializationUtil {
             writeFun: (String, ByteArray) -> Unit
     ) {
         val classes = packageFragments.flatMap {
-            it.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
+            it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
         }.filter { !skip(it) }
 
         val builder = JsProtoBuf.Classes.newBuilder()
@@ -193,7 +193,7 @@ public object KotlinJavascriptSerializationUtil {
             result.add(fqName)
         }
 
-        for (descriptor in packageView.memberScope.getDescriptors(DescriptorKindFilter.PACKAGES, KtScope.ALL_NAME_FILTER)) {
+        for (descriptor in packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)) {
             if (descriptor is PackageViewDescriptor) {
                 getSubPackagesFqNames(descriptor, result)
             }

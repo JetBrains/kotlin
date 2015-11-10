@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -54,7 +54,7 @@ public class AddConstModifierFix(val property: KtProperty) : AddModifierFix(prop
     }
 }
 
-public class AddConstModifierIntention : JetSelfTargetingIntention<KtProperty>(javaClass(), "Add 'const' modifier") {
+public class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(javaClass(), "Add 'const' modifier") {
     override fun applyTo(element: KtProperty, editor: Editor) {
         AddConstModifierFix.addConstModifier(element)
     }
@@ -76,7 +76,7 @@ public class AddConstModifierIntention : JetSelfTargetingIntention<KtProperty>(j
 }
 
 
-public object ConstFixFactory : JetSingleIntentionActionFactory() {
+public object ConstFixFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val expr = diagnostic.psiElement as? KtReferenceExpression ?: return null
         val bindingContext = expr.analyze(BodyResolveMode.PARTIAL)

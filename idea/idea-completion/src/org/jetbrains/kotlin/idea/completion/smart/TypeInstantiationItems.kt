@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
-import org.jetbrains.kotlin.idea.core.psiClassToDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -278,10 +278,10 @@ class TypeInstantiationItems(
                 is ClassDescriptor -> container.getStaticScope()
                 else -> return
             }
-            val samConstructor = scope.getFunctions(`class`.name, NoLookupLocation.FROM_IDE)
+            val samConstructor = scope.getContributedFunctions(`class`.name, NoLookupLocation.FROM_IDE)
                                          .filterIsInstance<SamConstructorDescriptor>()
                                          .singleOrNull() ?: return
-            lookupElementFactory.createLookupElementsInSmartCompletion(samConstructor, bindingContext, useReceiverTypes = false)
+            lookupElementFactory.createStandardLookupElementsForDescriptor(samConstructor, useReceiverTypes = false)
                     .mapTo(collection) {
                         it.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION).addTail(tail)
                     }
@@ -302,9 +302,10 @@ class TypeInstantiationItems(
         override fun search(nameFilter: (String) -> Boolean, consumer: (LookupElement) -> Unit) {
             val parameters = ClassInheritorsSearch.SearchParameters(psiClass, inheritorSearchScope, true, true, false, nameFilter)
             for (inheritor in ClassInheritorsSearch.search(parameters)) {
-                val descriptor = resolutionFacade.psiClassToDescriptor(
-                        inheritor,
-                        { toFromOriginalFileMapper.toSyntheticFile(it) as KtClassOrObject? }) as? ClassDescriptor ?: continue
+                val descriptor = inheritor.resolveToDescriptor(
+                        resolutionFacade,
+                        { toFromOriginalFileMapper.toSyntheticFile(it) as KtClassOrObject? }
+                ) ?: continue
                 if (!visibilityFilter(descriptor)) continue
 
                 var inheritorFuzzyType = FuzzyType(descriptor.defaultType, descriptor.typeConstructor.parameters)

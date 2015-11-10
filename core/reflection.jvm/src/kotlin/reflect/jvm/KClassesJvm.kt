@@ -27,5 +27,5 @@ import kotlin.reflect.jvm.internal.KClassImpl
  */
 public val KClass<*>.jvmName: String
     get() {
-        return (this as KClassImpl).jClass.getName()
+        return (this as KClassImpl).jClass.name
     }

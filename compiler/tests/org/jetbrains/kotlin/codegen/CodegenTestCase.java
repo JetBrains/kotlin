@@ -30,11 +30,9 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider;
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
@@ -59,8 +57,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
-import static org.jetbrains.kotlin.test.JetTestUtils.compilerConfigurationForTests;
-import static org.jetbrains.kotlin.test.JetTestUtils.getAnnotationsJar;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.compilerConfigurationForTests;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
 
@@ -108,7 +106,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected String loadFile(@NotNull @TestDataFile String name) {
-        return loadFileByFullPath(JetTestUtils.getTestDataPathBase() + "/codegen/" + name);
+        return loadFileByFullPath(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + name);
     }
 
     @NotNull

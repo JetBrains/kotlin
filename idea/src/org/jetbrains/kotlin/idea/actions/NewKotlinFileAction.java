@@ -30,7 +30,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinIcons;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class NewKotlinFileAction extends CreateFileFromTemplateAction implements DumbAware {
     public NewKotlinFileAction() {
-        super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file or class", KotlinFileType.INSTANCE.getIcon());
+        super(KotlinBundle.message("new.kotlin.file.action"), "Creates new Kotlin file or class", KotlinFileType.INSTANCE.getIcon());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction implements
 
     @Override
     protected String getActionName(PsiDirectory directory, String newName, String templateName) {
-        return JetBundle.message("new.kotlin.file.action");
+        return KotlinBundle.message("new.kotlin.file.action");
     }
 
     @Override

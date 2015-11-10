@@ -40,8 +40,8 @@ public class SMAPBuilder(val source: String,
             return null;
         }
 
-        val fileIds = "*F" + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.join("")
-        val lineMappings = "*L" + realMappings.map { it.toSMAPMapping() }.join("")
+        val fileIds = "*F" + realMappings.mapIndexed { id, file -> "\n${file.toSMAPFile(id + 1)}" }.joinToString("")
+        val lineMappings = "*L" + realMappings.joinToString("") { it.toSMAPMapping() }
 
         return "$header\n$fileIds\n$lineMappings\n*E\n"
     }
@@ -58,9 +58,7 @@ public class SMAPBuilder(val source: String,
 
     //TODO inline
     fun FileMapping.toSMAPMapping(): String {
-        return lineMappings.map {
-            "\n${it.toSMAP(id)}"
-        }.join("")
+        return lineMappings.joinToString("") { "\n${it.toSMAP(id)}" }
     }
 }
 

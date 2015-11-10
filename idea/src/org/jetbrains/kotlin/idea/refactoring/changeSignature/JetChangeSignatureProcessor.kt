@@ -46,7 +46,7 @@ public class JetChangeSignatureProcessor(project: Project,
 
     override fun findUsages(): Array<UsageInfo> {
         val allUsages = ArrayList<UsageInfo>()
-        getChangeInfo().getOrCreateJavaChangeInfos(true)?.let { javaChangeInfos ->
+        getChangeInfo().getOrCreateJavaChangeInfos()?.let { javaChangeInfos ->
             val javaProcessor = JavaChangeSignatureUsageProcessor()
             javaChangeInfos.mapTo(allUsages) {
                 KotlinWrapperForJavaUsageInfos(it, javaProcessor.findUsages(it), getChangeInfo().getMethod())

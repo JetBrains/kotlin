@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.handlers.indexOfSkippingSpace
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class OverridesCompletion(
         private val collector: LookupElementsCollector,
-        private val lookupElementFactory: LookupElementFactory
+        private val lookupElementFactory: BasicLookupElementFactory
 ) {
     private val PRESENTATION_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
         modifiers = emptySet()
@@ -66,7 +66,7 @@ class OverridesCompletion(
             if (isConstructorParameter && memberObject.descriptor !is PropertyDescriptor) continue
 
             val descriptor = memberObject.descriptor
-            var lookupElement = lookupElementFactory.createLookupElement(descriptor, useReceiverTypes = false)
+            var lookupElement = lookupElementFactory.createLookupElement(descriptor)
 
             var text = "override " + PRESENTATION_RENDERER.render(descriptor)
             if (descriptor is FunctionDescriptor) {
@@ -87,7 +87,7 @@ class OverridesCompletion(
             icon.setIcon(additionalIcon, 1)
 
             val baseClassDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(position.project, baseClass)
-            val baseClassIcon = JetDescriptorIconProvider.getIcon(baseClass, baseClassDeclaration, 0)
+            val baseClassIcon = KotlinDescriptorIconProvider.getIcon(baseClass, baseClassDeclaration, 0)
 
             lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
                 override fun getLookupString() = "override"

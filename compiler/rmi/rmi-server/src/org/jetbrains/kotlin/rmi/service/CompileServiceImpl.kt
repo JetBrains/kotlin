@@ -27,13 +27,11 @@ import java.io.PrintStream
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
-import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.write
-import kotlin.concurrent.schedule
 
 fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
@@ -46,12 +44,20 @@ class CompileServiceImpl(
         val compiler: CompilerSelector,
         val selfCompilerId: CompilerId,
         val daemonOptions: DaemonOptions,
-        port: Int
+        port: Int,
+        val onShutdown: () -> Unit
 ) : CompileService {
+
+    private val classpathWatcher = LazyClasspathWatcher(selfCompilerId.compilerClasspath)
 
     // RMI-exposed API
 
-    override fun getCompilerId(): CompilerId = ifAlive { selfCompilerId }
+    override fun checkCompilerId(compilerId: CompilerId): Boolean =
+        ifAlive {
+            (selfCompilerId.compilerVersion.isEmpty() || selfCompilerId.compilerVersion == compilerId.compilerVersion) &&
+            (selfCompilerId.compilerClasspath.all { compilerId.compilerClasspath.contains(it) }) &&
+            !classpathWatcher.isChanged
+        }
 
     override fun getUsedMemory(): Long = ifAlive { usedMemory(withGC = true) }
 
@@ -61,14 +67,7 @@ class CompileServiceImpl(
             alive = false
             UnicastRemoteObject.unexportObject(this, true)
             log.info("Shutdown complete")
-            if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE) {
-                // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
-                // the watcher is a daemon thread, meaning it should not prevent JVM to exit normally
-                Timer(true).schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
-                    log.info("force JVM shutdown")
-                    System.exit(0)
-                }
-            }
+            onShutdown()
         }
     }
 
@@ -76,9 +75,11 @@ class CompileServiceImpl(
                                args: Array<out String>,
                                servicesFacade: CompilerCallbackServicesFacade,
                                compilerOutputStream: RemoteOutputStream,
-                               outputFormat: CompileService.OutputFormat, serviceOutputStream: RemoteOutputStream
+                               outputFormat: CompileService.OutputFormat,
+                               serviceOutputStream: RemoteOutputStream,
+                               operationsTracer: RemoteOperationsTracer?
     ): Int =
-            doCompile(args, compilerOutputStream, serviceOutputStream) { printStream, profiler ->
+            doCompile(args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, profiler ->
                 when (outputFormat) {
                     CompileService.OutputFormat.PLAIN -> compiler[targetPlatform].exec(printStream, *args)
                     CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, profiler), *args)
@@ -90,9 +91,10 @@ class CompileServiceImpl(
                                           servicesFacade: CompilerCallbackServicesFacade,
                                           compilerOutputStream: RemoteOutputStream,
                                           compilerOutputFormat: CompileService.OutputFormat,
-                                          serviceOutputStream: RemoteOutputStream
+                                          serviceOutputStream: RemoteOutputStream,
+                                          operationsTracer: RemoteOperationsTracer?
     ): Int =
-            doCompile(args, compilerOutputStream, serviceOutputStream) { printStream, profiler ->
+            doCompile(args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, profiler ->
                 when (compilerOutputFormat) {
                     CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
                     CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, profiler), *args)
@@ -137,8 +139,14 @@ class CompileServiceImpl(
         alive = true
     }
 
-    private fun doCompile(args: Array<out String>, compilerMessagesStreamProxy: RemoteOutputStream, serviceOutputStreamProxy: RemoteOutputStream, body: (PrintStream, Profiler) -> ExitCode): Int =
+    private fun doCompile(args: Array<out String>,
+                          compilerMessagesStreamProxy: RemoteOutputStream,
+                          serviceOutputStreamProxy: RemoteOutputStream,
+                          operationsTracer: RemoteOperationsTracer?,
+                          body: (PrintStream, Profiler) -> ExitCode): Int =
             ifAlive {
+
+                operationsTracer?.before("compile")
                 val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                 val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))
                 val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096))
@@ -152,6 +160,7 @@ class CompileServiceImpl(
                 finally {
                     serviceOutputStream.flush()
                     compilerMessagesStream.flush()
+                    operationsTracer?.after("compile")
                 }
             }
 

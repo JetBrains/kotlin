@@ -18,32 +18,32 @@ package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.editor.JetEditorOptions
+import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import kotlin.test.assertEquals
 
 public abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopyPasteTest() {
     private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/conversion"
 
-    private var oldEditorOptions: JetEditorOptions? = null
+    private var oldEditorOptions: KotlinEditorOptions? = null
 
     override fun getTestDataPath() = BASE_PATH
 
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun setUp() {
         super.setUp()
-        oldEditorOptions = JetEditorOptions.getInstance().getState()
-        JetEditorOptions.getInstance().setEnableJavaToKotlinConversion(true)
-        JetEditorOptions.getInstance().setDonTShowConversionDialog(true)
+        oldEditorOptions = KotlinEditorOptions.getInstance().getState()
+        KotlinEditorOptions.getInstance().setEnableJavaToKotlinConversion(true)
+        KotlinEditorOptions.getInstance().setDonTShowConversionDialog(true)
     }
 
     override fun tearDown() {
-        JetEditorOptions.getInstance().loadState(oldEditorOptions)
+        KotlinEditorOptions.getInstance().loadState(oldEditorOptions)
         super.tearDown()
     }
 
@@ -69,6 +69,6 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractCopy
         assertEquals(noConversionExpected, !ConvertJavaCopyPastePostProcessor.conversionPerformed,
         if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested")
 
-        JetTestUtils.assertEqualsToFile(File(path.replace(".java", ".expected.kt")), myFixture.getFile().getText())
+        KotlinTestUtils.assertEqualsToFile(File(path.replace(".java", ".expected.kt")), myFixture.getFile().getText())
     }
 }

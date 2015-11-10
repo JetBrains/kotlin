@@ -4,7 +4,7 @@ fun test() {
     a.plus(1)
   }
   else {
-    a?.plus(1)
+    <warning>a</warning>?.plus(1)
   }
 
   val out : java.io.PrintStream? = null
@@ -28,7 +28,7 @@ fun test() {
   }
 
   if (out == null) {
-    out?.println()
+    <warning>out</warning>?.println()
   } else {
     out.println()
   }
@@ -84,7 +84,7 @@ fun test() {
   }
 
   if (out == null) {
-    out?.println()
+    <warning>out</warning>?.println()
   } else {
     out.println()
   }
@@ -131,12 +131,12 @@ fun test() {
   while (out != null) {
     out.println();
   }
-  out?.println();
+  <warning>out</warning>?.println();
 
   val out2 : java.io.PrintStream? = null
   
   while (out2 == null) {
-    out2?.println();
+    <warning>out2</warning>?.println();
   }
   out2.println()
 
@@ -224,7 +224,7 @@ fun f7(s : String?, t : String?) {
   }
   s?.get(0)
   if (!(s != null)) {
-    s?.get(0)
+    <warning>s</warning>?.get(0)
   }
   else {
     s.get(0)
@@ -234,7 +234,7 @@ fun f7(s : String?, t : String?) {
     s.get(0)
   }
   else {
-    s?.get(0)
+    <warning>s</warning>?.get(0)
   }
   s?.get(0)
   t?.get(0)
@@ -253,7 +253,7 @@ fun f7(s : String?, t : String?) {
     t?.get(0)
   }
   else {
-    s?.get(0)
+    <warning>s</warning>?.get(0)
     t?.get(0)
   }
 }

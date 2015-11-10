@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,30 +32,30 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ExpressionSelectionTestGenerated extends AbstractExpressionSelectionTest {
     public void testAllFilesPresentInExpressionSelection() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/expressionSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/expressionSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
     @TestMetadata("binaryExpr.kt")
     public void testBinaryExpr() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/expressionSelection/binaryExpr.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/expressionSelection/binaryExpr.kt");
         doTestExpressionSelection(fileName);
     }
 
     @TestMetadata("labelledStatement.kt")
     public void testLabelledStatement() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/expressionSelection/labelledStatement.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/expressionSelection/labelledStatement.kt");
         doTestExpressionSelection(fileName);
     }
 
     @TestMetadata("labelledThis.kt")
     public void testLabelledThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/expressionSelection/labelledThis.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/expressionSelection/labelledThis.kt");
         doTestExpressionSelection(fileName);
     }
 
     @TestMetadata("noExpression.kt")
     public void testNoExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/expressionSelection/noExpression.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/expressionSelection/noExpression.kt");
         doTestExpressionSelection(fileName);
     }
 }

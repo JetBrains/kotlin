@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
@@ -32,7 +33,8 @@ public class DeserializationComponentsForJava(
         classDataFinder: JavaClassDataFinder,
         annotationAndConstantLoader: BinaryClassAnnotationAndConstantLoaderImpl,
         packageFragmentProvider: LazyJavaPackageFragmentProvider,
-        errorReporter: ErrorReporter
+        errorReporter: ErrorReporter,
+        lookupTracker: LookupTracker
 ) {
     val components: DeserializationComponents
 
@@ -40,7 +42,7 @@ public class DeserializationComponentsForJava(
         val localClassResolver = LocalClassResolverImpl()
         components = DeserializationComponents(
                 storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider, localClassResolver,
-                errorReporter, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY, JavaTypeCapabilitiesLoader,
+                errorReporter, lookupTracker, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY, JavaTypeCapabilitiesLoader,
                 additionalSupertypes = BuiltInClassesAreSerializableOnJvm(moduleDescriptor)
         )
         localClassResolver.setDeserializationComponents(components)

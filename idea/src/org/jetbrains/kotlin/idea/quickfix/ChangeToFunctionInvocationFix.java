@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
@@ -35,13 +35,13 @@ public class ChangeToFunctionInvocationFix extends KotlinQuickFixAction<KtExpres
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("change.to.function.invocation");
+        return KotlinBundle.message("change.to.function.invocation");
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.to.function.invocation");
+        return KotlinBundle.message("change.to.function.invocation");
     }
 
     @Override
@@ -50,8 +50,8 @@ public class ChangeToFunctionInvocationFix extends KotlinQuickFixAction<KtExpres
         getElement().replace(KtPsiFactoryKt.KtPsiFactory(file).createExpression(reference.getText() + "()"));
     }
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtExpression> createAction(Diagnostic diagnostic) {
                 if (diagnostic.getPsiElement() instanceof KtExpression) {

@@ -79,7 +79,7 @@ public class IterableTypesDetection(
         }
 
         private fun canBeIterable(type: FuzzyType): Boolean {
-            return type.type.memberScope.getFunctions(iteratorName, NoLookupLocation.FROM_IDE).isNotEmpty() ||
+            return type.type.memberScope.getContributedFunctions(iteratorName, NoLookupLocation.FROM_IDE).isNotEmpty() ||
                    typesWithExtensionIterator.any { type.checkIsSubtypeOf(it) != null }
         }
     }

@@ -17,9 +17,10 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.name.FqName
+import kotlin.jvm.internal.FunctionReference
+import kotlin.jvm.internal.PropertyReference
 import kotlin.reflect.IllegalCallableAccessException
 
-internal val PLATFORM_STATIC = FqName("kotlin.platform.platformStatic")
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
 // TODO: wrap other exceptions
@@ -30,3 +31,14 @@ internal inline fun <R> reflectionCall(block: () -> R): R =
         catch (e: IllegalAccessException) {
             throw IllegalCallableAccessException(e)
         }
+
+internal fun Any?.asKFunctionImpl(): KFunctionImpl? =
+        this as? KFunctionImpl ?:
+        (this as? FunctionReference)?.compute() as? KFunctionImpl //
+
+internal fun Any?.asKPropertyImpl(): KPropertyImpl<*>? =
+        this as? KPropertyImpl<*> ?:
+        (this as? PropertyReference)?.compute() as? KPropertyImpl
+
+internal fun Any?.asKCallableImpl(): KCallableImpl<*>? =
+        this as? KCallableImpl<*> ?: asKFunctionImpl() ?: asKPropertyImpl()

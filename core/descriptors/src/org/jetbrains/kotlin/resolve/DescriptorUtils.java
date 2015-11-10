@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -32,8 +31,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
-import org.jetbrains.kotlin.resolve.scopes.FilteringScope;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.LazyType;
@@ -50,7 +49,6 @@ public class DescriptorUtils {
     public static final Name ENUM_VALUES = Name.identifier("values");
     public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
-    public static final FqName PLATFORM_NAME = new FqName("kotlin.platform.platformName");
     public static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
     public static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
 
@@ -385,7 +383,7 @@ public class DescriptorUtils {
     @Nullable
     public static ClassDescriptor getInnerClassByName(@NotNull ClassDescriptor classDescriptor, @NotNull String innerClassName, @NotNull LookupLocation location) {
         ClassifierDescriptor classifier =
-                classDescriptor.getDefaultType().getMemberScope().getClassifier(Name.identifier(innerClassName), location);
+                classDescriptor.getDefaultType().getMemberScope().getContributedClassifier(Name.identifier(innerClassName), location);
         assert classifier instanceof ClassDescriptor :
                 "Inner class " + innerClassName + " in " + classDescriptor + " should be instance of ClassDescriptor, but was: "
                 + (classifier == null ? "null" : classifier.getClass());
@@ -405,17 +403,6 @@ public class DescriptorUtils {
         return descriptor instanceof ClassDescriptor &&
                containing instanceof ClassDescriptor &&
                !((ClassDescriptor) descriptor).isInner();
-    }
-
-    @NotNull
-    public static KtScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
-        KtScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
-        return new FilteringScope(innerClassesScope, new Function1<DeclarationDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(DeclarationDescriptor descriptor) {
-                return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
-            }
-        });
     }
 
     /**
@@ -531,9 +518,6 @@ public class DescriptorUtils {
     @Nullable
     public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotations annotations) {
         AnnotationWithTarget jvmName = Annotations.Companion.findAnyAnnotation(annotations, JVM_NAME);
-        if (jvmName == null) {
-            jvmName = Annotations.Companion.findAnyAnnotation(annotations, PLATFORM_NAME);
-        }
         return jvmName == null ? null : jvmName.getAnnotation();
     }
 
@@ -563,5 +547,10 @@ public class DescriptorUtils {
         }
 
         return SourceFile.NO_SOURCE_FILE;
+    }
+
+    @NotNull
+    public static Collection<DeclarationDescriptor> getAllDescriptors(@NotNull MemberScope scope) {
+        return scope.getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
     }
 }

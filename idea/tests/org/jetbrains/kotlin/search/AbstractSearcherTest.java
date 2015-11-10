@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.search;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Query;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
@@ -59,11 +60,21 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         List<String> expected = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile()), true), "// SEARCH: ");
         List<String> actualModified = new ArrayList<String>();
         for (Object member : actual) {
-            actualModified.add(member.toString());
+            actualModified.add(stringRepresentation(member));
         }
         Collections.sort(expected);
         Collections.sort(actualModified);
         assertOrderedEquals(actualModified, expected);
+    }
+
+    private static String stringRepresentation(Object member) {
+        if (member instanceof PsiClass) {
+            return "class:" + ((PsiClass) member).getName();
+        }
+        if (member instanceof PsiMethod) {
+            return "method:" + ((PsiMethod) member).getName();
+        }
+        throw new IllegalStateException("Do not know how to render member of type: " + member.getClass().getName());
     }
 
     protected String getPathToFile() {
@@ -77,6 +88,6 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return KotlinLightProjectDescriptor.INSTANCE;
     }
 }

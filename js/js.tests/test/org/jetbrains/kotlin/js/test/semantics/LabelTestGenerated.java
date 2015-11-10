@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,66 +32,66 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class LabelTestGenerated extends AbstractLabelTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/labels/cases"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/labels/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("labelOnExpression.kt")
     public void testLabelOnExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/labelOnExpression.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/labelOnExpression.kt");
         doTest(fileName);
     }
 
     @TestMetadata("labelWithVariableClashing.kt")
     public void testLabelWithVariableClashing() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/labelWithVariableClashing.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/labelWithVariableClashing.kt");
         doTest(fileName);
     }
 
     @TestMetadata("nestedLabels.kt")
     public void testNestedLabels() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/nestedLabels.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/nestedLabels.kt");
         doTest(fileName);
     }
 
     @TestMetadata("nestedLabelsInlinedClashing.kt")
     public void testNestedLabelsInlinedClashing() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/nestedLabelsInlinedClashing.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/nestedLabelsInlinedClashing.kt");
         doTest(fileName);
     }
 
     @TestMetadata("nestedLabelsInlinedClashingAtFunctionsWithClosure.kt")
     public void testNestedLabelsInlinedClashingAtFunctionsWithClosure() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt");
         doTest(fileName);
     }
 
     @TestMetadata("siblingLabels.kt")
     public void testSiblingLabels() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/siblingLabels.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/siblingLabels.kt");
         doTest(fileName);
     }
 
     @TestMetadata("siblingLabelsInlined.kt")
     public void testSiblingLabelsInlined() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/siblingLabelsInlined.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/siblingLabelsInlined.kt");
         doTest(fileName);
     }
 
     @TestMetadata("siblingLabelsInlinedClashing.kt")
     public void testSiblingLabelsInlinedClashing() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/siblingLabelsInlinedClashing.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/siblingLabelsInlinedClashing.kt");
         doTest(fileName);
     }
 
     @TestMetadata("simpleLabel.kt")
     public void testSimpleLabel() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/simpleLabel.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/simpleLabel.kt");
         doTest(fileName);
     }
 
     @TestMetadata("simpleLabelInlined.kt")
     public void testSimpleLabelInlined() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/simpleLabelInlined.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/labels/cases/simpleLabelInlined.kt");
         doTest(fileName);
     }
 }

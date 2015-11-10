@@ -20,7 +20,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
@@ -81,7 +81,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
     }
 
     protected fun doTest(path: String) {
-        val configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
+        val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
         val repl = ReplInterpreter(getTestRootDisposable()!!, configuration, false, null)
 
         for ((code, expected) in loadLines(File(path))) {

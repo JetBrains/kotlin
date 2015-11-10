@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.asJava.KotlinLightElement
+import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.psi.*
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.JdkOrderEntry
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage
-import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.roots.ModuleRootManager
@@ -35,7 +35,7 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
         return NotUnderContentRootModuleInfo
     }
 
-    if (this is KotlinLightElement<*, *>) return this.getModuleInfoForLightElement()
+    if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement()
 
     val containingJetFile = (this as? KtElement)?.getContainingFile() as? KtFile
     val context = containingJetFile?.analysisContext
@@ -114,13 +114,13 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     return NotUnderContentRootModuleInfo
 }
 
-private fun KotlinLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo {
-    if (this is KotlinLightClassForDecompiledDeclaration) {
+private fun KtLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo {
+    if (this is KtLightClassForDecompiledDeclaration) {
         return getModuleInfoByVirtualFile(getProject(), getContainingFile().getVirtualFile(), false)
     }
     val element = getOrigin() ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
-        is KotlinLightClassForFacade -> this.files.first()
+        is KtLightClassForFacade -> this.files.first()
         else -> throw IllegalStateException("Unknown light class without origin is referenced by IDE lazy resolve: $javaClass")
     }
     return element.getModuleInfo()

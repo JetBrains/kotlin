@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtEnumEntry;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.Utils;
@@ -57,7 +57,7 @@ public class KtClassElementType extends KtStubElementType<KotlinClassStub, KtCla
     public KotlinClassStub createStub(@NotNull KtClass psi, StubElement parentStub) {
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         boolean isEnumEntry = psi instanceof KtEnumEntry;
-        List<String> superNames = JetPsiUtilKt.getSuperNames(psi);
+        List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
         return new KotlinClassStubImpl(
                 getStubType(isEnumEntry), parentStub, StringRef.fromString(fqName != null ? fqName.asString() : null),
                 StringRef.fromString(psi.getName()), Utils.INSTANCE.wrapStrings(superNames), psi.isInterface(), isEnumEntry,

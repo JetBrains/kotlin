@@ -11,5 +11,5 @@ fun main() {
     uniqueN<caret>
 }
 
-// EXIST: uniqueName
+// EXIST: { allLookupStrings: "uniqueName", itemText: "uniqueName", tailText: "()", typeText: "Unit", attributes: "" }
 // NUMBER: 1

@@ -53,7 +53,7 @@ class TypesWithContainsDetector(
 
     private fun hasContainsNoCache(type: FuzzyType): Boolean {
         return type.nullability() != TypeNullability.NULLABLE &&
-               type.type.memberScope.getFunctions(containsName, NoLookupLocation.FROM_IDE).any { isGoodContainsFunction(it, type.freeParameters) }
+               type.type.memberScope.getContributedFunctions(containsName, NoLookupLocation.FROM_IDE).any { isGoodContainsFunction(it, type.freeParameters) }
                || typesWithExtensionContains.any { type.checkIsSubtypeOf(it) != null }
     }
 

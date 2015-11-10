@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.idea.completion.test;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
-public abstract class AbstractJvmSmartCompletionTest extends JetFixtureCompletionBaseTestCase {
+public abstract class AbstractJvmSmartCompletionTest extends KotlinFixtureCompletionBaseTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @NotNull

@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.references.KtMultiReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -126,7 +126,7 @@ private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedNam
     return getParamDescriptors(fromDescriptor).filter { it.getName().asString() == name }
 }
 
-private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): KtScope {
+private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): MemberScope {
     return descriptor.getContainingDeclaration().getPackage(descriptor.fqName).memberScope
 }
 
@@ -148,10 +148,10 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
 public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
     return when (descriptor) {
         is PackageFragmentDescriptor ->
-            getPackageInnerScope(descriptor).memberScopeAsImportingScope()
+            LexicalScope.empty(getPackageInnerScope(descriptor).memberScopeAsImportingScope(), descriptor)
 
         is PackageViewDescriptor ->
-            descriptor.memberScope.memberScopeAsImportingScope()
+            LexicalScope.empty(descriptor.memberScope.memberScopeAsImportingScope(), descriptor)
 
         is ClassDescriptor ->
             getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)

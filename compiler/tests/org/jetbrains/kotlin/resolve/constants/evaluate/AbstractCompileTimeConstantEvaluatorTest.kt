@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.regex.Pattern
 
@@ -99,7 +99,7 @@ public abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotat
             actualFileText = actualFileText.replace(expected, actual)
         }
 
-        JetTestUtils.assertEqualsToFile(myFile, actualFileText)
+        KotlinTestUtils.assertEqualsToFile(myFile, actualFileText)
     }
 
     fun getObjectsToTest(fileText: String): List<String> {

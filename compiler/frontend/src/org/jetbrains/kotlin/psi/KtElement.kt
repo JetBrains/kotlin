@@ -20,7 +20,7 @@ import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiReference
 
 public interface KtElement : NavigatablePsiElement {
-    public fun getContainingJetFile(): KtFile
+    public fun getContainingKtFile(): KtFile
 
     public fun <D> acceptChildren(visitor: KtVisitor<Void, D>, data: D)
 

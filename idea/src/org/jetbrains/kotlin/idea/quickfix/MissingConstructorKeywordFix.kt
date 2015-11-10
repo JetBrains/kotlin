@@ -34,11 +34,11 @@ public class MissingConstructorKeywordFix(element: KtPrimaryConstructor) : Kotli
         element.addConstructorKeyword()
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? =
                 diagnostic.createIntentionForFirstParentOfType(::MissingConstructorKeywordFix)
 
-        public fun createWholeProjectFixFactory(): JetSingleIntentionActionFactory = createIntentionFactory {
+        public fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory {
             JetWholeProjectForEachElementOfTypeFix.createByPredicate<KtPrimaryConstructor>(
                     predicate = { it.getModifierList() != null && !it.hasConstructorKeyword() },
                     taskProcessor = { it.addConstructorKeyword() },

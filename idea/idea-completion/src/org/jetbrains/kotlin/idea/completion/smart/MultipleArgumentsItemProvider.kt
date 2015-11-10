@@ -22,13 +22,13 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.ui.LayeredIcon
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.completion.ArgumentPositionData
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
 import org.jetbrains.kotlin.idea.completion.Tail
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.getVariableFromImplicitReceivers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.Call
@@ -65,8 +65,7 @@ class MultipleArgumentsItemProvider(
                     }
                     val variables = ArrayList<VariableDescriptor>()
                     for ((i, parameter) in parameters.withIndex()) {
-                        val variable = variableInScope(parameter, resolutionScope) ?: break
-                        variables.add(variable) // TODO: cannot inline variable because of KT-5890
+                        variables.add(variableInScope(parameter, resolutionScope) ?: break)
 
                         if (i > 0 && parameters.asSequence().drop(i + 1).all { it.hasDefaultValue() }) { // this is the last parameter or all others have default values
                             val lookupElement = createParametersLookupElement(variables, tail)
@@ -82,13 +81,13 @@ class MultipleArgumentsItemProvider(
 
     private fun createParametersLookupElement(variables: List<VariableDescriptor>, tail: Tail): LookupElement {
         val compoundIcon = LayeredIcon(2)
-        val firstIcon = JetDescriptorIconProvider.getIcon(variables.first(), null, 0)
-        val lastIcon = JetDescriptorIconProvider.getIcon(variables.last(), null, 0)
+        val firstIcon = KotlinDescriptorIconProvider.getIcon(variables.first(), null, 0)
+        val lastIcon = KotlinDescriptorIconProvider.getIcon(variables.last(), null, 0)
         compoundIcon.setIcon(lastIcon, 0, 2 * firstIcon.getIconWidth() / 5, 0)
         compoundIcon.setIcon(firstIcon, 1, 0, 0)
 
         return LookupElementBuilder
-                .create(variables.map { it.getName().render() }.joinToString(", "))
+                .create(variables.map { it.getName().render() }.joinToString(", ")) //TODO: use code formatting settings
                 .withInsertHandler { context, lookupElement ->
                     if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
                         val offset = context.getOffsetMap().getOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)

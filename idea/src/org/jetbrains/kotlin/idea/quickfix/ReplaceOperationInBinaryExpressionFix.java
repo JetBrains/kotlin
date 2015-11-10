@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.psi.*;
 
 public abstract class ReplaceOperationInBinaryExpressionFix<T extends KtExpression> extends KotlinQuickFixAction<T> {
@@ -34,7 +34,7 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends KtExpressi
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("replace.operation.in.binary.expression");
+        return KotlinBundle.message("replace.operation.in.binary.expression");
     }
 
     @Override

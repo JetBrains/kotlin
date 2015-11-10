@@ -38,7 +38,7 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
 
     override fun serializePackage(packageFragments: Collection<PackageFragmentDescriptor>, proto: ProtoBuf.Package.Builder) {
         val classes = packageFragments.flatMap {
-            it.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
+            it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
         }
 
         for (descriptor in DescriptorSerializer.sort(classes)) {

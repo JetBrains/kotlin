@@ -29,14 +29,12 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -68,8 +66,8 @@ public class JdkAnnotationsValidityTest extends AbstractSdkAnnotationsValidityTe
     private static final Set<String> classesToIgnore = new HashSet<String>(Arrays.asList("javax.management.openmbean.TabularDataSupport"));
 
     private static KotlinCoreEnvironment createFullJdkEnvironment(Disposable parentDisposable) {
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK, JetTestUtils.getAnnotationsJar()
+        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar()
         );
         // TODO: move this test to idea-tests and re-implement it for ExternalAnnotationsManagerImpl
         // configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File("ideaSDK/lib/jdkAnnotations.jar"));

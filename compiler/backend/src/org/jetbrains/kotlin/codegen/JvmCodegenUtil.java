@@ -119,7 +119,7 @@ public class JvmCodegenUtil {
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
-        return CollectionsKt.any(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(),
+        return CollectionsKt.any(DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope()),
                                  new Function1<DeclarationDescriptor, Boolean>() {
                                      @Override
                                      public Boolean invoke(DeclarationDescriptor descriptor) {

@@ -65,7 +65,8 @@ import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -85,7 +86,7 @@ private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
 /**
  * Represents a single choice for a type (e.g. parameter type or return type).
  */
-class TypeCandidate(val theType: KotlinType, scope: LexicalScope? = null) {
+class TypeCandidate(val theType: KotlinType, scope: HierarchicalScope? = null) {
     public val typeParameters: Array<TypeParameterDescriptor>
     var renderedType: String? = null
         private set
@@ -162,7 +163,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     private fun computeTypeCandidates(
             typeInfo: TypeInfo,
             substitutions: List<JetTypeSubstitution>,
-            scope: LexicalScope): List<TypeCandidate> {
+            scope: HierarchicalScope): List<TypeCandidate> {
         if (!typeInfo.substitutionsAllowed) return computeTypeCandidates(typeInfo)
         return typeCandidates.getOrPut(typeInfo) {
             val types = typeInfo.getPossibleTypes(this).asReversed()
@@ -260,7 +261,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             if (containingElement is KtElement) {
-                jetFileToEdit = containingElement.getContainingJetFile()
+                jetFileToEdit = containingElement.getContainingKtFile()
                 if (jetFileToEdit != config.currentFile) {
                     containingFileEditor = FileEditorManager.getInstance(project).getSelectedTextEditor()!!
                 }
@@ -337,7 +338,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             mandatoryTypeParametersAsCandidates.forEach { it.render(typeParameterNameMap, fakeFunction) }
         }
 
-        private fun getDeclarationScope(): LexicalScope {
+        private fun getDeclarationScope(): HierarchicalScope {
             if (config.isExtension || receiverClassDescriptor == null) {
                 return currentFileModule.getPackage(config.currentFile.packageFqName).memberScope.memberScopeAsImportingScope()
             }
@@ -348,24 +349,14 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             assert (receiverClassDescriptor is JavaClassDescriptor) { "Unexpected receiver class: $receiverClassDescriptor" }
 
-            val typeParamScope = with(
-                    WritableScopeImpl(
-                            KtScope.Empty,
-                            receiverClassDescriptor,
-                            RedeclarationHandler.DO_NOTHING,
-                            "Scope with type parameters for ${receiverClassDescriptor.getName()}"
-                    )
-            ) {
-                receiverClassDescriptor.getTypeConstructor().getParameters().forEach { addClassifierDescriptor(it) }
-                changeLockLevel(WritableScope.LockLevel.READING)
-                this
-            }
-
             val projections = receiverClassDescriptor.getTypeConstructor().getParameters()
                     .map { TypeProjectionImpl(it.getDefaultType()) }
             val memberScope = receiverClassDescriptor.getMemberScope(projections)
 
-            return typeParamScope.memberScopeAsImportingScope(memberScope.memberScopeAsImportingScope())
+            return LexicalScopeImpl(memberScope.memberScopeAsImportingScope(), receiverClassDescriptor, false, null,
+                                    "Scope with type parameters for ${receiverClassDescriptor.getName()}") {
+                receiverClassDescriptor.typeConstructor.parameters.forEach { addClassifierDescriptor(it) }
+            }
         }
 
         private fun collectSubstitutionsForReceiverTypeParameters(
@@ -390,7 +381,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
         }
 
-        private fun createFakeFunctionDescriptor(scope: LexicalScope, typeParameterCount: Int): FunctionDescriptor {
+        private fun createFakeFunctionDescriptor(scope: HierarchicalScope, typeParameterCount: Int): FunctionDescriptor {
             val fakeFunction = SimpleFunctionDescriptorImpl.create(
                     MutablePackageFragmentDescriptor(currentFileModule, FqName("fake")),
                     Annotations.EMPTY,
@@ -612,7 +603,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             else classBody.addAfter(declaration, classBody.lBrace!!) as KtNamedDeclaration
         }
 
-        private fun getTypeParameterRenames(scope: LexicalScope): Map<TypeParameterDescriptor, String> {
+        private fun getTypeParameterRenames(scope: HierarchicalScope): Map<TypeParameterDescriptor, String> {
             val allTypeParametersNotInScope = LinkedHashSet<TypeParameterDescriptor>()
 
             mandatoryTypeParametersAsCandidates.asSequence()

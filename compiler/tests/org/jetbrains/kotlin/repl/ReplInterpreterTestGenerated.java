@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.repl;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,84 +32,84 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     public void testAllFilesPresentInRepl() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl"), Pattern.compile("^(.+)\\.repl$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl"), Pattern.compile("^(.+)\\.repl$"), true);
     }
 
     @TestMetadata("analyzeErrors.repl")
     public void testAnalyzeErrors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/analyzeErrors.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/analyzeErrors.repl");
         doTest(fileName);
     }
 
     @TestMetadata("constants.repl")
     public void testConstants() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/constants.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/constants.repl");
         doTest(fileName);
     }
 
     @TestMetadata("empty.repl")
     public void testEmpty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/empty.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/empty.repl");
         doTest(fileName);
     }
 
     @TestMetadata("evaluationErrors.repl")
     public void testEvaluationErrors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/evaluationErrors.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/evaluationErrors.repl");
         doTest(fileName);
     }
 
     @TestMetadata("function.repl")
     public void testFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/function.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/function.repl");
         doTest(fileName);
     }
 
     @TestMetadata("functionOverloadResolution.repl")
     public void testFunctionOverloadResolution() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/functionOverloadResolution.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/functionOverloadResolution.repl");
         doTest(fileName);
     }
 
     @TestMetadata("functionOverloadResolutionAnyBeatsString.repl")
     public void testFunctionOverloadResolutionAnyBeatsString() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/functionOverloadResolutionAnyBeatsString.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/functionOverloadResolutionAnyBeatsString.repl");
         doTest(fileName);
     }
 
     @TestMetadata("functionReferencesPrev.repl")
     public void testFunctionReferencesPrev() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/functionReferencesPrev.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/functionReferencesPrev.repl");
         doTest(fileName);
     }
 
     @TestMetadata("imports.repl")
     public void testImports() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/imports.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/imports.repl");
         doTest(fileName);
     }
 
     @TestMetadata("simple.repl")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/simple.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/simple.repl");
         doTest(fileName);
     }
 
     @TestMetadata("simpleTwoVals.repl")
     public void testSimpleTwoVals() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/simpleTwoVals.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/simpleTwoVals.repl");
         doTest(fileName);
     }
 
     @TestMetadata("syntaxErrors.repl")
     public void testSyntaxErrors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/syntaxErrors.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/syntaxErrors.repl");
         doTest(fileName);
     }
 
     @TestMetadata("twoClosures.repl")
     public void testTwoClosures() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/twoClosures.repl");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/twoClosures.repl");
         doTest(fileName);
     }
 
@@ -118,60 +118,60 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Classes extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInClasses() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/classes"), Pattern.compile("^(.+)\\.repl$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/classes"), Pattern.compile("^(.+)\\.repl$"), true);
         }
 
         @TestMetadata("classInheritance.repl")
         public void testClassInheritance() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/classInheritance.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/classInheritance.repl");
             doTest(fileName);
         }
 
         @TestMetadata("classRedeclaration.repl")
         public void testClassRedeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/classRedeclaration.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/classRedeclaration.repl");
             doTest(fileName);
         }
 
         @TestMetadata("emptyClass.repl")
         public void testEmptyClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/emptyClass.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/emptyClass.repl");
             doTest(fileName);
         }
 
         @TestMetadata("emptyClassRedeclaration.repl")
         public void testEmptyClassRedeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/emptyClassRedeclaration.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/emptyClassRedeclaration.repl");
             doTest(fileName);
         }
 
         @TestMetadata("enumEntrySubclass.repl")
         public void testEnumEntrySubclass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/enumEntrySubclass.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/enumEntrySubclass.repl");
             doTest(fileName);
         }
 
         @TestMetadata("import.repl")
         public void testImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/import.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/import.repl");
             doTest(fileName);
         }
 
         @TestMetadata("simpleClass.repl")
         public void testSimpleClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/simpleClass.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/simpleClass.repl");
             doTest(fileName);
         }
 
         @TestMetadata("simpleEnum.repl")
         public void testSimpleEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/simpleEnum.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/simpleEnum.repl");
             doTest(fileName);
         }
 
         @TestMetadata("simpleTrait.repl")
         public void testSimpleTrait() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/classes/simpleTrait.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/simpleTrait.repl");
             doTest(fileName);
         }
     }
@@ -181,30 +181,30 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Multiline extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInMultiline() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/multiline"), Pattern.compile("^(.+)\\.repl$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/multiline"), Pattern.compile("^(.+)\\.repl$"), true);
         }
 
         @TestMetadata("functionOnSeveralLines.repl")
         public void testFunctionOnSeveralLines() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/multiline/functionOnSeveralLines.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/multiline/functionOnSeveralLines.repl");
             doTest(fileName);
         }
 
         @TestMetadata("multilineFunctionInvocation.repl")
         public void testMultilineFunctionInvocation() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/multiline/multilineFunctionInvocation.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/multiline/multilineFunctionInvocation.repl");
             doTest(fileName);
         }
 
         @TestMetadata("openParenthesisIncomplete.repl")
         public void testOpenParenthesisIncomplete() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/multiline/openParenthesisIncomplete.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/multiline/openParenthesisIncomplete.repl");
             doTest(fileName);
         }
 
         @TestMetadata("simpleFunctionBodyOnNextLine.repl")
         public void testSimpleFunctionBodyOnNextLine() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/multiline/simpleFunctionBodyOnNextLine.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/multiline/simpleFunctionBodyOnNextLine.repl");
             doTest(fileName);
         }
     }
@@ -214,24 +214,24 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Objects extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInObjects() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/objects"), Pattern.compile("^(.+)\\.repl$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/objects"), Pattern.compile("^(.+)\\.repl$"), true);
         }
 
         @TestMetadata("emptyObject.repl")
         public void testEmptyObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/objects/emptyObject.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/objects/emptyObject.repl");
             doTest(fileName);
         }
 
         @TestMetadata("localObject.repl")
         public void testLocalObject() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/objects/localObject.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/objects/localObject.repl");
             doTest(fileName);
         }
 
         @TestMetadata("simpleObjectDeclaration.repl")
         public void testSimpleObjectDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/objects/simpleObjectDeclaration.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/objects/simpleObjectDeclaration.repl");
             doTest(fileName);
         }
     }
@@ -241,18 +241,18 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PrimitiveTypes extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInPrimitiveTypes() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/primitiveTypes"), Pattern.compile("^(.+)\\.repl$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/primitiveTypes"), Pattern.compile("^(.+)\\.repl$"), true);
         }
 
         @TestMetadata("arrayOfBoxed.repl")
         public void testArrayOfBoxed() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/primitiveTypes/arrayOfBoxed.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/primitiveTypes/arrayOfBoxed.repl");
             doTest(fileName);
         }
 
         @TestMetadata("boxingOnPurpose.repl")
         public void testBoxingOnPurpose() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/primitiveTypes/boxingOnPurpose.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/primitiveTypes/boxingOnPurpose.repl");
             doTest(fileName);
         }
     }
@@ -262,12 +262,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Regressions extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInRegressions() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/regressions"), Pattern.compile("^(.+)\\.repl$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/regressions"), Pattern.compile("^(.+)\\.repl$"), true);
         }
 
         @TestMetadata("kt6843.repl")
         public void testKt6843() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/regressions/kt6843.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/regressions/kt6843.repl");
             doTest(fileName);
         }
     }
@@ -277,12 +277,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UseJava extends AbstractReplInterpreterTest {
         public void testAllFilesPresentInUseJava() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/useJava"), Pattern.compile("^(.+)\\.repl$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/repl/useJava"), Pattern.compile("^(.+)\\.repl$"), true);
         }
 
         @TestMetadata("syntheticProperty.repl")
         public void testSyntheticProperty() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/repl/useJava/syntheticProperty.repl");
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/useJava/syntheticProperty.repl");
             doTest(fileName);
         }
     }

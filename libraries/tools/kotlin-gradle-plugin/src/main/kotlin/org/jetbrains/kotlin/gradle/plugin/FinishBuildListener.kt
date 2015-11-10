@@ -125,32 +125,18 @@ class CompilerServicesCleanup(private var pluginClassLoader: ClassLoader?) {
         val shortName = classFqName.substring(classFqName.lastIndexOf('.') + 1)
 
         log.kotlinDebug("Looking for $shortName class")
-        val lowMemoryWatcherClass = Class.forName(classFqName, false, pluginClassLoader)
+        val cls = pluginClassLoader!!.loadClass(classFqName)
 
         log.kotlinDebug("Looking for $methodName() method")
-        val shutdownMethod = lowMemoryWatcherClass.getMethod(methodName)
+        val method = cls.getMethod(methodName)
 
         log.kotlinDebug("Call $shortName.$methodName()")
-        shutdownMethod.invoke(null)
+        method.invoke(null)
     }
 
     private fun cleanJarCache() {
-        val zipHandlerClass = pluginClassLoader!!.loadClass("com.intellij.openapi.vfs.impl.ZipHandler")
-        val privateCacheField = zipHandlerClass.getDeclaredField("ourZipFileFileAccessorCache")
-        privateCacheField.isAccessible = true
-        privateCacheField.get(null)?.let {
-            val innerCache = privateCacheField.type.getDeclaredField("myCache")
-            innerCache.isAccessible = true
-            innerCache.get(it)?.let {
-                val clearMethod = innerCache.type.getMethod("clear")
-                if (clearMethod != null) {
-                    clearMethod.invoke(it)
-                    log.kotlinDebug("successfuly cleared ZipHandler.ourZipFileFileAccessorCache.myCache")
-                }
-                else {
-                    log.kotlinDebug("unable to access ZipHandler.ourZipFileFileAccessorCache.myCache.clear")
-                }
-            } ?: log.kotlinDebug("unable to access ZipHandler.ourZipFileFileAccessorCache.myCache (${innerCache.get(it)})")
-        } ?: log.kotlinDebug("unable to access ZipHandler.ourZipFileFileAccessorCache (${privateCacheField.get(null)})")
+        log.kotlinDebug("Clean JAR cache")
+        callVoidStaticMethod("com.intellij.openapi.vfs.impl.ZipHandler", "clearFileAccessorCache")
+        log.kotlinDebug("JAR cache cleared")
     }
 }

@@ -158,9 +158,9 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             }
         }
 
-        descriptor.defaultType.memberScope.getDescriptors().forEach(::processMember)
+        descriptor.defaultType.memberScope.getContributedDescriptors().forEach(::processMember)
         descriptor.getParentJavaStaticClassScope()?.run {
-            getDescriptors(DescriptorKindFilter.FUNCTIONS)
+            getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filter {
                         it is FunctionDescriptor && Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, it, descriptor)
                     }

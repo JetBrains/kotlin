@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -32,7 +32,7 @@ import java.util.List;
 public abstract class AbstractClassDescriptor implements ClassDescriptor {
     private final Name name;
     protected final NotNullLazyValue<KotlinType> defaultType;
-    private final NotNullLazyValue<KtScope> unsubstitutedInnerClassesScope;
+    private final NotNullLazyValue<MemberScope> unsubstitutedInnerClassesScope;
     private final NotNullLazyValue<ReceiverParameterDescriptor> thisAsReceiverParameter;
 
     public AbstractClassDescriptor(@NotNull StorageManager storageManager, @NotNull Name name) {
@@ -43,9 +43,9 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
                 return TypeUtils.makeUnsubstitutedType(AbstractClassDescriptor.this, getUnsubstitutedMemberScope());
             }
         });
-        this.unsubstitutedInnerClassesScope = storageManager.createLazyValue(new Function0<KtScope>() {
+        this.unsubstitutedInnerClassesScope = storageManager.createLazyValue(new Function0<MemberScope>() {
             @Override
-            public KtScope invoke() {
+            public MemberScope invoke() {
                 return new InnerClassesScopeWrapper(getUnsubstitutedMemberScope());
             }
         });
@@ -71,7 +71,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtScope getUnsubstitutedInnerClassesScope() {
+    public MemberScope getUnsubstitutedInnerClassesScope() {
         return unsubstitutedInnerClassesScope.invoke();
     }
 
@@ -83,7 +83,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
         assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Illegal number of type arguments: expected "
                                                                                      + getTypeConstructor().getParameters().size() + " but was " + typeArguments.size()
                                                                                      + " for " + getTypeConstructor() + " " + getTypeConstructor().getParameters();
@@ -95,7 +95,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
+    public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
         if (typeSubstitution.isEmpty()) return getUnsubstitutedMemberScope();
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(typeSubstitution);

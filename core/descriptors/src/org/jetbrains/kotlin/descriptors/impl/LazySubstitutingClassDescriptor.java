@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.types.*;
 
@@ -89,8 +89,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
-        KtScope memberScope = original.getMemberScope(typeArguments);
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        MemberScope memberScope = original.getMemberScope(typeArguments);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
@@ -99,8 +99,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
-        KtScope memberScope = original.getMemberScope(typeSubstitution);
+    public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
+        MemberScope memberScope = original.getMemberScope(typeSubstitution);
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
@@ -109,8 +109,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtScope getUnsubstitutedMemberScope() {
-        KtScope memberScope = original.getUnsubstitutedMemberScope();
+    public MemberScope getUnsubstitutedMemberScope() {
+        MemberScope memberScope = original.getUnsubstitutedMemberScope();
         if (originalSubstitutor.isEmpty()) {
             return memberScope;
         }
@@ -119,7 +119,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtScope getStaticScope() {
+    public MemberScope getStaticScope() {
         return original.getStaticScope();
     }
 
@@ -233,7 +233,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public KtScope getUnsubstitutedInnerClassesScope() {
+    public MemberScope getUnsubstitutedInnerClassesScope() {
         return original.getUnsubstitutedInnerClassesScope();
     }
 

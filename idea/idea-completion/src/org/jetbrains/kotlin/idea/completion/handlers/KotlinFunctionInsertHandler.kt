@@ -25,7 +25,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -58,16 +58,20 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
         ) = Normal(inputTypeArguments, inputValueArguments, argumentText, lambdaInfo, argumentsOnly)
 
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
+            val document = context.document
+
             if (!argumentsOnly) {
+                surroundWithBracesIfInStringTemplate(context)
+
                 super.handleInsert(context, item)
             }
 
-            val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
             psiDocumentManager.commitAllDocuments()
-            psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
+            psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)
 
-            val startOffset = context.getStartOffset()
-            val element = context.getFile().findElementAt(startOffset) ?: return
+            val startOffset = context.startOffset
+            val element = context.file.findElementAt(startOffset) ?: return
 
             addArguments(context, element)
         }
@@ -179,7 +183,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
         }
 
         private fun isInsertSpacesInOneLineFunctionEnabled(project: Project)
-                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(javaClass<JetCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
+                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(javaClass<KotlinCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
     }
 
     object Infix : KotlinFunctionInsertHandler() {

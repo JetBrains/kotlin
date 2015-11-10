@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JetLiteFixture
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinLiteFixture
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -44,11 +44,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.psi.KtFile
 import com.intellij.psi.PsiElement
 
-public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
+public abstract class AbstractResolvedCallsTest : KotlinLiteFixture() {
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.ALL)
 
     public fun doTest(filePath: String) {
-        val text = JetTestUtils.doLoadFile(File(filePath))!!
+        val text = KotlinTestUtils.doLoadFile(File(filePath))!!
 
         val jetFile = KtPsiFactory(getProject()).createFile(text.replace("<caret>", ""))
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile, environment).bindingContext
@@ -60,7 +60,7 @@ public abstract class AbstractResolvedCallsTest : JetLiteFixture() {
             else cachedCall.variableCall
 
         val resolvedCallInfoFileName = FileUtil.getNameWithoutExtension(filePath) + ".txt"
-        JetTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall?.renderToText()}")
+        KotlinTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall?.renderToText()}")
     }
 
     open protected fun buildCachedCall(

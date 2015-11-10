@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 public abstract class AbstractLazyType(storageManager: StorageManager) : AbstractKotlinType(), LazyType {
@@ -41,7 +41,7 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
     private val memberScope = storageManager.createLazyValue { computeMemberScope() }
     override fun getMemberScope() = memberScope()
 
-    protected open fun computeMemberScope(): KtScope {
+    protected open fun computeMemberScope(): MemberScope {
         val descriptor = constructor.getDeclarationDescriptor()
         return when (descriptor) {
             is TypeParameterDescriptor -> descriptor.getDefaultType().getMemberScope()

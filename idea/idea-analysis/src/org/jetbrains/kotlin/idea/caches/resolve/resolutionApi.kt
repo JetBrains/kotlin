@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -91,7 +92,7 @@ public fun ResolutionFacade.resolveImportReference(
 // see com.intellij.psi.impl.file.impl.ResolveScopeManagerImpl.getInherentResolveScope
 public fun getResolveScope(file: KtFile): GlobalSearchScope {
     if (file is KtCodeFragment) {
-        file.forcedResolveScope?.let { return it }
+        file.forcedResolveScope?.let { return KotlinSourceFilterScope.sourceAndClassFiles(it, file.project) }
     }
 
     return when (file.getModuleInfo()) {

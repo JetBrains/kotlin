@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionFunctions
@@ -47,26 +44,29 @@ import java.util.*
 class ReferenceVariantsHelper(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
+        private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
     fun getReferenceVariants(
             expression: KtSimpleNameExpression,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
-            filterOutJavaGettersAndSetters: Boolean = false,
+            filterOutJavaGettersAndSetters: Boolean = true,
             filterOutShadowed: Boolean = true,
+            excludeNonInitializedVariable: Boolean = true,
             useReceiverType: KotlinType? = null
     ): Collection<DeclarationDescriptor>
             = getReferenceVariants(expression, CallTypeAndReceiver.detect(expression),
-                                   kindFilter, nameFilter, filterOutJavaGettersAndSetters, filterOutShadowed, useReceiverType)
+                                   kindFilter, nameFilter, filterOutJavaGettersAndSetters, filterOutShadowed, excludeNonInitializedVariable, useReceiverType)
 
     fun getReferenceVariants(
             contextElement: PsiElement,
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
-            filterOutJavaGettersAndSetters: Boolean = false,
+            filterOutJavaGettersAndSetters: Boolean = true,
             filterOutShadowed: Boolean = true,
+            excludeNonInitializedVariable: Boolean = true,
             useReceiverType: KotlinType? = null
     ): Collection<DeclarationDescriptor> {
         var variants: Collection<DeclarationDescriptor>
@@ -79,12 +79,13 @@ class ReferenceVariantsHelper(
             }
         }
 
-
-        if (filterOutJavaGettersAndSetters) {
+        if (filterOutJavaGettersAndSetters && kindFilter.kindMask.and(DescriptorKindFilter.FUNCTIONS_MASK) != 0) {
             variants = filterOutJavaGettersAndSetters(variants)
         }
 
-        variants = variants.excludeNonInitializedVariable(contextElement)
+        if (excludeNonInitializedVariable && kindFilter.kindMask.and(DescriptorKindFilter.VARIABLES_MASK) != 0) {
+            variants = excludeNonInitializedVariable(variants, contextElement)
+        }
 
         return variants
     }
@@ -102,16 +103,16 @@ class ReferenceVariantsHelper(
     }
 
     // filters out variable inside its initializer
-    private fun Collection<DeclarationDescriptor>.excludeNonInitializedVariable(contextElement: PsiElement): Collection<DeclarationDescriptor> {
+    fun excludeNonInitializedVariable(variants: Collection<DeclarationDescriptor>, contextElement: PsiElement): Collection<DeclarationDescriptor> {
         for (element in contextElement.parentsWithSelf) {
             val parent = element.parent
             if (parent is KtVariableDeclaration && element == parent.initializer) {
                 val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent]
-                return this.filter { it != descriptor }
+                return variants.filter { it != descriptor }
             }
             if (element is KtDeclaration) break // we can use variable inside lambda or anonymous object located in its initializer
         }
-        return this
+        return variants
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(
@@ -151,6 +152,7 @@ class ReferenceVariantsHelper(
 
             is CallTypeAndReceiver.DEFAULT -> receiverExpression = null
             is CallTypeAndReceiver.DOT -> receiverExpression = callTypeAndReceiver.receiver
+            is CallTypeAndReceiver.SUPER_MEMBERS -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.SAFE -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.INFIX -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.OPERATOR -> return emptyList()
@@ -179,15 +181,7 @@ class ReferenceVariantsHelper(
                 listOf(useReceiverType)
             }
             else {
-                val expressionType = bindingContext.getType(receiverExpression)
-                if (expressionType != null && !expressionType.isError()) {
-                    val receiverValue = ExpressionReceiver(receiverExpression, expressionType)
-                    smartCastManager.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, bindingContext, containingDeclaration, dataFlowInfo)
-
-                }
-                else {
-                    emptyList()
-                }
+                callTypeAndReceiver.receiverTypes(bindingContext, contextElement, moduleDescriptor, resolutionFacade, predictableSmartCastsOnly = false)!!
             }
 
             descriptors.processAll(implicitReceiverTypes, explicitReceiverTypes, resolutionScope, callType, kindFilter, nameFilter)
@@ -199,6 +193,12 @@ class ReferenceVariantsHelper(
 
             // add non-instance members
             descriptors.addAll(resolutionScope.collectDescriptorsFiltered(kindFilter exclude DescriptorKindExclude.Extensions, nameFilter))
+        }
+
+        if (callType == CallType.SUPER_MEMBERS) { // we need to unwrap fake overrides in case of "super." because ShadowedDeclarationsFilter does not work correctly
+            return descriptors.flatMapTo(LinkedHashSet()) {
+                if (it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) it.overriddenDescriptors else listOf(it)
+            }
         }
 
         return descriptors
@@ -296,7 +296,7 @@ class ReferenceVariantsHelper(
     }
 
     private fun MutableSet<DeclarationDescriptor>.addNonExtensionCallablesAndConstructors(
-            scope: LexicalScope,
+            scope: HierarchicalScope,
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean,
             constructorFilter: (ClassDescriptor) -> Boolean

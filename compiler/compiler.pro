@@ -78,6 +78,11 @@ messages/**)
     public InputStream getInputStream();
 }
 
+# needed for jar cache cleanup in the gradle plugin and compile daemon
+-keepclassmembers class com.intellij.openapi.vfs.impl.ZipHandler {
+    public static void clearFileAccessorCache();
+}
+
 -keep class jet.** {
     public protected *;
 }

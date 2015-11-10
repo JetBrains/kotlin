@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
@@ -41,18 +43,18 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private val factory = ConstantValueFactory(builtIns)
 
     public fun deserializeAnnotation(proto: Annotation, nameResolver: NameResolver): AnnotationDescriptor {
-        val annotationClass = resolveClass(nameResolver.getClassId(proto.getId()))
+        val annotationClass = resolveClass(nameResolver.getClassId(proto.id))
 
-        val arguments = if (proto.getArgumentCount() == 0 || ErrorUtils.isError(annotationClass)) {
-            mapOf()
-        }
-        else {
-            val parameterByName = annotationClass.getConstructors().single().getValueParameters().toMap { it.getName() }
-            val arguments = proto.getArgumentList().map { resolveArgument(it, parameterByName, nameResolver) }.filterNotNull()
-            arguments.toMap()
+        var arguments = emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
+        if (proto.argumentCount != 0 && !ErrorUtils.isError(annotationClass) && DescriptorUtils.isAnnotationClass(annotationClass)) {
+            val constructor = annotationClass.constructors.singleOrNull()
+            if (constructor != null) {
+                val parameterByName = constructor.valueParameters.toMapBy { it.name }
+                arguments = proto.argumentList.map { resolveArgument(it, parameterByName, nameResolver) }.filterNotNull().toMap()
+            }
         }
 
-        return AnnotationDescriptorImpl(annotationClass.getDefaultType(), arguments, SourceElement.NO_SOURCE)
+        return AnnotationDescriptorImpl(annotationClass.defaultType, arguments, SourceElement.NO_SOURCE)
     }
 
     private fun resolveArgument(
@@ -98,7 +100,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
                 val actualArrayType =
                         if (arrayElements.isNotEmpty()) {
                             val actualElementType = resolveArrayElementType(arrayElements.first(), nameResolver)
-                            builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(actualElementType) ?:
+                            builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(actualElementType) ?:
                             builtIns.getArrayType(Variance.INVARIANT, actualElementType)
                         }
                         else {
@@ -133,7 +135,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private fun resolveEnumValue(enumClassId: ClassId, enumEntryName: Name): ConstantValue<*> {
         val enumClass = resolveClass(enumClassId)
         if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-            val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getClassifier(enumEntryName)
+            val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(enumEntryName, NoLookupLocation.FROM_DESERIALIZATION)
             if (enumEntry is ClassDescriptor) {
                 return factory.createEnumValue(enumEntry)
             }

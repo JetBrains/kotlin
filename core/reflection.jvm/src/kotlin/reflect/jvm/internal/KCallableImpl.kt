@@ -68,7 +68,7 @@ internal interface KCallableImpl<out R> : KCallable<R>, KAnnotatedElementImpl {
     // See ArgumentGenerator#generate
     override fun callBy(args: Map<KParameter, Any?>): R {
         val parameters = parameters
-        val arguments = ArrayList<Any?>(parameters.size())
+        val arguments = ArrayList<Any?>(parameters.size)
         var mask = 0
         val masks = ArrayList<Int>(1)
         var index = 0

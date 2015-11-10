@@ -42,11 +42,11 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
 
     private val LOG = Logger.getInstance(this.javaClass)
 
-    override fun visitJetFile(file: KtFile, data: Unit?): String? {
+    override fun visitKtFile(file: KtFile, data: Unit?): String? {
         return "STUB file: ${file.getName()}"
     }
 
-    override fun visitJetElement(element: KtElement, data: Unit?): String? {
+    override fun visitKtElement(element: KtElement, data: Unit?): String? {
         if (element is KtElementImplStub<*>) {
             LOG.error("getDebugText() is not defined for ${element.javaClass}")
         }
@@ -283,12 +283,12 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
 
     fun renderChildren(element: KtElementImplStub<*>, separator: String, prefix: String = "", postfix: String = ""): String? {
         val childrenTexts = element.getStub()?.getChildrenStubs()?.map { (it?.getPsi() as? KtElement)?.getDebugText() }
-        return childrenTexts?.filterNotNull()?.join(separator, prefix, postfix) ?: element.getText()
+        return childrenTexts?.filterNotNull()?.joinToString(separator, prefix, postfix) ?: element.getText()
     }
 
     fun render(element: KtElementImplStub<*>, vararg relevantChildren: KtElement?): String? {
         if (element.getStub() == null) return element.getText()
-        return relevantChildren.filterNotNull().map { it.getDebugText() }.join("", "", "")
+        return relevantChildren.filterNotNull().map { it.getDebugText() }.joinToString("", "", "")
     }
 }
 

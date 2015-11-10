@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.checkers.KotlinMultiFileTestWithWithJava;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -38,10 +38,10 @@ public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTest
     @Override
     @NotNull
     protected CompilerConfiguration createCompilerConfiguration(File javaFilesDir) {
-        return JetTestUtils.compilerConfigurationForTests(
+        return KotlinTestUtils.compilerConfigurationForTests(
                 ConfigurationKind.ALL,
                 TestJdkKind.MOCK_JDK,
-                Arrays.asList(JetTestUtils.getAnnotationsJar()),
+                Arrays.asList(KotlinTestUtils.getAnnotationsJar()),
                 Arrays.asList(javaFilesDir)
         );
     }
@@ -55,7 +55,7 @@ public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTest
     @NotNull
     public static JavaElementFinder createFinder(@NotNull KotlinCoreEnvironment environment) throws IOException {
         // We need to resolve all the files in order too fill in the trace that sits inside LightClassGenerationSupport
-        JetTestUtils.resolveAllKotlinFiles(environment);
+        KotlinTestUtils.resolveAllKotlinFiles(environment);
 
         return JavaElementFinder.getInstance(environment.getProject());
     }

@@ -32,11 +32,10 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.UsefulTestCase;
-import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade;
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
@@ -44,7 +43,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.junit.ComparisonFailure;
 
@@ -76,7 +75,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void setUp() throws Exception {
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
         super.setUp();
 
         UsefulTestCase.edt(new Runnable() {
@@ -114,7 +113,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
     }
 
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
@@ -131,7 +130,12 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir), CUSTOM_LIBRARY_JAR.getPath());
 
             List<String> options = Arrays.asList("-d", outputDir, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath());
-            JetTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
+            try {
+                KotlinTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
             IS_TINY_APP_COMPILED = true;
         }
@@ -190,8 +194,8 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         });
 
         for (PsiClass psiClass : psiClasses) {
-            if (psiClass instanceof KotlinLightClassForFacade) {
-                Collection<KtFile> files = ((KotlinLightClassForFacade) psiClass).getFiles();
+            if (psiClass instanceof KtLightClassForFacade) {
+                Collection<KtFile> files = ((KtLightClassForFacade) psiClass).getFiles();
                 for (KtFile jetFile : files) {
                     createBreakpoints(jetFile);
                 }
@@ -225,7 +229,7 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             super.checkTestOutput();
         }
         catch (ComparisonFailure e) {
-            JetTestUtils.assertEqualsToFile(
+            KotlinTestUtils.assertEqualsToFile(
                     new File(getTestAppPath() + File.separator + "outs" + File.separator + getTestName(true) + ".out"),
                     e.getActual());
         }

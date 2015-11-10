@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -44,14 +42,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.properties.Delegates
 
-private val POSSIBLE_GETTER_NAMES_CAPACITY = 3
-
 interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val getMethod: FunctionDescriptor
     val setMethod: FunctionDescriptor?
 
     companion object {
-        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: LexicalScope): SyntheticJavaPropertyDescriptor? {
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: HierarchicalScope): SyntheticJavaPropertyDescriptor? {
             val name = getterOrSetter.getName()
             if (name.isSpecial()) return null
             val identifier = name.getIdentifier()
@@ -82,7 +78,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         val (descriptor, lookedNames) = syntheticPropertyInClass(Pair(classifier, name))
 
         if (location !is NoLookupLocation) {
-            lookedNames.forEach { lookupTracker.record(location, classifier.unsubstitutedMemberScope, it) }
+            lookedNames.forEach { lookupTracker.record(location, classifier, classifier.unsubstitutedMemberScope, it) }
         }
 
         return descriptor
@@ -90,12 +86,12 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
     private fun syntheticPropertyInClassNotCached(ownerClass: ClassDescriptor, name: Name): SyntheticPropertyHolder {
 
-        fun result(descriptor: PropertyDescriptor?, getterNames: Sequence<Name>, setterName: Name? = null): SyntheticPropertyHolder {
+        fun result(descriptor: PropertyDescriptor?, getterNames: List<Name>, setterName: Name? = null): SyntheticPropertyHolder {
             if (lookupTracker == LookupTracker.DO_NOTHING) {
                 return if (descriptor == null) SyntheticPropertyHolder.EMPTY else SyntheticPropertyHolder(descriptor, emptyList())
             }
 
-            val names = ArrayList<Name>(POSSIBLE_GETTER_NAMES_CAPACITY + (setterName?.let { 1 } ?: 0))
+            val names = ArrayList<Name>(getterNames.size + (setterName?.let { 1 } ?: 0))
 
             names.addAll(getterNames)
             names.addIfNotNull(setterName)
@@ -115,14 +111,14 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
         val possibleGetMethodNames = possibleGetMethodNames(name)
         val getMethod = possibleGetMethodNames
-                                .flatMap { memberScope.getFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).asSequence() }
+                                .flatMap { memberScope.getContributedFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE) }
                                 .singleOrNull {
                                     isGoodGetMethod(it) && it.hasJavaOriginInHierarchy()
                                 } ?: return result(null, possibleGetMethodNames)
 
 
         val setMethodName = setMethodName(getMethod.name)
-        val setMethod = memberScope.getFunctions(setMethodName, NoLookupLocation.FROM_SYNTHETIC_SCOPE)
+        val setMethod = memberScope.getContributedFunctions(setMethodName, NoLookupLocation.FROM_SYNTHETIC_SCOPE)
                 .singleOrNull { isGoodSetMethod(it, getMethod) }
 
         val propertyType = getMethod.returnType!!
@@ -207,7 +203,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
         val classifier = type.declarationDescriptor
         if (classifier is ClassDescriptor) {
-            for (descriptor in classifier.getUnsubstitutedMemberScope().getDescriptors(DescriptorKindFilter.FUNCTIONS)) {
+            for (descriptor in classifier.getUnsubstitutedMemberScope().getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)) {
                 if (descriptor is FunctionDescriptor) {
                     val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
                     addIfNotNull(syntheticPropertyInClass(Pair(classifier, propertyName)).descriptor)
@@ -228,8 +224,8 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
     //TODO: reuse code with generation?
 
-    private fun possibleGetMethodNames(propertyName: Name): Sequence<Name> {
-        val result = ArrayList<Name>(POSSIBLE_GETTER_NAMES_CAPACITY)
+    private fun possibleGetMethodNames(propertyName: Name): List<Name> {
+        val result = ArrayList<Name>(3)
         val identifier = propertyName.identifier
 
         if (JvmAbi.startsWithIsPrefix(identifier)) {
@@ -243,7 +239,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             result.add(Name.identifier("get" + capitalize2))
         }
 
-        return result.asSequence()
+        return result
                 .filter { SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(it) == propertyName } // don't accept "uRL" for "getURL" etc
     }
 

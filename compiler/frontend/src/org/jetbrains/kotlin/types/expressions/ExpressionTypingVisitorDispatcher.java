@@ -399,7 +399,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     }
 
     @Override
-    public KotlinTypeInfo visitJetElement(@NotNull KtElement element, ExpressionTypingContext data) {
+    public KotlinTypeInfo visitKtElement(@NotNull KtElement element, ExpressionTypingContext data) {
         return element.accept(basic, data);
     }
 }

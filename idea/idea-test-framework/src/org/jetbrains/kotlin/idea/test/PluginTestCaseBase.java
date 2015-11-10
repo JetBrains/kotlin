@@ -20,7 +20,7 @@ import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 
@@ -32,7 +32,7 @@ public class PluginTestCaseBase {
 
     @NotNull
     public static String getTestDataPathBase() {
-        return JetTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
+        return KotlinTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
     @NotNull

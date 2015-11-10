@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -86,7 +86,7 @@ class KotlinOverridingDialog extends DialogWrapper {
             myMethodText[i] = formatElement(((KotlinSafeDeleteOverridingUsageInfo) myOverridingMethods.get(i)).getOverridingElement());
         }
         myUsagePreviewPanel = new UsagePreviewPanel(project, new UsageViewPresentation());
-        setTitle(JetBundle.message("unused.overriding.methods.title"));
+        setTitle(KotlinBundle.message("unused.overriding.methods.title"));
         init();
     }
 
@@ -99,7 +99,7 @@ class KotlinOverridingDialog extends DialogWrapper {
             if (declarationDescriptor instanceof CallableMemberDescriptor) {
                 DeclarationDescriptor containingDescriptor = declarationDescriptor.getContainingDeclaration();
                 if (containingDescriptor instanceof ClassDescriptor) {
-                    return JetBundle.message(
+                    return KotlinBundle.message(
                             "x.in.y",
                             DescriptorRenderer.COMPACT.render(declarationDescriptor),
                             IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(containingDescriptor)
@@ -144,8 +144,8 @@ class KotlinOverridingDialog extends DialogWrapper {
     protected JComponent createNorthPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel(JetBundle.message("there.are.unused.methods.that.override.methods.you.delete")));
-        panel.add(new JLabel(JetBundle.message("choose.the.ones.you.want.to.be.deleted")));
+        panel.add(new JLabel(KotlinBundle.message("there.are.unused.methods.that.override.methods.you.delete")));
+        panel.add(new JLabel(KotlinBundle.message("choose.the.ones.you.want.to.be.deleted")));
         return panel;
     }
 
@@ -251,7 +251,7 @@ class KotlinOverridingDialog extends DialogWrapper {
                 case CHECK_COLUMN:
                     return " ";
                 default:
-                    return JetBundle.message("method.column");
+                    return KotlinBundle.message("method.column");
             }
         }
 

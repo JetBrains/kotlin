@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
 import org.jetbrains.kotlin.idea.debugger.stepping.*
-import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -247,7 +247,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
         val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, getProject())
         if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
-                                     libraryEntry.getPresentableName() == JetJdkAndLibraryProjectDescriptor.LIBRARY_NAME)) {
+                                     libraryEntry.getPresentableName() == KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME)) {
             return FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!"
         }
 

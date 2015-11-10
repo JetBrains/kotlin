@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
-import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
+import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -58,7 +58,7 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor.hasPlatformStaticAnnotation()) {
+        if (descriptor.hasJvmStaticAnnotation()) {
             if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtPropertyAccessor) {
                 checkDeclaration(declaration, descriptor, diagnosticHolder)
             }

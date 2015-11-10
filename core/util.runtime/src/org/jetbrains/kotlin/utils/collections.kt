@@ -108,3 +108,8 @@ public fun <T> Collection<T>.toReadOnlyList(): List<T> =
 
 public fun <T: Any> T?.singletonOrEmptyList(): List<T> =
         if (this != null) listOf(this) else emptyList()
+
+public fun <T> MutableList<T>.removeLast(condition: (T) -> Boolean): T? {
+    val index = indexOfLast(condition)
+    return if (index >= 0) removeAt(index) else null
+}

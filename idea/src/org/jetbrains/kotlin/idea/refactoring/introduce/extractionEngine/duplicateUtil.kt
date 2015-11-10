@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.project.Project
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
 import com.intellij.refactoring.RefactoringBundle
 
-public fun JetPsiRange.highlight(project: Project, editor: Editor): RangeHighlighter? {
+public fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHighlighter? {
     val textRange = getTextRange()
     val highlighters = ArrayList<RangeHighlighter>()
     val attributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
@@ -46,7 +46,7 @@ public fun JetPsiRange.highlight(project: Project, editor: Editor): RangeHighlig
     return highlighters.firstOrNull()
 }
 
-public fun JetPsiRange.preview(project: Project, editor: Editor): RangeHighlighter? {
+public fun KotlinPsiRange.preview(project: Project, editor: Editor): RangeHighlighter? {
     return highlight(project, editor)?.let {
         val startOffset = getTextRange().getStartOffset()
         val foldedRegions =
@@ -63,7 +63,7 @@ public fun JetPsiRange.preview(project: Project, editor: Editor): RangeHighlight
 }
 
 public fun processDuplicates(
-        duplicateReplacers: Map<JetPsiRange, () -> Unit>,
+        duplicateReplacers: Map<KotlinPsiRange, () -> Unit>,
         project: Project,
         editor: Editor
 ) {
@@ -114,7 +114,7 @@ public fun processDuplicates(
     }
 }
 
-public fun processDuplicatesSilently(duplicateReplacers: Map<JetPsiRange, () -> Unit>, project: Project) {
+public fun processDuplicatesSilently(duplicateReplacers: Map<KotlinPsiRange, () -> Unit>, project: Project) {
     project.executeWriteCommand(MethodDuplicatesHandler.REFACTORING_NAME) {
         duplicateReplacers.values().forEach { it() }
     }

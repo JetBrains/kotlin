@@ -43,9 +43,7 @@ public inline fun String.matches(regex : String) : Boolean {
     return result != null && result.size() > 0
 }
 
-public inline fun CharSequence.isEmpty(): Boolean = this.length() == 0
-
-public fun String.isBlank(): Boolean = length() == 0 || matches("^[\\s\\xA0]+$")
+public fun CharSequence.isBlank(): Boolean = length() == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
 
 public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): Boolean =
         if (this == null)
@@ -56,14 +54,8 @@ public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): 
             anotherString != null && this.toLowerCase() == anotherString.toLowerCase()
 
 
-public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean {
-    if ((otherOffset < 0) || (thisOffset < 0) || (thisOffset > length() - length)
-        || (otherOffset > other.length() - length)) {
-        return false;
-    }
-
-    return substring(thisOffset, thisOffset + length).equals(other.substring(otherOffset, otherOffset + length), ignoreCase)
-}
+public fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean
+        = regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
 
 
 /**

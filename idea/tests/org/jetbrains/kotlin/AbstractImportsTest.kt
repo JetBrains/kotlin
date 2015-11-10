@@ -18,25 +18,25 @@ package org.jetbrains.kotlin
 
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.PackageEntry
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = JetTestUtils.getHomeDirectory()
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+public abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
+    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected fun doTest(testPath: String) {
         val settingManager = CodeStyleSettingsManager.getInstance()
         val tempSettings = settingManager.getCurrentSettings().clone()
         settingManager.setTemporarySettings(tempSettings)
 
-        val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
+        val codeStyleSettings = KotlinCodeStyleSettings.getInstance(getProject())
 
         try {
             val fixture = myFixture
@@ -70,7 +70,7 @@ public abstract class AbstractImportsTest : JetLightCodeInsightFixtureTestCase()
                 doTest(file)
             }
 
-            JetTestUtils.assertEqualsToFile(File(testPath + ".after"), myFixture.getFile().getText())
+            KotlinTestUtils.assertEqualsToFile(File(testPath + ".after"), myFixture.getFile().getText())
         }
         finally {
             settingManager.dropTemporarySettings()

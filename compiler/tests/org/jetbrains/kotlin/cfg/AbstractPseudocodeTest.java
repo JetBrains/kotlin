@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,10 +51,10 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
 
     protected void doTest(String fileName) throws Exception {
         File file = new File(fileName);
-        KtFile jetFile = JetTestUtils.loadJetFile(getProject(), file);
+        KtFile jetFile = KotlinTestUtils.loadJetFile(getProject(), file);
 
         Map<KtElement, Pseudocode> data = new LinkedHashMap<KtElement, Pseudocode>();
-        AnalysisResult analysisResult = JetTestUtils.analyzeFile(jetFile, getEnvironment());
+        AnalysisResult analysisResult = KotlinTestUtils.analyzeFile(jetFile, getEnvironment());
         List<KtDeclaration> declarations = jetFile.getDeclarations();
         BindingContext bindingContext = analysisResult.getBindingContext();
         for (KtDeclaration declaration : declarations) {
@@ -126,8 +126,8 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
             checkPseudocode((PseudocodeImpl) pseudocode);
         }
 
-        File expectedInstructionsFile = JetTestUtils.replaceExtension(file, getDataFileExtension());
-        JetTestUtils.assertEqualsToFile(expectedInstructionsFile, instructionDump.toString());
+        File expectedInstructionsFile = KotlinTestUtils.replaceExtension(file, getDataFileExtension());
+        KotlinTestUtils.assertEqualsToFile(expectedInstructionsFile, instructionDump.toString());
     }
 
     protected String getDataFileExtension() {

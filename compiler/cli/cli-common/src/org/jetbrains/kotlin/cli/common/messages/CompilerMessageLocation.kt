@@ -23,10 +23,10 @@ public data class CompilerMessageLocation private constructor(
         public val lineContent: String?
 ) {
     override fun toString(): String =
-            path + (if (line != -1 || column != -1) " (" + line + ":" + column + ")" else "")
+            path + (if (line != -1 || column != -1) " ($line:$column)" else "")
 
     companion object {
-        @JvmStatic
+        @JvmField
         public val NO_LOCATION: CompilerMessageLocation = CompilerMessageLocation(null, -1, -1, null)
 
         @JvmStatic

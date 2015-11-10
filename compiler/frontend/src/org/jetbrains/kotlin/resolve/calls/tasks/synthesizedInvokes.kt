@@ -74,8 +74,8 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
             original.getTypeParameters(),
             original.getValueParameters().drop(1).map { p ->
                 ValueParameterDescriptorImpl(
-                        result, null, p.getIndex() - 1, p.getAnnotations(), Name.identifier("p${p.getIndex() + 1}"), p.getType(),
-                        p.declaresDefaultValue(), p.isCrossinline, p.isNoinline, p.getVarargElementType(), p.getSource()
+                        result, null, p.index - 1, p.getAnnotations(), Name.identifier("p${p.index + 1}"), p.getType(),
+                        p.declaresDefaultValue(), p.isCrossinline, p.isNoinline, p.varargElementType, p.getSource()
                 )
             },
             original.getReturnType(),

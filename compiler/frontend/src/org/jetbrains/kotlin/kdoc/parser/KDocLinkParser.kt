@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.kdoc.parser
 
+import com.intellij.lang.ASTNode
+import com.intellij.lang.PsiBuilder
+import com.intellij.lang.PsiBuilderFactory
 import com.intellij.lang.PsiParser
 import com.intellij.psi.tree.IElementType
-import com.intellij.lang.PsiBuilder
-import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KotlinLexer
-import com.intellij.lang.PsiBuilderFactory
-import kotlin.platform.*
+import org.jetbrains.kotlin.lexer.KtTokens
 
 /**
  * Parses the contents of a Markdown link in KDoc. Uses the standard Kotlin lexer.

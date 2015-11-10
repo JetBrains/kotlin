@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.test.MockLibraryUtil;
 
 import java.io.File;
 
-public class JdkAndMockLibraryProjectDescriptor extends JetLightProjectDescriptor {
+public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
     public static final String LIBRARY_NAME = "myKotlinLib";
 
     private final String sourcesPath;

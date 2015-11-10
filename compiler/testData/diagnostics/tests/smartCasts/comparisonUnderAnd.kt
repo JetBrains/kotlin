@@ -8,19 +8,19 @@ fun foo(x : String?, y : String?) {
         x<!UNSAFE_CALL!>.<!>length
         y<!UNSAFE_CALL!>.<!>length
     }
-    if (y != null || x == y) {
+    if (y != null || x == <!ALWAYS_NULL!>y<!>) {
         x<!UNSAFE_CALL!>.<!>length
         y<!UNSAFE_CALL!>.<!>length
     }
     else {
         // y == null but x != y
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        y<!UNSAFE_CALL!>.<!>length
+        <!ALWAYS_NULL!>y<!><!UNSAFE_CALL!>.<!>length
     }
-    if (y == null && x != y) {
+    if (y == null && x != <!ALWAYS_NULL!>y<!>) {
         // y == null but x != y
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        y<!UNSAFE_CALL!>.<!>length
+        <!ALWAYS_NULL!>y<!><!UNSAFE_CALL!>.<!>length
     }
     else {
         x<!UNSAFE_CALL!>.<!>length

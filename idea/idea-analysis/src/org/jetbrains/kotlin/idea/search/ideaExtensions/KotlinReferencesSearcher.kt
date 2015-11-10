@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.KOTLIN_NAMED_ARGUMENT_SEARCH_CONTEXT
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -110,7 +110,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         var namedArgsScope = function.useScope.intersectWith(queryParameters.scopeDeterminedByUser)
 
         if (namedArgsScope is GlobalSearchScope) {
-            namedArgsScope = JetSourceFilterScope.kotlinSourcesAndLibraries(namedArgsScope, project)
+            namedArgsScope = KotlinSourceFilterScope.sourcesAndLibraries(namedArgsScope, project)
 
             val filesWithFunctionName = CacheManager.SERVICE.getInstance(project).getVirtualFilesWithWord(
                     function.name!!, UsageSearchContext.IN_CODE, namedArgsScope, true)
@@ -171,7 +171,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
     }
 
     companion object {
-        public fun processJetClassOrObject(element: KtClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
+        public fun processKtClassOrObject(element: KtClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
             val className = element.getName()
             if (className != null) {
                 val lightClass = runReadAction { LightClassUtil.getPsiClass(element) }
@@ -190,9 +190,9 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                                 val originClass = element.getStrictParentOfType<KtClass>()
                                 val originLightClass = LightClassUtil.getPsiClass(originClass)
                                 if (originLightClass != null) {
-                                    val lightDeclarations: List<KotlinLightElement<*, *>?> =
-                                            originLightClass.methods.map { it as? KotlinLightMethod } +
-                                            originLightClass.fields.map { it as? KotlinLightFieldForDeclaration }
+                                    val lightDeclarations: List<KtLightElement<*, *>?> =
+                                            originLightClass.methods.map { it as? KtLightMethod } +
+                                            originLightClass.fields.map { it as? KtLightField }
 
                                     for (declaration in element.declarations) {
                                         val lightDeclaration = lightDeclarations.find { it?.getOrigin() == declaration }
@@ -216,7 +216,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                 val originClass = originObject.getStrictParentOfType<KtClass>()
                 val originLightClass = LightClassUtil.getPsiClass(originClass)
                 val allMethods = originLightClass?.allMethods
-                return allMethods?.find { it is KotlinLightMethod && it.getOrigin() == function }
+                return allMethods?.find { it is KtLightMethod && it.getOrigin() == function }
             }
             return null
         }
@@ -239,7 +239,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
         private fun searchLightElements(queryParameters: ReferencesSearch.SearchParameters, element: PsiElement) {
             when (element) {
-                is KtClassOrObject -> processJetClassOrObject(element, queryParameters)
+                is KtClassOrObject -> processKtClassOrObject(element, queryParameters)
                 is KtNamedFunction, is KtSecondaryConstructor -> {
                     val function = element as KtFunction
                     val name = runReadAction { function.getName() }
@@ -272,7 +272,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     }
                 }
 
-                is KotlinLightMethod -> {
+                is KtLightMethod -> {
                     val declaration = element.getOrigin()
                     if (declaration is KtProperty || (declaration is KtParameter && declaration.hasValOrVar())) {
                         searchNamedElement(queryParameters, declaration as PsiNamedElement)
@@ -289,7 +289,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
                     }
                 }
 
-                is KotlinLightParameter -> {
+                is KtLightParameter -> {
                     val origin = element.getOrigin() ?: return
                     runReadAction {
                         val componentFunctionDescriptor = origin.dataClassComponentFunction()

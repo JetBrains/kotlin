@@ -17,16 +17,25 @@
 package org.jetbrains.kotlin.incremental.components
 
 public interface LookupLocation {
+    val location: LocationInfo?
+}
+
+interface LocationInfo {
+    val filePath: String
+
+    // only for tests
+    val position: Position
+
+    data class Position(val line: Int, val column: Int)
 }
 
 public enum class NoLookupLocation : LookupLocation {
-    @Deprecated("Use more suitable constant if possible")
-    UNSORTED,
     FROM_IDE,
     FROM_BACKEND,
     FROM_TEST,
     FROM_BUILTINS,
     WHEN_CHECK_REDECLARATIONS,
+    WHEN_CHECK_OVERRIDES,
     FOR_SCRIPT,
     FROM_REFLECTION,
     WHEN_RESOLVE_DECLARATION,
@@ -37,5 +46,12 @@ public enum class NoLookupLocation : LookupLocation {
     WHEN_TYPING,
     WHEN_GET_SUPER_MEMBERS,
     FOR_NON_TRACKED_SCOPE,
-    FROM_SYNTHETIC_SCOPE
+    FROM_SYNTHETIC_SCOPE,
+    FROM_DESERIALIZATION,
+    FROM_JAVA_LOADER,
+    WHEN_GET_LOCAL_VARIABLE,
+    WHEN_FIND_BY_FQNAME,
+    WHEN_GET_COMPANION_OBJECT;
+
+    override val location: LocationInfo? = null
 }

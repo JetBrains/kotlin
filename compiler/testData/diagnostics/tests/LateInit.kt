@@ -16,7 +16,7 @@ public abstract class A<T: Any, V: String?>(<!INAPPLICABLE_LATEINIT_MODIFIER!>la
 
     public lateinit var e: String
         get
-        <!PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR!>private<!> set
+        <!SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY!>private<!> set
 
     fun a() {
         <!WRONG_MODIFIER_TARGET!>lateinit<!> var <!UNUSED_VARIABLE!>a<!>: String

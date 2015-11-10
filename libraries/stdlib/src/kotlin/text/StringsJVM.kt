@@ -106,12 +106,12 @@ public fun String.format(vararg args: Any?): String = java.lang.String.format(th
 public fun String.format(locale: Locale, vararg args : Any?) : String = java.lang.String.format(locale, this, *args)
 
 /**
- * Splits this string around matches of the given regular expression.
+ * Splits this char sequence around matches of the given regular expression.
 
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
-public fun String.split(regex: Pattern, limit: Int = 0): List<String>
+public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String>
 {
     require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
     return regex.split(this, if (limit == 0) -1 else limit).asList()
@@ -234,12 +234,6 @@ public fun String(stringBuffer: java.lang.StringBuffer): String = java.lang.Stri
  */
 public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.String(stringBuilder) as String
 
-///**
-// * Replaces the first substring of this string that matches the given regular expression with the given replacement.
-// */
-//deprecated("Use replaceFirst(Regex, String) or replaceFirstLiteral(String, String) instead.", ReplaceWith("replaceFirst(regex.toRegex(), replacement)"))
-//public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
-
 /**
  * Returns the character (Unicode code point) at the specified index.
  */
@@ -298,12 +292,26 @@ public fun String.intern(): String = (this as java.lang.String).intern()
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
-public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
+public fun CharSequence.isBlank(): Boolean = length() == 0 || indices.all { this[it].isWhitespace() }
 
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
  */
 public fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int = (this as java.lang.String).offsetByCodePoints(index, codePointOffset)
+
+/**
+ * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
+ * @param thisOffset the start offset in this char sequence of the substring to compare.
+ * @param other the string against a substring of which the comparison is performed.
+ * @param otherOffset the start offset in the other char sequence of the substring to compare.
+ * @param length the length of the substring to compare.
+ */
+public fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean {
+    if (this is String && other is String)
+        return this.regionMatches(thisOffset, other, otherOffset, length, ignoreCase)
+    else
+        return regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
+}
 
 /**
  * Returns `true` if the specified range in this string is equal to the specified range in another string.
@@ -332,6 +340,12 @@ public fun String.toUpperCase(locale: java.util.Locale): String = (this as java.
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
 public fun String.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)
+
+/**
+ * Parses the string as a signed [Byte] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+public fun String.toByte(): Byte = java.lang.Byte.parseByte(this)
 
 /**
  * Parses the string as a [Short] number and returns the result.
@@ -369,7 +383,7 @@ public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 public fun String.toCharList(): List<Char> = toCharArray().toList()
 
 /**
- * Returns a subsequence of this sequence.
+ * Returns a subsequence of this char sequence.
  *
  * @param start the start index (inclusive).
  * @param end the end index (exclusive).
@@ -386,12 +400,7 @@ public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.S
  */
 public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
-/**
- * Returns a subsequence of this sequence specified by given [range].
- */
-public fun CharSequence.slice(range: IntRange): CharSequence {
-    return subSequence(range.start, range.end + 1) // inclusive
-}
+
 
 /**
  * Converts the string into a regular expression [Pattern] optionally
@@ -423,15 +432,15 @@ public fun String.decapitalize(): String {
 }
 
 /**
- * Repeats a given string [n] times.
+ * Returns a string containing this char sequence repeated [n] times.
  * @throws [IllegalArgumentException] when n < 0.
  * @sample test.text.StringJVMTest.repeat
  */
-public fun String.repeat(n: Int): String {
+public fun CharSequence.repeat(n: Int): String {
     if (n < 0)
         throw IllegalArgumentException("Value should be non-negative, but was $n")
 
-    val sb = StringBuilder()
+    val sb = StringBuilder(n * length())
     for (i in 1..n) {
         sb.append(this)
     }
@@ -439,10 +448,10 @@ public fun String.repeat(n: Int): String {
 }
 
 /**
- * Appends the contents of this string, excluding the first characters that satisfy the given [predicate],
+ * Appends the contents of this char sequence, excluding the first characters that satisfy the given [predicate],
  * to the given Appendable.
  */
-public inline fun <T : Appendable> String.dropWhileTo(result: T, predicate: (Char) -> Boolean): T {
+public inline fun <T : Appendable> CharSequence.dropWhileTo(result: T, predicate: (Char) -> Boolean): T {
     var start = true
     for (element in this) {
         if (start && predicate(element)) {
@@ -456,9 +465,9 @@ public inline fun <T : Appendable> String.dropWhileTo(result: T, predicate: (Cha
 }
 
 /**
- * Appends the first characters from this string that satisfy the given [predicate] to the given Appendable.
+ * Appends the first characters from this char sequence that satisfy the given [predicate] to the given Appendable.
  */
-public inline fun <T : Appendable> String.takeWhileTo(result: T, predicate: (Char) -> Boolean): T {
+public inline fun <T : Appendable> CharSequence.takeWhileTo(result: T, predicate: (Char) -> Boolean): T {
     for (c in this) if (predicate(c)) result.append(c) else break
     return result
 }

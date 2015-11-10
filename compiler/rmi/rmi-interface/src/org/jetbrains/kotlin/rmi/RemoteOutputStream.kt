@@ -16,18 +16,17 @@
 
 package org.jetbrains.kotlin.rmi
 
-import java.io.IOException
 import java.rmi.Remote
 import java.rmi.RemoteException
 
 public interface RemoteOutputStream : Remote {
 
-    @Throws(IOException::class, RemoteException::class)
+    @Throws(RemoteException::class)
     public fun close()
 
-    @Throws(IOException::class, RemoteException::class)
+    @Throws(RemoteException::class)
     public fun write(data: ByteArray, offset: Int, length: Int)
 
-    @Throws(IOException::class, RemoteException::class)
+    @Throws(RemoteException::class)
     public fun write(dataByte: Int)
 }

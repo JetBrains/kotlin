@@ -6,12 +6,8 @@ package creatures
 
 import java.util.ArrayList
 import jquery.*
-import kotlin.js.dom.html.window
-import kotlin.js.dom.html.HTMLElement
-import kotlin.js.dom.html.HTMLImageElement
-import kotlin.js.dom.html5.CanvasContext
-import kotlin.js.dom.html5.CanvasGradient
-import kotlin.js.dom.html5.HTMLCanvasElement
+import kotlin.browser.window
+import org.w3c.dom.*
 
 
 fun getImage(path: String): HTMLImageElement {
@@ -25,22 +21,22 @@ val canvas: HTMLCanvasElement
         return window.document.getElementsByTagName("canvas").item(0)!! as HTMLCanvasElement
     }
 
-val context: CanvasContext
+val context: CanvasRenderingContext2D
     get() {
-        return canvas.getContext("2d")!!
+        return canvas.getContext("2d") as CanvasRenderingContext2D
     }
 
 abstract class Shape() {
 
     abstract fun draw(state: CanvasState)
     // these two abstract methods defines that our shapes can be dragged
-    abstract fun contains(mousePos: Vector): Boolean
+    abstract operator fun contains(mousePos: Vector): Boolean
     abstract var pos: Vector
 
     var selected: Boolean = false
 
     // a couple of helper extension methods we'll be using in the derived classes
-    fun CanvasContext.shadowed(shadowOffset: Vector, alpha: Double, render: CanvasContext.() -> Unit) {
+    fun CanvasRenderingContext2D.shadowed(shadowOffset: Vector, alpha: Double, render: CanvasRenderingContext2D.() -> Unit) {
         save()
         shadowColor = "rgba(100, 100, 100, $alpha)"
         shadowBlur = 5.0
@@ -50,7 +46,7 @@ abstract class Shape() {
         restore()
     }
 
-    fun CanvasContext.fillPath(constructPath: CanvasContext.() -> Unit) {
+    fun CanvasRenderingContext2D.fillPath(constructPath: CanvasRenderingContext2D.() -> Unit) {
         beginPath()
         constructPath()
         closePath()
@@ -73,10 +69,10 @@ class Logo(override var pos: Vector) : Shape() {
     fun drawLogo(state: CanvasState) {
         size = imageSize * (state.size.x / imageSize.x) * relSize
         // getKotlinLogo() is a 'magic' function here defined only for purposes of demonstration but in fact it just find an element containing the logo
-        state.context.drawImage(getImage("http://kotlin-demo.jetbrains.com/static/images/kotlinlogowobackground.png"), 0, 0,
-                                imageSize.x.toInt(), imageSize.y.toInt(),
-                                position.x.toInt(), position.y.toInt(),
-                                size.x.toInt(), size.y.toInt())
+        state.context.drawImage(getImage("http://kotlin-demo.jetbrains.com/static/images/kotlinlogowobackground.png"), 0.0, 0.0,
+                                imageSize.x, imageSize.y,
+                                position.x, position.y,
+                                size.x, size.y)
     }
 
     override fun draw(state: CanvasState) {
@@ -123,12 +119,12 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
     override fun contains(mousePos: Vector) = pos distanceTo mousePos < radius
 
     // defining more nice extension functions
-    fun CanvasContext.circlePath(position: Vector, rad: Double) {
+    fun CanvasRenderingContext2D.circlePath(position: Vector, rad: Double) {
         arc(position.x, position.y, rad, 0.0, 2 * Math.PI, false)
     }
 
     //notice we can use an extension function we just defined inside another extension function
-    fun CanvasContext.fillCircle(position: Vector, rad: Double) {
+    fun CanvasRenderingContext2D.fillCircle(position: Vector, rad: Double) {
         fillPath {
             circlePath(position, rad)
         }
@@ -144,7 +140,7 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
         }
     }
 
-    fun drawCreature(context: CanvasContext) {
+    fun drawCreature(context: CanvasRenderingContext2D) {
         context.fillStyle = getGradient(context)
         context.fillPath {
             tailPath(context)
@@ -153,16 +149,16 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
         drawEye(context)
     }
 
-    fun getGradient(context: CanvasContext): CanvasGradient {
+    fun getGradient(context: CanvasRenderingContext2D): CanvasGradient {
         val gradientCentre = position + directionToLogo * (radius / 4)
-        val gradient = context.createRadialGradient(gradientCentre.x, gradientCentre.y, 1.0, gradientCentre.x, gradientCentre.y, 2 * radius)!!
+        val gradient = context.createRadialGradient(gradientCentre.x, gradientCentre.y, 1.0, gradientCentre.x, gradientCentre.y, 2 * radius)
         for (colorStop in colorStops) {
             gradient.addColorStop(colorStop.first, colorStop.second)
         }
         return gradient
     }
 
-    fun tailPath(context: CanvasContext) {
+    fun tailPath(context: CanvasRenderingContext2D) {
         val tailDirection = -directionToLogo
         val tailPos = position + tailDirection * radius * 1.0
         val tailSize = radius * 1.6
@@ -170,13 +166,13 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
         val p1 = tailPos + tailDirection.rotatedBy(angle) * tailSize
         val p2 = tailPos + tailDirection.rotatedBy(-angle) * tailSize
         val middlePoint = position + tailDirection * radius * 1.0
-        context.moveTo(tailPos.x.toInt(), tailPos.y.toInt())
-        context.lineTo(p1.x.toInt(), p1.y.toInt())
+        context.moveTo(tailPos.x, tailPos.y)
+        context.lineTo(p1.x, p1.y)
         context.quadraticCurveTo(middlePoint.x, middlePoint.y, p2.x, p2.y)
-        context.lineTo(tailPos.x.toInt(), tailPos.y.toInt())
+        context.lineTo(tailPos.x, tailPos.y)
     }
 
-    fun drawEye(context: CanvasContext) {
+    fun drawEye(context: CanvasRenderingContext2D) {
         val eyePos = directionToLogo * radius * 0.6 + position
         val eyeRadius = radius / 3
         val eyeLidRadius = eyeRadius / 2
@@ -186,7 +182,7 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
         context.fillCircle(eyePos, eyeLidRadius)
     }
 
-    fun drawCreatureWithShadow(context: CanvasContext) {
+    fun drawCreatureWithShadow(context: CanvasRenderingContext2D) {
         context.shadowed(shadowOffset, 0.7) {
             context.fillStyle = getGradient(context)
             fillPath {
@@ -199,8 +195,8 @@ class Creature(override var pos: Vector, val state: CanvasState) : Shape() {
 }
 
 class CanvasState(val canvas: HTMLCanvasElement) {
-    var width = canvas.width
-    var height = canvas.height
+    var width = canvas.width.toDouble()
+    var height = canvas.height.toDouble()
     val size: Vector
         get() = v(width, height)
     val context = creatures.context
@@ -255,9 +251,9 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         var offset = Vector()
         var element: HTMLElement? = canvas
         while (element != null) {
-            val el: HTMLElement = element!!
+            val el: HTMLElement = element
             offset += Vector(el.offsetLeft, el.offsetTop)
-            element = el.offsetParent
+            element = el.offsetParent as HTMLElement?
         }
         return Vector(e.pageX, e.pageY) - offset
     }
@@ -269,10 +265,10 @@ class CanvasState(val canvas: HTMLCanvasElement) {
 
     fun clear() {
         context.fillStyle = "#FFFFFF"
-        context.fillRect(0, 0, width.toInt(), height.toInt())
+        context.fillRect(0.0, 0.0, width, height)
         context.strokeStyle = "#000000"
         context.lineWidth = 4.0
-        context.strokeRect(0, 0, width.toInt(), height.toInt())
+        context.strokeRect(0.0, 0.0, width, height)
     }
 
     fun draw() {
@@ -287,7 +283,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
     }
 }
 
-class RadialGradientGenerator(val context: CanvasContext) {
+class RadialGradientGenerator(val context: CanvasRenderingContext2D) {
     val gradients = ArrayList<Array<out Pair<Double, String>>>()
     var current = 0
 
@@ -306,7 +302,7 @@ class RadialGradientGenerator(val context: CanvasContext) {
 
     fun getNext(): Array<out Pair<Double, String>> {
         val result = gradients.get(current)
-        current = (current + 1) % gradients.size()
+        current = (current + 1) % gradients.size
         return result
     }
 }
@@ -314,11 +310,11 @@ class RadialGradientGenerator(val context: CanvasContext) {
 fun v(x: Double, y: Double) = Vector(x, y)
 
 class Vector(val x: Double = 0.0, val y: Double = 0.0) {
-    fun plus(v: Vector) = v(x + v.x, y + v.y)
-    fun minus() = v(-x, -y)
-    fun minus(v: Vector) = v(x - v.x, y - v.y)
-    fun times(koef: Double) = v(x * koef, y * koef)
-    fun distanceTo(v: Vector) = Math.sqrt((this - v).sqr)
+    operator fun plus(v: Vector) = v(x + v.x, y + v.y)
+    operator fun unaryMinus() = v(-x, -y)
+    operator fun minus(v: Vector) = v(x - v.x, y - v.y)
+    operator fun times(koef: Double) = v(x * koef, y * koef)
+    infix fun distanceTo(v: Vector) = Math.sqrt((this - v).sqr)
     fun rotatedBy(theta: Double): Vector {
         val sin = Math.sin(theta)
         val cos = Math.cos(theta)
@@ -326,7 +322,7 @@ class Vector(val x: Double = 0.0, val y: Double = 0.0) {
     }
 
     fun isInRect(topLeft: Vector, size: Vector) = (x >= topLeft.x) && (x <= topLeft.x + size.x) &&
-    (y >= topLeft.y) && (y <= topLeft.y + size.y)
+                                                  (y >= topLeft.y) && (y <= topLeft.y + size.y)
 
     val sqr: Double
         get() = x * x + y * y
@@ -342,13 +338,14 @@ fun main(args: Array<String>) {
         state.addShape(Creature(state.size * 0.75, state))
         window.setTimeout({
                               state.valid = false
+                              Unit
                           }, 1000)
     }
 }
 
 fun <T> List<T>.reversed(): List<T> {
     val result = ArrayList<T>()
-    var i = size()
+    var i = size
     while (i > 0) {
         result.add(get(--i))
     }

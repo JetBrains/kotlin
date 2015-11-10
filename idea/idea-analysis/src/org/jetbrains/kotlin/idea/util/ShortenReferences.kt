@@ -127,7 +127,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
     @JvmOverloads
     public fun process(elements: Iterable<KtElement>, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): Collection<KtElement> {
-        return elements.groupBy { element -> element.getContainingJetFile() }
+        return elements.groupBy { element -> element.getContainingKtFile() }
                 .flatMap { shortenReferencesInFile(it.key, it.value, elementFilter) }
     }
 

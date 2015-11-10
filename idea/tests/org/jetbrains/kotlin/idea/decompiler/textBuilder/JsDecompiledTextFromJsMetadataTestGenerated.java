@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +32,12 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JsDecompiledTextFromJsMetadataTestGenerated extends AbstractJsDecompiledTextFromJsMetadataTest {
     public void testAllFilesPresentInDecompiledTextJs() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs"), Pattern.compile("^([^\\.]+)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
     @TestMetadata("TestPackage")
     public void testTestPackage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJs/TestPackage/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJs/TestPackage/");
         doTest(fileName);
     }
 

@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import java.io.File
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {
 
@@ -35,6 +35,6 @@ class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JetJdkAndLibraryProjectDescriptor(File(JetTestUtils.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
+        return KotlinJdkAndLibraryProjectDescriptor(File(KotlinTestUtils.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
     }
 }

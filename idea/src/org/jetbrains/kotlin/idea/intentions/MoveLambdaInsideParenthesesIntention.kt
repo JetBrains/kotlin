@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.core.moveInsideParentheses
 import org.jetbrains.kotlin.psi.KtFunctionLiteralArgument
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 
-public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<KtFunctionLiteralArgument>(javaClass(), "Move lambda argument into parentheses"), LowPriorityAction {
+public class MoveLambdaInsideParenthesesIntention : SelfTargetingIntention<KtFunctionLiteralArgument>(javaClass(), "Move lambda argument into parentheses"), LowPriorityAction {
     override fun isApplicableTo(element: KtFunctionLiteralArgument, caretOffset: Int): Boolean {
         val body = element.getFunctionLiteral().getBodyExpression() ?: return true
         return !body.getTextRange().containsInside(caretOffset)

@@ -17,9 +17,9 @@ class MyTestClass {
 }
 
 // ANNOTATION: org.junit.Test
-// SEARCH: KotlinLightMethodForDeclaration:test1
-// SEARCH: KotlinLightMethodForDeclaration:test2
-// SEARCH: KotlinLightMethodForDeclaration:test3
-// SEARCH: KotlinLightMethodForDeclaration:test4
-// SEARCH: KotlinLightMethodForDeclaration:test5
-// SEARCH: KotlinLightMethodForDeclaration:test6
+// SEARCH: method:test1
+// SEARCH: method:test2
+// SEARCH: method:test3
+// SEARCH: method:test4
+// SEARCH: method:test5
+// SEARCH: method:test6

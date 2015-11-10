@@ -26,13 +26,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.sure
-import java.util.LinkedHashSet
+import java.util.*
 
-public class ModuleDescriptorImpl(
+public class ModuleDescriptorImpl @JvmOverloads constructor(
         moduleName: Name,
         private val storageManager: StorageManager,
         private val moduleParameters: ModuleParameters,
-        override val builtIns: KotlinBuiltIns
+        override val builtIns: KotlinBuiltIns,
+        private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor, ModuleParameters by moduleParameters {
     init {
         if (!moduleName.isSpecial()) {
@@ -102,6 +103,9 @@ public class ModuleDescriptorImpl(
         assert(friend != this) { "Attempt to make module $id a friend to itself" }
         friendModules.add(friend)
     }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
 }
 
 public interface ModuleDependencies {

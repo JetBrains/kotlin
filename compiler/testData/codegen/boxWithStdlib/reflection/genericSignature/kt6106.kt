@@ -1,13 +1,11 @@
 package test
 
-import kotlin.platform.platformStatic
-
 open class B
 
 class A {
 
     companion object {
-        @platformStatic
+        @JvmStatic
         fun <T: B> a(s: T) : T {
             return s
         }

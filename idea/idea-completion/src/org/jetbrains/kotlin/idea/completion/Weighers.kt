@@ -23,10 +23,7 @@ import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
 import com.intellij.openapi.util.Key
 import com.intellij.psi.util.proximity.PsiProximityComparator
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.smart.*
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -34,6 +31,8 @@ import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.FuzzyType
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 
 object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
     override fun weigh(element: LookupElement, context: WeighingContext)
@@ -43,7 +42,7 @@ object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
 class NotImportedWeigher(private val classifier: ImportableFqNameClassifier) : LookupElementWeigher("kotlin.notImported") {
     private enum class Weight {
         default,
-        hasImportFromSamePackage,
+        siblingImported,
         notImported,
         notToBeUsedInKotlin
     }
@@ -53,11 +52,19 @@ class NotImportedWeigher(private val classifier: ImportableFqNameClassifier) : L
         val o = element.`object` as? DeclarationLookupObject
         val fqName = o?.importableFqName ?: return Weight.default
         return when (classifier.classify(fqName, o is PackageLookupObject)) {
-            ImportableFqNameClassifier.Classification.hasImportFromSamePackage -> Weight.hasImportFromSamePackage
+            ImportableFqNameClassifier.Classification.siblingImported -> Weight.siblingImported
             ImportableFqNameClassifier.Classification.notImported -> Weight.notImported
             ImportableFqNameClassifier.Classification.notToBeUsedInKotlin -> Weight.notToBeUsedInKotlin
             else -> Weight.default
         }
+    }
+}
+
+class NotImportedStaticMemberWeigher(private val classifier: ImportableFqNameClassifier) : LookupElementWeigher("kotlin.notImportedMember") {
+    override fun weigh(element: LookupElement): Comparable<*>? {
+        if (element.getUserData(ITEM_PRIORITY_KEY) != ItemPriority.STATIC_MEMBER) return null
+        val fqName = (element.`object` as DeclarationLookupObject).importableFqName ?: return null
+        return classifier.classify(fqName.parent(), false)
     }
 }
 
@@ -245,5 +252,33 @@ class SmartCompletionInBasicWeigher(
             fullMatchWeight(nameSimilarity)
         else
             ifNotNullMatchWeight(nameSimilarity)
+    }
+}
+
+class PreferContextElementsWeigher(private val context: DeclarationDescriptor) : LookupElementWeigher("kotlin.preferContextElements", true, false) {
+    private val contextElements = context.parentsWithSelf
+            .takeWhile { it !is PackageFragmentDescriptor }
+            .toList()
+            .flatMap { if (it is CallableDescriptor) it.findOriginalTopMostOverriddenDescriptors() else listOf(it) }
+            .toSet()
+    private val contextElementNames = contextElements.map { it.name }.toSet()
+
+    override fun weigh(element: LookupElement): Boolean {
+        val lookupObject = element.`object` as? DeclarationLookupObject ?: return false
+        val descriptor = lookupObject.descriptor ?: return false
+        return descriptor.isContextElement()
+    }
+
+    private fun DeclarationDescriptor.isContextElement(): Boolean {
+        if (name !in contextElementNames) return false // optimization
+
+        if (this is CallableMemberDescriptor) {
+            val overridden = this.overriddenDescriptors
+            if (overridden.isNotEmpty()) {
+                return overridden.any { it.isContextElement() }
+            }
+        }
+
+        return original in contextElements
     }
 }

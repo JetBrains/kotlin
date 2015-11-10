@@ -16,20 +16,12 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.utils.Printer
 
-public fun KtScope.asLexicalScope(): LexicalScope {
-    val importingScope = memberScopeAsImportingScope()
-    return object : BaseLexicalScope(importingScope) {
-        override val ownerDescriptor: DeclarationDescriptor
-            get() = importingScope.ownerDescriptor
-
-        override fun printStructure(p: Printer) {
-        }
-    }
-}
+fun KotlinBuiltIns.builtInPackageAsLexicalScope()
+        = LexicalScope.empty(getBuiltInsPackageScope().memberScopeAsImportingScope(), getBuiltInsModule())

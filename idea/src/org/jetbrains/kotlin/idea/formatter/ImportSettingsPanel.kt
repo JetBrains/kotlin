@@ -26,7 +26,7 @@ import com.intellij.psi.codeStyle.PackageEntryTable
 import com.intellij.ui.OptionGroup
 import com.intellij.ui.components.JBScrollPane
 import org.jdom.Element
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import java.awt.BorderLayout
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -37,7 +37,7 @@ import javax.swing.table.AbstractTableModel
 class ImportSettingsPanelWrapper(settings: CodeStyleSettings) : CodeStyleAbstractPanel(settings) {
     private val importsPanel = ImportSettingsPanel(settings)
 
-    private fun CodeStyleSettings.kotlinSettings() = getCustomSettings(JetCodeStyleSettings::class.java)
+    private fun CodeStyleSettings.kotlinSettings() = getCustomSettings(KotlinCodeStyleSettings::class.java)
 
     override fun getRightMargin() = throw UnsupportedOperationException()
 
@@ -97,7 +97,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         }), BorderLayout.CENTER)
     }
 
-    fun reset(settings: JetCodeStyleSettings) {
+    fun reset(settings: KotlinCodeStyleSettings) {
         nameCountToUseStarImportSelector.value = settings.NAME_COUNT_TO_USE_STAR_IMPORT
         nameCountToUseStarImportForMembersSelector.value = settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
 
@@ -110,7 +110,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         }
     }
 
-    fun apply(settings: JetCodeStyleSettings, dropEmptyPackages: Boolean = true) {
+    fun apply(settings: KotlinCodeStyleSettings, dropEmptyPackages: Boolean = true) {
         settings.NAME_COUNT_TO_USE_STAR_IMPORT = nameCountToUseStarImportSelector.value
         settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = nameCountToUseStarImportForMembersSelector.value
         settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected()
@@ -121,8 +121,8 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         settings.PACKAGES_TO_USE_STAR_IMPORTS.copyFrom(starImportPackageEntryTable)
     }
 
-    fun isModified(settings: JetCodeStyleSettings): Boolean {
-        val tempSettings = JetCodeStyleSettings(commonSettings)
+    fun isModified(settings: KotlinCodeStyleSettings): Boolean {
+        val tempSettings = KotlinCodeStyleSettings(commonSettings)
         apply(tempSettings, dropEmptyPackages = false)
         val root = Element("fake")
         tempSettings.writeExternal(root, settings)

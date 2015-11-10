@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -82,15 +82,15 @@ public class TestlibTest extends UsefulTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
-        JvmContentRootsKt.addJvmClasspathRoot(configuration, JetTestUtils.getAnnotationsJar());
+        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
+        JvmContentRootsKt.addJvmClasspathRoot(configuration, KotlinTestUtils.getAnnotationsJar());
 
         junitJar = new File("libraries/lib/junit-4.11.jar");
         assertTrue(junitJar.exists());
         JvmContentRootsKt.addJvmClasspathRoot(configuration, junitJar);
 
-        ContentRootsKt.addKotlinSourceRoot(configuration, JetTestUtils.getHomeDirectory() + "/libraries/stdlib/test");
-        ContentRootsKt.addKotlinSourceRoot(configuration, JetTestUtils.getHomeDirectory() + "/libraries/kunit/src");
+        ContentRootsKt.addKotlinSourceRoot(configuration, KotlinTestUtils.getHomeDirectory() + "/libraries/stdlib/test");
+        ContentRootsKt.addKotlinSourceRoot(configuration, KotlinTestUtils.getHomeDirectory() + "/libraries/kunit/src");
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);

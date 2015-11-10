@@ -51,7 +51,7 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D :
     }
 }
 
-abstract class KotlinIntentionActionFactoryWithDelegate<E : KtElement, D : Any> : JetIntentionActionsFactory() {
+abstract class KotlinIntentionActionFactoryWithDelegate<E : KtElement, D : Any> : KotlinIntentionActionsFactory() {
     protected abstract fun getElementOfInterest(diagnostic: Diagnostic): E?
 
     protected abstract fun createFixes(

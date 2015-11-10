@@ -27,7 +27,7 @@ import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
 import org.junit.Assert;
 
@@ -123,6 +123,6 @@ public abstract class AbstractKotlinFoldingTest extends LightCodeInsightFixtureT
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return KotlinLightProjectDescriptor.INSTANCE;
     }
 }

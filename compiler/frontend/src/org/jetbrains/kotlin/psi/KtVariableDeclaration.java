@@ -16,12 +16,6 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-
-public interface KtVariableDeclaration extends KtCallableDeclaration, KtWithExpressionInitializer {
+public interface KtVariableDeclaration extends KtCallableDeclaration, KtWithExpressionInitializer, KtValVarKeywordOwner {
     boolean isVar();
-
-    @Nullable
-    PsiElement getValOrVarKeyword();
 }

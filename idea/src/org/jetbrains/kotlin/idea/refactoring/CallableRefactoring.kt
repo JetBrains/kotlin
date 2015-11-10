@@ -29,12 +29,12 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtExpression
@@ -78,10 +78,10 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
         val superString = superCallables.map {
             it.getContainingDeclaration().getName().asString()
         }.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
-        val message = JetBundle.message("x.overrides.y.in.class.list",
-                                        DescriptorRenderer.COMPACT.render(callableFromEditor),
-                                        callableFromEditor.getContainingDeclaration().getName().asString(), superString,
-                                        "refactor")
+        val message = KotlinBundle.message("x.overrides.y.in.class.list",
+                                           DescriptorRenderer.COMPACT.render(callableFromEditor),
+                                           callableFromEditor.getContainingDeclaration().getName().asString(), superString,
+                                           "refactor")
         val title = IdeBundle.message("title.warning")!!
         val icon = Messages.getQuestionIcon()
         return Messages.showDialog(message, title, options.toTypedArray(), 0, icon)
@@ -194,7 +194,7 @@ fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
         val containingDescriptor = getContainingDeclaration() ?: return null
         return when (containingDescriptor) {
             is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution()
-            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope().memberScopeAsImportingScope()
+            is PackageFragmentDescriptor -> LexicalScope.empty(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
             else -> null
         }
     }

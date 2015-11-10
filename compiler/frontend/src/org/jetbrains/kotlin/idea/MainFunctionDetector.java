@@ -108,7 +108,7 @@ public class MainFunctionDetector {
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         return containingDeclaration instanceof ClassDescriptor
                && ((ClassDescriptor) containingDeclaration).getKind().isSingleton()
-               && AnnotationUtilKt.hasPlatformStaticAnnotation(functionDescriptor);
+               && AnnotationUtilKt.hasJvmStaticAnnotation(functionDescriptor);
     }
 
     @Nullable

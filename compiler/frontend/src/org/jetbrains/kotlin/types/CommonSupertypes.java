@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.utils.DFS;
@@ -230,7 +230,7 @@ public class CommonSupertypes {
         }
 
         ClassifierDescriptor classifier = constructor.getDeclarationDescriptor();
-        KtScope newScope;
+        MemberScope newScope;
         if (classifier instanceof ClassDescriptor) {
             newScope = ((ClassDescriptor) classifier).getMemberScope(newProjections);
         }

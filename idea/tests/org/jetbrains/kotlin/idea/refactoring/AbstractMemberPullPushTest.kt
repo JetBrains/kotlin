@@ -26,16 +26,16 @@ import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.findElementsByCommentPrefix
 import java.io.File
 
-public abstract class AbstractMemberPullPushTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCase() {
     private data class ElementInfo(val checked: Boolean, val toAbstract: Boolean)
 
     companion object {
@@ -43,7 +43,7 @@ public abstract class AbstractMemberPullPushTest : JetLightCodeInsightFixtureTes
                 by NotNullableUserDataProperty(Key.create("ELEMENT_INFO"), ElementInfo(false, false))
     }
 
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     val fixture: JavaCodeInsightTestFixture get() = myFixture
 
@@ -54,7 +54,7 @@ public abstract class AbstractMemberPullPushTest : JetLightCodeInsightFixtureTes
         val afterFile = File("$path.after")
         val conflictFile = File("$path.messages")
 
-        fixture.testDataPath = "${JetTestUtils.getHomeDirectory()}/${mainFile.getParent()}"
+        fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.getParent()}"
 
         val mainFileName = mainFile.getName()
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
@@ -79,9 +79,9 @@ public abstract class AbstractMemberPullPushTest : JetLightCodeInsightFixtureTes
             action(file)
 
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
-            JetTestUtils.assertEqualsToFile(afterFile, file.text!!)
+            KotlinTestUtils.assertEqualsToFile(afterFile, file.text!!)
             for ((extraPsiFile, extraFile) in extraFilesToPsi) {
-                JetTestUtils.assertEqualsToFile(File("${extraFile.getPath()}.after"), extraPsiFile.text)
+                KotlinTestUtils.assertEqualsToFile(File("${extraFile.getPath()}.after"), extraPsiFile.text)
             }
         }
         catch(e: Exception) {
@@ -90,7 +90,7 @@ public abstract class AbstractMemberPullPushTest : JetLightCodeInsightFixtureTes
                 is CommonRefactoringUtil.RefactoringErrorHintException -> e.getMessage()!!
                 else -> throw e
             }
-            JetTestUtils.assertEqualsToFile(conflictFile, message)
+            KotlinTestUtils.assertEqualsToFile(conflictFile, message)
         }
         finally {
             if (addKotlinRuntime) {

@@ -25,19 +25,19 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.codeInsight.upDownMover.JetDeclarationMover;
-import org.jetbrains.kotlin.idea.codeInsight.upDownMover.JetExpressionMover;
+import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover;
+import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
 
 public abstract class AbstractCodeMoverTest extends LightCodeInsightTestCase {
     public void doTestClassBodyDeclaration(@NotNull String path) throws Exception {
-        doTest(path, JetDeclarationMover.class);
+        doTest(path, KotlinDeclarationMover.class);
     }
 
     public void doTestExpression(@NotNull String path) throws Exception {
-        doTest(path, JetExpressionMover.class);
+        doTest(path, KotlinExpressionMover.class);
     }
 
     private void doTest(@NotNull String path, @NotNull Class<? extends StatementUpDownMover> defaultMoverClass) throws Exception {

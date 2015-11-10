@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
-public class InvertIfConditionIntention : JetSelfTargetingIntention<KtIfExpression>(javaClass(), "Invert 'if' condition") {
+public class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(javaClass(), "Invert 'if' condition") {
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
         if (!element.getIfKeyword().getTextRange().containsOffset(caretOffset)) return false
         return element.getCondition() != null && element.getThen() != null

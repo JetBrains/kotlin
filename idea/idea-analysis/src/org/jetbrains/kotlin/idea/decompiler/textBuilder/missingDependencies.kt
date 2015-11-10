@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.types.ErrorUtils.createErrorType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeSubstitution
@@ -35,22 +35,19 @@ import org.jetbrains.kotlin.utils.Printer
 
 private class PackageFragmentWithMissingDependencies(override val fqName: FqName, moduleDescriptor: ModuleDescriptor) :
         PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
-    override fun getMemberScope(): KtScope {
+    override fun getMemberScope(): MemberScope {
         return ScopeWithMissingDependencies(fqName, this)
     }
 }
 
-private class ScopeWithMissingDependencies(val fqName: FqName, val containing: DeclarationDescriptor) : KtScopeImpl() {
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        return containing
-    }
+private class ScopeWithMissingDependencies(val fqName: FqName, val ownerDescriptor: DeclarationDescriptor) : MemberScopeImpl() {
 
     override fun printScopeStructure(p: Printer) {
         p.println("Special scope for decompiler, containing class with any name")
     }
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        return MissingDependencyErrorClassDescriptor(getContainingDeclaration(), fqName.child(name))
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        return MissingDependencyErrorClassDescriptor(ownerDescriptor, fqName.child(name))
     }
 }
 
@@ -74,7 +71,7 @@ private class MissingDependencyErrorClassDescriptor(
         val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)
         emptyConstructor.initialize(listOf(), listOf(), Visibilities.DEFAULT_VISIBILITY)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
-        initialize(KtScope.Empty, setOf(emptyConstructor), emptyConstructor)
+        initialize(MemberScope.Empty, setOf(emptyConstructor), emptyConstructor)
     }
 
     override fun substitute(substitutor: TypeSubstitutor) = this

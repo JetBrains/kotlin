@@ -50,10 +50,11 @@ import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.JavaElementFinder
-import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -74,8 +75,10 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.parsing.JetParserDefinition
-import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -118,7 +121,7 @@ public class KotlinCoreEnvironment private constructor(
         val index = JvmDependenciesIndex(javaRoots)
         (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
 
-        sourceFiles.addAll(CompileEnvironmentUtil.getJetFiles(project, getSourceRootsCheckingForDuplicates(), {
+        sourceFiles.addAll(CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), {
             message ->
             report(ERROR, message)
         }))
@@ -128,7 +131,7 @@ public class KotlinCoreEnvironment private constructor(
             }
         })
 
-        JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
+        KotlinScriptDefinitionProvider.getInstance(project).addScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
 
         project.registerService(javaClass<JvmVirtualFileFinderFactory>(), JvmCliVirtualFileFinderFactory(index))
 
@@ -166,12 +169,24 @@ public class KotlinCoreEnvironment private constructor(
             val virtualFile = contentRootToVirtualFile(javaRoot) ?: continue
 
             projectEnvironment.addSourcesToClasspath(virtualFile)
+
+            val prefixPackageFqName = (javaRoot as? JavaSourceRoot)?.packagePrefix?.let {
+                if (isValidJavaFqName(it)) {
+                    FqName(it)
+                }
+                else {
+                    report(WARNING, "Invalid package prefix name is ignored: $it")
+                    null
+                }
+            }
+
             val rootType = when (javaRoot) {
                 is JavaSourceRoot -> JavaRoot.RootType.SOURCE
                 is JvmClasspathRoot -> JavaRoot.RootType.BINARY
                 else -> throw IllegalStateException()
             }
-            javaRoots.add(JavaRoot(virtualFile, rootType))
+
+            javaRoots.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
         }
     }
 
@@ -237,9 +252,12 @@ public class KotlinCoreEnvironment private constructor(
         public fun createForProduction(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
         ): KotlinCoreEnvironment {
-            // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
-            // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
-            if (System.getProperty("kotlin.environment.keepalive") == null) {
+            val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths)
+            // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
+            // breaks a lot of tests, therefore it is disabled for production and enabled for tests
+            if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) == null || appEnv.application.isUnitTestMode) {
+                // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
+                // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
                 Disposer.register(parentDisposable, object : Disposable {
                     override fun dispose() {
                         synchronized (APPLICATION_LOCK) {
@@ -250,7 +268,7 @@ public class KotlinCoreEnvironment private constructor(
                     }
                 })
             }
-            val environment = KotlinCoreEnvironment(parentDisposable, getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths), configuration)
+            val environment = KotlinCoreEnvironment(parentDisposable, appEnv, configuration)
 
             synchronized (APPLICATION_LOCK) {
                 ourProjectCount++
@@ -354,8 +372,8 @@ public class KotlinCoreEnvironment private constructor(
         public fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
             with(applicationEnvironment) {
                 registerFileType(KotlinFileType.INSTANCE, "kt")
-                registerFileType(KotlinFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX)
-                registerParserDefinition(JetParserDefinition())
+                registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
+                registerParserDefinition(KotlinParserDefinition())
                 getApplication().registerService(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())
             }
         }
@@ -369,9 +387,9 @@ public class KotlinCoreEnvironment private constructor(
         @JvmStatic
         public fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.getProject()) {
-                registerService(javaClass<JetScriptDefinitionProvider>(), JetScriptDefinitionProvider())
+                registerService(javaClass<KotlinScriptDefinitionProvider>(), KotlinScriptDefinitionProvider())
                 registerService(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(this))
-                registerService(javaClass<KotlinLightClassForFacade.FacadeStubCache>(), KotlinLightClassForFacade.FacadeStubCache(this))
+                registerService(javaClass<KtLightClassForFacade.FacadeStubCache>(), KtLightClassForFacade.FacadeStubCache(this))
             }
         }
 

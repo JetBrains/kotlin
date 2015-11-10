@@ -97,7 +97,7 @@ public abstract class KtCodeFragment(
     }
 
     override fun importsToString(): String {
-        return myImports.join(IMPORT_SEPARATOR)
+        return myImports.joinToString(IMPORT_SEPARATOR)
     }
 
     override fun addImportsFromString(imports: String?) {
@@ -110,7 +110,7 @@ public abstract class KtCodeFragment(
     }
 
     public fun importsAsImportList(): KtImportList? {
-        return KtPsiFactory(this).createFile(myImports.join("\n")).getImportList()
+        return KtPsiFactory(this).createFile(myImports.joinToString("\n")).getImportList()
     }
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }

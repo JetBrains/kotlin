@@ -24,7 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.psi.*;
@@ -74,13 +74,13 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("remove.parts.from.property", partsToRemove(removeGetter, removeSetter, removeInitializer));
+        return KotlinBundle.message("remove.parts.from.property", partsToRemove(removeGetter, removeSetter, removeInitializer));
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("remove.parts.from.property.family");
+        return KotlinBundle.message("remove.parts.from.property.family");
     }
 
     @Override
@@ -120,8 +120,8 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
         }
     }
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtProperty> createAction(Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();

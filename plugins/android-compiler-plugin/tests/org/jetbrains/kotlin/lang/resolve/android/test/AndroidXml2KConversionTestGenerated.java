@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.lang.resolve.android.test;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,90 +34,90 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Simple extends AbstractAndroidXml2KConversionTest {
         public void testAllFilesPresentInSimple() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-compiler-plugin/testData/android/converter/simple"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-compiler-plugin/testData/android/converter/simple"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("escapedLayoutName")
         public void testEscapedLayoutName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/escapedLayoutName/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/escapedLayoutName/");
             doTest(fileName);
         }
 
         @TestMetadata("fqNameInAttr")
         public void testFqNameInAttr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/fqNameInAttr/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/fqNameInAttr/");
             doTest(fileName);
         }
 
         @TestMetadata("fqNameInTag")
         public void testFqNameInTag() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/fqNameInTag/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/fqNameInTag/");
             doTest(fileName);
         }
 
         @TestMetadata("layoutVariants")
         public void testLayoutVariants() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/layoutVariants/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/layoutVariants/");
             doTest(fileName);
         }
 
         @TestMetadata("multiFile")
         public void testMultiFile() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/multiFile/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/multiFile/");
             doTest(fileName);
         }
 
         @TestMetadata("noIds")
         public void testNoIds() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/noIds/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/noIds/");
             doTest(fileName);
         }
 
         @TestMetadata("sameIds")
         public void testSameIds() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/sameIds/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/sameIds/");
             doTest(fileName);
         }
 
         @TestMetadata("severalResDirs")
         public void testSeveralResDirs() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/severalResDirs/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/severalResDirs/");
             doTest(fileName);
         }
 
         @TestMetadata("singleFile")
         public void testSingleFile() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/singleFile/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/singleFile/");
             doTest(fileName);
         }
 
         @TestMetadata("specialTags")
         public void testSpecialTags() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/specialTags/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/specialTags/");
             doTest(fileName);
         }
 
         @TestMetadata("supportSingleFile")
         public void testSupportSingleFile() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/supportSingleFile/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/supportSingleFile/");
             doTest(fileName);
         }
 
         @TestMetadata("supportSpecialTags")
         public void testSupportSpecialTags() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/supportSpecialTags/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/supportSpecialTags/");
             doTest(fileName);
         }
 
         @TestMetadata("unresolvedFqName")
         public void testUnresolvedFqName() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/unresolvedFqName/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/unresolvedFqName/");
             doTest(fileName);
         }
 
         @TestMetadata("unresolvedWidget")
         public void testUnresolvedWidget() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/unresolvedWidget/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/simple/unresolvedWidget/");
             doTest(fileName);
         }
     }
@@ -127,12 +127,12 @@ public class AndroidXml2KConversionTestGenerated extends AbstractAndroidXml2KCon
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Exceptions extends AbstractAndroidXml2KConversionTest {
         public void testAllFilesPresentInExceptions() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-compiler-plugin/testData/android/converter/exceptions"), Pattern.compile("^([^\\.]+)$"), false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-compiler-plugin/testData/android/converter/exceptions"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("noManifest")
         public void testNoManifest() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/exceptions/noManifest/");
+            String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/android/converter/exceptions/noManifest/");
             doNoManifestTest(fileName);
         }
     }

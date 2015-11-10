@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.receiverType
@@ -33,7 +34,7 @@ public abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         functionList: Collection<ProtoBuf.Function>,
         propertyList: Collection<ProtoBuf.Property>
-) : KtScopeImpl() {
+) : MemberScopeImpl() {
 
     private data class ProtoKey(val name: Name, val isExtension: Boolean)
 
@@ -49,7 +50,7 @@ public abstract class DeserializedMemberScope protected constructor(
     private val functions =
             c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties =
-            c.storageManager.createMemoizedFunction<Name, Collection<VariableDescriptor>> { computeProperties(it) }
+            c.storageManager.createMemoizedFunction<Name, Collection<PropertyDescriptor>> { computeProperties(it) }
 
     protected open fun filteredFunctionProtos(protos: Collection<ProtoBuf.Function>): Collection<ProtoBuf.Function> = protos
 
@@ -81,9 +82,12 @@ public abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<FunctionDescriptor>) {
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = functions(name)
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        recordLookup(name, location)
+        return functions(name)
+    }
 
-    private fun computeProperties(name: Name): Collection<VariableDescriptor> {
+    private fun computeProperties(name: Name): Collection<PropertyDescriptor> {
         val protos = propertyProtos()[ProtoKey(name, isExtension = false)].orEmpty() +
                      propertyProtos()[ProtoKey(name, isExtension = true)].orEmpty()
 
@@ -98,15 +102,19 @@ public abstract class DeserializedMemberScope protected constructor(
     protected open fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> = properties.invoke(name)
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        recordLookup(name, location)
+        return properties.invoke(name)
+    }
 
-    override fun getClassifier(name: Name, location: LookupLocation) = getClassDescriptor(name)
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        recordLookup(name, location)
+        return getClassDescriptor(name)
+    }
 
     protected abstract fun getClassDescriptor(name: Name): ClassifierDescriptor?
 
     protected abstract fun addClassDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
-
-    override fun getContainingDeclaration() = c.containingDeclaration
 
     protected fun computeDescriptors(
             kindFilter: DescriptorKindFilter,
@@ -140,12 +148,12 @@ public abstract class DeserializedMemberScope protected constructor(
     ) {
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
             val keys = propertyProtos().keySet().filter { nameFilter(it.name) }
-            addMembers(result, keys) { getProperties(it, location) }
+            addMembers(result, keys) { getContributedVariables(it, location) }
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
             val keys = functionProtos().keySet().filter { nameFilter(it.name) }
-            addMembers(result, keys) { getFunctions(it, location) }
+            addMembers(result, keys) { getContributedFunctions(it, location) }
         }
     }
 
@@ -165,22 +173,17 @@ public abstract class DeserializedMemberScope protected constructor(
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-        val receiver = getImplicitReceiver()
-        return if (receiver != null) listOf(receiver) else listOf()
-    }
-
-    protected abstract fun getImplicitReceiver(): ReceiverParameterDescriptor?
-
-    override fun getOwnDeclaredDescriptors() = getAllDescriptors()
-
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
-        p.println("containingDeclaration = " + getContainingDeclaration())
+        p.println("containingDeclaration = " + c.containingDeclaration)
 
         p.popIndent()
         p.println("}")
+    }
+
+    private fun recordLookup(name: Name, from: LookupLocation) {
+        c.components.lookupTracker.record(from, c.containingDeclaration, this, name)
     }
 }

@@ -1,5 +1,3 @@
-import kotlin.platform.platformStatic
-
 class B(var s: Int = 0) {
 
 }
@@ -10,7 +8,7 @@ object A {
         v += B(1000)
     }
 
-    @platformStatic fun B.plusAssign(b: B) {
+    @JvmStatic fun B.plusAssign(b: B) {
         this.s += b.s
     }
 }

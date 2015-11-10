@@ -21,7 +21,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
-public abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractJetFindUsagesTest() {
+public abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractFindUsagesTest() {
     override fun getProjectDescriptor() =
             JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/findUsages/libraryUsages/_library", true)
 }

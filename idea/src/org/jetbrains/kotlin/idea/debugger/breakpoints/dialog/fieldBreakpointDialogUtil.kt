@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.idea.debugger.breakpoints.dialog
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.asJava.KotlinLightClass
-import org.jetbrains.kotlin.asJava.KotlinLightClassForFacade
+import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.KtLightClassForFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.psi.KtProperty
 
 fun PsiClass.collectProperties(): Array<DescriptorMemberChooserObject> {
-    if (this is KotlinLightClassForFacade) {
+    if (this is KtLightClassForFacade) {
         val result = arrayListOf<DescriptorMemberChooserObject>()
         this.files.forEach {
             it.getDeclarations().filterIsInstance<KtProperty>().forEach {
@@ -33,7 +33,7 @@ fun PsiClass.collectProperties(): Array<DescriptorMemberChooserObject> {
         }
         return result.toTypedArray()
     }
-    if (this is KotlinLightClass) {
+    if (this is KtLightClass) {
         val origin = this.getOrigin()
         if (origin != null) {
             return origin.getDeclarations().filterIsInstance<KtProperty>().map {

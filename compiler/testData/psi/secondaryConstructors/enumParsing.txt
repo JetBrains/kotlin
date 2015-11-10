@@ -15,8 +15,7 @@ JetFile: enumParsing.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n   ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('abc1')
+        PsiElement(IDENTIFIER)('abc1')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
@@ -41,8 +40,7 @@ JetFile: enumParsing.kt
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n   ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('abc2')
+        PsiElement(IDENTIFIER)('abc2')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
@@ -71,8 +69,7 @@ JetFile: enumParsing.kt
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n   ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('abc3')
+        PsiElement(IDENTIFIER)('abc3')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n   ')
       SECONDARY_CONSTRUCTOR

@@ -71,7 +71,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         if (TypeUtils.noExpectedType(expectedType)) return
 
         val expectedMustNotBeNull = expectedType.mustNotBeNull()
-        if (dataFlowInfo.getNullability(dataFlowValue) == Nullability.NOT_NULL) return
+        if (dataFlowInfo.getPredictableNullability(dataFlowValue) == Nullability.NOT_NULL) return
 
         val actualMayBeNull = expressionType.mayBeNull()
 
@@ -155,7 +155,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     }
 
     private fun <T: Any> doIfNotNull(dataFlowValue: DataFlowValue, c: ResolutionContext<*>, body: () -> T): T? {
-        if (c.dataFlowInfo.getNullability(dataFlowValue).canBeNull()
+        if (c.dataFlowInfo.getPredictableNullability(dataFlowValue).canBeNull()
             && dataFlowValue.type.mustNotBeNull() == ErrorsJvm.NullabilityInformationSource.JAVA) {
             return body()
         }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.android;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,60 +32,60 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidCompletionTestGenerated extends AbstractAndroidCompletionTest {
     public void testAllFilesPresentInCompletion() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-idea-plugin/testData/android/completion"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-idea-plugin/testData/android/completion"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInAttr/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInAttr/");
         doTest(fileName);
     }
 
     @TestMetadata("fqNameInAttrFragment")
     public void testFqNameInAttrFragment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInAttrFragment/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInAttrFragment/");
         doTest(fileName);
     }
 
     @TestMetadata("fqNameInTag")
     public void testFqNameInTag() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInTag/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInTag/");
         doTest(fileName);
     }
 
     @TestMetadata("fqNameInTagFragment")
     public void testFqNameInTagFragment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInTagFragment/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/fqNameInTagFragment/");
         doTest(fileName);
     }
 
     @TestMetadata("multiFile")
     public void testMultiFile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/multiFile/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/multiFile/");
         doTest(fileName);
     }
 
     @TestMetadata("multiFileFragment")
     public void testMultiFileFragment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/multiFileFragment/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/multiFileFragment/");
         doTest(fileName);
     }
 
     @TestMetadata("propertiesSimple")
     public void testPropertiesSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimple/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimple/");
         doTest(fileName);
     }
 
     @TestMetadata("propertiesSimpleFragment")
     public void testPropertiesSimpleFragment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleFragment/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleFragment/");
         doTest(fileName);
     }
 
     @TestMetadata("propertiesSimpleView")
     public void testPropertiesSimpleView() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleView/");
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleView/");
         doTest(fileName);
     }
 }

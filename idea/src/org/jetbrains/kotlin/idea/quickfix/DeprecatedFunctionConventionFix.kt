@@ -42,7 +42,7 @@ class DeprecatedFunctionConventionFix(
         FilteredRenameProcessor(project, element, newName, false, false).run()
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val (functionDescriptor, newName) = when (diagnostic) {
                 is DiagnosticWithParameters3<*, *, *, *> -> Pair(diagnostic.a, diagnostic.c)

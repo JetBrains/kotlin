@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
 import org.jetbrains.kotlin.psi.KtNamedDeclarationUtil;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,7 +59,7 @@ public class ResolveSessionUtils {
             PackageViewDescriptor packageDescriptor = module.getPackage(packageFqName);
             if (!packageDescriptor.isEmpty()) {
                 FqName relativeClassFqName = FqNamesUtilKt.tail(fqName, packageFqName);
-                ClassDescriptor classDescriptor = findByQualifiedName(packageDescriptor.getMemberScope(), relativeClassFqName);
+                ClassDescriptor classDescriptor = findClassByRelativePath(packageDescriptor.getMemberScope(), relativeClassFqName);
                 if (classDescriptor != null && filter.apply(classDescriptor)) {
                     result.add(classDescriptor);
                 }
@@ -76,17 +76,18 @@ public class ResolveSessionUtils {
     }
 
     @Nullable
-    public static ClassDescriptor findByQualifiedName(@NotNull KtScope outerScope, @NotNull FqName path) {
+    public static ClassDescriptor findClassByRelativePath(@NotNull MemberScope packageScope, @NotNull FqName path) {
         if (path.isRoot()) return null;
 
-        KtScope scope = outerScope;
+        MemberScope scope = packageScope;
+        ClassifierDescriptor classifier = null;
         for (Name name : path.pathSegments()) {
-            ClassifierDescriptor classifier = scope.getClassifier(name, NoLookupLocation.UNSORTED);
+            classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_FIND_BY_FQNAME);
             if (!(classifier instanceof ClassDescriptor)) return null;
             scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
         }
 
-        return (ClassDescriptor) scope.getContainingDeclaration();
+        return (ClassDescriptor) classifier;
     }
 
     @NotNull

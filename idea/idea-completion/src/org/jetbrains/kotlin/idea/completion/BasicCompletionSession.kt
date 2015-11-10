@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -108,9 +108,11 @@ class BasicCompletionSession(
         return ALL
     }
 
-    public fun shouldDisableAutoPopup(): Boolean {
-        return completionKind.shouldDisableAutoPopup()
-    }
+    fun shouldDisableAutoPopup(): Boolean
+            = completionKind.shouldDisableAutoPopup()
+
+    override fun shouldCompleteTopLevelCallablesFromIndex()
+            = super.shouldCompleteTopLevelCallablesFromIndex() && prefix.isNotEmpty()
 
     override fun doComplete() {
         assert(parameters.completionType == CompletionType.BASIC)
@@ -154,22 +156,28 @@ class BasicCompletionSession(
         }
 
         override fun doComplete() {
-            if (smartCompletion != null) {
-                val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(lookupElementFactory)
+            fun completeWithSmartCompletion(lookupElementFactory: LookupElementFactory) {
+                if (smartCompletion != null) {
+                    val (additionalItems, @Suppress("UNUSED_VARIABLE") inheritanceSearcher) = smartCompletion.additionalItems(lookupElementFactory)
 
-                // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
-                for (item in additionalItems) {
-                    if (item.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == null) {
-                        item.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, SmartCompletionItemPriority.DEFAULT)
+                    // all additional items should have SMART_COMPLETION_ITEM_PRIORITY_KEY to be recognized by SmartCompletionInBasicWeigher
+                    for (item in additionalItems) {
+                        if (item.getUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY) == null) {
+                            item.putUserData(SMART_COMPLETION_ITEM_PRIORITY_KEY, SmartCompletionItemPriority.DEFAULT)
+                        }
                     }
-                }
 
-                collector.addElements(additionalItems)
+                    collector.addElements(additionalItems)
+                }
             }
 
-            val (imported, notImported) = referenceVariants!!
-            collector.addDescriptorElements(imported, lookupElementFactory)
-            collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+            val contextVariableTypesForSmartCompletion = withCollectRequiredContextVariableTypes(::completeWithSmartCompletion)
+
+            val contextVariableTypesForReferenceVariants = withCollectRequiredContextVariableTypes { lookupElementFactory ->
+                val (imported, notImported) = referenceVariantsWithNonInitializedVarExcluded!!
+                collector.addDescriptorElements(imported, lookupElementFactory)
+                collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+            }
 
             KEYWORDS_ONLY.doComplete()
 
@@ -188,32 +196,58 @@ class BasicCompletionSession(
                     }
                 }
 
-                packageNames.forEach { collector.addElement(lookupElementFactory.createLookupElementForPackage(it)) }
+                packageNames.forEach { collector.addElement(basicLookupElementFactory.createLookupElementForPackage(it)) }
             }
-
+            
             flushToResultSet()
 
             NamedArgumentCompletion.complete(collector, expectedInfos)
             flushToResultSet()
 
-            completeNonImported()
-            flushToResultSet()
+            val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
+            withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
+                if (contextVariableTypesForSmartCompletion.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+                    completeWithSmartCompletion(lookupElementFactory)
+                }
 
-            if (position.containingFile is KtCodeFragment) {
-                val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
-                if (variantsAndFactory != null) {
-                    val variants = variantsAndFactory.first
-                    val lookupElementFactory = variantsAndFactory.second
-                    collector.addDescriptorElements(variants.imported, lookupElementFactory, withReceiverCast = true)
-                    collector.addDescriptorElements(variants.notImportedExtensions, lookupElementFactory, withReceiverCast = true, notImported = true)
-                    flushToResultSet()
+                if (contextVariableTypesForReferenceVariants.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+                    val (imported, notImported) = referenceVariantsWithSingleFunctionTypeParameter()!!
+                    collector.addDescriptorElements(imported, lookupElementFactory)
+                    collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+                }
+
+                val staticMembersCompletion = StaticMembersCompletion(
+                        prefixMatcher, resolutionFacade, lookupElementFactory, referenceVariants!!.imported, isJvmModule)
+                if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
+                    staticMembersCompletion.completeFromImports(file, collector)
+                }
+
+                completeNonImported(lookupElementFactory)
+                flushToResultSet()
+
+                if (position.containingFile is KtCodeFragment) {
+                    val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants(lookupElementFactory)
+                    if (variantsAndFactory != null) {
+                        val variants = variantsAndFactory.first
+                        @Suppress("NAME_SHADOWING") val lookupElementFactory = variantsAndFactory.second
+                        collector.addDescriptorElements(variants.imported, lookupElementFactory, withReceiverCast = true)
+                        collector.addDescriptorElements(variants.notImportedExtensions, lookupElementFactory, withReceiverCast = true, notImported = true)
+                        flushToResultSet()
+                    }
+                }
+
+                if (configuration.completeStaticMembers && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT && prefix.isNotEmpty()) {
+                    staticMembersCompletion.completeFromIndices(indicesHelper(false), collector)
                 }
             }
         }
 
-        private fun completeNonImported() {
+        private fun completeNonImported(lookupElementFactory: LookupElementFactory) {
             if (shouldCompleteTopLevelCallablesFromIndex()) {
-                collector.addDescriptorElements(getTopLevelCallables(), lookupElementFactory, notImported = true)
+                processTopLevelCallables {
+                    collector.addDescriptorElements(it, lookupElementFactory, notImported = true)
+                    flushToResultSet()
+                }
             }
 
             val classKindFilter: ((ClassKind) -> Boolean)?
@@ -223,7 +257,7 @@ class BasicCompletionSession(
                 else -> classKindFilter = null
             }
             if (classKindFilter != null) {
-                if (configuration.completeNonImportedDeclarations) {
+                if (configuration.completeNonImportedClasses) {
                     addClassesFromIndex(classKindFilter)
                 }
                 else {
@@ -292,7 +326,7 @@ class BasicCompletionSession(
                     "override" -> {
                         collector.addElement(lookupElement)
 
-                        OverridesCompletion(collector, lookupElementFactory).complete(position)
+                        OverridesCompletion(collector, basicLookupElementFactory).complete(position)
                     }
 
                     "class" -> {
@@ -377,7 +411,7 @@ class BasicCompletionSession(
             KEYWORDS_ONLY.doComplete()
 
             if (shouldCompleteParameterNameAndType()) {
-                val parameterNameAndTypeCompletion = ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
+                val parameterNameAndTypeCompletion = ParameterNameAndTypeCompletion(collector, basicLookupElementFactory, prefixMatcher, resolutionFacade)
 
                 // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
                 val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
@@ -391,13 +425,13 @@ class BasicCompletionSession(
                     lookupElement
                 }
 
-                parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilter)
+                parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
                 flushToResultSet()
 
-                parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilter)
+                parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilterCheckAlways)
                 flushToResultSet()
 
-                parameterNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper)
+                parameterNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper(false))
             }
         }
 
@@ -455,14 +489,9 @@ class BasicCompletionSession(
         override fun doComplete() {
             val classOrObject = position.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return
             val classDescriptor = resolutionFacade.resolveToDescriptor(classOrObject) as ClassDescriptor
-            var superClasses = classDescriptor.defaultType.constructor.supertypes
+            var superClasses = classDescriptor.defaultType.constructor.supertypesWithAny()
                     .map { it.constructor.declarationDescriptor as? ClassDescriptor }
                     .filterNotNull()
-
-            //TODO: IMO it's not good that Any is to be added manually
-            if (superClasses.all { it.kind == ClassKind.INTERFACE }) {
-                superClasses += classDescriptor.builtIns.any
-            }
 
             if (callTypeAndReceiver.receiver != null) {
                 val referenceVariantsSet = referenceVariants!!.imported.toSet()
@@ -470,7 +499,7 @@ class BasicCompletionSession(
             }
 
             superClasses
-                    .map { lookupElementFactory.createLookupElement(it, useReceiverTypes = false, qualifyNestedClasses = true, includeClassTypeArguments = false) }
+                    .map { basicLookupElementFactory.createLookupElement(it, qualifyNestedClasses = true, includeClassTypeArguments = false) }
                     .forEach { collector.addElement(it) }
         }
     }

@@ -15,7 +15,7 @@ interface<error> </error>{
 
 }
 
-object <error>{</error>
+object<error> </error>{
 
 }
 

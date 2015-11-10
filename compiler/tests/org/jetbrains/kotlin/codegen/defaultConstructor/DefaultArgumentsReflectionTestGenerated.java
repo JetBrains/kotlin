@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.defaultConstructor;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,78 +32,78 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class DefaultArgumentsReflectionTestGenerated extends AbstractDefaultArgumentsReflectionTest {
     public void testAllFilesPresentInReflection() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/defaultArguments/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("classInClassObject.kt")
     public void testClassInClassObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/classInClassObject.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/classInClassObject.kt");
         doTest(fileName);
     }
 
     @TestMetadata("classInObject.kt")
     public void testClassInObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/classInObject.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/classInObject.kt");
         doTest(fileName);
     }
 
     @TestMetadata("classWithTwoDefaultArgs.kt")
     public void testClassWithTwoDefaultArgs() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/classWithTwoDefaultArgs.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/classWithTwoDefaultArgs.kt");
         doTest(fileName);
     }
 
     @TestMetadata("classWithVararg.kt")
     public void testClassWithVararg() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/classWithVararg.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/classWithVararg.kt");
         doTest(fileName);
     }
 
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/enum.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/enum.kt");
         doTest(fileName);
     }
 
     @TestMetadata("internalClass.kt")
     public void testInternalClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/internalClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/internalClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("privateClass.kt")
     public void testPrivateClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/privateClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/privateClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("privateConstructor.kt")
     public void testPrivateConstructor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/privateConstructor.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/privateConstructor.kt");
         doTest(fileName);
     }
 
     @TestMetadata("publicClass.kt")
     public void testPublicClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/publicClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/publicClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("publicClassWoDefArgs.kt")
     public void testPublicClassWoDefArgs() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/publicClassWoDefArgs.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/publicClassWoDefArgs.kt");
         doTest(fileName);
     }
 
     @TestMetadata("publicInnerClass.kt")
     public void testPublicInnerClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/publicInnerClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/publicInnerClass.kt");
         doTest(fileName);
     }
 
     @TestMetadata("publicInnerClassInPrivateClass.kt")
     public void testPublicInnerClassInPrivateClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/publicInnerClassInPrivateClass.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/defaultArguments/reflection/publicInnerClassInPrivateClass.kt");
         doTest(fileName);
     }
 }

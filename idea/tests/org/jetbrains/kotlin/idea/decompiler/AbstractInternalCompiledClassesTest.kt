@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.decompiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.junit.Assert
 
-public abstract class AbstractInternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun isFileWithHeader(predicate: (KotlinClassHeader) -> Boolean) : VirtualFile.() -> Boolean = {
         val header = KotlinBinaryClassCache.getKotlinBinaryClass(this)?.getClassHeader()
         header != null && predicate(header)

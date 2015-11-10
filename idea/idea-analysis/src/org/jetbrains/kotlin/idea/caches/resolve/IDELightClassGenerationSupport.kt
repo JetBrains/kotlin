@@ -32,9 +32,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
+import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
+import org.jetbrains.kotlin.idea.project.ResolveElementCache
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.stubindex.*
-import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope.kotlinSourceAndClassFiles
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope.sourceAndClassFiles
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -45,7 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
@@ -68,26 +70,43 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     }
 
     override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
-        val resolutionFacade = classOrObject.getResolutionFacade()
-
-        val moduleDescriptor = resolutionFacade.moduleDescriptor
-        val bindingContext = resolutionFacade.analyze(classOrObject, BodyResolveMode.FULL)
         if (classOrObject.isLocal()) {
-            val descriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
+            return getContextForLocalClassOrObject(classOrObject)
+        }
+        else {
+            return getContextForNonLocalClassOrObject(classOrObject)
+        }
+    }
 
+    private fun getContextForNonLocalClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
+        val resolutionFacade = classOrObject.getResolutionFacade()
+        ForceResolveUtil.forceResolveAllContents(resolutionFacade.resolveToDescriptor(classOrObject))
+        val bindingContext = if (classOrObject is KtClass && classOrObject.isAnnotation()) {
+            // need to make sure default values for parameters are resolved
+            // because java resolve depends on whether there is a default value for an annotation attribute
+            resolutionFacade.getFrontendService(ResolveElementCache::class.java)
+                    .resolvePrimaryConstructorParametersDefaultValues(classOrObject)
+        }
+        else {
+            resolutionFacade.analyze(classOrObject)
+        }
+        return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
+    }
 
-            if (descriptor == null) {
-                LOG.warn("No class descriptor in context for class: " + classOrObject.getElementTextWithContext())
-                return LightClassConstructionContext(bindingContext, moduleDescriptor)
-            }
+    private fun getContextForLocalClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
+        val resolutionFacade = classOrObject.getResolutionFacade()
+        val bindingContext = resolutionFacade.analyze(classOrObject)
 
-            ForceResolveUtil.forceResolveAllContents<ClassDescriptor>(descriptor)
+        val descriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
 
-            return LightClassConstructionContext(bindingContext, moduleDescriptor)
+        if (descriptor == null) {
+            LOG.warn("No class descriptor in context for class: " + classOrObject.getElementTextWithContext())
+            return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
         }
 
-        ForceResolveUtil.forceResolveAllContents(resolutionFacade.resolveToDescriptor(classOrObject))
-        return LightClassConstructionContext(bindingContext, moduleDescriptor)
+        ForceResolveUtil.forceResolveAllContents<ClassDescriptor>(descriptor)
+
+        return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
     }
 
     override fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext {
@@ -97,27 +116,27 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
-        return JetFullClassNameIndex.getInstance().get(fqName.asString(), project, kotlinSourceAndClassFiles(searchScope, project))
+        return KotlinFullClassNameIndex.getInstance().get(fqName.asString(), project, sourceAndClassFiles(searchScope, project))
     }
 
     override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return PackageIndexUtil.findFilesWithExactPackage(fqName, kotlinSourceAndClassFiles(searchScope, project), project)
+        return PackageIndexUtil.findFilesWithExactPackage(fqName, sourceAndClassFiles(searchScope, project), project)
     }
 
     override fun findClassOrObjectDeclarationsInPackage(
             packageFqName: FqName,
             searchScope: GlobalSearchScope
     ): Collection<KtClassOrObject> {
-        return JetTopLevelClassByPackageIndex.getInstance().get(
-                packageFqName.asString(), project, kotlinSourceAndClassFiles(searchScope, project))
+        return KotlinTopLevelClassByPackageIndex.getInstance().get(
+                packageFqName.asString(), project, sourceAndClassFiles(searchScope, project))
     }
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean {
-        return PackageIndexUtil.packageExists(fqName, kotlinSourceAndClassFiles(scope, project), project)
+        return PackageIndexUtil.packageExists(fqName, sourceAndClassFiles(scope, project), project)
     }
 
     override fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName> {
-        return PackageIndexUtil.getSubPackageFqNames(fqn, kotlinSourceAndClassFiles(scope, project), project, KtScope.ALL_NAME_FILTER)
+        return PackageIndexUtil.getSubPackageFqNames(fqn, sourceAndClassFiles(scope, project), project, MemberScope.ALL_NAME_FILTER)
     }
 
     override fun getPsiClass(classOrObject: KtClassOrObject): PsiClass? {
@@ -126,13 +145,13 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
             if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile)) {
                 return getLightClassForDecompiledClassOrObject(classOrObject)
             }
-            return JetSourceNavigationHelper.getOriginalClass(classOrObject)
+            return SourceNavigationHelper.getOriginalClass(classOrObject)
         }
-        return KotlinLightClassForExplicitDeclaration.create(psiManager, classOrObject)
+        return KtLightClassForExplicitDeclaration.create(psiManager, classOrObject)
     }
 
     private fun withFakeLightClasses(
-            lightClassForFacade: KotlinLightClassForFacade?,
+            lightClassForFacade: KtLightClassForFacade?,
             facadeFiles: List<KtFile>
     ): List<PsiClass> {
         if (lightClassForFacade == null) return emptyList()
@@ -163,7 +182,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
             moduleInfo: IdeaModuleInfo
     ): List<PsiClass> {
         if (moduleInfo is ModuleSourceInfo) {
-            val lightClassForFacade = KotlinLightClassForFacade.createForFacade(
+            val lightClassForFacade = KtLightClassForFacade.createForFacade(
                     psiManager, facadeFqName, moduleInfo.contentScope(), facadeFiles)
             return withFakeLightClasses(lightClassForFacade, facadeFiles)
         }
@@ -173,7 +192,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
-        return JetFileFacadeFqNameIndex.INSTANCE.get(facadeFqName.asString(), project, scope)
+        return KotlinFileFacadeFqNameIndex.INSTANCE.get(facadeFqName.asString(), project, scope)
     }
 
     override fun resolveClassToDescriptor(classOrObject: KtClassOrObject): ClassDescriptor? {
@@ -186,12 +205,12 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
     }
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
-        val facadeFilesInPackage = JetFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
+        val facadeFilesInPackage = KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
         return facadeFilesInPackage.map { it.javaFileFacadeFqName.shortName().asString() }
     }
 
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val facadeFilesInPackage = JetFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
+        val facadeFilesInPackage = KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
         val groupedByFqNameAndModuleInfo = facadeFilesInPackage.groupBy {
             Pair(it.javaFileFacadeFqName, it.getModuleInfo())
         }
@@ -220,14 +239,14 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
             for (declaration in file.declarations) {
                 if (declaration is KtFunction) {
                     val name = declaration.nameAsSafeName
-                    val functions = packageDescriptor.memberScope.getFunctions(name, NoLookupLocation.FROM_IDE)
+                    val functions = packageDescriptor.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE)
                     for (descriptor in functions) {
                         ForceResolveUtil.forceResolveAllContents(descriptor)
                     }
                 }
                 else if (declaration is KtProperty) {
                     val name = declaration.nameAsSafeName
-                    val properties = packageDescriptor.memberScope.getProperties(name, NoLookupLocation.FROM_IDE)
+                    val properties = packageDescriptor.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE)
                     for (descriptor in properties) {
                         ForceResolveUtil.forceResolveAllContents(descriptor)
                     }
@@ -248,7 +267,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         if (decompiledClassOrObject is KtEnumEntry) {
             return null
         }
-        val containingJetFile = decompiledClassOrObject.getContainingJetFile()
+        val containingJetFile = decompiledClassOrObject.getContainingKtFile()
         if (!containingJetFile.isCompiled) {
             return null
         }
@@ -263,12 +282,12 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         val relativeFqName = getClassRelativeName(decompiledClassOrObject)
         val iterator = relativeFqName.pathSegments().iterator()
         val base = iterator.next()
-        assert(rootLightClassForDecompiledFile.name == base.asString()) { "Light class for file:\n" + decompiledClassOrObject.getContainingJetFile().virtualFile.canonicalPath + "\nwas expected to have name: " + base.asString() + "\n Actual: " + rootLightClassForDecompiledFile.name }
+        assert(rootLightClassForDecompiledFile.name == base.asString()) { "Light class for file:\n" + decompiledClassOrObject.getContainingKtFile().virtualFile.canonicalPath + "\nwas expected to have name: " + base.asString() + "\n Actual: " + rootLightClassForDecompiledFile.name }
         var current = rootLightClassForDecompiledFile
         while (iterator.hasNext()) {
             val name = iterator.next()
             val innerClass = current.findInnerClassByName(name.asString(), false).sure {
-                "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" + "File: " + decompiledClassOrObject.getContainingJetFile().virtualFile.name
+                "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" + "File: " + decompiledClassOrObject.getContainingKtFile().virtualFile.name
             }
             current = innerClass
         }
@@ -285,7 +304,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         return getClassRelativeName(parent).child(name)
     }
 
-    private fun createLightClassForDecompiledKotlinFile(file: KtFile): KotlinLightClassForDecompiledDeclaration? {
+    private fun createLightClassForDecompiledKotlinFile(file: KtFile): KtLightClassForDecompiledDeclaration? {
         val virtualFile = file.virtualFile ?: return null
 
         val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
@@ -295,7 +314,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
                 correspondingClassOrObject = classOrObject
         ) ?: return null
 
-        return KotlinLightClassForDecompiledDeclaration(javaClsClass, classOrObject)
+        return KtLightClassForDecompiledDeclaration(javaClsClass, classOrObject)
     }
 
     private fun createClsJavaClassFromVirtualFile(

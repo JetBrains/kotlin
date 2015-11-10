@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl implements LazyEntity {
-    private final KtScope memberScope;
+    private final MemberScope memberScope;
     private final PackageMemberDeclarationProvider declarationProvider;
 
     public LazyPackageDescriptor(
@@ -50,7 +50,7 @@ public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl impleme
 
     @NotNull
     @Override
-    public KtScope getMemberScope() {
+    public MemberScope getMemberScope() {
         return memberScope;
     }
 

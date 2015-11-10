@@ -29,7 +29,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
-public class KtMultiDeclaration extends KtDeclarationImpl {
+public class KtMultiDeclaration extends KtDeclarationImpl implements KtValVarKeywordOwner {
     public KtMultiDeclaration(@NotNull ASTNode node) {
         super(node);
     }

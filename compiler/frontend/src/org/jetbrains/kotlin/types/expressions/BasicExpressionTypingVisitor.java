@@ -97,12 +97,28 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         super(facade);
     }
 
+    private static boolean isLValue(@NotNull KtSimpleNameExpression expression) {
+        PsiElement parent = PsiTreeUtil.skipParentsOfType(expression, KtParenthesizedExpression.class);
+        if (!(parent instanceof KtBinaryExpression)) return false;
+        KtBinaryExpression binaryExpression = (KtBinaryExpression) parent;
+        if (!KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.getOperationToken())) return false;
+        return PsiTreeUtil.isAncestor(binaryExpression.getLeft(), expression, false);
+    }
+
     @Override
     public KotlinTypeInfo visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
         CallExpressionResolver callExpressionResolver = components.callExpressionResolver;
         KotlinTypeInfo typeInfo = callExpressionResolver.getSimpleNameExpressionTypeInfo(expression, NO_RECEIVER, null, context);
+        if (typeInfo.getType() != null && !typeInfo.getType().isError() && !isLValue(expression)) {
+            DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, typeInfo.getType(), context);
+            Nullability nullability = context.dataFlowInfo.getPredictableNullability(dataFlowValue);
+            if (!nullability.canBeNonNull() && nullability.canBeNull()) {
+                context.trace.report(ALWAYS_NULL.on(expression));
+            }
+        }
+
         return components.dataFlowAnalyzer.checkType(typeInfo, expression, context); // TODO : Extensions to this
     }
 
@@ -892,7 +908,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     private static boolean isKnownToBeNotNull(KtExpression expression, KotlinType jetType, ExpressionTypingContext context) {
         DataFlowValue dataFlowValue = createDataFlowValue(expression, jetType, context);
-        return !context.dataFlowInfo.getNullability(dataFlowValue).canBeNull();
+        return !context.dataFlowInfo.getPredictableNullability(dataFlowValue).canBeNull();
     }
 
     /**
@@ -1191,7 +1207,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo rightDataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
             if ((rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable())
-                || !rightDataFlowInfo.getNullability(leftValue).canBeNull()) {
+                || !rightDataFlowInfo.getPredictableNullability(leftValue).canBeNull()) {
                 dataFlowInfo = dataFlowInfo.disequate(leftValue, DataFlowValue.nullValue(components.builtIns));
             }
         }
@@ -1298,7 +1314,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                         new Function1<DataFlowValue, Nullability>() {
                             @Override
                             public Nullability invoke(DataFlowValue value) {
-                                return context.dataFlowInfo.getNullability(value);
+                                return context.dataFlowInfo.getPredictableNullability(value);
                             }
                         });
             }
@@ -1449,7 +1465,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public KotlinTypeInfo visitJetElement(@NotNull KtElement element, ExpressionTypingContext context) {
+    public KotlinTypeInfo visitKtElement(@NotNull KtElement element, ExpressionTypingContext context) {
         context.trace.report(UNSUPPORTED.on(element, getClass().getCanonicalName()));
         return TypeInfoFactoryKt.noTypeInfo(context);
     }

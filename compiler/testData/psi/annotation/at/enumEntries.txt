@@ -41,8 +41,7 @@ JetFile: enumEntries.kt
                   PsiElement(INTEGER_LITERAL)('1')
               PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('X')
+        PsiElement(IDENTIFIER)('X')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
@@ -65,8 +64,7 @@ JetFile: enumEntries.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('Ann')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('Y')
+        PsiElement(IDENTIFIER)('Y')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
@@ -98,8 +96,7 @@ JetFile: enumEntries.kt
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('Z')
+        PsiElement(IDENTIFIER)('Z')
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             CONSTRUCTOR_CALLEE
@@ -130,8 +127,7 @@ JetFile: enumEntries.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('private')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('Q')
+        PsiElement(IDENTIFIER)('Q')
         PsiElement(COMMA)(',')
       PsiWhiteSpace('\n\n    ')
       ENUM_ENTRY
@@ -149,8 +145,7 @@ JetFile: enumEntries.kt
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('W')
+        PsiElement(IDENTIFIER)('W')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       FUN

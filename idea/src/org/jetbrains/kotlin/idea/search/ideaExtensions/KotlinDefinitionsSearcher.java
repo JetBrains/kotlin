@@ -29,7 +29,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.KotlinLightMethod;
+import org.jetbrains.kotlin.asJava.KtLightMethod;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.psi.*;
 
@@ -122,8 +122,8 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
             MethodImplementationsSearch.getOverridingMethods(method, implementations, scope);
 
             for (PsiMethod implementation : implementations) {
-                PsiElement mirrorElement = implementation instanceof KotlinLightMethod
-                                           ? ((KotlinLightMethod) implementation).getOrigin() : null;
+                PsiElement mirrorElement = implementation instanceof KtLightMethod
+                                           ? ((KtLightMethod) implementation).getOrigin() : null;
                 if (mirrorElement instanceof KtProperty || mirrorElement instanceof KtParameter) {
                     if (!consumer.process(mirrorElement)) {
                         return false;

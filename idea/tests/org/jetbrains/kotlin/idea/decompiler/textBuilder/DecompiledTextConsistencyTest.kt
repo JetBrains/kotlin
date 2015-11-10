@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -54,7 +54,7 @@ public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
             ).moduleDescriptor
 
     override fun getProjectDescriptor() =
-            object : JetWithJdkAndRuntimeLightProjectDescriptor() {
+            object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
                 override fun getSdk() = PluginTestCaseBase.fullJdk()
             }
 

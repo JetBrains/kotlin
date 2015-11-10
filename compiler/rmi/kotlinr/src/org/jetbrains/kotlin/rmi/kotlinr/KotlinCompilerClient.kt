@@ -59,7 +59,7 @@ public object KotlinCompilerClient {
             while (attempts++ < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
                 val service = tryFindDaemon(File(daemonOptions.runFilesPath), compilerId, reportingTargets)
                 if (service != null) {
-                    if (!checkId || checkCompilerId(service, compilerId)) {
+                    if (!checkId || service.checkCompilerId(compilerId)) {
                         reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
                         return service
                     }
@@ -111,10 +111,15 @@ public object KotlinCompilerClient {
     }
 
 
-    public fun compile(compilerService: CompileService, targetPlatform: CompileService.TargetPlatform, args: Array<out String>, out: OutputStream): Int {
-
-        val outStrm = RemoteOutputStreamServer(out)
-        return compilerService.remoteCompile(targetPlatform, args, CompilerCallbackServicesFacadeServer(), outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+    public fun compile(compilerService: CompileService,
+                       targetPlatform: CompileService.TargetPlatform,
+                       args: Array<out String>,
+                       out: OutputStream,
+                       port: Int = SOCKET_ANY_FREE_PORT,
+                       operationsTracer: RemoteOperationsTracer? = null
+    ): Int {
+        val outStrm = RemoteOutputStreamServer(out, port = port)
+        return compilerService.remoteCompile(targetPlatform, args, CompilerCallbackServicesFacadeServer(port = port), outStrm, CompileService.OutputFormat.PLAIN, outStrm, operationsTracer)
     }
 
 
@@ -124,16 +129,20 @@ public object KotlinCompilerClient {
                                   callbackServices: CompilationServices,
                                   compilerOut: OutputStream,
                                   daemonOut: OutputStream,
-                                  profiler: Profiler = DummyProfiler()
+                                  port: Int = SOCKET_ANY_FREE_PORT,
+                                  profiler: Profiler = DummyProfiler(),
+                                  operationsTracer: RemoteOperationsTracer? = null
     ): Int = profiler.withMeasure(this) {
             compileService.remoteIncrementalCompile(
                     targetPlatform,
                     args,
                     CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
-                                                         compilationCancelledStatus = callbackServices.compilationCanceledStatus),
-                    RemoteOutputStreamServer(compilerOut),
+                                                         compilationCancelledStatus = callbackServices.compilationCanceledStatus,
+                                                         port = port),
+                    RemoteOutputStreamServer(compilerOut, port),
                     CompileService.OutputFormat.XML,
-                    RemoteOutputStreamServer(daemonOut))
+                    RemoteOutputStreamServer(daemonOut, port),
+                    operationsTracer)
     }
 
     public val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
@@ -162,7 +171,7 @@ public object KotlinCompilerClient {
     public fun main(vararg args: String) {
         val compilerId = CompilerId()
         val daemonOptions = configureDaemonOptions()
-        val daemonLaunchingOptions = configureDaemonJVMOptions(true)
+        val daemonLaunchingOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
         val clientOptions = configureClientOptions()
         val filteredArgs = args.asIterable().filterExtractProps(compilerId, daemonOptions, daemonLaunchingOptions, clientOptions, prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX)
 
@@ -177,8 +186,6 @@ public object KotlinCompilerClient {
                 throw IllegalArgumentException("Cannot find compiler jar")
             else
                 println("desired compiler classpath: " + compilerId.compilerClasspath.joinToString(File.pathSeparator))
-
-            compilerId.updateDigest()
         }
 
         val daemon = connectToCompileService(compilerId, daemonLaunchingOptions, daemonOptions, DaemonReportingTargets(out = System.out), autostart = !clientOptions.stop, checkId = !clientOptions.stop)
@@ -197,7 +204,7 @@ public object KotlinCompilerClient {
             }
             filteredArgs.none() -> {
                 // so far used only in tests
-                println("Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${checkCompilerId(daemon, compilerId)}")
+                println("Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${daemon.checkCompilerId(compilerId)}")
             }
             else -> {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
@@ -207,7 +214,7 @@ public object KotlinCompilerClient {
                     val memBefore = daemon.getUsedMemory() / 1024
                     val startTime = System.nanoTime()
 
-                    val res = daemon.remoteCompile(CompileService.TargetPlatform.JVM, filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm)
+                    val res = daemon.remoteCompile(CompileService.TargetPlatform.JVM, filteredArgs.toArrayList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm, null)
 
                     val endTime = System.nanoTime()
                     println("Compilation result code: $res")
@@ -255,7 +262,7 @@ public object KotlinCompilerClient {
 
 
     private fun tryFindDaemon(registryDir: File, compilerId: CompilerId, reportingTargets: DaemonReportingTargets): CompileService? {
-        val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest()
+        val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
         val daemons = registryDir.walk()
                 .map { Pair(it, it.name.extractPortFromRunFilename(classPathDigest)) }
                 .filter { it.second != 0 }
@@ -368,20 +375,12 @@ public object KotlinCompilerClient {
     }
 
 
-    private fun checkCompilerId(compiler: CompileService, localId: CompilerId): Boolean {
-        val remoteId = compiler.getCompilerId()
-        return (localId.compilerVersion.isEmpty() || localId.compilerVersion == remoteId.compilerVersion) &&
-               (localId.compilerClasspath.all { remoteId.compilerClasspath.contains(it) }) &&
-               (localId.compilerDigest.isEmpty() || remoteId.compilerDigest.isEmpty() || localId.compilerDigest == remoteId.compilerDigest)
-    }
-
-
     class FileBasedLock(compilerId: CompilerId, daemonOptions: DaemonOptions) {
 
         private val lockFile: File =
                 File(daemonOptions.runFilesPath,
                      makeRunFilenameString(timestamp = "lock",
-                                           digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
+                                           digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
                                            port = "0"))
         @Volatile private var locked = acquireLockFile(lockFile)
         private val channel = if (locked) RandomAccessFile(lockFile, "rw").channel else null

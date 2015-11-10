@@ -23,7 +23,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     // methods with parameter
 
     public void visitJetElementVoid(@NotNull KtElement element, P data) {
-        super.visitJetElement(element, data);
+        super.visitKtElement(element, data);
     }
 
     public void visitDeclarationVoid(@NotNull KtDeclaration dcl, P data) {
@@ -63,7 +63,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     public void visitJetFileVoid(@NotNull KtFile file, P data) {
-        super.visitJetFile(file, data);
+        super.visitKtFile(file, data);
     }
 
     public void visitScriptVoid(@NotNull KtScript script, P data) {
@@ -398,10 +398,6 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitObjectDeclaration(declaration, data);
     }
 
-    public void visitObjectDeclarationNameVoid(@NotNull KtObjectDeclarationName declarationName, P data) {
-        super.visitObjectDeclarationName(declarationName, data);
-    }
-
     public void visitStringTemplateEntryVoid(@NotNull KtStringTemplateEntry entry, P data) {
         super.visitStringTemplateEntry(entry, data);
     }
@@ -428,7 +424,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
 
     // hidden methods
     @Override
-    public final Void visitJetElement(@NotNull KtElement element, P data) {
+    public final Void visitKtElement(@NotNull KtElement element, P data) {
         visitJetElementVoid(element, data);
     	return null;
     }
@@ -482,7 +478,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitJetFile(@NotNull KtFile file, P data) {
+    public final Void visitKtFile(@NotNull KtFile file, P data) {
         visitJetFileVoid(file, data);
         return null;
     }
@@ -978,12 +974,6 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     @Override
     public final Void visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, P data) {
         visitObjectDeclarationVoid(declaration, data);
-    	return null;
-    }
-
-    @Override
-    public final Void visitObjectDeclarationName(@NotNull KtObjectDeclarationName declarationName, P data) {
-        visitObjectDeclarationNameVoid(declarationName, data);
     	return null;
     }
 

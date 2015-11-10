@@ -1,10 +1,8 @@
-import kotlin.platform.platformStatic
-
 object AX {
 
-    @platformStatic val c: String = "OK"
+    @JvmStatic val c: String = "OK"
 
-    @platformStatic fun aStatic(): String {
+    @JvmStatic fun aStatic(): String {
         return AX.b()
     }
 
@@ -12,7 +10,7 @@ object AX {
         return AX.b()
     }
 
-    @platformStatic fun b(): String {
+    @JvmStatic fun b(): String {
         return "OK"
     }
 

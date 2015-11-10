@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.util.indexing.FileContentImpl
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.junit.Assert
 
-public abstract class StubConsistencyBaseTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class StubConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected abstract fun getFileIds(): List<ClassId>
     protected abstract fun getVirtualFileFinder(): VirtualFileFinder

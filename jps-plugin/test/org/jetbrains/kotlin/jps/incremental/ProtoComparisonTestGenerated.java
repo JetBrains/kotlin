@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.incremental;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -34,42 +34,42 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassSignatureChange extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInClassSignatureChange() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("classFlagsChanged")
         public void testClassFlagsChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classToFileFacade")
         public void testClassToFileFacade() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classToFileFacade/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classToFileFacade/");
             doTest(fileName);
         }
 
         @TestMetadata("classTypeParameterListChanged")
         public void testClassTypeParameterListChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithClassAnnotationListChanged")
         public void testClassWithClassAnnotationListChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classWithClassAnnotationListChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classWithClassAnnotationListChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithSuperTypeListChanged")
         public void testClassWithSuperTypeListChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("packageFacadeToClass")
         public void testPackageFacadeToClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/packageFacadeToClass/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/packageFacadeToClass/");
             doTest(fileName);
         }
 
@@ -80,36 +80,36 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassPrivateOnlyChange extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInClassPrivateOnlyChange() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("classWithPrivateFunChanged")
         public void testClassWithPrivateFunChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithPrivatePrimaryConstructorChanged")
         public void testClassWithPrivatePrimaryConstructorChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithPrivateSecondaryConstructorChanged")
         public void testClassWithPrivateSecondaryConstructorChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithPrivateValChanged")
         public void testClassWithPrivateValChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithPrivateVarChanged")
         public void testClassWithPrivateVarChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged/");
             doTest(fileName);
         }
 
@@ -120,36 +120,36 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassMembersOnlyChanged extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInClassMembersOnlyChanged() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("classWithCompanionObjectChanged")
         public void testClassWithCompanionObjectChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithConstructorChanged")
         public void testClassWithConstructorChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithFunAndValChanged")
         public void testClassWithFunAndValChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWithNestedClassesChanged")
         public void testClassWithNestedClassesChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("classWitnEnumChanged")
         public void testClassWitnEnumChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged/");
             doTest(fileName);
         }
 
@@ -160,24 +160,24 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PackageMembers extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInPackageMembers() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("packageFacadeMultifileClassChanged")
         public void testPackageFacadeMultifileClassChanged() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadeMultifileClassChanged/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadeMultifileClassChanged/");
             doTest(fileName);
         }
 
         @TestMetadata("packageFacadePrivateOnlyChanges")
         public void testPackageFacadePrivateOnlyChanges() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges/");
             doTest(fileName);
         }
 
         @TestMetadata("packageFacadePublicChanges")
         public void testPackageFacadePublicChanges() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges/");
             doTest(fileName);
         }
 
@@ -188,18 +188,18 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Unchanged extends AbstractProtoComparisonTest {
         public void testAllFilesPresentInUnchanged() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("unchangedClass")
         public void testUnchangedClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/unchanged/unchangedClass/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/unchanged/unchangedClass/");
             doTest(fileName);
         }
 
         @TestMetadata("unchangedPackageFacade")
         public void testUnchangedPackageFacade() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/comparison/unchanged/unchangedPackageFacade/");
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/unchanged/unchangedPackageFacade/");
             doTest(fileName);
         }
 

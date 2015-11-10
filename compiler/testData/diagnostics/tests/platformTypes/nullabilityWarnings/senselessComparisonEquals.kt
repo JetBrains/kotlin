@@ -33,10 +33,10 @@ fun test() {
 
     if (platformN != null) {}
     if (platformN == null) {}
-    if (a == null && platformN == a) {}
+    if (a == null && platformN == <!ALWAYS_NULL!>a<!>) {}
 
     if (platformJ != null) {}
     if (platformJ == null) {}
-    if (a == null && platformJ == a) {}
+    if (a == null && platformJ == <!ALWAYS_NULL!>a<!>) {}
 }
 

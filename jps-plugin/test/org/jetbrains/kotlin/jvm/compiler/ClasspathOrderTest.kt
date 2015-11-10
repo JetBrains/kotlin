@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
+import org.jetbrains.kotlin.jps.build.JvmSourceRoot
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.utils.PathUtil
@@ -31,7 +32,7 @@ import java.io.File
  */
 public class ClasspathOrderTest : TestCaseWithTmpdir() {
     companion object {
-        val sourceDir = File(JetTestUtils.getTestDataPathBase() + "/classpathOrder").getAbsoluteFile()
+        val sourceDir = File(KotlinTestUtils.getTestDataPathBase() + "/classpathOrder").getAbsoluteFile()
     }
 
     public fun testClasspathOrderForCLI() {
@@ -43,7 +44,7 @@ public class ClasspathOrderTest : TestCaseWithTmpdir() {
                 "name",
                 File(tmpdir, "output").getAbsolutePath(),
                 listOf(sourceDir),
-                listOf(sourceDir),
+                listOf(JvmSourceRoot(sourceDir)),
                 listOf(PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()),
                 JavaModuleBuildTargetType.PRODUCTION,
                 setOf()

@@ -19,13 +19,18 @@ package org.jetbrains.kotlin.idea.completion.smart
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.FunctionLiteralArgument
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.ValueArgumentName
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -64,44 +69,91 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             return
         }
 
-        if (expression != null) {
-            addFunctionLiteralArgumentCompletions()
+        if (expression == null) return
 
-            val (additionalItems, inheritanceSearcher) = smartCompletion!!.additionalItems(lookupElementFactory)
-            collector.addElements(additionalItems)
+        addFunctionLiteralArgumentCompletions()
 
-            if (nameExpression != null) {
-                val filter = smartCompletion!!.descriptorFilter
-                if (filter != null) {
-                    val (imported, notImported) = referenceVariants!!
-                    imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
-                    notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+        var inheritanceSearcher: InheritanceItemsSearcher? = null
+        val contextVariableTypesForAdditionalItems = withCollectRequiredContextVariableTypes { lookupElementFactory ->
+            val pair = smartCompletion!!.additionalItems(lookupElementFactory)
+            collector.addElements(pair.first)
+            inheritanceSearcher = pair.second
+        }
 
-                    flushToResultSet()
+        val filter = smartCompletion!!.descriptorFilter
+        var contextVariableTypesForReferenceVariants = filter?.let {
+            withCollectRequiredContextVariableTypes { lookupElementFactory ->
+                val (imported, notImported) = referenceVariantsWithNonInitializedVarExcluded ?: return@withCollectRequiredContextVariableTypes
+                imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
+                notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+            }
+        }
 
-                    if (shouldCompleteTopLevelCallablesFromIndex()) {
-                        getTopLevelCallables().forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+        flushToResultSet()
+
+        val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
+        withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
+            if (contextVariableTypesForAdditionalItems.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+                val additionalItems = smartCompletion!!.additionalItems(lookupElementFactory).first
+                collector.addElements(additionalItems)
+            }
+
+            if (filter != null && contextVariableTypesForReferenceVariants!!.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
+                val (imported, notImported) = referenceVariantsWithSingleFunctionTypeParameter()!!
+                imported.forEach { collector.addElements(filter(it, lookupElementFactory)) }
+                notImported.forEach { collector.addElements(filter(it, lookupElementFactory), notImported = true) }
+            }
+
+            flushToResultSet()
+
+            if (filter != null) {
+                val staticMembersCompletion: StaticMembersCompletion?
+                if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
+                    staticMembersCompletion = StaticMembersCompletion(prefixMatcher, resolutionFacade, lookupElementFactory, referenceVariants!!.imported, isJvmModule)
+                    val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER_FROM_IMPORTS)
+                    staticMembersCompletion.membersFromImports(file)
+                            .flatMap { filter(it, decoratedFactory) }
+                            .forEach { collector.addElement(it) }
+                }
+                else {
+                    staticMembersCompletion = null
+                }
+
+                if (shouldCompleteTopLevelCallablesFromIndex()) {
+                    processTopLevelCallables {
+                        collector.addElements(filter(it, lookupElementFactory), notImported = true)
                         flushToResultSet()
                     }
+                }
 
-                    if (position.getContainingFile() is KtCodeFragment) {
-                        val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants()
-                        if (variantsAndFactory != null) {
-                            val variants = variantsAndFactory.first
-                            val lookupElementFactory = variantsAndFactory.second
-                            variants.imported.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }) }
-                            variants.notImportedExtensions.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }, notImported = true) }
+                if (position.getContainingFile() is KtCodeFragment) {
+                    val variantsAndFactory = getRuntimeReceiverTypeReferenceVariants(lookupElementFactory)
+                    if (variantsAndFactory != null) {
+                        val variants = variantsAndFactory.first
+                        @Suppress("NAME_SHADOWING") val lookupElementFactory = variantsAndFactory.second
+                        variants.imported.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }) }
+                        variants.notImportedExtensions.forEach { collector.addElements(filter(it, lookupElementFactory).map { it.withReceiverCast() }, notImported = true) }
+                        flushToResultSet()
+                    }
+                }
+
+                if (staticMembersCompletion != null && configuration.completeStaticMembers) {
+                    val decoratedFactory = staticMembersCompletion.decoratedLookupElementFactory(ItemPriority.STATIC_MEMBER)
+                    staticMembersCompletion.processMembersFromIndices(indicesHelper(false)) {
+                        filter(it, decoratedFactory).forEach {
+                            collector.addElement(it)
                             flushToResultSet()
                         }
                     }
                 }
-
-                // it makes no sense to search inheritors if there is no reference because it means that we have prefix like "this@"
-                inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
-                    collector.addElement(it)
-                    flushToResultSet()
-                }
             }
+        }
+
+
+        // it makes no sense to search inheritors if there is no reference because it means that we have prefix like "this@"
+        inheritanceSearcher?.search({ prefixMatcher.prefixMatches(it) }) {
+            collector.addElement(it)
+            flushToResultSet()
         }
     }
 
@@ -137,5 +189,26 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     override fun createSorter(): CompletionSorter {
         return super.createSorter()
                 .weighBefore(KindWeigher.toString(), NameSimilarityWeigher, SmartCompletionPriorityWeigher)
+    }
+
+    override fun createLookupElementFactory(contextVariablesProvider: ContextVariablesProvider): LookupElementFactory {
+        return super.createLookupElementFactory(contextVariablesProvider).copy(
+                standardLookupElementsPostProcessor = { wrapStandardLookupElement(it) }
+        )
+    }
+
+    private fun wrapStandardLookupElement(lookupElement: LookupElement): LookupElement {
+        val descriptor = (lookupElement.`object` as DeclarationLookupObject).descriptor
+        var element = lookupElement
+
+        if (descriptor is FunctionDescriptor && descriptor.valueParameters.isNotEmpty()) {
+            element = element.keepOldArgumentListOnTab()
+        }
+
+        if (descriptor is ValueParameterDescriptor && bindingContext[BindingContext.AUTO_CREATED_IT, descriptor]!!) {
+            element = element.assignSmartCompletionPriority(SmartCompletionItemPriority.IT)
+        }
+
+        return element
     }
 }

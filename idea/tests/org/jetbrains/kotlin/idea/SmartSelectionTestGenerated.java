@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,60 +32,60 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SmartSelectionTestGenerated extends AbstractSmartSelectionTest {
     public void testAllFilesPresentInSmartSelection() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/smartSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/smartSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
     @TestMetadata("labelledStatement.kt")
     public void testLabelledStatement() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/labelledStatement.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/labelledStatement.kt");
         doTestSmartSelection(fileName);
     }
 
     @TestMetadata("labelledThis.kt")
     public void testLabelledThis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/labelledThis.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/labelledThis.kt");
         doTestSmartSelection(fileName);
     }
 
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/simple.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/simple.kt");
         doTestSmartSelection(fileName);
     }
 
     @TestMetadata("superExpression.kt")
     public void testSuperExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/superExpression.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/superExpression.kt");
         doTestSmartSelection(fileName);
     }
 
     @TestMetadata("superExpressionWithLabel.kt")
     public void testSuperExpressionWithLabel() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithLabel.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithLabel.kt");
         doTestSmartSelection(fileName);
     }
 
     @TestMetadata("superExpressionWithLabelAndType.kt")
     public void testSuperExpressionWithLabelAndType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithLabelAndType.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithLabelAndType.kt");
         doTestSmartSelection(fileName);
     }
 
     @TestMetadata("superExpressionWithType.kt")
     public void testSuperExpressionWithType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithType.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/superExpressionWithType.kt");
         doTestSmartSelection(fileName);
     }
 
     @TestMetadata("typeInSuperExpression.kt")
     public void testTypeInSuperExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/typeInSuperExpression.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/typeInSuperExpression.kt");
         doTestSmartSelection(fileName);
     }
 
     @TestMetadata("typeInSuperExpressionWithLabel.kt")
     public void testTypeInSuperExpressionWithLabel() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/smartSelection/typeInSuperExpressionWithLabel.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/typeInSuperExpressionWithLabel.kt");
         doTestSmartSelection(fileName);
     }
 }

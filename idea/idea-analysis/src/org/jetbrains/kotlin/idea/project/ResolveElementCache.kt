@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
-import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingFunctionShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -105,14 +105,17 @@ public class ResolveElementCache(
 
     private fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
         return object : ProbablyNothingCallableNames {
-            override fun functionNames() = JetProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project)
-            override fun propertyNames() = JetProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project)
+            override fun functionNames() = KotlinProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project)
+            override fun propertyNames() = KotlinProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project)
         }
     }
 
     override fun resolveFunctionBody(function: KtNamedFunction)
             = getElementAdditionalResolve(function, function, BodyResolveMode.FULL)
 
+    public fun resolvePrimaryConstructorParametersDefaultValues(ktClass: KtClass): BindingContext {
+        return constructorAdditionalResolve(resolveSession, ktClass, ktClass.getContainingKtFile()).bindingContext
+    }
 
     fun getElementAdditionalResolve(resolveElement: KtElement, contextElement: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
         // check if full additional resolve already performed and is up-to-date
@@ -139,7 +142,7 @@ public class ResolveElementCache(
                     return getElementAdditionalResolve(resolveElement, contextElement, BodyResolveMode.FULL)
                 }
 
-                val file = resolveElement.getContainingJetFile()
+                val file = resolveElement.getContainingKtFile()
                 val statementToResolve = PartialBodyResolveFilter.findStatementToResolve(contextElement, resolveElement)
                 val partialResolveMap = partialBodyResolveCache.value
                 partialResolveMap[statementToResolve ?: resolveElement]
@@ -240,7 +243,7 @@ public class ResolveElementCache(
     }
 
     private fun performElementAdditionalResolve(resolveElement: KtElement, contextElement: KtElement, bodyResolveMode: BodyResolveMode): Pair<BindingContext, StatementFilter> {
-        val file = resolveElement.getContainingJetFile()
+        val file = resolveElement.getContainingKtFile()
 
         var statementFilterUsed = StatementFilter.NONE
 
@@ -270,7 +273,7 @@ public class ResolveElementCache(
             is KtInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as KtEnumEntry, file)
 
             is KtImportList -> {
-                val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingJetFile())
+                val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingKtFile())
                 resolver.forceResolveAllImports()
                 resolveSession.trace
             }
@@ -352,10 +355,10 @@ public class ResolveElementCache(
         else {
             val fileAnnotationList = ktAnnotationEntry.getParentOfType<KtFileAnnotationList>(true)
             if (fileAnnotationList != null) {
-                doResolveAnnotations(resolveSession.getFileAnnotations(fileAnnotationList.getContainingJetFile()))
+                doResolveAnnotations(resolveSession.getFileAnnotations(fileAnnotationList.getContainingKtFile()))
             }
             if (modifierList != null && modifierList.getParent() is KtFile) {
-                doResolveAnnotations(resolveSession.getDanglingAnnotations(modifierList.getContainingJetFile()))
+                doResolveAnnotations(resolveSession.getDanglingAnnotations(modifierList.getContainingKtFile()))
             }
         }
 

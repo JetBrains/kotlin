@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.kdoc;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.idea.resolve.AbstractReferenceResolveTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -33,72 +33,72 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     public void testAllFilesPresentInResolve() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("AmbiguousReference.kt")
     public void testAmbiguousReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("AmbiguousReferenceTypeParameter.kt")
     public void testAmbiguousReferenceTypeParameter() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReferenceTypeParameter.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/AmbiguousReferenceTypeParameter.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ClassSelfReference.kt")
     public void testClassSelfReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ClassSelfReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ClassSelfReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("CodeReference.kt")
     public void testCodeReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/CodeReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/CodeReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConstructorParamReference.kt")
     public void testConstructorParamReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ConstructorParamReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ConstructorParamReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportedClassReference.kt")
     public void testImportedClassReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ImportedClassReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ImportedClassReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ParamReference.kt")
     public void testParamReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ParamReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ParamReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PropertyTypeParamReference.kt")
     public void testPropertyTypeParamReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/PropertyTypeParamReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/PropertyTypeParamReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("QualifiedCodeReference.kt")
     public void testQualifiedCodeReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/QualifiedCodeReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/QualifiedCodeReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("SeeReference.kt")
     public void testSeeReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/SeeReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/SeeReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("TypeParamReference.kt")
     public void testTypeParamReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/kdoc/resolve/TypeParamReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/TypeParamReference.kt");
         doTest(fileName);
     }
 }

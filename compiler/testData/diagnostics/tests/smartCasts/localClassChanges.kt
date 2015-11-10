@@ -8,8 +8,8 @@ fun foo() {
                 i = null
             }
         }
-        i<!UNSAFE_CALL!>.<!>hashCode()
+        <!SMARTCAST_IMPOSSIBLE!>i<!>.hashCode()
         Changing().bar()
-        i<!UNSAFE_CALL!>.<!>hashCode()
+        <!SMARTCAST_IMPOSSIBLE!>i<!>.hashCode()
     }
 }

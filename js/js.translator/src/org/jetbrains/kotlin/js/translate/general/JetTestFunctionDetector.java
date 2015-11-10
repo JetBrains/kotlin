@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
@@ -83,7 +84,7 @@ public class JetTestFunctionDetector {
     ) {
         List<FunctionDescriptor> answer = Lists.newArrayList();
         for (KtDeclaration declaration : declarations) {
-            KtScope scope = null;
+            MemberScope scope = null;
 
             if (declaration instanceof KtClass) {
                 KtClass klass = (KtClass) declaration;
@@ -95,7 +96,7 @@ public class JetTestFunctionDetector {
             }
 
             if (scope != null) {
-                Collection<DeclarationDescriptor> allDescriptors = scope.getAllDescriptors();
+                Collection<DeclarationDescriptor> allDescriptors = DescriptorUtils.getAllDescriptors(scope);
                 List<FunctionDescriptor> testFunctions = ContainerUtil.mapNotNull(
                         allDescriptors,
                         new Function<DeclarationDescriptor, FunctionDescriptor>() {

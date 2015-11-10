@@ -4,8 +4,6 @@ fun foo(s: String, k: Int): Boolean {
 
 class X(val k: Int)
 
-fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
-
 fun test() {
     with(X(0)) {
         foo("1", 2)

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,42 +32,42 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentCompletionHandlerTestGenerated extends AbstractCodeFragmentCompletionHandlerTest {
     public void testAllFilesPresentInRuntimeCast() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/runtimeCast"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/runtimeCast"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("CastPrivateFun.kt")
     public void testCastPrivateFun() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/CastPrivateFun.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/CastPrivateFun.kt");
         doTest(fileName);
     }
 
     @TestMetadata("CastPropertyWithSmartCast.kt")
     public void testCastPropertyWithSmartCast() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/CastPropertyWithSmartCast.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/CastPropertyWithSmartCast.kt");
         doTest(fileName);
     }
 
     @TestMetadata("InsertExtFunction.kt")
     public void testInsertExtFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/InsertExtFunction.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/InsertExtFunction.kt");
         doTest(fileName);
     }
 
     @TestMetadata("InsertFunction.kt")
     public void testInsertFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/InsertFunction.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/InsertFunction.kt");
         doTest(fileName);
     }
 
     @TestMetadata("InsertImport.kt")
     public void testInsertImport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/InsertImport.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/InsertImport.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NotImportedExtension.kt")
     public void testNotImportedExtension() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/NotImportedExtension.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/runtimeCast/NotImportedExtension.kt");
         doTest(fileName);
     }
 }

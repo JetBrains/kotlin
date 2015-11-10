@@ -135,10 +135,10 @@ private inline fun resolveSupertypesByMembers(
 }
 
 private fun getFunctionMembers(type: KotlinType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
-        type.memberScope.getFunctions(name, location)
+        type.memberScope.getContributedFunctions(name, location)
 
 private fun getPropertyMembers(type: KotlinType, name: Name, location: LookupLocation): Collection<MemberDescriptor> =
-        type.memberScope.getProperties(name, location).filterIsInstanceTo(SmartList<MemberDescriptor>())
+        type.memberScope.getContributedVariables(name, location).filterIsInstanceTo(SmartList<MemberDescriptor>())
 
 private fun isConcreteMember(supertype: KotlinType, memberDescriptor: MemberDescriptor): Boolean {
     // "Concrete member" is a function or a property that is not abstract,

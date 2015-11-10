@@ -17,7 +17,7 @@ interface<!SYNTAX!><!> {
 
 }
 
-object <!SYNTAX!><!>{
+object<!SYNTAX!><!> {
 
 }
 

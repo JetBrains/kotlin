@@ -23,13 +23,13 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil
 import org.jetbrains.kotlin.psi.KtElement
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
 public class AddReflectionQuickFix(element: KtElement) : KotlinQuickFixAction<KtElement>(element) {
-    override fun getText() = JetBundle.message("add.reflection.to.classpath")
+    override fun getText() = KotlinBundle.message("add.reflection.to.classpath")
     override fun getFamilyName() = getText()
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -73,7 +73,7 @@ public class AddReflectionQuickFix(element: KtElement) : KotlinQuickFixAction<Kt
         }
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddReflectionQuickFix)
     }
 }

@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS
-import org.jetbrains.kotlin.diagnostics.Errors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED
-import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -40,7 +38,9 @@ import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.types.FunctionPlaceholders
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.ThrowingList
 
 public fun resolveCallableReferenceReceiverType(
@@ -100,9 +101,23 @@ public fun resolvePossiblyAmbiguousCallableReference(
 ): OverloadResolutionResults<CallableDescriptor>? {
     val reference = callableReferenceExpression.getCallableReference()
 
-    fun resolveInScope(traceTitle: String, staticScope: KtScope): OverloadResolutionResults<CallableDescriptor> {
+    fun resolveInScope(traceTitle: String, classifier: ClassifierDescriptor, staticScope: MemberScope): OverloadResolutionResults<CallableDescriptor> {
+
+        // todo: drop this class when new resolve will be finished
+        class StaticScopeAsLexicalScope(val staticScope: MemberScope) : BaseLexicalScope(staticScope.memberScopeAsImportingScope(), classifier) {
+            override fun printStructure(p: Printer) {
+                p.println(toString())
+            }
+
+            override fun toString(): String = "${javaClass.canonicalName} for $staticScope"
+
+            // this method is needed for correct rewrite LEXICAL_SCOPE in trace
+            override fun equals(other: Any?) = other is StaticScopeAsLexicalScope && other.staticScope == staticScope
+            override fun hashCode() = staticScope.hashCode()
+        }
+
         val temporaryTraceAndCache = TemporaryTraceAndCache.create(context, traceTitle, reference)
-        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(staticScope.memberScopeAsImportingScope())
+        val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(StaticScopeAsLexicalScope(staticScope))
         val results = resolvePossiblyAmbiguousCallableReference(reference, ReceiverValue.NO_RECEIVER, newContext, resolutionMode, callResolver)
         resolutionMode.acceptResolution(results, temporaryTraceAndCache)
         return results
@@ -126,11 +141,11 @@ public fun resolvePossiblyAmbiguousCallableReference(
         return null
     }
 
-    val possibleStatic = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static scope", classifier.getStaticScope())
+    val possibleStatic = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static scope", classifier, classifier.getStaticScope())
     if (possibleStatic.isSomething()) return possibleStatic
 
     val possibleNested = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static nested classes scope",
-                                        DescriptorUtils.getStaticNestedClassesScope(classifier))
+                                        classifier, JetScopeUtils.getStaticNestedClassesScope(classifier))
     if (possibleNested.isSomething()) return possibleNested
 
     val possibleWithReceiver = resolveWithReceiver("trace to resolve ::${reference.getReferencedName()} with receiver",

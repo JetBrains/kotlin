@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class ImplementMembersHandler : OverrideImplementMembersHandler(), IntentionAction {
@@ -34,8 +34,8 @@ public class ImplementMembersHandler : OverrideImplementMembersHandler(), Intent
 
     override fun getNoMembersFoundHint() = "No members to implement have been found"
 
-    override fun getText() = JetBundle.message("implement.members")
-    override fun getFamilyName() = JetBundle.message("implement.members")
+    override fun getText() = KotlinBundle.message("implement.members")
+    override fun getFamilyName() = KotlinBundle.message("implement.members")
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile) = isValidFor(editor, file)
 }

@@ -23,13 +23,13 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.setReceiverType
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<KtCallableDeclaration>(javaClass(), "Convert member to extension"), LowPriorityAction {
+public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(javaClass(), "Convert member to extension"), LowPriorityAction {
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         val classBody = element.getParent() as? KtClassBody ?: return null
         if (classBody.getParent() !is KtClass) return null
@@ -48,7 +48,7 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
         val descriptor = element.resolveToDescriptor()
         val containingClass = descriptor.getContainingDeclaration() as ClassDescriptor
 
-        val file = element.getContainingJetFile()
+        val file = element.getContainingKtFile()
         val outermostParent = KtPsiUtil.getOutermostParent(element, file, false)
 
         val typeParameterList = newTypeParameterList(element)

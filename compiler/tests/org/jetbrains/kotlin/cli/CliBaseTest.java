@@ -26,10 +26,11 @@ import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.Tmpdir;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Rule;
@@ -72,7 +73,8 @@ public class CliBaseTest {
         String normalizedOutputWithoutExitCode = pureOutput
                 .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
                 .replace("expected ABI version is " + JvmAbi.VERSION, "expected ABI version is $ABI_VERSION$")
-                .replace("\\", "/");
+                .replace("\\", "/")
+                .replace(KotlinVersion.VERSION, "$VERSION$");
 
         return removePerfOutput(normalizedOutputWithoutExitCode) + exitCode;
     }
@@ -95,7 +97,7 @@ public class CliBaseTest {
                                                              tmpdir.getTmpDir().getPath()));
         String actual = getNormalizedCompilerOutput(outputAndExitCode.first, outputAndExitCode.second, testDataDir);
 
-        JetTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testName.getMethodName() + ".out"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(testDataDir + "/" + testName.getMethodName() + ".out"), actual);
     }
 
     @NotNull

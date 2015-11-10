@@ -25,14 +25,14 @@ import com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 
 public class QuickFixes {
-    private val factories: Multimap<DiagnosticFactory<*>, JetIntentionActionsFactory> = HashMultimap.create<DiagnosticFactory<*>, JetIntentionActionsFactory>()
+    private val factories: Multimap<DiagnosticFactory<*>, KotlinIntentionActionsFactory> = HashMultimap.create<DiagnosticFactory<*>, KotlinIntentionActionsFactory>()
     private val actions: Multimap<DiagnosticFactory<*>, IntentionAction> = HashMultimap.create<DiagnosticFactory<*>, IntentionAction>()
 
     init {
         Extensions.getExtensions(QuickFixContributor.EP_NAME).forEach { it.registerQuickFixes(this) }
     }
 
-    public fun register(diagnosticFactory: DiagnosticFactory<*>, vararg factory: JetIntentionActionsFactory) {
+    public fun register(diagnosticFactory: DiagnosticFactory<*>, vararg factory: KotlinIntentionActionsFactory) {
         factories.putAll(diagnosticFactory, factory.toList())
     }
 
@@ -40,7 +40,7 @@ public class QuickFixes {
         actions.putAll(diagnosticFactory, action.toList())
     }
 
-    public fun getActionFactories(diagnosticFactory: DiagnosticFactory<*>): Collection<JetIntentionActionsFactory> {
+    public fun getActionFactories(diagnosticFactory: DiagnosticFactory<*>): Collection<KotlinIntentionActionsFactory> {
         return factories.get(diagnosticFactory)
     }
 
@@ -48,7 +48,7 @@ public class QuickFixes {
         return actions.get(diagnosticFactory)
     }
 
-    public fun getDiagnostics(factory: JetIntentionActionsFactory): Collection<DiagnosticFactory<*>> {
+    public fun getDiagnostics(factory: KotlinIntentionActionsFactory): Collection<DiagnosticFactory<*>> {
         return factories.keySet().filter { factory in factories.get(it) }
     }
 

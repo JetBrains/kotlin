@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ public class JUnitUsageGenTest extends CodegenTestCase {
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
-                JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, junitJar),
+                KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, junitJar),
                 EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 

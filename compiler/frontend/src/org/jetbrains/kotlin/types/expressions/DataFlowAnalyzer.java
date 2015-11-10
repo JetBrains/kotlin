@@ -252,7 +252,7 @@ public class DataFlowAnalyzer {
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
-        SmartCastResult result = smartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, false);
+        SmartCastResult result = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, false);
         return result != null ? result.getResultType() : null;
     }
 
@@ -285,6 +285,9 @@ public class DataFlowAnalyzer {
                     context.trace.report(INVALID_IF_AS_EXPRESSION.on((KtIfExpression) expression));
                     return expressionType;
                 }
+            }
+            else if (isIfExpression && context.expectedType != NO_EXPECTED_TYPE) {
+                return expressionType;
             }
             else {
                 context.trace.report(IMPLICIT_CAST_TO_UNIT_OR_ANY.on(expression, expressionType));

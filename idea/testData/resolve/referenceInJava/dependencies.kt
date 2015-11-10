@@ -1,7 +1,5 @@
 package k
 
-import kotlin.platform.platformStatic
-
 public class Class() {
     public val prop: Int = 0
     fun function() = 1
@@ -32,7 +30,7 @@ public interface StaticFieldInClassObjectInTrait {
 }
 
 object PlatformStaticFun {
-    platformStatic
+    @JvmStatic
     fun test() {
     }
 }
@@ -52,4 +50,4 @@ public class TraitWithDelegatedWithImpl(f: TraitWithImpl) : TraitWithImpl by f
 kotlin.jvm.jvmOverloads
 public fun withJvmOverloads(i: Int, b: Boolean = false, s: String="hello") {}
 
-
+annotation class KAnno(val c: Int = 4, val d: String)

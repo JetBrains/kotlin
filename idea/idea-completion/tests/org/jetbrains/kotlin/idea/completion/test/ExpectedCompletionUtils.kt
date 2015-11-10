@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.google.common.collect.ImmutableList
+import com.google.gson.JsonElement
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -157,7 +158,12 @@ public object ExpectedCompletionUtils {
         for (proposalStr in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, *prefixes)) {
             if (proposalStr.startsWith("{")) {
                 val parser = JsonParser()
-                val json = parser.parse(proposalStr)
+                val json: JsonElement? = try {
+                    parser.parse(proposalStr)
+                }
+                catch(t: Throwable) {
+                    throw RuntimeException("Error parsing '$proposalStr'", t)
+                }
                 proposals.add(CompletionProposal(json as JsonObject))
             }
             else if (proposalStr.startsWith("\"") && proposalStr.endsWith("\"")) {

@@ -6,10 +6,13 @@ import java.util.*
 public object Collections {
     public fun max<T>(col: Collection<T>, comp: Comparator<in T>): T = java.util.max(col, comp)
 
-    public fun <T> sort(list: MutableList<T>): Unit = java.util.sort(list)
+    @Deprecated("Use list.sort() instead.", ReplaceWith("list.sort()"))
+    public fun <T: Comparable<T>> sort(list: MutableList<T>): Unit = java.util.sort(list, naturalOrder())
 
+    @Deprecated("Use list.sortWith(comparator) instead.", ReplaceWith("list.sortWith(comparator)"))
     public fun <T> sort(list: MutableList<T>, comparator: java.util.Comparator<in T>): Unit = java.util.sort(list, comparator)
 
+    @Deprecated("Use list.reverse() instead.", ReplaceWith("list.reverse()"))
     public fun <T> reverse(list: MutableList<T>): Unit {
         val size = list.size()
         for (i in 0..(size / 2) - 1) {
@@ -22,10 +25,7 @@ public object Collections {
 }
 
 @library("collectionsMax")
-internal fun max<T>(col: Collection<T>, comp: Comparator<in T>): T = noImpl
+private fun max<T>(col: Collection<T>, comp: Comparator<in T>): T = noImpl
 
 @library("collectionsSort")
-internal fun <T> sort(list: MutableList<T>): Unit = noImpl
-
-@library("collectionsSort")
-internal fun <T> sort(list: MutableList<T>, comparator: java.util.Comparator<in T>): Unit = noImpl
+private fun <T> sort(list: MutableList<T>, comparator: Comparator<in T>): Unit = noImpl

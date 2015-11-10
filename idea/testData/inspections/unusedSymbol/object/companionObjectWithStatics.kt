@@ -2,7 +2,7 @@ package companionObjectWithStatics
 
 class Foo {
     companion object {
-        platformStatic fun foo() {
+        @JvmStatic fun foo() {
         }
 
         val CONST = 111

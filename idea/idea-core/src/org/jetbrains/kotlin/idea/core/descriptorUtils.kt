@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.getOriginalTopmostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
@@ -88,8 +88,8 @@ public fun compareDescriptors(project: Project, currentDescriptor: DeclarationDe
     if (compareDescriptorsText(project, currentDescriptor, originalDescriptor)) return true
 
     if (originalDescriptor is CallableDescriptor && currentDescriptor is CallableDescriptor) {
-        val overriddenOriginalDescriptor = originalDescriptor.getOriginalTopmostOverriddenDescriptors()
-        val overriddenCurrentDescriptor = currentDescriptor.getOriginalTopmostOverriddenDescriptors()
+        val overriddenOriginalDescriptor = originalDescriptor.findOriginalTopMostOverriddenDescriptors()
+        val overriddenCurrentDescriptor = currentDescriptor.findOriginalTopMostOverriddenDescriptors()
 
         if (overriddenOriginalDescriptor.size != overriddenCurrentDescriptor.size) return false
         return overriddenCurrentDescriptor.zip(overriddenOriginalDescriptor).all {

@@ -6,25 +6,17 @@ import kotlin.test.*
 import org.junit.Test as test
 
 class StringJVMTest {
-    @test fun stringBuilderIterator() {
-        var sum = 0
-        val sb = StringBuilder()
-        for(c in "239")
-            sb.append(c)
 
-        println(sb)
-
-        for(c in sb)
-            sum += (c.toInt() - '0'.toInt())
-        assertTrue(sum == 14)
+    @test fun toBoolean() {
+        assertEquals(true, "true".toBoolean())
+        assertEquals(true, "True".toBoolean())
+        assertEquals(false, "false".toBoolean())
+        assertEquals(false, "not so true".toBoolean())
     }
 
-    @test fun orEmpty() {
-        val s: String? = "hey"
-        val ns: String? = null
-
-        assertEquals("hey", s.orEmpty())
-        assertEquals("", ns.orEmpty())
+    @test fun toByte() {
+        assertEquals(77.toByte(), "77".toByte())
+        assertFails { "255".toByte() }
     }
 
     @test fun toShort() {
@@ -39,28 +31,7 @@ class StringJVMTest {
         assertEquals(77.toLong(), "77".toLong())
     }
 
-    @test fun count() {
-        val text = "hello there\tfoo\nbar"
-        val whitespaceCount = text.count { it.isWhitespace() }
-        assertEquals(3, whitespaceCount)
-    }
-
-    @test fun testSplitByChar() {
-        val s = "ab\n[|^$&\\]^cd"
-        var list = s.split('b');
-        assertEquals(2, list.size())
-        assertEquals("a", list[0])
-        assertEquals("\n[|^$&\\]^cd", list[1])
-        list = s.split('^')
-        assertEquals(3, list.size())
-        assertEquals("cd", list[2])
-        list = s.split('.')
-        assertEquals(1, list.size())
-        assertEquals(s, list[0])
-    }
-
-    @test fun testSplitByPattern() {
-        val s = "ab1cd2def3"
+    @test fun testSplitByPattern() = withOneCharSequenceArg("ab1cd2def3") { s ->
         val isDigit = "\\d".toRegex()
         assertEquals(listOf("ab", "cd", "def", ""), s.split(isDigit))
         assertEquals(listOf("ab", "cd", "def3"), s.split(isDigit, 3))
@@ -73,7 +44,9 @@ class StringJVMTest {
         }
     }
 
-    @test fun repeat() {
+    @test fun repeat() = withOneCharSequenceArg { arg1 ->
+        fun String.repeat(n: Int): String = arg1(this).repeat(n)
+
         assertFails { "foo".repeat(-1) }
         assertEquals("", "foo".repeat(0))
         assertEquals("foo", "foo".repeat(1))
@@ -81,214 +54,14 @@ class StringJVMTest {
         assertEquals("foofoofoo", "foo".repeat(3))
     }
 
-    @test fun filter() {
-        assertEquals("acdca", "abcdcba".filter { !it.equals('b') })
-        assertEquals("1234", "a1b2c3d4".filter { it.isDigit() })
-    }
 
-    @test fun filterNot() {
-        assertEquals("acdca", "abcdcba".filterNot { it.equals('b') })
-        assertEquals("abcd", "a1b2c3d4".filterNot { it.isDigit() })
-    }
-
-    @test fun forEach() {
-        val data = "abcd1234"
-        var count = 0
-        data.forEach{ count++ }
-        assertEquals(data.length(), count)
-    }
-
-    @test fun all() {
-        val data = "AbCd"
-        assertTrue {
-            data.all { it.isJavaIdentifierPart() }
-        }
-        assertFalse {
-            data.all { it.isUpperCase() }
-        }
-    }
-
-    @test fun any() {
-        val data = "a1bc"
-        assertTrue {
-            data.any() { it.isDigit() }
-        }
-        assertFalse {
-            data.any() { it.isUpperCase() }
-        }
-    }
-
-    @test fun joinTo() {
-        val data = "kotlin".toList()
-        val sb = StringBuilder()
-        data.joinTo(sb, "^", "<", ">")
-        assertEquals("<k^o^t^l^i^n>", sb.toString())
-    }
-
-    @test fun find() {
-        val data = "a1b2c3"
-        assertEquals('1', data.first { it.isDigit() })
-        assertNull(data.firstOrNull { it.isUpperCase() })
-    }
-
-    @test fun findNot() {
-        val data = "1a2b3c"
-        assertEquals('a', data.filterNot { it.isDigit() }.firstOrNull())
-        assertNull(data.filterNot { it.isJavaIdentifierPart() }.firstOrNull())
-    }
-
-    @test fun partition() {
-        val data = "a1b2c3"
-        val pair = data.partition { it.isDigit() }
-        assertEquals("123", pair.first, "pair.first")
-        assertEquals("abc", pair.second, "pair.second")
-    }
-
-    @test fun map() {
-        assertEquals(listOf('a', 'b', 'c'), "abc".map { it })
-
-        assertEquals(listOf(true, false, true), "AbC".map { it.isUpperCase() })
-
-        assertEquals(listOf<Boolean>(), "".map { it.isUpperCase() })
-
-        assertEquals(listOf(97, 98, 99), "abc".map { it.toInt() })
-    }
-
-    @test fun mapTo() {
-        val result1 = arrayListOf<Char>()
-        val return1 = "abc".mapTo(result1, { it })
-        assertEquals(result1, return1)
-        assertEquals(arrayListOf('a', 'b', 'c'), result1)
-
-        val result2 = arrayListOf<Boolean>()
-        val return2 = "AbC".mapTo(result2, { it.isUpperCase() })
-        assertEquals(result2, return2)
-        assertEquals(arrayListOf(true, false, true), result2)
-
-        val result3 = arrayListOf<Boolean>()
-        val return3 = "".mapTo(result3, { it.isUpperCase() })
-        assertEquals(result3, return3)
-        assertEquals(arrayListOf<Boolean>(), result3)
-
-        val result4 = arrayListOf<Int>()
-        val return4 = "abc".mapTo(result4, { it.toInt() })
-        assertEquals(result4, return4)
-        assertEquals(arrayListOf(97, 98, 99), result4)
-    }
-
-    @test fun flatMap() {
-        val data = "abcd"
-        val result = data.flatMap { listOf(it) }
-        assertEquals(data.length(), result.count())
-        assertEquals(data.toCharList(), result)
-    }
-
-    @test fun fold() {
-        // calculate number of digits in the string
-        val data = "a1b2c3def"
-        val result = data.fold(0, { digits, c -> if(c.isDigit()) digits + 1 else digits } )
-        assertEquals(3, result)
-
-        //simulate all method
-        assertEquals(true, "ABCD".fold(true, { r, c -> r && c.isUpperCase() }))
-
-        //get string back
-        assertEquals(data, data.fold("", { s, c -> s + c }))
-    }
-
-    @test fun foldRight() {
-        // calculate number of digits in the string
-        val data = "a1b2c3def"
-        val result = data.foldRight(0, { c, digits -> if(c.isDigit()) digits + 1 else digits })
-        assertEquals(3, result)
-
-        //simulate all method
-        assertEquals(true, "ABCD".foldRight(true, { c, r -> r && c.isUpperCase() }))
-
-        //get string back
-        assertEquals(data, data.foldRight("", { s, c -> "" + s + c }))
-    }
-
-    @test fun reduce() {
-        // get the smallest character(by char value)
-        assertEquals('a', "bacfd".reduce { v, c -> if (v > c) c else v })
-
-        assertFailsWith(UnsupportedOperationException::class) {
-            "".reduce { a, b -> '\n' }
-        }
-    }
-
-    @test fun reduceRight() {
-        // get the smallest character(by char value)
-        assertEquals('a', "bacfd".reduceRight { c, v -> if (v > c) c else v })
-
-        assertFailsWith(UnsupportedOperationException::class) {
-            "".reduceRight { a, b -> '\n' }
-        }
-    }
-
-    @test fun groupBy() {
-        // group characters by their case
-        val data = "abAbaABcD"
-        val result = data.groupBy { it.isLowerCase() }
-        assertEquals(2, result.size())
-        assertEquals(listOf('a','b','b','a','c'), result.get(true))
-    }
-
-    @test fun joinToString() {
-        val data = "abcd".toList()
-        val result = data.joinToString("_", "(", ")")
-        assertEquals("(a_b_c_d)", result)
-
-        val data2 = "verylongstring".toList()
-        val result2 = data2.joinToString("-", "[", "]", 11, "oops")
-        assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
-
-        val data3 = "a1/b".toList()
-        val result3 = data3.joinToString() { it.toUpperCase().toString() }
-        assertEquals("A, 1, /, B", result3)
-    }
-
-    @test fun join() {
-        val data = "abcd".map { it.toString() }
-        val result = data.joinToString("_", "(", ")")
-        assertEquals("(a_b_c_d)", result)
-
-        val data2 = "verylongstring".map { it.toString() }
-        val result2 = data2.joinToString("-", "[", "]", 11, "oops")
-        assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
-    }
-
-    @test fun dropWhile() {
-        val data = "ab1cd2"
-        assertEquals("1cd2", data.dropWhile { it.isJavaIdentifierStart() })
-        assertEquals("", data.dropWhile { true })
-        assertEquals("ab1cd2", data.dropWhile { false })
-    }
-
-    @test fun drop() {
-        val data = "abcd1234"
-        assertEquals("d1234", data.drop(3))
+    @test fun sliceCharSequenceFails() = withOneCharSequenceArg { arg1 ->
         assertFails {
-            data.drop(-2)
+            arg1("abc").slice(1..4)
         }
-        assertEquals("", data.drop(data.length() + 5))
-    }
-
-    @test fun takeWhile() {
-        val data = "ab1cd2"
-        assertEquals("ab", data.takeWhile { it.isJavaIdentifierStart() })
-        assertEquals("", data.takeWhile { false })
-        assertEquals("ab1cd2", data.takeWhile { true })
-    }
-
-    @test fun take() {
-        val data = "abcd1234"
-        assertEquals("abc", data.take(3))
         assertFails {
-            data.take(-7)
+            arg1("ABCDabcd").slice(listOf(10))
         }
-        assertEquals(data, data.take(data.length() + 42))
     }
 
     @test fun formatter() {
@@ -305,60 +78,6 @@ class StringJVMTest {
         assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset)))
         assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset.name())))
     }
-
-    @test fun testReplaceAllClosure() {
-        val s = "test123zzz"
-        val result = s.replace("\\d+".toRegex()) { mr ->
-            "[" + mr.value + "]"
-        }
-        assertEquals("test[123]zzz", result)
-    }
-
-    @test fun testReplaceAllClosureAtStart() {
-        val s = "123zzz"
-        val result = s.replace("\\d+".toRegex()) { mr ->
-            "[" + mr.value + "]"
-        }
-        assertEquals("[123]zzz", result)
-    }
-
-    @test fun testReplaceAllClosureAtEnd() {
-        val s = "test123"
-        val result = s.replace("\\d+".toRegex()) { mr ->
-            "[" + mr.value + "]"
-        }
-        assertEquals("test[123]", result)
-    }
-
-    @test fun testReplaceAllClosureEmpty() {
-        val s = ""
-        val result = s.replace("\\d+".toRegex()) { mr ->
-            "x"
-        }
-        assertEquals("", result)
-
-    }
-
-    @test fun slice() {
-        val iter = listOf(4, 3, 0, 1)
-
-        val builder = StringBuilder()
-        builder.append("ABCD")
-        builder.append("abcd")
-        // ABCDabcd
-        // 01234567
-        assertEquals("BCDabc", builder.slice(1..6).toString())
-        assertEquals("baD", builder.slice(5 downTo 3).toString())
-        assertEquals("aDAB", builder.slice(iter).toString())
-
-        assertFails {
-            "abc".slice(listOf(1,4))
-        }
-        assertFails {
-            builder.slice(listOf(10))
-        }
-    }
-
 
     @test fun orderIgnoringCase() {
         val list = listOf("Beast", "Ast", "asterisk")

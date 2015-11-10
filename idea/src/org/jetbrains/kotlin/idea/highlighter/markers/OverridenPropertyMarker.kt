@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import com.intellij.psi.PsiMethod
@@ -59,18 +59,18 @@ fun getOverriddenPropertyTooltip(property: KtProperty): String? {
     val isImplemented = isImplemented(property)
     if (overriddenInClassesProcessor.isOverflow()) {
         return if (isImplemented)
-            JetBundle.message("property.is.implemented.too.many")
+            KotlinBundle.message("property.is.implemented.too.many")
         else
-            JetBundle.message("property.is.overridden.too.many")
+            KotlinBundle.message("property.is.overridden.too.many")
     }
 
     val collectedClasses = overriddenInClassesProcessor.getCollection()
     if (collectedClasses.isEmpty()) return null
 
     val start = if (isImplemented)
-        JetBundle.message("property.is.implemented.header")
+        KotlinBundle.message("property.is.implemented.header")
     else
-        JetBundle.message("property.is.overridden.header")
+        KotlinBundle.message("property.is.overridden.header")
 
     val pattern = "&nbsp;&nbsp;&nbsp;&nbsp;{0}"
     return GutterIconTooltipHelper.composeText(collectedClasses.sortedWith(PsiClassListCellRenderer().comparator), start, pattern)
@@ -110,8 +110,8 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: KtPropert
 
     PsiElementListNavigator.openTargets(e,
                                         navigatingOverrides.toTypedArray(),
-                                        JetBundle.message("navigation.title.overriding.property", property.getName()),
-                                        JetBundle.message("navigation.findUsages.title.overriding.property", property.getName()), renderer)
+                                        KotlinBundle.message("navigation.title.overriding.property", property.getName()),
+                                        KotlinBundle.message("navigation.findUsages.title.overriding.property", property.getName()), renderer)
 }
 
 

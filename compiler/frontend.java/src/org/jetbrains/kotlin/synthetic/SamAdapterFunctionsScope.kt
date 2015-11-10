@@ -57,7 +57,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
     override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         var result: SmartList<FunctionDescriptor>? = null
         for (type in receiverTypes) {
-            for (function in type.memberScope.getFunctions(name, location)) {
+            for (function in type.memberScope.getContributedFunctions(name, location)) {
                 val extension = extensionForFunction(function.original)
                 if (extension != null) {
                     if (result == null) {
@@ -76,7 +76,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
 
     override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
         return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
-            type.memberScope.getDescriptors(DescriptorKindFilter.FUNCTIONS)
+            type.memberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filterIsInstance<FunctionDescriptor>()
                     .map { extensionForFunction(it.original) }
                     .filterNotNull()

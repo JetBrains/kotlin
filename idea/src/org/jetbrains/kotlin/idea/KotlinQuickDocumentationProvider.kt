@@ -22,7 +22,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.asJava.KotlinLightElement
+import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -91,7 +91,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             if (element is KtDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
-            else if (element is KotlinLightElement<*, *>) {
+            else if (element is KtLightElement<*, *>) {
                 val origin = element.getOrigin() ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
             }

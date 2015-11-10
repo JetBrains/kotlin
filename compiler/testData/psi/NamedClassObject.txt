@@ -17,8 +17,7 @@ JetFile: NamedClassObject.kt
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('Companion')
+        PsiElement(IDENTIFIER)('Companion')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
@@ -26,8 +25,7 @@ JetFile: NamedClassObject.kt
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('B')
+        PsiElement(IDENTIFIER)('B')
       PsiWhiteSpace('\n\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
@@ -35,8 +33,7 @@ JetFile: NamedClassObject.kt
         PsiWhiteSpace(' ')
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('C')
+        PsiElement(IDENTIFIER)('C')
         PsiWhiteSpace(' ')
         CLASS_BODY
           PsiElement(LBRACE)('{')
@@ -51,7 +48,6 @@ JetFile: NamedClassObject.kt
       OBJECT_DECLARATION
         PsiElement(object)('object')
         PsiWhiteSpace(' ')
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('C')
+        PsiElement(IDENTIFIER)('C')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

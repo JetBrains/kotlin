@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 
@@ -42,7 +42,7 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extend
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("remove.right.part.of.binary.expression");
+        return KotlinBundle.message("remove.right.part.of.binary.expression");
     }
 
     @Override
@@ -70,8 +70,8 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extend
         return newExpression;
     }
 
-    public static JetSingleIntentionActionFactory createRemoveTypeFromBinaryExpressionFactory(final String message) {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createRemoveTypeFromBinaryExpressionFactory(final String message) {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
                 KtBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, KtBinaryExpressionWithTypeRHS.class);
@@ -81,12 +81,12 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extend
         };
     }
 
-    public static JetSingleIntentionActionFactory createRemoveElvisOperatorFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createRemoveElvisOperatorFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtBinaryExpression> createAction(Diagnostic diagnostic) {
                 KtBinaryExpression expression = (KtBinaryExpression) diagnostic.getPsiElement();
-                return new RemoveRightPartOfBinaryExpressionFix<KtBinaryExpression>(expression, JetBundle.message("remove.elvis.operator"));
+                return new RemoveRightPartOfBinaryExpressionFix<KtBinaryExpression>(expression, KotlinBundle.message("remove.elvis.operator"));
             }
         };
     }

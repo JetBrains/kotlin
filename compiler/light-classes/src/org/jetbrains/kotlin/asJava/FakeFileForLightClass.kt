@@ -45,7 +45,7 @@ open class FakeFileForLightClass(
         private val packageFqName: FqName,
         virtualFile: VirtualFile,
         psiManager: PsiManager,
-        private val lightClass: KotlinLightClass,
+        private val lightClass: KtLightClass,
         private val stub: () -> PsiClassHolderFileStub<*>
 ) : ClsFileImpl(ClassFileViewProvider(psiManager, virtualFile)) {
     override fun getPackageName() = packageFqName.asString()

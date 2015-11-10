@@ -20,17 +20,17 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.idea.completion.renderDataFlowValue
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase() + "/dataFlowValueRendering/"
     }
@@ -51,6 +51,6 @@ public abstract class AbstractDataFlowValueRenderingTest: JetLightCodeInsightFix
         val allValues = (info.getCompleteTypeInfo().keySet() + info.getCompleteNullabilityInfo().keySet()).toSet()
         val actual = allValues.map { renderDataFlowValue(it) }.filterNotNull().sorted().joinToString("\n")
 
-        JetTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(fileName) + ".txt"), actual)
+        KotlinTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(fileName) + ".txt"), actual)
     }
 }

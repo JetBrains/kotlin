@@ -23,7 +23,7 @@ import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.parsing.JetParser;
+import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType;
 
 public class KtBlockCodeFragmentType extends KtFileElementType {
@@ -44,7 +44,7 @@ public class KtBlockCodeFragmentType extends KtFileElementType {
         Project project = psi.getProject();
         Language languageForParser = getLanguageForParser(psi);
         PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
-        return JetParser.parseBlockCodeFragment(builder).getFirstChildNode();
+        return KotlinParser.parseBlockCodeFragment(builder).getFirstChildNode();
     }
 }
 

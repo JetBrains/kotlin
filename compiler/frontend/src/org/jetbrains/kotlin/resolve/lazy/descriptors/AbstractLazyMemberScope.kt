@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import com.google.common.collect.Sets
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
@@ -32,7 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
@@ -46,12 +43,12 @@ protected constructor(
         protected val declarationProvider: DP,
         protected val thisDescriptor: D,
         protected val trace: BindingTrace
-) : KtScopeImpl() {
+) : MemberScopeImpl() {
 
     protected val storageManager: StorageManager = c.storageManager
     private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }
     private val functionDescriptors: MemoizedFunctionToNotNull<Name, Collection<FunctionDescriptor>> = storageManager.createMemoizedFunction { doGetFunctions(it) }
-    private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<VariableDescriptor>> = storageManager.createMemoizedFunction { doGetProperties(it) }
+    private val propertyDescriptors: MemoizedFunctionToNotNull<Name, Collection<PropertyDescriptor>> = storageManager.createMemoizedFunction { doGetProperties(it) }
 
     private fun resolveClassDescriptor(name: Name): List<ClassDescriptor> {
         return declarationProvider.getClassOrObjectDeclarations(name).map {
@@ -62,14 +59,12 @@ protected constructor(
         }.toReadOnlyList()
     }
 
-    override fun getContainingDeclaration() = thisDescriptor
-
-    override fun getClassifier(name: Name, location: LookupLocation): ClassDescriptor? {
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassDescriptor? {
         recordLookup(name, location)
         return classDescriptors(name).firstOrNull()
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         recordLookup(name, location)
         return functionDescriptors(name)
     }
@@ -97,13 +92,13 @@ protected constructor(
 
     protected abstract fun getNonDeclaredFunctions(name: Name, result: MutableSet<FunctionDescriptor>)
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         recordLookup(name, location)
         return propertyDescriptors(name)
     }
 
-    public fun doGetProperties(name: Name): Collection<VariableDescriptor> {
-        val result = LinkedHashSet<VariableDescriptor>()
+    public fun doGetProperties(name: Name): Collection<PropertyDescriptor> {
+        val result = LinkedHashSet<PropertyDescriptor>()
 
         val declarations = declarationProvider.getPropertyDeclarations(name)
         for (propertyDeclaration in declarations) {
@@ -122,7 +117,7 @@ protected constructor(
         return result.toReadOnlyList()
     }
 
-    protected abstract fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>)
+    protected abstract fun getNonDeclaredProperties(name: Name, result: MutableSet<PropertyDescriptor>)
 
     protected fun computeDescriptorsFromDeclaredElements(
             kindFilter: DescriptorKindFilter,
@@ -141,19 +136,19 @@ protected constructor(
             else if (declaration is KtFunction) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getFunctions(name, location))
+                    result.addAll(getContributedFunctions(name, location))
                 }
             }
             else if (declaration is KtProperty) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getProperties(name, location))
+                    result.addAll(getContributedVariables(name, location))
                 }
             }
             else if (declaration is KtParameter) {
                 val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
-                    result.addAll(getProperties(name, location))
+                    result.addAll(getContributedVariables(name, location))
                 }
             }
             else if (declaration is KtScript) {
@@ -178,8 +173,6 @@ protected constructor(
     // a generic implementation can't do this properly
     abstract override fun toString(): String
 
-    override fun getOwnDeclaredDescriptors() = getDescriptors()
-
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
@@ -191,6 +184,6 @@ protected constructor(
     }
 
     private fun recordLookup(name: Name, from: LookupLocation) {
-        c.lookupTracker.record(from, this, name)
+        c.lookupTracker.record(from, thisDescriptor, this, name)
     }
 }

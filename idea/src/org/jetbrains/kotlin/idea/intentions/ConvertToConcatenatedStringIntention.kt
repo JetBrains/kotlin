@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(javaClass(), "Convert template to concatenated string"), LowPriorityAction {
+public class ConvertToConcatenatedStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(javaClass(), "Convert template to concatenated string"), LowPriorityAction {
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
         if (element.getLastChild().getNode().getElementType() != KtTokens.CLOSING_QUOTE) return false // not available for unclosed literal
         return element.getEntries().any { it is KtStringTemplateEntryWithExpression }
@@ -40,7 +40,7 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndepe
                 .mapIndexed { index, entry ->
                     entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
                 }
-                .join(separator = "+")
+                .joinToString(separator = "+")
                 .replace("""$quote+$quote""", "")
 
         val replacement = KtPsiFactory(element).createExpression(text)

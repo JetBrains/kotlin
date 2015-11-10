@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager;
 
 import javax.inject.Inject;
@@ -66,13 +66,13 @@ public class LazyDeclarationResolver {
 
     @NotNull
     public ClassDescriptor getClassDescriptor(@NotNull KtClassOrObject classOrObject, @NotNull LookupLocation location) {
-        KtScope scope = getMemberScopeDeclaredIn(classOrObject, location);
+        MemberScope scope = getMemberScopeDeclaredIn(classOrObject, location);
 
         // Why not use the result here. Because it may be that there is a redeclaration:
         //     class A {} class A { fun foo(): A<completion here>}
         // and if we find the class by name only, we may b-not get the right one.
         // This call is only needed to make sure the classes are written to trace
-        ClassifierDescriptor scopeDescriptor = scope.getClassifier(classOrObject.getNameAsSafeName(), location);
+        ClassifierDescriptor scopeDescriptor = scope.getContributedClassifier(classOrObject.getNameAsSafeName(), location);
         DeclarationDescriptor descriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
 
         if (descriptor == null) {
@@ -147,8 +147,8 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitNamedFunction(@NotNull KtNamedFunction function, Void data) {
                 LookupLocation location = lookupLocationFor(function, function.isTopLevel());
-                KtScope scopeForDeclaration = getMemberScopeDeclaredIn(function, location);
-                scopeForDeclaration.getFunctions(function.getNameAsSafeName(), location);
+                MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(function, location);
+                scopeForDeclaration.getContributedFunctions(function.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 
@@ -160,7 +160,7 @@ public class LazyDeclarationResolver {
                     // This is a primary constructor parameter
                     ClassDescriptor classDescriptor = getClassDescriptor(jetClass, lookupLocationFor(jetClass, false));
                     if (parameter.hasValOrVar()) {
-                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName(), lookupLocationFor(parameter, false));
+                        classDescriptor.getDefaultType().getMemberScope().getContributedVariables(parameter.getNameAsSafeName(), lookupLocationFor(parameter, false));
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                     }
                     else {
@@ -203,8 +203,8 @@ public class LazyDeclarationResolver {
             @Override
             public DeclarationDescriptor visitProperty(@NotNull KtProperty property, Void data) {
                 LookupLocation location = lookupLocationFor(property, property.isTopLevel());
-                KtScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
-                scopeForDeclaration.getProperties(property.getNameAsSafeName(), location);
+                MemberScope scopeForDeclaration = getMemberScopeDeclaredIn(property, location);
+                scopeForDeclaration.getContributedVariables(property.getNameAsSafeName(), location);
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 
@@ -214,7 +214,7 @@ public class LazyDeclarationResolver {
             }
 
             @Override
-            public DeclarationDescriptor visitJetElement(@NotNull KtElement element, Void data) {
+            public DeclarationDescriptor visitKtElement(@NotNull KtElement element, Void data) {
                 throw new IllegalArgumentException("Unsupported declaration type: " + element + " " +
                                                    PsiUtilsKt.getElementTextWithContext(element));
             }
@@ -226,7 +226,7 @@ public class LazyDeclarationResolver {
     }
 
     @NotNull
-    /*package*/ KtScope getMemberScopeDeclaredIn(@NotNull KtDeclaration declaration, @NotNull LookupLocation location) {
+    /*package*/ MemberScope getMemberScopeDeclaredIn(@NotNull KtDeclaration declaration, @NotNull LookupLocation location) {
         KtDeclaration parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(declaration);
         boolean isTopLevel = parentDeclaration == null;
         if (isTopLevel) { // for top level declarations we search directly in package because of possible conflicts with imports

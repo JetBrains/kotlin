@@ -163,7 +163,7 @@ public class ModifiersChecker {
         }
 
         public void checkParameterHasNoValOrVar(
-                @NotNull KtParameter parameter,
+                @NotNull KtValVarKeywordOwner parameter,
                 @NotNull DiagnosticFactory1<PsiElement, KtKeywordToken> diagnosticFactory
         ) {
             PsiElement valOrVar = parameter.getValOrVarKeyword();

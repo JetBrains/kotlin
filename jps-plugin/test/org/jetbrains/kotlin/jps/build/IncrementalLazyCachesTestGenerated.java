@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,48 +32,48 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalLazyCachesTestGenerated extends AbstractIncrementalLazyCachesTest {
     public void testAllFilesPresentInLazyKotlinCaches() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lazyKotlinCaches"), Pattern.compile("^([^\\.]+)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lazyKotlinCaches"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
     @TestMetadata("class")
     public void testClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/class/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/class/");
         doTest(fileName);
     }
 
     @TestMetadata("constant")
     public void testConstant() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/constant/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/constant/");
         doTest(fileName);
     }
 
     @TestMetadata("function")
     public void testFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/function/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/function/");
         doTest(fileName);
     }
 
     @TestMetadata("inlineFunctionWithUsage")
     public void testInlineFunctionWithUsage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithUsage/");
         doTest(fileName);
     }
 
     @TestMetadata("inlineFunctionWithoutUsage")
     public void testInlineFunctionWithoutUsage() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/inlineFunctionWithoutUsage/");
         doTest(fileName);
     }
 
     @TestMetadata("noKotlin")
     public void testNoKotlin() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/noKotlin/");
         doTest(fileName);
     }
 
     @TestMetadata("topLevelPropertyAccess")
     public void testTopLevelPropertyAccess() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lazyKotlinCaches/topLevelPropertyAccess/");
         doTest(fileName);
     }
 

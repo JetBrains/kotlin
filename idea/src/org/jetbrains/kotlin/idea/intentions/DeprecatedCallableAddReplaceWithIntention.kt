@@ -44,7 +44,7 @@ import java.util.*
 
 public class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspection<KtCallableDeclaration>(DeprecatedCallableAddReplaceWithIntention())
 
-public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIntention<KtCallableDeclaration>(
+public class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
         javaClass(), "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'Deprecated' annotation"
 ) {
     private class ReplaceWith(val expression: String, vararg val imports: String)
@@ -160,7 +160,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
                 }
             }
 
-            override fun visitJetElement(element: KtElement) {
+            override fun visitKtElement(element: KtElement) {
                 element.acceptChildren(this)
             }
         })
@@ -193,7 +193,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
     }
 
     private fun extractImports(expression: KtExpression): Collection<String> {
-        val file = expression.getContainingJetFile()
+        val file = expression.getContainingKtFile()
         val currentPackageFqName = file.getPackageFqName()
         val importHelper = ImportInsertHelper.getInstance(expression.getProject())
 
@@ -213,7 +213,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
                 }
             }
 
-            override fun visitJetElement(element: KtElement) {
+            override fun visitKtElement(element: KtElement) {
                 element.acceptChildren(this)
             }
         })

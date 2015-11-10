@@ -3,7 +3,7 @@
 fun indexOfMax(a: IntArray): Int? {
     var maxI: Int? = null
     a.forEachIndexed { i, value ->
-        if (maxI == null || value >= a[<!TYPE_MISMATCH!>maxI<!>]) {
+        if (maxI == null || value >= a[<!SMARTCAST_IMPOSSIBLE!>maxI<!>]) {
             maxI = i
         }
     }

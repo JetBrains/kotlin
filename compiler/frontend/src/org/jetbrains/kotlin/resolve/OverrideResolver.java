@@ -243,7 +243,7 @@ public class OverrideResolver {
 
     private static List<CallableMemberDescriptor> getCallableMembersFromType(KotlinType type) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
-        for (DeclarationDescriptor decl : type.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor decl : DescriptorUtils.getAllDescriptors(type.getMemberScope())) {
             if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
                 r.add((CallableMemberDescriptor) decl);
             }
@@ -305,7 +305,7 @@ public class OverrideResolver {
             @NotNull Set<CallableMemberDescriptor> abstractInBaseClassNoImpl,
             @NotNull Set<CallableMemberDescriptor> conflictingInterfaceOverrides
     ) {
-        for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope())) {
             if (member instanceof CallableMemberDescriptor) {
                 collectMissingImplementations((CallableMemberDescriptor) member,
                                               abstractNoImpl, manyImpl,
@@ -794,9 +794,9 @@ public class OverrideResolver {
     ) {
         for (KotlinType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
             Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
-            all.addAll(supertype.getMemberScope().getFunctions(declared.getName(), NoLookupLocation.UNSORTED));
+            all.addAll(supertype.getMemberScope().getContributedFunctions(declared.getName(), NoLookupLocation.WHEN_CHECK_OVERRIDES));
             //noinspection unchecked
-            all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName(), NoLookupLocation.UNSORTED));
+            all.addAll((Collection) supertype.getMemberScope().getContributedVariables(declared.getName(), NoLookupLocation.WHEN_CHECK_OVERRIDES));
             for (CallableMemberDescriptor fromSuper : all) {
                 if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
                     if (Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSuper, declared)) {
@@ -812,7 +812,7 @@ public class OverrideResolver {
 
     private void checkParameterOverridesForAllClasses(@NotNull TopDownAnalysisContext c) {
         for (ClassDescriptorWithResolutionScopes classDescriptor : c.getDeclaredClasses().values()) {
-            for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope())) {
                 if (member instanceof CallableMemberDescriptor) {
                     checkOverridesForParameters((CallableMemberDescriptor) member);
                 }

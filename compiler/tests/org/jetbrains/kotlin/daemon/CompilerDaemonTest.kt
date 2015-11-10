@@ -22,9 +22,12 @@ import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.rmi.*
 import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportingTargets
 import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
 
@@ -56,8 +59,8 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
             TestCase.assertEquals("build results differ", CliBaseTest.removePerfOutput(res1.out), CliBaseTest.removePerfOutput(res2.out))
     }
 
-    private fun getTestBaseDir(): String = JetTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true)
-    private fun getHelloAppBaseDir(): String = JetTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp"
+    private fun getTestBaseDir(): String = KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true)
+    private fun getHelloAppBaseDir(): String = KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp"
 
     private fun run(logName: String, vararg args: String): Int = runJava(getTestBaseDir(), logName, *args)
 
@@ -74,8 +77,8 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
-        val daemonJVMOptions = configureDaemonJVMOptions(false,
-                                                         "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"")
+        val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"",
+                                                         inheritMemoryLimits = false, inheritAdditionalProperties = false)
         var daemonShotDown = false
 
         try {
@@ -115,7 +118,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val backupJvmOptions = System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
         try {
             System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
-            val opts = configureDaemonJVMOptions(inheritMemoryLimits = false)
+            val opts = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
             TestCase.assertEquals("200m", opts.maxMemory)
             TestCase.assertEquals("10k", opts.maxPermSize)
             TestCase.assertEquals("100", opts.reservedCodeCacheSize)
@@ -155,11 +158,12 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val logFile1 = createTempFile("kotlin-daemon1-test", ".log")
         val logFile2 = createTempFile("kotlin-daemon2-test", ".log")
         val daemonJVMOptions1 =
-                configureDaemonJVMOptions(false,
-                                          "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile1.absolutePath}\"")
+                configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile1.absolutePath}\"",
+                                          inheritMemoryLimits = false, inheritAdditionalProperties = false)
+
         val daemonJVMOptions2 =
-                configureDaemonJVMOptions(false,
-                                          "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile2.absolutePath}\"")
+                configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile2.absolutePath}\"",
+                                          inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
         TestCase.assertTrue(logFile1.length() == 0L && logFile2.length() == 0L)
 
@@ -231,6 +235,65 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         finally {
             if (clientAliveFile.exists())
                 clientAliveFile.delete()
+        }
+    }
+
+    private class SynchronizationTracer(public val startSignal: CountDownLatch, public val doneSignal: CountDownLatch, port: Int) : RemoteOperationsTracer,
+            java.rmi.server.UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
+    {
+        override fun before(id: String) {
+            startSignal.await()
+        }
+        override fun after(id: String) {
+            doneSignal.countDown()
+        }
+    }
+
+    private val PARALLEL_THREADS_TO_COMPILE = 10
+    private val PARALLEL_WAIT_TIMEOUT_S = 60L
+
+    public fun testParallelCompilationOnDaemon() {
+
+        TestCase.assertTrue(PARALLEL_THREADS_TO_COMPILE <= LoopbackNetworkInterface.SERVER_SOCKET_BACKLOG_SIZE)
+
+        val flagFile = createTempFile(getTestName(true), ".alive")
+        flagFile.deleteOnExit()
+        val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath, clientAliveFlagPath = flagFile.absolutePath)
+        val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = false, inheritAdditionalProperties = false)
+        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true, checkId = true)
+        TestCase.assertNotNull("failed to connect daemon", daemon)
+
+        val (registry, port) = findPortAndCreateRegistry(10, 16384, 65535)
+        val tracer = SynchronizationTracer(CountDownLatch(1), CountDownLatch(PARALLEL_THREADS_TO_COMPILE), port)
+
+        val resultCodes = arrayOfNulls<Int>(PARALLEL_THREADS_TO_COMPILE)
+        val localEndSignal = CountDownLatch(PARALLEL_THREADS_TO_COMPILE)
+        val outStreams = Array(PARALLEL_THREADS_TO_COMPILE, { ByteArrayOutputStream() })
+
+        fun runCompile(threadNo: Int) =
+            thread {
+                val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
+                val res = KotlinCompilerClient.compile(daemon!!,
+                        CompileService.TargetPlatform.JVM,
+                        arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                        outStreams[threadNo],
+                        port = port,
+                        operationsTracer = tracer as RemoteOperationsTracer)
+                synchronized(resultCodes) {
+                    resultCodes[threadNo] = res
+                }
+                localEndSignal.countDown()
+            }
+
+        (1..PARALLEL_THREADS_TO_COMPILE).forEach { runCompile(it-1) }
+
+        tracer.startSignal.countDown()
+        val succeeded = tracer.doneSignal.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
+        TestCase.assertTrue("parallel compilation failed to complete in $PARALLEL_WAIT_TIMEOUT_S ms, ${tracer.doneSignal.count} unfinished threads", succeeded)
+
+        localEndSignal.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
+        (1..PARALLEL_THREADS_TO_COMPILE).forEach {
+            TestCase.assertEquals("Compilation on thread $it failed:\n${outStreams[it-1]}", 0, resultCodes[it-1])
         }
     }
 }

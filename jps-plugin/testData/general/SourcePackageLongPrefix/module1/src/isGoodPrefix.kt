@@ -1,0 +1,3 @@
+package good.prefix
+
+class KotlinTestInGoodPrefix

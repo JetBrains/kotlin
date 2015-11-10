@@ -201,10 +201,6 @@ public class KtPsiFactory(private val project: Project) {
         return (createExpression("0 $name 0") as KtBinaryExpression).getOperationReference()
     }
 
-    public fun createObjectDeclarationName(name: String): KtObjectDeclarationName {
-        return createDeclaration<KtObjectDeclaration>("object $name").getNameAsDeclaration()!!
-    }
-
     public fun createIdentifier(name: String): PsiElement {
         return createSimpleName(name).getIdentifier()!!
     }
@@ -533,7 +529,7 @@ public class KtPsiFactory(private val project: Project) {
         public fun lazyBody(body: String): CallableBuilder {
             assert(target == Target.READ_ONLY_PROPERTY && (state == State.BODY || state == State.TYPE_CONSTRAINTS))
 
-            sb.append(" by kotlin.properties.Delegates.lazy {\n").append(body).append("\n}")
+            sb.append(" by kotlin.lazy {\n").append(body).append("\n}")
             state = State.DONE
 
             return this

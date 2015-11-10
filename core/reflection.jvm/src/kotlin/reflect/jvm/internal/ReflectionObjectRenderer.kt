@@ -58,17 +58,17 @@ internal object ReflectionObjectRenderer {
 
     // TODO: include visibility
     fun renderProperty(descriptor: PropertyDescriptor): String {
-        return StringBuilder {
+        return buildString {
             append(if (descriptor.isVar) "var " else "val ")
             appendReceiversAndName(descriptor)
 
             append(": ")
             append(renderType(descriptor.type))
-        }.toString()
+        }
     }
 
     fun renderFunction(descriptor: FunctionDescriptor): String {
-        return StringBuilder {
+        return buildString {
             append("fun ")
             appendReceiversAndName(descriptor)
 
@@ -78,11 +78,11 @@ internal object ReflectionObjectRenderer {
 
             append(": ")
             append(renderType(descriptor.returnType!!))
-        }.toString()
+        }
     }
 
     fun renderParameter(parameter: KParameterImpl): String {
-        return StringBuilder {
+        return buildString {
             when (parameter.kind) {
                 KParameter.Kind.EXTENSION_RECEIVER -> append("extension receiver")
                 KParameter.Kind.INSTANCE -> append("instance")
@@ -91,7 +91,7 @@ internal object ReflectionObjectRenderer {
 
             append(" of ")
             append(renderCallable(parameter.callable.descriptor))
-        }.toString()
+        }
     }
 
     fun renderType(type: KotlinType): String {

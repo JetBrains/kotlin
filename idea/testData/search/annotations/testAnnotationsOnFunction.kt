@@ -27,8 +27,8 @@ object Test7 {
 }
 
 // ANNOTATION: java.lang.Deprecated
-// SEARCH: KotlinLightMethodForDeclaration:test1
-// SEARCH: KotlinLightMethodForDeclaration:test2
-// SEARCH: KotlinLightMethodForDeclaration:test4
-// SEARCH: KotlinLightMethodForDeclaration:test6
-// SEARCH: KotlinLightMethodForDeclaration:test7
+// SEARCH: method:test1
+// SEARCH: method:test2
+// SEARCH: method:test4
+// SEARCH: method:test6
+// SEARCH: method:test7

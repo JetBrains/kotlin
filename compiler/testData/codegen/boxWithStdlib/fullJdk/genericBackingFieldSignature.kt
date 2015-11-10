@@ -28,7 +28,9 @@ class Test<T>(val constructorProperty: T) {
 
     val classField4 : Zin<TParam>? = null
 
-    val delegates : Z<TParam>? by Delegates.lazy {Z<TParam>()}
+    val delegateLazy: Z<TParam>? by lazy {Z<TParam>()}
+
+    val delegateNotNull: Z<TParam>? by Delegates.notNull()
 
 
 }
@@ -65,10 +67,15 @@ fun box(): String {
     if (classField4.getGenericType().toString() != "Zin<? super TParam>")
         return "fail4:" + classField4.getGenericType();
 
-    val classField5 = clz.getDeclaredField("delegates\$delegate");
+    val classField5 = clz.getDeclaredField("delegateLazy\$delegate");
 
-    if (classField5.getGenericType().toString() != "kotlin.properties.ReadOnlyProperty<? super java.lang.Object, ? extends Z<TParam>>")
+    if (classField5.getGenericType().toString() != "kotlin.Lazy<? extends Z<TParam>>")
         return "fail5:" + classField5.getGenericType();
+
+    val classField6 = clz.getDeclaredField("delegateNotNull\$delegate");
+
+    if (classField6.getGenericType().toString() != "kotlin.properties.ReadWriteProperty<? super java.lang.Object, Z<TParam>>")
+        return "fail6:" + classField6.getGenericType();
 
 
     return "OK"

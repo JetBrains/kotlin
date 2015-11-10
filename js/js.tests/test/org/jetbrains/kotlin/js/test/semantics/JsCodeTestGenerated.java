@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,138 +32,138 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JsCodeTestGenerated extends AbstractJsCodeTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/jsCode/cases"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/jsCode/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("break.kt")
     public void testBreak() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/break.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/break.kt");
         doTest(fileName);
     }
 
     @TestMetadata("catchScope.kt")
     public void testCatchScope() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/catchScope.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/catchScope.kt");
         doTest(fileName);
     }
 
     @TestMetadata("codeFromVariable.kt")
     public void testCodeFromVariable() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/codeFromVariable.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/codeFromVariable.kt");
         doTest(fileName);
     }
 
     @TestMetadata("continue.kt")
     public void testContinue() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/continue.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/continue.kt");
         doTest(fileName);
     }
 
     @TestMetadata("doWhile.kt")
     public void testDoWhile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/doWhile.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/doWhile.kt");
         doTest(fileName);
     }
 
     @TestMetadata("for.kt")
     public void testFor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/for.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/for.kt");
         doTest(fileName);
     }
 
     @TestMetadata("forIn.kt")
     public void testForIn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/forIn.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/forIn.kt");
         doTest(fileName);
     }
 
     @TestMetadata("function.kt")
     public void testFunction() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/function.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/function.kt");
         doTest(fileName);
     }
 
     @TestMetadata("if.kt")
     public void testIf() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/if.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/if.kt");
         doTest(fileName);
     }
 
     @TestMetadata("invocation.kt")
     public void testInvocation() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/invocation.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/invocation.kt");
         doTest(fileName);
     }
 
     @TestMetadata("label.kt")
     public void testLabel() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/label.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/label.kt");
         doTest(fileName);
     }
 
     @TestMetadata("labelNestedClash.kt")
     public void testLabelNestedClash() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/labelNestedClash.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/labelNestedClash.kt");
         doTest(fileName);
     }
 
     @TestMetadata("labelNestedClashWithKotlin.kt")
     public void testLabelNestedClashWithKotlin() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/labelNestedClashWithKotlin.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/labelNestedClashWithKotlin.kt");
         doTest(fileName);
     }
 
     @TestMetadata("labelSiblingClash.kt")
     public void testLabelSiblingClash() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/labelSiblingClash.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/labelSiblingClash.kt");
         doTest(fileName);
     }
 
     @TestMetadata("literal.kt")
     public void testLiteral() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/literal.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/literal.kt");
         doTest(fileName);
     }
 
     @TestMetadata("object.kt")
     public void testObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/object.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/object.kt");
         doTest(fileName);
     }
 
     @TestMetadata("objectScopes.kt")
     public void testObjectScopes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/objectScopes.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/objectScopes.kt");
         doTest(fileName);
     }
 
     @TestMetadata("operators.kt")
     public void testOperators() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/operators.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/operators.kt");
         doTest(fileName);
     }
 
     @TestMetadata("quotes.kt")
     public void testQuotes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/quotes.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/quotes.kt");
         doTest(fileName);
     }
 
     @TestMetadata("switch.kt")
     public void testSwitch() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/switch.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/switch.kt");
         doTest(fileName);
     }
 
     @TestMetadata("tryCatchFinally.kt")
     public void testTryCatchFinally() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/tryCatchFinally.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/tryCatchFinally.kt");
         doTest(fileName);
     }
 
     @TestMetadata("while.kt")
     public void testWhile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/while.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/jsCode/cases/while.kt");
         doTest(fileName);
     }
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.psi.tree.IElementType;
+import kotlin.ArraysKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Contract;
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -201,7 +203,7 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue collectionElement(
-            StackValue collectionElementReceiver,
+            CollectionElementReceiver collectionElementReceiver,
             Type type,
             ResolvedCall<FunctionDescriptor> getter,
             ResolvedCall<FunctionDescriptor> setter,
@@ -535,7 +537,7 @@ public abstract class StackValue {
     ) {
         if (receiver == none()) {
             if (receiverValue.exists()) {
-                return codegen.generateReceiverValue(receiverValue);
+                return codegen.generateReceiverValue(receiverValue, false);
             }
             else if (isLocalFunCall(callableMethod) && !isExtension) {
                 StackValue value = codegen.findLocalOrCapturedValue(resolvedCall.getResultingDescriptor().getOriginal());
@@ -774,6 +776,7 @@ public abstract class StackValue {
         private final StackValue receiver;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
+        private DefaultCallMask mask;
 
         public CollectionElementReceiver(
                 @NotNull Callable callable,
@@ -803,7 +806,7 @@ public abstract class StackValue {
             ResolvedCall<?> call = isGetter ? resolvedGetCall : resolvedSetCall;
             StackValue newReceiver = StackValue.receiver(call, receiver, codegen, callable);
             newReceiver.put(newReceiver.type, v);
-            argumentGenerator.generate(valueArguments, valueArguments);
+            mask = argumentGenerator.generate(valueArguments, valueArguments);
         }
 
         @Override
@@ -862,7 +865,7 @@ public abstract class StackValue {
 
             if (resolvedSetCall.getDispatchReceiver().exists()) {
                 if (resolvedSetCall.getExtensionReceiver().exists()) {
-                    codegen.generateReceiverValue(resolvedSetCall.getDispatchReceiver()).put(OBJECT_TYPE, v);
+                    codegen.generateReceiverValue(resolvedSetCall.getDispatchReceiver(), false).put(OBJECT_TYPE, v);
                 }
                 v.load(realReceiverIndex, realReceiverType);
             }
@@ -908,11 +911,9 @@ public abstract class StackValue {
         private final ExpressionCodegen codegen;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
-        private final FunctionDescriptor setterDescriptor;
-        private final FunctionDescriptor getterDescriptor;
 
         public CollectionElement(
-                @NotNull StackValue collectionElementReceiver,
+                @NotNull CollectionElementReceiver collectionElementReceiver,
                 @NotNull Type type,
                 @Nullable ResolvedCall<FunctionDescriptor> resolvedGetCall,
                 @Nullable ResolvedCall<FunctionDescriptor> resolvedSetCall,
@@ -921,10 +922,10 @@ public abstract class StackValue {
             super(type, false, false, collectionElementReceiver, true);
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
-            this.setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
-            this.getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
-            this.setter = resolvedSetCall == null ? null : codegen.resolveToCallable(setterDescriptor, false, resolvedSetCall);
-            this.getter = resolvedGetCall == null ? null : codegen.resolveToCallable(getterDescriptor, false, resolvedGetCall);
+            this.setter = resolvedSetCall == null ? null :
+                          codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(resolvedSetCall), false, resolvedSetCall);
+            this.getter = resolvedGetCall == null ? null :
+                          codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(resolvedGetCall), false, resolvedGetCall);
             this.codegen = codegen;
         }
 
@@ -933,9 +934,14 @@ public abstract class StackValue {
             if (getter == null) {
                 throw new UnsupportedOperationException("no getter specified");
             }
-
-            getter.genInvokeInstruction(v);
+            CallGenerator callGenerator = codegen.defaultCallGenerator;
+            callGenerator.genCall(getter, resolvedGetCall, genDefaultMaskIfPresent(callGenerator), codegen);
             coerceTo(type, v);
+        }
+
+        private boolean genDefaultMaskIfPresent(CallGenerator callGenerator) {
+            DefaultCallMask mask = ((CollectionElementReceiver) receiver).mask;
+            return mask.generateOnStackIfNeeded(callGenerator);
         }
 
         @Override
@@ -985,9 +991,25 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException("no setter specified");
             }
 
-            Type[] argumentTypes = setter.getParameterTypes();
-            coerce(topOfStackType, argumentTypes[argumentTypes.length - 1], v);
-            setter.genInvokeInstruction(v);
+            Type lastParameterType = ArraysKt.last(setter.getParameterTypes());
+            coerce(topOfStackType, lastParameterType, v);
+            //*Convention setter couldn't have default parameters, just getter can have it at last positions
+            //We should remove default parameters of getter from stack*/
+            CollectionElementReceiver collectionElementReceiver = (CollectionElementReceiver) receiver;
+            if (collectionElementReceiver.isGetter) {
+                List<ResolvedValueArgument> arguments = collectionElementReceiver.valueArguments;
+                List<Type> types = getter.getValueParameterTypes();
+                for (int i = arguments.size() - 1; i >= 0; i--) {
+                    ResolvedValueArgument argument = arguments.get(i);
+                    if (argument instanceof DefaultValueArgument) {
+                        Type defaultType = types.get(i);
+                        AsmUtil.swap(v, lastParameterType, defaultType);
+                        AsmUtil.pop(v, defaultType);
+                    }
+                }
+            }
+
+            codegen.defaultCallGenerator.genCall(setter, resolvedSetCall, false, codegen);
             Type returnType = setter.getReturnType();
             if (returnType != Type.VOID_TYPE) {
                 pop(v, returnType);
@@ -1401,6 +1423,11 @@ public abstract class StackValue {
 
             currentExtensionReceiver
                     .moveToTopOfStack(hasExtensionReceiver ? type : currentExtensionReceiver.type, v, dispatchReceiver.type.getSize());
+        }
+
+        @Override
+        public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
+            AsmUtil.dup(v, extensionReceiver.type, dispatchReceiver.type);
         }
     }
 

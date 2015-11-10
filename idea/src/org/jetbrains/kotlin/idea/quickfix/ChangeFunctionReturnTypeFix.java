@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -85,19 +85,19 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
 
         if (KotlinBuiltIns.isUnit(type) && getElement().hasBlockBody()) {
             return functionName == null ?
-                   JetBundle.message("remove.no.name.function.return.type") :
-                   JetBundle.message("remove.function.return.type", functionName);
+                   KotlinBundle.message("remove.no.name.function.return.type") :
+                   KotlinBundle.message("remove.function.return.type", functionName);
         }
         String renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
         return functionName == null ?
-               JetBundle.message("change.no.name.function.return.type", renderedType) :
-               JetBundle.message("change.function.return.type", functionName, renderedType);
+               KotlinBundle.message("change.no.name.function.return.type", renderedType) :
+               KotlinBundle.message("change.function.return.type", functionName, renderedType);
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.type.family");
+        return KotlinBundle.message("change.type.family");
     }
 
     @Override
@@ -134,8 +134,8 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForComponentFunctionReturnTypeMismatch() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
@@ -155,8 +155,8 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForHasNextFunctionTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForHasNextFunctionTypeMismatch() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
@@ -177,8 +177,8 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForCompareToTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForCompareToTypeMismatch() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
@@ -196,8 +196,8 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
     }
 
     @NotNull
-    public static JetIntentionActionsFactory createFactoryForReturnTypeMismatchOnOverride() {
-        return new JetIntentionActionsFactory() {
+    public static KotlinIntentionActionsFactory createFactoryForReturnTypeMismatchOnOverride() {
+        return new KotlinIntentionActionsFactory() {
             @NotNull
             @Override
             protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
@@ -238,8 +238,8 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForChangingReturnTypeToUnit() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForChangingReturnTypeToUnit() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
@@ -250,8 +250,8 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForChangingReturnTypeToNothing() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForChangingReturnTypeToNothing() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {

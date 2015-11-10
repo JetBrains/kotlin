@@ -40,7 +40,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     public void visitNamedFunction(@NotNull KtNamedFunction function) {
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (nameIdentifier != null) {
-            NameHighlighter.highlightName(holder, nameIdentifier, JetHighlightingColors.FUNCTION_DECLARATION);
+            NameHighlighter.highlightName(holder, nameIdentifier, KotlinHighlightingColors.FUNCTION_DECLARATION);
         }
 
         super.visitNamedFunction(function);
@@ -55,7 +55,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             if (typeElement instanceof KtUserType) {
                 KtSimpleNameExpression nameExpression = ((KtUserType)typeElement).getReferenceExpression();
                 if (nameExpression != null) {
-                    NameHighlighter.highlightName(holder, nameExpression, JetHighlightingColors.CONSTRUCTOR_CALL);
+                    NameHighlighter.highlightName(holder, nameExpression, KotlinHighlightingColors.CONSTRUCTOR_CALL);
                 }
             }
         }
@@ -70,25 +70,25 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             CallableDescriptor calleeDescriptor = resolvedCall.getResultingDescriptor();
 
             if (DynamicCallsKt.isDynamic(calleeDescriptor)) {
-                NameHighlighter.highlightName(holder, callee, JetHighlightingColors.DYNAMIC_FUNCTION_CALL);
+                NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.DYNAMIC_FUNCTION_CALL);
             }
             else if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 NameHighlighter.highlightName(holder, callee, containedInFunctionClassOrSubclass(calleeDescriptor)
-                                                            ? JetHighlightingColors.VARIABLE_AS_FUNCTION_CALL
-                                                            : JetHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
+                                                            ? KotlinHighlightingColors.VARIABLE_AS_FUNCTION_CALL
+                                                            : KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL);
             }
             else {
                 if (calleeDescriptor instanceof ConstructorDescriptor) {
-                    NameHighlighter.highlightName(holder, callee, JetHighlightingColors.CONSTRUCTOR_CALL);
+                    NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.CONSTRUCTOR_CALL);
                 }
                 else if (calleeDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor fun = (FunctionDescriptor) calleeDescriptor;
-                    NameHighlighter.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
+                    NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.FUNCTION_CALL);
                     if (DescriptorUtils.isTopLevelDeclaration(fun)) {
-                        NameHighlighter.highlightName(holder, callee, JetHighlightingColors.PACKAGE_FUNCTION_CALL);
+                        NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.PACKAGE_FUNCTION_CALL);
                     }
                     if (fun.getExtensionReceiverParameter() != null) {
-                        NameHighlighter.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);
+                        NameHighlighter.highlightName(holder, callee, KotlinHighlightingColors.EXTENSION_FUNCTION_CALL);
                     }
                 }
             }

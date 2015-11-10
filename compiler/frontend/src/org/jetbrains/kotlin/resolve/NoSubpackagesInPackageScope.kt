@@ -21,20 +21,17 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class NoSubpackagesInPackageScope(packageDescriptor: PackageViewDescriptor) : AbstractScopeAdapter() {
-    override val workerScope: KtScope = packageDescriptor.memberScope
+    override val workerScope: MemberScope = packageDescriptor.memberScope
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         val modifiedFilter = kindFilter.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)
         if (modifiedFilter.kindMask == 0) return listOf()
-        return workerScope.getDescriptors(modifiedFilter, nameFilter).filter { it !is PackageViewDescriptor }
+        return workerScope.getContributedDescriptors(modifiedFilter, nameFilter).filter { it !is PackageViewDescriptor }
     }
 
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> {
-        return workerScope.getOwnDeclaredDescriptors().filter { it !is PackageViewDescriptor }
-    }
 }

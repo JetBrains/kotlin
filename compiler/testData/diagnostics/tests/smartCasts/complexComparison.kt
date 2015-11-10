@@ -3,10 +3,10 @@ fun foo(x: String?, y: String?, z: String?, w: String?) {
         <!DEBUG_INFO_SMARTCAST!>z<!>.length
     else
         z<!UNSAFE_CALL!>.<!>length
-    if (x != null || y != null || (x != z && y != z))
+    if (x != null || y != null || (<!ALWAYS_NULL!>x<!> != z && <!ALWAYS_NULL!>y<!> != z))
         z<!UNSAFE_CALL!>.<!>length
     else
-        z<!UNSAFE_CALL!>.<!>length
+        <!ALWAYS_NULL!>z<!><!UNSAFE_CALL!>.<!>length
     if (x == null || y == null || (x != z && y != z))
         z<!UNSAFE_CALL!>.<!>length
     else

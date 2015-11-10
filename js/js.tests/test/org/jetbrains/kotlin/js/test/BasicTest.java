@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,7 +106,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         }
         File outDir = new File(getOutputPath());
 
-        JetTestUtils.mkdirs(outDir);
+        KotlinTestUtils.mkdirs(outDir);
     }
 
     @Override
@@ -358,7 +358,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         for (String libFileName : list) {
             VirtualFile virtualFile = rootFile == null ? fileSystem.findFileByPath(libFileName) : rootFile.findFileByRelativePath(libFileName);
             //TODO logging?
-            assert virtualFile != null;
+            assert virtualFile != null : "virtual file is missing, most likely the file doesn't exist: " + libFileName;
             PsiFile psiFile = psiManager.findFile(virtualFile);
             libFiles.add((KtFile) psiFile);
         }

@@ -186,6 +186,9 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
                 if (environment.getSourceFiles().isEmpty()) {
+                    if (arguments.version) {
+                        return OK
+                    }
                     messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION)
                     return COMPILATION_ERROR
                 }

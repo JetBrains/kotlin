@@ -18,10 +18,6 @@ package org.jetbrains.kotlin.android;
 
 import com.android.SdkConstants;
 import com.android.ide.common.rendering.RenderSecurityManager;
-import com.intellij.analysis.AnalysisScope;
-import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
-import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.android.tools.idea.rendering.PsiProjectListener;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
@@ -34,22 +30,13 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiManagerEx;
-import com.intellij.psi.impl.file.impl.FileManager;
-import com.intellij.testFramework.InspectionTestUtil;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
-import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -58,7 +45,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors"})
@@ -94,7 +80,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         System.setProperty(KotlinAndroidTestCaseBase.SDK_PATH_PROPERTY, PathManager.getHomePath() + "/../dependencies/androidSDK");
         System.setProperty(KotlinAndroidTestCaseBase.PLATFORM_DIR_PROPERTY, "android-21");
 
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
 
         super.setUp();
 
@@ -231,7 +217,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         Map listeners = (Map)listenersField.get(null);
         listeners.clear();
 
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
 
         myModule = null;
         myAdditionalModules = null;

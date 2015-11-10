@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.psi
 
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import com.intellij.psi.ElementManipulators
 import org.junit.Assert.*
 import com.intellij.openapi.util.TextRange
 
-public class StringTemplateExpressionManipulatorTest : JetLightCodeInsightFixtureTestCase() {
+public class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTestCase() {
     public fun testSingleQuoted() {
         doTestContentChange("\"a\"", "b", "\"b\"")
         doTestContentChange("\"\"", "b", "\"b\"")
@@ -67,5 +67,5 @@ public class StringTemplateExpressionManipulatorTest : JetLightCodeInsightFixtur
         assertEquals(expected, newExpression.getText())
     }
 
-    override fun getProjectDescriptor() = JetLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 }

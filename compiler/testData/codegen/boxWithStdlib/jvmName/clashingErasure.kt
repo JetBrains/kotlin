@@ -1,8 +1,6 @@
-import kotlin.platform.*
-
 fun <T> List<T>.foo() = "foo"
 
-@platformName("fooInt")
+@JvmName("fooInt")
 fun List<Int>.foo() = "fooInt"
 
 fun box(): String {

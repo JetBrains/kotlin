@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -48,7 +48,7 @@ import java.util.*
 
 class ParameterNameAndTypeCompletion(
         private val collector: LookupElementsCollector,
-        private val lookupElementFactory: LookupElementFactory,
+        private val lookupElementFactory: BasicLookupElementFactory,
         private val prefixMatcher: PrefixMatcher,
         private val resolutionFacade: ResolutionFacade
 ) {
@@ -63,9 +63,9 @@ class ParameterNameAndTypeCompletion(
         val nameSuggestionPrefixes = if (prefix.isEmpty() || prefix[0].isUpperCase())
             emptyList()
         else
-            prefixWords.indices.map { index -> if (index == 0) prefix else prefixWords.drop(index).join("") }
+            prefixWords.indices.map { index -> if (index == 0) prefix else prefixWords.drop(index).joinToString("") }
 
-        userPrefixes = nameSuggestionPrefixes.indices.map { prefixWords.take(it).join("") }
+        userPrefixes = nameSuggestionPrefixes.indices.map { prefixWords.take(it).joinToString("") }
         classNamePrefixMatchers = nameSuggestionPrefixes.map { CamelHumpMatcher(it.capitalize(), false) }
     }
 
@@ -112,9 +112,9 @@ class ParameterNameAndTypeCompletion(
                 if (descriptor != null) {
                     val parameterType = descriptor.getType()
                     if (parameterType.isVisible(visibilityFilter)) {
-                        val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), lookupElementFactory)
+                        val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), lookupElementFactory)!!
                         val count = lookupElementToCount[lookupElement] ?: 0
-                        lookupElementToCount[lookupElement!!] = count + 1
+                        lookupElementToCount[lookupElement] = count + 1
                     }
                 }
             }
@@ -159,24 +159,24 @@ class ParameterNameAndTypeCompletion(
     }
 
     private abstract class Type(private val idString: String) {
-        abstract fun createTypeLookupElement(lookupElementFactory: LookupElementFactory): LookupElement?
+        abstract fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory): LookupElement?
 
         override fun equals(other: Any?) = other is Type && other.idString == idString
         override fun hashCode() = idString.hashCode()
     }
 
     private class DescriptorType(private val classifier: ClassifierDescriptor) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)) {
-        override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
-                = lookupElementFactory.createLookupElement(classifier, useReceiverTypes = false, qualifyNestedClasses = true)
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
+                = lookupElementFactory.createLookupElement(classifier, qualifyNestedClasses = true)
     }
 
     private class JavaClassType(private val psiClass: PsiClass) : Type(psiClass.getQualifiedName()!!) {
-        override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
                 = lookupElementFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses = true)
     }
 
     private class ArbitraryType(private val type: KotlinType) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)) {
-        override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
+        override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
                 = lookupElementFactory.createLookupElementForType(type)
     }
 
@@ -187,7 +187,7 @@ class ParameterNameAndTypeCompletion(
     ) : LookupElementDecorator<LookupElement>(typeLookupElement) {
 
         companion object {
-            fun create(parameterName: String, type: Type, factory: LookupElementFactory): LookupElement? {
+            fun create(parameterName: String, type: Type, factory: BasicLookupElementFactory): LookupElement? {
                 val typeLookupElement = type.createTypeLookupElement(factory) ?: return null
                 val lookupElement = MyLookupElement(parameterName, type, typeLookupElement)
                 return lookupElement.suppressAutoInsertion()
@@ -206,7 +206,7 @@ class ParameterNameAndTypeCompletion(
         }
 
         override fun handleInsert(context: InsertionContext) {
-            val settings = CodeStyleSettingsManager.getInstance(context.getProject()).getCurrentSettings().getCustomSettings(JetCodeStyleSettings::class.java)
+            val settings = CodeStyleSettingsManager.getInstance(context.getProject()).getCurrentSettings().getCustomSettings(KotlinCodeStyleSettings::class.java)
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
             val text = parameterName + spaceBefore + ":" + spaceAfter

@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -384,7 +383,7 @@ public class DescriptorResolver {
 
     @NotNull
     private KotlinType getVarargParameterType(@NotNull KotlinType elementType) {
-        KotlinType primitiveArrayType = builtIns.getPrimitiveArrayJetTypeByPrimitiveJetType(elementType);
+        KotlinType primitiveArrayType = builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType);
         if (primitiveArrayType != null) {
             return primitiveArrayType;
         }
@@ -556,7 +555,7 @@ public class DescriptorResolver {
 
             Name name = nameExpression.getReferencedNameAsName();
 
-            ClassifierDescriptor classifier = ScopeUtilsKt.findClassifier(scope, name, NoLookupLocation.UNSORTED);
+            ClassifierDescriptor classifier = ScopeUtilsKt.findClassifier(scope, name, NoLookupLocation.FOR_NON_TRACKED_SCOPE);
             if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == descriptor) continue;
 
             if (classifier != null) {
@@ -589,6 +588,9 @@ public class DescriptorResolver {
         }
         if (DynamicTypesKt.isDynamic(upperBoundType)) {
             trace.report(DYNAMIC_UPPER_BOUND.on(upperBound));
+        }
+        if (KotlinBuiltIns.isExactExtensionFunctionType(upperBoundType)) {
+            trace.report(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE.on(upperBound));
         }
     }
 
@@ -778,7 +780,7 @@ public class DescriptorResolver {
                         "Scope with type parameters of a property");
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(
                         propertyDescriptor, writableScope, scope, typeParameters, trace);
-                writableScope.changeLockLevel(WritableScope.LockLevel.READING);
+                writableScope.changeLockLevel(LexicalWritableScope.LockLevel.READING);
                 resolveGenericBounds(property, propertyDescriptor, writableScope, typeParameterDescriptors, trace);
                 scopeWithTypeParameters = writableScope;
             }
@@ -1008,6 +1010,14 @@ public class DescriptorResolver {
                                                                 setter.hasBody(), false, setter.hasModifier(EXTERNAL_KEYWORD),
                                                                 CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt
                                                                         .toSourceElement(setter));
+            KtTypeReference returnTypeReference = setter.getReturnTypeReference();
+            if (returnTypeReference != null) {
+                KotlinType returnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
+                if (!KotlinBuiltIns.isUnit(returnType)) {
+                    trace.report(WRONG_SETTER_RETURN_TYPE.on(returnTypeReference));
+                }
+            }
+
             if (parameter != null) {
 
                 // This check is redundant: the parser does not allow a default value, but we'll keep it just in case

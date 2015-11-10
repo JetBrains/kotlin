@@ -36,6 +36,7 @@ class CollectionTest {
         }
     }
 
+    /*
     @test fun mapNotNull() {
         val data = listOf(null, "foo", null, "bar")
         val foo = data.mapNotNull { it.length() }
@@ -46,6 +47,7 @@ class CollectionTest {
             foo is List<Int>
         }
     }
+    */
 
     @test fun listOfNotNull() {
         val l1: List<Int> = listOfNotNull(null)
@@ -308,22 +310,29 @@ class CollectionTest {
         }
     }
 
-    @test fun reverse() {
+    @test fun reverseInPlace() {
+        val data = arrayListOf<String>()
+        data.reverse()
+        assertTrue(data.isEmpty())
+
+        data.add("foo")
+        data.reverse()
+        assertEquals(listOf("foo"), data)
+
+        data.add("bar")
+        data.reverse()
+        assertEquals(listOf("bar", "foo"), data)
+
+        data.add("zoo")
+        data.reverse()
+        assertEquals(listOf("zoo", "foo", "bar"), data)
+    }
+
+    @test fun reversed() {
         val data = listOf("foo", "bar")
         val rev = data.reversed()
         assertEquals(listOf("bar", "foo"), rev)
-    }
-
-    @test fun reverseFunctionShouldReturnReversedCopyForList() {
-        val list: List<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 3, 2)) { list.reversed() }
-        expect(listOf(2, 3, 1)) { list }
-    }
-
-    @test fun reverseFunctionShouldReturnReversedCopyForIterable() {
-        val iterable: Iterable<Int> = listOf(2, 3, 1)
-        expect(listOf(1, 3, 2)) { iterable.reversed() }
-        expect(listOf(2, 3, 1)) { iterable }
+        assertNotEquals(data, rev)
     }
 
 
@@ -554,15 +563,40 @@ class CollectionTest {
         expect(listOf(1)) { listOf(1) take 10 }
     }
 
+    @test fun sortInPlace() {
+        val data = listOf(11, 3, 7)
+
+        val asc = data.toArrayList()
+        asc.sort()
+        assertEquals(listOf(3, 7, 11), asc)
+
+        val desc = data.toArrayList()
+        desc.sortDescending()
+        assertEquals(listOf(11, 7, 3), desc)
+    }
+
     @test fun sorted() {
-        assertEquals(listOf(1, 3, 7), listOf(3, 7, 1).sorted())
-        assertEquals(listOf(7, 3, 1), listOf(3, 7, 1).sortedDescending())
+        val data = listOf(11, 3, 7)
+        assertEquals(listOf(3, 7, 11), data.sorted())
+        assertEquals(listOf(11, 7, 3), data.sortedDescending())
+    }
+
+    @test fun sortByInPlace() {
+        val data = arrayListOf("aa" to 20, "ab" to 3, "aa" to 3)
+        data.sortBy { it.second }
+        assertEquals(listOf("ab" to 3, "aa" to 3, "aa" to 20), data)
+
+        data.sortBy { it.first }
+        assertEquals(listOf("aa" to 3, "aa" to 20, "ab" to 3), data)
+
+        data.sortByDescending { (it.first + it.second).length }
+        assertEquals(listOf("aa" to 20, "aa" to 3, "ab" to 3), data)
     }
 
     @test fun sortedBy() {
-        assertEquals(listOf("two" to 2, "three" to 3), listOf("three" to 3, "two" to 2).sortedBy { it.second })
-        assertEquals(listOf("three" to 3, "two" to 2), listOf("three" to 3, "two" to 2).sortedBy { it.first })
-        assertEquals(listOf("three", "two"), listOf("two", "three").sortedByDescending { it.length() })
+        assertEquals(listOf("two" to 3, "three" to 20), listOf("three" to 20, "two" to 3).sortedBy { it.second })
+        assertEquals(listOf("three" to 20, "two" to 3), listOf("three" to 20, "two" to 3).sortedBy { it.first })
+        assertEquals(listOf("three", "two"), listOf("two", "three").sortedByDescending { it.length })
     }
 
     @test fun sortedNullableBy() {

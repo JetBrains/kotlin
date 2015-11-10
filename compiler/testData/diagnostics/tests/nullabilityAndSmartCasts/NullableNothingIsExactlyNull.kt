@@ -1,8 +1,8 @@
 fun test() {
   val out : Int? = null
   val x : Nothing? = null
-  if (out != x)
+  if (out != <!ALWAYS_NULL!>x<!>)
     <!DEBUG_INFO_SMARTCAST!>out<!>.plus(1)
-  if (out == x) return
+  if (out == <!ALWAYS_NULL!>x<!>) return
   <!DEBUG_INFO_SMARTCAST!>out<!>.plus(1)
 }

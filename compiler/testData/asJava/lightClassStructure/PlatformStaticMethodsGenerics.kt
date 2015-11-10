@@ -1,10 +1,8 @@
 package test
 
-import kotlin.platform.platformStatic
-
 class PlatformStaticClass {
     companion object {
-        @platformStatic
+        @JvmStatic
         fun <T> inClassObject() {}
     }
 

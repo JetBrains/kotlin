@@ -16,21 +16,15 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
-import kotlin.platform.*
-import java.util.jar.JarFile
-import java.util.jar.Attributes
-import java.util.regex.Pattern
 import com.intellij.util.containers.MultiMap
-import java.net.URLClassLoader
-import java.net.URL
-import java.io.File
-import java.util.ServiceLoader
-import java.io.IOException
-import java.util.Enumeration
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.utils.valuesToMap
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.compiler.plugin.*
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.utils.valuesToMap
+import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
+import java.util.*
 
 
 public object PluginCliParser {

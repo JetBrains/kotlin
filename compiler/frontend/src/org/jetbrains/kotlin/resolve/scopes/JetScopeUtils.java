@@ -16,41 +16,30 @@
 
 package org.jetbrains.kotlin.resolve.scopes;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TraceBasedRedeclarationHandler;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.utils.Printer;
 
-import java.util.Collection;
 import java.util.List;
 
 public final class JetScopeUtils {
     private JetScopeUtils() {}
 
     @NotNull
-    public static List<ReceiverValue> getImplicitReceiversHierarchyValues(@NotNull KtScope scope) {
-        Collection<ReceiverParameterDescriptor> hierarchy = scope.getImplicitReceiversHierarchy();
-
-        return Lists.newArrayList(
-                Collections2.transform(hierarchy,
-                       new Function<ReceiverParameterDescriptor, ReceiverValue>() {
-                           @Override
-                           public ReceiverValue apply(ReceiverParameterDescriptor receiverParameterDescriptor) {
-                               return receiverParameterDescriptor.getValue();
-                           }
-                       })
-        );
+    public static MemberScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {
+        MemberScope innerClassesScope = descriptor.getUnsubstitutedInnerClassesScope();
+        return new FilteringScope(innerClassesScope, new Function1<DeclarationDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(DeclarationDescriptor descriptor) {
+                return descriptor instanceof ClassDescriptor && !((ClassDescriptor) descriptor).isInner();
+            }
+        });
     }
 
     public static LexicalScope makeScopeForPropertyAccessor(
@@ -136,7 +125,7 @@ public final class JetScopeUtils {
 
     @TestOnly
     @NotNull
-    public static String printStructure(@Nullable KtScope scope) {
+    public static String printStructure(@Nullable MemberScope scope) {
         StringBuilder out = new StringBuilder();
         Printer p = new Printer(out);
         if (scope == null) {

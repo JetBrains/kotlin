@@ -67,7 +67,7 @@ public interface AbstractSMAPBaseTest {
         val compiledData = extractSMAPFromClasses(outputFiles).groupBy {
             it.sourceFile
         }.map {
-            val smap = it.getValue().map { replaceHash(it.smap) }.filterNotNull().join("\n")
+            val smap = it.getValue().map { replaceHash(it.smap) }.filterNotNull().joinToString("\n")
             SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key)
         }.toMap { it.sourceFile }
 
@@ -85,7 +85,7 @@ public interface AbstractSMAPBaseTest {
 
         val files = data.substring(fileSectionStart, lineSection).split("\n")
 
-        val cleaned = files.join("\n")
+        val cleaned = files.joinToString("\n")
 
         return data.substring(0, fileSectionStart) + cleaned + data.substring(lineSection)
     }

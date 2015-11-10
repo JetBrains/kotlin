@@ -21,7 +21,7 @@ import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
@@ -62,10 +62,10 @@ public class JetChangeSignatureData(
         }
         parameters = baseDescriptor.getValueParameters()
                 .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
-                    val jetParameter = valueParameters?.get(parameterDescriptor.getIndex())
+                    val jetParameter = valueParameters?.get(parameterDescriptor.index)
                     JetParameterInfo(
                             callableDescriptor = baseDescriptor,
-                            originalIndex = parameterDescriptor.getIndex(),
+                            originalIndex = parameterDescriptor.index,
                             name = parameterDescriptor.getName().asString(),
                             type = parameterDescriptor.getType(),
                             defaultValueForParameter = jetParameter?.getDefaultValue(),
@@ -112,7 +112,7 @@ public class JetChangeSignatureData(
                 OverridingMethodsSearch
                         .search(baseMethod)
                         .map { overridingMethod ->
-                            if (overridingMethod is KotlinLightMethod) {
+                            if (overridingMethod is KtLightMethod) {
                                 val overridingDeclaration = overridingMethod.namedUnwrappedElement as KtNamedDeclaration
                                 val overridingDescriptor = overridingDeclaration.resolveToDescriptor() as CallableDescriptor
                                 JetCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)

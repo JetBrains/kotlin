@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -33,125 +33,125 @@ import java.util.regex.Pattern;
 public class SecondaryConstructorTestGenerated extends AbstractSecondaryConstructorTest {
     @TestMetadata("accessToNestedObject.kt")
     public void ignoredAccessToNestedObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToNestedObject.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToNestedObject.kt");
         doTest(fileName);
     }
 
     @TestMetadata("innerClasses.kt")
     public void ignoredInnerClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClasses.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClasses.kt");
         doTest(fileName);
     }
 
     @TestMetadata("innerClassesInheritance.kt")
     public void ignoredInnerClassesInheritance() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClassesInheritance.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClassesInheritance.kt");
         doTest(fileName);
     }
 
     @TestMetadata("localClasses.kt")
     public void ignoredLocalClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localClasses.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/localClasses.kt");
         doTest(fileName);
     }
 
     @TestMetadata("withNonLocalReturn.kt")
     public void ignoredWithNonLocalReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withNonLocalReturn.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withNonLocalReturn.kt");
         doTest(fileName);
     }
 
     @TestMetadata("accessToCompanion.kt")
     public void testAccessToCompanion() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToCompanion.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToCompanion.kt");
         doTest(fileName);
     }
 
     public void testAllFilesPresentInSecondaryConstructors() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("basicNoPrimaryManySinks.kt")
     public void testBasicNoPrimaryManySinks() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicNoPrimaryManySinks.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicNoPrimaryManySinks.kt");
         doTest(fileName);
     }
 
     @TestMetadata("basicNoPrimaryOneSink.kt")
     public void testBasicNoPrimaryOneSink() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicNoPrimaryOneSink.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicNoPrimaryOneSink.kt");
         doTest(fileName);
     }
 
     @TestMetadata("basicPrimary.kt")
     public void testBasicPrimary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicPrimary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/basicPrimary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("clashingDefaultConstructors.kt")
     public void testClashingDefaultConstructors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/clashingDefaultConstructors.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/clashingDefaultConstructors.kt");
         doTest(fileName);
     }
 
     @TestMetadata("dataClasses.kt")
     public void testDataClasses() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/dataClasses.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/dataClasses.kt");
         doTest(fileName);
     }
 
     @TestMetadata("defaultArgs.kt")
     public void testDefaultArgs() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/defaultArgs.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/defaultArgs.kt");
         doTest(fileName);
     }
 
     @TestMetadata("delegationWithPrimary.kt")
     public void testDelegationWithPrimary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/delegationWithPrimary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/delegationWithPrimary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/enums.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/enums.kt");
         doTest(fileName);
     }
 
     @TestMetadata("generics.kt")
     public void testGenerics() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/generics.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/generics.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superCallPrimary.kt")
     public void testSuperCallPrimary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/superCallPrimary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/superCallPrimary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superCallSecondary.kt")
     public void testSuperCallSecondary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/superCallSecondary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/superCallSecondary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("varargs.kt")
     public void testVarargs() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/varargs.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/varargs.kt");
         doTest(fileName);
     }
 
     @TestMetadata("withReturn.kt")
     public void testWithReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withReturn.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withReturn.kt");
         doTest(fileName);
     }
 
     @TestMetadata("withReturnUnit.kt")
     public void testWithReturnUnit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withReturnUnit.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/withReturnUnit.kt");
         doTest(fileName);
     }
 }

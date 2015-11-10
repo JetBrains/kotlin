@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.codeInsight.NullableNotNullManager
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
-import org.jetbrains.kotlin.asJava.KotlinLightElement
+import org.jetbrains.kotlin.asJava.KtLightElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -373,7 +373,7 @@ class TypeConverter(val converter: Converter) {
         }
 
         override fun fromAnnotations(owner: PsiModifierListOwner): Mutability {
-            if (owner is KotlinLightElement<*, *>) {
+            if (owner is KtLightElement<*, *>) {
                 val jetDeclaration = owner.getOrigin() as? KtCallableDeclaration ?: return Mutability.Default
                 val descriptor = converter.services.resolverForConverter.resolveToDescriptor(jetDeclaration) as? CallableDescriptor ?: return Mutability.Default
                 val type = descriptor.getReturnType() ?: return Mutability.Default

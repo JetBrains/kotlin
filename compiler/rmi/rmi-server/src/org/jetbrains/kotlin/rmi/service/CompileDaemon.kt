@@ -26,15 +26,13 @@ import java.io.OutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
-import java.rmi.RemoteException
-import java.rmi.registry.LocateRegistry
-import java.rmi.registry.Registry
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
 import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
+import kotlin.concurrent.schedule
 import kotlin.concurrent.timer
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
@@ -119,14 +117,14 @@ public object CompileDaemon {
             //            if (System.getSecurityManager() == null)
             //                System.setSecurityManager (RMISecurityManager())
             //
-            //            setDaemonPpermissions(daemonOptions.port)
+            //            setDaemonPermissions(daemonOptions.port)
 
-            val (registry, port) = createRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS)
+            val (registry, port) = findPortAndCreateRegistry(COMPILE_DAEMON_FIND_PORT_ATTEMPTS, COMPILE_DAEMON_PORTS_RANGE_START, COMPILE_DAEMON_PORTS_RANGE_END)
             val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
             runFileDir.mkdirs()
             val runFile = File(runFileDir,
                                makeRunFilenameString(timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                                                     digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest(),
+                                                     digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
                                                      port = port.toString()))
             try {
                 if (!runFile.createNewFile()) throw Exception("createNewFile returned false")
@@ -143,7 +141,17 @@ public object CompileDaemon {
                     CompileService.TargetPlatform.JS -> js
                 }
             }
-            val compilerService = CompileServiceImpl(registry, compilerSelector, compilerId, daemonOptions, port)
+            val compilerService = CompileServiceImpl(registry, compilerSelector, compilerId, daemonOptions, port,
+                                                     onShutdown = {
+                                                         if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE) {
+                                                             // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
+                                                             // the watcher is a daemon thread, meaning it should not prevent JVM to exit normally
+                                                             Timer(true).schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
+                                                                 log.info("force JVM shutdown")
+                                                                 System.exit(0)
+                                                             }
+                                                         }
+                                                     })
 
             if (daemonOptions.runFilesPath.isNotEmpty())
                 println(daemonOptions.runFilesPath)
@@ -172,7 +180,7 @@ public object CompileDaemon {
             }
 
             // stopping daemon if any shutdown condition is met
-            timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
+            timer(initialDelay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS, daemon = true) {
                 try {
                     val idleSeconds = nowSeconds() - compilerService.lastUsedSeconds
                     if (shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
@@ -198,24 +206,5 @@ public object CompileDaemon {
             // TODO consider exiting without throwing
             throw e
         }
-    }
-
-    val random = Random()
-
-    private fun createRegistry(attempts: Int) : Pair<Registry, Int> {
-        var i = 0
-        var lastException: RemoteException? = null
-
-        while (i++ < attempts) {
-            val port = random.nextInt(COMPILE_DAEMON_PORTS_RANGE_END - COMPILE_DAEMON_PORTS_RANGE_START) + COMPILE_DAEMON_PORTS_RANGE_START
-            try {
-                return Pair(LocateRegistry.createRegistry(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory), port)
-            }
-            catch (e: RemoteException) {
-                // assuming that the port is already taken
-                lastException = e
-            }
-        }
-        throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
     }
 }

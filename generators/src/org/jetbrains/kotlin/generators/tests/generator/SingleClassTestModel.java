@@ -23,7 +23,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
@@ -49,7 +49,7 @@ public class SingleClassTestModel implements TestClassModel {
     @NotNull
     private final TargetBackend targetBackend;
     @Nullable
-    private Collection<TestMethodModel> testMethods;
+    private Collection<MethodModel> methods;
 
     public SingleClassTestModel(
             @NotNull File rootFile,
@@ -75,8 +75,8 @@ public class SingleClassTestModel implements TestClassModel {
 
     @NotNull
     @Override
-    public Collection<TestMethodModel> getTestMethods() {
-        if (testMethods == null) {
+    public Collection<MethodModel> getMethods() {
+        if (methods == null) {
             final List<TestMethodModel> result = Lists.newArrayList();
 
             result.add(new TestAllFilesPresentMethodModel());
@@ -99,10 +99,10 @@ public class SingleClassTestModel implements TestClassModel {
                 }
             });
 
-            testMethods = result;
+            methods = Lists.<MethodModel>newArrayList(result);
         }
 
-        return testMethods;
+        return methods;
     }
 
     @NotNull
@@ -115,12 +115,12 @@ public class SingleClassTestModel implements TestClassModel {
     @Override
     public boolean isEmpty() {
         // There's always one test for checking if all tests are present
-        return getTestMethods().size() <= 1;
+        return getMethods().size() <= 1;
     }
 
     @Override
     public String getDataString() {
-        return JetTestUtils.getFilePath(rootFile);
+        return KotlinTestUtils.getFilePath(rootFile);
     }
 
     @Nullable
@@ -129,12 +129,14 @@ public class SingleClassTestModel implements TestClassModel {
         return "$PROJECT_ROOT";
     }
 
+    @NotNull
     @Override
     public String getName() {
         return testClassName;
     }
 
     private class TestAllFilesPresentMethodModel implements TestMethodModel {
+        @NotNull
         @Override
         public String getName() {
             return "testAllFilesPresentIn" + testClassName;
@@ -143,8 +145,8 @@ public class SingleClassTestModel implements TestClassModel {
         @Override
         public void generateBody(@NotNull Printer p) {
             String assertTestsPresentStr = String.format(
-                    "JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"));",
-                    JetTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern())
+                    "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"));",
+                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern())
             );
             p.println(assertTestsPresentStr);
         }
@@ -152,6 +154,11 @@ public class SingleClassTestModel implements TestClassModel {
         @Override
         public String getDataString() {
             return null;
+        }
+
+        @Override
+        public void generateSignature(@NotNull Printer p) {
+            TestMethodModel.DefaultImpls.generateSignature(this, p);
         }
     }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.components.ExternalAnnotationResolver
 import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
@@ -49,7 +50,8 @@ class JavaResolverComponents(
         val sourceElementFactory: JavaSourceElementFactory,
         val moduleClassResolver: ModuleClassResolver,
         val packageMapper: PackagePartProvider,
-        val supertypeLoopChecker: SupertypeLoopChecker
+        val supertypeLoopChecker: SupertypeLoopChecker,
+        val lookupTracker: LookupTracker
 )
 
 open class LazyJavaResolverContext(

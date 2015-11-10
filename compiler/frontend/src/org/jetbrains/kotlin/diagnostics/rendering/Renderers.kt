@@ -183,10 +183,10 @@ public object Renderers {
             val parameterTypes = Lists.newArrayList<KotlinType>()
             for (valueParameterDescriptor in substitutedDescriptor.getValueParameters()) {
                 parameterTypes.add(valueParameterDescriptor.getType())
-                if (valueParameterDescriptor.getIndex() >= inferenceErrorData.valueArgumentsTypes.size()) continue
-                val actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.getIndex())
+                if (valueParameterDescriptor.index >= inferenceErrorData.valueArgumentsTypes.size()) continue
+                val actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.index)
                 if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
-                    errorPositions.add(VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()))
+                    errorPositions.add(VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index))
                 }
             }
 

@@ -60,7 +60,11 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
     )
 
     override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
-        return targetClass is KtClass && targetClass !is KtEnumEntry && !targetClass.isInterface() && !targetClass.isAnnotation()
+        return targetClass is KtClass
+                && targetClass !is KtEnumEntry
+                && !targetClass.isInterface()
+                && !targetClass.isAnnotation()
+                && !targetClass.hasExplicitPrimaryConstructor()
     }
 
     private fun shouldPreselect(element: PsiElement) = element is KtProperty && !element.isVar

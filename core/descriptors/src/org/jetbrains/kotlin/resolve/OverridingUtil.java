@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.utils.DFS;
 
 import java.util.*;
 
@@ -502,30 +501,6 @@ public class OverridingUtil {
             }
         }
         return maxVisibility;
-    }
-
-    @NotNull
-    public static List<? extends CallableDescriptor> getTopmostOverridenDescriptors(@NotNull CallableDescriptor originalDescriptor) {
-        return DFS.dfs(
-                Collections.singletonList(originalDescriptor),
-                new DFS.Neighbors<CallableDescriptor>() {
-                    @NotNull
-                    @Override
-                    public Iterable<? extends CallableDescriptor> getNeighbors(CallableDescriptor current) {
-                        return current.getOverriddenDescriptors();
-                    }
-                },
-                new DFS.CollectingNodeHandler<CallableDescriptor, CallableDescriptor, ArrayList<CallableDescriptor>>(
-                        new ArrayList<CallableDescriptor>()
-                ) {
-                    @Override
-                    public void afterChildren(CallableDescriptor current) {
-                        if (current.getOverriddenDescriptors().isEmpty()) {
-                            result.add(current);
-                        }
-                    }
-                }
-        );
     }
 
     public interface DescriptorSink {

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,60 +32,60 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCompletionTest {
     public void testAllFilesPresentInCodeFragments() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("blockCodeFragment.kt")
     public void testBlockCodeFragment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/blockCodeFragment.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/blockCodeFragment.kt");
         doTest(fileName);
     }
 
     @TestMetadata("classHeader.kt")
     public void testClassHeader() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/classHeader.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/classHeader.kt");
         doTest(fileName);
     }
 
     @TestMetadata("elementAt.kt")
     public void testElementAt() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/elementAt.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/elementAt.kt");
         doTest(fileName);
     }
 
     @TestMetadata("elementAtFirstInBlock.kt")
     public void testElementAtFirstInBlock() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/elementAtFirstInBlock.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/elementAtFirstInBlock.kt");
         doTest(fileName);
     }
 
     @TestMetadata("localVal.kt")
     public void testLocalVal() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/localVal.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/localVal.kt");
         doTest(fileName);
     }
 
     @TestMetadata("localVariables.kt")
     public void testLocalVariables() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/localVariables.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/localVariables.kt");
         doTest(fileName);
     }
 
     @TestMetadata("localVariablesOnReturn.kt")
     public void testLocalVariablesOnReturn() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/localVariablesOnReturn.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/localVariablesOnReturn.kt");
         doTest(fileName);
     }
 
     @TestMetadata("noDuplicatesForSyntheticProperties.kt")
     public void testNoDuplicatesForSyntheticProperties() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/noDuplicatesForSyntheticProperties.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/noDuplicatesForSyntheticProperties.kt");
         doTest(fileName);
     }
 
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/topLevel.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/topLevel.kt");
         doTest(fileName);
     }
 
@@ -94,42 +94,42 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RuntimeType extends AbstractCodeFragmentCompletionTest {
         public void testAllFilesPresentInRuntimeType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments/runtimeType"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/codeFragments/runtimeType"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("castWithGenerics.kt")
         public void testCastWithGenerics() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/castWithGenerics.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/castWithGenerics.kt");
             doTest(fileName);
         }
 
         @TestMetadata("complexHierarchy.kt")
         public void testComplexHierarchy() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/complexHierarchy.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/complexHierarchy.kt");
             doTest(fileName);
         }
 
         @TestMetadata("extensionMethod.kt")
         public void testExtensionMethod() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/extensionMethod.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/extensionMethod.kt");
             doTest(fileName);
         }
 
         @TestMetadata("notImportedExtension.kt")
         public void testNotImportedExtension() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/notImportedExtension.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/notImportedExtension.kt");
             doTest(fileName);
         }
 
         @TestMetadata("runtimeCast.kt")
         public void testRuntimeCast() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/runtimeCast.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/runtimeCast.kt");
             doTest(fileName);
         }
 
         @TestMetadata("smartCompletion.kt")
         public void testSmartCompletion() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/smartCompletion.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/codeFragments/runtimeType/smartCompletion.kt");
             doTest(fileName);
         }
     }

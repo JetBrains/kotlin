@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class AddNameToArgumentIntention
-  : JetSelfTargetingIntention<KtValueArgument>(javaClass(), "Add name to argument"), LowPriorityAction {
+  : SelfTargetingIntention<KtValueArgument>(javaClass(), "Add name to argument"), LowPriorityAction {
 
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
         val expression = element.getArgumentExpression() ?: return false
@@ -71,7 +71,7 @@ public class AddNameToArgumentIntention
 
         if (!resolvedCall.getResultingDescriptor().hasStableParameterNames()) return null
 
-        if (argumentMatch.valueParameter.getVarargElementType() != null) {
+        if (argumentMatch.valueParameter.varargElementType != null) {
             val varargArgument = resolvedCall.getValueArguments()[argumentMatch.valueParameter] as? VarargValueArgument ?: return null
             if (varargArgument.getArguments().size() != 1) return null
         }

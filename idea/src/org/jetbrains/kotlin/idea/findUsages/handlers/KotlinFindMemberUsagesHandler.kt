@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.resolve.getOriginalTopmostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
@@ -164,7 +164,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val callableDescriptor = (target as? KtCallableDeclaration)?.resolveToDescriptorIfAny() as? CallableDescriptor
-        val baseDescriptors = callableDescriptor?.getOriginalTopmostOverriddenDescriptors() ?: emptyList<CallableDescriptor>()
+        val baseDescriptors = callableDescriptor?.findOriginalTopMostOverriddenDescriptors() ?: emptyList<CallableDescriptor>()
         val baseDeclarations = baseDescriptors.map { it.source.getPsi() }.filter { it != null && it != target }
 
         return if (baseDeclarations.isNotEmpty()) {

@@ -213,6 +213,30 @@ public class Intrinsics {
         throwUndefinedForReified(message);
     }
 
+    public static void checkHasClass(String internalName) throws ClassNotFoundException {
+        String fqName = internalName.replace('/', '.');
+        try {
+            Class.forName(fqName);
+        }
+        catch (ClassNotFoundException e) {
+            throw sanitizeStackTrace(new ClassNotFoundException(
+                    "Class " + fqName + " is not found. Please update the Kotlin runtime to the latest version", e
+            ));
+        }
+    }
+
+    public static void checkHasClass(String internalName, String requiredVersion) throws ClassNotFoundException {
+        String fqName = internalName.replace('/', '.');
+        try {
+            Class.forName(fqName);
+        }
+        catch (ClassNotFoundException e) {
+            throw sanitizeStackTrace(new ClassNotFoundException(
+                    "Class " + fqName + " is not found: this code requires the Kotlin runtime of version at least " + requiredVersion, e
+            ));
+        }
+    }
+
     private static <T extends Throwable> T sanitizeStackTrace(T throwable) {
         return sanitizeStackTrace(throwable, Intrinsics.class.getName());
     }

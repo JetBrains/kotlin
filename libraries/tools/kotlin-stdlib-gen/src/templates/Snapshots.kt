@@ -1,13 +1,16 @@
 package templates
 
 import templates.Family.*
-import java.util.ArrayList
+import templates.DocExtensions.element
+import templates.DocExtensions.collection
 
 fun snapshots(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("toCollection(collection: C)") {
-        doc { "Appends all elements to the given [collection]." }
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
+        doc { f -> "Appends all ${f.element}s to the given [collection]." }
         returns("C")
         typeParam("C : MutableCollection<in T>")
         body {
@@ -21,31 +24,35 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toSet()") {
-        doc { "Returns a [Set] of all elements." }
+        doc { f -> "Returns a [Set] of all ${f.element}s." }
         returns("Set<T>")
         body { "return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(LinkedHashSet<T>())" }
-        body(Strings) { "return toCollection(LinkedHashSet<T>(mapCapacity(length())))" }
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) { "return toCollection(LinkedHashSet<T>(mapCapacity(length())))" }
         body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(LinkedHashSet<T>(mapCapacity(size())))" }
     }
 
     templates add f("toHashSet()") {
-        doc { "Returns a [HashSet] of all elements." }
+        doc { f -> "Returns a [HashSet] of all ${f.element}s." }
         returns("HashSet<T>")
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
-        body(Strings) { "return toCollection(HashSet<T>(mapCapacity(length())))" }
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) { "return toCollection(HashSet<T>(mapCapacity(length())))" }
         body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(HashSet<T>(mapCapacity(size())))" }
     }
 
     templates add f("toSortedSet()") {
-        doc { "Returns a [SortedSet] of all elements." }
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
+        doc { f -> "Returns a [SortedSet] of all ${f.element}s." }
         returns("SortedSet<T>")
         body { "return toCollection(TreeSet<T>())" }
     }
 
     templates add f("toArrayList()") {
-        doc { "Returns an [ArrayList] of all elements." }
+        doc { f -> "Returns an [ArrayList] of all ${f.element}s." }
         returns("ArrayList<T>")
         body { "return toCollection(ArrayList<T>())" }
         body(Iterables) {
@@ -56,7 +63,8 @@ fun snapshots(): List<GenericFunction> {
             """
         }
         body(Collections) { "return ArrayList(this)" }
-        body(Strings) { "return toCollection(ArrayList<T>(length()))" }
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) { "return toCollection(ArrayList<T>(length()))" }
         body(ArraysOfObjects) { "return ArrayList(this.asCollection())" }
         body(ArraysOfPrimitives) {
             """
@@ -82,20 +90,25 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toList()") {
-        doc { "Returns a [List] containing all elements." }
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
+        doc { f -> "Returns a [List] containing all ${f.element}s." }
         returns("List<T>")
         body { "return this.toArrayList()" }
     }
 
     templates add f("toLinkedList()") {
+        include(Strings)
         doc { "Returns a [LinkedList] containing all elements." }
         returns("LinkedList<T>")
-        body { "return toCollection(LinkedList<T>())" }
+        deprecate { Deprecation("Use toCollection(LinkedList()) instead.", replaceWith = "toCollection(LinkedList())") }
     }
 
     templates add f("toMap(selector: (T) -> K)") {
         inline(true)
-        include(Strings)
+        deprecate(Strings) { forBinaryCompatibility }
+        body(Strings) { "return toMapBy(selector)" }
+        include(CharSequences, Strings)
         typeParam("K")
         returns("Map<K, T>")
         deprecate(Deprecation("Use toMapBy instead.", replaceWith = "toMapBy(selector)"))
@@ -104,10 +117,11 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toMapBy(selector: (T) -> K)") {
         inline(true)
         typeParam("K")
-        doc {
+        doc { f ->
             """
-            Returns Map containing the values from the given collection indexed by [selector].
-            If any two elements would have the same key returned by [selector] the last one gets added to the map.
+            Returns Map containing the ${f.element}s from the given ${f.collection} indexed by the key
+            returned from [selector] function applied to each ${f.element}.
+            If any two ${f.element}s would have the same key returned by [selector] the last one gets added to the map.
             """
         }
         returns("Map<K, T>")
@@ -136,7 +150,8 @@ fun snapshots(): List<GenericFunction> {
             return result
             """
         }
-        body(Strings) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             """
             val capacity = (length()/.75f) + 1
             val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
@@ -162,10 +177,10 @@ fun snapshots(): List<GenericFunction> {
         inline(true)
         typeParam("K")
         typeParam("V")
-        doc {
+        doc { f ->
             """
-            Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
-            If any two elements would have the same key returned by [selector] the last one gets added to the map.
+            Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element}s of the given ${f.collection}.
+            If any two ${f.element}s would have the same key returned by [selector] the last one gets added to the map.
             """
         }
         returns("Map<K, V>")
@@ -194,7 +209,8 @@ fun snapshots(): List<GenericFunction> {
             return result
             """
         }
-        body(Strings) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             """
             val capacity = (length()/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))

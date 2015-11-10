@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeImpl
 import java.util.regex.Pattern
@@ -66,12 +66,12 @@ public class ConstraintSystemTestData(
             val number = matcher.group(1)!!
             return KotlinTypeImpl.create(
                     Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong(), functionFoo.builtIns), false, listOf(),
-                    KtScope.Empty
+                    MemberScope.Empty
             )
         }
         return typeResolver.resolveType(
-            scopeToResolveTypeParameters, KtPsiFactory(project).createType(name),
-            JetTestUtils.DUMMY_TRACE, true)
+                scopeToResolveTypeParameters, KtPsiFactory(project).createType(name),
+                KotlinTestUtils.DUMMY_TRACE, true)
     }
 }
 

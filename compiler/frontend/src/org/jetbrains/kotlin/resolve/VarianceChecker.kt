@@ -156,14 +156,14 @@ class VarianceChecker(private val trace: BindingTrace) {
                 = createTypeBinding(trace)?.checkTypePosition(position, diagnosticSink)
 
         private fun TypeBinding<PsiElement>.checkTypePosition(position: Variance, diagnosticSink: DiagnosticSink)
-                = checkTypePosition(jetType, position, diagnosticSink)
+                = checkTypePosition(kotlinType, position, diagnosticSink)
 
         private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KotlinType, position: Variance, diagnosticSink: DiagnosticSink): Boolean {
-            val classifierDescriptor = jetType.getConstructor().getDeclarationDescriptor()
+            val classifierDescriptor = kotlinType.getConstructor().getDeclarationDescriptor()
             if (classifierDescriptor is TypeParameterDescriptor) {
                 val declarationVariance = classifierDescriptor.getVariance()
                 if (!declarationVariance.allowsPosition(position)
-                        && !jetType.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.unsafeVariance)) {
+                        && !kotlinType.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.unsafeVariance)) {
                     diagnosticSink.report(
                             Errors.TYPE_VARIANCE_CONFLICT.on(
                                     psiElement,

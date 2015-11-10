@@ -27,7 +27,7 @@ import java.util.zip.ZipOutputStream
  */
 
 fun main(args: Array<String>) {
-    if (args.size() != 4) {
+    if (args.size != 4) {
         error("Usage: kotlinc -script strip-kotlin-annotations.kts <annotation-internal-name-regex> <class-internal-name-regex> <path-to-in-jar> <path-to-out-jar>")
     }
 
@@ -70,8 +70,8 @@ fun main(args: Array<String>) {
                 val inBytes = inJar.getInputStream(entry).readBytes()
                 val outBytes = transform(entry.getName(), inBytes)
 
-                if (inBytes.size() < outBytes.size()) {
-                    error("Size increased for ${entry.getName()}: was  ${inBytes.size()} bytes, became ${outBytes.size()} bytes")
+                if (inBytes.size < outBytes.size) {
+                    error("Size increased for ${entry.getName()}: was ${inBytes.size} bytes, became ${outBytes.size} bytes")
                 }
 
                 entry.setCompressedSize(-1L)

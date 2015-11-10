@@ -189,13 +189,10 @@ public class DelegatedPropertyResolver {
 
         if (!functionResults.isSuccess()) {
             String expectedFunction = renderCall(call, trace.getBindingContext());
-            if (functionResults.isIncomplete()) {
-                trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType));
-            }
-            else if (functionResults.isSingleResult() ||
+            if (functionResults.isSingleResult() || functionResults.isIncomplete() ||
                      functionResults.getResultCode() == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
                 trace.report(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
-                                             .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
+                                     .on(delegateExpression, expectedFunction, functionResults.getResultingCalls()));
             }
             else if (functionResults.isAmbiguity()) {
                 trace.report(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY

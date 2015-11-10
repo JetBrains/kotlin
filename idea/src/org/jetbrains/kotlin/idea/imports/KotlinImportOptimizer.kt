@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
 import java.util.*
 
@@ -84,7 +84,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         override fun visitPackageDirective(directive: KtPackageDirective) {
         }
 
-        override fun visitJetElement(element: KtElement) {
+        override fun visitKtElement(element: KtElement) {
             for (reference in element.references) {
                 if (reference !is KtReference) continue
 
@@ -112,13 +112,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 }
             }
 
-            super.visitJetElement(element)
+            super.visitKtElement(element)
         }
 
         private fun isAccessibleAsMember(target: DeclarationDescriptor, place: KtElement, bindingContext: BindingContext): Boolean {
             if (target.containingDeclaration !is ClassDescriptor) return false
 
-            fun isInScope(scope: LexicalScope): Boolean {
+            fun isInScope(scope: HierarchicalScope): Boolean {
                 return when (target) {
                     is FunctionDescriptor ->
                         scope.findFunction(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
@@ -136,8 +136,11 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             val resolutionScope = place.getResolutionScope(bindingContext, place.getResolutionFacade())
             val noImportsScope = resolutionScope.replaceImportingScopes(null)
 
-            return isInScope(noImportsScope)
-                    || resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope.memberScopeAsImportingScope()) }
+            if (isInScope(noImportsScope)) return true
+            if (target !is ClassDescriptor) { // classes not accessible through receivers, only their constructors
+                if (resolutionScope.getImplicitReceiversHierarchy().any { isInScope(it.type.memberScope.memberScopeAsImportingScope()) }) return true
+            }
+            return false
         }
     }
 
@@ -153,7 +156,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 descriptorsToImport: Collection<DeclarationDescriptor>
         ): List<ImportPath>? {
             val importInsertHelper = ImportInsertHelper.getInstance(file.project)
-            val codeStyleSettings = JetCodeStyleSettings.getInstance(file.project)
+            val codeStyleSettings = KotlinCodeStyleSettings.getInstance(file.project)
             val aliasImports = buildAliasImportMap(file)
 
             val importsToGenerate = HashSet<ImportPath>()

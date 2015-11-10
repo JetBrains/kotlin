@@ -30,7 +30,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.FilteredQuery
 import com.intellij.util.Processor
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -112,7 +112,7 @@ public class KotlinFindClassUsagesHandler(
         if (kotlinOptions.searchConstructorUsages) {
             val result = runReadAction {
                 val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
-                constructors.filterIsInstance<KotlinLightMethod>().all { constructor ->
+                constructors.filterIsInstance<KtLightMethod>().all { constructor ->
                     constructor.processDelegationCallConstructorUsages(constructor.getUseScope()) {
                         it.getCalleeExpression()?.mainReference?.let { referenceProcessor.process(it) } ?: false
                     }
@@ -156,7 +156,7 @@ public class KotlinFindClassUsagesHandler(
             val klass = companionObject.getStrictParentOfType<KtClass>() ?: return@runReadAction
             val companionObjectDescriptor = companionObject.descriptor
             klass.acceptChildren(object : KtVisitorVoid() {
-                override fun visitJetElement(element: KtElement) {
+                override fun visitKtElement(element: KtElement) {
                     if (element == companionObject) return // skip companion object itself
                     if (stop) return
                     element.acceptChildren(this)

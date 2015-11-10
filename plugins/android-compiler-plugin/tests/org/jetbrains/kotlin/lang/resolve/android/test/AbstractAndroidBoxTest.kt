@@ -22,7 +22,7 @@ import java.io.File
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.util.regex.Pattern
 import com.intellij.openapi.util.io.FileUtil
 import java.util.ArrayList
@@ -33,11 +33,11 @@ import org.jetbrains.kotlin.codegen.CodegenTestFiles
 public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
 
     private fun createAndroidAPIEnvironment(path: String) {
-        return createEnvironmentForConfiguration(JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
+        return createEnvironmentForConfiguration(KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
     }
 
     private fun createFakeAndroidEnvironment(path: String) {
-        return createEnvironmentForConfiguration(JetTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK), path)
+        return createEnvironmentForConfiguration(KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK), path)
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
@@ -96,7 +96,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
         myFiles = CodegenTestFiles.create(
                 myEnvironment!!.project,
                 ArrayUtil.toStringArray(files),
-                JetTestUtils.getHomeDirectory() + "/plugins/android-compiler-plugin/testData"
+                KotlinTestUtils.getHomeDirectory() + "/plugins/android-compiler-plugin/testData"
         )
         blackBox();
     }

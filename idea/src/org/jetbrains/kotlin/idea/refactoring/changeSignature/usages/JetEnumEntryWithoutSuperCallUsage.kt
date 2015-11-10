@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDelegatorToSuperCall
+import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtInitializerList
+import org.jetbrains.kotlin.psi.KtPsiFactory
 
 public class JetEnumEntryWithoutSuperCallUsage(enumEntry: KtEnumEntry) : JetUsageInfo<KtEnumEntry>(enumEntry) {
     override fun processUsage(changeInfo: JetChangeInfo, element: KtEnumEntry, allUsages: Array<out UsageInfo>): Boolean {
@@ -27,7 +30,7 @@ public class JetEnumEntryWithoutSuperCallUsage(enumEntry: KtEnumEntry) : JetUsag
 
             val delegatorToSuperCall = (element.addAfter(
                     psiFactory.createEnumEntryInitializerList(),
-                    element.getNameAsDeclaration()
+                    element.nameIdentifier
             ) as KtInitializerList).initializers[0] as KtDelegatorToSuperCall
 
             return JetFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryCallable)

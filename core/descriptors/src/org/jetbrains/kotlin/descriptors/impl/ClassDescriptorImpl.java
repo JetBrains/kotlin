@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -35,9 +35,9 @@ import java.util.Set;
 public class ClassDescriptorImpl extends ClassDescriptorBase {
     private final Modality modality;
     private final TypeConstructor typeConstructor;
-    private final KtScope staticScope = new StaticScopeForKotlinClass(this);
+    private final MemberScope staticScope = new StaticScopeForKotlinClass(this);
 
-    private KtScope unsubstitutedMemberScope;
+    private MemberScope unsubstitutedMemberScope;
     private Set<ConstructorDescriptor> constructors;
     private ConstructorDescriptor primaryConstructor;
 
@@ -56,7 +56,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     public final void initialize(
-            @NotNull KtScope unsubstitutedMemberScope,
+            @NotNull MemberScope unsubstitutedMemberScope,
             @NotNull Set<ConstructorDescriptor> constructors,
             @Nullable ConstructorDescriptor primaryConstructor
     ) {
@@ -89,13 +89,13 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public KtScope getUnsubstitutedMemberScope() {
+    public MemberScope getUnsubstitutedMemberScope() {
         return unsubstitutedMemberScope;
     }
 
     @NotNull
     @Override
-    public KtScope getStaticScope() {
+    public MemberScope getStaticScope() {
         return staticScope;
     }
 

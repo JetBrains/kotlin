@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 
@@ -38,7 +38,7 @@ public abstract class AbstractBytecodeListingTest : CodegenTestCase() {
                     visitor.text
                 }.joinToString("\n\n")
 
-        JetTestUtils.assertEqualsToFile(txtFile, generatedFiles)
+        KotlinTestUtils.assertEqualsToFile(txtFile, generatedFiles)
     }
 
     private class TextCollectingVisitor : ClassVisitor(Opcodes.ASM5) {

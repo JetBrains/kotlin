@@ -35,7 +35,7 @@ import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.kotlin.idea.test.RunnableWithException;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 
@@ -59,7 +59,7 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
     }
 
     public static String getPluginTestDataPathBase() {
-        return JetTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
+        return KotlinTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
     public String getTestDataPath() {

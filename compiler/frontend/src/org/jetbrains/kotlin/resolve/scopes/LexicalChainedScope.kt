@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
-public class LexicalChainedScope(
+public class LexicalChainedScope @JvmOverloads constructor(
         parent: LexicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
         private val debugName: String,
-        vararg memberScopes: KtScope, // todo JetScope -> MemberScope
+        vararg memberScopes: MemberScope,
         @Deprecated("This value is temporary hack for resolve -- don't use it!")
         val isStaticScope: Boolean = false
 ): LexicalScope {
@@ -39,13 +39,13 @@ public class LexicalChainedScope(
     private val scopeChain = memberScopes.clone()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = getFromAllScopes(scopeChain) { it.getAllDescriptors() }
+            = getFromAllScopes(scopeChain) { it.getContributedDescriptors() }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = getFirstMatch(scopeChain) { it.getClassifier(name, location) }
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = getFirstMatch(scopeChain) { it.getContributedClassifier(name, location) }
 
-    override fun getContributedVariables(name: Name, location: LookupLocation) = getFromAllScopes(scopeChain) { it.getProperties(name, location) }
+    override fun getContributedVariables(name: Name, location: LookupLocation) = getFromAllScopes(scopeChain) { it.getContributedVariables(name, location) }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = getFromAllScopes(scopeChain) { it.getFunctions(name, location) }
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = getFromAllScopes(scopeChain) { it.getContributedFunctions(name, location) }
 
     override fun toString(): String = debugName
 

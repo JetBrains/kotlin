@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +32,12 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentAutoImportTestGenerated extends AbstractCodeFragmentAutoImportTest {
     public void testAllFilesPresentInCodeFragmentAutoImport() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix.special/codeFragmentAutoImport"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix.special/codeFragmentAutoImport"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
     @TestMetadata("ExtensionFun.kt")
     public void testExtensionFun() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix.special/codeFragmentAutoImport/ExtensionFun.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix.special/codeFragmentAutoImport/ExtensionFun.kt");
         doTest(fileName);
     }
 }

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 
@@ -82,7 +82,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
 
         PackageFragmentDescriptor deserialized = createBuiltInsPackageFragment();
 
-        List<KtFile> files = JetTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
+        List<KtFile> files = KotlinTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
                 allFilesUnder("core/builtins/native"),
                 allFilesUnder("core/builtins/src")
         ));

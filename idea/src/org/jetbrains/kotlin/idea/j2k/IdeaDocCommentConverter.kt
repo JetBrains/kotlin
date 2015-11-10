@@ -74,7 +74,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
 
     private fun convertInlineDocTag(tag: PsiInlineDocTag) = when(tag.getName()) {
         "code", "literal" -> {
-            val text = tag.getDataElements().map { it.getText() }.join("")
+            val text = tag.getDataElements().joinToString("") { it.getText() }
             val escaped = StringUtil.escapeXml(text.trimStart())
             if (tag.getName() == "code") "<code>$escaped</code>" else escaped
         }

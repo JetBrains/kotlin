@@ -119,7 +119,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
                 processPsiMethodCallers(Collections.singleton(lightMethod), descriptor, methodToDescriptorMap, searchScope, false);
             }
             else {
-                processJetClassOrObjectCallers((KtClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
+                processKtClassOrObjectCallers((KtClassOrObject) element, descriptor, methodToDescriptorMap, searchScope);
             }
         }
 
@@ -164,7 +164,7 @@ public class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStructure {
         ContainerUtil.process(references, defaultQueryProcessor(descriptor, methodToDescriptorMap, kotlinOnly));
     }
 
-    private void processJetClassOrObjectCallers(
+    private void processKtClassOrObjectCallers(
             final KtClassOrObject classOrObject,
             HierarchyNodeDescriptor descriptor,
             Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap,

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.stubs;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,36 +32,36 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiFileHighlightingTestGenerated extends AbstractMultiFileHighlightingTest {
     public void testAllFilesPresentInMultiFileHighlighting() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiFileHighlighting"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
     @TestMetadata("copyResolveBeforeParams.kt")
     public void testCopyResolveBeforeParams() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/copyResolveBeforeParams.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/copyResolveBeforeParams.kt");
         doTest(fileName);
     }
 
     @TestMetadata("delegatesReference.kt")
     public void testDelegatesReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/delegatesReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/delegatesReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("enumReference.kt")
     public void testEnumReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/enumReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/enumReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("referencesFunWithUnspecifiedType.kt")
     public void testReferencesFunWithUnspecifiedType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/referencesFunWithUnspecifiedType.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/referencesFunWithUnspecifiedType.kt");
         doTest(fileName);
     }
 
     @TestMetadata("topLevelMembersReference.kt")
     public void testTopLevelMembersReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/topLevelMembersReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/topLevelMembersReference.kt");
         doTest(fileName);
     }
 }

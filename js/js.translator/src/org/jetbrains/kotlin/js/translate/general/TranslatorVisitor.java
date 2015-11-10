@@ -32,7 +32,7 @@ public abstract class TranslatorVisitor<T> extends KtVisitor<T, TranslationConte
     protected abstract T emptyResult(@NotNull TranslationContext context);
 
     @Override
-    public T visitJetElement(@NotNull KtElement expression, TranslationContext context) {
+    public T visitKtElement(@NotNull KtElement expression, TranslationContext context) {
         context.bindingTrace().report(ErrorsJs.NOT_SUPPORTED.on(expression, expression));
         return emptyResult(context);
     }

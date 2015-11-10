@@ -24,10 +24,10 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.regex.Pattern
 
@@ -54,7 +54,7 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
         }
 
         var settings = ConverterSettings.defaultSettings.copy()
-        val directives = JetTestUtils.parseDirectives(javaCode)
+        val directives = KotlinTestUtils.parseDirectives(javaCode)
         for ((name, value) in directives) {
             when (name) {
                 "forceNotNullTypes" -> settings.forceNotNullTypes = parseBoolean(value)
@@ -85,13 +85,13 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
 
         val kotlinPath = javaPath.replace(".java", ".kt")
         val expectedFile = File(kotlinPath)
-        JetTestUtils.assertEqualsToFile(expectedFile, actual)
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
     }
 
     private fun reformat(text: String, project: Project, inFunContext: Boolean): String {
         val textToFormat = if (inFunContext) "fun convertedTemp() {\n$text\n}" else text
 
-        val convertedFile = JetTestUtils.createFile("converted", textToFormat, project)
+        val convertedFile = KotlinTestUtils.createFile("converted", textToFormat, project)
         WriteCommandAction.runWriteCommandAction(project) {
             CodeStyleManager.getInstance(project)!!.reformat(convertedFile)
         }
@@ -126,7 +126,7 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
     }
 
     override fun getProjectDescriptor()
-            = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+            = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     private fun String.removeFirstLine() = substringAfter('\n', "")
 

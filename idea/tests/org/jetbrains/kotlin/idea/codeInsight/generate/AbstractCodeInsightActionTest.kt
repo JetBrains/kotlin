@@ -25,13 +25,13 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestActionEvent
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractCodeInsightActionTest : JetLightCodeInsightFixtureTestCase() {
+abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTestCase() {
     protected open fun createAction(fileText: String): CodeInsightAction {
         val actionClassName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// ACTION_CLASS: ")
         return Class.forName(actionClassName).newInstance() as CodeInsightAction
@@ -86,12 +86,12 @@ abstract class AbstractCodeInsightActionTest : JetLightCodeInsightFixtureTestCas
             }
         }
         catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
-            JetTestUtils.assertEqualsToFile(conflictFile, e.getMessage()!!)
+            KotlinTestUtils.assertEqualsToFile(conflictFile, e.getMessage()!!)
         }
         finally {
             ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
         }
     }
 
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

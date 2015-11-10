@@ -53,12 +53,12 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ScopeUtils;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange;
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRangeKt;
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier;
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange;
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRangeKt;
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
@@ -469,7 +469,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
                 KtExpression replacement = psiFactory.createExpression(nameSuggestion);
                 KtExpression result;
-                if (JetPsiUtilKt.isFunctionLiteralOutsideParentheses(replace)) {
+                if (KtPsiUtilKt.isFunctionLiteralOutsideParentheses(replace)) {
                     KtFunctionLiteralArgument functionLiteralArgument =
                             PsiTreeUtil.getParentOfType(replace, KtFunctionLiteralArgument.class);
                     KtCallExpression newCallExpression = PsiModificationUtilsKt
@@ -523,11 +523,11 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
     private static List<KtExpression> findOccurrences(PsiElement occurrenceContainer, @NotNull KtExpression originalExpression) {
         return CollectionsKt.map(
-                JetPsiRangeKt.toRange(originalExpression).match(occurrenceContainer, JetPsiUnifier.DEFAULT),
-                new Function1<JetPsiRange.Match, KtExpression>() {
+                KotlinPsiRangeKt.toRange(originalExpression).match(occurrenceContainer, KotlinPsiUnifier.DEFAULT),
+                new Function1<KotlinPsiRange.Match, KtExpression>() {
                     @Override
-                    public KtExpression invoke(JetPsiRange.Match match) {
-                        PsiElement candidate = ((JetPsiRange.ListRange) match.getRange()).getStartElement();
+                    public KtExpression invoke(KotlinPsiRange.Match match) {
+                        PsiElement candidate = ((KotlinPsiRange.ListRange) match.getRange()).getStartElement();
                         if (candidate instanceof KtExpression) return (KtExpression) candidate;
                         if (candidate instanceof KtStringTemplateEntryWithExpression)
                             return ((KtStringTemplateEntryWithExpression) candidate).getExpression();

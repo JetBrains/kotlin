@@ -50,7 +50,7 @@ public class CodegenUtil {
             @NotNull ClassifierDescriptor returnedClassifier,
             @NotNull ClassifierDescriptor... valueParameterClassifiers
     ) {
-        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getFunctions(name, NoLookupLocation.FROM_BACKEND);
+        Collection<FunctionDescriptor> functions = owner.getDefaultType().getMemberScope().getContributedFunctions(name, NoLookupLocation.FROM_BACKEND);
         for (FunctionDescriptor function : functions) {
             if (!CallResolverUtilKt.isOrOverridesSynthesized(function)
                 && function.getTypeParameters().isEmpty()
@@ -95,7 +95,7 @@ public class CodegenUtil {
     @NotNull
     public static Map<FunctionDescriptor, FunctionDescriptor> getTraitMethods(ClassDescriptor descriptor) {
         Map<FunctionDescriptor, FunctionDescriptor> result = new LinkedHashMap<FunctionDescriptor, FunctionDescriptor>();
-        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor declaration : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
             if (!(declaration instanceof CallableMemberDescriptor)) continue;
 
             CallableMemberDescriptor inheritedMember = (CallableMemberDescriptor) declaration;

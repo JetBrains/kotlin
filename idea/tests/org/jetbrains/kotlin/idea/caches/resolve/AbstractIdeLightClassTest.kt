@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import java.io.File
 
-abstract class AbstractIdeLightClassTest : JetLightCodeInsightFixtureTestCase() {
-
+abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {
         myFixture.configureByFile(testDataPath)
 
@@ -32,15 +31,23 @@ abstract class AbstractIdeLightClassTest : JetLightCodeInsightFixtureTestCase() 
         LightClassTestCommon.testLightClass(
                 File(testDataPath),
                 findLightClass = {
-                    JavaPsiFacade.getInstance(project).findClass(it, GlobalSearchScope.allScope(project))
+                    val clazz = JavaPsiFacade.getInstance(project).findClass(it, GlobalSearchScope.allScope(project))
+                    if (clazz != null) {
+                        PsiElementChecker.checkPsiElementStructure(clazz)
+                    }
+                    clazz
+
                 },
                 normalizeText = {
                     //NOTE: ide and compiler differ in names generated for parameters with unspecified names
-                    it.replace("java.lang.String s,", "java.lang.String p,").replace("java.lang.String s)", "java.lang.String p)")
-                            .replace("java.lang.String s1", "java.lang.String p1").replace("java.lang.String s2", "java.lang.String p2")
+                    it
+                            .replace("java.lang.String s,", "java.lang.String p,")
+                            .replace("java.lang.String s)", "java.lang.String p)")
+                            .replace("java.lang.String s1", "java.lang.String p1")
+                            .replace("java.lang.String s2", "java.lang.String p2")
                 }
         )
     }
 
-    override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

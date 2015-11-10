@@ -207,7 +207,7 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
 
     @NotNull
     @Override
-    public KtFile getContainingJetFile() {
+    public KtFile getContainingKtFile() {
         return this;
     }
 
@@ -218,7 +218,7 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitJetFile(this, data);
+        return visitor.visitKtFile(this, data);
     }
 
     @NotNull

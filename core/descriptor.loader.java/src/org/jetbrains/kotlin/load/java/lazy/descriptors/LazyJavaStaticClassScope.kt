@@ -28,19 +28,16 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
-import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesProperty
+import org.jetbrains.kotlin.resolve.DescriptorFactory.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 public class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,
         private val jClass: JavaClass,
-        descriptor: LazyJavaClassDescriptor
-) : LazyJavaStaticScope(c, descriptor) {
+        override val ownerDescriptor: LazyJavaClassDescriptor
+) : LazyJavaStaticScope(c) {
 
     override fun computeMemberIndex(): MemberIndex {
         val delegate = ClassMemberIndex(jClass) { it.isStatic() }
@@ -65,37 +62,42 @@ public class LazyJavaStaticClassScope(
             memberIndex().getAllFieldNames() + (if (jClass.isEnum) listOf(DescriptorUtils.ENUM_VALUES) else emptyList())
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> = listOf()
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        // We don't need to track lookups here because we find nested/inner classes in LazyJavaClassMemberScope
+        return null
+    }
 
     override fun getSubPackages(): Collection<FqName> = listOf()
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        val nestedClassesScope = getContainingDeclaration().getUnsubstitutedInnerClassesScope()
-        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, nestedClassesScope))
+        c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
+            ownerDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+        }?.let { result.add(it) }
 
-        val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, getContainingDeclaration())
-        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter))
+        val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, ownerDescriptor)
+        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
 
         if (jClass.isEnum()) {
             when (name) {
-                DescriptorUtils.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(getContainingDeclaration()))
-                DescriptorUtils.ENUM_VALUES -> result.add(createEnumValuesMethod(getContainingDeclaration()))
+                DescriptorUtils.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(ownerDescriptor))
+                DescriptorUtils.ENUM_VALUES -> result.add(createEnumValuesMethod(ownerDescriptor))
             }
         }
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
-        val propertiesFromSupertypes = getStaticPropertiesFromJavaSupertypes(name, getContainingDeclaration())
+        val propertiesFromSupertypes = getStaticPropertiesFromJavaSupertypes(name, ownerDescriptor)
 
         val actualProperties =
                 if (!result.isEmpty()) {
-                    DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(), c.components.errorReporter)
+                    DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, ownerDescriptor, c.components.errorReporter)
                 }
                 else {
                     propertiesFromSupertypes.groupBy {
                         it.realOriginal
                     }.flatMap {
-                        DescriptorResolverUtils.resolveOverrides(name, it.value, result, getContainingDeclaration(), c.components.errorReporter)
+                        DescriptorResolverUtils.resolveOverrides(name, it.value, result, ownerDescriptor, c.components.errorReporter)
                     }
                 }
 
@@ -103,16 +105,14 @@ public class LazyJavaStaticClassScope(
 
         if (jClass.isEnum) {
             if (name == DescriptorUtils.ENUM_VALUES) {
-                result.add(createEnumValuesProperty(getContainingDeclaration()))
+                result.add(createEnumValuesProperty(ownerDescriptor))
             }
         }
     }
 
-    override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaClassDescriptor
-
     private fun getStaticFunctionsFromJavaSuperClasses(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
         val staticScope = descriptor.getParentJavaStaticClassScope() ?: return emptySet()
-        return staticScope.getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as SimpleFunctionDescriptor }.toSet()
+        return staticScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as SimpleFunctionDescriptor }.toSet()
     }
 
     private fun getStaticPropertiesFromJavaSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
@@ -124,7 +124,7 @@ public class LazyJavaStaticClassScope(
 
             if (staticScope !is LazyJavaStaticClassScope) return getStaticPropertiesFromJavaSupertypes(name, superTypeDescriptor)
 
-            return staticScope.getProperties(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it as PropertyDescriptor }
+            return staticScope.getContributedVariables(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { it }
         }
 
         return descriptor.typeConstructor.supertypes.flatMap(::getStaticProperties).toSet()

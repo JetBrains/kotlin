@@ -1085,8 +1085,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assert loopRangeType != null;
             Type asmLoopRangeType = asmType(loopRangeType);
 
-            Collection<VariableDescriptor> incrementProp =
-                    loopRangeType.getMemberScope().getProperties(Name.identifier("increment"), NoLookupLocation.FROM_BACKEND);
+            Collection<PropertyDescriptor> incrementProp =
+                    loopRangeType.getMemberScope().getContributedVariables(Name.identifier("increment"), NoLookupLocation.FROM_BACKEND);
             assert incrementProp.size() == 1 : loopRangeType + " " + incrementProp.size();
             incrementType = asmType(incrementProp.iterator().next().getType());
 
@@ -2324,7 +2324,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         final Type asmType =
-                state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingJetFile(), getParentCodegen());
+                state.getSamWrapperClasses().getSamWrapperClass(samType, expression.getContainingKtFile(), getParentCodegen());
 
         return StackValue.operation(asmType, new Function1<InstructionAdapter, Unit>() {
             @Override
@@ -2357,7 +2357,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private FunctionDescriptor accessibleFunctionDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
+    protected FunctionDescriptor accessibleFunctionDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
         FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
         FunctionDescriptor originalIfSamAdapter = SamCodegenUtil.getOriginalIfSamAdapter(descriptor);
         if (originalIfSamAdapter != null) {
@@ -2477,18 +2477,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor();
 
-        List<Integer> masks =
-                argumentGenerator.generate(valueArguments, new ArrayList<ResolvedValueArgument>(resolvedCall.getValueArguments().values()))
-                        .toInts();
+        DefaultCallMask masks =
+                argumentGenerator.generate(valueArguments, new ArrayList<ResolvedValueArgument>(resolvedCall.getValueArguments().values()));
 
         if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
             tailRecursionCodegen.generateTailRecursion(resolvedCall);
             return;
         }
 
-        for (int mask : masks) {
-            callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE));
-        }
+        boolean defaultMaskWasGenerated = masks.generateOnStackIfNeeded(callGenerator);
 
         // Extra constructor marker argument
         if (callableMethod instanceof CallableMethod) {
@@ -2500,7 +2497,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        callGenerator.genCall(callableMethod, resolvedCall, !masks.isEmpty(), this);
+        callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
     }
 
     @NotNull
@@ -2562,7 +2559,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue) {
+    public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue, boolean isSuper) {
         if (receiverValue instanceof ClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
             if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
@@ -2575,7 +2572,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
             }
             else {
-                return StackValue.thisOrOuter(this, receiverDescriptor, false, isEnumEntry(receiverDescriptor));
+                return StackValue.thisOrOuter(this, receiverDescriptor, isSuper, isEnumEntry(receiverDescriptor));
             }
         }
         else if (receiverValue instanceof ScriptReceiver) {
@@ -2635,8 +2632,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         throw new UnsupportedOperationException();
     }
 
+
     @NotNull
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
+        return generateThisOrOuter(calleeContainingClass, isSuper, false);
+    }
+
+    @NotNull
+    public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper, boolean forceOuter) {
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
             if (calleeContainingClass.equals(context.getThisDescriptor()) &&
@@ -2662,9 +2665,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 return result;
             }
 
-            if (isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
+            if (!forceOuter && isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
                 return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
             }
+
+            forceOuter = false;
 
             //for constructor super call we should access to outer instance through parameter in locals, in other cases through field for captured outer
             if (inStartConstructorContext) {
@@ -3151,7 +3156,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private StackValue generateAugmentedAssignment(KtBinaryExpression expression) {
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
-        FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        FunctionDescriptor descriptor = accessibleFunctionDescriptor(resolvedCall);
         Callable callable = resolveToCallable(descriptor, false, resolvedCall);
         KtExpression lhs = expression.getLeft();
         Type lhsType = expressionType(lhs);
@@ -3437,14 +3442,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 ConstructorDescriptor constructor = getConstructorDescriptor(resolvedCall);
 
                 ReceiverParameterDescriptor dispatchReceiver = constructor.getDispatchReceiverParameter();
+                ClassDescriptor containingDeclaration = constructor.getContainingDeclaration();
                 if (dispatchReceiver != null) {
                     Type receiverType = typeMapper.mapType(dispatchReceiver.getType());
-                    generateReceiverValue(resolvedCall.getDispatchReceiver()).put(receiverType, v);
+                    ReceiverValue receiver = resolvedCall.getDispatchReceiver();
+                    boolean callSuper = containingDeclaration.isInner() && receiver instanceof ClassReceiver;
+                    generateReceiverValue(receiver, callSuper).put(receiverType, v);
                 }
 
                 // Resolved call to local class constructor doesn't have dispatchReceiver, so we need to generate closure on stack
                 // See StackValue.receiver for more info
-                pushClosureOnStack(constructor.getContainingDeclaration(), dispatchReceiver == null, defaultCallGenerator);
+                pushClosureOnStack(containingDeclaration, dispatchReceiver == null, defaultCallGenerator);
 
                 constructor = SamCodegenUtil.resolveSamAdapter(constructor);
                 CallableMethod method = typeMapper.mapToCallableMethod(constructor, false);
@@ -3521,7 +3529,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Callable callableMethod = resolveToCallableMethod(operationDescriptor, false);
             Type[] argumentTypes = callableMethod.getParameterTypes();
 
-            StackValue collectionElementReceiver = createCollectionElementReceiver(
+            StackValue.CollectionElementReceiver collectionElementReceiver = createCollectionElementReceiver(
                     expression, receiver, operationDescriptor, isGetter, resolvedGetCall, resolvedSetCall, callable
             );
 
@@ -3531,7 +3539,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private StackValue createCollectionElementReceiver(
+    private StackValue.CollectionElementReceiver createCollectionElementReceiver(
             @NotNull KtArrayAccessExpression expression,
             @NotNull StackValue receiver,
             @NotNull FunctionDescriptor operationDescriptor,

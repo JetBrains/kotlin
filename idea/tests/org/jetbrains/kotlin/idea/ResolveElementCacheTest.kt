@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ResolveElementCacheTest : JetLightCodeInsightFixtureTestCase() {
-    override fun getProjectDescriptor() = JetLightProjectDescriptor.INSTANCE
+public class ResolveElementCacheTest : KotlinLightCodeInsightFixtureTestCase() {
+    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     private val FILE_TEXT =
 """

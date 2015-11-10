@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
@@ -44,7 +43,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         }
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (target instanceof SyntheticFieldDescriptor) {
-            NameHighlighter.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_VARIABLE);
+            NameHighlighter.highlightName(holder, expression, KotlinHighlightingColors.BACKING_FIELD_VARIABLE);
             return;
         }
         if (!(target instanceof PropertyDescriptor)) {
@@ -86,21 +85,21 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             boolean withBackingField
     ) {
         if (DynamicCallsKt.isDynamic(descriptor)) {
-            NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.DYNAMIC_PROPERTY_CALL);
+            NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.DYNAMIC_PROPERTY_CALL);
             return;
         }
 
         boolean isStatic = DescriptorUtils.isStaticDeclaration(descriptor);
         NameHighlighter.highlightName(
                 holder, elementToHighlight,
-                isStatic ? JetHighlightingColors.PACKAGE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
+                isStatic ? KotlinHighlightingColors.PACKAGE_PROPERTY : KotlinHighlightingColors.INSTANCE_PROPERTY
         );
         if (descriptor.getExtensionReceiverParameter() != null) {
-            NameHighlighter.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
+            NameHighlighter.highlightName(holder, elementToHighlight, KotlinHighlightingColors.EXTENSION_PROPERTY);
         }
         if (withBackingField) {
             holder.createInfoAnnotation(elementToHighlight, "This property has a backing field")
-                    .setTextAttributes(JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD);
+                    .setTextAttributes(KotlinHighlightingColors.PROPERTY_WITH_BACKING_FIELD);
         }
     }
 }

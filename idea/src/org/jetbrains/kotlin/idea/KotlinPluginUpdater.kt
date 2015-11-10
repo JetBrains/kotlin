@@ -96,7 +96,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
             if (mainRepoUpdateSuccess || latestVersionInRepository != null) {
                 recordSuccessfulUpdateCheck()
-                if (latestVersionInRepository != null && VersionComparatorUtil.compare(latestVersionInRepository, JetPluginUtil.getPluginVersion()) > 0) {
+                if (latestVersionInRepository != null && VersionComparatorUtil.compare(latestVersionInRepository, KotlinPluginUtil.getPluginVersion()) > 0) {
                     ApplicationManager.getApplication().invokeLater {
                         notifyPluginUpdateAvailable(latestVersionInRepository!!, descriptorToInstall, hostToInstallFrom)
                     }
@@ -118,7 +118,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     fun getPluginVersionFromMainRepository(): RepositoryCheckResult {
         val buildNumber = ApplicationInfo.getInstance().build.asString()
-        val pluginVersion = JetPluginUtil.getPluginVersion()
+        val pluginVersion = KotlinPluginUtil.getPluginVersion()
         val os = URLEncoder.encode(SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION, CharsetToolkit.UTF8)
         val uid = UpdateChecker.getInstallationUID(propertiesComponent)
         val url = "https://plugins.jetbrains.com/plugins/list?pluginId=6954&build=$buildNumber&pluginVersion=$pluginVersion&os=$os&uuid=a$uid"

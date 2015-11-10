@@ -361,7 +361,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitJetElement(@NotNull KtElement element) {
+            public void visitKtElement(@NotNull KtElement element) {
                 throw new UnsupportedOperationException(element.getText() + " : " + element);
             }
         };
@@ -798,7 +798,7 @@ public class BodyResolver {
                                               RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                 @Override
                 public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                    handler.addVariableOrClassDescriptor(fieldDescriptor);
+                    handler.addVariableDescriptor(fieldDescriptor);
                     return Unit.INSTANCE$;
                 }
             });

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -169,7 +169,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     @Override
-    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull PsiElement element, @NotNull UsageInfo[] allUsages) {
+    public boolean processUsage(@NotNull JetChangeInfo changeInfo, @NotNull T element, @NotNull UsageInfo[] allUsages) {
         if (!(element instanceof KtNamedDeclaration)) return true;
 
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(element.getProject());
@@ -184,7 +184,7 @@ public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
         changeReturnTypeIfNeeded(changeInfo, element);
 
-        KtParameterList parameterList = JetPsiUtilKt.getValueParameterList((KtNamedDeclaration) element);
+        KtParameterList parameterList = KtPsiUtilKt.getValueParameterList((KtNamedDeclaration) element);
 
         if (changeInfo.isParameterSetOrOrderChanged()) {
             processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory);

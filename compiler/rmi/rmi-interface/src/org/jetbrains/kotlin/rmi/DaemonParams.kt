@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.rmi
 
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import java.io.File
 import java.io.Serializable
 import java.lang.management.ManagementFactory
-import java.security.DigestInputStream
 import java.security.MessageDigest
 import kotlin.reflect.KMutableProperty1
 
@@ -42,7 +42,6 @@ public val COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY: String = "kotlin.daemon.verbo
 public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
 public val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String = "kotlin.daemon.startup.timeout"
 public val COMPILE_DAEMON_DEFAULT_FILES_PREFIX: String = "kotlin-daemon"
-public val COMPILE_DAEMON_DATA_DIRECTORY_NAME: String = "." + COMPILE_DAEMON_DEFAULT_FILES_PREFIX
 public val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
 public val COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S: Int = 7200 // 2 hours
 public val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
@@ -50,11 +49,9 @@ public val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10
 public val COMPILE_DAEMON_FORCE_SHUTDOWN_TIMEOUT_INFINITE: Long = 0L
 
 public val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
-    // TODO consider special case for windows - local appdata
-    File(System.getProperty("user.home"), COMPILE_DAEMON_DATA_DIRECTORY_NAME).absolutePath
+    FileSystem.getRuntimeStateFilesPath("kotlin", "daemon")
 
-val COMPILER_ID_DIGEST = "MD5"
-
+val CLASSPATH_ID_DIGEST = "MD5"
 
 public fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String = "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
 
@@ -143,14 +140,14 @@ fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, 
 
         when {
             propMapper != null -> {
-                val optionLength = prefix.length() + matchingOption!!.length()
+                val optionLength = prefix.length + matchingOption!!.length
                 when {
                     propMapper is BoolPropMapper<*, *> -> {
-                        if (param.length() > optionLength)
+                        if (param.length > optionLength)
                             throw IllegalArgumentException("Invalid switch option '$param', expecting $prefix$matchingOption without arguments")
                         propMapper.apply("")
                     }
-                    param.length() > optionLength ->
+                    param.length > optionLength ->
                         if (param[optionLength] != '=') {
                             if (propMapper.mergeDelimiter == null)
                                 throw IllegalArgumentException("Invalid option syntax '$param', expecting $prefix$matchingOption[= ]<arg>")
@@ -224,60 +221,21 @@ public data class DaemonOptions(
 }
 
 
-fun updateSingleFileDigest(file: File, md: MessageDigest) {
-    DigestInputStream(file.inputStream(), md).use {
-        val buf = ByteArray(1024)
-        while (it.read(buf) != -1) {}
-        it.close()
-    }
-}
-
-fun updateForAllClasses(dir: File, md: MessageDigest) {
-    dir.walk().forEach { updateEntryDigest(it, md) }
-}
-
-fun updateEntryDigest(entry: File, md: MessageDigest) {
-    when {
-        entry.isDirectory
-            -> updateForAllClasses(entry, md)
-        entry.isFile &&
-        (entry.extension.equals("class", ignoreCase = true) ||
-         entry.extension.equals("jar", ignoreCase = true))
-            -> updateSingleFileDigest(entry, md)
-    // else skip
-    }
-}
-
-@JvmName("getFilesClasspathDigest_Files")
-fun Iterable<File>.getFilesClasspathDigest(): String {
-    val md = MessageDigest.getInstance(COMPILER_ID_DIGEST)
-    this.forEach { updateEntryDigest(it, md) }
-    return md.digest().joinToString("", transform = { "%02x".format(it) })
-}
-
-@JvmName("getFilesClasspathDigest_Strings")
-fun Iterable<String>.getFilesClasspathDigest(): String = map { File(it) }.getFilesClasspathDigest()
-
-fun Iterable<String>.distinctStringsDigest(): String =
-        MessageDigest.getInstance(COMPILER_ID_DIGEST)
+fun Iterable<String>.distinctStringsDigest(): ByteArray =
+        MessageDigest.getInstance(CLASSPATH_ID_DIGEST)
                 .digest(this.distinct().sorted().joinToString("").toByteArray())
-                .joinToString("", transform = { "%02x".format(it) })
+
+fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 
 public data class CompilerId(
         public var compilerClasspath: List<String> = listOf(),
-        public var compilerDigest: String = "",
         public var compilerVersion: String = ""
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(PropMapper(this, CompilerId::compilerClasspath, toString = { it.joinToString(File.pathSeparator) }, fromString = { it.trimQuotes().split(File.pathSeparator) }),
-                       StringPropMapper(this, CompilerId::compilerDigest),
                        StringPropMapper(this, CompilerId::compilerVersion))
-
-    public fun updateDigest() {
-        compilerDigest = compilerClasspath.getFilesClasspathDigest()
-    }
 
     companion object {
         @JvmStatic
@@ -285,7 +243,7 @@ public data class CompilerId(
 
         @JvmStatic
         public fun makeCompilerId(paths: Iterable<File>): CompilerId =
-                CompilerId(compilerClasspath = paths.map { it.absolutePath }, compilerDigest = paths.getFilesClasspathDigest())
+                CompilerId(compilerClasspath = paths.map { it.absolutePath })
     }
 }
 
@@ -293,7 +251,11 @@ public data class CompilerId(
 public fun isDaemonEnabled(): Boolean = System.getProperty(COMPILE_DAEMON_ENABLED_PROPERTY) != null
 
 
-public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits: Boolean, vararg additionalParams: String): DaemonJVMOptions {
+public fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
+                                     vararg additionalParams: String,
+                                     inheritMemoryLimits: Boolean,
+                                     inheritAdditionalProperties: Boolean
+): DaemonJVMOptions {
     // note: sequence matters, explicit override in COMPILE_DAEMON_JVM_OPTIONS_PROPERTY should be done after inputArguments processing
     if (inheritMemoryLimits) {
         ManagementFactory.getRuntimeMXBean().inputArguments.filterExtractProps(opts.mappers, "-")
@@ -306,15 +268,23 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions, inheritMemoryLimits
                   .filterExtractProps(opts.mappers, "-", opts.restMapper))
     }
 
-    System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"" ) }
     opts.jvmParams.addAll(additionalParams)
-    System.getProperty("kotlin.environment.keepalive")?.let { opts.jvmParams.add("Dkotlin.environment.keepalive=true") }
+    if (inheritAdditionalProperties) {
+        System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"") }
+        System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { opts.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY") }
+    }
     return opts
 }
 
 
-public fun configureDaemonJVMOptions(inheritMemoryLimits: Boolean, vararg additionalParams: String): DaemonJVMOptions =
-        configureDaemonJVMOptions(DaemonJVMOptions(), inheritMemoryLimits = inheritMemoryLimits, additionalParams = *additionalParams)
+public fun configureDaemonJVMOptions(vararg additionalParams: String,
+                                     inheritMemoryLimits: Boolean,
+                                     inheritAdditionalProperties: Boolean
+): DaemonJVMOptions =
+        configureDaemonJVMOptions(DaemonJVMOptions(),
+                                  additionalParams = *additionalParams,
+                                  inheritMemoryLimits = inheritMemoryLimits,
+                                  inheritAdditionalProperties = inheritAdditionalProperties)
 
 
 public fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {

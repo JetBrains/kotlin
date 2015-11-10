@@ -429,9 +429,11 @@ public class MethodInliner {
                     String desc = methodInsnNode.desc;
                     String name = methodInsnNode.name;
                     //TODO check closure
-                    int paramLength = Type.getArgumentsAndReturnSizes(desc) >> 2;//non static
+                    Type[] argTypes = Type.getArgumentTypes(desc);
+                    int paramCount = argTypes.length + 1;//non static
+                    int firstParameterIndex = frame.getStackSize() - paramCount;
                     if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
-                        SourceValue sourceValue = frame.getStack(frame.getStackSize() - paramLength);
+                        SourceValue sourceValue = frame.getStack(firstParameterIndex);
 
                         LambdaInfo lambdaInfo = null;
                         int varIndex = -1;
@@ -450,18 +452,19 @@ public class MethodInliner {
                     }
                     else if (isAnonymousConstructorCall(owner, name)) {
                         Map<Integer, LambdaInfo> lambdaMapping = new HashMap<Integer, LambdaInfo>();
-                        int paramStart = frame.getStackSize() - paramLength;
 
-                        for (int i = 0; i < paramLength; i++) {
-                            SourceValue sourceValue = frame.getStack(paramStart + i);
+                        int offset = 0;
+                        for (int i = 0; i < paramCount; i++) {
+                            SourceValue sourceValue = frame.getStack(firstParameterIndex + i);
                             if (sourceValue.insns.size() == 1) {
                                 AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
                                 LambdaInfo lambdaInfo = getLambdaIfExists(insnNode);
                                 if (lambdaInfo != null) {
-                                    lambdaMapping.put(i, lambdaInfo);
+                                    lambdaMapping.put(offset, lambdaInfo);
                                     node.instructions.remove(insnNode);
                                 }
                             }
+                            offset += i == 0 ? 1 : argTypes[i - 1].getSize();
                         }
 
                         anonymousObjectGenerations.add(

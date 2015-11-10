@@ -56,7 +56,7 @@ private tailrec fun ClassDescriptor.findDeclaredFunction (
         filter: (FunctionDescriptor) -> Boolean
 ): FunctionDescriptor? {
     unsubstitutedMemberScope
-            .getFunctions(Name.identifier(name), NoLookupLocation.FROM_IDE)
+            .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_IDE)
             .firstOrNull { it.containingDeclaration == this && it.kind == CallableMemberDescriptor.Kind.DECLARATION && filter(it) }
             ?.let { return it }
 

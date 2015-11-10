@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
@@ -29,23 +26,22 @@ import org.jetbrains.kotlin.load.java.lazy.resolveKotlinBinaryClass
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 public class LazyJavaPackageScope(
         c: LazyJavaResolverContext,
         private val jPackage: JavaPackage,
-        private val containingDeclaration: LazyJavaPackageFragment
-) : LazyJavaStaticScope(c, containingDeclaration) {
+        override val ownerDescriptor: LazyJavaPackageFragment
+) : LazyJavaStaticScope(c) {
+
     private val partToFacade = c.storageManager.createLazyValue {
         val result = hashMapOf<String, String>()
-        kotlinClasses@for (kotlinClass in containingDeclaration.kotlinBinaryClasses) {
+        kotlinClasses@for (kotlinClass in ownerDescriptor.kotlinBinaryClasses) {
             val header = kotlinClass.classHeader
             when (header.kind) {
                 KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
@@ -67,25 +63,23 @@ public class LazyJavaPackageScope(
             partToFacade()[partName]
 
     private val deserializedPackageScope = c.storageManager.createLazyValue {
-        if (containingDeclaration.kotlinBinaryClasses.isEmpty()) {
+        if (ownerDescriptor.kotlinBinaryClasses.isEmpty()) {
             // If the scope is queried but no package parts are found, there's a possibility that we're trying to load symbols
             // from an old package with the binary-incompatible facade.
             // We try to read the old package facade if there is one, to report the "incompatible ABI version" message.
-            packageFragment.oldPackageFacade?.let { binaryClass ->
+            ownerDescriptor.oldPackageFacade?.let { binaryClass ->
                 c.components.deserializedDescriptorResolver.readData(binaryClass, DeserializedDescriptorResolver.KOTLIN_PACKAGE_FACADE)
             }
 
-            KtScope.Empty
+            MemberScope.Empty
         }
         else {
-            c.components.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, containingDeclaration.kotlinBinaryClasses)
+            c.components.deserializedDescriptorResolver.createKotlinPackageScope(ownerDescriptor, ownerDescriptor.kotlinBinaryClasses)
         }
     }
 
-    private val packageFragment: LazyJavaPackageFragment get() = getContainingDeclaration() as LazyJavaPackageFragment
-
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> { name ->
-        val classId = ClassId(packageFragment.fqName, name)
+        val classId = ClassId(ownerDescriptor.fqName, name)
 
         val kotlinResult = c.resolveKotlinBinaryClass(c.components.kotlinClassFinder.findKotlinClass(classId))
         when (kotlinResult) {
@@ -94,8 +88,8 @@ public class LazyJavaPackageScope(
             is KotlinClassLookupResult.NotFound -> {
                 c.components.finder.findClass(classId)?.let { javaClass ->
                     c.javaClassResolver.resolveClass(javaClass).apply {
-                        assert(this == null || this.containingDeclaration == packageFragment) {
-                            "Wrong package fragment for $this, expected $packageFragment"
+                        assert(this == null || this.containingDeclaration == ownerDescriptor) {
+                            "Wrong package fragment for $this, expected $ownerDescriptor"
                         }
                     }
                 }
@@ -103,16 +97,29 @@ public class LazyJavaPackageScope(
         }
     }
 
-    override fun getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-            if (SpecialNames.isSafeIdentifier(name)) classes(name) else null
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        if (!SpecialNames.isSafeIdentifier(name)) return null
 
-    override fun getProperties(name: Name, location: LookupLocation) = deserializedPackageScope().getProperties(name, location)
-    override fun getFunctions(name: Name, location: LookupLocation) = deserializedPackageScope().getFunctions(name, location) + super.getFunctions(name, location)
+        recordLookup(name, location)
+        return classes(name)
+    }
+
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+        // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
+        recordLookup(name, location)
+        return deserializedPackageScope().getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+    }
+
+    override fun getContributedFunctions(name: Name, location: LookupLocation): List<FunctionDescriptor> {
+        // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
+        recordLookup(name, location)
+        return deserializedPackageScope().getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+    }
 
     override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
                                      kindFilter: DescriptorKindFilter,
                                      nameFilter: (Name) -> Boolean) {
-        result.addAll(deserializedPackageScope().getDescriptors(kindFilter, nameFilter))
+        result.addAll(deserializedPackageScope().getContributedDescriptors(kindFilter, nameFilter))
     }
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
@@ -145,7 +152,9 @@ public class LazyJavaPackageScope(
     )
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
-        result.addIfNotNull(c.components.samConversionResolver.resolveSamConstructor(name, this))
+        c.components.samConversionResolver.resolveSamConstructor(ownerDescriptor) {
+            getContributedClassifier(name, NoLookupLocation.FOR_ALREADY_TRACKED)
+        }?.let { result.add(it) }
     }
 
     override fun getSubPackages() = subPackages()
@@ -153,7 +162,7 @@ public class LazyJavaPackageScope(
     override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = listOf<Name>()
 
     // we don't use implementation from super which caches all descriptors and does not use filters
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         return computeDescriptors(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
     }
 }

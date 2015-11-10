@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.build;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,43 +32,48 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class LookupTrackerTestGenerated extends AbstractLookupTrackerTest {
     public void testAllFilesPresentInLookupTracker() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker"), Pattern.compile("^([^\\.]+)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/lookupTracker"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("classifierMembers")
     public void testClassifierMembers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/classifierMembers/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/classifierMembers/");
         doTest(fileName);
     }
 
     @TestMetadata("conventions")
     public void testConventions() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/conventions/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/conventions/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("java")
+    public void testJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/java/");
         doTest(fileName);
     }
 
     @TestMetadata("localDeclarations")
     public void testLocalDeclarations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/localDeclarations/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/localDeclarations/");
         doTest(fileName);
     }
 
     @TestMetadata("packageDeclarations")
     public void testPackageDeclarations() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/packageDeclarations/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/packageDeclarations/");
         doTest(fileName);
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/simple/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/simple/");
         doTest(fileName);
     }
 
     @TestMetadata("syntheticProperties")
     public void testSyntheticProperties() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/syntheticProperties/");
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/lookupTracker/syntheticProperties/");
         doTest(fileName);
     }
-
 }

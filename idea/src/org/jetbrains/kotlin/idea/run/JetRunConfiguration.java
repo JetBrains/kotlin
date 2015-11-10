@@ -21,7 +21,6 @@ import com.intellij.execution.*;
 import com.intellij.execution.application.BaseJavaApplicationCommandLineState;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.execution.util.ProgramParametersUtil;
@@ -49,8 +48,8 @@ import kotlin.jvm.functions.Function1;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.kotlin.asJava.KotlinLightMethod;
+import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration;
+import org.jetbrains.kotlin.asJava.KtLightMethod;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.name.FqName;
@@ -233,9 +232,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment)
         throws ExecutionException {
-        JavaCommandLineState state = new MyJavaCommandLineState(this, executionEnvironment);
-        state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
-        return state;
+        return new MyJavaCommandLineState(this, executionEnvironment);
     }
 
     @Nullable
@@ -315,9 +312,9 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
                         new Function1<PsiMethod, KtNamedFunction>() {
                             @Override
                             public KtNamedFunction invoke(PsiMethod method) {
-                                if (!(method instanceof KotlinLightMethod)) return null;
+                                if (!(method instanceof KtLightMethod)) return null;
 
-                                KtDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+                                KtDeclaration declaration = ((KtLightMethod) method).getOrigin();
                                 return declaration instanceof KtNamedFunction ? (KtNamedFunction) declaration : null;
                             }
                         }
@@ -397,7 +394,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         private String noFunctionFoundMessage(@NotNull PsiClass psiClass) {
             //noinspection ConstantConditions
             FqName classFqName = new FqName(psiClass.getQualifiedName());
-            if (psiClass instanceof KotlinLightClassForExplicitDeclaration) {
+            if (psiClass instanceof KtLightClassForExplicitDeclaration) {
                 return String.format("Function 'main' not found in class '%s'", classFqName);
             }
             return String.format("Top-level function 'main' not found in package '%s'", classFqName.parent());

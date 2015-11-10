@@ -23,7 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
@@ -52,7 +52,7 @@ public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccess
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message(
+        return KotlinBundle.message(
                 getElement().isGetter() ? "change.getter.type" : "change.setter.type",
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
         );
@@ -61,7 +61,7 @@ public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccess
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.accessor.type");
+        return KotlinBundle.message("change.accessor.type");
     }
 
     @Override
@@ -84,8 +84,8 @@ public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccess
         ShortenReferences.DEFAULT.process(newTypeReference);
     }
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtPropertyAccessor> createAction(@NotNull Diagnostic diagnostic) {
                 KtPropertyAccessor accessor = QuickFixUtil.getParentElementOfType(diagnostic, KtPropertyAccessor.class);

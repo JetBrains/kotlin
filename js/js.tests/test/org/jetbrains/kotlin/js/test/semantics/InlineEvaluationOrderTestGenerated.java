@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,228 +32,228 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class InlineEvaluationOrderTestGenerated extends AbstractInlineEvaluationOrderTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineEvaluationOrder/cases"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineEvaluationOrder/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("argumentOfCall.kt")
     public void testArgumentOfCall() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/argumentOfCall.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/argumentOfCall.kt");
         doTest(fileName);
     }
 
     @TestMetadata("argumentOfCallMultipleInlineCalls.kt")
     public void testArgumentOfCallMultipleInlineCalls() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/argumentOfCallMultipleInlineCalls.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/argumentOfCallMultipleInlineCalls.kt");
         doTest(fileName);
     }
 
     @TestMetadata("argumentOfInlineCall.kt")
     public void testArgumentOfInlineCall() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/argumentOfInlineCall.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/argumentOfInlineCall.kt");
         doTest(fileName);
     }
 
     @TestMetadata("argumentOfNew.kt")
     public void testArgumentOfNew() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/argumentOfNew.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/argumentOfNew.kt");
         doTest(fileName);
     }
 
     @TestMetadata("arrayAccess1.kt")
     public void testArrayAccess1() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayAccess1.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayAccess1.kt");
         doTest(fileName);
     }
 
     @TestMetadata("arrayAccess2.kt")
     public void testArrayAccess2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayAccess2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayAccess2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("arrayAccess3.kt")
     public void testArrayAccess3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayAccess3.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayAccess3.kt");
         doTest(fileName);
     }
 
     @TestMetadata("arrayLiteral.kt")
     public void testArrayLiteral() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayLiteral.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayLiteral.kt");
         doTest(fileName);
     }
 
     @TestMetadata("arrayLiteralMultipleInlineCalls.kt")
     public void testArrayLiteralMultipleInlineCalls() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayLiteralMultipleInlineCalls.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayLiteralMultipleInlineCalls.kt");
         doTest(fileName);
     }
 
     @TestMetadata("arrayLiteralNested.kt")
     public void testArrayLiteralNested() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayLiteralNested.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/arrayLiteralNested.kt");
         doTest(fileName);
     }
 
     @TestMetadata("assignment.kt")
     public void testAssignment() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/assignment.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/assignment.kt");
         doTest(fileName);
     }
 
     @TestMetadata("binaryOperator.kt")
     public void testBinaryOperator() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/binaryOperator.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/binaryOperator.kt");
         doTest(fileName);
     }
 
     @TestMetadata("binaryOperatorMultipleInlineCalls.kt")
     public void testBinaryOperatorMultipleInlineCalls() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/binaryOperatorMultipleInlineCalls.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/binaryOperatorMultipleInlineCalls.kt");
         doTest(fileName);
     }
 
     @TestMetadata("callQualifier.kt")
     public void testCallQualifier() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/callQualifier.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/callQualifier.kt");
         doTest(fileName);
     }
 
     @TestMetadata("callQualifierComplex.kt")
     public void testCallQualifierComplex() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/callQualifierComplex.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/callQualifierComplex.kt");
         doTest(fileName);
     }
 
     @TestMetadata("conditional.kt")
     public void testConditional() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditional.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditional.kt");
         doTest(fileName);
     }
 
     @TestMetadata("conditionalElvis.kt")
     public void testConditionalElvis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditionalElvis.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditionalElvis.kt");
         doTest(fileName);
     }
 
     @TestMetadata("conditionalNested.kt")
     public void testConditionalNested() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditionalNested.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditionalNested.kt");
         doTest(fileName);
     }
 
     @TestMetadata("conditionalTestExpression.kt")
     public void testConditionalTestExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditionalTestExpression.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditionalTestExpression.kt");
         doTest(fileName);
     }
 
     @TestMetadata("conditionalTestExpressionElvis.kt")
     public void testConditionalTestExpressionElvis() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditionalTestExpressionElvis.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/conditionalTestExpressionElvis.kt");
         doTest(fileName);
     }
 
     @TestMetadata("doWhile.kt")
     public void testDoWhile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/doWhile.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/doWhile.kt");
         doTest(fileName);
     }
 
     @TestMetadata("doWhileComplex.kt")
     public void testDoWhileComplex() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/doWhileComplex.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/doWhileComplex.kt");
         doTest(fileName);
     }
 
     @TestMetadata("for.kt")
     public void testFor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/for.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/for.kt");
         doTest(fileName);
     }
 
     @TestMetadata("if.kt")
     public void testIf() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/if.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/if.kt");
         doTest(fileName);
     }
 
     @TestMetadata("lambdaWithClosure.kt")
     public void testLambdaWithClosure() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/lambdaWithClosure.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/lambdaWithClosure.kt");
         doTest(fileName);
     }
 
     @TestMetadata("logicalAnd.kt")
     public void testLogicalAnd() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/logicalAnd.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/logicalAnd.kt");
         doTest(fileName);
     }
 
     @TestMetadata("logicalAndOrMultipleInlineCalls.kt")
     public void testLogicalAndOrMultipleInlineCalls() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/logicalAndOrMultipleInlineCalls.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/logicalAndOrMultipleInlineCalls.kt");
         doTest(fileName);
     }
 
     @TestMetadata("logicalOr.kt")
     public void testLogicalOr() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/logicalOr.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/logicalOr.kt");
         doTest(fileName);
     }
 
     @TestMetadata("methodCallQualifierWithSideEffect.kt")
     public void testMethodCallQualifierWithSideEffect() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/methodCallQualifierWithSideEffect.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/methodCallQualifierWithSideEffect.kt");
         doTest(fileName);
     }
 
     @TestMetadata("methodInlineCallQualifierWithSideEffect.kt")
     public void testMethodInlineCallQualifierWithSideEffect() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/methodInlineCallQualifierWithSideEffect.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/methodInlineCallQualifierWithSideEffect.kt");
         doTest(fileName);
     }
 
     @TestMetadata("multiDeclaration.kt")
     public void testMultiDeclaration() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/multiDeclaration.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/multiDeclaration.kt");
         doTest(fileName);
     }
 
     @TestMetadata("multiDeclarationComplex.kt")
     public void testMultiDeclarationComplex() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/multiDeclarationComplex.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/multiDeclarationComplex.kt");
         doTest(fileName);
     }
 
     @TestMetadata("nestedInlineCall.kt")
     public void testNestedInlineCall() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/nestedInlineCall.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/nestedInlineCall.kt");
         doTest(fileName);
     }
 
     @TestMetadata("propertiesInitializationOrder.kt")
     public void testPropertiesInitializationOrder() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertiesInitializationOrder.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertiesInitializationOrder.kt");
         doTest(fileName);
     }
 
     @TestMetadata("propertiesInitializationOrderSimple.kt")
     public void testPropertiesInitializationOrderSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertiesInitializationOrderSimple.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/propertiesInitializationOrderSimple.kt");
         doTest(fileName);
     }
 
     @TestMetadata("while.kt")
     public void testWhile() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/while.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/while.kt");
         doTest(fileName);
     }
 
     @TestMetadata("whileComplex.kt")
     public void testWhileComplex() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/whileComplex.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/inlineEvaluationOrder/cases/whileComplex.kt");
         doTest(fileName);
     }
 }

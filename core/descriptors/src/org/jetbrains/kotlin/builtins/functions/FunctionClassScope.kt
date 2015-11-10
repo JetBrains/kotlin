@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
@@ -30,7 +30,7 @@ import java.util.ArrayList
 class FunctionClassScope(
         private val storageManager: StorageManager,
         private val functionClass: FunctionClassDescriptor
-) : KtScopeImpl() {
+) : MemberScopeImpl() {
     private val allDescriptors = storageManager.createLazyValue {
         if (functionClass.functionKind == FunctionClassDescriptor.Kind.Function) {
             val invoke = FunctionInvokeDescriptor.create(functionClass)
@@ -41,25 +41,23 @@ class FunctionClassScope(
         }
     }
 
-    override fun getContainingDeclaration() = functionClass
-
-    override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.CALLABLES.kindMask)) return listOf()
         return allDescriptors()
     }
 
-    override fun getFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         return allDescriptors().filterIsInstance<FunctionDescriptor>().filter { it.getName() == name }
     }
 
-    override fun getProperties(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         return allDescriptors().filterIsInstance<PropertyDescriptor>().filter { it.getName() == name }
     }
 
     private fun createFakeOverrides(invoke: FunctionDescriptor?): List<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>(3)
         val allSuperDescriptors = functionClass.getTypeConstructor().getSupertypes()
-                .flatMap { it.getMemberScope().getAllDescriptors() }
+                .flatMap { it.getMemberScope().getContributedDescriptors() }
                 .filterIsInstance<CallableMemberDescriptor>()
         for ((name, group) in allSuperDescriptors.groupBy { it.getName() }) {
             for ((isFunction, descriptors) in group.groupBy { it is FunctionDescriptor }) {
@@ -75,7 +73,7 @@ class FunctionClassScope(
                             }
 
                             override fun conflict(fromSuper: CallableMemberDescriptor, fromCurrent: CallableMemberDescriptor) {
-                                error("Conflict in scope of ${getContainingDeclaration()}: $fromSuper vs $fromCurrent")
+                                error("Conflict in scope of $functionClass: $fromSuper vs $fromCurrent")
                             }
                         }
                 )

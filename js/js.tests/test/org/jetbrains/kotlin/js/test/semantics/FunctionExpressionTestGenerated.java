@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,24 +32,24 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class FunctionExpressionTestGenerated extends AbstractFunctionExpressionTest {
     public void testAllFilesPresentInFunctionExpression() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/functionExpression"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/functionExpression"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("functionExpression.kt")
     public void testFunctionExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpression.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpression.kt");
         doTest(fileName);
     }
 
     @TestMetadata("functionExpressionWithThisReference.kt")
     public void testFunctionExpressionWithThisReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt");
         doTest(fileName);
     }
 
     @TestMetadata("functionLiteralExpression.kt")
     public void testFunctionLiteralExpression() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionLiteralExpression.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/functions/functionExpression/functionLiteralExpression.kt");
         doTest(fileName);
     }
 }

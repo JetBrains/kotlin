@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 public interface PackageFragmentDescriptor : ClassOrPackageFragmentDescriptor {
 
@@ -25,5 +25,5 @@ public interface PackageFragmentDescriptor : ClassOrPackageFragmentDescriptor {
 
     public val fqName: FqName
 
-    public fun getMemberScope(): KtScope
+    public fun getMemberScope(): MemberScope
 }

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention())
 
-class ObjectLiteralToLambdaIntention : JetSelfTargetingRangeIntention<KtObjectLiteralExpression>(
+class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
         KtObjectLiteralExpression::class.java,
         "Convert to lambda",
         "Convert object literal to lambda"
@@ -148,7 +148,7 @@ class ObjectLiteralToLambdaIntention : JetSelfTargetingRangeIntention<KtObjectLi
             RedundantSamConstructorInspection.replaceSamConstructorCall(callExpression)
         }
         else {
-            ShortenReferences.DEFAULT.process(replaced.getContainingJetFile(), replaced.startOffset, callee.endOffset)
+            ShortenReferences.DEFAULT.process(replaced.getContainingKtFile(), replaced.startOffset, callee.endOffset)
         }
     }
 

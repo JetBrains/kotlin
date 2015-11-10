@@ -35,7 +35,7 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         ChangeFunctionSignatureFix.runRemoveParameter(parameterDescriptor, element)
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtParameter> {
             return RemoveUnusedFunctionParameterFix(Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement)
         }

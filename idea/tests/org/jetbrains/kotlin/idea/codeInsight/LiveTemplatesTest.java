@@ -32,15 +32,15 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class LiveTemplatesTest extends JetLightCodeInsightFixtureTestCase {
+public class LiveTemplatesTest extends KotlinLightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() {
         super.setUp();
@@ -305,7 +305,7 @@ public class LiveTemplatesTest extends JetLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     private void doAction(@NotNull String actionId) {

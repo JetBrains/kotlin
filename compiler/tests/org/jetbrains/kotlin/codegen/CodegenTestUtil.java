@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import kotlin.StringsKt;
+import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -120,15 +120,15 @@ public class CodegenTestUtil {
             @NotNull List<String> additionalOptions
     ) {
         try {
-            File javaClassesTempDirectory = JetTestUtils.tmpDir("java-classes");
+            File javaClassesTempDirectory = KotlinTestUtils.tmpDir("java-classes");
             List<String> classpath = new ArrayList<String>();
             classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
             classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
-            classpath.add(JetTestUtils.getAnnotationsJar().getPath());
+            classpath.add(KotlinTestUtils.getAnnotationsJar().getPath());
             classpath.addAll(additionalClasspath);
 
             List<String> options = new ArrayList<String>(Arrays.asList(
-                    "-classpath", StringsKt.join(classpath, File.pathSeparator, "", "", -1, ""),
+                    "-classpath", StringsKt.join(classpath, File.pathSeparator),
                     "-d", javaClassesTempDirectory.getPath()
             ));
             options.addAll(additionalOptions);
@@ -136,11 +136,11 @@ public class CodegenTestUtil {
             List<File> fileList = Lists.transform(fileNames, new Function<String, File>() {
                 @Override
                 public File apply(@Nullable String input) {
-                    return new File(JetTestUtils.getTestDataPathBase() + "/codegen/" + input);
+                    return new File(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + input);
                 }
             });
 
-            JetTestUtils.compileJavaFiles(fileList, options);
+            KotlinTestUtils.compileJavaFiles(fileList, options);
 
             return javaClassesTempDirectory;
         }

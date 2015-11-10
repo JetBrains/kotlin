@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.config.Services;
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
@@ -54,6 +53,7 @@ import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -88,8 +88,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         final MessageSeverityCollector messageSeverityCollector = new MessageSeverityCollector(messageCollector);
 
         if (arguments.freeArgs.isEmpty()) {
+            if (arguments.version) {
+                return OK;
+            }
             messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "Specify at least one source file or directory", NO_LOCATION);
-            return ExitCode.COMPILATION_ERROR;
+            return COMPILATION_ERROR;
         }
 
         CompilerConfiguration configuration = new CompilerConfiguration();

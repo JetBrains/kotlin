@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 import org.jetbrains.kotlin.resolve.constants.NullValue;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -101,7 +101,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 supertypes,
                 KotlinSourceElementKt.toSourceElement(element)
         );
-        classDescriptor.initialize(KtScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
+        classDescriptor.initialize(MemberScope.Empty.INSTANCE, Collections.<ConstructorDescriptor>emptySet(), null);
 
         bindingTrace.record(CLASS_FOR_CALLABLE, callableDescriptor, classDescriptor);
         return classDescriptor;
@@ -153,13 +153,13 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @Override
-    public void visitJetElement(@NotNull KtElement element) {
-        super.visitJetElement(element);
+    public void visitKtElement(@NotNull KtElement element) {
+        super.visitKtElement(element);
         element.acceptChildren(this);
     }
 
     @Override
-    public void visitJetFile(@NotNull KtFile file) {
+    public void visitKtFile(@NotNull KtFile file) {
         if (file.isScript()) {
             // TODO: replace with visitScript override
             //noinspection ConstantConditions
@@ -518,7 +518,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         super.visitWhenExpression(expression);
         if (!isWhenWithEnums(expression)) return;
 
-        String currentClassName = getCurrentTopLevelClassOrPackagePartInternalName(expression.getContainingJetFile());
+        String currentClassName = getCurrentTopLevelClassOrPackagePartInternalName(expression.getContainingKtFile());
 
         if (bindingContext.get(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName) == null) {
             bindingTrace.record(MAPPINGS_FOR_WHENS_BY_ENUM_IN_CLASS_FILE, currentClassName, new ArrayList<WhenByEnumsMapping>(1));

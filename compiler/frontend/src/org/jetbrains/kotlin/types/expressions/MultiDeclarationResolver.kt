@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -75,8 +74,7 @@ public class MultiDeclarationResolver(
             }
             val variableDescriptor = descriptorResolver.resolveLocalVariableDescriptorWithType(writableScope, entry, componentType, context.trace)
 
-            val olderVariable = writableScope.findLocalVariable(variableDescriptor.getName())
-            ExpressionTypingUtils.checkVariableShadowing(context, variableDescriptor, olderVariable)
+            ExpressionTypingUtils.checkVariableShadowing(writableScope, context.trace, variableDescriptor)
 
             writableScope.addVariableDescriptor(variableDescriptor)
         }

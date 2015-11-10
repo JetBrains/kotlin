@@ -203,11 +203,12 @@ public class PropertyCodegen {
                 null
         );
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            KtExpression defaultValue = p.getDefaultValue();
-            if (defaultValue != null) {
-                ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
-                assert constant != null : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
+        KtExpression defaultValue = p.getDefaultValue();
+        if (defaultValue != null) {
+            ConstantValue<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
+            assert state.getClassBuilderMode() != ClassBuilderMode.FULL || constant != null
+                    : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
+            if (constant != null) {
                 AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(mv, typeMapper);
                 annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());
             }

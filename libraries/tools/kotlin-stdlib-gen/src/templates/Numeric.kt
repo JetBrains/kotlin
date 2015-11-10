@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.DocExtensions.collection
 
 fun numeric(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -8,7 +9,7 @@ fun numeric(): List<GenericFunction> {
     templates add f("sum()") {
         exclude(Strings)
         buildFamilies.forEach { family -> onlyPrimitives(family, numericPrimitives) }
-        doc { "Returns the sum of all elements in the collection." }
+        doc { f -> "Returns the sum of all elements in the ${f.collection}." }
         returns("SUM")
         platformName("sumOf<T>")
         body {
@@ -26,7 +27,7 @@ fun numeric(): List<GenericFunction> {
     templates add f("average()") {
         exclude(Strings)
         buildFamilies.forEach { family -> onlyPrimitives(family, numericPrimitives) }
-        doc { "Returns an average value of elements in the collection."}
+        doc { f -> "Returns an average value of elements in the ${f.collection}."}
         returns("Double")
         platformName("averageOf<T>")
         body {

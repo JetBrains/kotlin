@@ -16,6 +16,6 @@ class Derived : Base() {
 
         val y: Int? = null
         if (y != null) super.bar(this.baz(<!DEBUG_INFO_SMARTCAST!>y<!>))
-        else this.baz(super.bar(<!TYPE_MISMATCH!>y<!>))
+        else this.baz(super.bar(<!ALWAYS_NULL, TYPE_MISMATCH!>y<!>))
     }
 }

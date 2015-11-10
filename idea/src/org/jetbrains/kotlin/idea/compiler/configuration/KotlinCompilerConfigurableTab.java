@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.config.CompilerSettings;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
 
 import javax.swing.*;
@@ -69,9 +69,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
         setupFileChooser(labelForOutputPrefixFile, outputPrefixFile,
-                         JetBundle.message("kotlin.compiler.js.option.output.prefix.browse.title"));
+                         KotlinBundle.message("kotlin.compiler.js.option.output.prefix.browse.title"));
         setupFileChooser(labelForOutputPostfixFile, outputPostfixFile,
-                         JetBundle.message("kotlin.compiler.js.option.output.postfix.browse.title"));
+                         KotlinBundle.message("kotlin.compiler.js.option.output.postfix.browse.title"));
 
         labelForOutputDirectory.setLabelFor(outputDirectory);
         copyRuntimeFilesCheckBox.addChangeListener(new ChangeListener() {

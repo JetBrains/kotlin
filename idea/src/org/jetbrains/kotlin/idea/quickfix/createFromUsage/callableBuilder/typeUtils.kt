@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
@@ -80,7 +81,7 @@ private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor,
 internal fun KotlinType.renderShort(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, false)
 internal fun KotlinType.renderLong(typeParameterNameMap: Map<TypeParameterDescriptor, String>) = render(typeParameterNameMap, true)
 
-internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: LexicalScope): List<TypeParameterDescriptor> {
+internal fun getTypeParameterNamesNotInScope(typeParameters: Collection<TypeParameterDescriptor>, scope: HierarchicalScope): List<TypeParameterDescriptor> {
     return typeParameters.filter { typeParameter ->
         val classifier = scope.findClassifier(typeParameter.name, NoLookupLocation.FROM_IDE)
         classifier == null || classifier != typeParameter

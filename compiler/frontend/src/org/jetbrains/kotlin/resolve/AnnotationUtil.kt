@@ -22,13 +22,11 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public fun DeclarationDescriptor.hasPlatformStaticAnnotation(): Boolean {
-    return getAnnotations().findAnnotation(FqName("kotlin.platform.platformStatic")) != null ||
-           getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
+public fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
+    return getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
 }
 
 public fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
@@ -52,9 +50,9 @@ private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescrip
             is PropertyAccessorDescriptor -> {
                 val propertyDescriptor = getCorrespondingProperty()
                 predicate(propertyDescriptor.getContainingDeclaration()) &&
-                (hasPlatformStaticAnnotation() || propertyDescriptor.hasPlatformStaticAnnotation())
+                (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
             }
-            else -> predicate(getContainingDeclaration()) && hasPlatformStaticAnnotation()
+            else -> predicate(getContainingDeclaration()) && hasJvmStaticAnnotation()
         }
 
 public fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {

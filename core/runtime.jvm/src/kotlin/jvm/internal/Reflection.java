@@ -39,10 +39,16 @@ public class Reflection {
         factory = impl != null ? impl : new ReflectionFactory();
     }
 
+    /* package */ static final String REFLECTION_NOT_AVAILABLE = " (Kotlin reflection is not available)";
+
     private static final KClass[] EMPTY_K_CLASS_ARRAY = new KClass[0];
 
     public static KClass createKotlinClass(Class javaClass) {
         return factory.createKotlinClass(javaClass);
+    }
+
+    public static KClass createKotlinClass(Class javaClass, String internalName) {
+        return factory.createKotlinClass(javaClass, internalName);
     }
 
     public static KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
@@ -51,6 +57,10 @@ public class Reflection {
 
     public static KClass getOrCreateKotlinClass(Class javaClass) {
         return factory.getOrCreateKotlinClass(javaClass);
+    }
+
+    public static KClass getOrCreateKotlinClass(Class javaClass, String internalName) {
+        return factory.getOrCreateKotlinClass(javaClass, internalName);
     }
 
     public static KClass[] getOrCreateKotlinClasses(Class[] javaClasses) {
@@ -96,6 +106,7 @@ public class Reflection {
     }
 
     // Deprecated
+    // TODO: drop before 1.0
 
     @Deprecated
     public static KPackage createKotlinPackage(Class javaClass, String moduleName) {

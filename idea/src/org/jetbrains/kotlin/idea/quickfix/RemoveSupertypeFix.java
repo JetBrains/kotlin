@@ -24,7 +24,7 @@ import com.intellij.psi.impl.PsiImplUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtDelegationSpecifier;
@@ -41,13 +41,13 @@ public class RemoveSupertypeFix extends KotlinQuickFixAction<KtDelegationSpecifi
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("remove.supertype", superClass.getText());
+        return KotlinBundle.message("remove.supertype", superClass.getText());
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("remove.supertype.family");
+        return KotlinBundle.message("remove.supertype.family");
     }
 
     @Override
@@ -64,8 +64,8 @@ public class RemoveSupertypeFix extends KotlinQuickFixAction<KtDelegationSpecifi
         superClass.delete();
     }
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Override
             public KotlinQuickFixAction<KtDelegationSpecifier> createAction(Diagnostic diagnostic) {
                 KtDelegationSpecifier superClass = QuickFixUtil.getParentElementOfType(diagnostic, KtDelegationSpecifier.class);

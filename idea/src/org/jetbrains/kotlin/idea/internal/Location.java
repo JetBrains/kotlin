@@ -30,7 +30,7 @@ public class Location {
     final Editor editor;
 
     @Nullable
-    final KtFile jetFile;
+    final KtFile ktFile;
 
     final long modificationStamp;
 
@@ -47,18 +47,18 @@ public class Location {
 
             VirtualFile vFile = ((EditorEx) editor).getVirtualFile();
             if (vFile == null) {
-                jetFile = null;
+                ktFile = null;
             }
             else {
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
-                jetFile = psiFile instanceof KtFile ? (KtFile) psiFile : null;
+                ktFile = psiFile instanceof KtFile ? (KtFile) psiFile : null;
             }
         }
         else {
             modificationStamp = 0;
             startOffset = 0;
             endOffset = 0;
-            jetFile = null;
+            ktFile = null;
         }
     }
 
@@ -67,8 +67,8 @@ public class Location {
     }
 
     @Nullable
-    public KtFile getJetFile() {
-        return jetFile;
+    public KtFile getKFile() {
+        return ktFile;
     }
 
     @Nullable
@@ -95,7 +95,7 @@ public class Location {
         if (endOffset != location.endOffset) return false;
         if (startOffset != location.startOffset) return false;
         if (editor != null ? !editor.equals(location.editor) : location.editor != null) return false;
-        if (jetFile != null ? !jetFile.equals(location.jetFile) : location.jetFile != null) return false;
+        if (ktFile != null ? !ktFile.equals(location.ktFile) : location.ktFile != null) return false;
 
         return true;
     }
@@ -103,7 +103,7 @@ public class Location {
     @Override
     public int hashCode() {
         int result = editor != null ? editor.hashCode() : 0;
-        result = 31 * result + (jetFile != null ? jetFile.hashCode() : 0);
+        result = 31 * result + (ktFile != null ? ktFile.hashCode() : 0);
         result = 31 * result + (int)(modificationStamp ^ (modificationStamp >>> 32));
         result = 31 * result + startOffset;
         result = 31 * result + endOffset;

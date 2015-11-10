@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.WritableScope;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -169,7 +168,7 @@ public class ExpressionTypingServices {
         }
         LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null,
                                                               new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
 
         KotlinTypeInfo r;
         if (block.isEmpty()) {
@@ -180,7 +179,7 @@ public class ExpressionTypingServices {
             r = getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression,
                                                       context.replaceStatementFilter(statementFilter));
         }
-        scope.changeLockLevel(WritableScope.LockLevel.READING);
+        scope.changeLockLevel(LexicalWritableScope.LockLevel.READING);
 
         if (containingDescriptor instanceof ScriptDescriptor) {
             context.trace.record(BindingContext.SCRIPT_SCOPE, (ScriptDescriptor) containingDescriptor, scope);

@@ -4,6 +4,6 @@ fun foo(y: String?) {
     var x: String? = ""
     if (x != null) {
         y?.let { x = null }
-        x<!UNSAFE_CALL!>.<!>length // Smart cast is not possible
+        <!SMARTCAST_IMPOSSIBLE!>x<!>.length // Smart cast is not possible
     }
 }

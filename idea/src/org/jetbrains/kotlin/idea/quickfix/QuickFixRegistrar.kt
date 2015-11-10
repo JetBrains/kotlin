@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
-import org.jetbrains.kotlin.idea.intentions.IntroduceBackingPropertyFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -43,7 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.POSITIONED_VALUE_A
 
 public class QuickFixRegistrar : QuickFixContributor {
     public override fun registerQuickFixes(quickFixes: QuickFixes) {
-        fun DiagnosticFactory<*>.registerFactory(vararg factory: JetIntentionActionsFactory) {
+        fun DiagnosticFactory<*>.registerFactory(vararg factory: KotlinIntentionActionsFactory) {
             quickFixes.register(this, *factory)
         }
 
@@ -115,7 +114,7 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         val removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory()
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
-        PRIVATE_SETTER_ON_NON_PRIVATE_LATE_INIT_VAR.registerFactory(removeModifierFactory)
+        SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY.registerFactory(removeModifierFactory)
         ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
         WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
@@ -164,6 +163,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         val removeValVarFromParameterFixFactory = RemoveValVarFromParameterFix.createFactory()
         VAL_OR_VAR_ON_FUN_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
         VAL_OR_VAR_ON_LOOP_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
+        VAL_OR_VAR_ON_LOOP_MULTI_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
         VAL_OR_VAR_ON_CATCH_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
         VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
 
@@ -327,6 +327,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.registerFactory(ConstFixFactory)
 
         OPERATOR_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.OPERATOR_KEYWORD))
+        OPERATOR_MODIFIER_REQUIRED.registerFactory(AutoImportForMissingOperatorFactory)
+
         INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.INFIX_KEYWORD))
 
         UNDERSCORE_IS_RESERVED.registerFactory(RenameUnderscoreFix)

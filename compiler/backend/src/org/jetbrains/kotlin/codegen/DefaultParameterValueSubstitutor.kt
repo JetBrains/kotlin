@@ -38,13 +38,15 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      * If all of the parameters of the specified constructor declare default values,
      * generates a no-argument constructor that passes default values for all arguments.
      */
-    fun generateConstructorOverloadsIfNeeded(
+    fun generatePrimaryConstructorOverloadsIfNeeded(
             constructorDescriptor: ConstructorDescriptor,
             classBuilder: ClassBuilder,
             contextKind: OwnerKind,
             classOrObject: KtClassOrObject
     ) {
-        if (generateOverloadsIfNeeded(classOrObject, constructorDescriptor, constructorDescriptor, contextKind, classBuilder)) {
+        val methodElement = classOrObject.getPrimaryConstructor() ?: classOrObject
+
+        if (generateOverloadsIfNeeded(methodElement, constructorDescriptor, constructorDescriptor, contextKind, classBuilder)) {
             return
         }
 
@@ -52,7 +54,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             return
         }
 
-        generateOverloadWithSubstitutedParameters(constructorDescriptor, constructorDescriptor, classBuilder, classOrObject, contextKind,
+        generateOverloadWithSubstitutedParameters(constructorDescriptor, constructorDescriptor, classBuilder, methodElement, contextKind,
                                                   constructorDescriptor.countDefaultParameters())
     }
 
@@ -64,7 +66,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      *
      * @param functionDescriptor the method for which the overloads are generated
      * @param delegateFunctionDescriptor the method descriptor for the implementation that we need to call
-     *     (same as [functionDescriptor] in all cases except for companion object methods annotated with [platformStatic],
+     *     (same as [functionDescriptor] in all cases except for companion object methods annotated with @JvmStatic,
      *     where [functionDescriptor] is the static method in the main class and [delegateFunctionDescriptor] is the
      *     implementation in the companion object class)
      * @return true if the overloads annotation was found on the element, false otherwise
@@ -100,7 +102,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      *
      * @param functionDescriptor the method for which the overloads are generated
      * @param delegateFunctionDescriptor the method descriptor for the implementation that we need to call
-     *     (same as [functionDescriptor] in all cases except for companion object methods annotated with [platformStatic],
+     *     (same as [functionDescriptor] in all cases except for companion object methods annotated with @JvmStatic,
      *     where [functionDescriptor] is the static method in the main class and [delegateFunctionDescriptor] is the
      *     implementation in the companion object class)
      * @param methodElement the PSI element for the method implementation (used in diagnostic messages only)
@@ -173,7 +175,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
             }
             else {
                 AsmUtil.pushDefaultValueOnStack(paramType, v)
-                val i = parameterDescriptor.getIndex()
+                val i = parameterDescriptor.index
                 if (i != 0 && i % Integer.SIZE == 0) {
                     masks.add(mask)
                     mask = 0

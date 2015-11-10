@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapperKt;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.*;
@@ -305,7 +305,7 @@ public class SignaturesPropagationData {
         Name name = method.getName();
         JvmMethodSignature autoSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(autoMethodDescriptor);
         for (KotlinType supertype : containingClass.getTypeConstructor().getSupertypes()) {
-            Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
+            Collection<FunctionDescriptor> superFunctionCandidates = supertype.getMemberScope().getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS);
             for (FunctionDescriptor candidate : superFunctionCandidates) {
                 JvmMethodSignature candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
                 if (KotlinToJvmSignatureMapperKt.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
@@ -401,7 +401,7 @@ public class SignaturesPropagationData {
         boolean resultNullable = typeMustBeNullable(autoType, typesFromSuper, howThisTypeIsUsed);
         ClassifierDescriptor resultClassifier = modifyTypeClassifier(autoType, typesFromSuper);
         List<TypeProjection> resultArguments = getTypeArgsOfType(autoType, resultClassifier, typesFromSuper);
-        KtScope resultScope;
+        MemberScope resultScope;
         if (resultClassifier instanceof ClassDescriptor) {
             resultScope = ((ClassDescriptor) resultClassifier).getMemberScope(resultArguments);
         }

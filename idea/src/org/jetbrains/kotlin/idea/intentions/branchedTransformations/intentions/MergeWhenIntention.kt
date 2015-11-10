@@ -22,14 +22,14 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.appendElement
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
-public class MergeWhenIntention : JetSelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Merge with next 'when'", "Merge 'when' expressions") {
+public class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Merge with next 'when'", "Merge 'when' expressions") {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         val next = PsiTreeUtil.skipSiblingsForward(element, javaClass<PsiWhiteSpace>()) as? KtWhenExpression ?: return null
 

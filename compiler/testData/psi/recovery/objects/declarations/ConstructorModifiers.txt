@@ -6,8 +6,7 @@ JetFile: ConstructorModifiers.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
@@ -20,8 +19,7 @@ JetFile: ConstructorModifiers.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
@@ -38,8 +36,7 @@ JetFile: ConstructorModifiers.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
@@ -66,8 +63,7 @@ JetFile: ConstructorModifiers.kt
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')
-    OBJECT_DECLARATION_NAME
-      PsiElement(IDENTIFIER)('Foo')
+    PsiElement(IDENTIFIER)('Foo')
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST

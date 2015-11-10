@@ -31,7 +31,7 @@ public class RemoveNameFromFunctionExpressionFix(element: KtNamedFunction) : Kot
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) = removeNameFromFunction(element)
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
 
         override fun createAction(diagnostic: Diagnostic) =
                 diagnostic.createIntentionForFirstParentOfType(::RemoveNameFromFunctionExpressionFix)

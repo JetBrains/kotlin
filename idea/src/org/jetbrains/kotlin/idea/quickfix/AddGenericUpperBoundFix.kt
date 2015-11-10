@@ -61,7 +61,7 @@ public class AddGenericUpperBoundFix(
         ShortenReferences.DEFAULT.process(insertedTypeReference)
     }
 
-    companion object Factory : JetIntentionActionsFactory() {
+    companion object Factory : KotlinIntentionActionsFactory() {
         override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
             return when (diagnostic.factory) {
                 Errors.UPPER_BOUND_VIOLATED -> {

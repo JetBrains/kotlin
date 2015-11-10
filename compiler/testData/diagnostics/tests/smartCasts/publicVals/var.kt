@@ -4,10 +4,10 @@ public class X {
     public fun fn(): Int {
         if (x != null)
             // Smartcast is not possible for variable properties
-            return x<!UNSAFE_CALL!>.<!>length
+            return <!SMARTCAST_IMPOSSIBLE!>x<!>.length
         else if (y != null)
             // Even if they are private
-            return y<!UNSAFE_CALL!>.<!>length
+            return <!SMARTCAST_IMPOSSIBLE!>y<!>.length
         else
             return 0
     }

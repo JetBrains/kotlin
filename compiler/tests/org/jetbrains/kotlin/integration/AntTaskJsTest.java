@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.kotlin.js.test.rhino.RhinoUtils;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
 
     @NotNull
     private String getTestDataDir() {
-        return JetTestUtils.getTestDataPathBase() + "/integration/ant/js/" + getTestName(true);
+        return KotlinTestUtils.getTestDataPathBase() + "/integration/ant/js/" + getTestName(true);
     }
 
     @NotNull

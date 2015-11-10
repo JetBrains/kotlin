@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
@@ -30,7 +31,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.NEED_SYNTHETIC_ACCESSO
 public class NeedSyntheticChecker implements CallChecker {
 
     @Override
-    public  <F extends CallableDescriptor> void check(
+    public <F extends CallableDescriptor> void check(
             @NotNull ResolvedCall<F> resolvedCall,
             @NotNull BasicCallResolutionContext context
     ) {
@@ -45,7 +46,14 @@ public class NeedSyntheticChecker implements CallChecker {
     //      e.g.: from class to companion object) controlled via NEED_SYNTHETIC_ACCESSOR slice
     private static boolean needSyntheticAccessor(LexicalScope invokationScope, CallableDescriptor targetDescriptor) {
         return targetDescriptor instanceof CallableMemberDescriptor &&
-               Visibilities.isPrivate(targetDescriptor.getVisibility()) &&
+               isPrivate(targetDescriptor) &&
                targetDescriptor.getContainingDeclaration() != invokationScope.getOwnerDescriptor().getContainingDeclaration();
+    }
+
+    private static boolean isPrivate(@NotNull CallableDescriptor targetDescriptor) {
+        return Visibilities.isPrivate(targetDescriptor.getVisibility()) ||
+               (targetDescriptor instanceof PropertyDescriptor &&
+                ((PropertyDescriptor) targetDescriptor).getSetter() != null &&
+                Visibilities.isPrivate(((PropertyDescriptor) targetDescriptor).getSetter().getVisibility()));
     }
 }

@@ -257,13 +257,15 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 }
 
                 val somethingAdded = session.complete()
-                if (!somethingAdded && parameters.getInvocationCount() < 2) {
+                if (!somethingAdded && parameters.invocationCount < 2) {
                     // Rerun completion if nothing was found
                     val newConfiguration = CompletionSessionConfiguration(
-                            completeNonImportedDeclarations = true,
+                            completeNonImportedClasses = true,
                             completeNonAccessibleDeclarations = false,
                             filterOutJavaGettersAndSetters = false,
-                            completeJavaClassesNotToBeUsed = false)
+                            completeJavaClassesNotToBeUsed = false,
+                            completeStaticMembers = parameters.invocationCount > 0
+                    )
                     BasicCompletionSession(newConfiguration, parameters, result).complete()
                 }
             }

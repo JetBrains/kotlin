@@ -1,14 +1,12 @@
 package test
 
-import kotlin.platform.platformStatic
-
 class A {
     companion object {
-        @platformStatic val b: String = "OK"
+        @JvmStatic val b: String = "OK"
 
         var A.c: String
-            @platformStatic get() = "OK"
-            @platformStatic set(t: String) {}
+            @JvmStatic get() = "OK"
+            @JvmStatic set(t: String) {}
     }
 }
 

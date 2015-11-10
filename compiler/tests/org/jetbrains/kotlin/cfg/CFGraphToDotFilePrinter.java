@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitIn
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +41,7 @@ import java.util.*;
 
 public class CFGraphToDotFilePrinter {
     public static void dumpDot(File file, Collection<Pseudocode> pseudocodes) throws FileNotFoundException {
-        File target = JetTestUtils.replaceExtension(file, "dot");
+        File target = KotlinTestUtils.replaceExtension(file, "dot");
 
         PrintStream out = new PrintStream(target);
 

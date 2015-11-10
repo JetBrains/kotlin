@@ -2,6 +2,8 @@ package
 
 public final class My {
     public constructor My()
+    public final lateinit var u: kotlin.String
+    protected final lateinit var v: kotlin.String
     private final lateinit var w: kotlin.String
     public final lateinit var x: kotlin.String
     public final lateinit var y: kotlin.String

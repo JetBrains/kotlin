@@ -24,7 +24,7 @@ import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeInsightFixtureTestCase() {
     private var kotlinInternalModeOriginalValue: Boolean = false
@@ -32,7 +32,8 @@ public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatfo
     override fun setUp() {
         super.setUp()
         (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        invalidateLibraryCache(project)
 
         kotlinInternalModeOriginalValue = KotlinInternalMode.enabled
         KotlinInternalMode.enabled = true
@@ -40,7 +41,7 @@ public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatfo
 
     override fun tearDown() {
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         val builtInsSources = BuiltInsReferenceResolver.getInstance(getProject()).builtInsSources!!
         val fileManager = (PsiManager.getInstance(getProject()) as PsiManagerEx).getFileManager()

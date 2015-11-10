@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbse
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -62,11 +62,11 @@ class KotlinPullUpHelper(
     private fun KtExpression.isMovable(): Boolean {
         return accept(
                 object: KtVisitor<Boolean, Nothing?>() {
-                    override fun visitJetElement(element: KtElement, arg: Nothing?): Boolean {
+                    override fun visitKtElement(element: KtElement, arg: Nothing?): Boolean {
                         return element.allChildren.all { (it as? KtElement)?.accept(this, arg) ?: true }
                     }
 
-                    override fun visitJetFile(file: KtFile, data: Nothing?) = false
+                    override fun visitKtFile(file: KtFile, data: Nothing?) = false
 
                     override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, arg: Nothing?): Boolean {
                         val resolvedCall = expression.getResolvedCall(data.resolutionFacade.analyze(expression)) ?: return true
@@ -118,13 +118,13 @@ class KotlinPullUpHelper(
                         elementsToRemove.add(statement)
                     }
                     else {
-                        if (!JetPsiUnifier.DEFAULT.unify(statement, currentInitializer).matched) return null
+                        if (!KotlinPsiUnifier.DEFAULT.unify(statement, currentInitializer).matched) return null
 
                         initializerCandidate = currentInitializer
                         elementsToRemove.add(statement)
                     }
                 }
-                else if (!JetPsiUnifier.DEFAULT.unify(statement, initializerCandidate).matched) return null
+                else if (!KotlinPsiUnifier.DEFAULT.unify(statement, initializerCandidate).matched) return null
             }
         }
 

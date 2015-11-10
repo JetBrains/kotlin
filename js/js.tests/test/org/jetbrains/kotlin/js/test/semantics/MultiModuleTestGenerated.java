@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.test.semantics;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,12 +32,12 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiModuleTestGenerated extends AbstractMultiModuleTest {
     public void testAllFilesPresentInCases() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/multiModule/cases"), Pattern.compile("^([^\\.]+)$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/multiModule/cases"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("useElementsFromDefaultPackageInAnotherModule")
     public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/useElementsFromDefaultPackageInAnotherModule/");
+        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/multiModule/cases/useElementsFromDefaultPackageInAnotherModule/");
         doTest(fileName);
     }
 }

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,24 +32,24 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTest {
     public void testAllFilesPresentInDecompiledTextJvm() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm"), Pattern.compile("^([^\\.]+)$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/Modifiers/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/Modifiers/");
         doTest(fileName);
     }
 
     @TestMetadata("MultifileClass")
     public void testMultifileClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/MultifileClass/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/MultifileClass/");
         doTest(fileName);
     }
 
     @TestMetadata("TestKt")
     public void testTestKt() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/TestKt/");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/TestKt/");
         doTest(fileName);
     }
 

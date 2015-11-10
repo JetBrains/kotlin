@@ -78,7 +78,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
                     val parameter = parameters[positionalArgumentIndex]
                     map[argument] = parameter
 
-                    if (parameter.getVarargElementType() == null) {
+                    if (parameter.varargElementType == null) {
                         positionalArgumentIndex++
                     }
                 }
@@ -97,9 +97,9 @@ public fun ThisReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: 
     return expressionFactory.createExpression(psiFactory)
 }
 
-public fun KtImportDirective.targetDescriptors(): Collection<DeclarationDescriptor> {
+public fun KtImportDirective.targetDescriptors(resolutionFacade: ResolutionFacade = this.getResolutionFacade()): Collection<DeclarationDescriptor> {
     val nameExpression = importedReference?.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return emptyList()
-    return nameExpression.mainReference.resolveToDescriptors(nameExpression.analyze())
+    return nameExpression.mainReference.resolveToDescriptors(resolutionFacade.analyze(nameExpression))
 }
 
 public fun Call.resolveCandidates(

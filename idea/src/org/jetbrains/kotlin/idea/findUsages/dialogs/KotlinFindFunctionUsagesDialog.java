@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
 import com.intellij.ui.SimpleColoredComponent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 
@@ -61,12 +61,12 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
             Utils.renameCheckbox(
                     findWhatPanel,
                     FindBundle.message("find.what.implementing.methods.checkbox"),
-                    JetBundle.message("find.what.implementing.methods.checkbox")
+                    KotlinBundle.message("find.what.implementing.methods.checkbox")
             );
             Utils.renameCheckbox(
                     findWhatPanel,
                     FindBundle.message("find.what.overriding.methods.checkbox"),
-                    JetBundle.message("find.what.overriding.methods.checkbox")
+                    KotlinBundle.message("find.what.overriding.methods.checkbox")
             );
         }
 
@@ -80,10 +80,10 @@ public class KotlinFindFunctionUsagesDialog extends FindMethodUsagesDialog {
         if (!Utils.renameCheckbox(
                 optionsPanel,
                 FindBundle.message("find.options.include.overloaded.methods.checkbox"),
-                JetBundle.message("find.options.include.overloaded.methods.checkbox")
+                KotlinBundle.message("find.options.include.overloaded.methods.checkbox")
         )) {
             addCheckboxToPanel(
-                    JetBundle.message("find.options.include.overloaded.methods.checkbox"),
+                    KotlinBundle.message("find.options.include.overloaded.methods.checkbox"),
                     FindSettings.getInstance().isSearchOverloadedMethods(),
                     optionsPanel,
                     false

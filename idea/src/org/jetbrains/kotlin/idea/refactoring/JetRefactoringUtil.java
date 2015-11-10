@@ -36,21 +36,21 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.KotlinLightMethod;
+import org.jetbrains.kotlin.asJava.KtLightMethod;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.string.StringUtilKt;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -147,12 +147,12 @@ public class JetRefactoringUtil {
         }
 
         String superClassesStr = "\n" + StringUtil.join(superClasses, "");
-        String message = JetBundle.message(
+        String message = KotlinBundle.message(
                 "x.overrides.y.in.class.list",
                 DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(declarationDescriptor.getContainingDeclaration()),
                 superClassesStr,
-                JetBundle.message(actionStringKey)
+                KotlinBundle.message(actionStringKey)
         );
 
         int exitCode = Messages.showYesNoCancelDialog(declaration.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon());
@@ -270,7 +270,7 @@ public class JetRefactoringUtil {
             }
 
             String message =
-                    JetBundle.message("delete.param.in.method.hierarchy", formatJavaOrLightMethod(method));
+                    KotlinBundle.message("delete.param.in.method.hierarchy", formatJavaOrLightMethod(method));
             int exitCode = Messages.showOkCancelDialog(
                     parameter.getProject(), message, IdeBundle.message("title.warning"), Messages.getQuestionIcon()
             );
@@ -314,10 +314,10 @@ public class JetRefactoringUtil {
     }
 
     private static void addParameter(@NotNull PsiMethod method, @NotNull Set<PsiElement> result, @NotNull PsiParameter parameter) {
-        int parameterIndex = JetPsiUtilKt.parameterIndex(LightClassUtilsKt.getUnwrapped(parameter));
+        int parameterIndex = KtPsiUtilKt.parameterIndex(LightClassUtilsKt.getUnwrapped(parameter));
 
-        if (method instanceof KotlinLightMethod) {
-            KtDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
+        if (method instanceof KtLightMethod) {
+            KtDeclaration declaration = ((KtLightMethod) method).getOrigin();
             if (declaration instanceof KtFunction) {
                 result.add(((KtFunction) declaration).getValueParameters().get(parameterIndex));
             }

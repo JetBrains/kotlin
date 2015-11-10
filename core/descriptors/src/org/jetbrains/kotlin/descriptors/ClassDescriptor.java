@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeSubstitution;
@@ -30,19 +30,19 @@ import java.util.List;
 
 public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor, ClassOrPackageFragmentDescriptor {
     @NotNull
-    KtScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
+    MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments);
 
     @NotNull
-    KtScope getMemberScope(@NotNull TypeSubstitution typeSubstitution);
+    MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution);
 
     @NotNull
-    KtScope getUnsubstitutedMemberScope();
+    MemberScope getUnsubstitutedMemberScope();
 
     @NotNull
-    KtScope getUnsubstitutedInnerClassesScope();
+    MemberScope getUnsubstitutedInnerClassesScope();
 
     @NotNull
-    KtScope getStaticScope();
+    MemberScope getStaticScope();
 
     @NotNull
     @ReadOnly

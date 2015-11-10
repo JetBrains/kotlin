@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotations;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.storage.*;
 
@@ -286,9 +286,9 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @NotNull
     public ClassDescriptor getClassDescriptorForScript(@NotNull KtScript script) {
-        KtScope memberScope = lazyDeclarationResolver.getMemberScopeDeclaredIn(script, NoLookupLocation.FOR_SCRIPT);
+        MemberScope memberScope = lazyDeclarationResolver.getMemberScopeDeclaredIn(script, NoLookupLocation.FOR_SCRIPT);
         FqName fqName = ScriptNameUtil.classNameForScript(script);
-        ClassifierDescriptor classifier = memberScope.getClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
+        ClassifierDescriptor classifier = memberScope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
         assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
         return (ClassDescriptor) classifier;
     }
@@ -350,7 +350,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
             @NotNull LazyPackageDescriptor current
     ) {
         result.add(current);
-        for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), KtScope.Companion.getALL_NAME_FILTER())) {
+        for (FqName subPackage : packageFragmentProvider.getSubPackagesOf(current.getFqName(), MemberScope.Companion.getALL_NAME_FILTER())) {
             LazyPackageDescriptor fragment = getPackageFragment(subPackage);
             assert fragment != null : "Couldn't find fragment for " + subPackage;
             collectAllPackages(result, fragment);

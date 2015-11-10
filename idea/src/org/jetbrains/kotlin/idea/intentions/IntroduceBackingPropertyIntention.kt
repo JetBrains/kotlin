@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
-import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class IntroduceBackingPropertyIntention(): JetSelfTargetingIntention<KtProperty>(javaClass(), "Introduce backing property") {
+class IntroduceBackingPropertyIntention(): SelfTargetingIntention<KtProperty>(javaClass(), "Introduce backing property") {
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         if (!canIntroduceBackingProperty(element)) return false
         return element.nameIdentifier?.textRange?.containsOffset(caretOffset) == true
@@ -145,7 +145,7 @@ class IntroduceBackingPropertyFix(prop: KtProperty): KotlinQuickFixAction<KtProp
         IntroduceBackingPropertyIntention.introduceBackingProperty(element)
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val resolveResult = diagnostic.psiElement.reference?.resolve()
             if (resolveResult is KtProperty &&

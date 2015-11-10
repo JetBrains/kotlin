@@ -26,7 +26,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 
 public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTestCase {
     /**
@@ -63,7 +63,7 @@ public class NavigateToLibraryRegressionTest extends LightCodeInsightFixtureTest
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     protected PsiElement configureAndResolve(String text) {

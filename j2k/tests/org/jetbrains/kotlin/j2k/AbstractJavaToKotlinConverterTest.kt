@@ -23,14 +23,14 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         invalidateLibraryCache(project)
 
@@ -39,7 +39,7 @@ public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtur
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
         super.tearDown()
     }
     

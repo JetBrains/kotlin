@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.AllClassesGetter
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 
 class AllClassesCompletion(private val parameters: CompletionParameters,
@@ -56,7 +56,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
         }
     }
 
-    private fun collectClassesFromScope(scope: KtScope, collector: (ClassDescriptor) -> Unit) {
+    private fun collectClassesFromScope(scope: MemberScope, collector: (ClassDescriptor) -> Unit) {
         for (descriptor in scope.getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS)) {
             if (descriptor is ClassDescriptor) {
                 if (kindFilter(descriptor.kind) && prefixMatcher.prefixMatches(descriptor.name.asString())) {
@@ -70,7 +70,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
 
     private fun addAdaptedJavaCompletion(collector: (PsiClass) -> Unit) {
         AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
-            if (psiClass!! !is KotlinLightClass) { // Kotlin class should have already been added as kotlin element before
+            if (psiClass!! !is KtLightClass) { // Kotlin class should have already been added as kotlin element before
                 if (psiClass.isSyntheticKotlinClass()) return@processJavaClasses // filter out synthetic classes produced by Kotlin compiler
 
                 val kind = when {

@@ -25,8 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
@@ -47,7 +48,7 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message(
+        return KotlinBundle.message(
                 "cast.expression.to.type",
                 getElement().getText(),
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
@@ -57,7 +58,7 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("cast.expression.family");
+        return KotlinBundle.message("cast.expression.family");
     }
 
     @Override
@@ -99,12 +100,12 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForSmartCastImpossible() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForSmartCastImpossible() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters2<KtExpression, KotlinType, String> diagnosticWithParameters =
+                DiagnosticWithParameters3<KtExpression, KotlinType, String, String> diagnosticWithParameters =
                         Errors.SMARTCAST_IMPOSSIBLE.cast(diagnostic);
                 return new CastExpressionFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
             }
@@ -112,8 +113,8 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForGenericVarianceConversion() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForGenericVarianceConversion() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {

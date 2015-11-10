@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.*
 import java.util.*
@@ -32,13 +32,13 @@ import java.util.*
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
 public class ReflectionTypes(private val module: ModuleDescriptor) {
-    private val kotlinReflectScope: KtScope by lazy {
+    private val kotlinReflectScope: MemberScope by lazy {
         module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
     }
 
     fun find(className: String): ClassDescriptor {
         val name = Name.identifier(className)
-        return kotlinReflectScope.getClassifier(name, NoLookupLocation.FROM_REFLECTION) as? ClassDescriptor
+        return kotlinReflectScope.getContributedClassifier(name, NoLookupLocation.FROM_REFLECTION) as? ClassDescriptor
                 ?: ErrorUtils.createErrorClass(KOTLIN_REFLECT_FQ_NAME.child(name).asString())
     }
 

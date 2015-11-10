@@ -32,12 +32,12 @@ import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import javax.swing.*;
 
@@ -90,7 +90,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         //noinspection ConstantConditions
         javaClass.getModifierList().setModifierProperty(
                 PsiModifier.FINAL,
-                !(classOrObject instanceof KtClass && JetPsiUtilKt.isInheritable((KtClass) classOrObject))
+                !(classOrObject instanceof KtClass && KtPsiUtilKt.isInheritable((KtClass) classOrObject))
         );
 
         javaClass.putUserData(ORIGINAL_CLASS, classOrObject);
@@ -106,31 +106,31 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
         Utils.renameCheckbox(
                 findWhatPanel,
                 FindBundle.message("find.what.methods.usages.checkbox"),
-                JetBundle.message("find.what.functions.usages.checkbox")
+                KotlinBundle.message("find.what.functions.usages.checkbox")
         );
         Utils.renameCheckbox(
                 findWhatPanel,
                 FindBundle.message("find.what.fields.usages.checkbox"),
-                JetBundle.message("find.what.properties.usages.checkbox")
+                KotlinBundle.message("find.what.properties.usages.checkbox")
         );
         Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.implementing.classes.checkbox"));
         Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.derived.interfaces.checkbox"));
         Utils.removeCheckbox(findWhatPanel, FindBundle.message("find.what.derived.classes.checkbox"));
 
         derivedClasses = addCheckboxToPanel(
-                JetBundle.message("find.what.derived.classes.checkbox"),
+                KotlinBundle.message("find.what.derived.classes.checkbox"),
                 getFindUsagesOptions().isDerivedClasses,
                 findWhatPanel,
                 true
         );
         derivedTraits = addCheckboxToPanel(
-                JetBundle.message("find.what.derived.interfaces.checkbox"),
+                KotlinBundle.message("find.what.derived.interfaces.checkbox"),
                 getFindUsagesOptions().isDerivedInterfaces,
                 findWhatPanel,
                 true
         );
         constructorUsages = addCheckboxToPanel(
-                JetBundle.message("find.what.constructor.usages.checkbox"),
+                KotlinBundle.message("find.what.constructor.usages.checkbox"),
                 getFindUsagesOptions().getSearchConstructorUsages(),
                 findWhatPanel,
                 true

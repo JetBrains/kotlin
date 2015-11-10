@@ -37,16 +37,16 @@ class AllUnderImportsScope(descriptor: DeclarationDescriptor) : BaseImportingSco
     }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = scopes.flatMap { it.getDescriptors(kindFilter, nameFilter) }
+            = scopes.flatMap { it.getContributedDescriptors(kindFilter, nameFilter) }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation)
-            = scopes.asSequence().map { it.getClassifier(name, location) }.filterNotNull().singleOrNull()
+            = scopes.asSequence().map { it.getContributedClassifier(name, location) }.filterNotNull().singleOrNull()
 
     override fun getContributedVariables(name: Name, location: LookupLocation)
-            = scopes.flatMap { it.getProperties(name, location) }
+            = scopes.flatMap { it.getContributedVariables(name, location) }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation)
-            = scopes.flatMap { it.getFunctions(name, location) }
+            = scopes.flatMap { it.getContributedFunctions(name, location) }
 
     override fun printStructure(p: Printer) {
         p.println(javaClass.simpleName)

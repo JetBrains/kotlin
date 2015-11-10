@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
@@ -45,7 +46,7 @@ public class SingleAbstractMethodUtils {
     @NotNull
     public static List<CallableMemberDescriptor> getAbstractMembers(@NotNull KotlinType type) {
         List<CallableMemberDescriptor> abstractMembers = new ArrayList<CallableMemberDescriptor>();
-        for (DeclarationDescriptor member : type.getMemberScope().getAllDescriptors()) {
+        for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(type.getMemberScope())) {
             if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getModality() == Modality.ABSTRACT) {
                 abstractMembers.add((CallableMemberDescriptor) member);
             }

@@ -23,16 +23,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.sure
-import java.util.ArrayList
+import java.util.*
 
-public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : KtScopeImpl() {
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        return moduleDescriptor.getPackage(fqName)
-    }
+public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : MemberScopeImpl() {
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
         if (name.isSpecial()) {
@@ -45,8 +41,8 @@ public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, pr
         return packageViewDescriptor
     }
 
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                           nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.PACKAGES_MASK)) return listOf()
         if (fqName.isRoot() && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return listOf()
 
@@ -64,8 +60,6 @@ public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, pr
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")
         p.pushIndent()
-
-        p.println("thisDescriptor = ", getContainingDeclaration())
 
         p.popIndent()
         p.println("}")

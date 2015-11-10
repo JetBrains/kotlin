@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
-public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<KtCallableDeclaration>(javaClass(), "Specify type explicitly"), LowPriorityAction {
+public class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclaration>(javaClass(), "Specify type explicitly"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
         if (element.getContainingFile() is KtCodeFragment) return false
         if (element is KtFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?

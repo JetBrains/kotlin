@@ -29,7 +29,7 @@ data class SimpleType(val type: String, override val nullable: Boolean) : Type {
 }
 data class FunctionType(val parameterTypes : List<Attribute>, val returnType : Type, override val nullable: Boolean) : Type {
     override fun render() = if (nullable) "(${renderImpl()})?" else renderImpl()
-    private fun renderImpl() = "(${parameterTypes.map { it.type.render() }.join(", ")}) -> ${returnType.render()}"
+    private fun renderImpl() = "(${parameterTypes.joinToString(", ") { it.type.render() }}) -> ${returnType.render()}"
 }
 
 val FunctionType.arity : Int
@@ -42,7 +42,7 @@ class UnionType(val namespace: String, types: Collection<Type>, override val nul
     operator fun contains(type: Type) = type in memberTypes
     override fun equals(other: Any?): Boolean = other is UnionType && memberTypes == other.memberTypes
     override fun hashCode(): Int = memberTypes.hashCode()
-    override fun toString(): String = memberTypes.map { it.toString() }.join(", ", "Union<", ">")
+    override fun toString(): String = memberTypes.joinToString(", ", "Union<", ">")
 
     override fun render(): String = name.appendNullabilitySuffix(this)
 

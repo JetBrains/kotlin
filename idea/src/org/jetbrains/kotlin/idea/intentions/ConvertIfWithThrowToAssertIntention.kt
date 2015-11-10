@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 
-public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingOffsetIndependentIntention<KtIfExpression>(javaClass(), "Replace 'if' with 'assert' statement") {
+public class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(javaClass(), "Replace 'if' with 'assert' statement") {
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         if (element.getElse() != null) return false

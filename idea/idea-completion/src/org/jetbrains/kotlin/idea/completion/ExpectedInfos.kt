@@ -322,7 +322,7 @@ class ExpectedInfos(
 
         fun needCommaForParameter(parameter: ValueParameterDescriptor): Boolean {
             if (parameter.hasDefaultValue()) return false // parameter is optional
-            if (parameter.getVarargElementType() != null) return false // vararg arguments list can be empty
+            if (parameter.varargElementType != null) return false // vararg arguments list can be empty
             // last parameter of functional type can be placed outside parenthesis:
             if (!isArrayAccess && parameter == parameters.last() && KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameter.getType())) return false
             return true
@@ -342,7 +342,7 @@ class ExpectedInfos(
 
         val alreadyHasStar = argument.getSpreadElement() != null
 
-        val varargElementType = parameter!!.getVarargElementType()
+        val varargElementType = parameter!!.varargElementType
         if (varargElementType != null) {
             if (isFunctionLiteralArgument) return
 

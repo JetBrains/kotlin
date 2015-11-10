@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.resolve;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,30 +32,30 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceResolveInLibrarySourcesTestGenerated extends AbstractReferenceResolveInLibrarySourcesTest {
     public void testAllFilesPresentInReferenceInLib() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInLib"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceInLib"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
     @TestMetadata("builtInNumber.kt")
     public void testBuiltInNumber() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/builtInNumber.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/builtInNumber.kt");
         doTest(fileName);
     }
 
     @TestMetadata("inLibrarySource.kt")
     public void testInLibrarySource() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/inLibrarySource.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/inLibrarySource.kt");
         doTest(fileName);
     }
 
     @TestMetadata("toFunParameter.kt")
     public void testToFunParameter() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/toFunParameter.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/toFunParameter.kt");
         doTest(fileName);
     }
 
     @TestMetadata("toLocalFun.kt")
     public void testToLocalFun() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/toLocalFun.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceInLib/toLocalFun.kt");
         doTest(fileName);
     }
 }

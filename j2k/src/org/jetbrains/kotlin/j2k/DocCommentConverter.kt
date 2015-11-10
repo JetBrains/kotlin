@@ -34,5 +34,4 @@ fun PsiDocTag.content(): String =
                 .dropWhile { it.getNode().getElementType() == JavaDocTokenType.DOC_TAG_NAME }
                 .dropWhile { it is PsiWhiteSpace }
                 .filterNot { it.getNode().getElementType() == JavaDocTokenType.DOC_COMMENT_LEADING_ASTERISKS }
-                .map { it.getText() }
-                .join("")
+                .joinToString("") { it.getText() }

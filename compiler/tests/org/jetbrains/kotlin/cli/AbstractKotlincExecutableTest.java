@@ -21,7 +21,7 @@ import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.util.SystemInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -46,7 +46,7 @@ public abstract class AbstractKotlincExecutableTest extends TestCaseWithTmpdir {
         File outFile = new File(argsFilePath.replace(".args", ".out"));
 
         try {
-            JetTestUtils.assertEqualsToFile(outFile, normalizedOutput);
+            KotlinTestUtils.assertEqualsToFile(outFile, normalizedOutput);
         }
         catch (Exception e) {
             System.err.println("exit code " + exitCode);

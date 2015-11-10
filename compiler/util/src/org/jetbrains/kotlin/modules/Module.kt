@@ -27,5 +27,7 @@ public interface Module {
 
     public fun getClasspathRoots(): List<String>
 
-    public fun getJavaSourceRoots(): List<String>
+    public fun getJavaSourceRoots(): List<JavaRootPath>
 }
+
+data class JavaRootPath(val path: String, val packagePrefix: String? = null)

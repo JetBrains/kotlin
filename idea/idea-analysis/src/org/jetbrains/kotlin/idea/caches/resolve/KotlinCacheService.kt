@@ -47,7 +47,7 @@ public class KotlinCacheService(val project: Project) {
     }
 
     public fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
-        return getFacadeToAnalyzeFiles(elements.map { it.getContainingJetFile() })
+        return getFacadeToAnalyzeFiles(elements.map { it.getContainingKtFile() })
     }
 
     private val globalFacadesPerPlatform = listOf(JvmPlatform, JsPlatform).keysToMap { platform -> GlobalFacade(platform) }
@@ -185,7 +185,7 @@ public class KotlinCacheService(val project: Project) {
 
     private fun KtCodeFragment.getContextFile(): KtFile? {
         val contextElement = getContext() ?: return null
-        val contextFile = (contextElement as? KtElement)?.getContainingJetFile()
+        val contextFile = (contextElement as? KtElement)?.getContainingKtFile()
                           ?: throw AssertionError("Analyzing kotlin code fragment of type $javaClass with java context of type ${contextElement.javaClass}")
         return if (contextFile is KtCodeFragment) contextFile.getContextFile() else contextFile
     }

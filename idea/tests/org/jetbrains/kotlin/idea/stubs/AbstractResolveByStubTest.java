@@ -41,7 +41,7 @@ public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCas
     private void doTest(@NotNull final String path, final boolean checkPrimaryConstructors, final boolean checkPropertyAccessors)
             throws Exception {
         configureByFile(path);
-        TestUtilsKt.configureAs(getModule(), JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
+        TestUtilsKt.configureAs(getModule(), KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
         boolean shouldFail = getTestName(false).equals("ClassWithConstVal");
         AstAccessControl.INSTANCE$.testWithControlledAccessToAst(
                 shouldFail, getProject(), getTestRootDisposable(),

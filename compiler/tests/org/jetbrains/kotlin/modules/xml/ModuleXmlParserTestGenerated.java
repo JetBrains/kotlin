@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.modules.xml;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,54 +32,54 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ModuleXmlParserTestGenerated extends AbstractModuleXmlParserTest {
     public void testAllFilesPresentInModules_xml() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/modules.xml"), Pattern.compile("^(.+)\\.xml$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/modules.xml"), Pattern.compile("^(.+)\\.xml$"), true);
     }
 
     @TestMetadata("allOnce.xml")
     public void testAllOnce() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/allOnce.xml");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/allOnce.xml");
         doTest(fileName);
     }
 
     @TestMetadata("comments.xml")
     public void testComments() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/comments.xml");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/comments.xml");
         doTest(fileName);
     }
 
     @TestMetadata("empty.xml")
     public void testEmpty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/empty.xml");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/empty.xml");
         doTest(fileName);
     }
 
     @TestMetadata("emptyModule.xml")
     public void testEmptyModule() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/emptyModule.xml");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/emptyModule.xml");
         doTest(fileName);
     }
 
     @TestMetadata("manyTimes.xml")
     public void testManyTimes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/manyTimes.xml");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/manyTimes.xml");
         doTest(fileName);
     }
 
     @TestMetadata("onlySources.xml")
     public void testOnlySources() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/onlySources.xml");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/onlySources.xml");
         doTest(fileName);
     }
 
     @TestMetadata("twoModules.xml")
     public void testTwoModules() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/twoModules.xml");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/twoModules.xml");
         doTest(fileName);
     }
 
     @TestMetadata("typeTestModule.xml")
     public void testTypeTestModule() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/modules.xml/typeTestModule.xml");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/typeTestModule.xml");
         doTest(fileName);
     }
 }

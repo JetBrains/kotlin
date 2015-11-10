@@ -10,8 +10,6 @@ class A(val k: Int) {
 
 class X(val k: Int)
 
-fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
-
 fun test() {
     with(A(3)) {
         X(0).foo("1", 2)

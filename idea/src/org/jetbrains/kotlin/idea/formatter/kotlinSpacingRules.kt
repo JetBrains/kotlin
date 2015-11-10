@@ -27,7 +27,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -44,7 +44,7 @@ fun SpacingBuilder.afterInside(element: IElementType, tokenSet: TokenSet, spacin
 }
 
 fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
-    val jetSettings = settings.getCustomSettings(javaClass<JetCodeStyleSettings>())!!
+    val jetSettings = settings.getCustomSettings(javaClass<KotlinCodeStyleSettings>())!!
     val jetCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)!!
 
     return rules(settings) {
@@ -135,7 +135,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             after(MODIFIER_LIST).spaces(1)
 
             beforeInside(IDENTIFIER, CLASS).spaces(1)
-            beforeInside(OBJECT_DECLARATION_NAME, OBJECT_DECLARATION).spaces(1)
+            beforeInside(IDENTIFIER, OBJECT_DECLARATION).spaces(1)
 
             betweenInside(VAL_KEYWORD, IDENTIFIER, PROPERTY).spaces(1)
             betweenInside(VAR_KEYWORD, IDENTIFIER, PROPERTY).spaces(1)

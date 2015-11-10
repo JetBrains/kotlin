@@ -1,0 +1,5 @@
+// WITH_RUNTIME
+fun boo() : Pair<Int, String> {
+    val flag = true
+    return (if (flag) 0 else 1).to("value")
+}

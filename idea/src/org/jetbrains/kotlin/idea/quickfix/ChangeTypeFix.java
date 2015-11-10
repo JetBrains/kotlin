@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
@@ -49,13 +49,13 @@ public class ChangeTypeFix extends KotlinQuickFixAction<KtTypeReference> {
     @Override
     public String getText() {
         String currentTypeText = getElement().getText();
-        return JetBundle.message("change.type", currentTypeText, QuickFixUtil.renderTypeWithFqNameOnClash(type, currentTypeText));
+        return KotlinBundle.message("change.type", currentTypeText, QuickFixUtil.renderTypeWithFqNameOnClash(type, currentTypeText));
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("change.type.family");
+        return KotlinBundle.message("change.type.family");
     }
 
     @Override
@@ -65,8 +65,8 @@ public class ChangeTypeFix extends KotlinQuickFixAction<KtTypeReference> {
     }
 
     @NotNull
-    public static JetSingleIntentionActionFactory createFactoryForExpectedParameterTypeMismatch() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactoryForExpectedParameterTypeMismatch() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {

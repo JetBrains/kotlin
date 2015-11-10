@@ -81,7 +81,7 @@ public class AnnotationListParseTest {
         assertEqualsToFile(expectedFile, fileContents)
     }
 
-    // JetTestUtils.assertEqualsToFile() is not reachable from here
+    // KotlinTestUtils.assertEqualsToFile() is not reachable from here
     public fun assertEqualsToFile(expectedFile: File, actual: String) {
         val lineSeparator = System.getProperty("line.separator")
         val actualText = actual.replace(lineSeparator, "\n").trim('\n', ' ', '\t')

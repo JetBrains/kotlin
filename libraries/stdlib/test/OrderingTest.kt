@@ -50,7 +50,7 @@ class OrderingTest {
 
     @Test
     fun sortComparatorThenComparator() {
-        val comparator = comparator<Item> { a, b -> a.name.compareTo(b.name) } thenComparator { a, b -> a.rating.compareTo(b.rating) }
+        val comparator = comparator<Item> { a, b -> a.name.compareTo(b.name) }.thenComparator { a, b -> a.rating.compareTo(b.rating) }
 
         val diff = comparator.compare(v1, v2)
         assertTrue(diff > 0)
@@ -75,8 +75,27 @@ class OrderingTest {
     }
 
     @Test
+    fun reversedComparator() {
+        val comparator = compareBy<Item> { it.name }
+        val reversed = comparator.reversed()
+        assertEquals(comparator.compare(v2, v1), reversed.compare(v1, v2))
+        assertEquals(comparator, reversed.reversed())
+    }
+
+    @Test
+    fun naturalOrderComparator() {
+        val v1 = "a"
+        val v2 = "beta"
+
+        assertTrue(naturalOrder<String>().compare(v1, v2) < 0)
+        assertTrue(reverseOrder<String>().compare(v1, v2) > 0)
+        assertTrue(reverseOrder<Int>() === naturalOrder<Int>().reversed())
+        assertTrue(naturalOrder<Int>() === reverseOrder<Int>().reversed())
+    }
+
+    @Test
     fun sortByThenBy() {
-        val comparator = compareBy<Item> { it.rating } thenBy { it.name }
+        val comparator = compareBy<Item> { it.rating }.thenBy { it.name }
 
         val diff = comparator.compare(v1, v2)
         assertTrue(diff < 0)
@@ -87,7 +106,7 @@ class OrderingTest {
 
     @Test
     fun sortByThenByDescending() {
-        val comparator = compareBy<Item> { it.rating } thenByDescending { it.name }
+        val comparator = compareBy<Item> { it.rating }.thenByDescending { it.name }
 
         val diff = comparator.compare(v1, v2)
         assertTrue(diff < 0)

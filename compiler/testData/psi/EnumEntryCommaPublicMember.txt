@@ -15,8 +15,7 @@ JetFile: EnumEntryCommaPublicMember.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('FIRST')
+        PsiElement(IDENTIFIER)('FIRST')
         PsiElement(COMMA)(',')
       PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
         <empty list>

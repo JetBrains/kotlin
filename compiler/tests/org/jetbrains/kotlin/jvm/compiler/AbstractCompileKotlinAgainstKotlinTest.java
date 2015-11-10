@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
@@ -52,8 +52,8 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
         super.setUp();
         aDir = new File(tmpdir, "a");
         bDir = new File(tmpdir, "b");
-        JetTestUtils.mkdirs(aDir);
-        JetTestUtils.mkdirs(bDir);
+        KotlinTestUtils.mkdirs(aDir);
+        KotlinTestUtils.mkdirs(bDir);
     }
 
     public void doTest(@NotNull String fileName) throws Exception {
@@ -86,14 +86,14 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
     }
 
     protected ClassFileFactory compileA(@NotNull File ktAFile) throws IOException {
-        KotlinCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
-                                                                                                            ConfigurationKind.ALL);
+        KotlinCoreEnvironment jetCoreEnvironment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(),
+                                                                                                                  ConfigurationKind.ALL);
         return compileKotlin(ktAFile, aDir, jetCoreEnvironment, getTestRootDisposable());
     }
 
     protected ClassFileFactory compileB(@NotNull File ktBFile) throws IOException {
-        CompilerConfiguration configurationWithADirInClasspath = JetTestUtils
-                .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), aDir);
+        CompilerConfiguration configurationWithADirInClasspath = KotlinTestUtils
+                .compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, KotlinTestUtils.getAnnotationsJar(), aDir);
 
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -108,7 +108,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
 
         String text = FileUtil.loadFile(file, true);
 
-        KtFile psiFile = JetTestUtils.createFile(file.getName(), text, jetCoreEnvironment.getProject());
+        KtFile psiFile = KotlinTestUtils.createFile(file.getName(), text, jetCoreEnvironment.getProject());
 
         ModuleVisibilityManager.SERVICE.getInstance(jetCoreEnvironment.getProject()).addModule(new ModuleBuilder("module for test", tmpdir.getAbsolutePath(), "test"));
 

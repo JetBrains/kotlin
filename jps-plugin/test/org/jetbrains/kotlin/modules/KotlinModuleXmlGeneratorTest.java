@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.modules;
 
 import junit.framework.TestCase;
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.jps.build.JvmSourceRoot;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -30,12 +31,12 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
-                Collections.singletonList(new File("java")),
+                Collections.singletonList(new JvmSourceRoot(new File("java"), null)),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.<File>emptySet()
         ).asText().toString();
-        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/basic.xml"), actual);
     }
 
     public void testFiltered() throws Exception {
@@ -43,12 +44,12 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
-                Collections.<File>emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
         ).asText().toString();
-        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/filtered.xml"), actual);
     }
 
     public void testMultiple() throws Exception {
@@ -57,7 +58,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name",
                 "output",
                 Arrays.asList(new File("s1"), new File("s2")),
-                Collections.<File>emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp1"), new File("cp2")),
                 JavaModuleBuildTargetType.PRODUCTION,
                 Collections.singleton(new File("cp1"))
@@ -66,12 +67,12 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 "name2",
                 "output2",
                 Arrays.asList(new File("s12"), new File("s22")),
-                Collections.<File>emptyList(),
+                Collections.<JvmSourceRoot>emptyList(),
                 Arrays.asList(new File("cp12"), new File("cp22")),
                 JavaModuleBuildTargetType.TEST,
                 Collections.singleton(new File("cp12"))
         );
         String actual = builder.asText().toString();
-        JetTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File("idea/testData/modules.xml/multiple.xml"), actual);
     }
 }

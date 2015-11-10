@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import java.util.List;
 
@@ -48,6 +48,6 @@ public class KtAnnotatedExpression extends KtExpressionImpl implements KtAnnotat
     @Override
     @NotNull
     public List<KtAnnotationEntry> getAnnotationEntries() {
-        return JetPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);
+        return KtPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);
     }
 }

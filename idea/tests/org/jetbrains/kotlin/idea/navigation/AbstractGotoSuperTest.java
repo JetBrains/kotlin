@@ -20,13 +20,13 @@ import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.util.List;
 
 public abstract class AbstractGotoSuperTest extends LightCodeInsightFixtureTestCase {
     protected void doTest(String testPath) {
-        List<String> parts = JetTestUtils.loadBeforeAfterText(testPath);
+        List<String> parts = KotlinTestUtils.loadBeforeAfterText(testPath);
 
         myFixture.configureByText(KotlinFileType.INSTANCE, parts.get(0));
 

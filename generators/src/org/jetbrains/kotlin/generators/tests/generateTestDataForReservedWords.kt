@@ -329,9 +329,9 @@ class TestDataBuilder() {
         }
 
         if (isCreatingFromScratch) {
-            shouldBeEscapedFile.writeText("$PREAMBLE_MESSAGE\n${SHOULD_BE_ESCAPED.join("\n")}")
-            shouldNotBeEscapedFile.writeText("$PREAMBLE_MESSAGE\n${SHOULD_NOT_BE_ESCAPED.join("\n")}")
-            casesFile.writeText("$PREAMBLE_MESSAGE\n${cases.join("\n")}")
+            shouldBeEscapedFile.writeText("$PREAMBLE_MESSAGE\n${SHOULD_BE_ESCAPED.joinToString("\n")}")
+            shouldNotBeEscapedFile.writeText("$PREAMBLE_MESSAGE\n${SHOULD_NOT_BE_ESCAPED.joinToString("\n")}")
+            casesFile.writeText("$PREAMBLE_MESSAGE\n${cases.joinToString("\n")}")
 
         }
     }

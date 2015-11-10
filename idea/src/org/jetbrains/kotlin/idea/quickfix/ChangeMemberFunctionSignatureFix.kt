@@ -78,7 +78,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
         }
     }
 
-    companion object : JetSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val function = diagnostic.psiElement as? KtNamedFunction ?: return null
             val signatures = computePossibleSignatures(function)
@@ -179,7 +179,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
             val name = functionDescriptor.name
             return containingClass.defaultType.supertypes()
-                    .flatMap { supertype -> supertype.memberScope.getFunctions(name, NoLookupLocation.FROM_IDE) }
+                    .flatMap { supertype -> supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) }
                     .filter { it.kind.isReal && it.modality.isOverridable }
         }
     }

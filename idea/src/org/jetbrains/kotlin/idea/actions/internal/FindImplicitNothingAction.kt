@@ -67,7 +67,7 @@ public class FindImplicitNothingAction : AnAction() {
 
             val resolutionFacade = file.getResolutionFacade()
             file.acceptChildren(object : KtVisitorVoid() {
-                override fun visitJetElement(element: KtElement) {
+                override fun visitKtElement(element: KtElement) {
                     ProgressManager.checkCanceled()
                     element.acceptChildren(this)
                 }

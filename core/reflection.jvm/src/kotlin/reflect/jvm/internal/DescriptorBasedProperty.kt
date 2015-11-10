@@ -19,13 +19,14 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.lang.reflect.Field
+import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.internal.JvmPropertySignature.JavaField
 import kotlin.reflect.jvm.internal.JvmPropertySignature.KotlinProperty
 
 internal abstract class DescriptorBasedProperty<out R> protected constructor(
         val container: KDeclarationContainerImpl,
         name: String,
-        signature: String,
+        val signature: String,
         descriptorInitialValue: PropertyDescriptor?
 ) : KCallableImpl<R> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : this(
@@ -55,11 +56,13 @@ internal abstract class DescriptorBasedProperty<out R> protected constructor(
         }
     }
 
-    override fun equals(other: Any?): Boolean =
-            other is DescriptorBasedProperty<*> && descriptor == other.descriptor
+    override fun equals(other: Any?): Boolean {
+        val that = other.asKPropertyImpl() ?: return false
+        return container == that.container && name == that.name && signature == that.signature
+    }
 
     override fun hashCode(): Int =
-            descriptor.hashCode()
+            (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
 
     override fun toString(): String =
             ReflectionObjectRenderer.renderProperty(descriptor)

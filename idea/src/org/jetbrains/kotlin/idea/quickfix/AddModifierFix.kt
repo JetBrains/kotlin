@@ -70,12 +70,12 @@ open class AddModifierFix(
             return "'$name'"
         }
 
-        fun createFactory(modifier: KtModifierKeywordToken): JetSingleIntentionActionFactory {
+        fun createFactory(modifier: KtModifierKeywordToken): KotlinSingleIntentionActionFactory {
             return createFactory(modifier, KtModifierListOwner::class.java)
         }
 
-        fun <T : KtModifierListOwner> createFactory(modifier: KtModifierKeywordToken, modifierOwnerClass: Class<T>): JetSingleIntentionActionFactory {
-            return object : JetSingleIntentionActionFactory() {
+        fun <T : KtModifierListOwner> createFactory(modifier: KtModifierKeywordToken, modifierOwnerClass: Class<T>): KotlinSingleIntentionActionFactory {
+            return object : KotlinSingleIntentionActionFactory() {
                 public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                     val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass) ?: return null
 
@@ -87,7 +87,7 @@ open class AddModifierFix(
         }
     }
 
-    object MakeClassOpenFactory : JetSingleIntentionActionFactory() {
+    object MakeClassOpenFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val typeReference = diagnostic.psiElement as KtTypeReference
             val bindingContext = typeReference.analyze(BodyResolveMode.PARTIAL)

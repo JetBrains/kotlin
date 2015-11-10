@@ -26,7 +26,7 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -87,7 +87,7 @@ public open class DescriptorMemberChooserObject(
                 if (declaration is KtDeclaration) {
                     // kotlin declaration
                     // visibility and abstraction better detect by a descriptor
-                    return JetDescriptorIconProvider.getIcon(descriptor, declaration, flags)
+                    return KotlinDescriptorIconProvider.getIcon(descriptor, declaration, flags)
                 }
                 else {
                     // it is better to show java icons for java code
@@ -95,7 +95,7 @@ public open class DescriptorMemberChooserObject(
                 }
             }
             else {
-                return JetDescriptorIconProvider.getIcon(descriptor, declaration, 0)
+                return KotlinDescriptorIconProvider.getIcon(descriptor, declaration, 0)
             }
         }
     }

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.integration;
 
 import com.intellij.util.ArrayUtil;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
@@ -28,7 +28,7 @@ import java.util.Collections;
 
 public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     private int run(String logName, String... args) throws Exception {
-        return runJava(JetTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true), logName, args);
+        return runJava(KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true), logName, args);
     }
 
     private int runCompiler(String logName, String... arguments) throws Exception {

@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
-import org.jetbrains.kotlin.resolve.scopes.utils.asKtScope
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.validation.InfixValidator
@@ -70,7 +69,8 @@ public class TaskPrioritizer(
 
         if (explicitReceiver is QualifierReceiver) {
             val qualifierReceiver: QualifierReceiver = explicitReceiver
-            val receiverScope = qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsImportingScope()
+            val receiverScope = LexicalScope.empty(qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsImportingScope(),
+                                                   qualifierReceiver.descriptor)
             doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(receiverScope))
             computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
         }
@@ -201,7 +201,7 @@ public class TaskPrioritizer(
             //extensions
             c.result.addCandidates {
                 val extensions = callableDescriptorCollector.getExtensionsByName(
-                        c.scope.asKtScope(), c.name, explicitReceiver.types, createLookupLocation(c))
+                        c.scope, c.name, explicitReceiver.types, createLookupLocation(c))
                 val filteredExtensions = if (filter == null) extensions else extensions.filter(filter)
 
                 convertWithImpliedThis(
@@ -261,7 +261,7 @@ public class TaskPrioritizer(
             val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(c.context.call, c.scope.ownerDescriptor)
 
             val dynamicDescriptors = c.callableDescriptorCollectors.flatMap {
-                it.getNonExtensionsByName(dynamicScope, c.name, createLookupLocation(c))
+                it.getNonExtensionsByName(dynamicScope.memberScopeAsImportingScope(), c.name, createLookupLocation(c))
             }
 
             convertWithReceivers(dynamicDescriptors, explicitReceiver.value, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
@@ -282,7 +282,7 @@ public class TaskPrioritizer(
     ) {
         c.result.addCandidates {
             val memberExtensions =
-                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope, c.name, receiverParameter.types, createLookupLocation(c))
+                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope.memberScopeAsImportingScope(), c.name, receiverParameter.types, createLookupLocation(c))
             convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter.value, receiverKind, c.context.call)
         }
     }
@@ -322,7 +322,7 @@ public class TaskPrioritizer(
         //nonlocals
         c.callableDescriptorCollectors.forEach {
             c.result.addCandidates {
-                val descriptors = it.getNonExtensionsByName(c.scope.asKtScope(), c.name, lookupLocation)
+                val descriptors = it.getNonExtensionsByName(c.scope, c.name, lookupLocation)
                         .filter { c.scope is ImportingScope || !ExpressionTypingUtils.isLocal(c.scope.ownerDescriptor, it) }
                 convertWithImpliedThisAndNoReceiver(c.scope, descriptors, c.context.call)
             }

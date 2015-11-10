@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 public open class ChangeVisibilityModifierIntention protected constructor(
         val modifier: KtModifierKeywordToken
-) : JetSelfTargetingRangeIntention<KtDeclaration>(javaClass(), "Make ${modifier.getValue()}") {
+) : SelfTargetingRangeIntention<KtDeclaration>(javaClass(), "Make ${modifier.getValue()}") {
 
     override fun applicabilityRange(element: KtDeclaration): TextRange? {
         val modifierList = element.getModifierList()

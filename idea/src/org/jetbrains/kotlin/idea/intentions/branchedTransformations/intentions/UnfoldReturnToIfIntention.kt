@@ -20,7 +20,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<KtReturnExpression>(javaClass(), "Replace return with 'if' expression"), LowPriorityAction {
+public class UnfoldReturnToIfIntention : SelfTargetingRangeIntention<KtReturnExpression>(javaClass(), "Replace return with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtReturnExpression): TextRange? {
         val ifExpression = element.getReturnedExpression() as? KtIfExpression ?: return null
         return TextRange(element.startOffset, ifExpression.getIfKeyword().endOffset)

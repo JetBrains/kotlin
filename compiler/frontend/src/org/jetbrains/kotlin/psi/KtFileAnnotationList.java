@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -47,6 +47,6 @@ public class KtFileAnnotationList extends KtElementImplStub<KotlinPlaceHolderStu
 
     @NotNull
     public List<KtAnnotationEntry> getAnnotationEntries() {
-        return JetPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);
+        return KtPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);
     }
 }

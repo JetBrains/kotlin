@@ -55,6 +55,7 @@ public class ShadowedDeclarationsFilter(
                 is CallTypeAndReceiver.DEFAULT -> null
                 is CallTypeAndReceiver.DOT -> callTypeAndReceiver.receiver
                 is CallTypeAndReceiver.SAFE -> callTypeAndReceiver.receiver
+                is CallTypeAndReceiver.SUPER_MEMBERS -> callTypeAndReceiver.receiver
                 is CallTypeAndReceiver.INFIX -> callTypeAndReceiver.receiver
                 is CallTypeAndReceiver.TYPE, is CallTypeAndReceiver.ANNOTATION -> null // need filtering of classes with the same FQ-name
                 else -> return null // TODO: support shadowed declarations filtering for callable references
@@ -78,23 +79,27 @@ public class ShadowedDeclarationsFilter(
                 .flatMap { group -> filterEqualSignatureGroup(group) }
     }
 
-    public fun <TDescriptor : DeclarationDescriptor> filterNonImported(
-            declarations: Collection<TDescriptor>,
+    public fun <TDescriptor : DeclarationDescriptor> createNonImportedDeclarationsFilter(
             importedDeclarations: Collection<DeclarationDescriptor>
-    ): Collection<TDescriptor> {
+    ): (Collection<TDescriptor>) -> Collection<TDescriptor> {
         val importedDeclarationsSet = importedDeclarations.toSet()
-        val nonImportedDeclarations = declarations.filter { it !in importedDeclarationsSet }
-
         val importedDeclarationsBySignature = importedDeclarationsSet.groupBy { signature(it) }
 
-        val notShadowed = HashSet<DeclarationDescriptor>()
-        // same signature non-imported declarations from different packages do not shadow each other
-        for ((pair, group) in nonImportedDeclarations.groupBy { signature(it) to packageName(it) }) {
-            val imported = importedDeclarationsBySignature[pair.first]
-            val all = if (imported != null) group + imported else group
-            notShadowed.addAll(filterEqualSignatureGroup(all, descriptorsToImport = group))
+        return filter@ { declarations ->
+            // optimization
+            if (declarations.size == 1 && importedDeclarationsBySignature[signature(declarations.single())] == null) return@filter declarations
+
+            val nonImportedDeclarations = declarations.filter { it !in importedDeclarationsSet }
+
+            val notShadowed = HashSet<DeclarationDescriptor>()
+            // same signature non-imported declarations from different packages do not shadow each other
+            for ((pair, group) in nonImportedDeclarations.groupBy { signature(it) to packageName(it) }) {
+                val imported = importedDeclarationsBySignature[pair.first]
+                val all = if (imported != null) group + imported else group
+                notShadowed.addAll(filterEqualSignatureGroup(all, descriptorsToImport = group))
+            }
+            declarations.filter { it in notShadowed }
         }
-        return declarations.filter { it in notShadowed }
     }
 
     private fun signature(descriptor: DeclarationDescriptor): Any {
@@ -128,11 +133,11 @@ public class ShadowedDeclarationsFilter(
 
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for filtering shadowed declarations")
         for ((expression, parameter) in dummyArgumentExpressions.zip(parameters)) {
-            bindingTrace.recordType(expression, parameter.getVarargElementType() ?: parameter.getType())
+            bindingTrace.recordType(expression, parameter.varargElementType ?: parameter.getType())
             bindingTrace.record(BindingContext.PROCESSED, expression, true)
         }
 
-        val firstVarargIndex = parameters.withIndex().firstOrNull { it.value.getVarargElementType() != null }?.index
+        val firstVarargIndex = parameters.withIndex().firstOrNull { it.value.varargElementType != null }?.index
         val useNamedFromIndex = if (firstVarargIndex != null && firstVarargIndex != parameters.lastIndex) firstVarargIndex else parameters.size()
 
         class DummyArgument(val index: Int) : ValueArgument {
@@ -232,7 +237,7 @@ public class ShadowedDeclarationsFilter(
             for (i in parameters1.indices) {
                 val p1 = parameters1[i]
                 val p2 = parameters2[i]
-                if (p1.getVarargElementType() != p2.getVarargElementType()) return false // both should be vararg or or both not
+                if (p1.varargElementType != p2.varargElementType) return false // both should be vararg or or both not
                 if (p1.getType() != p2.getType()) return false
             }
             return true

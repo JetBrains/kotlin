@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.junit.Assert
 
-public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCase() {
+public abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected abstract fun getPackages(): List<FqName>
 
@@ -79,7 +79,7 @@ public abstract class TextConsistencyBaseTest : JetLightCodeInsightFixtureTestCa
                 module.resolveTopLevelClass(classId.asSingleFqName(), NoLookupLocation.FROM_TEST)
 
         override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> =
-                module.getPackage(facadeFqName.parent()).memberScope.getAllDescriptors().filter {
+                module.getPackage(facadeFqName.parent()).memberScope.getContributedDescriptors().filter {
                     it is CallableMemberDescriptor &&
                     it.module != module.builtIns.builtInsModule &&
                     isFromFacade(it, facadeFqName)

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -205,6 +205,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             generateFunctionReferenceMethods(functionReferenceTarget);
         }
 
+        functionCodegen.generateDefaultIfNeeded(
+                context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
+        );
+
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
@@ -212,10 +216,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         }
 
         genClosureFields(closure, v, typeMapper);
-
-        functionCodegen.generateDefaultIfNeeded(
-                context.intoFunction(funDescriptor), funDescriptor, context.getContextKind(), DefaultParameterValueLoader.DEFAULT, null
-        );
     }
 
     @Override
@@ -260,7 +260,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                         }
 
                         if (functionReferenceTarget != null) {
-                            v.invokestatic(REFLECTION, "function", Type.getMethodDescriptor(K_FUNCTION, FUNCTION_REFERENCE), false);
+                            if (!"true".equalsIgnoreCase(System.getProperty("kotlin.jvm.optimize.callable.references"))) {
+                                v.invokestatic(REFLECTION, "function", Type.getMethodDescriptor(K_FUNCTION, FUNCTION_REFERENCE), false);
+                            }
                         }
 
                         return Unit.INSTANCE$;
@@ -468,7 +470,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         ClassDescriptor elementClass = elementDescriptor.getExtensionReceiverParameter() == null
                                    ? DescriptorUtilsKt.getBuiltIns(elementDescriptor).getFunction(arity)
                                    : DescriptorUtilsKt.getBuiltIns(elementDescriptor).getExtensionFunction(arity);
-        KtScope scope = elementClass.getDefaultType().getMemberScope();
-        return scope.getFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
+        MemberScope scope = elementClass.getDefaultType().getMemberScope();
+        return scope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
     }
 }

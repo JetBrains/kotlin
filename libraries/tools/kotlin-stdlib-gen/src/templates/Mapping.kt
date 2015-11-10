@@ -1,12 +1,17 @@
 package templates
 
 import templates.Family.*
+import templates.DocExtensions.element
+import templates.DocExtensions.collection
+import templates.DocExtensions.mapResult
 
 fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("withIndex()") {
-        doc { "Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection." }
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
+        doc {  f -> "Returns a ${if (f == Sequences) f.mapResult else "lazy [Iterable]"} of [IndexedValue] for each ${f.element} of the original ${f.collection}." }
         returns("Iterable<IndexedValue<T>>")
         body {
             """
@@ -15,7 +20,6 @@ fun mapping(): List<GenericFunction> {
         }
 
         returns(Sequences) { "Sequence<IndexedValue<T>>" }
-        doc(Sequences) { "Returns a sequence of [IndexedValue] for each element of the original sequence." }
         body(Sequences) {
             """
             return IndexingSequence(this)
@@ -26,7 +30,7 @@ fun mapping(): List<GenericFunction> {
     templates add f("mapIndexed(transform: (Int, T) -> R)") {
         inline(true)
 
-        doc { "Returns a list containing the results of applying the given [transform] function to each element and its index of the original collection." }
+        doc { f -> "Returns a ${f.mapResult} containing the results of applying the given [transform] function to each ${f.element} and its index in the original ${f.collection}." }
         typeParam("R")
         returns("List<R>")
         body {
@@ -35,12 +39,12 @@ fun mapping(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             "return mapIndexedTo(ArrayList<R>(size()), transform)"
         }
-        body(Strings) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             "return mapIndexedTo(ArrayList<R>(length()), transform)"
         }
         inline(false, Sequences)
         returns(Sequences) { "Sequence<R>" }
-        doc(Sequences) { "Returns a sequence containing the results of applying the given [transform] function to each element and its index of the original sequence." }
         body(Sequences) {
             "return TransformingIndexedSequence(this, transform)"
         }
@@ -49,7 +53,7 @@ fun mapping(): List<GenericFunction> {
     templates add f("map(transform: (T) -> R)") {
         inline(true)
 
-        doc { "Returns a list containing the results of applying the given [transform] function to each element of the original collection." }
+        doc { f -> "Returns a ${f.mapResult} containing the results of applying the given [transform] function to each ${f.element} of the original ${f.collection}." }
         typeParam("R")
         returns("List<R>")
         body {
@@ -58,23 +62,24 @@ fun mapping(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives, Maps) {
             "return mapTo(ArrayList<R>(size()), transform)"
         }
-        body(Strings) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             "return mapTo(ArrayList<R>(length()), transform)"
         }
 
         inline(false, Sequences)
         returns(Sequences) { "Sequence<R>" }
-        doc(Sequences) { "Returns a sequence containing the results of applying the given [transform] function to each element of the original sequence." }
         body(Sequences) {
             "return TransformingSequence(this, transform)"
         }
         include(Maps)
     }
 
+    /*
     templates add f("mapNotNull(transform: (T) -> R)") {
         inline(true)
         exclude(Strings, ArraysOfPrimitives)
-        doc { "Returns a list containing the results of applying the given [transform] function to each non-null element of the original collection." }
+        doc { f -> "Returns a ${f.mapResult} containing the results of applying the given [transform] function to each non-null ${f.element} of the original ${f.collection}." }
         deprecate(Deprecation("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().map {} instead.", replaceWith = "filterNotNull().map(transform)"))
         typeParam("T : Any")
         typeParam("R")
@@ -86,7 +91,6 @@ fun mapping(): List<GenericFunction> {
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing the results of applying the given [transform] function to each non-null element of the original sequence." }
         returns(Sequences) { "Sequence<R>" }
         inline(false, Sequences)
         body(Sequences) {
@@ -95,13 +99,14 @@ fun mapping(): List<GenericFunction> {
             """
         }
     }
+    */
 
     templates add f("mapTo(destination: C, transform: (T) -> R)") {
         inline(true)
 
-        doc {
+        doc { f ->
             """
-            Appends transformed elements of the original collection using the given [transform] function
+            Appends transformed ${f.element}s of the original ${f.collection} using the given [transform] function
             to the given [destination].
             """
         }
@@ -116,15 +121,16 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        include(Maps)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("mapIndexedTo(destination: C, transform: (Int, T) -> R)") {
         inline(true)
 
-        doc {
+        doc { f ->
             """
-            Appends transformed elements and their indices of the original collection using the given [transform] function
+            Appends transformed ${f.element}s and their indices in the original ${f.collection} using the given [transform] function
             to the given [destination].
             """
         }
@@ -140,9 +146,11 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        include(Maps)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
+    /*
     templates add f("mapNotNullTo(destination: C, transform: (T) -> R)") {
         inline(true)
         exclude(Strings, ArraysOfPrimitives)
@@ -170,18 +178,20 @@ fun mapping(): List<GenericFunction> {
             """
         }
     }
+    */
 
     templates add f("flatMap(transform: (T) -> Iterable<R>)") {
         inline(true)
 
         exclude(Sequences)
-        doc { "Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original collection." }
+        doc { f -> "Returns a single list of all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}." }
         typeParam("R")
         returns("List<R>")
         body {
             "return flatMapTo(ArrayList<R>(), transform)"
         }
-        include(Maps)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("flatMap(transform: (T) -> Sequence<R>)") {
@@ -197,7 +207,7 @@ fun mapping(): List<GenericFunction> {
     templates add f("flatMapTo(destination: C, transform: (T) -> Iterable<R>)") {
         inline(true)
         exclude(Sequences)
-        doc { "Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination]." }
+        doc { f -> "Appends all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}, to the given [destination]." }
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
         returns("C")
@@ -210,7 +220,8 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        include(Maps)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("flatMapTo(destination: C, transform: (T) -> Sequence<R>)") {
@@ -235,7 +246,9 @@ fun mapping(): List<GenericFunction> {
     templates add f("groupBy(toKey: (T) -> K)") {
         inline(true)
 
-        doc { "Returns a map of the elements in original collection grouped by the result of given [toKey] function." }
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
+        doc { f -> "Returns a map of the ${f.element}s in original ${f.collection} grouped by the result of given [toKey] function." }
         typeParam("K")
         returns("Map<K, List<T>>")
         body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)" }
@@ -244,8 +257,10 @@ fun mapping(): List<GenericFunction> {
     templates add f("groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K)") {
         inline(true)
 
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         typeParam("K")
-        doc { "Appends elements from original collection grouped by the result of given [toKey] function to the given [map]." }
+        doc { f -> "Appends ${f.element}s from original ${f.collection} grouped by the result of given [toKey] function to the given [map]." }
         returns("Map<K, MutableList<T>>")
         body {
             """

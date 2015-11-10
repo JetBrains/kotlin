@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
@@ -70,7 +70,7 @@ public class MultifileClassCodegen(
                 getDeserializedCallables(compiledPackageFragment)
 
     private fun getDeserializedCallables(compiledPackageFragment: PackageFragmentDescriptor) =
-            compiledPackageFragment.getMemberScope().getDescriptors(DescriptorKindFilter.CALLABLES, KtScope.ALL_NAME_FILTER).filterIsInstance<DeserializedCallableMemberDescriptor>()
+            compiledPackageFragment.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CALLABLES, MemberScope.ALL_NAME_FILTER).filterIsInstance<DeserializedCallableMemberDescriptor>()
 
     public val packageParts = PackageParts(facadeFqName.parent().asString())
 

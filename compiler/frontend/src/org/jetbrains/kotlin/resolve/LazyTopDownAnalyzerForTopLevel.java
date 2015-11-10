@@ -84,7 +84,7 @@ public class LazyTopDownAnalyzerForTopLevel {
         }
 
         for (KtScript script : c.getScripts().keySet()) {
-            resolveAndCheckImports(script.getContainingJetFile(), resolveSession);
+            resolveAndCheckImports(script.getContainingKtFile(), resolveSession);
         }
     }
 

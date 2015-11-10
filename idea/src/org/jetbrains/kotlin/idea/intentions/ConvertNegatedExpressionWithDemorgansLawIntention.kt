@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingOffsetIndependentIntention<KtPrefixExpression>(javaClass(), "DeMorgan Law") {
+public class ConvertNegatedExpressionWithDemorgansLawIntention : SelfTargetingOffsetIndependentIntention<KtPrefixExpression>(javaClass(), "DeMorgan Law") {
 
     override fun isApplicableTo(element: KtPrefixExpression): Boolean {
         val prefixOperator = element.getOperationReference().getReferencedNameElementType()

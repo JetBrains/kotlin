@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -32,6 +33,7 @@ class DeserializationComponents(
         val packageFragmentProvider: PackageFragmentProvider,
         val localClassResolver: LocalClassResolver,
         val errorReporter: ErrorReporter,
+        val lookupTracker: LookupTracker,
         val flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
         val fictitiousClassDescriptorFactory: ClassDescriptorFactory,
         val typeCapabilitiesLoader: TypeCapabilitiesLoader = TypeCapabilitiesLoader.NONE,

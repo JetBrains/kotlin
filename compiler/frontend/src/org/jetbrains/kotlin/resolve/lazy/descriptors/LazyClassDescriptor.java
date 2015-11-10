@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.JetObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
@@ -59,7 +59,10 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.TypeUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static kotlin.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.diagnostics.Errors.CYCLIC_INHERITANCE_HIERARCHY;
@@ -92,7 +95,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final MemoizedFunctionToNotNull<KtObjectDeclaration, ClassDescriptor> extraCompanionObjectDescriptors;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
-    private final KtScope staticScope;
+    private final MemberScope staticScope;
 
     private final NullableLazyValue<Void> forceResolveAllContents;
     private final boolean isCompanionObject;
@@ -249,7 +252,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @NotNull
     @Override
-    public KtScope getUnsubstitutedMemberScope() {
+    public MemberScope getUnsubstitutedMemberScope() {
         return unsubstitutedMemberScope;
     }
 
@@ -287,7 +290,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     public Collection<CallableMemberDescriptor> getDeclaredCallableMembers() {
         //noinspection unchecked
         return (Collection) CollectionsKt.filter(
-                unsubstitutedMemberScope.getAllDescriptors(),
+                DescriptorUtils.getAllDescriptors(unsubstitutedMemberScope),
                 new Function1<DeclarationDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(DeclarationDescriptor descriptor) {
@@ -300,7 +303,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @NotNull
     @Override
-    public KtScope getStaticScope() {
+    public MemberScope getStaticScope() {
         return staticScope;
     }
 
@@ -358,7 +361,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         Name name = ((JetClassOrObjectInfo) companionObjectInfo).getName();
         assert name != null;
-        getUnsubstitutedMemberScope().getClassifier(name, NoLookupLocation.UNSORTED);
+        getUnsubstitutedMemberScope().getContributedClassifier(name, NoLookupLocation.WHEN_GET_COMPANION_OBJECT);
         ClassDescriptor companionObjectDescriptor = c.getTrace().get(BindingContext.CLASS, companionObject);
         if (companionObjectDescriptor instanceof LazyClassDescriptor) {
             assert DescriptorUtils.isCompanionObject(companionObjectDescriptor) : "Not a companion object: " + companionObjectDescriptor;
@@ -474,7 +477,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         getOriginal();
         getScopeForClassHeaderResolution();
         getScopeForMemberDeclarationResolution();
-        getUnsubstitutedMemberScope().getAllDescriptors();
+        DescriptorUtils.getAllDescriptors(getUnsubstitutedMemberScope());
         getScopeForInitializerResolution();
         getUnsubstitutedInnerClassesScope();
         getTypeConstructor().getSupertypes();

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jvm.compiler;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,168 +32,168 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotlinAgainstKotlinTest {
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.A.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.A.kt$"), true);
     }
 
     @TestMetadata("AnnotationInTrait.A.kt")
     public void testAnnotationInTrait() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/AnnotationInTrait.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/AnnotationInTrait.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ClassInObject.A.kt")
     public void testClassInObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ClassInObject.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ClassInObject.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ClassObjectInEnum.A.kt")
     public void testClassObjectInEnum() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ClassObjectInEnum.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ClassObjectInEnum.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ClassObjectMember.A.kt")
     public void testClassObjectMember() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ClassObjectMember.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ClassObjectMember.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ConstructorVararg.A.kt")
     public void testConstructorVararg() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ConstructorVararg.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ConstructorVararg.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("DefaultConstructor.A.kt")
     public void testDefaultConstructor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/DefaultConstructor.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/DefaultConstructor.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("DoublyNestedClass.A.kt")
     public void testDoublyNestedClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/DoublyNestedClass.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/DoublyNestedClass.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Enum.A.kt")
     public void testEnum() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/Enum.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/Enum.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ImportObject.A.kt")
     public void testImportObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ImportObject.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/ImportObject.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("InlinedConstants.A.kt")
     public void testInlinedConstants() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/InlinedConstants.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/InlinedConstants.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("InnerClassConstructor.A.kt")
     public void testInnerClassConstructor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/InnerClassConstructor.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/InnerClassConstructor.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("jvmField.A.kt")
     public void testJvmField() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmField.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmField.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("JvmNameOnAccessor.A.kt")
     public void testJvmNameOnAccessor() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/JvmNameOnAccessor.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/JvmNameOnAccessor.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("KotlinPropertyAsAnnotationParameter.A.kt")
     public void testKotlinPropertyAsAnnotationParameter() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/KotlinPropertyAsAnnotationParameter.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/KotlinPropertyAsAnnotationParameter.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("MultifileClassInlineFunctionAccessingProperty.A.kt")
     public void testMultifileClassInlineFunctionAccessingProperty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/MultifileClassInlineFunctionAccessingProperty.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/MultifileClassInlineFunctionAccessingProperty.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NestedClass.A.kt")
     public void testNestedClass() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/NestedClass.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/NestedClass.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NestedEnum.A.kt")
     public void testNestedEnum() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/NestedEnum.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/NestedEnum.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("NestedObject.A.kt")
     public void testNestedObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/NestedObject.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/NestedObject.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PlatformNames.A.kt")
     public void testPlatformNames() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformNames.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformNames.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PlatformStaticInObject.A.kt")
     public void testPlatformStaticInObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformStaticInObject.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformStaticInObject.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PlatformTypes.A.kt")
     public void testPlatformTypes() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformTypes.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PlatformTypes.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PropertyReference.A.kt")
     public void testPropertyReference() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PropertyReference.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/PropertyReference.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("RecursiveGeneric.A.kt")
     public void testRecursiveGeneric() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/RecursiveGeneric.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/RecursiveGeneric.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("SecondaryConstructors.A.kt")
     public void testSecondaryConstructors() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SecondaryConstructors.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SecondaryConstructors.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("Simple.A.kt")
     public void testSimple() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("SimpleValAnonymousObject.A.kt")
     public void testSimpleValAnonymousObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SimpleValAnonymousObject.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/SimpleValAnonymousObject.A.kt");
         doTest(fileName);
     }
 
     @TestMetadata("StarImportEnum.A.kt")
     public void testStarImportEnum() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/StarImportEnum.A.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/StarImportEnum.A.kt");
         doTest(fileName);
     }
 }

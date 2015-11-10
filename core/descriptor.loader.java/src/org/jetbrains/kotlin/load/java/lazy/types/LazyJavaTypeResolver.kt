@@ -50,7 +50,7 @@ class LazyJavaTypeResolver(
         return when (javaType) {
             is JavaPrimitiveType -> {
                 val primitiveType = javaType.getType()
-                if (primitiveType != null) c.module.builtIns.getPrimitiveJetType(primitiveType)
+                if (primitiveType != null) c.module.builtIns.getPrimitiveKotlinType(primitiveType)
                 else c.module.builtIns.getUnitType()
             }
             is JavaClassifierType ->
@@ -70,7 +70,7 @@ class LazyJavaTypeResolver(
             val javaComponentType = arrayType.getComponentType()
             val primitiveType = (javaComponentType as? JavaPrimitiveType)?.getType()
             if (primitiveType != null) {
-                val jetType = c.module.builtIns.getPrimitiveArrayJetType(primitiveType)
+                val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
                 return@run if (PLATFORM_TYPES && attr.allowFlexible)
                     FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
                 else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)

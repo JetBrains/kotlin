@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.parsing.JetScriptDefinition;
-import org.jetbrains.kotlin.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
+import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPackageDirective;
 import org.jetbrains.kotlin.psi.KtScript;
@@ -30,8 +30,8 @@ public class ScriptNameUtil {
 
     @NotNull
     public static FqName classNameForScript(KtScript script) {
-        KtFile file = script.getContainingJetFile();
-        JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
+        KtFile file = script.getContainingKtFile();
+        KotlinScriptDefinition scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
 
         String name = file.getName();
         int index = name.lastIndexOf('/');

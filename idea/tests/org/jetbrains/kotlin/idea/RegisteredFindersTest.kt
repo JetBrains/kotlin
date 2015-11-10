@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea
 import com.intellij.psi.NonClasspathClassFinder
 import com.intellij.psi.PsiElementFinder
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.junit.Assert
 
-public class RegisteredFindersTest : JetLightCodeInsightFixtureTestCase() {
+public class RegisteredFindersTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
     public fun testKnownNonClasspathFinder() {

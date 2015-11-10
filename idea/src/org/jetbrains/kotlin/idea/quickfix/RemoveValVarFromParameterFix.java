@@ -24,15 +24,15 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.KtValVarKeywordOwner;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
-public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtParameter> {
+public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtValVarKeywordOwner> {
     private final String varOrVal;
 
-    public RemoveValVarFromParameterFix(@NotNull KtParameter element) {
+    public RemoveValVarFromParameterFix(@NotNull KtValVarKeywordOwner element) {
         super(element);
         PsiElement valOrVarNode = element.getValOrVarKeyword();
         assert valOrVarNode != null : "Val or var node not found for " + PsiUtilsKt.getElementTextWithContext(element);
@@ -42,13 +42,13 @@ public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtParamet
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("remove.val.var.from.parameter", varOrVal);
+        return KotlinBundle.message("remove.val.var.from.parameter", varOrVal);
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("remove.val.var.from.parameter", "val/var");
+        return KotlinBundle.message("remove.val.var.from.parameter", "val/var");
     }
 
     @Override
@@ -59,12 +59,12 @@ public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtParamet
     }
 
 
-    public static JetSingleIntentionActionFactory createFactory() {
-        return new JetSingleIntentionActionFactory() {
+    public static KotlinSingleIntentionActionFactory createFactory() {
+        return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                return new RemoveValVarFromParameterFix((KtParameter) diagnostic.getPsiElement().getParent());
+                return new RemoveValVarFromParameterFix((KtValVarKeywordOwner) diagnostic.getPsiElement().getParent());
             }
         };
     }

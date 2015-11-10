@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace call with binary operator"), HighPriorityAction {
+public class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(javaClass(), "Replace call with binary operator"), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
 
@@ -37,7 +37,7 @@ public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeInten
         if (!resolvedCall.isReallySuccess()) return null
         if (resolvedCall.getCall().getTypeArgumentList() != null) return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
-        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return null
+        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.index != 0) return null
 
         if (!element.isReceiverExpressionWithValue()) return null
 

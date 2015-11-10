@@ -22,14 +22,14 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.ArrayList
 
@@ -71,7 +71,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
         }
 
         for ((i, kotlinFile) in resultFiles.withIndex()) {
-            JetTestUtils.assertEqualsToFile(expectedResultFile(i), kotlinFile.dumpTextWithErrors())
+            KotlinTestUtils.assertEqualsToFile(expectedResultFile(i), kotlinFile.dumpTextWithErrors())
         }
 
         for ((externalFile, externalPsiFile) in externalFiles.zip(externalPsiFiles)) {
@@ -83,10 +83,10 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
                 //TODO: errors dump for java files too
                 externalPsiFile.getText()
             }
-            JetTestUtils.assertEqualsToFile(expectedFile, resultText)
+            KotlinTestUtils.assertEqualsToFile(expectedFile, resultText)
         }
     }
 
     override fun getProjectDescriptor()
-            = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+            = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

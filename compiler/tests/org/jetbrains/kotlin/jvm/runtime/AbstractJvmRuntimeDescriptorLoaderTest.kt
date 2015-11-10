@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
@@ -39,14 +41,16 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.JetTestUtils.TestFileFactoryNoModules
+import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactoryNoModules
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.net.URLClassLoader
+import java.util.*
 import java.util.regex.Pattern
 
 public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
@@ -110,7 +114,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         val fileName = file.getName()
         when {
             fileName.endsWith(".java") -> {
-                val sources = JetTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
+                val sources = KotlinTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
                     override fun create(fileName: String, text: String, directives: Map<String, String>): File {
                         val targetFile = File(tmpdir, fileName)
                         targetFile.writeText(adaptJavaSource(text))
@@ -120,10 +124,10 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 LoadDescriptorUtil.compileJavaWithAnnotationsJar(sources, tmpdir)
             }
             fileName.endsWith(".kt") -> {
-                val environment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+                val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                         myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
-                val jetFile = JetTestUtils.createFile(file.getPath(), text, environment.project)
+                val jetFile = KotlinTestUtils.createFile(file.getPath(), text, environment.project)
                 GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile, environment).writeAllTo(tmpdir)
             }
         }
@@ -138,7 +142,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
         val allClassFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.class"), generatedPackageDir)
 
-        val packageScopes = arrayListOf<KtScope>()
+        val packageScopes = arrayListOf<MemberScope>()
         val classes = arrayListOf<ClassDescriptor>()
         var shouldAddPackageView = false
         for (classFile in allClassFiles) {
@@ -182,20 +186,17 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
     }
 
     private class SyntheticPackageViewForTest(override val module: ModuleDescriptor,
-                                              packageScopes: List<KtScope>,
+                                              packageScopes: List<MemberScope>,
                                               classes: List<ClassifierDescriptor>) : PackageViewDescriptor {
-        private val scope: KtScope
+        private val scope: MemberScope
 
         init {
-            val writableScope = WritableScopeImpl(KtScope.Empty, this, RedeclarationHandler.THROW_EXCEPTION, "runtime descriptor loader test")
-            classes.forEach { writableScope.addClassifierDescriptor(it) }
-            writableScope.changeLockLevel(WritableScope.LockLevel.READING)
-            scope = ChainedScope(this, "synthetic package view for test", writableScope, *packageScopes.toTypedArray())
+            scope = ChainedScope("synthetic package view for test", ScopeWithClassifiers(classes), *packageScopes.toTypedArray())
         }
 
         override val fqName: FqName
             get() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
-        override val memberScope: KtScope
+        override val memberScope: MemberScope
             get() = scope
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
                 visitor.visitPackageViewDescriptor(this, data)
@@ -209,4 +210,26 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         override val fragments: Nothing
             get() = throw UnsupportedOperationException()
     }
+
+    private class ScopeWithClassifiers(classifiers: List<ClassifierDescriptor>) : MemberScopeImpl() {
+        private val classifierMap = HashMap<Name, ClassifierDescriptor>()
+        val redeclarationHandler = RedeclarationHandler.THROW_EXCEPTION
+
+        init {
+            for (classifier in classifiers) {
+                classifierMap.put(classifier.name, classifier)?.let {
+                    redeclarationHandler.handleRedeclaration(it, classifier)
+                }
+            }
+        }
+
+        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classifierMap[name]
+
+        override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = classifierMap.values
+
+        override fun printScopeStructure(p: Printer) {
+            p.println("runtime descriptor loader test")
+        }
+    }
+
 }

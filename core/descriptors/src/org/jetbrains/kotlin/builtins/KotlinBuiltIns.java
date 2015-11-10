@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.AdditionalSupertypes;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
@@ -61,9 +61,9 @@ public abstract class KotlinBuiltIns {
     private final BuiltinsPackageFragment builtinsPackageFragment;
     private final BuiltinsPackageFragment annotationPackageFragment;
 
-    private final Map<PrimitiveType, KotlinType> primitiveTypeToArrayJetType;
-    private final Map<KotlinType, KotlinType> primitiveJetTypeToJetArrayType;
-    private final Map<KotlinType, KotlinType> jetArrayTypeToPrimitiveJetType;
+    private final Map<PrimitiveType, KotlinType> primitiveTypeToArrayKotlinType;
+    private final Map<KotlinType, KotlinType> primitiveKotlinTypeToKotlinArrayType;
+    private final Map<KotlinType, KotlinType> kotlinArrayTypeToPrimitiveKotlinType;
 
     public static final FqNames FQ_NAMES = new FqNames();
 
@@ -91,9 +91,9 @@ public abstract class KotlinBuiltIns {
         builtinsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
         annotationPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(ANNOTATION_PACKAGE_FQ_NAME));
 
-        primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, KotlinType>(PrimitiveType.class);
-        primitiveJetTypeToJetArrayType = new HashMap<KotlinType, KotlinType>();
-        jetArrayTypeToPrimitiveJetType = new HashMap<KotlinType, KotlinType>();
+        primitiveTypeToArrayKotlinType = new EnumMap<PrimitiveType, KotlinType>(PrimitiveType.class);
+        primitiveKotlinTypeToKotlinArrayType = new HashMap<KotlinType, KotlinType>();
+        kotlinArrayTypeToPrimitiveKotlinType = new HashMap<KotlinType, KotlinType>();
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
@@ -108,9 +108,9 @@ public abstract class KotlinBuiltIns {
         KotlinType type = getBuiltInTypeByClassName(primitiveType.getTypeName().asString());
         KotlinType arrayType = getBuiltInTypeByClassName(primitiveType.getArrayTypeName().asString());
 
-        primitiveTypeToArrayJetType.put(primitiveType, arrayType);
-        primitiveJetTypeToJetArrayType.put(type, arrayType);
-        jetArrayTypeToPrimitiveJetType.put(arrayType, type);
+        primitiveTypeToArrayKotlinType.put(primitiveType, arrayType);
+        primitiveKotlinTypeToKotlinArrayType.put(type, arrayType);
+        kotlinArrayTypeToPrimitiveKotlinType.put(arrayType, type);
     }
 
     public static class FqNames {
@@ -202,12 +202,12 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KtScope getBuiltInsPackageScope() {
+    public MemberScope getBuiltInsPackageScope() {
         return builtinsPackageFragment.getMemberScope();
     }
 
     @NotNull
-    public KtScope getAnnotationPackageScope() {
+    public MemberScope getAnnotationPackageScope() {
         return annotationPackageFragment.getMemberScope();
     }
 
@@ -219,8 +219,8 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getClassifier(simpleName,
-                                                                                                   NoLookupLocation.FROM_BUILTINS);
+        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getContributedClassifier(simpleName,
+                                                                                                              NoLookupLocation.FROM_BUILTINS);
         assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " +
                                                        (classifier == null ? "null" : classifier.toString());
         return (ClassDescriptor) classifier;
@@ -235,8 +235,8 @@ public abstract class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName,
-                                                                                                      NoLookupLocation.FROM_BUILTINS);
+        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getContributedClassifier(simpleName,
+                                                                                                                 NoLookupLocation.FROM_BUILTINS);
         assert classifier == null ||
                classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
@@ -405,7 +405,7 @@ public abstract class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
-        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getClassifier(
+        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getContributedClassifier(
                 Name.identifier(target.name()), NoLookupLocation.FROM_BUILTINS
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
@@ -418,7 +418,7 @@ public abstract class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
-        ClassifierDescriptor result = getAnnotationRetentionEnum().getUnsubstitutedInnerClassesScope().getClassifier(
+        ClassifierDescriptor result = getAnnotationRetentionEnum().getUnsubstitutedInnerClassesScope().getContributedClassifier(
                 Name.identifier(retention.name()), NoLookupLocation.FROM_BUILTINS
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
@@ -569,48 +569,48 @@ public abstract class KotlinBuiltIns {
     // Primitive
 
     @NotNull
-    public KotlinType getPrimitiveJetType(@NotNull PrimitiveType type) {
+    public KotlinType getPrimitiveKotlinType(@NotNull PrimitiveType type) {
         return getPrimitiveClassDescriptor(type).getDefaultType();
     }
 
     @NotNull
     public KotlinType getByteType() {
-        return getPrimitiveJetType(BYTE);
+        return getPrimitiveKotlinType(BYTE);
     }
 
     @NotNull
     public KotlinType getShortType() {
-        return getPrimitiveJetType(SHORT);
+        return getPrimitiveKotlinType(SHORT);
     }
 
     @NotNull
     public KotlinType getIntType() {
-        return getPrimitiveJetType(INT);
+        return getPrimitiveKotlinType(INT);
     }
 
     @NotNull
     public KotlinType getLongType() {
-        return getPrimitiveJetType(LONG);
+        return getPrimitiveKotlinType(LONG);
     }
 
     @NotNull
     public KotlinType getFloatType() {
-        return getPrimitiveJetType(FLOAT);
+        return getPrimitiveKotlinType(FLOAT);
     }
 
     @NotNull
     public KotlinType getDoubleType() {
-        return getPrimitiveJetType(DOUBLE);
+        return getPrimitiveKotlinType(DOUBLE);
     }
 
     @NotNull
     public KotlinType getCharType() {
-        return getPrimitiveJetType(CHAR);
+        return getPrimitiveKotlinType(CHAR);
     }
 
     @NotNull
     public KotlinType getBooleanType() {
-        return getPrimitiveJetType(BOOLEAN);
+        return getPrimitiveKotlinType(BOOLEAN);
     }
 
     // Recognized
@@ -633,7 +633,7 @@ public abstract class KotlinBuiltIns {
             }
             return arrayType.getArguments().get(0).getType();
         }
-        KotlinType primitiveType = jetArrayTypeToPrimitiveJetType.get(TypeUtils.makeNotNullable(arrayType));
+        KotlinType primitiveType = kotlinArrayTypeToPrimitiveKotlinType.get(TypeUtils.makeNotNullable(arrayType));
         if (primitiveType == null) {
             throw new IllegalStateException("not array: " + arrayType);
         }
@@ -641,16 +641,16 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public KotlinType getPrimitiveArrayJetType(@NotNull PrimitiveType primitiveType) {
-        return primitiveTypeToArrayJetType.get(primitiveType);
+    public KotlinType getPrimitiveArrayKotlinType(@NotNull PrimitiveType primitiveType) {
+        return primitiveTypeToArrayKotlinType.get(primitiveType);
     }
 
     /**
      * @return {@code null} if not primitive
      */
     @Nullable
-    public KotlinType getPrimitiveArrayJetTypeByPrimitiveJetType(@NotNull KotlinType jetType) {
-        return primitiveJetTypeToJetArrayType.get(jetType);
+    public KotlinType getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(@NotNull KotlinType kotlinType) {
+        return primitiveKotlinTypeToKotlinArrayType.get(kotlinType);
     }
 
     public static boolean isPrimitiveArray(@NotNull FqNameUnsafe arrayFqName) {
@@ -1072,7 +1072,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public FunctionDescriptor getIdentityEquals() {
-        return first(getBuiltInsPackageFragment().getMemberScope().getFunctions(Name.identifier("identityEquals"),
-                                                                                              NoLookupLocation.FROM_BUILTINS));
+        return first(getBuiltInsPackageFragment().getMemberScope().getContributedFunctions(Name.identifier("identityEquals"),
+                                                                                           NoLookupLocation.FROM_BUILTINS));
     }
 }

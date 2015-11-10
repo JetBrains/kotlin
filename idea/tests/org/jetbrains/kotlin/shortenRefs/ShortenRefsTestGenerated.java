@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.shortenRefs;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,48 +32,48 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     public void testAllFilesPresentInShortenRefs() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
     @TestMetadata("ClassNameConflict.kt")
     public void testClassNameConflict() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/ClassNameConflict.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/ClassNameConflict.kt");
         doTest(fileName);
     }
 
     @TestMetadata("ClassNameConflictNoPackageImport.kt")
     public void testClassNameConflictNoPackageImport() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/ClassNameConflictNoPackageImport.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/ClassNameConflictNoPackageImport.kt");
         doTest(fileName);
     }
 
     @TestMetadata("classObject.kt")
     public void testClassObject() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/classObject.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/classObject.kt");
         doTest(fileName);
     }
 
     @TestMetadata("descriptorsChangeAfterImportInsertion.kt")
     public void testDescriptorsChangeAfterImportInsertion() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/descriptorsChangeAfterImportInsertion.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/descriptorsChangeAfterImportInsertion.kt");
         doTest(fileName);
     }
 
     @TestMetadata("JavaStaticMethod.kt")
     public void testJavaStaticMethod() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/JavaStaticMethod.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/JavaStaticMethod.kt");
         doTest(fileName);
     }
 
     @TestMetadata("noShortening.kt")
     public void testNoShortening() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/noShortening.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/noShortening.kt");
         doTest(fileName);
     }
 
     @TestMetadata("PackagesToUseStarImports.kt")
     public void testPackagesToUseStarImports() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/PackagesToUseStarImports.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/PackagesToUseStarImports.kt");
         doTest(fileName);
     }
 
@@ -82,96 +82,96 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractShortenRefsTest {
         public void testAllFilesPresentInConstructor() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/constructor"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/constructor"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
 
         @TestMetadata("Ambiguous.kt")
         public void testAmbiguous() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/Ambiguous.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/Ambiguous.kt");
             doTest(fileName);
         }
 
         @TestMetadata("GenericType.kt")
         public void testGenericType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/GenericType.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/GenericType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeaveQualified.kt")
         public void testLeaveQualified() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeaveQualified1.kt")
         public void testLeaveQualified1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified1.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified1.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeaveQualified2.kt")
         public void testLeaveQualified2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified2.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeaveQualified3.kt")
         public void testLeaveQualified3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified3.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified3.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeaveQualified5.kt")
         public void testLeaveQualified5() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified5.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/LeaveQualified5.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NestedClass.kt")
         public void testNestedClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NestedClass.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NestedClass.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NestedClassWithImport.kt")
         public void testNestedClassWithImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NestedClassWithImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NestedClassWithImport.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NoImportNeeded.kt")
         public void testNoImportNeeded() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NoImportNeeded.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NoImportNeeded.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NoImportNeeded2.kt")
         public void testNoImportNeeded2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NoImportNeeded2.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NoImportNeeded2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NoImportNeeded3.kt")
         public void testNoImportNeeded3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NoImportNeeded3.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/NoImportNeeded3.kt");
             doTest(fileName);
         }
 
         @TestMetadata("SAMConstructorFromLambda.kt")
         public void testSAMConstructorFromLambda() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/SAMConstructorFromLambda.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/SAMConstructorFromLambda.kt");
             doTest(fileName);
         }
 
         @TestMetadata("WorksForClassNameRange.kt")
         public void testWorksForClassNameRange() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/WorksForClassNameRange.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/WorksForClassNameRange.kt");
             doTest(fileName);
         }
 
         @TestMetadata("WorksForClassNameRange2.kt")
         public void testWorksForClassNameRange2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/WorksForClassNameRange2.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/WorksForClassNameRange2.kt");
             doTest(fileName);
         }
     }
@@ -181,24 +181,24 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Imports extends AbstractShortenRefsTest {
         public void testAllFilesPresentInImports() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/imports"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/imports"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
 
         @TestMetadata("importGlobalCallables.kt")
         public void testImportGlobalCallables() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/importGlobalCallables.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/importGlobalCallables.kt");
             doTest(fileName);
         }
 
         @TestMetadata("leaveQualifiedConstructor.kt")
         public void testLeaveQualifiedConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/leaveQualifiedConstructor.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/leaveQualifiedConstructor.kt");
             doTest(fileName);
         }
 
         @TestMetadata("leaveQualifiedType.kt")
         public void testLeaveQualifiedType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/leaveQualifiedType.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/imports/leaveQualifiedType.kt");
             doTest(fileName);
         }
     }
@@ -208,60 +208,60 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Java extends AbstractShortenRefsTest {
         public void testAllFilesPresentInJava() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/java"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/java"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
 
         @TestMetadata("innerClassImport.kt")
         public void testInnerClassImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/innerClassImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/innerClassImport.kt");
             doTest(fileName);
         }
 
         @TestMetadata("innerClassNoImports.kt")
         public void testInnerClassNoImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/innerClassNoImports.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/innerClassNoImports.kt");
             doTest(fileName);
         }
 
         @TestMetadata("innerClassOnDemandImport.kt")
         public void testInnerClassOnDemandImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/innerClassOnDemandImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/innerClassOnDemandImport.kt");
             doTest(fileName);
         }
 
         @TestMetadata("staticClassNoImports.kt")
         public void testStaticClassNoImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticClassNoImports.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticClassNoImports.kt");
             doTest(fileName);
         }
 
         @TestMetadata("staticClassOnDemandImport.kt")
         public void testStaticClassOnDemandImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticClassOnDemandImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticClassOnDemandImport.kt");
             doTest(fileName);
         }
 
         @TestMetadata("staticFieldNoImports.kt")
         public void testStaticFieldNoImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticFieldNoImports.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticFieldNoImports.kt");
             doTest(fileName);
         }
 
         @TestMetadata("staticFieldOnDemandImport.kt")
         public void testStaticFieldOnDemandImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticFieldOnDemandImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticFieldOnDemandImport.kt");
             doTest(fileName);
         }
 
         @TestMetadata("staticMethodNoImports.kt")
         public void testStaticMethodNoImports() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticMethodNoImports.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticMethodNoImports.kt");
             doTest(fileName);
         }
 
         @TestMetadata("staticMethodOnDemandImport.kt")
         public void testStaticMethodOnDemandImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticMethodOnDemandImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticMethodOnDemandImport.kt");
             doTest(fileName);
         }
     }
@@ -271,54 +271,54 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class This extends AbstractShortenRefsTest {
         public void testAllFilesPresentInThis() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/this"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/this"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
 
         @TestMetadata("cantShortenThis.kt")
         public void testCantShortenThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/cantShortenThis.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/this/cantShortenThis.kt");
             doTest(fileName);
         }
 
         @TestMetadata("cantShortenThisLabel.kt")
         public void testCantShortenThisLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/cantShortenThisLabel.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/this/cantShortenThisLabel.kt");
             doTest(fileName);
         }
 
         @TestMetadata("shortenExtensionThis.kt")
         public void testShortenExtensionThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenExtensionThis.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenExtensionThis.kt");
             doTest(fileName);
         }
 
         @TestMetadata("shortenThis.kt")
         public void testShortenThis() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThis.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThis.kt");
             doTest(fileName);
         }
 
         @TestMetadata("shortenThisBothReceivers.kt")
         public void testShortenThisBothReceivers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisBothReceivers.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisBothReceivers.kt");
             doTest(fileName);
         }
 
         @TestMetadata("shortenThisLabel.kt")
         public void testShortenThisLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisLabel.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisLabel.kt");
             doTest(fileName);
         }
 
         @TestMetadata("shortenThisWithLabel.kt")
         public void testShortenThisWithLabel() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisWithLabel.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/this/shortenThisWithLabel.kt");
             doTest(fileName);
         }
 
         @TestMetadata("visitorConflict.kt")
         public void testVisitorConflict() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/this/visitorConflict.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/this/visitorConflict.kt");
             doTest(fileName);
         }
     }
@@ -328,114 +328,114 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Type extends AbstractShortenRefsTest {
         public void testAllFilesPresentInType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/type"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/type"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassNameInsideArguments.kt")
         public void testClassNameInsideArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/ClassNameInsideArguments.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/ClassNameInsideArguments.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ClassNameInsideLambda.kt")
         public void testClassNameInsideLambda() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/ClassNameInsideLambda.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/ClassNameInsideLambda.kt");
             doTest(fileName);
         }
 
         @TestMetadata("ClassSameNameAsPackage.kt")
         public void testClassSameNameAsPackage() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/ClassSameNameAsPackage.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/ClassSameNameAsPackage.kt");
             doTest(fileName);
         }
 
         @TestMetadata("delegationSpecifier.kt")
         public void testDelegationSpecifier() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/delegationSpecifier.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/delegationSpecifier.kt");
             doTest(fileName);
         }
 
         @TestMetadata("FunctionType.kt")
         public void testFunctionType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/FunctionType.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/FunctionType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("GenericType.kt")
         public void testGenericType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/GenericType.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/GenericType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("GenericType2.kt")
         public void testGenericType2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/GenericType2.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/GenericType2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("GenericType3.kt")
         public void testGenericType3() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/GenericType3.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/GenericType3.kt");
             doTest(fileName);
         }
 
         @TestMetadata("LeaveQualified.kt")
         public void testLeaveQualified() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/LeaveQualified.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/LeaveQualified.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NestedClass.kt")
         public void testNestedClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NestedClass.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NestedClass.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NestedClassRefInImport.kt")
         public void testNestedClassRefInImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NestedClassRefInImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NestedClassRefInImport.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NoImportNeeded.kt")
         public void testNoImportNeeded() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NoImportNeeded.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NoImportNeeded.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NoImportNeeded2.kt")
         public void testNoImportNeeded2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NoImportNeeded2.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NoImportNeeded2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("NullableType.kt")
         public void testNullableType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NullableType.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/NullableType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("OtherClassWithThisNameImported.kt")
         public void testOtherClassWithThisNameImported() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/OtherClassWithThisNameImported.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/OtherClassWithThisNameImported.kt");
             doTest(fileName);
         }
 
         @TestMetadata("SameClassTwice.kt")
         public void testSameClassTwice() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/SameClassTwice.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/SameClassTwice.kt");
             doTest(fileName);
         }
 
         @TestMetadata("SimpleAddImport.kt")
         public void testSimpleAddImport() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/SimpleAddImport.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/SimpleAddImport.kt");
             doTest(fileName);
         }
 
         @TestMetadata("TwoClassesSameNames.kt")
         public void testTwoClassesSameNames() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/shortenRefs/type/TwoClassesSameNames.kt");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/type/TwoClassesSameNames.kt");
             doTest(fileName);
         }
     }

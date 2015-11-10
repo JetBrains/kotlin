@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -160,14 +160,14 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     @Override
     @NotNull
-    public KtScope getUnsubstitutedMemberScope() {
-        return KtScope.Empty.INSTANCE$; // used for getDefaultType
+    public MemberScope getUnsubstitutedMemberScope() {
+        return MemberScope.Empty.INSTANCE; // used for getDefaultType
     }
 
     @NotNull
     @Override
-    public KtScope getStaticScope() {
-        return KtScope.Empty.INSTANCE$;
+    public MemberScope getStaticScope() {
+        return MemberScope.Empty.INSTANCE;
     }
 
     @Override

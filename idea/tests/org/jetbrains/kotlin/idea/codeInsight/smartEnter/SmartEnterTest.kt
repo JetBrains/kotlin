@@ -20,9 +20,9 @@ import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 
-class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
+class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testIfCondition() = doFunTest(
             """
             if <caret>

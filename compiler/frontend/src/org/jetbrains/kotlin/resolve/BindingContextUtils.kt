@@ -73,7 +73,7 @@ public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(ex
 
 public fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
     if (element != null) {
-        record(BindingContext.LEXICAL_SCOPE, element, scope.takeSnapshot())
+        record(BindingContext.LEXICAL_SCOPE, element, scope.takeSnapshot() as LexicalScope)
     }
 }
 

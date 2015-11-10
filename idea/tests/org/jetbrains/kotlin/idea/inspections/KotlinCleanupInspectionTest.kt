@@ -21,15 +21,15 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ex.GlobalInspectionContextBase
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
-class KotlinCleanupInspectionTest(): JetLightCodeInsightFixtureTestCase() {
+class KotlinCleanupInspectionTest(): KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String
             = PluginTestCaseBase.getTestDataPathBase() + "/inspections/cleanup"
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     private fun doTest(result: String, vararg files: String) {
         myFixture.enableInspections(javaClass<KotlinCleanupInspection>())

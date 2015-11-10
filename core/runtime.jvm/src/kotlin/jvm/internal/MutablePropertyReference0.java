@@ -16,27 +16,33 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.reflect.KCallable;
 import kotlin.reflect.KMutableProperty0;
 import kotlin.reflect.KProperty0;
 
 public class MutablePropertyReference0 extends MutablePropertyReference implements KMutableProperty0 {
     @Override
+    protected KCallable computeReflected() {
+        return Reflection.mutableProperty0(this);
+    }
+
+    @Override
     public Object get() {
-        throw error();
+        return ((KMutableProperty0) getReflected()).get();
     }
 
     @Override
     public void set(Object value) {
-        throw error();
+        ((KMutableProperty0) getReflected()).set(value);
     }
 
     @Override
     public KProperty0.Getter getGetter() {
-        throw error();
+        return ((KMutableProperty0) getReflected()).getGetter();
     }
 
     @Override
     public KMutableProperty0.Setter getSetter() {
-        throw error();
+        return ((KMutableProperty0) getReflected()).getSetter();
     }
 }

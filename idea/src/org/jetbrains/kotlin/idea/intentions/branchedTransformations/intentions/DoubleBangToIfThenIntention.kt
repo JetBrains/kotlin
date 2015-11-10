@@ -27,7 +27,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.ChooseStringExpression
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtThrowExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<KtPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression"), LowPriorityAction {
+public class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtPostfixExpression): TextRange? {
         return if (element.getOperationToken() == KtTokens.EXCLEXCL && element.getBaseExpression() != null)
             element.getOperationReference().getTextRange()

@@ -37,8 +37,18 @@ public interface DataFlowInfo {
     @NotNull
     SetMultimap<DataFlowValue, KotlinType> getCompleteTypeInfo();
 
+    /**
+     * Returns collected nullability for the given value, NOT taking its predictability into account.
+     */
     @NotNull
     Nullability getNullability(@NotNull DataFlowValue key);
+
+    /**
+     * Returns collected nullability for the given value if it's predictable.
+     * Otherwise basic value nullability is returned
+     */
+    @NotNull
+    Nullability getPredictableNullability(@NotNull DataFlowValue key);
 
     /**
      * IMPORTANT: by default, the original (native) type for this value

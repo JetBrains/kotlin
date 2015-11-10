@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,18 +32,18 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class DiagnosticMessageJsTestGenerated extends AbstractDiagnosticMessageJsTest {
     public void testAllFilesPresentInJs() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage/js"), Pattern.compile("^(.+)\\.kt$"), false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage/js"), Pattern.compile("^(.+)\\.kt$"), false);
     }
 
     @TestMetadata("jsCodeErrorHtml.kt")
     public void testJsCodeErrorHtml() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/js/jsCodeErrorHtml.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/js/jsCodeErrorHtml.kt");
         doTest(fileName);
     }
 
     @TestMetadata("jsCodeErrorText.kt")
     public void testJsCodeErrorText() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/diagnosticMessage/js/jsCodeErrorText.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/js/jsCodeErrorText.kt");
         doTest(fileName);
     }
 }

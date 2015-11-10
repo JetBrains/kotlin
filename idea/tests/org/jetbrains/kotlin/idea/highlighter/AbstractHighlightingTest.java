@@ -22,19 +22,19 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.TagsTestDataUtil;
 
 import java.io.File;
 import java.util.List;
 
-public abstract class AbstractHighlightingTest extends JetLightCodeInsightFixtureTestCase {
+public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFixtureTestCase {
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return KotlinLightProjectDescriptor.INSTANCE;
     }
 
     protected void doTest(String filePath) throws Exception {

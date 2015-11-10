@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.KtScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import kotlin.jvm.internal.KotlinPackage
 import kotlin.reflect.KCallable
 import kotlin.reflect.KPackage
@@ -35,7 +36,7 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
         }
     }
 
-    internal val scope: KtScope get() = descriptor().memberScope
+    internal val scope: MemberScope get() = descriptor().memberScope
 
     override val members: Collection<KCallable<*>>
         get() = getMembers(scope, declaredOnly = false, nonExtensions = true, extensions = true).toList()
@@ -45,10 +46,10 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
 
     @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
-            scope.getProperties(name, NoLookupLocation.FROM_REFLECTION) as Collection<PropertyDescriptor>
+            scope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> =
-            scope.getFunctions(name, NoLookupLocation.FROM_REFLECTION)
+            scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun equals(other: Any?): Boolean =
             other is KPackageImpl && jClass == other.jClass
@@ -57,8 +58,8 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
             jClass.hashCode()
 
     override fun toString(): String {
-        val name = jClass.getName()
-        return "package " + if (jClass.isAnnotationPresent(javaClass<KotlinPackage>())) {
+        val name = jClass.name
+        return "package " + if (jClass.isAnnotationPresent(KotlinPackage::class.java)) {
             if (name == "_DefaultPackage") "<default>" else name.substringBeforeLast(".")
         }
         else name

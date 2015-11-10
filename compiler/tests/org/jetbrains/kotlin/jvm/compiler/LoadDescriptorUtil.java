@@ -42,14 +42,14 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.kotlin.test.JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
+import static org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations;
 
 public final class LoadDescriptorUtil {
 
@@ -67,9 +67,10 @@ public final class LoadDescriptorUtil {
             @NotNull ConfigurationKind configurationKind,
             boolean useTypeTableInSerializer
     ) {
-        JetFilesAndAnalysisResult filesAndResult = JetFilesAndAnalysisResult.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
+        KtFilesAndAnalysisResult
+                filesAndResult = KtFilesAndAnalysisResult.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
         AnalysisResult result = filesAndResult.getAnalysisResult();
-        List<KtFile> files = filesAndResult.getJetFiles();
+        List<KtFile> files = filesAndResult.getKtFiles();
         GenerationState state = GenerationUtils.compileFilesGetGenerationState(
                 files.get(0).getProject(), result, files, useTypeTableInSerializer
         );
@@ -86,7 +87,7 @@ public final class LoadDescriptorUtil {
             boolean isBinaryRoot
     ) {
         List<File> javaBinaryRoots = new ArrayList<File>();
-        javaBinaryRoots.add(JetTestUtils.getAnnotationsJar());
+        javaBinaryRoots.add(KotlinTestUtils.getAnnotationsJar());
 
         List<File> javaSourceRoots = new ArrayList<File>();
         javaSourceRoots.add(new File("compiler/testData/loadJava/include"));
@@ -96,7 +97,7 @@ public final class LoadDescriptorUtil {
         else {
             javaSourceRoots.add(javaRoot);
         }
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
+        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
                 configurationKind,
                 testJdkKind,
                 javaBinaryRoots,
@@ -115,17 +116,17 @@ public final class LoadDescriptorUtil {
 
     public static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
         String classPath = ForTestCompileRuntime.runtimeJarForTests() + File.pathSeparator +
-                           JetTestUtils.getAnnotationsJar().getPath();
-        JetTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
+                           KotlinTestUtils.getAnnotationsJar().getPath();
+        KotlinTestUtils.compileJavaFiles(javaFiles, Arrays.asList(
                 "-classpath", classPath,
                 "-sourcepath", "compiler/testData/loadJava/include",
                 "-d", outDir.getPath()
         ));
     }
 
-    private static class JetFilesAndAnalysisResult {
+    private static class KtFilesAndAnalysisResult {
         @NotNull
-        public static JetFilesAndAnalysisResult createJetFilesAndAnalyze(
+        public static KtFilesAndAnalysisResult createJetFilesAndAnalyze(
                 @NotNull List<File> kotlinFiles,
                 @NotNull Disposable disposable,
                 @NotNull ConfigurationKind configurationKind
@@ -135,7 +136,7 @@ public final class LoadDescriptorUtil {
                 @Override
                 public KtFile fun(File kotlinFile) {
                     try {
-                        return JetTestUtils.createFile(
+                        return KotlinTestUtils.createFile(
                                 kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), jetCoreEnvironment.getProject());
                     }
                     catch (IOException e) {
@@ -145,20 +146,20 @@ public final class LoadDescriptorUtil {
             });
             AnalysisResult result = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                     jetCoreEnvironment.getProject(), jetFiles, new JvmPackagePartProvider(jetCoreEnvironment));
-            return new JetFilesAndAnalysisResult(jetFiles, result);
+            return new KtFilesAndAnalysisResult(jetFiles, result);
         }
 
-        private final List<KtFile> jetFiles;
+        private final List<KtFile> ktFiles;
         private final AnalysisResult result;
 
-        private JetFilesAndAnalysisResult(@NotNull List<KtFile> jetFiles, @NotNull AnalysisResult result) {
-            this.jetFiles = jetFiles;
+        private KtFilesAndAnalysisResult(@NotNull List<KtFile> ktFiles, @NotNull AnalysisResult result) {
+            this.ktFiles = ktFiles;
             this.result = result;
         }
 
         @NotNull
-        public List<KtFile> getJetFiles() {
-            return jetFiles;
+        public List<KtFile> getKtFiles() {
+            return ktFiles;
         }
 
         @NotNull

@@ -17,22 +17,18 @@
 package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
-import java.util.HashMap
+import java.util.*
 
-public class SubstitutingScope(private val workerScope: KtScope, private val substitutor: TypeSubstitutor) : KtScope {
+public class SubstitutingScope(private val workerScope: MemberScope, private val substitutor: TypeSubstitutor) : MemberScope {
 
     private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
 
-    private val _allDescriptors by lazy { substitute(workerScope.getDescriptors()) }
+    private val _allDescriptors by lazy { substitute(workerScope.getContributedDescriptors()) }
 
     private fun <D : DeclarationDescriptor> substitute(descriptor: D?): D? {
         if (descriptor == null) return null
@@ -63,42 +59,16 @@ public class SubstitutingScope(private val workerScope: KtScope, private val sub
         return result
     }
 
-    override fun getProperties(name: Name, location: LookupLocation) = substitute(workerScope.getProperties(name, location))
+    override fun getContributedVariables(name: Name, location: LookupLocation) = substitute(workerScope.getContributedVariables(name, location))
 
-    override fun getLocalVariable(name: Name) = substitute(workerScope.getLocalVariable(name))
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = substitute(workerScope.getContributedClassifier(name, location))
 
-    override fun getClassifier(name: Name, location: LookupLocation) = substitute(workerScope.getClassifier(name, location))
-
-    override fun getFunctions(name: Name, location: LookupLocation) = substitute(workerScope.getFunctions(name, location))
-
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-            = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes, name, location))
-
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor>
-            = substitute(workerScope.getSyntheticExtensionFunctions(receiverTypes, name, location))
-
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor>
-            = substitute(workerScope.getSyntheticExtensionProperties(receiverTypes))
-
-    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor>
-            = substitute(workerScope.getSyntheticExtensionFunctions(receiverTypes))
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = substitute(workerScope.getContributedFunctions(name, location))
 
     override fun getPackage(name: Name) = workerScope.getPackage(name)
 
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-        throw UnsupportedOperationException() // TODO
-    }
-
-    override fun getContainingDeclaration() = workerScope.getContainingDeclaration()
-
-    override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> {
-        throw UnsupportedOperationException() // TODO
-    }
-
-    override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                nameFilter: (Name) -> Boolean) = _allDescriptors
-
-    override fun getOwnDeclaredDescriptors() = substitute(workerScope.getOwnDeclaredDescriptors())
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
+                                           nameFilter: (Name) -> Boolean) = _allDescriptors
 
     override fun printScopeStructure(p: Printer) {
         p.println(javaClass.getSimpleName(), " {")

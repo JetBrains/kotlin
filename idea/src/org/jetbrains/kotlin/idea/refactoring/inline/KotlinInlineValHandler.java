@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.JetPsiUtilKt;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -90,7 +90,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     @Override
     public void inlineElement(final Project project, final Editor editor, PsiElement element) {
         final KtProperty val = (KtProperty) element;
-        final KtFile file = val.getContainingJetFile();
+        final KtFile file = val.getContainingKtFile();
         String name = val.getName();
 
         KtExpression initializerInDeclaration = val.getInitializer();
@@ -101,7 +101,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         for (KtExpression expression : referenceExpressions) {
             PsiElement parent = expression.getParent();
 
-            KtBinaryExpression assignment = JetPsiUtilKt.getAssignmentByLHS(expression);
+            KtBinaryExpression assignment = KtPsiUtilKt.getAssignmentByLHS(expression);
             if (assignment != null) {
                 assignments.add(parent);
             }
@@ -302,7 +302,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     }
 
     private static void addFunctionLiteralParameterTypes(@NotNull String parameters, @NotNull List<KtExpression> inlinedExpressions) {
-        KtFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
+        KtFile containingFile = inlinedExpressions.get(0).getContainingKtFile();
         List<KtFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);
@@ -363,7 +363,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     }
 
     private static void addTypeArguments(@NotNull String typeArguments, @NotNull List<KtExpression> inlinedExpressions) {
-        KtFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
+        KtFile containingFile = inlinedExpressions.get(0).getContainingKtFile();
         List<KtCallExpression> callsToAddArguments = Lists.newArrayList();
 
         ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);

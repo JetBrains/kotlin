@@ -93,7 +93,7 @@ public final class WhenChecker {
         assert isEnumClass(enumClassDescriptor) :
                 "isWhenOnEnumExhaustive should be called with an enum class descriptor";
         Set<ClassDescriptor> entryDescriptors = new HashSet<ClassDescriptor>();
-        for (DeclarationDescriptor descriptor : enumClassDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
+        for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(enumClassDescriptor.getUnsubstitutedInnerClassesScope())) {
             if (isEnumEntry(descriptor)) {
                 entryDescriptors.add((ClassDescriptor) descriptor);
             }
@@ -106,7 +106,7 @@ public final class WhenChecker {
             @NotNull ClassDescriptor currentDescriptor,
             @NotNull Set<ClassDescriptor> subclasses
     ) {
-        for (DeclarationDescriptor descriptor : currentDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
+        for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(currentDescriptor.getUnsubstitutedInnerClassesScope())) {
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor memberClassDescriptor = (ClassDescriptor) descriptor;
                 if (DescriptorUtils.isDirectSubclass(memberClassDescriptor, baseDescriptor)) {

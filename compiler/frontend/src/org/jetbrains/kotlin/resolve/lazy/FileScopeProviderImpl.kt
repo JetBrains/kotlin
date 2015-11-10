@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
 import org.jetbrains.kotlin.name.FqName
@@ -84,10 +83,10 @@ public open class FileScopeProviderImpl(
 
         var scope: ImportingScope
 
-        scope = LazyImportScope(null, packageFragment, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
+        scope = LazyImportScope(null, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
                 "Default all under imports in $debugName (invisible classes only)")
 
-        scope = LazyImportScope(scope, packageFragment, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
+        scope = LazyImportScope(scope, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
                 "All under imports in $debugName (invisible classes only)")
 
         for (additionalScope in additionalScopes.flatMap { it.scopes }) {
@@ -95,25 +94,22 @@ public open class FileScopeProviderImpl(
             scope = additionalScope.withParent(scope)
         }
 
-        scope = LazyImportScope(scope, packageFragment, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
+        scope = LazyImportScope(scope, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "Default all under imports in $debugName (visible classes)")
 
-        scope = LazyImportScope(scope, packageFragment, allUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
+        scope = LazyImportScope(scope, allUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "All under imports in $debugName (visible classes)")
 
-        scope = LazyImportScope(scope, packageFragment, defaultAliasImportResolver, LazyImportScope.FilteringKind.ALL,
+        scope = LazyImportScope(scope, defaultAliasImportResolver, LazyImportScope.FilteringKind.ALL,
                 "Default alias imports in $debugName")
 
         scope = SubpackagesScope(moduleDescriptor, FqName.ROOT).memberScopeAsImportingScope(scope)
 
         scope = NoSubpackagesInPackageScope(packageView).memberScopeAsImportingScope(scope) //TODO: problems with visibility too
 
-        scope = LazyImportScope(scope, packageFragment, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName")
+        scope = LazyImportScope(scope, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName")
 
-        val lexicalScope = object : BaseLexicalScope(scope) {
-            override val ownerDescriptor: DeclarationDescriptor
-                get() = packageFragment
-
+        val lexicalScope = object : BaseLexicalScope(scope, packageFragment) {
             override fun printStructure(p: Printer) {
                 p.println("File top-level scope (empty)")
             }

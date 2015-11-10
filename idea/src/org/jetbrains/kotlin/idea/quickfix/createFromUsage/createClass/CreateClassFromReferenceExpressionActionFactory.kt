@@ -75,7 +75,7 @@ public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromU
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
             val targetParent =
-                    getTargetParentByQualifier(element.getContainingJetFile(), receiverSelector != null, qualifierDescriptor)
+                    getTargetParentByQualifier(element.getContainingKtFile(), receiverSelector != null, qualifierDescriptor)
                     ?: return Collections.emptyList()
 
             element.getCreatePackageFixIfApplicable(targetParent)?.let { return emptyList() }
@@ -125,7 +125,7 @@ public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromU
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
             val targetParent =
-                    getTargetParentByQualifier(element.getContainingJetFile(), receiverSelector != null, qualifierDescriptor)
+                    getTargetParentByQualifier(element.getContainingKtFile(), receiverSelector != null, qualifierDescriptor)
                     ?: return null
 
             return ClassInfo(

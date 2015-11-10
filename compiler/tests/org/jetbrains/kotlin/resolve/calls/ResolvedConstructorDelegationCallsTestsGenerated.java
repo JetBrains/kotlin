@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -32,132 +32,132 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolvedConstructorDelegationCallsTestsGenerated extends AbstractResolvedConstructorDelegationCallsTests {
     public void testAllFilesPresentInResolveConstructorDelegationCalls() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolveConstructorDelegationCalls"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolveConstructorDelegationCalls"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("classWithGenerics.kt")
     public void testClassWithGenerics() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/classWithGenerics.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/classWithGenerics.kt");
         doTest(fileName);
     }
 
     @TestMetadata("generics2.kt")
     public void testGenerics2() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics2.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics2.kt");
         doTest(fileName);
     }
 
     @TestMetadata("generics3.kt")
     public void testGenerics3() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics3.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics3.kt");
         doTest(fileName);
     }
 
     @TestMetadata("generics4.kt")
     public void testGenerics4() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics4.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics4.kt");
         doTest(fileName);
     }
 
     @TestMetadata("generics5.kt")
     public void testGenerics5() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics5.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/generics5.kt");
         doTest(fileName);
     }
 
     @TestMetadata("inheritanceWithGeneric.kt")
     public void testInheritanceWithGeneric() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/inheritanceWithGeneric.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/inheritanceWithGeneric.kt");
         doTest(fileName);
     }
 
     @TestMetadata("innerClassDelegatingPrimary.kt")
     public void testInnerClassDelegatingPrimary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/innerClassDelegatingPrimary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/innerClassDelegatingPrimary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("innerClassDelegatingSecondary.kt")
     public void testInnerClassDelegatingSecondary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/innerClassDelegatingSecondary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/innerClassDelegatingSecondary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superAnyEmpty.kt")
     public void testSuperAnyEmpty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superAnyEmpty.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superAnyEmpty.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superAnyImplicit.kt")
     public void testSuperAnyImplicit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superAnyImplicit.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superAnyImplicit.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superPrimary.kt")
     public void testSuperPrimary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superPrimary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superPrimary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superPrimaryEmpty.kt")
     public void testSuperPrimaryEmpty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superPrimaryEmpty.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superPrimaryEmpty.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superPrimaryImplicit.kt")
     public void testSuperPrimaryImplicit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superPrimaryImplicit.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superPrimaryImplicit.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superSecondary.kt")
     public void testSuperSecondary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superSecondary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superSecondary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superSecondaryImplicit.kt")
     public void testSuperSecondaryImplicit() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superSecondaryImplicit.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superSecondaryImplicit.kt");
         doTest(fileName);
     }
 
     @TestMetadata("superSecondaryOverload.kt")
     public void testSuperSecondaryOverload() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superSecondaryOverload.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/superSecondaryOverload.kt");
         doTest(fileName);
     }
 
     @TestMetadata("thisPrimary.kt")
     public void testThisPrimary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/thisPrimary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/thisPrimary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("thisPrimaryEmpty.kt")
     public void testThisPrimaryEmpty() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/thisPrimaryEmpty.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/thisPrimaryEmpty.kt");
         doTest(fileName);
     }
 
     @TestMetadata("thisSecondary.kt")
     public void testThisSecondary() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/thisSecondary.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/thisSecondary.kt");
         doTest(fileName);
     }
 
     @TestMetadata("thisSecondaryOverload.kt")
     public void testThisSecondaryOverload() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/thisSecondaryOverload.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/thisSecondaryOverload.kt");
         doTest(fileName);
     }
 
     @TestMetadata("varargs.kt")
     public void testVarargs() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/varargs.kt");
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveConstructorDelegationCalls/varargs.kt");
         doTest(fileName);
     }
 }

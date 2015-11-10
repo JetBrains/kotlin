@@ -27,6 +27,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.util.*
@@ -35,6 +36,11 @@ public val LIBRARY_NAME_PREFIX: String = "library "
 
 public interface IdeaModuleInfo : ModuleInfo {
     fun contentScope(): GlobalSearchScope
+
+    val moduleOrigin: ModuleOrigin
+
+    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+        get() = mapOf(OriginCapability to moduleOrigin)
 }
 
 private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, productionOnly: Boolean): List<IdeaModuleInfo> {
@@ -82,6 +88,8 @@ fun ideaModelDependencies(module: Module, productionOnly: Boolean): List<IdeaMod
 
 public interface ModuleSourceInfo : IdeaModuleInfo {
     val module: Module
+    override val moduleOrigin: ModuleOrigin
+        get() = ModuleOrigin.MODULE
 }
 
 public data class ModuleProductionSourceInfo(override val module: Module) : ModuleSourceInfo {
@@ -149,6 +157,9 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
 }
 
 public data class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo {
+    override val moduleOrigin: ModuleOrigin
+        get() = ModuleOrigin.LIBRARY
+
     override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${library.getName()}>")
 
     override fun contentScope(): GlobalSearchScope = LibraryWithoutSourceScope(project, library)
@@ -172,6 +183,9 @@ public data class LibraryInfo(val project: Project, val library: Library) : Idea
 }
 
 internal data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo {
+    override val moduleOrigin: ModuleOrigin
+        get() = ModuleOrigin.OTHER
+
     override val name: Name = Name.special("<sources for library ${library.getName()}>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
@@ -188,6 +202,9 @@ internal data class LibrarySourceInfo(val project: Project, val library: Library
 
 //TODO: (module refactoring) there should be separate SdkSourceInfo but there are no kotlin source in existing sdks for now :)
 public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
+    override val moduleOrigin: ModuleOrigin
+        get() = ModuleOrigin.LIBRARY
+
     override val name: Name = Name.special("<$LIBRARY_NAME_PREFIX${sdk.getName()}>")
 
     override fun contentScope(): GlobalSearchScope = SdkScope(project, sdk)
@@ -196,6 +213,9 @@ public data class SdkInfo(val project: Project, val sdk: Sdk) : IdeaModuleInfo {
 }
 
 internal object NotUnderContentRootModuleInfo : IdeaModuleInfo {
+    override val moduleOrigin: ModuleOrigin
+        get() = ModuleOrigin.OTHER
+
     override val name: Name = Name.special("<special module for files not under source root>")
 
     override fun contentScope() = GlobalSearchScope.EMPTY_SCOPE
@@ -222,3 +242,11 @@ private class SdkScope(project: Project, private val sdk: Sdk) :
 }
 
 internal fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
+
+val OriginCapability = ModuleDescriptor.Capability<ModuleOrigin>("MODULE_ORIGIN")
+
+enum class ModuleOrigin {
+    MODULE,
+    LIBRARY,
+    OTHER
+}

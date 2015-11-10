@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.GenerationUtils;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
@@ -60,7 +60,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
+        jetCoreEnvironment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, ConfigurationKind.JDK_ONLY);
     }
 
     @Override
@@ -75,7 +75,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
 
         String fileText = FileUtil.loadFile(ktFile, true);
 
-        KtFile psiFile = JetTestUtils.createFile(ktFile.getName(), fileText, jetCoreEnvironment.getProject());
+        KtFile psiFile = KotlinTestUtils.createFile(ktFile.getName(), fileText, jetCoreEnvironment.getProject());
 
         OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile, jetCoreEnvironment);
 

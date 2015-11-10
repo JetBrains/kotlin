@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.IOException;
@@ -38,15 +38,15 @@ public class AndroidSdkAnnotationsValidityTest extends AbstractSdkAnnotationsVal
 
     @Override
     protected KotlinCoreEnvironment createEnvironment(Disposable parentDisposable) {
-        CompilerConfiguration configuration = JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.ANDROID_API, JetTestUtils.getAnnotationsJar()
+        CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(
+                ConfigurationKind.JDK_ONLY, TestJdkKind.ANDROID_API, KotlinTestUtils.getAnnotationsJar()
         );
         return KotlinCoreEnvironment.createForTests(parentDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
     }
 
     @Override
     protected List<FqName> getClassesToValidate() throws IOException {
-        JarFile jar = new JarFile(JetTestUtils.findAndroidApiJar());
+        JarFile jar = new JarFile(KotlinTestUtils.findAndroidApiJar());
         try {
             Enumeration<JarEntry> entries = jar.entries();
             Set<FqName> result = Sets.newLinkedHashSet();

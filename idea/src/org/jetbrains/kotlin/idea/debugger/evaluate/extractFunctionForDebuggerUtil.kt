@@ -44,17 +44,17 @@ fun getFunctionForExtractedFragment(
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: KtFile): String {
         if (KotlinInternalMode.enabled) {
             logger.error("Couldn't extract function for debugger:\n" +
-                                 "FILE NAME: ${breakpointFile.getName()}\n" +
-                                 "BREAKPOINT LINE: ${breakpointLine}\n" +
-                                 "CODE FRAGMENT:\n${codeFragment.getText()}\n" +
+                                 "FILE NAME: ${breakpointFile.name}\n" +
+                                 "BREAKPOINT LINE: $breakpointLine\n" +
+                                 "CODE FRAGMENT:\n${codeFragment.text}\n" +
                                  "ERRORS:\n${analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")}\n" +
                                  "TMPFILE_TEXT:\n${tmpFile.text}\n" +
-                                 "FILE TEXT: \n${breakpointFile.getText()}\n")
+                                 "FILE TEXT: \n${breakpointFile.text}\n")
         }
         return analysisResult.messages.map { errorMessage ->
             val message = when(errorMessage) {
                 ErrorMessage.NO_EXPRESSION -> "Cannot perform an action without an expression"
-                ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.getName()}:${breakpointLine}"
+                ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.name}:$breakpointLine"
                 ErrorMessage.SUPER_CALL -> "Cannot perform an action for expression with super call"
                 ErrorMessage.DENOTABLE_TYPES -> "Cannot perform an action because following types are unavailable from debugger scope"
                 ErrorMessage.ERROR_TYPES -> "Cannot perform an action because this code fragment contains erroneous types"
@@ -74,16 +74,14 @@ fun getFunctionForExtractedFragment(
         val tmpFile = originalFile.createTempCopy { it }
         tmpFile.suppressDiagnosticsInDebugMode = true
 
-        val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.getContext(), breakpointLine)
-        if (contextElement == null) return null
+        val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.context, breakpointLine) ?: return null
 
         addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
 
         val newDebugExpressions = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
         if (newDebugExpressions.isEmpty()) return null
 
-        val targetSibling = tmpFile.getDeclarations().firstOrNull()
-        if (targetSibling == null) return null
+        val targetSibling = tmpFile.declarations.firstOrNull() ?: return null
 
         val options = ExtractionOptions(inferUnitTypeForUnusedValues = false,
                                         enableListBoxing = true,
@@ -95,8 +93,8 @@ fun getFunctionForExtractedFragment(
         }
 
         val validationResult = analysisResult.descriptor!!.validate()
-        if (!validationResult.conflicts.isEmpty()) {
-            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().map { it.getText() }.joinToString(",")}")
+        if (!validationResult.conflicts.isEmpty) {
+            throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet().map { it.text }.joinToString(",")}")
         }
 
         val generatorOptions = ExtractionGeneratorOptions(inTempFile = true,
@@ -111,12 +109,12 @@ fun getFunctionForExtractedFragment(
 
 private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
     if (newImportList != null) {
-        val tmpFileImportList = tmpFile.getImportList()
-        val packageDirective = tmpFile.getPackageDirective()
+        val tmpFileImportList = tmpFile.importList
+        val packageDirective = tmpFile.packageDirective
         val psiFactory = KtPsiFactory(tmpFile)
         if (tmpFileImportList == null) {
             tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
-            tmpFile.addAfter(newImportList, tmpFile.getPackageDirective())
+            tmpFile.addAfter(newImportList, tmpFile.packageDirective)
         }
         else {
             val tmpFileImports = tmpFileImportList.imports
@@ -136,51 +134,46 @@ private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
 }
 
 private fun KtFile.getElementInCopy(e: PsiElement): PsiElement? {
-    val offset = e.getTextRange()?.getStartOffset()
-    if (offset == null) {
-        return null
-    }
+    val offset = e.textRange?.startOffset ?: return null
     var elementAt = this.findElementAt(offset)
-    while (elementAt == null || elementAt.getTextRange()?.getEndOffset() != e.getTextRange()?.getEndOffset()) {
-        elementAt = elementAt?.getParent()
+    while (elementAt == null || elementAt.textRange?.endOffset != e.textRange?.endOffset) {
+        elementAt = elementAt?.parent
     }
     return elementAt
 }
 
 private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElement: PsiElement?, line: Int): PsiElement? {
     if (contextElement == null) {
-        val lineStart = CodeInsightUtils.getStartLineOffset(tmpFile, line)
-        if (lineStart == null) return null
+        val lineStart = CodeInsightUtils.getStartLineOffset(tmpFile, line) ?: return null
 
-        val elementAtOffset = tmpFile.findElementAt(lineStart)
-        if (elementAtOffset == null) return null
+        val elementAtOffset = tmpFile.findElementAt(lineStart) ?: return null
 
         return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
     }
 
-    val containingFile = contextElement.getContainingFile()
+    val containingFile = contextElement.containingFile
     if (containingFile is KtCodeFragment) {
-        return getExpressionToAddDebugExpressionBefore(tmpFile, containingFile.getContext(), line)
+        return getExpressionToAddDebugExpressionBefore(tmpFile, containingFile.context, line)
     }
 
     fun shouldStop(el: PsiElement?, p: PsiElement?) = p is KtBlockExpression || el is KtDeclaration || el is KtFile
 
     var elementAt = tmpFile.getElementInCopy(contextElement)
 
-    var parent = elementAt?.getParent()
+    var parent = elementAt?.parent
     if (shouldStop(elementAt, parent)) {
         return elementAt
     }
 
-    var parentOfParent = parent?.getParent()
+    var parentOfParent = parent?.parent
 
     while (parent != null && parentOfParent != null) {
         if (shouldStop(parent, parentOfParent)) {
             break
         }
 
-        parent = parent.getParent()
-        parentOfParent = parent?.getParent()
+        parent = parent.parent
+        parentOfParent = parent?.parent
     }
 
     return parent
@@ -191,9 +184,9 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
 
     fun insertNewInitializer(classBody: KtClassBody): PsiElement? {
         val initializer = psiFactory.createAnonymousInitializer()
-        val newInitializer = (classBody.addAfter(initializer, classBody.getFirstChild()) as KtClassInitializer)
-        val block = newInitializer.getBody() as KtBlockExpression?
-        return block?.getLastChild()
+        val newInitializer = (classBody.addAfter(initializer, classBody.firstChild) as KtClassInitializer)
+        val block = newInitializer.body as KtBlockExpression?
+        return block?.lastChild
     }
 
     val elementBefore = when {
@@ -201,20 +194,20 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
             val fakeFunction = psiFactory.createFunction("fun _debug_fun_() {}")
             contextElement.add(psiFactory.createNewLine())
             val newFakeFun = contextElement.add(fakeFunction) as KtNamedFunction
-            newFakeFun.getBodyExpression()!!.getLastChild()
+            newFakeFun.bodyExpression!!.lastChild
         }
-        contextElement is KtProperty && !contextElement.isLocal() -> {
-            val delegateExpressionOrInitializer = contextElement.getDelegateExpressionOrInitializer()
+        contextElement is KtProperty && !contextElement.isLocal -> {
+            val delegateExpressionOrInitializer = contextElement.delegateExpressionOrInitializer
             if (delegateExpressionOrInitializer != null) {
                 wrapInRunFun(delegateExpressionOrInitializer)
             }
             else {
-                val getter = contextElement.getGetter()!!
+                val getter = contextElement.getter!!
                 if (!getter.hasBlockBody()) {
-                    wrapInRunFun(getter.getBodyExpression()!!)
+                    wrapInRunFun(getter.bodyExpression!!)
                 }
                 else {
-                    (getter.getBodyExpression() as KtBlockExpression).getStatements().first()
+                    (getter.bodyExpression as KtBlockExpression).statements.first()
                 }
             }
         }
@@ -226,29 +219,29 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
             insertNewInitializer(contextElement.getBody()!!)
         }
         contextElement is KtFunctionLiteral -> {
-            val block = contextElement.getBodyExpression()!!
-            block.getStatements().firstOrNull() ?: block.getLastChild()
+            val block = contextElement.bodyExpression!!
+            block.statements.firstOrNull() ?: block.lastChild
         }
         contextElement is KtDeclarationWithBody && !contextElement.hasBody()-> {
             val block = psiFactory.createBlock("")
             val newBlock = contextElement.add(block) as KtBlockExpression
-            newBlock.getRBrace()
+            newBlock.rBrace
         }
         contextElement is KtDeclarationWithBody && !contextElement.hasBlockBody()-> {
-            wrapInRunFun(contextElement.getBodyExpression()!!)
+            wrapInRunFun(contextElement.bodyExpression!!)
         }
         contextElement is KtDeclarationWithBody && contextElement.hasBlockBody()-> {
-            val block = contextElement.getBodyExpression() as KtBlockExpression
-            val last = block.getStatements().lastOrNull()
+            val block = contextElement.bodyExpression as KtBlockExpression
+            val last = block.statements.lastOrNull()
             if (last is KtReturnExpression)
                 last
             else
-                block.getRBrace()
+                block.rBrace
         }
         contextElement is KtWhenEntry -> {
-            val entryExpression = contextElement.getExpression()
+            val entryExpression = contextElement.expression
             if (entryExpression is KtBlockExpression) {
-                entryExpression.getStatements().firstOrNull() ?: entryExpression.getLastChild()
+                entryExpression.statements.firstOrNull() ?: entryExpression.lastChild
             }
             else {
                 wrapInRunFun(entryExpression!!)
@@ -259,18 +252,18 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
         }
     }
 
-    val parent = elementBefore?.getParent()
+    val parent = elementBefore?.parent
     if (parent == null || elementBefore == null) return emptyList()
 
     parent.addBefore(psiFactory.createNewLine(), elementBefore)
 
     fun insertExpression(expr: KtElement?): List<KtExpression> {
         when (expr) {
-            is KtBlockExpression -> return expr.getStatements().flatMap { insertExpression(it) }
+            is KtBlockExpression -> return expr.statements.flatMap { insertExpression(it) }
             is KtExpression -> {
                 val newDebugExpression = parent.addBefore(expr, elementBefore)
                 if (newDebugExpression == null) {
-                    logger.error("Couldn't insert debug expression ${expr.getText()} to context file before ${elementBefore.getText()}")
+                    logger.error("Couldn't insert debug expression ${expr.text} to context file before ${elementBefore.text}")
                     return emptyList()
                 }
                 parent.addBefore(psiFactory.createNewLine(), elementBefore)
@@ -280,7 +273,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
         return emptyList()
     }
 
-    val containingFile = codeFragment.getContext()?.getContainingFile()
+    val containingFile = codeFragment.context?.containingFile
     if (containingFile is KtCodeFragment) {
         insertExpression(containingFile.getContentElement() as? KtExpression)
     }
@@ -290,11 +283,11 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
 }
 
 private fun replaceByRunFunction(expression: KtExpression): KtCallExpression {
-    val callExpression = KtPsiFactory(expression).createExpression("run { \n${expression.getText()} \n}") as KtCallExpression
+    val callExpression = KtPsiFactory(expression).createExpression("run { \n${expression.text} \n}") as KtCallExpression
     val replaced = expression.replaced(callExpression)
     val typeArguments = InsertExplicitTypeArgumentsIntention.createTypeArguments(replaced, replaced.analyze())
-    if (typeArguments?.getArguments()?.isNotEmpty() ?: false) {
-        val calleeExpression = replaced.getCalleeExpression()
+    if (typeArguments?.arguments?.isNotEmpty() ?: false) {
+        val calleeExpression = replaced.calleeExpression
         replaced.addAfter(typeArguments!!, calleeExpression)
     }
     return replaced
@@ -304,7 +297,7 @@ private fun wrapInRunFun(expression: KtExpression): PsiElement? {
     val replacedBody = replaceByRunFunction(expression)
 
     // Increment modification tracker to clear ResolveCache after changes in function body
-    (PsiManager.getInstance(expression.getProject()).getModificationTracker() as PsiModificationTrackerImpl).incCounter()
+    (PsiManager.getInstance(expression.project).modificationTracker as PsiModificationTrackerImpl).incCounter()
 
-    return replacedBody.getFunctionLiteralArguments().first().getFunctionLiteral().getBodyExpression()?.getFirstChild()
+    return replacedBody.functionLiteralArguments.first().getFunctionLiteral().bodyExpression?.firstChild
 }

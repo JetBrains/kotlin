@@ -22,7 +22,7 @@ import java.io.File
 fun main(args: Array<String>) {
     val filePathDefault = "updated-version.txt"
 
-    if (args.isEmpty() || args.size() > 2) {
+    if (args.isEmpty() || args.size > 2) {
         error("Usage: kotlinc -script increment-version.kts " +
               "<version> " +
               "<file-path='$filePathDefault'>")
@@ -31,7 +31,7 @@ fun main(args: Array<String>) {
     var versionStr = args[0]
 
     val incrementPartStr = versionStr.takeLastWhile { it.isDigit() }
-    val versionPrefix = versionStr.take(versionStr.length() - incrementPartStr.length())
+    val versionPrefix = versionStr.take(versionStr.length - incrementPartStr.length)
     val incrementPart = incrementPartStr.toInt()
 
     var filePath = args.getOrNull(1) ?: filePathDefault

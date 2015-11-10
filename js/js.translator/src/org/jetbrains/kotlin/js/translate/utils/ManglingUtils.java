@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
-import org.jetbrains.kotlin.resolve.scopes.KtScope;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 
 import java.util.*;
 
@@ -154,7 +153,7 @@ public class ManglingUtils {
     private static String getSimpleMangledName(@NotNull CallableMemberDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
-        KtScope jetScope = null;
+        MemberScope jetScope = null;
 
         String nameToCompare = descriptor.getName().asString();
 
@@ -175,7 +174,7 @@ public class ManglingUtils {
         if (jetScope != null) {
             final String finalNameToCompare = nameToCompare;
 
-            Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, KtScope.Companion.getALL_NAME_FILTER());
+            Collection<DeclarationDescriptor> declarations = DescriptorUtils.getAllDescriptors(jetScope);
             List<CallableDescriptor> overloadedFunctions =
                     CollectionsKt.flatMap(declarations, new Function1<DeclarationDescriptor, Iterable<? extends CallableDescriptor>>() {
                 @Override
@@ -246,7 +245,7 @@ public class ManglingUtils {
     @NotNull
     public static String getStableMangledNameForDescriptor(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
         Collection<FunctionDescriptor> functions =
-                descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName), NoLookupLocation.FROM_BACKEND);
+                descriptor.getDefaultType().getMemberScope().getContributedFunctions(Name.identifier(functionName), NoLookupLocation.FROM_BACKEND);
         assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
         return getSuggestedName((DeclarationDescriptor) functions.iterator().next());
     }

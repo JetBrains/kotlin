@@ -41,7 +41,7 @@ public fun <T> Array<Array<out T>>.flatten(): List<T> {
  * *first* list is built from the first values of each pair from this array,
  * *second* list is built from the second values of each pair from this array.
  */
-public fun <T, R> Array<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
+public fun <T, R> Array<out Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     val listT = ArrayList<T>(size())
     val listR = ArrayList<R>(size())
     for (pair in this) {
