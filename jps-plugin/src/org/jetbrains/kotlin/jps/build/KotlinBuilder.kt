@@ -178,6 +178,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
         if (compilationErrors) {
             LOG.info("Compiled with errors")
+            return ABORT
         }
         else {
             LOG.info("Compiled successfully")
@@ -187,31 +188,21 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         registerOutputItems(outputConsumer, generatedFiles)
 
-        context.checkCanceled()
-
-        val isJsModule = JpsUtils.isJsKotlinModule(chunk.representativeTarget())
-        val changesInfo: ChangesInfo = when {
-            isJsModule -> ChangesInfo.NO_CHANGES
-            else -> {
-                val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass>()
-                val info = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles, chunk)
-                updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
-                updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
-                info
-            }
-        }
-
-        if (compilationErrors) {
-            return ABORT
-        }
-
-        if (isJsModule) {
+        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
             copyJsLibraryFilesIfNeeded(chunk, project)
+            return OK
         }
 
         if (!IncrementalCompilation.isEnabled()) {
             return OK
         }
+
+        context.checkCanceled()
+
+        val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass>()
+        val changesInfo = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles, chunk)
+        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
+        updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
         processChanges(context, chunk, allCompiledFiles, caches, changesInfo)
@@ -393,9 +384,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return sources
         }
 
-        if (!IncrementalCompilation.isEnabled()) {
-            return
-        }
+        assert(IncrementalCompilation.isEnabled()) { "updateJavaMappings should not be called when incremental compilation disabled" }
 
         val previousMappings = context.getProjectDescriptor().dataManager.getMappings()
         val delta = previousMappings.createDelta()
@@ -431,9 +420,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             generatedFiles: List<GeneratedFile>,
             chunk: ModuleChunk
     ): ChangesInfo {
-        if (!IncrementalCompilation.isEnabled()) {
-            return ChangesInfo.NO_CHANGES
-        }
+
+        assert(IncrementalCompilation.isEnabled()) { "updateKotlinIncrementalCache should not be called when incremental compilation disabled" }
 
         chunk.targets.forEach { incrementalCaches[it]!!.saveCacheFormatVersion() }
 
