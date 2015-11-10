@@ -26,16 +26,15 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 class InvokeConventionChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
-        if (resolvedCall !is VariableAsFunctionResolvedCallImpl || !resolvedCall.functionCall.dispatchReceiver.exists()
-            || !resolvedCall.functionCall.extensionReceiver.exists()) {
-            return
-        }
-
-        if (!KotlinBuiltIns.isExactExtensionFunctionType(resolvedCall.variableCall.resultingDescriptor.type)) return
-
-        if (resolvedCall.variableCall.dispatchReceiver is ExpressionReceiver || resolvedCall.variableCall.extensionReceiver is ExpressionReceiver) {
-            context.trace.report(Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER.on(
-                    resolvedCall.variableCall.call.callElement, resolvedCall.variableCall.call.callElement))
+        if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
+            val functionCall = resolvedCall.functionCall
+            val variableCall = resolvedCall.variableCall
+            if (functionCall.dispatchReceiver.exists() && functionCall.extensionReceiver.exists() && KotlinBuiltIns.isExactExtensionFunctionType(variableCall.resultingDescriptor.type)) {
+                if (variableCall.dispatchReceiver is ExpressionReceiver || variableCall.extensionReceiver is ExpressionReceiver) {
+                    val callElement = variableCall.call.callElement
+                    context.trace.report(Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER.on(callElement, callElement))
+                }
+            }
         }
     }
 
