@@ -351,6 +351,28 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
 
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithJava/javaProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaProperty extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInJavaProperty() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/javaProperty"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("boxedGetter")
+        public void testBoxedGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/javaProperty/boxedGetter/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("boxedSetter")
+        public void testBoxedSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/javaProperty/boxedSetter/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithJava/jvmField")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -6,3 +6,4 @@ public class Testing {
 }
 
 // EXIST: foo
+// LIGHT_CLASS: mockLib.foo.MyInterface

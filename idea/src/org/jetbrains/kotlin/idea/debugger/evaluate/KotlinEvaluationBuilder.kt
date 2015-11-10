@@ -81,7 +81,9 @@ import java.util.*
 
 internal val RECEIVER_NAME = "\$receiver"
 internal val THIS_NAME = "this"
-val logger = Logger.getInstance(KotlinEvaluator::class.java)
+val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluator")
+
+private val DEBUG_MODE = false
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -110,7 +112,7 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${position.line}"))
 
-            logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.context?.javaClass}", mergeAttachments(*attachments))
+            LOG.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.context?.javaClass}", mergeAttachments(*attachments))
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 
@@ -144,6 +146,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             throw e
         }
         catch(e: ProcessCanceledException) {
+            LOG.debug(e)
             exception(e)
         }
         catch(e: VMDisconnectedException) {
@@ -153,7 +156,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val attachments = arrayOf(attachmentByPsiFile(sourcePosition.file),
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${sourcePosition.line}"))
-            logger.error(LogMessageEx.createEvent(
+            LOG.error(LogMessageEx.createEvent(
                                 "Couldn't evaluate expression",
                                 ExceptionUtil.getThrowableText(e),
                                 mergeAttachments(*attachments)))
@@ -176,10 +179,23 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val parametersDescriptor = extractionResult.getParametersForDebugger(codeFragment)
             val extractedFunction = extractionResult.declaration as KtNamedFunction
 
+            if (LOG.isDebugEnabled) {
+                LOG.debug("Extracted function:\n" + runReadAction { extractedFunction.text })
+            }
+
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
 
             val outputFiles = classFileFactory.asList().filterClassFiles()
                     .sortedBy { it.relativePath.length }
+
+            for (file in outputFiles) {
+                if (LOG.isDebugEnabled) {
+                    LOG.debug("Output file generated: ${file.relativePath}")
+                }
+                if (DEBUG_MODE) {
+                    println(file.asText())
+                }
+            }
 
             val funName = runReadAction { extractedFunction.name }
                                         ?: throw IllegalStateException("Extracted function should have a name: ${extractedFunction.text}")
@@ -322,12 +338,16 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         private fun EvaluationContextImpl.getArgumentsForEval4j(parameters: ParametersDescriptor, parameterTypes: Array<Type>): List<Value> {
             val frameVisitor = FrameVisitor(this)
             return parameters.zip(parameterTypes).map {
-                if (it.first.value != null) {
+                val result = if (it.first.value != null) {
                     it.first.value!!
                 }
                 else {
                     frameVisitor.findValue(it.first.callText, it.second, checkType = false, failIfNotFound = true)!!
                 }
+                if (LOG.isDebugEnabled) {
+                    LOG.debug("Parameter for eval4j: name = ${it.first.callText}, type = ${it.second}, value = $result")
+                }
+                result
             }
         }
 
@@ -339,6 +359,9 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         ): ClassFileFactory {
             return runReadAction {
                 val jetFile = createFileForDebugger(codeFragment, extractedFunction)
+                if (LOG.isDebugEnabled) {
+                    LOG.debug("File for eval4j:\n${runReadAction { jetFile.text }}")
+                }
 
                 val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true)
 
@@ -351,7 +374,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
                 val state = GenerationState(
                         jetFile.project,
-                        ClassBuilderFactories.BINARIES,
+                        if (!DEBUG_MODE) ClassBuilderFactories.BINARIES else ClassBuilderFactories.TEST,
                         moduleDescriptor,
                         bindingContext,
                         files,
@@ -366,16 +389,13 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val valueParameters = extractedFunction.valueParameters
                 var paramIndex = 0
                 for (param in parameters) {
-
-                    if (param.callText.contains(THIS_NAME)) continue
-
                     val valueParameter = valueParameters[paramIndex++]
 
                     val paramRef = valueParameter.typeReference
                     if (paramRef == null) {
-                        logger.error("Each parameter for extracted function should have a type reference",
-                                     Attachment("codeFragment.txt", codeFragment.text),
-                                     Attachment("extractedFunction.txt", extractedFunction.text))
+                        LOG.error("Each parameter for extracted function should have a type reference",
+                                  Attachment("codeFragment.txt", codeFragment.text),
+                                  Attachment("extractedFunction.txt", extractedFunction.text))
 
                         exception("An exception occurs during Evaluate Expression Action")
                     }
@@ -397,6 +417,9 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     val localVariable = visitor.findValue(localVariableName, asmType = null, checkType = false, failIfNotFound = false)
                                                 ?: exception("Couldn't find local variable this in current frame to get classType for anonymous type $paramAnonymousType}")
                     record(CodegenBinding.ASM_TYPE, declarationDescriptor, localVariable.asmType)
+                    if (LOG.isDebugEnabled) {
+                        LOG.debug("Asm type ${localVariable.asmType.className} was recorded for ${declarationDescriptor.name}")
+                    }
                 }
             }
         }

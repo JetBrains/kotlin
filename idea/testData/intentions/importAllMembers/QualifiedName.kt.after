@@ -1,0 +1,8 @@
+import javax.swing.SwingUtilities.*
+
+// INTENTION_TEXT: "Import members from 'javax.swing.SwingUtilities'"
+// WITH_RUNTIME
+
+fun foo() {
+    <caret>invokeLater { }
+}

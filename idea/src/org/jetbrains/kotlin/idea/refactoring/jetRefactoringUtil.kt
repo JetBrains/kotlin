@@ -711,3 +711,36 @@ public fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterL
 }
 
 fun PsiNamedElement.isInterfaceClass(): Boolean = this is KtClass && isInterface() || this is PsiClass && isInterface
+
+fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
+        originalList: ListType,
+        newList: ListType,
+        itemsFun: ListType.() -> List<KtElement>
+): ListType {
+    originalList.children.takeWhile { it is PsiErrorElement }.forEach { it.delete() }
+
+    val oldParameters = originalList.itemsFun().toArrayList()
+    val newParameters = newList.itemsFun()
+    val oldCount = oldParameters.size
+    val newCount = newParameters.size
+
+    val commonCount = Math.min(oldCount, newCount)
+    for (i in 0..commonCount - 1) {
+        oldParameters[i] = oldParameters[i].replace(newParameters[i]) as KtElement
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    if (commonCount == 0) return originalList.replace(newList) as ListType
+
+    if (oldCount > commonCount) {
+        originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, oldParameters.last())
+    }
+    else if (newCount > commonCount) {
+        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling,
+                                   newList.lastChild.prevSibling,
+                                   PsiTreeUtil.skipSiblingsBackward(originalList.lastChild,
+                                                                    PsiWhiteSpace::class.java, PsiComment::class.java))
+    }
+
+    return originalList
+}

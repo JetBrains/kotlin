@@ -42,14 +42,14 @@ class ChangeFunctionLiteralSignatureFix private constructor(
         runChangeSignature(
                 project,
                 functionDescriptor,
-                object : JetChangeSignatureConfiguration {
-                    override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
+                object : KotlinChangeSignatureConfiguration {
+                    override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                         return originalDescriptor.modify { descriptor ->
                             val validator = CollectingNameValidator()
                             descriptor.clearNonReceiverParameters()
                             for (type in parameterTypes) {
                                 val name = KotlinNameSuggester.suggestNamesByType(type, validator, "param").get(0)
-                                descriptor.addParameter(JetParameterInfo(functionDescriptor, -1, name, type, null, null, JetValVar.None, null))
+                                descriptor.addParameter(KotlinParameterInfo(functionDescriptor, -1, name, type, null, null, KotlinValVar.None, null))
                             }
                         }
                     }

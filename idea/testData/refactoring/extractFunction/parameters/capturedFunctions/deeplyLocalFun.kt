@@ -1,4 +1,4 @@
-// OPTIONS: true, false, false, false, true
+// OPTIONS: true, false, false, false, true, false
 // PARAM_DESCRIPTOR: local final fun baz(m: kotlin.Int): Int defined in foo.bar
 // PARAM_DESCRIPTOR: value-parameter val n: kotlin.Int defined in foo
 // PARAM_TYPES: (kotlin.Int) -> Int

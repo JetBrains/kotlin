@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.CommonProcessors
@@ -74,10 +76,14 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
         val results = Collections.synchronizedList(arrayListOf<PsiReference>())
         val options = getFindUsagesOptions().clone()
         options.searchScope = searchScope
+        val scopeContainingFile = (searchScope as? LocalSearchScope)?.scope?.get(0)?.containingFile
         searchReferences(target, object : Processor<UsageInfo> {
             override fun process(info: UsageInfo): Boolean {
                 val reference = info.getReference()
                 if (reference != null) {
+                    if (scopeContainingFile != null && reference.element.containingFile != scopeContainingFile) {
+                        LOG.error("findReferencesToHighight() found a reference from a different file: $reference")
+                    }
                     results.add(reference)
                 }
                 return true
@@ -87,6 +93,7 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
     }
 
     companion object {
+        val LOG = Logger.getInstance(KotlinFindUsagesHandler::class.java)
 
         protected fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference): Boolean =
             processor.processIfNotNull { if (ref.element.isValid) KotlinReferenceUsageInfo(ref) else null }

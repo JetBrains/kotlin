@@ -7,3 +7,4 @@ public class Testing {
 // EXIST: topLevelFunction
 // EXIST: topLevelExtFunction
 // EXIST: getTopLevelVar, setTopLevelVar
+// LIGHT_CLASS: mockLib.foo.MainKt

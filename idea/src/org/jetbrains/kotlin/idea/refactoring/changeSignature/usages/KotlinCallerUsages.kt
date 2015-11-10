@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorParameterListIfAbsent
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.getAffectedCallables
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBody
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinCallerUsage(element: KtNamedDeclaration): JetUsageInfo<KtNamedDeclaration>(element) {
-    override fun processUsage(changeInfo: JetChangeInfo, element: KtNamedDeclaration, allUsages: Array<out UsageInfo>): Boolean {
+public class KotlinCallerUsage(element: KtNamedDeclaration): KotlinUsageInfo<KtNamedDeclaration>(element) {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtNamedDeclaration, allUsages: Array<out UsageInfo>): Boolean {
         // Do not process function twice
-        if (changeInfo.getAffectedCallables().any { it is JetCallableDefinitionUsage<*> && it.getElement() == element }) return true
+        if (changeInfo.getAffectedCallables().any { it is KotlinCallableDefinitionUsage<*> && it.getElement() == element }) return true
 
         val parameterList = when (element) {
             is KtFunction -> element.getValueParameterList()
@@ -50,8 +50,8 @@ public class KotlinCallerUsage(element: KtNamedDeclaration): JetUsageInfo<KtName
     }
 }
 
-public class KotlinCallerCallUsage(element: KtCallElement): JetUsageInfo<KtCallElement>(element) {
-    override fun processUsage(changeInfo: JetChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
+public class KotlinCallerCallUsage(element: KtCallElement): KotlinUsageInfo<KtCallElement>(element) {
+    override fun processUsage(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
         val argumentList = element.getValueArgumentList() ?: return true
         val psiFactory = KtPsiFactory(getProject())
         val isNamedCall = argumentList.getArguments().any { it.getArgumentName() != null }

@@ -591,6 +591,24 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("AfterDot1.kt")
+        public void testAfterDot1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/AfterDot1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterDot2.kt")
+        public void testAfterDot2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/AfterDot2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("AfterDot3.kt")
+        public void testAfterDot3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate/AfterDot3.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInStringTemplate() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
         }

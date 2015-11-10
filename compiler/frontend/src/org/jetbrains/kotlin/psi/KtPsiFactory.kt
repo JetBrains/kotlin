@@ -345,7 +345,7 @@ public class KtPsiFactory(private val project: Project) {
             createExpressionByPattern("if ($0) $1", condition, thenExpr)) as KtIfExpression
     }
 
-    public fun createArgument(expression: KtExpression, name: Name? = null, isSpread: Boolean = false): KtValueArgument {
+    public fun createArgument(expression: KtExpression?, name: Name? = null, isSpread: Boolean = false): KtValueArgument {
         val argumentList = buildByPattern({ pattern, args -> createByPattern(pattern, *args) { createCallArguments(it) } }) {
             appendFixedText("(")
 

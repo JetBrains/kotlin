@@ -197,7 +197,7 @@ public class OverridingUtil {
         return bothErrors || typeChecker.equalTypes(typeInSuper, typeInSub);
     }
 
-    // See JLS 8, §8.4.4 Generic Methods
+    // See JLS 8, 8.4.4 Generic Methods
     // TODO: use TypeSubstitutor instead
     private static boolean areTypeParametersEquivalent(
             @NotNull TypeParameterDescriptor superTypeParameter,

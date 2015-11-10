@@ -673,18 +673,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
-        @TestMetadata("StringTemplate1.kt")
-        public void testStringTemplate1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/StringTemplate1.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("StringTemplate2.kt")
-        public void testStringTemplate2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/StringTemplate2.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("SubpackageInFun.kt")
         public void testSubpackageInFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SubpackageInFun.kt");
@@ -1464,6 +1452,39 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("OptionalParameters.kt")
             public void testOptionalParameters() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/highOrderFunctions/OptionalParameters.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/inStringLiterals")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InStringLiterals extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInInStringLiterals() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/inStringLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("StringTemplate1.kt")
+            public void testStringTemplate1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplate1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("StringTemplate2.kt")
+            public void testStringTemplate2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplate2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("StringTemplateDot.kt")
+            public void testStringTemplateDot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplateDot.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("StringTemplateDotSomething.kt")
+            public void testStringTemplateDotSomething() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/inStringLiterals/StringTemplateDotSomething.kt");
                 doTest(fileName);
             }
         }

@@ -45,13 +45,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import java.util.*
 import javax.swing.Icon
 
 public open class KtLightClassForExplicitDeclaration(
-        manager: PsiManager,
         protected val classFqName: FqName, // FqName of (possibly inner) class
         protected val classOrObject: KtClassOrObject)
-: KtWrappingLightClass(manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+: KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private var delegate: PsiClass? = null
 
     private fun getLocalClassParent(): PsiElement? {
@@ -127,7 +127,7 @@ public open class KtLightClassForExplicitDeclaration(
     private val _parent: PsiElement? by lazy {
         if (classOrObject.isLocal())
             getLocalClassParent()
-        else if (classOrObject.parent === classOrObject.containingFile)
+        else if (classOrObject.isTopLevel())
             containingFile
         else
             containingClass
@@ -138,7 +138,7 @@ public open class KtLightClassForExplicitDeclaration(
     override fun getFqName(): FqName = classFqName
 
     override fun copy(): PsiElement {
-        return KtLightClassForExplicitDeclaration(manager, classFqName, classOrObject.copy() as KtClassOrObject)
+        return KtLightClassForExplicitDeclaration(classFqName, classOrObject.copy() as KtClassOrObject)
     }
 
     override fun getDelegate(): PsiClass {
@@ -179,7 +179,11 @@ public open class KtLightClassForExplicitDeclaration(
         val virtualFile = classOrObject.containingFile.virtualFile
         assert(virtualFile != null) { "No virtual file for " + classOrObject.text }
 
-        object : FakeFileForLightClass(classOrObject.getContainingKtFile().packageFqName, virtualFile, myManager, this, { getJavaFileStub() }) {
+        object : FakeFileForLightClass(
+                classOrObject.getContainingKtFile().packageFqName, virtualFile, myManager,
+                { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
+                { getJavaFileStub() }
+        ) {
             override fun processDeclarations(
                     processor: PsiScopeProcessor,
                     state: ResolveState,
@@ -227,6 +231,13 @@ public open class KtLightClassForExplicitDeclaration(
 
     override fun getContainingClass(): PsiClass? {
         if (classOrObject.parent === classOrObject.containingFile) return null
+
+        val containingClassOrObject = (classOrObject.parent as? KtClassBody)?.parent as? KtClassOrObject
+        if (containingClassOrObject != null) {
+            return create(containingClassOrObject)
+        }
+
+        // TODO: should return null
         return super.getContainingClass()
     }
 
@@ -351,23 +362,16 @@ public open class KtLightClassForExplicitDeclaration(
         return this
     }
 
-    override fun toString(): String {
-        try {
-            return javaClass<KtLightClass>().simpleName + ":" + qualifiedName
-        }
-        catch (e: Throwable) {
-            return javaClass<KtLightClass>().simpleName + ":" + e.toString()
-        }
-
-    }
+    override fun toString() = "${KtLightClass::class.java.simpleName}:$classFqName"
 
     override fun getOwnInnerClasses(): List<PsiClass> {
-        return getDelegate().innerClasses
-            .map {
-                val declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(it) as KtClassOrObject?
-                if (declaration != null) create(myManager, declaration, it) else null
-            }
-            .filterNotNull()
+        val result = ArrayList<PsiClass?>()
+        classOrObject.declarations.filterIsInstance<KtClassOrObject>().mapTo(result) { create(it) }
+
+        if (classOrObject.hasInterfaceDefaultImpls) {
+            result.add(KtLightClassForInterfaceDefaultImpls(classFqName.defaultImplsChild(), classOrObject))
+        }
+        return result.filterNotNull()
     }
 
     override fun getUseScope(): SearchScope = getOrigin().useScope
@@ -385,12 +389,7 @@ public open class KtLightClassForExplicitDeclaration(
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
-        @JvmOverloads
-        public fun create(
-                manager: PsiManager,
-                classOrObject: KtClassOrObject,
-                psiClass: PsiClass? = null
-        ): KtLightClassForExplicitDeclaration? {
+        public fun create(classOrObject: KtClassOrObject): KtLightClassForExplicitDeclaration? {
             if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingKtFile())) {
                 return null
             }
@@ -398,17 +397,10 @@ public open class KtLightClassForExplicitDeclaration(
             val fqName = predictFqName(classOrObject) ?: return null
 
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
-                return KtLightClassForAnonymousDeclaration(manager, fqName, classOrObject)
+                return KtLightClassForAnonymousDeclaration(fqName, classOrObject)
             }
 
-            if (classOrObject.hasInterfaceDefaultImpls) {
-                val implsFqName = fqName.defaultImplsChild()
-                if (implsFqName.asString() == psiClass?.qualifiedName) {
-                    return KtLightClassForInterfaceDefaultImpls(manager, implsFqName, classOrObject)
-                }
-            }
-
-            return KtLightClassForExplicitDeclaration(manager, fqName, classOrObject)
+            return KtLightClassForExplicitDeclaration(fqName, classOrObject)
         }
 
         private fun predictFqName(classOrObject: KtClassOrObject): FqName? {
@@ -429,7 +421,7 @@ public open class KtLightClassForExplicitDeclaration(
             var value = outermostClassOrObject.getUserData(JAVA_API_STUB)
             if (value == null) {
                 value = CachedValuesManager.getManager(classOrObject.project).createCachedValue(
-                        KotlinJavaFileStubProvider.createForDeclaredClass(outermostClassOrObject), false)
+                        LightClassDataProviderForClassOrObject(outermostClassOrObject), false)
                 value = outermostClassOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)!!
             }
             return value

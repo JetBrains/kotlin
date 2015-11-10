@@ -1,3 +1,5 @@
+package test;
+
 public class Testing {
     public static void test() {
         mockLib.foo.LibClass.<caret>
@@ -5,3 +7,4 @@ public class Testing {
 }
 
 // EXIST: Companion
+// LIGHT_CLASS: mockLib.foo.LibClass

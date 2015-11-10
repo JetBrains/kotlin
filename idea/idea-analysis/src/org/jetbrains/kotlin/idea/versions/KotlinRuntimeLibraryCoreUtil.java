@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.versions;
 
-import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -29,13 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class KotlinRuntimeLibraryCoreUtil {
-    private static final ImmutableList<String> CANDIDATE_CLASSES = ImmutableList.of(
-            "kotlin.Unit",
-
-            // For older versions
-            "jet.runtime.Intrinsics"
-    );
-
     @Nullable
     public static PsiClass getKotlinRuntimeMarkerClass(@NotNull final Project project, @NotNull final GlobalSearchScope scope) {
         return ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
@@ -45,13 +37,7 @@ public class KotlinRuntimeLibraryCoreUtil {
                 DumbService.getInstance(project).withAlternativeResolveEnabled(new Runnable() {
                     @Override
                     public void run() {
-                        for (String className : CANDIDATE_CLASSES) {
-                            PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass(className, scope);
-                            if (psiClass != null) {
-                                result.set(psiClass);
-                                return;
-                            }
-                        }
+                        result.set(JavaPsiFacade.getInstance(project).findClass("kotlin.Unit", scope));
                     }
                 });
 

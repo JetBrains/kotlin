@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.idea.core.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.DeferredJetFileKotlinMoveTarget
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.KotlinMoveTargetForDeferredFile
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.KotlinMoveTargetForExistingFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.kotlin.idea.search.allScope
@@ -249,12 +249,12 @@ enum class MoveAction {
             val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtNamedDeclaration>()!!
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
-                DeferredJetFileKotlinMoveTarget(project, FqName(packageName)) {
+                KotlinMoveTargetForDeferredFile(project, FqName(packageName)) {
                     val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
                     createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
-                JetFileKotlinMoveTarget(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
+                KotlinMoveTargetForExistingFile(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as KtFile)
             }
 
             val options = MoveKotlinTopLevelDeclarationsOptions(listOf(elementToMove), moveTarget)

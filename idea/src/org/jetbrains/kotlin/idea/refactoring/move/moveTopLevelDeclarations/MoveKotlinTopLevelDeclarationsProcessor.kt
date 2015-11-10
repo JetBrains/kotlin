@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.refactoring.getUsageContext
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
@@ -92,7 +92,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
         val options: MoveKotlinTopLevelDeclarationsOptions,
         val mover: Mover = Mover.Default) : BaseRefactoringProcessor(project) {
     companion object {
-        private val REFACTORING_NAME: String = JetRefactoringBundle.message("refactoring.move.top.level.declarations")
+        private val REFACTORING_NAME: String = KotlinRefactoringBundle.message("refactoring.move.top.level.declarations")
     }
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
@@ -172,7 +172,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
 
                 conflicts.putValue(
                         declaration,
-                        JetRefactoringBundle.message(
+                        KotlinRefactoringBundle.message(
                                 "package.private.0.will.no.longer.be.accessible.from.1",
                                 RefactoringUIUtil.getDescription(declaration, true),
                                 RefactoringUIUtil.getDescription(container, true)
@@ -210,7 +210,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
 
                     conflicts.putValue(
                             declaration,
-                            JetRefactoringBundle.message(
+                            KotlinRefactoringBundle.message(
                                     "0.uses.package.private.1",
                                     RefactoringUIUtil.getDescription(declaration, true),
                                     RefactoringUIUtil.getDescription(refTarget, true)

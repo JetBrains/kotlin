@@ -78,9 +78,9 @@ public class AddFunctionParametersFix(
         runChangeSignature(project, functionDescriptor, addParameterConfiguration(), callElement, text)
     }
 
-    private fun addParameterConfiguration(): JetChangeSignatureConfiguration {
-        return object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
+    private fun addParameterConfiguration(): KotlinChangeSignatureConfiguration {
+        return object : KotlinChangeSignatureConfiguration {
+            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify {
                     val parameters = functionDescriptor.valueParameters
                     val arguments = callElement.valueArguments
@@ -132,11 +132,11 @@ public class AddFunctionParametersFix(
             functionDescriptor: FunctionDescriptor,
             argument: ValueArgument,
             validator: (String) -> Boolean
-    ): JetParameterInfo {
+    ): KotlinParameterInfo {
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()
         val type = expression?.let { it.analyze().getType(it) } ?: functionDescriptor.builtIns.nullableAnyType
-        return JetParameterInfo(functionDescriptor, -1, name, type, null, null, JetValVar.None, null)
+        return KotlinParameterInfo(functionDescriptor, -1, name, type, null, null, KotlinValVar.None, null)
                 .apply { currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type) }
     }
 

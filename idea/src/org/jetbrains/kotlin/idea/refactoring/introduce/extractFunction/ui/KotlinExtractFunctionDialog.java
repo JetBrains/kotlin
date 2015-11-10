@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -42,10 +42,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class KotlinExtractFunctionDialog extends DialogWrapper {
     private JPanel contentPane;
@@ -78,7 +76,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         this.onAccept = onAccept;
 
         setModal(true);
-        setTitle(JetRefactoringBundle.message("extract.function"));
+        setTitle(KotlinRefactoringBundle.message("extract.function"));
         init();
         update();
     }
@@ -306,22 +304,26 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         }
         controlFlow = new ControlFlow(outputValues, controlFlow.getBoxerFactory(), controlFlow.getDeclarationsToCopy());
 
-        Map<Integer, Replacement> replacementMap = ContainerUtil.newHashMap();
-        for (Map.Entry<Integer, Replacement> e : originalDescriptor.getReplacementMap().entrySet()) {
+        MultiMap<Integer, Replacement> replacementMap = MultiMap.<Integer, Replacement>create();
+        for (Map.Entry<Integer, Collection<Replacement>> e : originalDescriptor.getReplacementMap().entrySet()) {
             Integer offset = e.getKey();
-            Replacement replacement = e.getValue();
+            Collection<Replacement> replacements = e.getValue();
 
-            if (replacement instanceof ParameterReplacement) {
-                ParameterReplacement parameterReplacement = (ParameterReplacement) replacement;
-                Parameter parameter = parameterReplacement.getParameter();
+            for (Replacement replacement : replacements) {
+                if (replacement instanceof ParameterReplacement) {
+                    ParameterReplacement parameterReplacement = (ParameterReplacement) replacement;
+                    Parameter parameter = parameterReplacement.getParameter();
 
-                Parameter newParameter = oldToNewParameters.get(parameter);
-                if (newParameter != null) {
-                    replacementMap.put(offset, parameterReplacement.copy(newParameter));
+                    Parameter newParameter = oldToNewParameters.get(parameter);
+                    if (newParameter != null) {
+                        replacementMap.remove(offset, replacement);
+                        replacementMap.putValue(offset, parameterReplacement.copy(newParameter));
+                    }
                 }
-            }
-            else {
-                replacementMap.put(offset, replacement);
+                else {
+                    replacementMap.put(offset, replacements);
+                }
+
             }
         }
 

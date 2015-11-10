@@ -346,7 +346,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
             String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH : null;
             JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
-            JavaParametersUtil.configureConfiguration(params, myConfiguration);
+            setupJavaParameters(params);
 
             params.setMainClass(myConfiguration.getRunClass());
 

@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -140,8 +140,8 @@ abstract class ChangeFunctionSignatureFix(
             runChangeSignature(
                     context.project,
                     functionDescriptor,
-                    object : JetChangeSignatureConfiguration {
-                        override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
+                    object : KotlinChangeSignatureConfiguration {
+                        override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                             return originalDescriptor.modify { descriptor ->
                                 val index = if (descriptor.receiver != null) parameterDescriptor.index + 1 else parameterDescriptor.index
                                 descriptor.removeParameter(index)

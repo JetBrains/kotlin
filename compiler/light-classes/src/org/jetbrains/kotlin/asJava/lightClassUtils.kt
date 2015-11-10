@@ -104,7 +104,18 @@ public val PsiElement.namedUnwrappedElement: PsiNamedElement?
 
 
 val KtClassOrObject.hasInterfaceDefaultImpls: Boolean
-    get() = this is KtClass && isInterface()
+    get() = this is KtClass && isInterface() && hasNonAbstractMembers(this)
+
+private fun hasNonAbstractMembers(ktInterface: KtClass): Boolean {
+    return ktInterface.declarations.any {
+        isNonAbstractMember(it)
+    }
+}
+
+private fun isNonAbstractMember(member: KtDeclaration?): Boolean {
+    return (member is KtNamedFunction && member.hasBody()) ||
+           (member is KtProperty && (member.hasDelegateExpressionOrInitializer() || member.getter?.hasBody() ?: false || member.setter?.hasBody() ?: false))
+}
 
 private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)

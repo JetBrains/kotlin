@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -80,7 +80,7 @@ public data class IntroduceParameterDescriptor(
 ) {
     val originalOccurrence: KotlinPsiRange
         get() = occurrencesToReplace.first { it.getTextRange().intersects(originalRange.getTextRange()) }
-    val valVar: JetValVar
+    val valVar: KotlinValVar
 
     init {
         valVar = if (callable is KtClass) {
@@ -98,9 +98,9 @@ public data class IntroduceParameterDescriptor(
             }
             if (occurrencesToReplace.all {
                 PsiTreeUtil.findCommonParent(it.elements)?.parentsWithSelf?.any(modifierIsUnnecessary) ?: false
-            }) JetValVar.None else JetValVar.Val
+            }) KotlinValVar.None else KotlinValVar.Val
         }
-        else JetValVar.None
+        else KotlinValVar.None
     }
 }
 
@@ -123,8 +123,8 @@ fun getParametersToRemove(
 
 fun IntroduceParameterDescriptor.performRefactoring() {
     runWriteAction {
-        val config = object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
+        val config = object : KotlinChangeSignatureConfiguration {
+            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify { methodDescriptor ->
                     if (!withDefaultValue) {
                         val parameters = callable.getValueParameters()
@@ -139,11 +139,11 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                                 .forEach { methodDescriptor.removeParameter(it) }
                     }
 
-                    val parameterInfo = JetParameterInfo(callableDescriptor = callableDescriptor,
-                                                         name = newParameterName,
-                                                         defaultValueForCall = if (withDefaultValue) null else newArgumentValue,
-                                                         defaultValueForParameter = if (withDefaultValue) newArgumentValue else null,
-                                                         valOrVar = valVar)
+                    val parameterInfo = KotlinParameterInfo(callableDescriptor = callableDescriptor,
+                                                            name = newParameterName,
+                                                            defaultValueForCall = if (withDefaultValue) null else newArgumentValue,
+                                                            defaultValueForParameter = if (withDefaultValue) newArgumentValue else null,
+                                                            valOrVar = valVar)
                     parameterInfo.currentTypeText = newParameterTypeText
                     methodDescriptor.addParameter(parameterInfo)
                 }
@@ -214,7 +214,7 @@ public open class KotlinIntroduceParameterHandler(
         }
 
         if (expressionType.isUnit() || expressionType.isNothing()) {
-            val message = JetRefactoringBundle.message(
+            val message = KotlinRefactoringBundle.message(
                     "cannot.introduce.parameter.of.0.type",
                     IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
             )

@@ -41,7 +41,7 @@ public object EmptyKotlinMoveTarget: KotlinMoveTarget {
     override fun verify(file: PsiFile) = null
 }
 
-public class JetFileKotlinMoveTarget(val targetFile: KtFile): KotlinMoveTarget {
+public class KotlinMoveTargetForExistingFile(val targetFile: KtFile): KotlinMoveTarget {
     override val packageWrapper: PackageWrapper? = targetFile.getPackageFqName().asString().let { packageName ->
         PackageWrapper(PsiManager.getInstance(targetFile.getProject()), packageName)
     }
@@ -54,7 +54,7 @@ public class JetFileKotlinMoveTarget(val targetFile: KtFile): KotlinMoveTarget {
     override fun verify(file: PsiFile): String? = null
 }
 
-public class DeferredJetFileKotlinMoveTarget(
+public class KotlinMoveTargetForDeferredFile(
         project: Project,
         private val packageFqName: FqName,
         private val createFile: (KtFile) -> KtFile?): KotlinMoveTarget {

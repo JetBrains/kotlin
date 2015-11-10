@@ -50,7 +50,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQ
             if (!(diagnostic.getPsiElement().getNonStrictParentOfType<KtAnnotationEntry>()?.looksLikeObsoleteLabelWithReferencesInCode()
                 ?: false)) return@factory null
 
-            JetWholeProjectForEachElementOfTypeFix.createForMultiTaskOnElement<KtAnnotatedExpression, KtAnnotationEntry>(
+            WholeProjectForEachElementOfTypeFix.createForMultiTaskOnElement<KtAnnotatedExpression, KtAnnotationEntry>(
                     tasksFactory = { collectTasks(it) },
                     tasksProcessor ={ it.forEach { ann -> replaceWithLabel(ann) } },
                     name = "Update obsolete label syntax in whole project"

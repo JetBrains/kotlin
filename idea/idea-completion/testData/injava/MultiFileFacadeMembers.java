@@ -6,4 +6,4 @@ public class Testing {
 
 // EXIST: funInFacade
 // EXIST: funInFacade2
-
+// LIGHT_CLASS: facades.MultiFileFacadeClass

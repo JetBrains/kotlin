@@ -160,10 +160,10 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
                 assert(descriptor !in failedToImportDescriptors)
 
                 val result = helper.importDescriptor(file, descriptor)
-                if (result != ImportInsertHelper.ImportDescriptorResult.ALREADY_IMPORTED) {
+                if (result != ImportDescriptorResult.ALREADY_IMPORTED) {
                     anyChange = true
                 }
-                if (result == ImportInsertHelper.ImportDescriptorResult.FAIL) {
+                if (result == ImportDescriptorResult.FAIL) {
                     failedToImportDescriptors.add(descriptor)
                 }
             }
@@ -207,11 +207,11 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
         protected fun analyze(element: KtElement)
                 = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
 
-        protected fun processQualifiedElement(element: T, target: DeclarationDescriptor, canShortenNow: Boolean) {
+        protected fun processQualifiedElement(element: T, target: DeclarationDescriptor?, canShortenNow: Boolean) {
             if (canShortenNow) {
                 addElementToShorten(element)
             }
-            else if (target !in failedToImportDescriptors && mayImport(target, file)) {
+            else if (target != null && target !in failedToImportDescriptors && mayImport(target, file)) {
                 descriptorsToImport.add(target)
             }
             else {
@@ -340,13 +340,14 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
             val selector = qualifiedExpression.getSelectorExpression() ?: return false
             val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return false
-            val target = callee.targets(bindingContext).singleOrNull() ?: return false
+            val targets = callee.targets(bindingContext)
+            if (targets.isEmpty()) return false
 
             val scope = qualifiedExpression.getResolutionScope(bindingContext, resolutionFacade)
             val selectorCopy = selector.copy() as KtReferenceExpression
             val newContext = selectorCopy.analyzeInContext(scope, selector)
             val targetsWhenShort = (selectorCopy.getCalleeExpressionIfAny() as KtReferenceExpression).targets(newContext)
-            val targetsMatch = targetsWhenShort.singleOrNull()?.asString() == target.asString()
+            val targetsMatch = targetsMatch(targets, targetsWhenShort)
 
             if (receiver is KtThisExpression) {
                 if (!targetsMatch) return false
@@ -368,8 +369,18 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
                 return false
             }
 
-            processQualifiedElement(qualifiedExpression, target, targetsMatch)
+            processQualifiedElement(qualifiedExpression, targets.singleOrNull(), targetsMatch)
             return true
+        }
+
+        private fun targetsMatch(targets1: Collection<DeclarationDescriptor>, targets2: Collection<DeclarationDescriptor>): Boolean {
+            if (targets1.size != targets2.size) return false
+            if (targets1.size == 1) {
+                return targets1.single().asString() == targets2.single().asString()
+            }
+            else {
+                return targets1.map { it.asString() }.toSet() == targets2.map { it.asString() }.toSet()
+            }
         }
 
         override fun shortenElement(element: KtDotQualifiedExpression): KtElement {

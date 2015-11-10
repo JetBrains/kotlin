@@ -37,14 +37,20 @@ class KtLightClassForAnonymousDeclaration extends KtLightClassForExplicitDeclara
 
     private SoftReference<PsiClassType> cachedBaseType = null;
 
-    KtLightClassForAnonymousDeclaration(@NotNull PsiManager manager, @NotNull FqName name, @NotNull KtClassOrObject classOrObject) {
-        super(manager, name, classOrObject);
+    KtLightClassForAnonymousDeclaration(@NotNull FqName name, @NotNull KtClassOrObject classOrObject) {
+        super(name, classOrObject);
     }
 
     @NotNull
     @Override
     public PsiJavaCodeReferenceElement getBaseClassReference() {
         return JavaPsiFacade.getElementFactory(getClassOrObject().getProject()).createReferenceElementByType(getBaseClassType());
+    }
+
+    @Nullable
+    @Override
+    public PsiClass getContainingClass() {
+        return getDelegate().getContainingClass();
     }
 
     @NotNull

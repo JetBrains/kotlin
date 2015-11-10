@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
@@ -153,7 +153,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
                                          : klass.getUserData(ORIGINAL_CLASS);
 
         if (originalClass != null) {
-            coloredComponent.append(JetRefactoringUtil.formatClass(originalClass));
+            coloredComponent.append(KotlinRefactoringUtil.formatClass(originalClass));
         }
     }
 

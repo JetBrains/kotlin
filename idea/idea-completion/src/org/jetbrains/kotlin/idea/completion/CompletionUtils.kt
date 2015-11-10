@@ -399,7 +399,7 @@ fun LookupElement.decorateAsStaticMember(
             var insertQualifier = true
             if (useImport) {
                 psiDocumentManager.commitAllDocuments()
-                if (ImportInsertHelper.getInstance(context.project).importDescriptor(file, memberDescriptor) != ImportInsertHelper.ImportDescriptorResult.FAIL) {
+                if (ImportInsertHelper.getInstance(context.project).importDescriptor(file, memberDescriptor) != ImportDescriptorResult.FAIL) {
                     insertQualifier = false
                 }
             }

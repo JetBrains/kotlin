@@ -1,0 +1,11 @@
+// INTENTION_TEXT: "Add import for 'javax.swing.SwingConstants.CENTER'"
+// WITH_RUNTIME
+
+import javax.swing.SwingConstants
+import javax.swing.SwingConstants.CENTER
+
+fun foo() {
+    val v = CENTER
+
+    <caret>CENTER
+}

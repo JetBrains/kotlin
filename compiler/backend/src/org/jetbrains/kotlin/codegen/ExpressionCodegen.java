@@ -359,7 +359,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitSuperExpression(@NotNull KtSuperExpression expression, StackValue data) {
-        return StackValue.thisOrOuter(this, getSuperCallLabelTarget(context, expression), true, true);
+        return StackValue.thisOrOuter(this, getSuperCallLabelTarget(context, expression), true, false);
     }
 
     @NotNull
@@ -2572,7 +2572,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
             }
             else {
-                return StackValue.thisOrOuter(this, receiverDescriptor, isSuper, isEnumEntry(receiverDescriptor));
+                return StackValue.thisOrOuter(this, receiverDescriptor, isSuper,
+                                              receiverValue instanceof CastClassReceiver || isEnumEntry(receiverDescriptor));
             }
         }
         else if (receiverValue instanceof ScriptReceiver) {

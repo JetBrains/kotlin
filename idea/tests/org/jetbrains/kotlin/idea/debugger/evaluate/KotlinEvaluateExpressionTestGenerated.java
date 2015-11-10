@@ -676,6 +676,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("extensionMemberFunction.kt")
+        public void testExtensionMemberFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/extensionMemberFunction.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("funFromOuterClassInLamdba.kt")
         public void testFunFromOuterClassInLamdba() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/funFromOuterClassInLamdba.kt");

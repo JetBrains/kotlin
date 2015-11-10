@@ -20,8 +20,8 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -33,9 +33,9 @@ public class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependen
         return (element.getParent() as? KtNamedFunction)?.getReceiverTypeReference() == element
     }
 
-    private fun configureChangeSignature(): JetChangeSignatureConfiguration {
-        return object : JetChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: JetMethodDescriptor): JetMethodDescriptor {
+    private fun configureChangeSignature(): KotlinChangeSignatureConfiguration {
+        return object : KotlinChangeSignatureConfiguration {
+            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify { it.receiver = null }
             }
         }

@@ -101,6 +101,12 @@ public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSou
         doTest(fileName);
     }
 
+    @TestMetadata("InterfaceDefaultImplsNonImported.java")
+    public void testInterfaceDefaultImplsNonImported() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/InterfaceDefaultImplsNonImported.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("MultiFileFacade.java")
     public void testMultiFileFacade() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/MultiFileFacade.java");
@@ -134,6 +140,12 @@ public class KotlinSourceInJavaCompletionTestGenerated extends AbstractKotlinSou
     @TestMetadata("NestedClassMembers2.java")
     public void testNestedClassMembers2() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/NestedClassMembers2.java");
+        doTest(fileName);
+    }
+
+    @TestMetadata("NestedNoImport.java")
+    public void testNestedNoImport() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/NestedNoImport.java");
         doTest(fileName);
     }
 

@@ -7,3 +7,4 @@ public class Testing {
 }
 
 // EXIST: LibClass.Nested
+// LIGHT_CLASS: mockLib.foo.LibClass

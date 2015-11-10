@@ -47,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry;
 
 public class KotlinTypedHandler extends TypedHandlerDelegate {
     private final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(
@@ -153,11 +154,18 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
             public boolean value(PsiFile file) {
                 int offset = editor.getCaretModel().getOffset();
 
-                PsiElement lastElement = file.findElementAt(offset - 1);
-                if (lastElement == null) return false;
+                PsiElement lastToken = file.findElementAt(offset - 1);
+                if (lastToken == null) return false;
 
-                IElementType elementType = lastElement.getNode().getElementType();
-                return elementType == KtTokens.DOT || elementType == KtTokens.SAFE_ACCESS;
+                IElementType elementType = lastToken.getNode().getElementType();
+                if (elementType == KtTokens.DOT || elementType == KtTokens.SAFE_ACCESS) return true;
+
+                if (elementType == KtTokens.REGULAR_STRING_PART && lastToken.getTextRange().getStartOffset() == offset - 1) {
+                    PsiElement prevSibling = lastToken.getParent().getPrevSibling();
+                    return prevSibling != null && prevSibling instanceof KtSimpleNameStringTemplateEntry;
+                }
+
+                return false;
             }
         });
     }

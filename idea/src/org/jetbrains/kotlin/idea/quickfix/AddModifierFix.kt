@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -50,7 +51,9 @@ open class AddModifierFix(
         element.addModifier(modifier)
     }
 
-    override fun startInWriteAction() = true
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        return super.isAvailable(project, editor, file) && QuickFixUtil.canModifyElement(element)
+    }
 
     companion object {
         fun getElementName(modifierListOwner: KtModifierListOwner): String {

@@ -16,17 +16,15 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiEnumConstant
+import com.intellij.psi.PsiEnumConstantInitializer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtEnumEntry
-import com.intellij.psi.PsiEnumConstantInitializer
-import com.intellij.psi.PsiEnumConstant
 
 internal class KtLightClassForEnumEntry(
-        psiManager: PsiManager,
         fqName: FqName,
         enumEntry: KtEnumEntry,
         private val enumConstant: PsiEnumConstant
-): KtLightClassForAnonymousDeclaration(psiManager, fqName, enumEntry), PsiEnumConstantInitializer {
+): KtLightClassForAnonymousDeclaration(fqName, enumEntry), PsiEnumConstantInitializer {
     override fun getEnumConstant(): PsiEnumConstant = enumConstant
 }

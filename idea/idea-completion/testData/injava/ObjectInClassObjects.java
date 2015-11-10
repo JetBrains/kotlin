@@ -4,3 +4,4 @@ public class Testing {
 }
 
 // EXIST: F
+// LIGHT_CLASS: mockLib.foo.F

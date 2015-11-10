@@ -1,3 +1,5 @@
+package test;
+
 public class Testing {
     void f() {
         MultiFile<caret>

@@ -22,7 +22,7 @@ import com.intellij.refactoring.changeSignature.OverriderUsageInfo
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.DeferredJavaMethodKotlinCallerUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JavaMethodKotlinUsageWithDelegate
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -65,11 +65,11 @@ public fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Bool
 }
 
 fun getCallableSubstitutor(
-        baseFunction: JetCallableDefinitionUsage<*>,
-        derivedCallable: JetCallableDefinitionUsage<*>
+        baseFunction: KotlinCallableDefinitionUsage<*>,
+        derivedCallable: KotlinCallableDefinitionUsage<*>
 ): TypeSubstitutor? {
-    val currentBaseFunction = baseFunction.getCurrentCallableDescriptor() ?: return null
-    val currentDerivedFunction = derivedCallable.getCurrentCallableDescriptor() ?: return null
+    val currentBaseFunction = baseFunction.currentCallableDescriptor ?: return null
+    val currentDerivedFunction = derivedCallable.currentCallableDescriptor ?: return null
     return getCallableSubstitutor(currentBaseFunction, currentDerivedFunction)
 }
 

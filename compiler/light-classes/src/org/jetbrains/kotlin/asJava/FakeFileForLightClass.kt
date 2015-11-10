@@ -34,8 +34,6 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.stubs.PsiClassHolderFileStub
@@ -45,14 +43,14 @@ open class FakeFileForLightClass(
         private val packageFqName: FqName,
         virtualFile: VirtualFile,
         psiManager: PsiManager,
-        private val lightClass: KtLightClass,
+        private val lightClass: () -> KtLightClass,
         private val stub: () -> PsiClassHolderFileStub<*>
 ) : ClsFileImpl(ClassFileViewProvider(psiManager, virtualFile)) {
     override fun getPackageName() = packageFqName.asString()
 
     override fun getStub() = stub()
 
-    override fun getClasses() = arrayOf(lightClass)
+    override fun getClasses() = arrayOf(lightClass())
 
     override fun getNavigationElement() = this
 }

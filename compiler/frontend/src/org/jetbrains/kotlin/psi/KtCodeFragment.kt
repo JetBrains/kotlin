@@ -39,7 +39,7 @@ public abstract class KtCodeFragment(
 ): KtFile((PsiManager.getInstance(_project) as PsiManagerEx).getFileManager().createFileViewProvider(LightVirtualFile(name, KotlinFileType.INSTANCE, text), true), false), JavaCodeFragment {
 
     private var viewProvider = super<KtFile>.getViewProvider() as SingleRootFileViewProvider
-    private var myImports = LinkedHashSet<String>()
+    private var imports = LinkedHashSet<String>()
     private val additionalContextForLambda: PsiElement? by lazy {
         this.getCopyableUserData(ADDITIONAL_CONTEXT_FOR_LAMBDA)?.invoke()
     }
@@ -76,7 +76,7 @@ public abstract class KtCodeFragment(
     override fun clone(): KtCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as KtCodeFragment
         clone.setOriginalFile(this)
-        clone.myImports = myImports
+        clone.imports = imports
         clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(getName(), KotlinFileType.INSTANCE, getText()), true)
         clone.viewProvider.forceCachedPsi(clone)
         return clone
@@ -97,12 +97,12 @@ public abstract class KtCodeFragment(
     }
 
     override fun importsToString(): String {
-        return myImports.joinToString(IMPORT_SEPARATOR)
+        return imports.joinToString(IMPORT_SEPARATOR)
     }
 
     override fun addImportsFromString(imports: String?) {
         if (imports == null || imports.isEmpty()) return
-        myImports.addAll(imports.split(IMPORT_SEPARATOR))
+        this.imports.addAll(imports.split(IMPORT_SEPARATOR))
 
         // we need this code to force re-highlighting, otherwise it does not work by some reason
         val tempElement = KtPsiFactory(project).createColon()
@@ -110,7 +110,11 @@ public abstract class KtCodeFragment(
     }
 
     public fun importsAsImportList(): KtImportList? {
-        return KtPsiFactory(this).createFile(myImports.joinToString("\n")).getImportList()
+        return KtPsiFactory(this).createFile(imports.joinToString("\n")).getImportList()
+    }
+
+    override fun getImportDirectives(): List<KtImportDirective> {
+        return importsAsImportList()?.imports ?: emptyList()
     }
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
@@ -129,7 +133,7 @@ public abstract class KtCodeFragment(
 
     private fun initImports(imports: String?) {
         if (imports != null && !imports.isEmpty()) {
-            myImports.addAll(imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import $it" })
+            this.imports.addAll(imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import $it" })
         }
     }
 

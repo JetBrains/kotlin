@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 public open class KtLightClassForInterfaceDefaultImpls(
-        manager: PsiManager,
         classFqName: FqName,
         classOrObject: KtClassOrObject)
-: KtLightClassForExplicitDeclaration(manager, classFqName, classOrObject){
+: KtLightClassForExplicitDeclaration(classFqName, classOrObject){
 
     override fun copy(): PsiElement {
-        return KtLightClassForInterfaceDefaultImpls(manager, classFqName, classOrObject.copy() as KtClassOrObject)
+        return KtLightClassForInterfaceDefaultImpls(classFqName, classOrObject.copy() as KtClassOrObject)
     }
 
     override fun getTypeParameterList(): PsiTypeParameterList? = null
@@ -47,4 +46,8 @@ public open class KtLightClassForInterfaceDefaultImpls(
     override fun setName(name: String): PsiElement {
         throw IncorrectOperationException("Impossible to rename DefaultImpls")
     }
+
+    override fun getContainingClass() = KtLightClassForExplicitDeclaration.create(classOrObject)
+
+    override fun getOwnInnerClasses() = emptyList<PsiClass>()
 }

@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getTypeParameters
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -68,7 +68,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
             }
         }
 
-        var valOrVar: JetValVar = JetValVar.None
+        var valOrVar: KotlinValVar = KotlinValVar.None
 
         fun chooseFunction(): PsiElement? {
             if (varExpected) return null
@@ -76,7 +76,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
         }
 
         fun chooseContainingClass(it: PsiElement): KtClass? {
-            valOrVar = if (varExpected) JetValVar.Var else JetValVar.Val
+            valOrVar = if (varExpected) KotlinValVar.Var else KotlinValVar.Val
             return it.parents.firstIsInstanceOrNull<KtClassOrObject>() as? KtClass
         }
 
@@ -120,10 +120,10 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
 
         return CreateParameterData(
                 context,
-                JetParameterInfo(callableDescriptor = functionDescriptor,
-                                 name = element.getReferencedName(),
-                                 type = paramType,
-                                 valOrVar = valOrVar),
+                KotlinParameterInfo(callableDescriptor = functionDescriptor,
+                                    name = element.getReferencedName(),
+                                    type = paramType,
+                                    valOrVar = valOrVar),
                 element
         )
     }

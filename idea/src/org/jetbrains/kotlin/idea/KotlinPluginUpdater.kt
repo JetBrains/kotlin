@@ -71,8 +71,6 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     private fun updateCheck() {
         try {
-            checkQueued = false
-
             var (mainRepoUpdateSuccess, latestVersionInRepository) = getPluginVersionFromMainRepository()
             var descriptorToInstall: IdeaPluginDescriptor? = null
             var hostToInstallFrom: String? = null
@@ -93,6 +91,8 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                     hostToInstallFrom = host
                 }
             }
+
+            checkQueued = false
 
             if (mainRepoUpdateSuccess || latestVersionInRepository != null) {
                 recordSuccessfulUpdateCheck()

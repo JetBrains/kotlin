@@ -5,3 +5,4 @@ public class Testing {
 }
 
 // EXIST: classObjectFun
+// LIGHT_CLASS: mockLib.foo.LibClass

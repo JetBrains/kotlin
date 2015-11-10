@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
 import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
@@ -76,20 +76,20 @@ import java.util.List;
 
 public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
-    public static final String INTRODUCE_VARIABLE = JetRefactoringBundle.message("introduce.variable");
+    public static final String INTRODUCE_VARIABLE = KotlinRefactoringBundle.message("introduce.variable");
 
     @Override
     public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file, DataContext dataContext) {
-        JetRefactoringUtil.SelectExpressionCallback callback = new JetRefactoringUtil.SelectExpressionCallback() {
+        KotlinRefactoringUtil.SelectExpressionCallback callback = new KotlinRefactoringUtil.SelectExpressionCallback() {
             @Override
             public void run(@Nullable KtExpression expression) {
                 doRefactoring(project, editor, expression, null, null);
             }
         };
         try {
-            JetRefactoringUtil.selectExpression(editor, file, callback);
+            KotlinRefactoringUtil.selectExpression(editor, file, callback);
         }
-        catch (JetRefactoringUtil.IntroduceRefactoringException e) {
+        catch (KotlinRefactoringUtil.IntroduceRefactoringException e) {
             showErrorHint(project, editor, e.getMessage());
         }
     }
@@ -103,7 +103,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             @Nullable final Function1<KtProperty, Unit> onNonInteractiveFinish
     ) {
         if (_expression == null) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
+            showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"));
             return;
         }
         if (_expression.getParent() instanceof KtParenthesizedExpression) {
@@ -114,18 +114,18 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         if (expression.getParent() instanceof KtQualifiedExpression) {
             KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression)expression.getParent();
             if (qualifiedExpression.getReceiverExpression() != expression) {
-                showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
+                showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"));
                 return;
             }
         }
         else if (expression instanceof KtStatementExpression) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
+            showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"));
             return;
         }
         else if (expression.getParent() instanceof KtOperationExpression) {
             KtOperationExpression operationExpression = (KtOperationExpression)expression.getParent();
             if (operationExpression.getOperationReference() == expression) {
-                showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
+                showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"));
                 return;
             }
         }
@@ -133,7 +133,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         //noinspection unchecked
         if (PsiTreeUtil.getNonStrictParentOfType(expression,
                                                  KtTypeReference.class, KtConstructorCalleeExpression.class, KtSuperExpression.class) != null) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.container"));
+            showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"));
             return;
         }
 
@@ -153,17 +153,17 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         }
 
         if (expressionType == null && bindingContext.get(BindingContext.QUALIFIER, expression) != null) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.package.expression"));
+            showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.package.expression"));
             return;
         }
         if (expressionType != null && KotlinBuiltIns.isUnit(expressionType)) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
+            showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
             return;
         }
         final PsiElement container = getContainer(expression);
         PsiElement occurrenceContainer = getOccurrenceContainer(expression);
         if (container == null) {
-            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.container"));
+            showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"));
             return;
         }
         final boolean isInplaceAvailableOnDataContext =

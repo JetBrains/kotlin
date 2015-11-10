@@ -43,13 +43,13 @@ fun getFunctionForExtractedFragment(
 
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: KtFile): String {
         if (KotlinInternalMode.enabled) {
-            logger.error("Couldn't extract function for debugger:\n" +
-                                 "FILE NAME: ${breakpointFile.name}\n" +
-                                 "BREAKPOINT LINE: $breakpointLine\n" +
-                                 "CODE FRAGMENT:\n${codeFragment.text}\n" +
-                                 "ERRORS:\n${analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")}\n" +
-                                 "TMPFILE_TEXT:\n${tmpFile.text}\n" +
-                                 "FILE TEXT: \n${breakpointFile.text}\n")
+            LOG.error("Couldn't extract function for debugger:\n" +
+                      "FILE NAME: ${breakpointFile.name}\n" +
+                      "BREAKPOINT LINE: $breakpointLine\n" +
+                      "CODE FRAGMENT:\n${codeFragment.text}\n" +
+                      "ERRORS:\n${analysisResult.messages.map { "$it: ${it.renderMessage()}" }.joinToString("\n")}\n" +
+                      "TMPFILE_TEXT:\n${tmpFile.text}\n" +
+                      "FILE TEXT: \n${breakpointFile.text}\n")
         }
         return analysisResult.messages.map { errorMessage ->
             val message = when(errorMessage) {
@@ -71,22 +71,21 @@ fun getFunctionForExtractedFragment(
     fun generateFunction(): ExtractionResult? {
         val originalFile = breakpointFile as KtFile
 
-        val tmpFile = originalFile.createTempCopy { it }
-        tmpFile.suppressDiagnosticsInDebugMode = true
-
-        val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.context, breakpointLine) ?: return null
-
-        addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
-
-        val newDebugExpressions = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
+        val newDebugExpressions = addDebugExpressionIntoTmpFileForExtractFunction(originalFile, codeFragment, breakpointLine)
         if (newDebugExpressions.isEmpty()) return null
+        val tmpFile = newDebugExpressions.first().getContainingKtFile()
+
+        if (LOG.isDebugEnabled) {
+            LOG.debug("TMP_FILE:\n${runReadAction { tmpFile.text }}")
+        }
 
         val targetSibling = tmpFile.declarations.firstOrNull() ?: return null
 
         val options = ExtractionOptions(inferUnitTypeForUnusedValues = false,
                                         enableListBoxing = true,
                                         allowSpecialClassNames = true,
-                                        captureLocalFunctions = true)
+                                        captureLocalFunctions = true,
+                                        canWrapInWith = true)
         val analysisResult = ExtractionData(tmpFile, newDebugExpressions.toRange(), targetSibling, null, options).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
             throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult, tmpFile))
@@ -107,29 +106,34 @@ fun getFunctionForExtractedFragment(
     return runReadAction { generateFunction() }
 }
 
+fun addDebugExpressionIntoTmpFileForExtractFunction(originalFile: KtFile, codeFragment: KtCodeFragment, line: Int): List<KtExpression> {
+    val tmpFile = originalFile.createTempCopy { it }
+    tmpFile.suppressDiagnosticsInDebugMode = true
+
+    val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.context, line) ?: return emptyList()
+
+    addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
+
+    return addDebugExpressionBeforeContextElement(codeFragment, contextElement)
+}
+
 private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
-    if (newImportList != null) {
+    if (newImportList != null && newImportList.imports.isNotEmpty()) {
         val tmpFileImportList = tmpFile.importList
-        val packageDirective = tmpFile.packageDirective
         val psiFactory = KtPsiFactory(tmpFile)
         if (tmpFileImportList == null) {
+            val packageDirective = tmpFile.packageDirective
             tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
             tmpFile.addAfter(newImportList, tmpFile.packageDirective)
         }
         else {
-            val tmpFileImports = tmpFileImportList.imports
-            if (tmpFileImports.isEmpty()) {
-                tmpFileImportList.replace(newImportList)
+            newImportList.imports.forEach {
+                tmpFileImportList.add(psiFactory.createNewLine())
+                tmpFileImportList.add(it)
             }
-            else {
-                val lastImport = tmpFileImports.last()
-                newImportList.imports.forEach {
-                    tmpFileImportList.addAfter(it, lastImport)
-                }
-                tmpFileImportList.addAfter(psiFactory.createNewLine(), lastImport)
-            }
+
+            tmpFileImportList.add(psiFactory.createNewLine())
         }
-        tmpFile.addAfter(psiFactory.createNewLine(), packageDirective)
     }
 }
 
@@ -263,7 +267,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
             is KtExpression -> {
                 val newDebugExpression = parent.addBefore(expr, elementBefore)
                 if (newDebugExpression == null) {
-                    logger.error("Couldn't insert debug expression ${expr.text} to context file before ${elementBefore.text}")
+                    LOG.error("Couldn't insert debug expression ${expr.text} to context file before ${elementBefore.text}")
                     return emptyList()
                 }
                 parent.addBefore(psiFactory.createNewLine(), elementBefore)

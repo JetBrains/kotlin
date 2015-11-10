@@ -169,7 +169,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
             }
         }.execute();
 
-        ConfigureKotlinInProjectUtils.showInfoNotification(virtualFile.getPath() + " was modified");
+        ConfigureKotlinInProjectUtils.showInfoNotification(module.getProject(), virtualFile.getPath() + " was modified");
     }
 
     protected void createExecution(

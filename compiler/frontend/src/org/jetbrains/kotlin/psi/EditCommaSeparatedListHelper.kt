@@ -21,7 +21,7 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-internal object EditCommaSeparatedListHelper {
+object EditCommaSeparatedListHelper {
     public fun <TItem: KtElement> addItem(list: KtElement, allItems: List<TItem>, item: TItem): TItem {
         return addItemBefore(list, allItems, item, null)
     }

@@ -54,7 +54,8 @@ data class ExtractionOptions(
         val enableListBoxing: Boolean = false,
         val extractAsProperty: Boolean = false,
         val allowSpecialClassNames: Boolean = false,
-        val captureLocalFunctions: Boolean = false
+        val captureLocalFunctions: Boolean = false,
+        val canWrapInWith: Boolean = false
 ) {
     companion object {
         val DEFAULT = ExtractionOptions()

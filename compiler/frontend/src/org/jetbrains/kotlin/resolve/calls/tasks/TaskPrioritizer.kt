@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.CastClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
@@ -234,9 +236,16 @@ public class TaskPrioritizer(
                     }
                     val filteredMembers = if (filter == null) membersForThisVariant else membersForThisVariant.filter(filter)
 
+                    val dispatchReceiver =
+                            if (explicitReceiver.value is ClassReceiver && type != explicitReceiver.value.type) {
+                                CastClassReceiver(explicitReceiver.value.declarationDescriptor, type)
+                            }
+                            else {
+                                explicitReceiver.value
+                            }
                     convertWithReceivers(
                             filteredMembers,
-                            explicitReceiver.value,
+                            dispatchReceiver,
                             NO_RECEIVER,
                             members,
                             createKind(DISPATCH_RECEIVER, isExplicit),
