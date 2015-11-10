@@ -507,6 +507,25 @@ class JetChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         // Delete OverriderUsageInfo and CallerUsageInfo for Kotlin declarations since they can't be processed correctly
         // TODO (OverriderUsageInfo only): Drop when OverriderUsageInfo.getElement() gets deleted
         val usageInfos = refUsages.get()
+
+        for (usageInfo in usageInfos) {
+            if (usageInfo !is KotlinWrapperForJavaUsageInfos) continue
+
+            val infos = usageInfo.javaUsageInfos
+            for (i in infos.indices) {
+                val javaUsageInfo = infos[i]
+                if (javaUsageInfo !is OverriderUsageInfo) continue
+                
+                val psiMethod = javaUsageInfo.overridingMethod
+                if (psiMethod !is KtLightMethod) continue
+                
+                val origin = psiMethod.getOrigin()
+                if (origin != null) {
+                    infos[i] = UsageInfo(origin)
+                }
+            }
+        }
+        
         val adjustedUsages = usageInfos.filterNot { getOverriderOrCaller(it) is KtLightMethod }
         if (adjustedUsages.size < usageInfos.size) {
             refUsages.set(adjustedUsages.toTypedArray())
