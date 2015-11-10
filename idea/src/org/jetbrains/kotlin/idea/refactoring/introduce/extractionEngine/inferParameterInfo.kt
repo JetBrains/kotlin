@@ -16,9 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.SingleType
 import org.jetbrains.kotlin.cfg.pseudocode.getElementValuesRecursively
@@ -64,7 +62,6 @@ internal fun ExtractionData.inferParametersInfo(
     val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, MutableParameter>()
 
     for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
-        val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
         val ref = refInfo.refExpr
 
         val selector = (ref.parent as? KtCallExpression) ?: ref
@@ -74,20 +71,17 @@ internal fun ExtractionData.inferParametersInfo(
             return info
         }
 
+        val resolvedCall = refInfo.resolveResult.resolvedCall
         val extensionReceiver = resolvedCall?.extensionReceiver
         val receiverToExtract = when {
                                     extensionReceiver == ReceiverValue.NO_RECEIVER,
-                                    isSynthesizedInvoke(originalDescriptor) -> resolvedCall?.dispatchReceiver
+                                    isSynthesizedInvoke(refInfo.resolveResult.descriptor) -> resolvedCall?.dispatchReceiver
                                     else -> extensionReceiver
                                 } ?: ReceiverValue.NO_RECEIVER
 
-        extractReceiver(receiverToExtract, ref, project, originalElements,
-                        originalDescriptor, info, options, targetScope, refInfo,
-                        originalDeclaration, originalRef, extractedDescriptorToParameter, resolvedCall, pseudocode, codeFragmentText, bindingContext, false)
+        extractReceiver(receiverToExtract, info, targetScope, refInfo, extractedDescriptorToParameter, pseudocode, bindingContext, false)
         if (options.canWrapInWith && resolvedCall != null && isMemberExtensionFunction(resolvedCall, ref)) {
-            extractReceiver(resolvedCall.dispatchReceiver, ref, project, originalElements,
-                            originalDescriptor, info, options, targetScope, refInfo,
-                            originalDeclaration, originalRef, extractedDescriptorToParameter, resolvedCall, pseudocode, codeFragmentText, bindingContext, true)
+            extractReceiver(resolvedCall.dispatchReceiver, info, targetScope, refInfo, extractedDescriptorToParameter, pseudocode, bindingContext, true)
         }
     }
 
@@ -119,28 +113,21 @@ internal fun ExtractionData.inferParametersInfo(
     return info
 }
 
-private fun extractReceiver(
+private fun ExtractionData.extractReceiver(
         receiverToExtract: ReceiverValue,
-        ref: KtSimpleNameExpression,
-        project: Project,
-        originalElements: List<PsiElement>,
-        originalDescriptor: DeclarationDescriptor,
         info: ParametersInfo,
-        options: ExtractionOptions,
         targetScope: LexicalScope,
         refInfo: ResolvedReferenceInfo,
-        originalDeclaration: PsiNameIdentifierOwner,
-        originalRef: KtSimpleNameExpression,
         extractedDescriptorToParameter: HashMap<DeclarationDescriptor, MutableParameter>,
-        resolvedCall: ResolvedCall<*>?,
         pseudocode: Pseudocode,
-        codeFragmentText: String,
         bindingContext: BindingContext,
         isMemberExtensionFunction: Boolean
 ) {
+    val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
+
     val thisDescriptor = (receiverToExtract as? ThisReceiver)?.declarationDescriptor
     val hasThisReceiver = thisDescriptor != null
-    val thisExpr = ref.parent as? KtThisExpression
+    val thisExpr = refInfo.refExpr.parent as? KtThisExpression
 
     if (hasThisReceiver
         && DescriptorToSourceUtilsIde.getAllDeclarations(project, thisDescriptor!!).all { it.isInsideOf(originalElements) }) {
@@ -153,7 +140,7 @@ private fun extractReceiver(
                 when(it.kind) {
                     ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it
                     ClassKind.ENUM_ENTRY -> it.containingDeclaration as? ClassDescriptor
-                    else -> if (ref.getNonStrictParentOfType<KtTypeReference>() != null) it else null
+                    else -> if (refInfo.refExpr.getNonStrictParentOfType<KtTypeReference>() != null) it else null
                 }
 
             is TypeParameterDescriptor -> it
@@ -209,7 +196,7 @@ private fun extractReceiver(
                             "this$label"
                         }
                         else {
-                            val argumentExpr = (thisExpr ?: ref).getQualifiedExpressionForSelectorOrThis()
+                            val argumentExpr = (thisExpr ?: refInfo.refExpr).getQualifiedExpressionForSelectorOrThis()
                             if (argumentExpr is KtOperationReferenceExpression) {
                                 val nameElement = argumentExpr.getReferencedNameElement()
                                 val nameElementType = nameElement.node.elementType
