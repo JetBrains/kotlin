@@ -22,14 +22,20 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import java.util.*
 
-internal fun unroll(root: KtQualifiedExpression): Deque<CallExpressionElement> {
-    var current: KtExpression = root
-    val result = linkedListOf<CallExpressionElement>()
-    while (current is KtQualifiedExpression) {
-        result.addFirst(CallExpressionElement(current))
-        current = result.first.receiver
+public fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression): List<KtQualifiedExpression> {
+    val unrolled = arrayListOf<KtQualifiedExpression>()
+
+    var finger = expression
+    while (true) {
+        unrolled.add(finger)
+        val receiver = finger.receiverExpression
+        if (receiver !is KtQualifiedExpression) {
+            break
+        }
+        finger = receiver
     }
-    return result
+
+    return unrolled.asReversed()
 }
 
 public data class CallExpressionElement internal constructor (val qualified: KtQualifiedExpression) {

@@ -98,17 +98,6 @@ public fun HierarchicalScope.findFunction(name: Name, location: LookupLocation, 
     return null
 }
 
-public fun HierarchicalScope.containsFunctionOrVariable(name: Name, location: LookupLocation): Boolean {
-    processForMeAndParent {
-        if (it.getContributedFunctions(name, location).isNotEmpty() ||
-            it.getContributedVariables(name, location).isNotEmpty()
-        ) {
-            return true
-        }
-    }
-    return false
-}
-
 public fun HierarchicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
         = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes, name, location) }
 

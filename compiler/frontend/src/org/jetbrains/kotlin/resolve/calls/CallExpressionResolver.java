@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -329,17 +330,51 @@ public class CallExpressionResolver {
      */
     @NotNull
     public KotlinTypeInfo getQualifiedExpressionTypeInfo(
-            @NotNull KtQualifiedExpression expression, @NotNull ExpressionTypingContext context
+            @NotNull KtQualifiedExpression expression, @NotNull final ExpressionTypingContext context
     ) {
         ExpressionTypingContext currentContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
 
+        Function1<KtSimpleNameExpression, Boolean> isValueFunction = new Function1<KtSimpleNameExpression, Boolean>() {
+            @Override
+            public Boolean invoke(KtSimpleNameExpression nameExpression) {
+                TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
+                        context, "trace to resolve as local variable or property", nameExpression);
+                Call call = CallMaker.makePropertyCall(ReceiverValue.NO_RECEIVER, null, nameExpression);
+                BasicCallResolutionContext contextForVariable = BasicCallResolutionContext.create(
+                        context.replaceTraceAndCache(temporaryForVariable),
+                        call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
+                OverloadResolutionResults<VariableDescriptor> resolutionResult = callResolver.resolveSimpleProperty(contextForVariable);
+
+                if (resolutionResult.isSingleResult() &&
+                    resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject) {
+                    return false;
+                }
+
+                return !resolutionResult.isNothing();
+            }
+        };
         List<CallExpressionElement> elementChain =
-                qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(expression, context);
+                qualifiedExpressionResolver.resolveQualifierInExpressionAndUnroll(expression, context, isValueFunction);
+
+        KotlinTypeInfo receiverTypeInfo;
+        KotlinType receiverType;
+        DataFlowInfo receiverDataFlowInfo;
 
         CallExpressionElement firstElement = elementChain.iterator().next();
-        KotlinTypeInfo receiverTypeInfo = expressionTypingServices.getTypeInfo(firstElement.getReceiver(), currentContext);
-        KotlinType receiverType = receiverTypeInfo.getType();
-        DataFlowInfo receiverDataFlowInfo = receiverTypeInfo.getDataFlowInfo();
+        KtExpression firstReceiver = firstElement.getReceiver();
+        Qualifier firstQualifier = context.trace.get(BindingContext.QUALIFIER, firstReceiver);
+        if (firstQualifier == null) {
+            receiverTypeInfo = expressionTypingServices.getTypeInfo(firstReceiver, currentContext);
+            receiverType = receiverTypeInfo.getType();
+            receiverDataFlowInfo = receiverTypeInfo.getDataFlowInfo();
+        }
+        else {
+            receiverType = null;
+            receiverDataFlowInfo = currentContext.dataFlowInfo;
+            //noinspection ConstantConditions
+            receiverTypeInfo = new KotlinTypeInfo(receiverType, receiverDataFlowInfo);
+        }
+
         KotlinTypeInfo resultTypeInfo = receiverTypeInfo;
 
         boolean unconditional = true;
@@ -366,7 +401,9 @@ public class CallExpressionResolver {
                     getSelectorReturnTypeInfo(receiver, element.getNode(), selectorExpression, currentContext);
             KotlinType selectorReturnType = selectorReturnTypeInfo.getType();
 
-            resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.getQualified(), currentContext);
+            if (qualifierReceiver != null) {
+                resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.getQualified(), currentContext);
+            }
             checkNestedClassAccess(element.getQualified(), currentContext);
 
             boolean safeCall = element.getSafe();
@@ -415,11 +452,10 @@ public class CallExpressionResolver {
     }
 
     private void resolveDeferredReceiverInQualifiedExpression(
-            @Nullable QualifierReceiver qualifierReceiver,
+            @NotNull QualifierReceiver qualifierReceiver,
             @NotNull KtQualifiedExpression qualifiedExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (qualifierReceiver == null) return;
         KtExpression calleeExpression =
                 KtPsiUtil.deparenthesize(CallUtilKt.getCalleeExpressionIfAny(qualifiedExpression.getSelectorExpression()));
         DeclarationDescriptor selectorDescriptor =

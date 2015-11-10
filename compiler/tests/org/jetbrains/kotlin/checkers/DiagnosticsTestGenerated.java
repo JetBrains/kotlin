@@ -4767,6 +4767,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("classWithCompanionObject.kt")
+            public void testClassWithCompanionObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/classWithCompanionObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("componentUsage.kt")
             public void testComponentUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/componentUsage.kt");
@@ -13071,6 +13077,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("HiddenDeclarations.kt")
             public void testHiddenDeclarations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/HiddenDeclarations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implicitReceiverProperty.kt")
+            public void testImplicitReceiverProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/implicitReceiverProperty.kt");
                 doTest(fileName);
             }
 
