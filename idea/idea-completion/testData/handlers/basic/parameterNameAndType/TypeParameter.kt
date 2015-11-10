@@ -1,3 +1,3 @@
 fun<T> foo(t<caret>)
 
-// ELEMENT: t: T
+// ELEMENT_TEXT: t: T

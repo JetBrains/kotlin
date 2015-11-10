@@ -2870,6 +2870,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("setWithNoParameters.kt")
+            public void testSetWithNoParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/setWithNoParameters.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("setWithVararg.kt")
+            public void testSetWithVararg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/setWithVararg.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("singleArgument.kt")
             public void testSingleArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetOrSet/singleArgument.kt");
@@ -5928,6 +5940,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("ReturnsInWhen.kt")
         public void testReturnsInWhen() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ReturnsInWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SamAdapterNeededBecauseOfLabeledReturn.kt")
+        public void testSamAdapterNeededBecauseOfLabeledReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/SamAdapterNeededBecauseOfLabeledReturn.kt");
             doTest(fileName);
         }
 

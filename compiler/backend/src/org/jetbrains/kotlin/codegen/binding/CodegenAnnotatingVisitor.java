@@ -161,7 +161,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     @Override
     public void visitJetFile(@NotNull KtFile file) {
         if (file.isScript()) {
-            // SCRIPT: should be replaced with VisitScript override
+            // TODO: replace with visitScript override
             //noinspection ConstantConditions
             ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, bindingContext.get(SCRIPT, file.getScript()));
             classStack.push(classDescriptor);

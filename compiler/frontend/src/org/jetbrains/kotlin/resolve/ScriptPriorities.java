@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtScript;
 
-// SCRIPT: Resolve declarations in scripts
 public class ScriptPriorities {
 
     public static final Key<Integer> PRIORITY_KEY = Key.create(KtScript.class.getName() + ".priority");

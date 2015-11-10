@@ -3,5 +3,5 @@ class FaOaOa
 
 fun foo(foo<caret>)
 
-// ORDER: fooBar: FooBar
-// ORDER: faOaOa: FaOaOa
+// ORDER: fooBar : FooBar
+// ORDER: faOaOa : FaOaOa

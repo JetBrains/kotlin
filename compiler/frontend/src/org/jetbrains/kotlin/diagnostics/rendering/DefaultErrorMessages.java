@@ -416,7 +416,7 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");
         MAP.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type");
-        MAP.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has itself as an upper bound");
+        MAP.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds");
 
         MAP.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list");
         MAP.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Only classes and interfaces may serve as supertypes");
@@ -501,9 +501,9 @@ public class DefaultErrorMessages {
                     }
                 });
 
-        MAP.put(FINITE_BOUNDS_VIOLATION, "Type argument is not within its bounds (violation of Finite Bound Restriction)");
+        MAP.put(FINITE_BOUNDS_VIOLATION, "This type parameter violates the Finite Bound Restriction");
         MAP.put(FINITE_BOUNDS_VIOLATION_IN_JAVA, "Violation of Finite Bound Restriction for {0}", STRING);
-        MAP.put(EXPANSIVE_INHERITANCE, "Type argument is not within its bounds (violation of Non-Expansive Inheritance Restriction)");
+        MAP.put(EXPANSIVE_INHERITANCE, "This type parameter violates the Non-Expansive Inheritance Restriction");
         MAP.put(EXPANSIVE_INHERITANCE_IN_JAVA, "Violation of Non-Expansive Inheritance Restriction for {0}", STRING);
         MAP.put(REDUNDANT_PROJECTION, "Projection is redundant: the corresponding type parameter of {0} has the same variance", NAME);
         MAP.put(CONFLICTING_PROJECTION, "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''", NAME);

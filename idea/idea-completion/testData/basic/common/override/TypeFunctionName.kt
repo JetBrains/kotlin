@@ -17,6 +17,6 @@ class A : Base2(), I {
 
 // ABSENT: { itemText: "override" }
 // ABSENT: { itemText: "override fun bar() {...}" }
-// EXIST: { itemText: "override fun someFun() {...}", lookupString: "override", allLookupStrings: "override, someFun", tailText: null, typeText: "I" }
-// EXIST: { itemText: "override val someVal: Int", lookupString: "override", allLookupStrings: "override, someVal", tailText: null, typeText: "I" }
-// EXIST: { itemText: "override var someVar: Int", lookupString: "override", allLookupStrings: "override, someVar", tailText: null, typeText: "I" }
+// EXIST: { itemText: "override fun someFun() {...}", lookupString: "override", allLookupStrings: "override, someFun", tailText: null, typeText: "I", attributes: "bold" }
+// EXIST: { itemText: "override val someVal: Int", lookupString: "override", allLookupStrings: "override, someVal", tailText: null, typeText: "I", attributes: "bold" }
+// EXIST: { itemText: "override var someVar: Int", lookupString: "override", allLookupStrings: "override, someVar", tailText: null, typeText: "I", attributes: "bold" }

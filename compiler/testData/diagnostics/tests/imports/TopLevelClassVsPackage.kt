@@ -46,7 +46,7 @@ fun test2(_a: a) {
     _ab._ab()
 
     val _ab2 = a.b()
-    _ab2.<!UNRESOLVED_REFERENCE!>_ab<!>() // todo
+    _ab2._ab()
 
     _fun()
 }
@@ -62,7 +62,7 @@ fun test3(_a: a) {
     _ab._ab()
 
     val _ab2 = a.b()
-    _ab2.<!UNRESOLVED_REFERENCE!>_ab<!>() // todo
+    _ab2._ab()
 
     _fun()
 }

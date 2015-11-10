@@ -1,0 +1,4 @@
+// "Make 'A' open" "true"
+open class A(val v: Int)
+
+class B : A<caret>(1)

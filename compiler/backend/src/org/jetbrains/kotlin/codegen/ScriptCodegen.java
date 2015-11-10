@@ -44,7 +44,6 @@ import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-// SCRIPT: script code generator
 public class ScriptCodegen extends MemberCodegen<KtScript> {
 
     public static ScriptCodegen createScriptCodegen(

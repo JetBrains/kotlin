@@ -2524,6 +2524,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/multiDeclForArray"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("kt9828.kt")
+        public void testKt9828() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/kt9828.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("MultiDeclFor.kt")
         public void testMultiDeclFor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/multiDeclForArray/MultiDeclFor.kt");

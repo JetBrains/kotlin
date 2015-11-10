@@ -18,18 +18,14 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
@@ -44,6 +40,12 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<KtIfExpressi
 
         val newIf = handleSpecialCases(element, newCondition)
                     ?: handleStandardCase(element, newCondition)
+
+        val newIfCondition = newIf.condition
+        val simplifyIntention = ConvertNegatedExpressionWithDemorgansLawIntention()
+        if (newIfCondition is KtPrefixExpression && simplifyIntention.isApplicableTo(newIfCondition)) {
+            simplifyIntention.applyTo(newIfCondition)
+        }
 
         PsiDocumentManager.getInstance(newIf.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
         editor.moveCaret(newIf.getTextOffset())

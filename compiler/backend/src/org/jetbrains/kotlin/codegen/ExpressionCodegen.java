@@ -681,13 +681,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 @SuppressWarnings("ConstantConditions") final Type componentAsmType = asmType(componentDescriptor.getReturnType());
                 final int componentVarIndex = myFrameMap.enter(componentDescriptor, componentAsmType);
+                final Label variableStartLabel = new Label();
                 scheduleLeaveVariable(new Runnable() {
                     @Override
                     public void run() {
                         myFrameMap.leave(componentDescriptor);
                         v.visitLocalVariable(componentDescriptor.getName().asString(),
                                              componentAsmType.getDescriptor(), null,
-                                             bodyStart, bodyEnd,
+                                             variableStartLabel, bodyEnd,
                                              componentVarIndex);
                     }
                 });
@@ -698,6 +699,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 StackValue value = invokeFunction(call, resolvedCall, StackValue.local(loopParameterVar, asmElementType));
                 StackValue.local(componentVarIndex, componentAsmType).store(value, v);
+                v.visitLabel(variableStartLabel);
             }
         }
 
@@ -2577,7 +2579,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
         else if (receiverValue instanceof ScriptReceiver) {
-            // SCRIPT: generate script
             return generateScript((ScriptReceiver) receiverValue);
         }
         else if (receiverValue instanceof ExtensionReceiver) {
@@ -2596,7 +2597,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return context.generateReceiver(descriptor, state, false);
     }
 
-    // SCRIPT: generate script, move to ScriptingUtil
     private StackValue generateScript(@NotNull ScriptReceiver receiver) {
         CodegenContext cur = context;
         StackValue result = StackValue.LOCAL_0;
@@ -3391,7 +3391,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type varType = asmType(variableDescriptor.getType());
 
         StackValue storeTo;
-        // SCRIPT: Variable at the top of the script is generated as field
         if (KtPsiUtil.isScriptDeclaration(variableDeclaration)) {
             KtScript scriptPsi = KtPsiUtil.getScript(variableDeclaration);
             assert scriptPsi != null;

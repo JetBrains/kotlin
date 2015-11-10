@@ -21,16 +21,12 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
-// SCRIPT: script receiver
 public class ScriptReceiver implements ThisReceiver {
-
-    @NotNull
     private final ScriptDescriptor scriptDescriptor;
 
     public ScriptReceiver(@NotNull ScriptDescriptor scriptDescriptor) {
         this.scriptDescriptor = scriptDescriptor;
     }
-
 
     @NotNull
     @Override

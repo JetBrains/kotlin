@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-// SCRIPT: Script declaration
 public class KtScript extends KtDeclarationImpl implements KtDeclarationContainer {
 
     public KtScript(@NotNull ASTNode node) {

@@ -21,7 +21,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -36,6 +38,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -66,17 +70,20 @@ public class CallExpressionResolver {
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
     private final SymbolUsageValidator symbolUsageValidator;
     private final DataFlowAnalyzer dataFlowAnalyzer;
+    @NotNull private final KotlinBuiltIns builtIns;
 
     public CallExpressionResolver(
             @NotNull CallResolver callResolver,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull SymbolUsageValidator symbolUsageValidator,
-            @NotNull DataFlowAnalyzer dataFlowAnalyzer
+            @NotNull DataFlowAnalyzer dataFlowAnalyzer,
+            @NotNull KotlinBuiltIns builtIns
     ) {
         this.callResolver = callResolver;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.symbolUsageValidator = symbolUsageValidator;
         this.dataFlowAnalyzer = dataFlowAnalyzer;
+        this.builtIns = builtIns;
     }
 
     private ExpressionTypingServices expressionTypingServices;
@@ -152,9 +159,16 @@ public class CallExpressionResolver {
                 context, "trace to resolve as variable", nameExpression);
         KotlinType type =
                 getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
-        // TODO: for a safe call, it's necessary to set receiver != null here, as inside ArgumentTypeResolver.analyzeArgumentsAndRecordTypes
-        // Unfortunately it provokes problems with x?.y!!.foo() with the following x!!.bar():
-        // x != null proceeds to successive statements
+        // NB: we have duplicating code in ArgumentTypeResolver.
+        // It would be better to do it in getSelectorTypeInfo, but it breaks call expression analysis
+        // (all safe calls become unnecessary after it)
+        // QualifierReceiver is a thing like Collections. which has no type or value
+        if (receiver.exists() && !(receiver instanceof QualifierReceiver)) {
+            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
+            if (callOperationNode != null && callOperationNode.getElementType() == KtTokens.SAFE_ACCESS) {
+                context = context.replaceDataFlowInfo(context.dataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns)));
+            }
+        }
 
         if (result[0]) {
             temporaryForVariable.commit();

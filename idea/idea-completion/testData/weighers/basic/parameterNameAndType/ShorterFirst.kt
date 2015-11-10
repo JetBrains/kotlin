@@ -3,5 +3,5 @@ class MyFileStream
 
 fun foo(myFi<caret>)
 
-// ORDER: myFile: MyFile
-// ORDER: myFileStream: MyFileStream
+// ORDER: myFile : MyFile
+// ORDER: myFileStream : MyFileStream

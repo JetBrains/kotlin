@@ -6,4 +6,4 @@ fun f() {
     val handler = { b<caret> }
 }
 
-// ABSENT: boo: Boo
+// ABSENT: { itemText: "boo: Boo" }

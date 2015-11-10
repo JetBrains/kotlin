@@ -30,9 +30,10 @@ fun test(ab_c: c) {
     ab_c3.ab_c()
 }
 
-fun test2(a_bc: a.b.c) {
-    a_bc.<!UNRESOLVED_REFERENCE!>a_bc<!>() // todo
-    a_bc.ab_c() // todo
+// NB according to the maximum package prefix rule, 'a.b.c' denotes 'c' in package 'a.b' (thus ab_c, not a_bc)
+fun test2(ab_c: a.b.c) {
+    ab_c.<!UNRESOLVED_REFERENCE!>a_bc<!>()
+    ab_c.ab_c()
 }
 
 
@@ -66,7 +67,7 @@ fun test(a_b: b) {
     _ab._ab()
 
     val _ab2 = a.b()
-    _ab2.<!UNRESOLVED_REFERENCE!>_ab<!>() // todo
+    _ab2._ab()
 }
 
 fun test2(_ab: a.b) {

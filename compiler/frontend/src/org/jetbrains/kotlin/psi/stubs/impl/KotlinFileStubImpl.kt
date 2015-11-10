@@ -23,13 +23,11 @@ import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.tree.IStubFileElementType
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-// SCRIPT: PsiJetFileStubImpl knows about scripting
 public open class KotlinFileStubImpl(
         jetFile: KtFile?,
         private val packageName: StringRef,

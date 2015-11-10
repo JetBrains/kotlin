@@ -280,12 +280,10 @@ public class KtPsiUtil {
         return qualifiedParent.getReceiverExpression() == expression || isLHSOfDot(qualifiedParent);
     }
 
-    // SCRIPT: is declaration in script?
     public static boolean isScriptDeclaration(@NotNull KtDeclaration namedDeclaration) {
         return getScript(namedDeclaration) != null;
     }
 
-    // SCRIPT: get script from top-level declaration
     @Nullable
     public static KtScript getScript(@NotNull KtDeclaration namedDeclaration) {
         PsiElement parent = namedDeclaration.getParent();

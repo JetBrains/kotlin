@@ -26,29 +26,30 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.util.OperatorNameConventions.GET
-import org.jetbrains.kotlin.util.OperatorNameConventions.SET
-import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
-import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
-import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
-import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
-import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
-import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
-import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
-import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
+import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
+import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPONENT_REGEX
-import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.MINUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_MINUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.NOT
-import org.jetbrains.kotlin.util.OperatorNameConventions.INC
+import org.jetbrains.kotlin.util.OperatorNameConventions.CONTAINS
 import org.jetbrains.kotlin.util.OperatorNameConventions.DEC
+import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
+import org.jetbrains.kotlin.util.OperatorNameConventions.GET
 import org.jetbrains.kotlin.util.OperatorNameConventions.GET_VALUE
+import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
+import org.jetbrains.kotlin.util.OperatorNameConventions.INC
+import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
+import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
+import org.jetbrains.kotlin.util.OperatorNameConventions.MINUS
+import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
+import org.jetbrains.kotlin.util.OperatorNameConventions.NOT
+import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
+import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
+import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
+import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_MINUS
+import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
 
 object OperatorChecks {
     fun canBeOperator(functionDescriptor: FunctionDescriptor): Boolean {
@@ -128,3 +129,5 @@ object OperatorChecks {
         get() = valueParameters.all { !it.hasDefaultValue() && it.varargElementType == null }
 
 }
+
+fun FunctionDescriptor.isValidOperator() = isOperator && OperatorChecks.canBeOperator(this)

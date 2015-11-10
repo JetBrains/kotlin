@@ -21,14 +21,16 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
 
@@ -37,7 +39,6 @@ public class KotlinCodegenFacade {
     public static void prepareForCompilation(@NotNull GenerationState state) {
         for (KtFile file : state.getFiles()) {
             if (file.isScript()) {
-                // SCRIPT: register class name for scripting from this file, move outside of this function
                 KtScript script = file.getScript();
                 assert script != null;
 

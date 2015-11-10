@@ -195,9 +195,8 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         INACCESSIBLE_OUTER_CLASS_EXPRESSION.registerFactory(AddModifierFix.createFactory(INNER_KEYWORD, javaClass<KtClass>()))
 
-        val addOpenModifierToClassDeclarationFix = AddOpenModifierToClassDeclarationFix.createFactory()
-        FINAL_SUPERTYPE.registerFactory(addOpenModifierToClassDeclarationFix)
-        FINAL_UPPER_BOUND.registerFactory(addOpenModifierToClassDeclarationFix)
+        FINAL_SUPERTYPE.registerFactory(AddModifierFix.MakeClassOpenFactory)
+        FINAL_UPPER_BOUND.registerFactory(AddModifierFix.MakeClassOpenFactory)
 
         OVERRIDING_FINAL_MEMBER.registerFactory(MakeOverriddenMemberOpenFix)
 

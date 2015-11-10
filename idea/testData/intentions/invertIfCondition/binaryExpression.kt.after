@@ -3,7 +3,7 @@ fun foo(): Boolean {
 }
 
 fun main() {
-    if (!(foo() && foo())) {
+    if (!foo() || !foo()) {
         foo()
     } else {
         foo()

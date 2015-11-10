@@ -120,7 +120,7 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
             // (because declarations beat synthesized members)
             val (candidatesForReplacement, irrelevantInvokes) =
                     members.partition { it is FunctionInvokeDescriptor && it.valueParameters.isNotEmpty() }
-            return createSynthesizedInvokes(candidatesForReplacement) + irrelevantInvokes + constructors
+            return createSynthesizedInvokes(candidatesForReplacement) + candidatesForReplacement + irrelevantInvokes + constructors
         }
 
         return members + constructors

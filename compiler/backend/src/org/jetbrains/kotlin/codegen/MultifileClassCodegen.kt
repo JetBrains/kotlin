@@ -162,17 +162,14 @@ public class MultifileClassCodegen(
         val partContext = state.rootContext.intoMultifileClassPart(packageFragment, facadeClassType, partType, file)
 
         for (declaration in file.declarations) {
-            if (declaration is KtProperty || declaration is KtNamedFunction) {
-                generatePart = true
-            }
-            else if (declaration is KtClassOrObject) {
-                if (state.generateDeclaredClassFilter.shouldGenerateClass(declaration)) {
+            when (declaration) {
+                is KtProperty, is KtNamedFunction -> {
+                    generatePart = true
+                }
+                is KtClassOrObject -> if (state.generateDeclaredClassFilter.shouldGenerateClass(declaration)) {
                     generateClassOrObject(declaration, partContext)
                 }
-            }
-            else if (declaration is KtScript) {
-                // SCRIPT: generate script code, should be separate execution branch
-                if (state.generateDeclaredClassFilter.shouldGenerateScript(declaration)) {
+                is KtScript -> if (state.generateDeclaredClassFilter.shouldGenerateScript(declaration)) {
                     ScriptCodegen.createScriptCodegen(declaration, state, partContext).generate()
                 }
             }

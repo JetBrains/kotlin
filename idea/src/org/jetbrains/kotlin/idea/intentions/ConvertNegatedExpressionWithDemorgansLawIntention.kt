@@ -40,6 +40,10 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
     }
 
     override fun applyTo(element: KtPrefixExpression, editor: Editor) {
+        applyTo(element)
+    }
+
+    fun applyTo(element: KtPrefixExpression) {
         val parenthesizedExpression = element.getBaseExpression() as KtParenthesizedExpression
         val baseExpression = parenthesizedExpression.getExpression() as KtBinaryExpression
 

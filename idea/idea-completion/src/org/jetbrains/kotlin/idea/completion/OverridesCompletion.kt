@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.completion.handlers.indexOfSkippingSpace
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
@@ -76,7 +77,8 @@ class OverridesCompletion(
             val baseClassName = baseClass.name.asString()
 
             val baseIcon = (lookupElement.`object` as DeclarationLookupObject).getIcon(0)
-            val additionalIcon = if (descriptor.modality == Modality.ABSTRACT)
+            val isImplement = descriptor.modality == Modality.ABSTRACT
+            val additionalIcon = if (isImplement)
                 AllIcons.Gutter.ImplementingMethod
             else
                 AllIcons.Gutter.OverridingMethod
@@ -95,16 +97,19 @@ class OverridesCompletion(
                     super.renderElement(presentation)
 
                     presentation.itemText = text
+                    presentation.isItemTextBold = isImplement
                     presentation.icon = icon
                     presentation.clearTail()
                     presentation.setTypeText(baseClassName, baseClassIcon)
                 }
 
                 override fun handleInsert(context: InsertionContext) {
-                    val dummyMemberText = if (isConstructorParameter) "override val dummy" else "override fun dummy() {}"
+                    val chars = context.document.charsSequence
+                    val dummyMemberText = if (isConstructorParameter) "override val dummy: Dummy ,@" else "override fun dummy() {}"
                     context.document.replaceString(context.startOffset, context.tailOffset, dummyMemberText)
 
-                    PsiDocumentManager.getInstance(context.project).commitAllDocuments()
+                    val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
+                    psiDocumentManager.commitAllDocuments()
 
                     val dummyMember = context.file.findElementAt(context.startOffset)!!.getStrictParentOfType<KtNamedDeclaration>()!!
 
@@ -118,7 +123,14 @@ class OverridesCompletion(
                     ShortenReferences.DEFAULT.process(insertedMember)
 
                     if (isConstructorParameter) {
-                        context.editor.moveCaret(insertedMember.endOffset)
+                        psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.document)
+
+                        val offset = insertedMember.endOffset
+                        val commaOffset = chars.indexOfSkippingSpace(',', offset)!!
+                        val atCharOffset = chars.indexOfSkippingSpace('@', commaOffset + 1)!!
+                        context.document.deleteString(offset, atCharOffset + 1)
+
+                        context.editor.moveCaret(offset)
                     }
                     else {
                         moveCaretIntoGeneratedElement(context.editor, insertedMember)
@@ -126,7 +138,7 @@ class OverridesCompletion(
                 }
             }
 
-            lookupElement.assignPriority(ItemPriority.OVERRIDE)
+            lookupElement.assignPriority(if (isImplement) ItemPriority.IMPLEMENT else ItemPriority.OVERRIDE)
 
             collector.addElement(lookupElement)
         }

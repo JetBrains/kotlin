@@ -47,6 +47,12 @@ public fun StorageComponentContainer.configureModule(
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
         extension.addDeclarations(this, platform)
     }
+
+    configurePlatformIndependentComponents()
+}
+
+private fun StorageComponentContainer.configurePlatformIndependentComponents() {
+    useImpl<SupertypeLoopCheckerImpl>()
 }
 
 public fun StorageComponentContainer.configureModule(

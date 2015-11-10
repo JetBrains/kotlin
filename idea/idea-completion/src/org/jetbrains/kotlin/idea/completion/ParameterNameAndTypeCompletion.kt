@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParameter
@@ -194,7 +194,8 @@ class ParameterNameAndTypeCompletion(
             }
         }
 
-        private val lookupString = parameterName + ": " + delegate.lookupString
+        // we need space before colon in lookupString otherwise completion list is not closed on typing ':' (see KT-9813)
+        private val lookupString = parameterName + " : " + delegate.lookupString
 
         override fun getLookupString() = lookupString
         override fun getAllLookupStrings() = setOf(lookupString)

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyLocalClassifierAnalyzer
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -54,7 +55,8 @@ public class LocalClassifierAnalyzer(
         private val typeResolver: TypeResolver,
         private val annotationResolver: AnnotationResolver,
         private val platform: TargetPlatform,
-        private val dynamicTypesSettings: DynamicTypesSettings
+        private val dynamicTypesSettings: DynamicTypesSettings,
+        private val supertypeLoopChecker: SupertypeLoopChecker
 ) {
     fun processClassOrObject(
             scope: LexicalWritableScope?,
@@ -78,7 +80,8 @@ public class LocalClassifierAnalyzer(
                         descriptorResolver,
                         funcionDescriptorResolver,
                         typeResolver,
-                        annotationResolver
+                        annotationResolver,
+                        supertypeLoopChecker
                 )
         )
 
@@ -100,7 +103,8 @@ class LocalClassDescriptorHolder(
         val descriptorResolver: DescriptorResolver,
         val functionDescriptorResolver: FunctionDescriptorResolver,
         val typeResolver: TypeResolver,
-        val annotationResolver: AnnotationResolver
+        val annotationResolver: AnnotationResolver,
+        val supertypeLoopChecker: SupertypeLoopChecker
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -132,6 +136,7 @@ class LocalClassDescriptorHolder(
                         }
                         override val annotationResolver = this@LocalClassDescriptorHolder.annotationResolver
                         override val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
+                        override val supertypeLoopChecker = this@LocalClassDescriptorHolder.supertypeLoopChecker
                     }
                     ,
                     containingDeclaration,

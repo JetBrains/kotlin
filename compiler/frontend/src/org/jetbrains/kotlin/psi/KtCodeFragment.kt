@@ -103,6 +103,10 @@ public abstract class KtCodeFragment(
     override fun addImportsFromString(imports: String?) {
         if (imports == null || imports.isEmpty()) return
         myImports.addAll(imports.split(IMPORT_SEPARATOR))
+
+        // we need this code to force re-highlighting, otherwise it does not work by some reason
+        val tempElement = KtPsiFactory(project).createColon()
+        add(tempElement).delete()
     }
 
     public fun importsAsImportList(): KtImportList? {

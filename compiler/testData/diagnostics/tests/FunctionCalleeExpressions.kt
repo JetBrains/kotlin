@@ -73,7 +73,7 @@ fun main1() {
 
 fun test() {
     {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
-    <!MISSING_RECEIVER!>(fun Int.() = 1)<!>()
+    (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
     <!TYPE_MISMATCH!>"sd"<!>.(fun Int.() = 1)()
     val i : Int? = null
     i<!UNSAFE_CALL!>.<!>(fun Int.() = 1)();

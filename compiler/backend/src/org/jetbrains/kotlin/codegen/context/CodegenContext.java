@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -312,7 +311,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new ConstructorContext(descriptor, getContextKind(), this, closure);
     }
 
-    // SCRIPT: generate into script, move to ScriptingUtil
     @NotNull
     public ScriptContext intoScript(
             @NotNull ScriptDescriptor script,

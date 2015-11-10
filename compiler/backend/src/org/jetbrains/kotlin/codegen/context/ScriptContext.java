@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 
 import java.util.List;
 
-// SCRIPT: script as field owner context
 public class ScriptContext extends FieldOwnerContext<ClassDescriptor> {
     private final ScriptDescriptor scriptDescriptor;
     private final List<ScriptDescriptor> earlierScripts;

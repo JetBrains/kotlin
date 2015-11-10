@@ -390,6 +390,10 @@ fun main(args: Array<String>) {
             model("checker/codeFragments/imports", testMethod = "doTestWithImport", extension = "kt")
         }
 
+        testClass<AbstractCodeFragmentAutoImportTest>() {
+            model("quickfix.special/codeFragmentAutoImport", extension = "kt", recursive = false)
+        }
+
         testClass<AbstractJetJsCheckerTest>() {
             model("checker/js")
         }

@@ -49,17 +49,20 @@ public class DataFlowAnalyzer {
     private final ConstantExpressionEvaluator constantExpressionEvaluator;
     private final KotlinBuiltIns builtIns;
     private final SmartCastManager smartCastManager;
+    private final ExpressionTypingFacade facade;
 
     public DataFlowAnalyzer(
             @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull KotlinBuiltIns builtIns,
-            @NotNull SmartCastManager smartCastManager
+            @NotNull SmartCastManager smartCastManager,
+            @NotNull ExpressionTypingFacade facade
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.builtIns = builtIns;
         this.smartCastManager = smartCastManager;
+        this.facade = facade;
     }
 
     @NotNull
@@ -85,8 +88,11 @@ public class DataFlowAnalyzer {
                     DataFlowInfo dataFlowInfo = extractDataFlowInfoFromCondition(expression.getLeft(), conditionValue, context);
                     KtExpression expressionRight = expression.getRight();
                     if (expressionRight != null) {
-                        DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(expressionRight, conditionValue, context);
                         boolean and = operationToken == KtTokens.ANDAND;
+                        DataFlowInfo rightInfo = extractDataFlowInfoFromCondition(
+                                expressionRight, conditionValue,
+                                and == conditionValue ? context.replaceDataFlowInfo(dataFlowInfo) : context
+                        );
                         if (and == conditionValue) { // this means: and && conditionValue || !and && !conditionValue
                             dataFlowInfo = dataFlowInfo.and(rightInfo);
                         }
@@ -97,6 +103,7 @@ public class DataFlowAnalyzer {
                     result.set(dataFlowInfo);
                 }
                 else  {
+                    DataFlowInfo expressionFlowInfo = facade.getTypeInfo(expression, context).getDataFlowInfo();
                     KtExpression left = expression.getLeft();
                     if (left == null) return;
                     KtExpression right = expression.getRight();
@@ -119,12 +126,14 @@ public class DataFlowAnalyzer {
                     }
                     if (equals != null) {
                         if (equals == conditionValue) { // this means: equals && conditionValue || !equals && !conditionValue
-                            result.set(context.dataFlowInfo.equate(leftValue, rightValue));
+                            result.set(context.dataFlowInfo.equate(leftValue, rightValue).and(expressionFlowInfo));
                         }
                         else {
-                            result.set(context.dataFlowInfo.disequate(leftValue, rightValue));
+                            result.set(context.dataFlowInfo.disequate(leftValue, rightValue).and(expressionFlowInfo));
                         }
-
+                    }
+                    else {
+                        result.set(expressionFlowInfo);
                     }
                 }
             }
@@ -138,6 +147,15 @@ public class DataFlowAnalyzer {
                         result.set(extractDataFlowInfoFromCondition(baseExpression, !conditionValue, context));
                     }
                 }
+                else {
+                    visitExpression(expression);
+                }
+            }
+
+            @Override
+            public void visitExpression(@NotNull KtExpression expression) {
+                // In fact, everything is taken from trace here
+                result.set(facade.getTypeInfo(expression, context).getDataFlowInfo());
             }
 
             @Override

@@ -159,7 +159,6 @@ public class ExpressionTypingServices {
     ) {
         List<KtExpression> block = StatementFilterKt.filterStatements(statementFilter, expression);
 
-        // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
         if (containingDescriptor instanceof ScriptDescriptor) {
             if (!(expression.getParent() instanceof KtScript)) {

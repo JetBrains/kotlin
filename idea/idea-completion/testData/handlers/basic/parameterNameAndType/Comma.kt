@@ -2,5 +2,5 @@ class FooBar
 
 fun f(b<caret>)
 
-// ELEMENT: bar: FooBar
+// ELEMENT_TEXT: bar: FooBar
 // CHAR: ','

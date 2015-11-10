@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassifierQualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -426,10 +427,14 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
     }
 
     private fun storageQualifier(trace: BindingTrace, referenceExpression: KtSimpleNameExpression, descriptor: DeclarationDescriptor) {
-        if (descriptor is PackageViewDescriptor || descriptor is ClassifierDescriptor) {
-            val qualifier = QualifierReceiver(referenceExpression, descriptor as? PackageViewDescriptor, descriptor as? ClassifierDescriptor)
-            trace.record(BindingContext.QUALIFIER, qualifier.expression, qualifier)
-        }
+        val qualifier =
+                when (descriptor) {
+                    is PackageViewDescriptor -> PackageQualifier(referenceExpression, descriptor)
+                    is ClassifierDescriptor -> ClassifierQualifier(referenceExpression, descriptor)
+                    else -> return
+                }
+
+        trace.record(BindingContext.QUALIFIER, qualifier.expression, qualifier)
     }
 
     private fun isVisible(

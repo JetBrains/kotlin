@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
+import kotlin.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -28,6 +31,8 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements LazyEntity {
@@ -57,18 +62,28 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
     @NotNull
     @Override
+    protected SupertypeLoopChecker getSupertypeLoopChecker() {
+        return c.getSupertypeLoopChecker();
+    }
+
+    @Override
+    protected void reportCycleError(@NotNull KotlinType type) {
+        for (KtTypeReference typeReference : getAllUpperBounds()) {
+            if (resolveBoundType(typeReference).getConstructor().equals(type.getConstructor())) {
+                c.getTrace().report(Errors.CYCLIC_GENERIC_UPPER_BOUND.on(typeReference));
+                return;
+            }
+        }
+    }
+
+    @NotNull
+    @Override
     protected List<KotlinType> resolveUpperBounds() {
         List<KotlinType> upperBounds = new ArrayList<KotlinType>(1);
 
-        KtTypeReference extendsBound = typeParameter.getExtendsBound();
-        if (extendsBound != null) {
-            KotlinType boundType = c.getDescriptorResolver().resolveTypeParameterExtendsBound(
-                    this, extendsBound, getContainingDeclaration().getScopeForClassHeaderResolution(), c.getTrace()
-            );
-            upperBounds.add(boundType);
+        for (KtTypeReference typeReference : getAllUpperBounds()) {
+            upperBounds.add(resolveBoundType(typeReference));
         }
-
-        resolveUpperBoundsFromWhereClause(upperBounds);
 
         if (upperBounds.isEmpty()) {
             upperBounds.add(c.getModuleDescriptor().getBuiltIns().getDefaultBound());
@@ -77,7 +92,18 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         return upperBounds;
     }
 
-    private void resolveUpperBoundsFromWhereClause(@NotNull List<KotlinType> upperBounds) {
+    private Collection<KtTypeReference> getAllUpperBounds() {
+        return CollectionsKt.plus(
+                typeParameter.getExtendsBound() != null
+                ? Collections.singletonList(typeParameter.getExtendsBound())
+                : Collections.<KtTypeReference>emptyList(),
+                getUpperBoundsFromWhereClause()
+        );
+    }
+
+    private Collection<KtTypeReference> getUpperBoundsFromWhereClause() {
+        Collection<KtTypeReference> result = new ArrayList<KtTypeReference>();
+
         KtClassOrObject classOrObject = KtStubbedPsiUtil.getPsiOrStubParent(typeParameter, KtClassOrObject.class, true);
         if (classOrObject instanceof KtClass) {
             for (KtTypeConstraint typeConstraint : classOrObject.getTypeConstraints()) {
@@ -88,12 +114,14 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
                         KtTypeReference boundTypeReference = typeConstraint.getBoundTypeReference();
                         if (boundTypeReference != null) {
-                            upperBounds.add(resolveBoundType(boundTypeReference));
+                            result.add(boundTypeReference);
                         }
                     }
                 }
             }
         }
+
+        return result;
     }
 
     @NotNull
