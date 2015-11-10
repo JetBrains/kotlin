@@ -1,6 +1,6 @@
 open class A(n: Int)
 
 fun foo() {
-    val i = 1
-    val x = object : A(i) {}
+    val n = 1
+    val x = object : A(n) {}
 }

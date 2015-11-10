@@ -18,10 +18,15 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -36,7 +41,7 @@ public object KotlinNameSuggester {
     public fun suggestNamesByExpressionAndType(expression: KtExpression, bindingContext: BindingContext, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
         val result = LinkedHashSet<String>()
 
-        result.addNamesByExpression(expression, validator)
+        result.addNamesByExpression(expression, bindingContext, validator)
 
         val type = bindingContext.getType(expression)
         if (type != null) {
@@ -62,10 +67,13 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestNamesByExpressionOnly(expression: KtExpression, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
+    public fun suggestNamesByExpressionOnly(
+            expression: KtExpression,
+            bindingContext: BindingContext?,
+            validator: (String) -> Boolean, defaultName: String? = null): List<String> {
         val result = ArrayList<String>()
 
-        result.addNamesByExpression(expression, validator)
+        result.addNamesByExpression(expression, bindingContext, validator)
 
         if (result.isEmpty()) {
             result.addName(defaultName, validator)
@@ -74,10 +82,14 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestIterationVariableNames(collection: KtExpression, elementType: KotlinType, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
+    public fun suggestIterationVariableNames(
+            collection: KtExpression,
+            elementType: KotlinType,
+            bindingContext: BindingContext?,
+            validator: (String) -> Boolean, defaultName: String?): Collection<String> {
         val result = LinkedHashSet<String>()
 
-        suggestNamesByExpressionOnly(collection, { true })
+        suggestNamesByExpressionOnly(collection, bindingContext, { true })
                 .map { StringUtil.unpluralize(it) }
                 .filterNotNull()
                 .mapTo(result) { suggestNameByName(it, validator) }
@@ -261,18 +273,41 @@ public object KotlinNameSuggester {
         return matcher.replaceAll("")
     }
 
-    private fun MutableCollection<String>.addNamesByExpression(expression: KtExpression?, validator: (String) -> Boolean) {
+    private fun MutableCollection<String>.addNamesByExpressionPSI(expression: KtExpression?, validator: (String) -> Boolean) {
+        if (expression == null) return
+        val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
+        when (deparenthesized) {
+            is KtSimpleNameExpression -> addCamelNames(deparenthesized.getReferencedName(), validator)
+            is KtQualifiedExpression -> addNamesByExpressionPSI(deparenthesized.selectorExpression, validator)
+            is KtCallExpression -> addNamesByExpressionPSI(deparenthesized.calleeExpression, validator)
+            is KtPostfixExpression -> addNamesByExpressionPSI(deparenthesized.baseExpression, validator)
+        }
+    }
+
+    private fun MutableCollection<String>.addNamesByExpression(
+            expression: KtExpression?,
+            bindingContext: BindingContext?,
+            validator: (String) -> Boolean
+    ) {
         if (expression == null) return
 
-        val expression = KtPsiUtil.safeDeparenthesize(expression)
-        when (expression) {
-            is KtSimpleNameExpression -> addCamelNames(expression.getReferencedName(), validator)
+        addNamesByValueArgument(expression, bindingContext, validator)
+        addNamesByExpressionPSI(expression, validator)
+    }
 
-            is KtQualifiedExpression -> addNamesByExpression(expression.getSelectorExpression(), validator)
-
-            is KtCallExpression -> addNamesByExpression(expression.getCalleeExpression(), validator)
-
-            is KtPostfixExpression -> addNamesByExpression(expression.getBaseExpression(), validator)
+    private fun MutableCollection<String>.addNamesByValueArgument(
+            expression: KtExpression,
+            bindingContext: BindingContext?,
+            validator: (String) -> Boolean
+    ) {
+        if (bindingContext == null) return
+        val argumentExpression = expression.getOutermostParenthesizerOrThis()
+        val valueArgument = argumentExpression.parent as? KtValueArgument ?: return
+        val resolvedCall = argumentExpression.getParentResolvedCall(bindingContext) ?: return
+        val argumentMatch = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return
+        val parameter = argumentMatch.valueParameter
+        if (parameter.containingDeclaration.hasStableParameterNames()) {
+            addName(parameter.name.asString(), validator)
         }
     }
 

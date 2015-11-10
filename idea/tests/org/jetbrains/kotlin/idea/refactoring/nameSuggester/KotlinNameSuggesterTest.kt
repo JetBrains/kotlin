@@ -21,10 +21,12 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
 public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
@@ -56,6 +58,10 @@ public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
 
     public fun testURL() { doTest() }
 
+    public fun testParameterNameByArgumentExpression() { doTest() }
+
+    public fun testParameterNameByParenthesizedArgumentExpression() { doTest() }
+
     override fun setUp() {
         super.setUp()
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/refactoring/nameSuggester")
@@ -65,7 +71,11 @@ public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val file = myFixture.getFile() as KtFile
         val expectedResultText = KotlinTestUtils.getLastCommentInFile(file)
+        val withRuntime = InTextDirectivesUtils.isDirectiveDefined(file.text, "//WITH_RUNTIME")
         try {
+            if (withRuntime) {
+                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
+            }
             KotlinRefactoringUtil.selectExpression(myFixture.getEditor(), file, object : KotlinRefactoringUtil.SelectExpressionCallback {
                 override fun run(expression: KtExpression?) {
                     val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression!!, expression.analyze(BodyResolveMode.PARTIAL), { true }, "value").sorted()
@@ -76,6 +86,11 @@ public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
         }
         catch (e: KotlinRefactoringUtil.IntroduceRefactoringException) {
             throw AssertionError("Failed to find expression: " + e.getMessage())
+        }
+        finally {
+            if (withRuntime) {
+                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
+            }
         }
     }
 }

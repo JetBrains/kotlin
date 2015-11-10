@@ -801,7 +801,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 builder.replaceElement(parameterTypeRef, parameterTypeExpression)
 
                 // add parameter name to the template
-                val possibleNamesFromExpression = parameter.typeInfo.possibleNamesFromExpression
+                val possibleNamesFromExpression = parameter.typeInfo.getPossibleNamesFromExpression(currentFileContext)
                 val preferredName = parameter.preferredName
                 val possibleNames = if (preferredName != null) {
                     arrayOf(preferredName, *possibleNamesFromExpression)

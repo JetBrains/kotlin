@@ -652,7 +652,7 @@ private class ConstructedExpressionWrapperWithIntroduceFeature(
             val name = if (nameSuggestion != null)
                 KotlinNameSuggester.suggestNameByName(nameSuggestion, validator)
             else
-                KotlinNameSuggester.suggestNamesByExpressionOnly(value, validator, "t").first()
+                KotlinNameSuggester.suggestNamesByExpressionOnly(value, bindingContext, validator, "t").first()
             return Name.identifier(name)
         }
 

@@ -41,8 +41,8 @@ abstract class TypeInfo(val variance: Variance) {
     }
 
     class ByExpression(val expression: KtExpression, variance: Variance): TypeInfo(variance) {
-        override val possibleNamesFromExpression: Array<String> by lazy {
-            KotlinNameSuggester.suggestNamesByExpressionOnly(expression, { true }).toTypedArray()
+        override fun getPossibleNamesFromExpression(bindingContext: BindingContext): Array<String> {
+            return KotlinNameSuggester.suggestNamesByExpressionOnly(expression, bindingContext, { true }).toTypedArray()
         }
 
         override fun getPossibleTypes(builder: CallableBuilder): List<KotlinType> =
@@ -70,7 +70,7 @@ abstract class TypeInfo(val variance: Variance) {
 
     abstract class DelegatingTypeInfo(val delegate: TypeInfo): TypeInfo(delegate.variance) {
         override val substitutionsAllowed: Boolean = delegate.substitutionsAllowed
-        override val possibleNamesFromExpression: Array<String> get() = delegate.possibleNamesFromExpression
+        override fun getPossibleNamesFromExpression(bindingContext: BindingContext) = delegate.getPossibleNamesFromExpression(bindingContext)
         override fun getPossibleTypes(builder: CallableBuilder): List<KotlinType> = delegate.getPossibleTypes(builder)
     }
 
@@ -84,7 +84,7 @@ abstract class TypeInfo(val variance: Variance) {
 
     open val substitutionsAllowed: Boolean = true
     open val staticContextRequired: Boolean = false
-    open val possibleNamesFromExpression: Array<String> get() = ArrayUtil.EMPTY_STRING_ARRAY
+    open fun getPossibleNamesFromExpression(bindingContext: BindingContext): Array<String> = ArrayUtil.EMPTY_STRING_ARRAY
     abstract fun getPossibleTypes(builder: CallableBuilder): List<KotlinType>
 
     protected fun KotlinType?.getPossibleSupertypes(variance: Variance, callableBuilder: CallableBuilder): List<KotlinType> {

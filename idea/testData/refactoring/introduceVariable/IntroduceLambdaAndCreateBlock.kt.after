@@ -2,7 +2,7 @@
 
 fun foo(p: Int, list: List<Int>) {
     if (p > 0) {
-        val function: (Int) -> Boolean = { it > 0 }
-        list.filter(function)
+        val predicate: (Int) -> Boolean = { it > 0 }
+        list.filter(predicate)
     }
 }
