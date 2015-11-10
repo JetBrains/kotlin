@@ -1,4 +1,4 @@
-// "Fix extension function value call" "true"
+// "Surround callee with parenthesis" "true"
 
 class A {
     val foo: B.() -> Unit get() = null!!

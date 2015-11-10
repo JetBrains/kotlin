@@ -29,20 +29,19 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
 class InvokeOnExtensionFunctionWithExplicitReceiverFix(qualifiedExpression: KtDotQualifiedExpression) : KotlinQuickFixAction<KtDotQualifiedExpression>(qualifiedExpression), CleanupFix {
-    override fun getFamilyName() = "Fix extension function value call"
+    override fun getFamilyName() = "Surround callee with parenthesis"
     override fun getText() = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val callExpression = element.selectorExpression as KtCallExpression
-        val pattern = if (element is KtSafeQualifiedExpression)"($0?.$1)" else "($0.$1)"
-        val newCallee = KtPsiFactory(file).createExpressionByPattern(pattern, element.receiverExpression, callExpression.calleeExpression!!)
+        val newCallee = KtPsiFactory(file).createExpressionByPattern("($0.$1)", element.receiverExpression, callExpression.calleeExpression!!)
         val newCallExpression = element.replaced(callExpression)
         newCallExpression.calleeExpression!!.replace(newCallee)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val callee = Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER.cast(diagnostic).a as? KtNameReferenceExpression ?: return null
+            val callee = Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER.cast(diagnostic).psiElement as? KtNameReferenceExpression ?: return null
             val callExpression = callee.parent as? KtCallExpression ?: return null
             val qualifiedExpression = callExpression.getQualifiedExpressionForSelector() as? KtDotQualifiedExpression ?: return null
             return InvokeOnExtensionFunctionWithExplicitReceiverFix(qualifiedExpression)

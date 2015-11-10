@@ -1,14 +1,17 @@
 // "Surround callee with parenthesis" "true"
 
 class A {
-    val foo: B.() -> Unit get() = null!!
+    val foo: B.(String, Int) -> Unit get() = null!!
 }
 
-class B
+class B {
+    fun getA() = A()
+}
 
-fun test(a: A, b: B) {
+
+fun test(b: B) {
     with(b) {
-        a.<caret>foo()
+        (b.getA().foo)("", 1)
     }
 }
 

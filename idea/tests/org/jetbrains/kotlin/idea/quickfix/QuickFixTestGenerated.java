@@ -4369,6 +4369,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("notSimple.kt")
+            public void testNotSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix/notSimple.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix/simple.kt");
