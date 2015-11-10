@@ -389,9 +389,6 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val valueParameters = extractedFunction.valueParameters
                 var paramIndex = 0
                 for (param in parameters) {
-
-                    if (param.callText.contains(THIS_NAME)) continue
-
                     val valueParameter = valueParameters[paramIndex++]
 
                     val paramRef = valueParameter.typeReference

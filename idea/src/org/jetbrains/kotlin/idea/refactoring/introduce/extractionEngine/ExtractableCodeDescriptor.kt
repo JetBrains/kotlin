@@ -38,15 +38,14 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
 interface Parameter {
@@ -93,6 +92,17 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
         }
         return expressionToReplace.replaced(replacement)
     }
+}
+
+class WrapInWithReplacement(override val parameter: Parameter): ParameterReplacement {
+    override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
+        val call = e.parents.firstIsInstance<KtCallExpression>().getQualifiedExpressionForSelectorOrThis()
+        val replacingExpression = KtPsiFactory(e).createExpressionByPattern("with($0) { $1 }", parameter.name, call.text)
+        val replace = call.replace(replacingExpression)
+        return (replace as KtCallExpression).functionLiteralArguments.first().getFunctionLiteral().bodyExpression!!.statements.first()
+    }
+
+    override fun copy(parameter: Parameter) = WrapInWithReplacement(parameter)
 }
 
 class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacement {

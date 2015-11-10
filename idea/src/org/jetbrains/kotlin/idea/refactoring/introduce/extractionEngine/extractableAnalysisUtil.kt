@@ -695,7 +695,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val adjustedParameters = paramsInfo.parameters.filterTo(HashSet<Parameter>()) { it.refCount > 0 }
 
     val receiverCandidates = adjustedParameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }
-    val receiverParameter = if (receiverCandidates.size == 1) receiverCandidates.first() else null
+    val receiverParameter = if (receiverCandidates.size == 1 && !options.canWrapInWith) receiverCandidates.first() else null
     receiverParameter?.let { adjustedParameters.remove(it) }
 
     return AnalysisResult(
