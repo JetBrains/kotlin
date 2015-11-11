@@ -500,27 +500,6 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/boxInline/modifiers")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Modifiers extends AbstractBlackBoxInlineCodegenTest {
-        public void testAllFilesPresentInModifiers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/modifiers"), Pattern.compile("^(.+)\\.1.kt$"), true);
-        }
-
-        @TestMetadata("packagePrivateMembers.1.kt")
-        public void testPackagePrivateMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/modifiers/packagePrivateMembers.1.kt");
-            doTestMultiFileWithInlineCheck(fileName);
-        }
-
-        @TestMetadata("propertyModifiers.1.kt")
-        public void testPropertyModifiers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/modifiers/propertyModifiers.1.kt");
-            doTestMultiFileWithInlineCheck(fileName);
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/boxInline/multifileClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1378,6 +1357,39 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("stackHeightBug.1.kt")
         public void testStackHeightBug() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/special/stackHeightBug.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SyntheticAccessors extends AbstractBlackBoxInlineCodegenTest {
+        public void testAllFilesPresentInSyntheticAccessors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("packagePrivateMembers.1.kt")
+        public void testPackagePrivateMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/packagePrivateMembers.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("propertyModifiers.1.kt")
+        public void testPropertyModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/propertyModifiers.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("superCall.1.kt")
+        public void testSuperCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/superCall.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("superProperty.1.kt")
+        public void testSuperProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/superProperty.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
     }

@@ -709,5 +709,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("protectedStaticAndInline")
+        public void testProtectedStaticAndInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/protectedStaticAndInline/");
+            doTestWithJava(fileName);
+        }
+
     }
 }
