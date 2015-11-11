@@ -149,39 +149,6 @@ class ClassQualifier(
     override fun toString() = "Class{$classifier}"
 }
 
-fun createQualifier(expression: KtSimpleNameExpression, receiver: Receiver, context: ExpressionTypingContext): QualifierReceiver? {
-    val receiverScope = when {
-        !receiver.exists() -> context.scope
-        receiver is QualifierReceiver -> receiver.scope.memberScopeAsImportingScope()
-        receiver is ReceiverValue -> receiver.type.memberScope.memberScopeAsImportingScope()
-        else -> throw IllegalArgumentException("Unexpected receiver kind: $receiver")
-    }
-
-    val name = expression.getReferencedNameAsName()
-    val packageViewDescriptor = receiverScope.findPackage(name)
-    val classifierDescriptor = receiverScope.findClassifier(name, KotlinLookupLocation(expression))
-
-    if (packageViewDescriptor == null && classifierDescriptor == null) return null
-
-    context.trace.recordScope(context.scope, expression)
-
-    val qualifier =
-            if (receiver is PackageQualifier) {
-                if (packageViewDescriptor != null)
-                    PackageQualifier(expression, packageViewDescriptor)
-                else
-                    createClassifierQualifier(expression, classifierDescriptor!!, context.trace.bindingContext)
-            else
-                if (classifierDescriptor != null)
-                    createClassifierQualifier(expression, classifierDescriptor, context.trace.bindingContext)
-                else
-                    PackageQualifier(expression, packageViewDescriptor!!)
-            }
-
-    context.trace.record(QUALIFIER, qualifier.expression, qualifier)
-    return qualifier
-}
-
 fun createClassifierQualifier(
         referenceExpression: KtSimpleNameExpression,
         classifier: ClassifierDescriptor,

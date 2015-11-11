@@ -127,8 +127,9 @@ public class CallExpressionResolver {
         // if the expression is a receiver in a qualified expression, it should be resolved after the selector is resolved
         boolean isLHSOfDot = KtPsiUtil.isLHSOfDot(nameExpression);
         if (!resolutionResult.isNothing() && resolutionResult.getResultCode() != OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER) {
-            boolean isQualifier = isLHSOfDot && resolutionResult.isSingleResult()
-                                  && resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject;
+            boolean isQualifier = isLHSOfDot &&
+                                  resolutionResult.isSingleResult() &&
+                                  resolutionResult.getResultingDescriptor() instanceof FakeCallableDescriptorForObject;
             if (!isQualifier) {
                 result[0] = true;
                 temporaryForVariable.commit();
@@ -136,14 +137,13 @@ public class CallExpressionResolver {
             }
         }
 
-        QualifierReceiver qualifier = QualifierKt.createQualifier(nameExpression, receiver, context);
-        if (qualifier != null) {
-            result[0] = true;
-            if (!isLHSOfDot) {
-                QualifiedExpressionResolveUtilKt.resolveAsStandaloneExpression(qualifier, context, symbolUsageValidator);
-            }
-            return null;
-        }
+        //// Generate some diagnostics for qualifier in unexpected position
+        //DeclarationDescriptor qualifierDescriptor =
+        //        QualifiedExpressionResolveUtilKt.getQualifierDescriptorOrNull(nameExpression, receiver, context);
+        //if (qualifierDescriptor != null) {
+        //    QualifiedExpressionResolveUtilKt.checkQualifierAsStandaloneExpression(qualifierDescriptor, nameExpression, context);
+        //}
+
         temporaryForVariable.commit();
         result[0] = !resolutionResult.isNothing();
         return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;
@@ -189,6 +189,15 @@ public class CallExpressionResolver {
             context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
             type = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
             return TypeInfoFactoryKt.createTypeInfo(type, context);
+        }
+
+        TemporaryTraceAndCache temporaryForQualifier = TemporaryTraceAndCache.create(context, "trace to resolve as qualifier", nameExpression);
+        ExpressionTypingContext contextForQualifier = context.replaceTraceAndCache(temporaryForQualifier);
+        Qualifier qualifier = qualifiedExpressionResolver.resolveNameExpressionAsQualifierForDiagnostics(nameExpression, receiver, contextForQualifier);
+        if (qualifier != null) {
+            QualifiedExpressionResolveUtilKt.resolveQualifierAsStandaloneExpression(qualifier, contextForQualifier, symbolUsageValidator);
+            temporaryForQualifier.commit();
+            return TypeInfoFactoryKt.createTypeInfo(null, context);
         }
 
         temporaryForVariable.commit();
@@ -350,7 +359,9 @@ public class CallExpressionResolver {
                     return false;
                 }
 
-                return !resolutionResult.isNothing();
+                OverloadResolutionResults.Code resultCode = resolutionResult.getResultCode();
+                return resultCode != OverloadResolutionResults.Code.NAME_NOT_FOUND &&
+                       resultCode != OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER;
             }
         };
         List<CallExpressionElement> elementChain =
@@ -462,7 +473,7 @@ public class CallExpressionResolver {
                 calleeExpression instanceof KtReferenceExpression
                 ? context.trace.get(BindingContext.REFERENCE_TARGET, (KtReferenceExpression) calleeExpression) : null;
 
-        QualifiedExpressionResolveUtilKt.resolveAsReceiverInQualifiedExpression(qualifierReceiver, context, selectorDescriptor, symbolUsageValidator);
+        QualifiedExpressionResolveUtilKt.resolveQualifierAsReceiverInExpression(qualifierReceiver, selectorDescriptor, context, symbolUsageValidator);
     }
 
     private static void checkNestedClassAccess(
