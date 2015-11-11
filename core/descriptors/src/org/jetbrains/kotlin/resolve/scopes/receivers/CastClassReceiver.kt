@@ -19,4 +19,6 @@ package org.jetbrains.kotlin.resolve.scopes.receivers
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
+// ClassReceiver cast to given target type
+// NB: equals / hashCode are inherited from ClassReceiver (as designed)
 class CastClassReceiver(originalDescriptor: ClassDescriptor, val targetType: KotlinType) : ClassReceiver(originalDescriptor)
