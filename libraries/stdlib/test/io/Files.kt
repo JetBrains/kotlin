@@ -333,7 +333,7 @@ class FilesTest {
                 }
 
                 fun visitFile(file: File) {
-                    assert(stack.last().listFiles().contains(file), file)
+                    assert(stack.last().listFiles().contains(file)) { file }
                     files.add(file.relativeTo(basedir))
                 }
 
@@ -347,10 +347,10 @@ class FilesTest {
                 assert(stack.isEmpty())
                 val sep = File.separator
                 for (fileName in arrayOf("", "1", "1${sep}2", "1${sep}3", "6", "8")) {
-                    assert(dirs.contains(fileName), fileName)
+                    assert(dirs.contains(fileName)) { fileName }
                 }
                 for (fileName in arrayOf("1${sep}3${sep}4.txt", "1${sep}3${sep}4.txt", "7.txt", "8${sep}9.txt")) {
-                    assert(files.contains(fileName), fileName)
+                    assert(files.contains(fileName)) { fileName }
                 }
 
                 //limit maxDepth
@@ -359,9 +359,9 @@ class FilesTest {
                 basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).maxDepth(1).
                         forEach { it -> if (it != basedir) visitFile(it) }
                 assert(stack.isEmpty())
-                assert(dirs.size() == 1 && dirs.contains(""), dirs.size())
+                assert(dirs.size() == 1 && dirs.contains("")) { dirs.size() }
                 for (file in arrayOf("1", "6", "7.txt", "8")) {
-                    assert(files.contains(file), file)
+                    assert(files.contains(file)) { file }
                 }
 
                 //restrict access
@@ -372,14 +372,14 @@ class FilesTest {
                         basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
                                 fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
                         assert(stack.isEmpty())
-                        assert(failed.size() == 1 && failed.contains("1"), failed.size())
-                        assert(dirs.size() == 4, dirs.size())
+                        assert(failed.size() == 1 && failed.contains("1")) { failed.size() }
+                        assert(dirs.size() == 4) { dirs.size() }
                         for (dir in arrayOf("", "1", "6", "8")) {
-                            assert(dirs.contains(dir), dir)
+                            assert(dirs.contains(dir)) { dir }
                         }
-                        assert(files.size() == 2, files.size())
+                        assert(files.size() == 2) { files.size() }
                         for (file in arrayOf("7.txt", "8${sep}9.txt")) {
-                            assert(files.contains(file), file)
+                            assert(files.contains(file)) { file }
                         }
                     } finally {
                         File(basedir, "1").setReadable(true)
@@ -397,12 +397,12 @@ class FilesTest {
             try {
                 val visited = HashSet<File>()
                 val block: (File) -> Unit = {
-                    assert(!visited.contains(it), it)
-                    assert(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile()), it)
+                    assert(!visited.contains(it)) { it }
+                    assert(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile())) { it }
                     visited.add(it)
                 }
                 basedir.walkTopDown().forEach(block)
-                assert(visited.size() == 10, visited.size())
+                assert(visited.size() == 10) { visited.size() }
 
             } finally {
                 basedir.deleteRecursively()
@@ -416,12 +416,12 @@ class FilesTest {
                 if (restricted.setReadable(false)) {
                     val visited = HashSet<File>()
                     val block: (File) -> Unit = {
-                        assert(!visited.contains(it), it)
-                        assert(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile()), it)
+                        assert(!visited.contains(it)) { it }
+                        assert(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile())) { it }
                         visited.add(it)
                     }
                     basedir.walkTopDown().forEach(block)
-                    assert(visited.size() == 6, visited.size())
+                    assert(visited.size() == 6) { visited.size() }
                 }
             } finally {
                 restricted.setReadable(true)
@@ -521,12 +521,6 @@ class FilesTest {
             }
         }
 
-        @test fun recurse() {
-            val set: MutableSet<String> = HashSet()
-            val dir = createTestFiles()
-            dir.recurse { set.add(it.path) }
-            assertEquals(10, set.size())
-        }
     }
 
     @test fun listFilesWithFilter() {

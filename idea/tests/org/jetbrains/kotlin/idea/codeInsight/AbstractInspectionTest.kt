@@ -71,13 +71,13 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
             setTestDataPath("${KotlinTestUtils.getHomeDirectory()}/$srcDir")
 
             val afterFiles = srcDir.listFiles { it.name == "inspectionData" }?.single()?.listFiles { it.extension == "after" } ?: emptyArray()
-            val psiFiles = srcDir.walkTopDown().filter { it.name != "inspectionData" }.map {
+            val psiFiles = srcDir.walkTopDown().treeFilter { it.name != "inspectionData" }.map {
                 file ->
                 if (file.isDirectory) {
                      null
                 }
                 else if (file.extension != "kt") {
-                    val filePath = file.getPath().substringAfter(srcDir.getPath()).replace("\\", "/")
+                    val filePath = file.relativeTo(srcDir).replace('\\', '/')
                     configureByFile(filePath)
                 }
                 else {
@@ -86,10 +86,10 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
                             if (text.startsWith("package"))
                                 text
                             else
-                                "package ${file.getName().removeSuffix(".kt")};$text"
-                    configureByText(file.getName(), fileText)!!
+                                "package ${file.nameWithoutExtension};$text"
+                    configureByText(file.name, fileText)!!
                 }
-            }.filterNotNull().toArrayList()
+            }.filterNotNull().toList()
 
             val isJs = srcDir.endsWith("js")
 

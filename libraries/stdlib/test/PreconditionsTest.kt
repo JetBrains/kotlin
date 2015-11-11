@@ -20,17 +20,6 @@ class PreconditionsTest() {
         assertNotNull(error.getMessage())
     }
 
-    @test fun passingRequireWithMessage() {
-        require(true, "Hello")
-    }
-
-    @test fun failingRequireWithMessage() {
-        val error = assertFailsWith(IllegalArgumentException::class) {
-            require(false, "Hello")
-        }
-        assertEquals("Hello", error.getMessage())
-    }
-
     @test fun failingRequireWithLazyMessage() {
         val error = assertFailsWith(IllegalArgumentException::class) {
             require(false) { "Hello" }
@@ -51,17 +40,6 @@ class PreconditionsTest() {
             check(false)
         }
         assertNotNull(error.getMessage())
-    }
-
-    @test fun passingCheckWithMessage() {
-        check(true, "Hello")
-    }
-
-    @test fun failingCheckWithMessage() {
-        val error = assertFailsWith(IllegalStateException::class) {
-            check(false, "Hello")
-        }
-        assertEquals("Hello", error.getMessage())
     }
 
     @test fun failingCheckWithLazyMessage() {
@@ -144,12 +122,12 @@ class PreconditionsTest() {
     }
 
     @test fun passingAssertWithMessage() {
-        assert(true, "Hello")
+        assert(true) { "Hello" }
     }
 
     @test fun failingAssertWithMessage() {
         val error = assertFails {
-            assert(false, "Hello")
+            assert(false) { "Hello" }
         }
         if (error is AssertionError) {
             assertEquals("Hello", error.getMessage())

@@ -14,13 +14,19 @@ import java.util.concurrent.ConcurrentMap
  * Allows to use the index operator for storing values in a mutable map.
  */
 // this code is JVM-specific, because JS has native set function
-public operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
+public operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
+    put(key, value)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JvmName("set")
+public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
 
 /**
  * getOrPut is not supported on [ConcurrentMap] since it cannot be implemented correctly in terms of concurrency.
  * Use [concurrentGetOrPut] instead, or cast this to a [MutableMap] if you want to sacrifice the concurrent-safety.
  */
-@Deprecated("Use concurrentGetOrPut instead or cast this map to MutableMap.")
+@Deprecated("Use concurrentGetOrPut instead or cast this map to MutableMap.", level = DeprecationLevel.ERROR)
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): Nothing =
     throw UnsupportedOperationException("getOrPut is not supported on ConcurrentMap.")
 

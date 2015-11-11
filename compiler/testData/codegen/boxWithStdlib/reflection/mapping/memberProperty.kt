@@ -6,7 +6,7 @@ class K(var value: Long)
 fun box(): String {
     val p = K::value
 
-    assert(p.javaField != null, "Fail p field")
+    assert(p.javaField != null) { "Fail p field" }
 
     val getter = p.javaGetter!!
     val setter = p.javaSetter!!
@@ -15,9 +15,9 @@ fun box(): String {
     assertEquals(setter, javaClass<K>().getMethod("setValue", javaClass<Long>()))
 
     val k = K(42L)
-    assert(getter.invoke(k) == 42L, "Fail k getter")
+    assert(getter.invoke(k) == 42L) { "Fail k getter" }
     setter.invoke(k, -239L)
-    assert(getter.invoke(k) == -239L, "Fail k setter")
+    assert(getter.invoke(k) == -239L) { "Fail k setter" }
 
     return "OK"
 }

@@ -3163,6 +3163,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("deprecationLevel.kt")
+        public void testDeprecationLevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/deprecationLevel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("doNotShortenUserReferences.kt")
         public void testDoNotShortenUserReferences() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/doNotShortenUserReferences.kt");

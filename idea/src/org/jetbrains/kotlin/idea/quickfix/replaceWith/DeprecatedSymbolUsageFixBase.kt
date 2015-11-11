@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
@@ -100,7 +101,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             else
                 null) ?: return null
 
-            val descriptor = Errors.DEPRECATION.cast(deprecatedDiagnostic).a
+            val descriptor = DiagnosticFactory.cast(deprecatedDiagnostic, Errors.DEPRECATION, Errors.DEPRECATION_ERROR).a
             val replacement = DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(descriptor, nameExpression.project) ?: return null
             return Data(nameExpression, replacement, descriptor)
         }
