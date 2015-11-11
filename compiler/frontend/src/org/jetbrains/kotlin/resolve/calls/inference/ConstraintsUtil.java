@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
@@ -84,9 +85,11 @@ public class ConstraintsUtil {
     public static boolean checkUpperBoundIsSatisfied(
             @NotNull ConstraintSystem constraintSystem,
             @NotNull TypeParameterDescriptor typeParameter,
+            @NotNull Call call,
             boolean substituteOtherTypeParametersInBound
     ) {
-        KotlinType type = constraintSystem.getTypeBounds(constraintSystem.descriptorToVariable(typeParameter)).getValue();
+        TypeVariable typeVariable = constraintSystem.descriptorToVariable(TypeVariableKt.toHandle(call), typeParameter);
+        KotlinType type = constraintSystem.getTypeBounds(typeVariable).getValue();
         if (type == null) return true;
         for (KotlinType upperBound : typeParameter.getUpperBounds()) {
             if (!substituteOtherTypeParametersInBound &&

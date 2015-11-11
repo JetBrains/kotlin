@@ -87,7 +87,8 @@ public class AddGenericUpperBoundFix(
                 typeParameterDescriptor ->
 
                 if (ConstraintsUtil.checkUpperBoundIsSatisfied(
-                        successfulConstraintSystem, typeParameterDescriptor, /* substituteOtherTypeParametersInBound */ true
+                        successfulConstraintSystem, typeParameterDescriptor, inferenceData.call,
+                        /* substituteOtherTypeParametersInBound */ true
                 )) return@factory null
 
                 val upperBound = typeParameterDescriptor.upperBounds.singleOrNull() ?: return@factory null

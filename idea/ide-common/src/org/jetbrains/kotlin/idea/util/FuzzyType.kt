@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.types.*
@@ -115,7 +116,7 @@ class FuzzyType(
         }
 
         val builder = ConstraintSystemBuilderImpl()
-        val typeVariableSubstitutor = builder.registerTypeVariables(freeParameters + otherType.freeParameters)
+        val typeVariableSubstitutor = builder.registerTypeVariables(CallHandle.NONE, freeParameters + otherType.freeParameters)
 
         when (matchKind) {
             MatchKind.IS_SUBTYPE -> builder.addSubtypeConstraint(

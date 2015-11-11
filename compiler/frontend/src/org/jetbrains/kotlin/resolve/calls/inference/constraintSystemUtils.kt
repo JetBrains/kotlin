@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import java.util.*
 
-fun ConstraintSystem.getNestedTypeVariables(type: KotlinType): List<TypeVariable> =
-        type.getNestedTypeParameters().filter { it in typeParameterDescriptors }.map { descriptorToVariable(it) }
+fun ConstraintSystem.getNestedTypeVariables(type: KotlinType): List<TypeVariable> {
+    val nestedTypeParameters = type.getNestedTypeParameters().toSet()
+    return typeVariables.filter { it.originalTypeParameter in nestedTypeParameters }
+}
 
 fun ConstraintSystem.filterConstraintsOut(excludePositionKind: ConstraintPositionKind): ConstraintSystem {
     return toBuilder { !it.derivedFrom(excludePositionKind) }.build()

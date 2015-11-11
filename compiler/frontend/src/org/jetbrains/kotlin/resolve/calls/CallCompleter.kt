@@ -204,7 +204,8 @@ public class CallCompleter(
 
         val errorData = InferenceErrorData.create(
                 getCandidateDescriptor(), getConstraintSystem()!!, valueArgumentsCheckingResult.argumentTypes,
-                receiverType, context.expectedType)
+                receiverType, context.expectedType, context.call
+        )
         tracing.typeInferenceFailed(context.trace, errorData)
 
         addStatus(ResolutionStatus.OTHER_ERROR)

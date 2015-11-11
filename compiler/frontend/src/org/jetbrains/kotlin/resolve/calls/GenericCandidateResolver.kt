@@ -32,13 +32,10 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
+import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeParameters
-import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
@@ -56,7 +53,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val candidate = candidateCall.candidateDescriptor
 
         val builder = ConstraintSystemBuilderImpl()
-        builder.registerTypeVariables(candidate.typeParameters)
+        builder.registerTypeVariables(candidateCall.call.toHandle(), candidate.typeParameters)
 
         val substituteDontCare = makeConstantSubstitutor(candidate.typeParameters, DONT_CARE)
 
@@ -158,7 +155,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val conversion = candidateDescriptor.typeParameters.zip(candidateWithFreshVariables.typeParameters).toMap()
 
         val freshVariables = returnType.getNestedTypeParameters().map { conversion[it] }.filterNotNull()
-        builder.registerTypeVariables(freshVariables, external = true)
+        builder.registerTypeVariables(resultingCall.call.toHandle(), freshVariables, external = true)
 
         builder.addSubtypeConstraint(candidateWithFreshVariables.returnType, effectiveExpectedType, constraintPosition)
         return true

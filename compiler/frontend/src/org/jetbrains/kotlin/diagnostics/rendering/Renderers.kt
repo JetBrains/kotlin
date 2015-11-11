@@ -251,7 +251,7 @@ public object Renderers {
 
         val systemWithoutWeakConstraints = constraintSystem.filterConstraintsOut(ConstraintPositionKind.TYPE_BOUND_POSITION)
         val typeParameterDescriptor = inferenceErrorData.descriptor.typeParameters.firstOrNull {
-            !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, true)
+            !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, inferenceErrorData.call, true)
         }
         if (typeParameterDescriptor == null && status.hasConflictingConstraints()) {
             return renderConflictingSubstitutionsInferenceError(inferenceErrorData, result)
@@ -261,8 +261,8 @@ public object Renderers {
             return result
         }
 
-        val inferredValueForTypeParameter =
-                systemWithoutWeakConstraints.getTypeBounds(systemWithoutWeakConstraints.descriptorToVariable(typeParameterDescriptor)).value
+        val typeVariable = systemWithoutWeakConstraints.descriptorToVariable(inferenceErrorData.call.toHandle(), typeParameterDescriptor)
+        val inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeVariable).value
         if (inferredValueForTypeParameter == null) {
             LOG.error(renderDebugMessage("System without weak constraints is not successful, there is no value for type parameter " + 
                                          typeParameterDescriptor.getName() + "\n: " + systemWithoutWeakConstraints, inferenceErrorData))

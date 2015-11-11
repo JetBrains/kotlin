@@ -34,7 +34,7 @@ interface ConstraintSystem {
      */
     val typeVariables: Set<TypeVariable>
 
-    fun descriptorToVariable(descriptor: TypeParameterDescriptor): TypeVariable
+    fun descriptorToVariable(call: CallHandle, descriptor: TypeParameterDescriptor): TypeVariable
 
     /**
      * Returns the resulting type constraints of solving the constraint system for specific type parameter descriptor.
@@ -66,7 +66,9 @@ interface ConstraintSystem {
          * Registers variables in a constraint system. Returns a substitutor which maps type parameter descriptors given as parameters
          * to the corresponding type variables of the system. Use that substitutor to provide constraints to the system
          */
-        fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>, external: Boolean = false): TypeSubstitutor
+        fun registerTypeVariables(
+                call: CallHandle, typeParameters: Collection<TypeParameterDescriptor>, external: Boolean = false
+        ): TypeSubstitutor
 
         /**
          * Adds a constraint that the constraining type is a subtype of the subject type.

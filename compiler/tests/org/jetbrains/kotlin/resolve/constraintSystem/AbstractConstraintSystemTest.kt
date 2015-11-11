@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
@@ -81,7 +82,7 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
         val variables = parseVariables(constraintsFileText)
         val fixVariables = constraintsFileText.contains("FIX_VARIABLES")
         val typeParameterDescriptors = variables.map { testDeclarations.getParameterDescriptor(it) }
-        val substitutor = builder.registerTypeVariables(typeParameterDescriptors)
+        val substitutor = builder.registerTypeVariables(CallHandle.NONE, typeParameterDescriptors)
 
         val constraints = parseConstraints(constraintsFileText)
 

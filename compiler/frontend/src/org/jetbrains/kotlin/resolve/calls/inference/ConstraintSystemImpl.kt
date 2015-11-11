@@ -111,8 +111,8 @@ internal class ConstraintSystemImpl(
     override val typeVariables: Set<TypeVariable>
         get() = allTypeParameterBounds.keys
 
-    override fun descriptorToVariable(descriptor: TypeParameterDescriptor): TypeVariable =
-            descriptorToVariable[descriptor] ?: throw IllegalArgumentException("Unknown descriptor: $descriptor")
+    override fun descriptorToVariable(call: CallHandle, descriptor: TypeParameterDescriptor): TypeVariable =
+            descriptorToVariable[descriptor] ?: throw IllegalArgumentException("Unknown descriptor: $descriptor, call: $call")
 
     override fun getTypeBounds(typeVariable: TypeVariable): TypeBoundsImpl {
         return allTypeParameterBounds[typeVariable] ?:
