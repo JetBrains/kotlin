@@ -2745,6 +2745,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("initializationInLambda.kt")
+            public void testInitializationInLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/initializationInLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1001.kt")
             public void testKt1001() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt1001.kt");
@@ -2988,6 +2994,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("unmappedArgs.kt")
             public void testUnmappedArgs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/unmappedArgs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("useUninitializedInLambda.kt")
+            public void testUseUninitializedInLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/useUninitializedInLambda.kt");
                 doTest(fileName);
             }
 

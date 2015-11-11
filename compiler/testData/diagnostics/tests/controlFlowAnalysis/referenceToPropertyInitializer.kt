@@ -3,9 +3,9 @@ package o
 
 class TestFunctionLiteral {
     val sum: (Int) -> Int = { x: Int ->
-        sum(x - 1) + x
+        <!UNINITIALIZED_VARIABLE!>sum<!>(x - 1) + x
     }
-    val foo: () -> Unit = l@ ({ foo() })
+    val foo: () -> Unit = l@ ({ <!UNINITIALIZED_VARIABLE!>foo<!>() })
 }
 
 open class A(val a: A)
@@ -16,14 +16,14 @@ class TestObjectLiteral {
             val x = <!UNINITIALIZED_VARIABLE!>obj<!>
         }
         fun foo() {
-            val y = obj
+            val y = <!UNINITIALIZED_VARIABLE!>obj<!>
         }
     }
     val obj1: A = l@ ( object: A(<!UNINITIALIZED_VARIABLE!>obj1<!>) {
         init {
             val x = <!UNINITIALIZED_VARIABLE!>obj1<!>
         }
-        fun foo() = obj1
+        fun foo() = <!UNINITIALIZED_VARIABLE!>obj1<!>
     })
 }
 

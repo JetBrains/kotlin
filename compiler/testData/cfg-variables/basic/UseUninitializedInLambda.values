@@ -1,0 +1,25 @@
+== bar ==
+fun bar(f: () -> Unit) = f()
+---------------------
+      <v0>: {<: () -> Unit}   NEW: magic[FAKE_INITIALIZER](f: () -> Unit) -> <v0>
+f     <v1>: {<: () -> Unit}   NEW: r(f) -> <v1>
+f()   <v2>: Unit              NEW: call(f(), invoke|<v1>) -> <v2>
+=====================
+== foo ==
+fun foo() {
+    var v: Any
+    bar { v.hashCode() }
+}
+---------------------
+{ v.hashCode() }                      <v0>: {<: () -> Unit}   NEW: r({ v.hashCode() }) -> <v0>
+bar { v.hashCode() }                  <v1>: *                 NEW: call(bar { v.hashCode() }, bar|<v0>) -> <v1>
+{ var v: Any bar { v.hashCode() } }   <v1>: *                 COPY
+=====================
+== anonymous_0 ==
+{ v.hashCode() }
+---------------------
+v              <v0>: {<: Any}   NEW: r(v) -> <v0>
+hashCode()     <v1>: *          NEW: call(hashCode(), hashCode|<v0>) -> <v1>
+v.hashCode()   <v1>: *          COPY
+v.hashCode()   <v1>: *          COPY
+=====================

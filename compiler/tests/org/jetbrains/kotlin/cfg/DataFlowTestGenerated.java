@@ -61,6 +61,12 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
             doTest(fileName);
         }
 
+        @TestMetadata("UseUninitializedInLambda.kt")
+        public void testUseUninitializedInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/UseUninitializedInLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("VariablesInitialization.kt")
         public void testVariablesInitialization() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/VariablesInitialization.kt");
