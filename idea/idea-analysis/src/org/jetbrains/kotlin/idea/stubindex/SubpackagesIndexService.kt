@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.idea.stubindex
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.search.GlobalSearchScope
-import java.util.HashSet
-import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import com.intellij.openapi.components.ServiceManager
+import java.util.*
 
 public class SubpackagesIndexService(private val project: Project) {
 
@@ -40,11 +40,14 @@ public class SubpackagesIndexService(private val project: Project) {
 
     public inner class SubpackagesIndex(allPackageFqNames: Collection<String>) {
         // a map from any existing package (in kotlin) to a set of subpackages (not necessarily direct) containing files
+        private val allPackageFqNames = hashSetOf<FqName>()
         private val fqNameByPrefix = MultiMap.createSet<FqName, FqName>()
 
         init {
             for (fqNameAsString in allPackageFqNames) {
                 val fqName = FqName(fqNameAsString)
+                this.allPackageFqNames.add(fqName)
+
                 var prefix = fqName
                 while (!prefix.isRoot()) {
                     prefix = prefix.parent()
@@ -53,13 +56,15 @@ public class SubpackagesIndexService(private val project: Project) {
             }
         }
 
-        public fun hasSubpackages(fqName: FqName, scope: GlobalSearchScope): Boolean {
+        fun hasSubpackages(fqName: FqName, scope: GlobalSearchScope): Boolean {
             return fqNameByPrefix[fqName].any { packageWithFilesFqName ->
                 PackageIndexUtil.containsFilesWithExactPackage(packageWithFilesFqName, scope, project)
             }
         }
 
-        public fun getSubpackages(fqName: FqName, scope: GlobalSearchScope, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        fun packageExists(fqName: FqName): Boolean = fqName in allPackageFqNames || fqNameByPrefix.containsKey(fqName)
+
+        fun getSubpackages(fqName: FqName, scope: GlobalSearchScope, nameFilter: (Name) -> Boolean): Collection<FqName> {
             val possibleFilesFqNames = fqNameByPrefix[fqName]
             val existingSubPackagesShortNames = HashSet<Name>()
             val len = fqName.pathSegments().size()

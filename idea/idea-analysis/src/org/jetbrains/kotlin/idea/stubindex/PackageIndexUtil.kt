@@ -49,8 +49,13 @@ public object PackageIndexUtil {
             searchScope: GlobalSearchScope,
             project: Project
     ): Boolean {
+        val subpackagesIndex = SubpackagesIndexService.getInstance(project)
+        if (!subpackagesIndex.packageExists(packageFqName)) {
+            return false
+        }
+
         return containsFilesWithExactPackage(packageFqName, searchScope, project) ||
-               SubpackagesIndexService.getInstance(project).hasSubpackages(packageFqName, searchScope)
+               subpackagesIndex.hasSubpackages(packageFqName, searchScope)
     }
 
     @JvmStatic
