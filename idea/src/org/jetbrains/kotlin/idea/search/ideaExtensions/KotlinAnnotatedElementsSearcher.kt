@@ -60,22 +60,27 @@ public class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwne
     companion object {
         private val LOG = Logger.getInstance("#com.intellij.psi.impl.search.AnnotatedMembersSearcher")
 
-        public fun processAnnotatedMembers(annClass: PsiClass, useScope: SearchScope, consumer: (KtDeclaration) -> Boolean): Boolean {
+        public fun processAnnotatedMembers(annClass: PsiClass,
+                                           useScope: SearchScope,
+                                           preFilter: (KtAnnotationEntry) -> Boolean = { true },
+                                           consumer: (KtDeclaration) -> Boolean): Boolean {
             assert(annClass.isAnnotationType()) { "Annotation type should be passed to annotated members search" }
 
             val annotationFQN = annClass.getQualifiedName()
             assert(annotationFQN != null)
 
-            for (elt in getKotlinAnnotationCandidates(annClass, useScope)) {
+            val candidates = getKotlinAnnotationCandidates(annClass, useScope)
+            for (elt in candidates) {
                 if (notKtAnnotationEntry(elt)) continue
 
                 val result = runReadAction(fun(): Boolean {
+                    if (elt !is KtAnnotationEntry) return true
+                    if (!preFilter(elt)) return true
+
                     val declaration = elt.getStrictParentOfType<KtDeclaration>() ?: return true
 
-                    val annotationEntry = elt as KtAnnotationEntry
-
-                    val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
-                    val annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry) ?: return true
+                    val context = elt.analyze(BodyResolveMode.PARTIAL)
+                    val annotationDescriptor = context.get(BindingContext.ANNOTATION, elt) ?: return true
 
                     val descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor() ?: return true
                     if (!(DescriptorUtils.getFqName(descriptor).asString() == annotationFQN)) return true
