@@ -3,7 +3,7 @@ package test
 public final class MethodReferencesOuterClassTP</*0*/ P : kotlin.Any!> {
     public constructor MethodReferencesOuterClassTP</*0*/ P : kotlin.Any!>()
 
-    public final inner class Inner {
+    public final inner class Inner /*captured type parameters: /*0*/ P : kotlin.Any!*/ {
         public constructor Inner()
         public final fun </*0*/ Q : P!> f(): kotlin.Unit
     }

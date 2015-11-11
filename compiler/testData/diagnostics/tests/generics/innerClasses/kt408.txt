@@ -8,7 +8,7 @@ public open class A</*0*/ X> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class B : T<X> {
+    public final inner class B /*captured type parameters: /*0*/ X*/ : T<X> {
         public constructor B()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun f(): X

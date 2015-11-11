@@ -7,14 +7,14 @@ public abstract class A</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public abstract inner class B</*0*/ S> : A<A<T>.B<S>> {
+    public abstract inner class B</*0*/ S> /*captured type parameters: /*1*/ T*/ : A<A<T>.B<S>> {
         public constructor B</*0*/ S>()
         public abstract override /*1*/ /*fake_override*/ fun Foo(/*0*/ x: A<T>.B<S>): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        public final inner class C</*0*/ U> : A<T>.B<A<T>.B<S>.C<U>> {
+        public final inner class C</*0*/ U> /*captured type parameters: /*1*/ S, /*2*/ T*/ : A<T>.B<A<T>.B<S>.C<U>> {
             public constructor C</*0*/ U>()
             public open override /*1*/ fun Foo(/*0*/ x: A<T>.B<A<T>.B<S>.C<U>>): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

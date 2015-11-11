@@ -12,7 +12,7 @@ public final class Outer</*0*/ E> {
     public final fun setInner(/*0*/ inner: Outer<E>.Inner<kotlin.Int>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class Inner</*0*/ F> {
+    public final inner class Inner</*0*/ F> /*captured type parameters: /*1*/ E*/ {
         public constructor Inner</*0*/ F>()
         public final fun act(): kotlin.Unit
         public final fun bar(/*0*/ e: E, /*1*/ f: F): kotlin.Unit

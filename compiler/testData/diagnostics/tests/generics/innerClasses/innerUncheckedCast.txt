@@ -8,7 +8,7 @@ public final class Outer</*0*/ E> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class Inner</*0*/ H> : Outer<E>.InnerBase<H> {
+    public final inner class Inner</*0*/ H> /*captured type parameters: /*1*/ E*/ : Outer<E>.InnerBase<H> {
         public constructor Inner</*0*/ H>()
         public final val prop: E
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -16,7 +16,7 @@ public final class Outer</*0*/ E> {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public open inner class InnerBase</*0*/ F> {
+    public open inner class InnerBase</*0*/ F> /*captured type parameters: /*1*/ E*/ {
         public constructor InnerBase</*0*/ F>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

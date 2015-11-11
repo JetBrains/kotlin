@@ -9,34 +9,34 @@ public final class Outer</*0*/ E> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class Inner</*0*/ F, /*1*/ G> {
+    public final inner class Inner</*0*/ F, /*1*/ G> /*captured type parameters: /*2*/ E*/ {
         public constructor Inner</*0*/ F, /*1*/ G>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        public final inner class Inner2 : Outer<E>.Inner<F, G>.Inner2Base {
+        public final inner class Inner2 /*captured type parameters: /*0*/ F, /*1*/ G, /*2*/ E*/ : Outer<E>.Inner<F, G>.Inner2Base {
             public constructor Inner2()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        public abstract inner class Inner2Base {
+        public abstract inner class Inner2Base /*captured type parameters: /*0*/ F, /*1*/ G, /*2*/ E*/ {
             public constructor Inner2Base()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        public final inner class Inner3</*0*/ H> : Outer<E>.Inner<F, G>.Inner3Base<H> {
+        public final inner class Inner3</*0*/ H> /*captured type parameters: /*1*/ F, /*2*/ G, /*3*/ E*/ : Outer<E>.Inner<F, G>.Inner3Base<H> {
             public constructor Inner3</*0*/ H>()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        public abstract inner class Inner3Base</*0*/ B> {
+        public abstract inner class Inner3Base</*0*/ B> /*captured type parameters: /*1*/ F, /*2*/ G, /*3*/ E*/ {
             public constructor Inner3Base</*0*/ B>()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

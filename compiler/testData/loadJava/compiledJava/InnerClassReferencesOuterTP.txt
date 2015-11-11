@@ -3,7 +3,7 @@ package test
 public open class InnerClassReferencesOuterTP</*0*/ P : kotlin.Any!> {
     public constructor InnerClassReferencesOuterTP</*0*/ P : kotlin.Any!>()
 
-    public open inner class Inner</*0*/ Q : P!> {
+    public open inner class Inner</*0*/ Q : P!> /*captured type parameters: /*1*/ P : kotlin.Any!*/ {
         public constructor Inner</*0*/ Q : P!>()
     }
 }

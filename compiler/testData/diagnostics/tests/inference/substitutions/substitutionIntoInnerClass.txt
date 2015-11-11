@@ -24,7 +24,7 @@ public final class Outer</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public final fun useOuterParam(/*0*/ t: T): kotlin.Unit
 
-    public final inner class Inner</*0*/ I> {
+    public final inner class Inner</*0*/ I> /*captured type parameters: /*1*/ T*/ {
         public constructor Inner</*0*/ I>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final fun </*0*/ R> genericFun(/*0*/ r: R): Outer<T>

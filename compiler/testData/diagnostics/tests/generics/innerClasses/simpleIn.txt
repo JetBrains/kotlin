@@ -13,7 +13,7 @@ public final class Outer</*0*/ in E> {
     public final fun set(/*0*/ inner: Outer<E>.Inner): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class Inner {
+    public final inner class Inner /*captured type parameters: /*0*/ in E*/ {
         public constructor Inner()
         public final fun baz(): Outer<E>.Inner
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

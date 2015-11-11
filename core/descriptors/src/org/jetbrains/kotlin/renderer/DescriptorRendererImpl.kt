@@ -574,17 +574,21 @@ internal class DescriptorRendererImpl(
 
         if (!typeParameters.isEmpty()) {
             builder.append(lt())
-            val iterator = typeParameters.iterator()
-            while (iterator.hasNext()) {
-                val typeParameterDescriptor = iterator.next()
-                renderTypeParameter(typeParameterDescriptor, builder, false)
-                if (iterator.hasNext()) {
-                    builder.append(", ")
-                }
-            }
+            renderTypeParameterList(builder, typeParameters)
             builder.append(gt())
             if (withSpace) {
                 builder.append(" ")
+            }
+        }
+    }
+
+    private fun renderTypeParameterList(builder: StringBuilder, typeParameters: List<TypeParameterDescriptor>) {
+        val iterator = typeParameters.iterator()
+        while (iterator.hasNext()) {
+            val typeParameterDescriptor = iterator.next()
+            renderTypeParameter(typeParameterDescriptor, builder, false)
+            if (iterator.hasNext()) {
+                builder.append(", ")
             }
         }
     }
@@ -824,6 +828,14 @@ internal class DescriptorRendererImpl(
 
         val typeParameters = klass.declaredTypeParameters
         renderTypeParameters(typeParameters, builder, false)
+
+        if (verbose && klass.isInner && klass.typeConstructor.parameters.size > typeParameters.size) {
+            builder.append(" /*captured type parameters: ")
+            val constructorTypeParameters = klass.typeConstructor.parameters
+            renderTypeParameterList(
+                    builder, constructorTypeParameters.subList(typeParameters.size, constructorTypeParameters.size))
+            builder.append("*/")
+        }
 
         if (!klass.kind.isSingleton && classWithPrimaryConstructor) {
             val primaryConstructor = klass.unsubstitutedPrimaryConstructor

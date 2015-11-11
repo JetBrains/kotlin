@@ -10,7 +10,7 @@ public open class Outer</*0*/ E : kotlin.Any!> {
     public/*package*/ open fun set(/*0*/ x: Outer<kotlin.String!>.Inner<E!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public open inner class Inner</*0*/ F : kotlin.Any!> {
+    public open inner class Inner</*0*/ F : kotlin.Any!> /*captured type parameters: /*1*/ E : kotlin.Any!*/ {
         public constructor Inner</*0*/ F : kotlin.Any!>()
         public/*package*/ open fun bar(): F!
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -7,7 +7,7 @@ public final class MyIterable</*0*/ T> : kotlin.Iterable<T> {
     public open override /*1*/ fun iterator(): kotlin.Iterator<T>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final inner class MyIterator : kotlin.Iterator<T> {
+    public final inner class MyIterator /*captured type parameters: /*0*/ T*/ : kotlin.Iterator<T> {
         public constructor MyIterator()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ fun hasNext(): kotlin.Boolean

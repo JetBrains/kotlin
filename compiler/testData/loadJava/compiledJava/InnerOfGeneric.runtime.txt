@@ -6,7 +6,7 @@ public open class InnerOfGeneric {
     public abstract inner class A</*0*/ K : kotlin.Any!> {
         public constructor A</*0*/ K : kotlin.Any!>()
 
-        public abstract inner class Inner : test.InnerOfGeneric.S<K!> {
+        public abstract inner class Inner /*captured type parameters: /*0*/ K : kotlin.Any!*/ : test.InnerOfGeneric.S<K!> {
             public constructor Inner()
             public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.(Mutable)Iterator<K!>!
         }
@@ -15,7 +15,7 @@ public open class InnerOfGeneric {
     public open inner class B</*0*/ L : kotlin.Any!> : test.InnerOfGeneric.A<L!> {
         public constructor B</*0*/ L : kotlin.Any!>()
 
-        public open inner class SubInner : test.InnerOfGeneric.A<kotlin.Any!>.Inner {
+        public open inner class SubInner /*captured type parameters: /*0*/ L : kotlin.Any!*/ : test.InnerOfGeneric.A<kotlin.Any!>.Inner {
             public constructor SubInner()
             public open override /*1*/ fun iterator(): kotlin.(Mutable)Iterator<L!>!
         }
