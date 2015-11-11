@@ -19,14 +19,9 @@ package org.jetbrains.kotlin.idea.stubindex
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.name.FqName
-import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.CachedValueProvider.Result
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
 
 public object PackageIndexUtil {
     @JvmStatic
@@ -71,24 +66,6 @@ public object PackageIndexUtil {
             result = true
             false
         }
-        return result
-    }
-
-    @JvmStatic
-    public fun getAllPossiblePackageClasses(project: Project): MultiMap<String, FqName> {
-        return CachedValuesManager.getManager(project).getCachedValue(project) {
-            Result(computeAllPossiblePackageClasses(project), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
-        }!!
-    }
-
-    private fun computeAllPossiblePackageClasses(project: Project): MultiMap<String, FqName> {
-        val packageFqNames = KotlinExactPackagesIndex.getInstance().getAllKeys(project)
-        val result = MultiMap<String, FqName>()
-        for (packageFqName in packageFqNames) {
-            val packageClassFqName = PackageClassUtils.getPackageClassFqName(FqName(packageFqName))
-            result.putValue(packageClassFqName.shortName().asString(), packageClassFqName)
-        }
-
         return result
     }
 }

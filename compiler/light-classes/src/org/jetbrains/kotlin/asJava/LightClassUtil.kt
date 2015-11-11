@@ -33,7 +33,6 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -141,7 +140,7 @@ public object LightClassUtil {
     }
 
     public fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? {
-        val outerPsiClass = getWrappingClass(companionObject, true)
+        val outerPsiClass = getWrappingClass(companionObject)
         if (outerPsiClass != null) {
             for (fieldOfParent in outerPsiClass.fields) {
                 if ((fieldOfParent is KtLightElement<*, *>) && fieldOfParent.getOrigin() === companionObject) {
@@ -163,7 +162,7 @@ public object LightClassUtil {
     }
 
     private fun getLightClassBackingField(declaration: KtDeclaration): PsiField? {
-        var psiClass: PsiClass = getWrappingClass(declaration, true) ?: return null
+        var psiClass: PsiClass = getWrappingClass(declaration) ?: return null
 
         if (psiClass is KtLightClass) {
             val origin = psiClass.getOrigin()
@@ -203,10 +202,10 @@ public object LightClassUtil {
     }
 
     private fun getPsiMethodWrappers(declaration: KtDeclaration, collectAll: Boolean): List<PsiMethod> {
-        val psiClasses = getWrappingClasses(declaration, collectAll)
+        val psiClass = getWrappingClass(declaration) ?: return emptyList()
 
         val methods = SmartList<PsiMethod>()
-        for (method in psiClasses.flatMap { it.methods.asList() }) {
+        for (method in psiClass.methods.asList()) {
             try {
                 if (method is KtLightMethod && method.getOrigin() === declaration) {
                     methods.add(method)
@@ -227,17 +226,7 @@ public object LightClassUtil {
         return methods
     }
 
-    private fun getWrappingClasses(declaration: KtDeclaration, collectAll: Boolean): Collection<PsiClass> {
-        val wrappingClass = getWrappingClass(declaration, true)
-        val oldPackagePartWrappingClass = if (declaration.parent is KtFile && collectAll)
-            getWrappingClass(declaration, false)
-        else
-            null
-
-        return setOf(wrappingClass, oldPackagePartWrappingClass).filterNotNull()
-    }
-
-    private fun getWrappingClass(declaration: KtDeclaration, useNewPackageParts: Boolean): PsiClass? {
+    private fun getWrappingClass(declaration: KtDeclaration): PsiClass? {
         var declaration = declaration
         if (declaration is KtParameter) {
             val constructorClass = KtPsiUtil.getClassIfParameterIsProperty(declaration)
@@ -267,11 +256,7 @@ public object LightClassUtil {
 
         if (parent is KtFile) {
             // top-level declaration
-            val fqName = if (useNewPackageParts)
-                parent.javaFileFacadeFqName
-            else
-                PackageClassUtils.getPackageClassFqName(parent.packageFqName)
-
+            val fqName = parent.javaFileFacadeFqName
             val project = declaration.project
             return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project))
         }
