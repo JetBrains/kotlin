@@ -38,8 +38,7 @@ internal class ConstraintSystemImpl(
         private val usedInBounds: Map<TypeVariable, MutableList<TypeBounds.Bound>>,
         private val errors: List<ConstraintError>,
         private val initialConstraints: List<ConstraintSystemBuilderImpl.Constraint>,
-        private val descriptorToVariable: Map<TypeParameterDescriptor, TypeVariable>,
-        private val variableToDescriptor: Map<TypeVariable, TypeParameterDescriptor>
+        private val descriptorToVariable: Map<TypeParameterDescriptor, TypeVariable>
 ) : ConstraintSystem {
     private val localTypeParameterBounds: Map<TypeVariable, TypeBoundsImpl>
         get() = allTypeParameterBounds.filterNot { it.key.isExternal }
@@ -88,7 +87,7 @@ internal class ConstraintSystemImpl(
         val substitutionContext = HashMap<TypeParameterDescriptor, TypeProjection>()
         for ((variable, typeBounds) in typeParameterBounds) {
             val value = typeBounds.value
-            val typeParameter = if (substituteOriginal) variableToDescriptor[variable]!! else variable.freshTypeParameter
+            val typeParameter = if (substituteOriginal) variable.originalTypeParameter else variable.freshTypeParameter
             val type =
                     if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) value
                     else getDefaultType(typeParameter)
@@ -110,13 +109,10 @@ internal class ConstraintSystemImpl(
         get() = descriptorToVariable.keys
 
     override val typeVariables: Set<TypeVariable>
-        get() = variableToDescriptor.keys
+        get() = allTypeParameterBounds.keys
 
     override fun descriptorToVariable(descriptor: TypeParameterDescriptor): TypeVariable =
             descriptorToVariable[descriptor] ?: throw IllegalArgumentException("Unknown descriptor: $descriptor")
-
-    override fun variableToDescriptor(typeVariable: TypeVariable): TypeParameterDescriptor =
-            variableToDescriptor[typeVariable] ?: throw IllegalArgumentException("Unknown type variable: $typeVariable")
 
     override fun getTypeBounds(typeVariable: TypeVariable): TypeBoundsImpl {
         return allTypeParameterBounds[typeVariable] ?:
@@ -171,7 +167,6 @@ internal class ConstraintSystemImpl(
 
         result.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) })
         result.descriptorToVariable.putAll(descriptorToVariable)
-        result.variableToDescriptor.putAll(variableToDescriptor)
 
         return result
     }

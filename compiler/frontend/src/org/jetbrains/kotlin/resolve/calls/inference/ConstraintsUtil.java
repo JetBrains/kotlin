@@ -44,7 +44,7 @@ public class ConstraintsUtil {
     public static Collection<TypeSubstitutor> getSubstitutorsForConflictingParameters(@NotNull ConstraintSystem constraintSystem) {
         TypeVariable firstConflictingVariable = getFirstConflictingVariable(constraintSystem);
         if (firstConflictingVariable == null) return Collections.emptyList();
-        TypeParameterDescriptor firstConflictingParameter = constraintSystem.variableToDescriptor(firstConflictingVariable);
+        TypeParameterDescriptor firstConflictingParameter = firstConflictingVariable.getOriginalTypeParameter();
 
         Collection<KotlinType> conflictingTypes = constraintSystem.getTypeBounds(firstConflictingVariable).getValues();
 
@@ -61,7 +61,7 @@ public class ConstraintsUtil {
             KotlinType safeType = getSafeValue(constraintSystem, typeVariable);
             for (Map<TypeConstructor, TypeProjection> context : substitutionContexts) {
                 TypeProjection typeProjection = new TypeProjectionImpl(safeType);
-                context.put(constraintSystem.variableToDescriptor(typeVariable).getTypeConstructor(), typeProjection);
+                context.put(typeVariable.getOriginalTypeParameter().getTypeConstructor(), typeProjection);
             }
         }
         Collection<TypeSubstitutor> typeSubstitutors = new ArrayList<TypeSubstitutor>(substitutionContexts.size());
@@ -78,7 +78,7 @@ public class ConstraintsUtil {
             return type;
         }
         //todo may be error type
-        return TypeIntersector.getUpperBoundsAsType(constraintSystem.variableToDescriptor(typeVariable));
+        return TypeIntersector.getUpperBoundsAsType(typeVariable.getOriginalTypeParameter());
     }
 
     public static boolean checkUpperBoundIsSatisfied(

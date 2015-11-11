@@ -36,8 +36,6 @@ interface ConstraintSystem {
 
     fun descriptorToVariable(descriptor: TypeParameterDescriptor): TypeVariable
 
-    fun variableToDescriptor(typeVariable: TypeVariable): TypeParameterDescriptor
-
     /**
      * Returns the resulting type constraints of solving the constraint system for specific type parameter descriptor.
      * Throws IllegalArgumentException if the type parameter descriptor is not known to the system.

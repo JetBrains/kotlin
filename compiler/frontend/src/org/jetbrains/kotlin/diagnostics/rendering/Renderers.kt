@@ -320,7 +320,7 @@ public object Renderers {
             return result
         }
 
-        val typeParameter = system.variableToDescriptor(typeVariableWithCapturedConstraint)
+        val typeParameter = typeVariableWithCapturedConstraint.originalTypeParameter
 
         val explanation: String
         val upperBound = TypeIntersector.getUpperBoundsAsType(typeParameter)

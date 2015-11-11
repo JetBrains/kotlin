@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.defaultProjections
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
 import java.util.*
 
@@ -51,7 +52,6 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     internal val errors = ArrayList<ConstraintError>()
     internal val initialConstraints = ArrayList<Constraint>()
     internal val descriptorToVariable = LinkedHashMap<TypeParameterDescriptor, TypeVariable>()
-    internal val variableToDescriptor = LinkedHashMap<TypeVariable, TypeParameterDescriptor>()
 
     private val descriptorToVariableSubstitutor: TypeSubstitutor by lazy {
         TypeSubstitutor.create(object : TypeConstructorSubstitution() {
@@ -74,26 +74,26 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
             DescriptorSubstitutor.substituteTypeParameters(
                     typeParameters.toList(), TypeSubstitution.EMPTY, typeParameters.first().containingDeclaration, this
             )
-        }).map { typeParameter ->
-            TypeVariable(typeParameter, external)
+        }).zip(typeParameters).map {
+            val (fresh, original) = it
+            TypeVariable(fresh, original, external)
         }
 
         for ((descriptor, typeVariable) in typeParameters.zip(typeVariables)) {
             allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable))
             descriptorToVariable[descriptor] = typeVariable
-            variableToDescriptor[typeVariable] = descriptor
         }
 
         for ((typeVariable, typeBounds) in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.freshTypeParameter.upperBounds) {
                 if (declaredUpperBound.isDefaultBound()) continue //todo remove this line (?)
-                val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.freshTypeParameter.index))
+                val context = ConstraintContext(TYPE_BOUND_POSITION.position(typeVariable.originalTypeParameter.index))
                 addBound(typeVariable, declaredUpperBound, UPPER_BOUND, context)
             }
         }
 
         return TypeSubstitutor.create(TypeConstructorSubstitution.createByParametersMap(
-                typeParameters.zip(TypeUtils.getDefaultTypeProjections(typeVariables.map { it.freshTypeParameter })).toMap()
+                typeParameters.zip(typeVariables.map { it.type }.defaultProjections()).toMap()
         ))
     }
 
@@ -101,12 +101,8 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         type -> type.constructor.declarationDescriptor.let { it is TypeParameterDescriptor && isMyTypeVariable(it) }
     }
 
-    internal fun getNestedTypeVariables(type: KotlinType): List<TypeVariable> {
-        val allTypeVariables = allTypeParameterBounds.keys
-        return type.getNestedTypeParameters().map { nestedTypeParameter ->
-            allTypeVariables.find { it.freshTypeParameter == nestedTypeParameter }
-        }.filterNotNull()
-    }
+    internal fun getNestedTypeVariables(type: KotlinType): List<TypeVariable> =
+            type.getNestedTypeParameters().map { getMyTypeVariable(it) }.filterNotNull()
 
     override fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
         val newSubjectType = descriptorToVariableSubstitutor.substitute(subjectType, Variance.INVARIANT)
@@ -317,7 +313,7 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
             constraintContext: ConstraintContext,
             isTypeMarkedNullable: Boolean
     ) {
-        if (!typeVariable.freshTypeParameter.upperBounds.let { it.size == 1 && it.single().isDefaultBound() } &&
+        if (!typeVariable.originalTypeParameter.upperBounds.let { it.size == 1 && it.single().isDefaultBound() } &&
             constrainingTypeProjection.projectionKind == Variance.IN_VARIANCE) {
             errors.add(CannotCapture(constraintContext.position, typeVariable))
         }
@@ -339,16 +335,17 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     }
 
     private fun isMyTypeVariable(typeParameter: TypeParameterDescriptor) =
-            allTypeParameterBounds.keys.any { it.freshTypeParameter == typeParameter }
+            getMyTypeVariable(typeParameter) != null
 
-    internal fun isMyTypeVariable(type: KotlinType): Boolean = getMyTypeVariable(type) != null
+    internal fun isMyTypeVariable(type: KotlinType): Boolean =
+            getMyTypeVariable(type) != null
 
     internal fun getMyTypeVariable(type: KotlinType): TypeVariable? {
-        val typeParameterDescriptor = type.constructor.declarationDescriptor as? TypeParameterDescriptor
-        return if (typeParameterDescriptor != null)
-            allTypeParameterBounds.keys.find { it.freshTypeParameter == typeParameterDescriptor }
-        else null
+        return getMyTypeVariable(type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return null)
     }
+
+    private fun getMyTypeVariable(typeParameter: TypeParameterDescriptor): TypeVariable? =
+            allTypeParameterBounds.keys.find { it.freshTypeParameter == typeParameter }
 
     private fun storeInitialConstraint(constraintKind: ConstraintKind, subType: KotlinType, superType: KotlinType, position: ConstraintPosition) {
         initialConstraints.add(Constraint(constraintKind, subType, superType, position))
@@ -375,9 +372,7 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     }
 
     override fun build(): ConstraintSystem {
-        return ConstraintSystemImpl(
-                allTypeParameterBounds, usedInBounds, errors, initialConstraints, descriptorToVariable, variableToDescriptor
-        )
+        return ConstraintSystemImpl(allTypeParameterBounds, usedInBounds, errors, initialConstraints, descriptorToVariable)
     }
 }
 

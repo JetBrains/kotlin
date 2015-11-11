@@ -24,11 +24,15 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeImpl
 
-class TypeVariable(val freshTypeParameter: TypeParameterDescriptor, val isExternal: Boolean) {
-    val name: Name get() = freshTypeParameter.name
+class TypeVariable(
+        val freshTypeParameter: TypeParameterDescriptor,
+        val originalTypeParameter: TypeParameterDescriptor,
+        val isExternal: Boolean
+) {
+    val name: Name get() = originalTypeParameter.name
 
     val type: KotlinType get() = freshTypeParameter.defaultType
 
     fun hasOnlyInputTypesAnnotation(): Boolean =
-            freshTypeParameter.hasOnlyInputTypesAnnotation()
+            originalTypeParameter.hasOnlyInputTypesAnnotation()
 }
