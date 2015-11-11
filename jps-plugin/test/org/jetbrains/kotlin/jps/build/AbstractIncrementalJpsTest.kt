@@ -340,6 +340,8 @@ public abstract class AbstractIncrementalJpsTest(
             UsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, logs)
         }
 
+        if (!enableExperimentalIncrementalCompilation && File(testDataDir, "dont-check-caches-in-non-experimental-ic.txt").exists()) return
+
         val lastMakeResult = otherMakeResults.last()
         rebuildAndCheckOutput(lastMakeResult)
         clearCachesRebuildAndCheckOutput(lastMakeResult)

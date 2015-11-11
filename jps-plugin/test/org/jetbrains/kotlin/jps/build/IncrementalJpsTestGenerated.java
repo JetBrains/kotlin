@@ -185,6 +185,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("changeTypeImplicitlyWithCircularDependency")
+        public void testChangeTypeImplicitlyWithCircularDependency() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/changeTypeImplicitlyWithCircularDependency/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeWithRemovingUsage")
+        public void testChangeWithRemovingUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/changeWithRemovingUsage/");
+            doTest(fileName);
+        }
+
         @TestMetadata("classInlineFunctionChanged")
         public void testClassInlineFunctionChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/classInlineFunctionChanged/");
