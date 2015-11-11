@@ -318,33 +318,29 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     private fun createContextElement(context: SuspendContextImpl): PsiElement {
-        val contextElement = ContextUtil.getContextElement(debuggerContext)
-        Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement?.getText() ?: "null"}",
+        val contextElement = ContextUtil.getContextElement(debuggerContext)!!
+        Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
                           KotlinCodeFragmentFactory().isContextAccepted(contextElement))
 
-        if (contextElement != null) {
-            val labelsAsText = InTextDirectivesUtils.findLinesWithPrefixesRemoved(contextElement.getContainingFile().getText(), "// DEBUG_LABEL: ")
-            if (labelsAsText.isEmpty()) return contextElement
+        val labelsAsText = InTextDirectivesUtils.findLinesWithPrefixesRemoved(contextElement.getContainingFile().getText(), "// DEBUG_LABEL: ")
+        if (labelsAsText.isEmpty()) return contextElement
 
-            val markupMap = hashMapOf<com.sun.jdi.Value, ValueMarkup>()
-            for (labelAsText in labelsAsText) {
-                val labelParts = labelAsText.split("=")
-                assert(labelParts.size() == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
-                val localVariableName = labelParts[0].trim()
-                val labelName = labelParts[1].trim()
-                val localVariable = context.getFrameProxy()!!.visibleVariableByName(localVariableName)
-                assert(localVariable != null) { "Couldn't find localVariable for label: name = $localVariableName" }
-                val localVariableValue = context.getFrameProxy()!!.getValue(localVariable)
-                assert(localVariableValue != null) { "Local variable $localVariableName should be an ObjectReference" }
-                localVariableValue!!
-                markupMap.put(localVariableValue, ValueMarkup(labelName, null, labelName))
-            }
-
-            val (text, labels) = KotlinCodeFragmentFactory.createCodeFragmentForLabeledObjects(contextElement.project, markupMap)
-            return KotlinCodeFragmentFactory().createWrappingContext(text, labels, KotlinCodeFragmentFactory.getContextElement(contextElement), getProject())!!
+        val markupMap = hashMapOf<com.sun.jdi.Value, ValueMarkup>()
+        for (labelAsText in labelsAsText) {
+            val labelParts = labelAsText.split("=")
+            assert(labelParts.size() == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
+            val localVariableName = labelParts[0].trim()
+            val labelName = labelParts[1].trim()
+            val localVariable = context.getFrameProxy()!!.visibleVariableByName(localVariableName)
+            assert(localVariable != null) { "Couldn't find localVariable for label: name = $localVariableName" }
+            val localVariableValue = context.getFrameProxy()!!.getValue(localVariable)
+            assert(localVariableValue != null) { "Local variable $localVariableName should be an ObjectReference" }
+            localVariableValue!!
+            markupMap.put(localVariableValue, ValueMarkup(labelName, null, labelName))
         }
 
-        return contextElement!!
+        val (text, labels) = KotlinCodeFragmentFactory.createCodeFragmentForLabeledObjects(contextElement.project, markupMap)
+        return KotlinCodeFragmentFactory().createWrappingContext(text, labels, KotlinCodeFragmentFactory.getContextElement(contextElement), getProject())!!
     }
 
     private fun SuspendContextImpl.evaluate(text: String, codeFragmentKind: CodeFragmentKind, expectedResult: String) {
