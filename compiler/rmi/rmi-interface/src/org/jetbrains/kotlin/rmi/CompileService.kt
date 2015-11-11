@@ -36,11 +36,14 @@ public interface CompileService : Remote {
         public val NO_SESSION: Int = 0
     }
 
-    public sealed class CallResult<R> : Serializable {
+    public sealed class CallResult<out R> : Serializable {
         class Good<R>(val result: R) : CallResult<R>()
         class Ok : CallResult<Nothing>()
         class Dying : CallResult<Nothing>()
         class Error(val message: String) : CallResult<Nothing>()
+
+        val isGood: Boolean get() = this is Good<*>
+
         fun get(): R = when (this) {
             is Good<R> -> this.result
             is Dying -> throw IllegalStateException("Service is dying")
