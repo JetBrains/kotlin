@@ -1229,7 +1229,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private StackValue generateBreakOrContinueExpression(
             @NotNull KtExpressionWithLabel expression,
             boolean isBreak,
-            @NotNull Label afterBreakContinueLabel
+            final @NotNull Label afterBreakContinueLabel
     ) {
         assert expression instanceof KtContinueExpression || expression instanceof KtBreakExpression;
 
@@ -1248,10 +1248,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 if (labelElement == null ||
                     loopBlockStackElement.targetLabel != null &&
                     labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
-                    Label label = isBreak ? loopBlockStackElement.breakLabel : loopBlockStackElement.continueLabel;
-                    PseudoInsnsKt.fixStackAndJump(v, label);
-                    v.mark(afterBreakContinueLabel);
-                    return StackValue.none();
+                    final Label label = isBreak ? loopBlockStackElement.breakLabel : loopBlockStackElement.continueLabel;
+                    return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+                                                    @Override
+                                                    public Unit invoke(InstructionAdapter adapter) {
+                                                        PseudoInsnsKt.fixStackAndJump(v, label);
+                                                        v.mark(afterBreakContinueLabel);
+                                                        return Unit.INSTANCE;
+                                                    }
+                                                }
+                    );
                 }
             }
             else {
@@ -1859,33 +1865,37 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Override
-    public StackValue visitReturnExpression(@NotNull KtReturnExpression expression, StackValue receiver) {
-        KtExpression returnedExpression = expression.getReturnedExpression();
-        CallableMemberDescriptor descriptor = getContext().getContextDescriptor();
-        NonLocalReturnInfo nonLocalReturn = getNonLocalReturnInfo(descriptor, expression);
-        boolean isNonLocalReturn = nonLocalReturn != null;
-        if (isNonLocalReturn && !state.isInlineEnabled()) {
-            state.getDiagnostics().report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE.on(expression));
-            genThrow(v, "java/lang/UnsupportedOperationException",
-                     "Non-local returns are not allowed with inlining disabled");
-            return StackValue.none();
-        }
+    public StackValue visitReturnExpression(@NotNull final KtReturnExpression expression, StackValue receiver) {
+        return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                KtExpression returnedExpression = expression.getReturnedExpression();
+                CallableMemberDescriptor descriptor = getContext().getContextDescriptor();
+                NonLocalReturnInfo nonLocalReturn = getNonLocalReturnInfo(descriptor, expression);
+                boolean isNonLocalReturn = nonLocalReturn != null;
+                if (isNonLocalReturn && !state.isInlineEnabled()) {
+                    state.getDiagnostics().report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE.on(expression));
+                    genThrow(v, "java/lang/UnsupportedOperationException",
+                             "Non-local returns are not allowed with inlining disabled");
+                    return Unit.INSTANCE;
+                }
 
-        Type returnType = isNonLocalReturn ? nonLocalReturn.returnType : this.returnType;
-        if (returnedExpression != null) {
-            gen(returnedExpression, returnType);
-        }
+                Type returnType = isNonLocalReturn ? nonLocalReturn.returnType : ExpressionCodegen.this.returnType;
+                if (returnedExpression != null) {
+                    gen(returnedExpression, returnType);
+                }
 
-        Label afterReturnLabel = new Label();
-        generateFinallyBlocksIfNeeded(returnType, afterReturnLabel);
+                Label afterReturnLabel = new Label();
+                generateFinallyBlocksIfNeeded(returnType, afterReturnLabel);
 
-        if (isNonLocalReturn) {
-            InlineCodegenUtil.generateGlobalReturnFlag(v, nonLocalReturn.labelName);
-        }
-        v.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
-        v.mark(afterReturnLabel);
-
-        return StackValue.none();
+                if (isNonLocalReturn) {
+                    InlineCodegenUtil.generateGlobalReturnFlag(v, nonLocalReturn.labelName);
+                }
+                v.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
+                v.mark(afterReturnLabel);
+                return Unit.INSTANCE;
+            }
+        });
     }
 
     public void generateFinallyBlocksIfNeeded(Type returnType, @NotNull Label afterReturnLabel) {
@@ -3571,10 +3581,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Override
-    public StackValue visitThrowExpression(@NotNull KtThrowExpression expression, StackValue receiver) {
-        gen(expression.getThrownExpression(), JAVA_THROWABLE_TYPE);
-        v.athrow();
-        return StackValue.none();
+    public StackValue visitThrowExpression(@NotNull final KtThrowExpression expression, StackValue receiver) {
+        return StackValue.operation(Type.VOID_TYPE, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                gen(expression.getThrownExpression(), JAVA_THROWABLE_TYPE);
+                v.athrow();
+                return Unit.INSTANCE;
+            }
+        });
     }
 
     @Override
