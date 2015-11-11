@@ -1,11 +1,12 @@
 package
 
-public fun useObject(): kotlin.Unit
+public val x: kotlin.Nothing
+public fun fn(): kotlin.Nothing
 
-@kotlin.Deprecated(message = "Object") public object Obsolete {
-    private constructor Obsolete()
+public final class SomeClass {
+    public constructor SomeClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun method(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun use(): kotlin.Unit
 }

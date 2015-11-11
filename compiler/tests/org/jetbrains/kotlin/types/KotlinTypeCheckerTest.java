@@ -128,7 +128,7 @@ public class KotlinTypeCheckerTest extends KotlinLiteFixture {
     }
 
     public void testJumps() throws Exception {
-        assertType("throw java.lang.Exception()", builtIns.getNothingType());
+        assertType("throw Exception()", builtIns.getNothingType());
         assertType("continue", builtIns.getNothingType());
         assertType("break", builtIns.getNothingType());
     }

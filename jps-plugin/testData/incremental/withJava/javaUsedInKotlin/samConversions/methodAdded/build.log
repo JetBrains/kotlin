@@ -17,7 +17,5 @@ src/usageWithFunctionExpression.kt
 src/usageWithFunctionLiteral.kt
 End of files
 COMPILATION FAILED
-Expression 'SamInterface' cannot be invoked as a function. The function invoke() is not found
-Please specify constructor invocation; classifier 'SamInterface' does not have a companion object
-Expression 'SamInterface' cannot be invoked as a function. The function invoke() is not found
-Please specify constructor invocation; classifier 'SamInterface' does not have a companion object
+Unresolved reference: SamInterface
+Unresolved reference: SamInterface

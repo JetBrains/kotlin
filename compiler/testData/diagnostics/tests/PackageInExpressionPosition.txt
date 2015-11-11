@@ -1,14 +1,14 @@
 package
 
 package foo {
-    public val f: () -> ???
+    public val f: () -> java.lang.System
     public val s: [ERROR : Type for java]
-    public val ss: [ERROR : Type for System]
-    public val sss: [ERROR : Type for X]
+    public val ss: java.lang.System
+    public val sss: foo.X
     public val x: kotlin.String
     public val xs: [ERROR : Type for java.lang]
-    public val xss: [ERROR : Type for java.lang.System]
-    public val xsss: [ERROR : Type for foo.X]
+    public val xss: java.lang.System
+    public val xsss: foo.X
     public val xssss: [ERROR : Type for foo]
     public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
 

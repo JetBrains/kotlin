@@ -10,7 +10,7 @@ class Test {
         }
 
         fun more(): InnerClass {
-            val b = <!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>InnerClass<!>()
+            val b = <!UNRESOLVED_REFERENCE!>InnerClass<!>()
 
             val <!UNUSED_VARIABLE!>testVal<!> = <!UNRESOLVED_REFERENCE!>inClass<!>
             <!UNRESOLVED_REFERENCE!>foo<!>()

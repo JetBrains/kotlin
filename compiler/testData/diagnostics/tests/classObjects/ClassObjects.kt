@@ -36,7 +36,7 @@ val a = A.x
 val c = B.<!UNRESOLVED_REFERENCE!>x<!>
 val d = b.<!UNRESOLVED_REFERENCE!>x<!>
 
-val s = <!NO_COMPANION_OBJECT!>System<!>  // error
+val s = <!INVISIBLE_MEMBER, FUNCTION_CALL_EXPECTED!>System<!>  // error
 fun test() {
   System.out.println()
   java.lang.System.out.println()

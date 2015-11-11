@@ -46,7 +46,7 @@ class Y: B() {
 
     init {
         B_()
-        B.<!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>B_<!>()
+        B.<!UNRESOLVED_REFERENCE!>B_<!>()
         Y.<!UNRESOLVED_REFERENCE!>B_<!>()
 
         B_S()
@@ -59,7 +59,7 @@ class Y: B() {
         val b_s: B_S = null!!
 
         init {
-            <!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>B_<!>()
+            <!UNRESOLVED_REFERENCE!>B_<!>()
             B_S()
         }
     }
@@ -83,7 +83,7 @@ class Z: C() {
 
         init {
             <!UNRESOLVED_REFERENCE!>A_S<!>()
-            <!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>B_<!>()
+            <!UNRESOLVED_REFERENCE!>B_<!>()
             B_S()
         }
     }

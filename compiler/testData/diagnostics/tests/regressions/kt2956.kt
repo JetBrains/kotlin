@@ -1,1 +1,1 @@
-val a: String = <!NO_COMPANION_OBJECT!>Nothing<!>
+val a: String = <!INVISIBLE_MEMBER, FUNCTION_CALL_EXPECTED!>Nothing<!>

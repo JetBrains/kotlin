@@ -1,11 +1,13 @@
 package
 
-public fun useObject(): kotlin.Unit
+public fun ff(): kotlin.Unit
 
-@kotlin.Deprecated(message = "Object") public object Obsolete {
-    private constructor Obsolete()
+public open class Test {
+    public constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun use(): kotlin.Unit
+
+    // Static members
+    public const final val FOO: kotlin.String = "test"
 }
