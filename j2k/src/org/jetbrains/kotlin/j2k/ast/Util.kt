@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
 
 fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix
 fun String.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + this
@@ -43,7 +43,7 @@ private fun Expression.precedence(): Int? {
 
         is TypeCastExpression -> 2
 
-        is BinaryExpression -> when(op) {
+        is BinaryExpression -> when(op.asString()) {
             "*", "/", "%" -> 3
             "+", "-" -> 4
             "?:" -> 7

@@ -270,8 +270,8 @@ class ForConverter(
         }
 
         val converted = codeConverter.convertExpression(bound)
-        val sign = if (correction > 0) "+" else "-"
-        return BinaryExpression(converted, LiteralExpression(Math.abs(correction).toString()).assignNoPrototype(), sign).assignNoPrototype()
+        val sign = if (correction > 0) JavaTokenType.PLUS else JavaTokenType.MINUS
+        return BinaryExpression(converted, LiteralExpression(Math.abs(correction).toString()).assignNoPrototype(), Operator(sign).assignPrototype(bound)).assignNoPrototype()
     }
 
     private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {

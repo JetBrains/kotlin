@@ -379,7 +379,7 @@ class Converter private constructor(
                     val superExpression = SuperExpression(Identifier.Empty).assignNoPrototype()
                     val superAccess = QualifiedExpression(superExpression, propertyInfo.identifier).assignNoPrototype()
                     val valueIdentifier = Identifier("value", false).assignNoPrototype()
-                    val assignment = AssignmentExpression(superAccess, valueIdentifier, "=").assignNoPrototype()
+                    val assignment = AssignmentExpression(superAccess, valueIdentifier, Operator.EQ).assignNoPrototype()
                     val body = Block(listOf(assignment), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
                     val parameter = FunctionParameter(valueIdentifier, propertyType, FunctionParameter.VarValModifier.None, Annotations.Empty, Modifiers.Empty).assignNoPrototype()
                     val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()

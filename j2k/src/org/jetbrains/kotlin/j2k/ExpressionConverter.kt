@@ -20,7 +20,6 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiTreeUtil
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.asJava.KtLightField
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -85,23 +85,23 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
     override fun visitAssignmentExpression(expression: PsiAssignmentExpression) {
         val tokenType = expression.getOperationSign().getTokenType()
-        val secondOp = when(tokenType) {
-            JavaTokenType.GTGTEQ -> "shr"
-            JavaTokenType.LTLTEQ -> "shl"
-            JavaTokenType.XOREQ -> "xor"
-            JavaTokenType.ANDEQ -> "and"
-            JavaTokenType.OREQ -> "or"
-            JavaTokenType.GTGTGTEQ -> "ushr"
-            else -> ""
-        }
 
         val lhs = codeConverter.convertExpression(expression.getLExpression())
         val rhs = codeConverter.convertExpression(expression.getRExpression()!!, expression.getLExpression().getType())
-        if (!secondOp.isEmpty()) {
-            result = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, secondOp).assignNoPrototype(), " = ")
+
+        val secondOp = when(tokenType) {
+            JavaTokenType.GTGTEQ, JavaTokenType.LTLTEQ, JavaTokenType.GTGTGTEQ,
+            JavaTokenType.XOREQ, JavaTokenType.OREQ,
+            JavaTokenType.ANDEQ -> true
+            else -> false
+        }
+
+        val operator = Operator(tokenType).assignPrototype(expression.operationSign)
+        if (secondOp) {
+            result = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, operator).assignNoPrototype(), Operator.EQ)
         }
         else {
-            result = AssignmentExpression(lhs, rhs, expression.getOperationSign().getText()!!)
+            result = AssignmentExpression(lhs, rhs, operator)
         }
     }
 
@@ -121,13 +121,13 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             result = MethodCallExpression.buildNotNull(leftConverted, "ushr", listOf(rightConverted))
         }
         else {
-            var operatorString = getOperatorString(operationTokenType)
+            var operator = Operator(operationTokenType)
             if (operationTokenType == JavaTokenType.EQEQ || operationTokenType == JavaTokenType.NE) {
                 if (!canKeepEqEq(left, right)) {
-                    operatorString += "="
+                    operator = if (operationTokenType == JavaTokenType.EQEQ) Operator(KtTokens.EQEQEQ) else Operator(KtTokens.EXCLEQEQEQ)
                 }
             }
-            result = BinaryExpression(leftConverted, rightConverted, operatorString)
+            result = BinaryExpression(leftConverted, rightConverted, operator.assignPrototype(expression.operationSign))
         }
     }
 
@@ -283,7 +283,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
                         1 /* setter */ -> {
                             val argument = codeConverter.convertExpression(arguments[if (isExtension) 1 else 0])
-                            result = AssignmentExpression(propertyAccess, argument, "=")
+                            result = AssignmentExpression(propertyAccess, argument, Operator.EQ)
                             return
                         }
                     }
@@ -383,7 +383,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitPostfixExpression(expression: PsiPostfixExpression) {
-        result = PostfixExpression(getOperatorString(expression.getOperationSign().getTokenType()),
+        result = PostfixExpression(Operator(expression.getOperationSign().getTokenType()).assignPrototype(expression.operationSign),
                                    codeConverter.convertExpression(expression.getOperand()))
     }
 
@@ -393,11 +393,11 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         if (token == JavaTokenType.TILDE) {
             result = MethodCallExpression.buildNotNull(operand, "inv")
         }
-        else if (token == JavaTokenType.EXCL && operand is BinaryExpression && operand.op == "==") { // happens when equals is converted to ==
-            result = BinaryExpression(operand.left, operand.right, "!=")
+        else if (token == JavaTokenType.EXCL && operand is BinaryExpression && operand.op.asString() == "==") { // happens when equals is converted to ==
+            result = BinaryExpression(operand.left, operand.right, Operator(JavaTokenType.NE).assignPrototype(expression.operand))
         }
         else {
-            result = PrefixExpression(getOperatorString(token), operand)
+            result = PrefixExpression(Operator(token).assignPrototype(expression.operand), operand)
         }
     }
 
@@ -499,8 +499,17 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitPolyadicExpression(expression: PsiPolyadicExpression) {
-        val args = expression.getOperands().map { codeConverter.convertExpression(it, expression.getType()) }
-        result = PolyadicExpression(args, getOperatorString(expression.getOperationTokenType()))
+        val commentsAndSpacesInheritance = CommentsAndSpacesInheritance.LINE_BREAKS
+        val args = expression.getOperands().map {
+            codeConverter.convertExpression(it, expression.getType()).assignPrototype(it, commentsAndSpacesInheritance)
+        }
+        val operators = expression.getOperands().map {
+            expression.getTokenBeforeOperand(it)?.let {
+                Operator(it.tokenType).assignPrototype(it, commentsAndSpacesInheritance)
+            }
+        }.filterNotNull()
+
+        result = PolyadicExpression(args, operators).assignPrototype(expression)
     }
 
     private fun convertArguments(expression: PsiCallExpression, isExtension: Boolean = false): List<Expression> {
@@ -527,34 +536,6 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
         else {
             arguments.map { codeConverter.convertExpression(it).assignPrototype(it, commentsAndSpacesInheritance) }
-        }
-    }
-
-    private fun getOperatorString(tokenType: IElementType): String {
-        return when(tokenType) {
-            JavaTokenType.EQEQ -> "=="
-            JavaTokenType.NE -> "!="
-            JavaTokenType.ANDAND -> "&&"
-            JavaTokenType.OROR -> "||"
-            JavaTokenType.GT -> ">"
-            JavaTokenType.LT -> "<"
-            JavaTokenType.GE -> ">="
-            JavaTokenType.LE -> "<="
-            JavaTokenType.EXCL -> "!"
-            JavaTokenType.PLUS -> "+"
-            JavaTokenType.MINUS -> "-"
-            JavaTokenType.ASTERISK -> "*"
-            JavaTokenType.DIV -> "/"
-            JavaTokenType.PERC -> "%"
-            JavaTokenType.GTGT -> "shr"
-            JavaTokenType.LTLT -> "shl"
-            JavaTokenType.XOR -> "xor"
-            JavaTokenType.AND -> "and"
-            JavaTokenType.OR -> "or"
-            JavaTokenType.GTGTGT -> "ushr"
-            JavaTokenType.PLUSPLUS -> "++"
-            JavaTokenType.MINUSMINUS -> "--"
-            else -> "" //System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType?.toString())
         }
     }
 

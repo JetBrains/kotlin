@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.j2k.usageProcessing
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.AccessorKind
 import org.jetbrains.kotlin.j2k.CodeConverter
-import org.jetbrains.kotlin.j2k.ResolverForConverter
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.psi.*
 
@@ -43,7 +42,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
             else {
                 if (arguments.size() != 1) return null // incorrect call
                 val argument = codeConverter.convertExpression(arguments[0])
-                return AssignmentExpression(propertyAccess, argument, "=")
+                return AssignmentExpression(propertyAccess, argument, Operator.EQ)
             }
         }
     }

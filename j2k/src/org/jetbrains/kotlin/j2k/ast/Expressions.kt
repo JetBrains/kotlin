@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
+import com.intellij.psi.JavaTokenType
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.j2k.append
+import org.jetbrains.kotlin.lexer.KtTokens
 
 class ArrayAccessExpression(val expression: Expression, val index: Expression, val lvalue: Boolean) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
@@ -27,7 +30,7 @@ class ArrayAccessExpression(val expression: Expression, val index: Expression, v
     }
 }
 
-class AssignmentExpression(val left: Expression, val right: Expression, val op: String) : Expression() {
+class AssignmentExpression(val left: Expression, val right: Expression, val op: Operator) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, left).append(" ").append(op).append(" ").appendOperand(this, right)
     }
@@ -48,7 +51,7 @@ class BangBangExpression(val expr: Expression) : Expression() {
     }
 }
 
-class BinaryExpression(val left: Expression, val right: Expression, val op: String) : Expression() {
+class BinaryExpression(val left: Expression, val right: Expression, val op: Operator) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, left, false).append(" ").append(op).append(" ").appendOperand(this, right, true)
     }
@@ -78,7 +81,7 @@ class ParenthesizedExpression(val expression: Expression) : Expression() {
     }
 }
 
-class PrefixExpression(val op: String, val expression: Expression) : Expression() {
+class PrefixExpression(val op: Operator, val expression: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder){
         builder.append(op).appendOperand(this, expression)
     }
@@ -87,7 +90,7 @@ class PrefixExpression(val op: String, val expression: Expression) : Expression(
         get() = expression.isNullable
 }
 
-class PostfixExpression(val op: String, val expression: Expression) : Expression() {
+class PostfixExpression(val op: Operator, val expression: Expression) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
         builder.appendOperand(this, expression) append op
     }
@@ -118,9 +121,72 @@ class QualifiedExpression(val qualifier: Expression, val identifier: Expression)
     }
 }
 
-class PolyadicExpression(val expressions: List<Expression>, val token: String) : Expression() {
+class PolyadicExpression(val expressions: List<Expression>, val operators: List<Operator>) : Expression() {
     override fun generateCode(builder: CodeBuilder) {
-        builder.append(expressions, " " + token + " ")
+        assert(expressions.size == operators.size + 1)
+        for ((i, expression) in expressions.withIndex()) {
+            builder.append(expression)
+            if (i < operators.size) {
+                builder.append(" ")
+                builder.append(operators[i])
+                builder.append(" ")
+            }
+        }
+    }
+}
+
+open class Operator(val operatorType: IElementType): Expression() {
+    override fun generateCode(builder: CodeBuilder) {
+        builder.append(asString(operatorType))
+    }
+
+    fun asString() = asString(operatorType)
+
+    private fun asString(tokenType: IElementType): String {
+        return when(tokenType) {
+            JavaTokenType.EQ -> "="
+            JavaTokenType.EQEQ -> "=="
+            JavaTokenType.NE -> "!="
+            JavaTokenType.ANDAND -> "&&"
+            JavaTokenType.OROR -> "||"
+            JavaTokenType.GT -> ">"
+            JavaTokenType.LT -> "<"
+            JavaTokenType.GE -> ">="
+            JavaTokenType.LE -> "<="
+            JavaTokenType.EXCL -> "!"
+            JavaTokenType.PLUS -> "+"
+            JavaTokenType.MINUS -> "-"
+            JavaTokenType.ASTERISK -> "*"
+            JavaTokenType.DIV -> "/"
+            JavaTokenType.PERC -> "%"
+            JavaTokenType.PLUSEQ -> "+="
+            JavaTokenType.MINUSEQ -> "-="
+            JavaTokenType.ASTERISKEQ -> "*="
+            JavaTokenType.DIVEQ -> "/="
+            JavaTokenType.PERCEQ -> "%="
+            JavaTokenType.GTGT -> "shr"
+            JavaTokenType.LTLT -> "shl"
+            JavaTokenType.XOR -> "xor"
+            JavaTokenType.AND -> "and"
+            JavaTokenType.OR -> "or"
+            JavaTokenType.GTGTGT -> "ushr"
+            JavaTokenType.GTGTEQ -> "shr"
+            JavaTokenType.LTLTEQ -> "shl"
+            JavaTokenType.XOREQ -> "xor"
+            JavaTokenType.ANDEQ -> "and"
+            JavaTokenType.OREQ -> "or"
+            JavaTokenType.GTGTGTEQ -> "ushr"
+            JavaTokenType.PLUSPLUS -> "++"
+            JavaTokenType.MINUSMINUS -> "--"
+            KtTokens.EQEQEQ -> "==="
+            KtTokens.EXCLEQEQEQ -> "!=="
+            else -> "" //System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType?.toString())
+        }
+    }
+
+    companion object {
+        val EQEQ = Operator(JavaTokenType.EQEQ).assignNoPrototype()
+        val EQ = Operator(JavaTokenType.EQ).assignNoPrototype()
     }
 }
 

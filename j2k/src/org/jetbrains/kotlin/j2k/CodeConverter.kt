@@ -116,7 +116,7 @@ class CodeConverter(
             }
             else if (expression is PsiPrefixExpression && expression.isLiteralWithSign()) {
                 val operandConverted = convertExpression(expression.getOperand(), expectedType)
-                convertedExpression = PrefixExpression(expression.getOperationSign().getText(), operandConverted)
+                convertedExpression = PrefixExpression(Operator(expression.getOperationSign().getTokenType()).assignPrototype(expression.getOperationSign()), operandConverted)
             }
             else {
                 val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedTypeStr]

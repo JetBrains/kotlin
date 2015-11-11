@@ -135,7 +135,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
             if (qualifier == null || qualifier is PsiSuperExpression) return null
-            return BinaryExpression(codeConverter.convertExpression(qualifier), codeConverter.convertExpression(arguments.single()), "==")
+            return BinaryExpression(codeConverter.convertExpression(qualifier), codeConverter.convertExpression(arguments.single()), Operator.EQEQ)
         }
     },
 
@@ -148,7 +148,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     OBJECTS_EQUALS("java.util.Objects", "equals", 2) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = BinaryExpression(codeConverter.convertExpression(arguments[0]), codeConverter.convertExpression(arguments[1]), "==")
+                = BinaryExpression(codeConverter.convertExpression(arguments[0]), codeConverter.convertExpression(arguments[1]), Operator.EQEQ)
     },
 
     COLLECTIONS_EMPTY_LIST(Collections::class.java.name, "emptyList", 0) {
@@ -178,7 +178,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     STRING_TRIM(JAVA_LANG_STRING, "trim", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
-            val comparison = BinaryExpression(Identifier("it", isNullable = false).assignNoPrototype(), LiteralExpression("' '").assignNoPrototype(), "<=").assignNoPrototype()
+            val comparison = BinaryExpression(Identifier("it", isNullable = false).assignNoPrototype(), LiteralExpression("' '").assignNoPrototype(), Operator(JavaTokenType.LE).assignNoPrototype()).assignNoPrototype()
             return MethodCallExpression.buildNotNull(
                     codeConverter.convertExpression(qualifier), "trim",
                     listOf(LambdaExpression(null, Block.of(comparison).assignNoPrototype())), emptyList())
@@ -423,7 +423,7 @@ private fun addIgnoreCaseArgument(
         ignoreCaseArgument: PsiExpression? = null
 ): Expression {
     val ignoreCaseExpression = ignoreCaseArgument?.let { codeConverter.convertExpression(it) } ?: LiteralExpression("true").assignNoPrototype()
-    val ignoreCaseArgumentExpression = AssignmentExpression(Identifier("ignoreCase").assignNoPrototype(), ignoreCaseExpression, "=").assignNoPrototype()
+    val ignoreCaseArgumentExpression = AssignmentExpression(Identifier("ignoreCase").assignNoPrototype(), ignoreCaseExpression, Operator.EQ).assignNoPrototype()
     return MethodCallExpression.build(codeConverter.convertExpression(qualifier), methodName,
                                       codeConverter.convertExpressions(arguments) + ignoreCaseArgumentExpression,
                                       typeArgumentsConverted, false)
