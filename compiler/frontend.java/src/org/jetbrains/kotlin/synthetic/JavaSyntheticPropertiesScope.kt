@@ -359,7 +359,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             }
             val classParametersSubstitutor = TypeSubstitutor.create(substitutionMap)
 
-            descriptor.getMethod = getMethod.substitute(classParametersSubstitutor)!!
+            descriptor.getMethod = getMethod.substitute(classParametersSubstitutor)
             descriptor.setMethod = setMethod?.substitute(classParametersSubstitutor)
             return descriptor
         }

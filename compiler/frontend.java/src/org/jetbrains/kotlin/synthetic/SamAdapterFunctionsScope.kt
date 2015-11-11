@@ -199,7 +199,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
             }
 
             val sourceFunctionSubstitutor = TypeSubstitutor.create(substitutionMap)
-            descriptor.sourceFunction = original.sourceFunction.substitute(sourceFunctionSubstitutor)!!
+            descriptor.sourceFunction = original.sourceFunction.substitute(sourceFunctionSubstitutor)
 
             return descriptor
         }

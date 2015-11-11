@@ -170,7 +170,7 @@ public abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
         return if (baseDeclarations.isNotEmpty()) {
             baseDeclarations.flatMap {
                 val handler = (FindManager.getInstance(project) as FindManagerImpl).findUsagesManager.getFindUsagesHandler(it!!, true)
-                handler?.findReferencesToHighlight(it!!, searchScope) ?: emptyList()
+                handler?.findReferencesToHighlight(it, searchScope) ?: emptyList()
             }
         }
         else {

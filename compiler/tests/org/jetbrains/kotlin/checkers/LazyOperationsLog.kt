@@ -189,7 +189,7 @@ class LazyOperationsLog(
                 }.appendQuoted()
             }
             o is ResolutionCandidate<*> -> DescriptorRenderer.COMPACT.render(o.getDescriptor()).appendQuoted()
-            o is ResolutionTaskHolder<*, *> -> o.field<BasicCallResolutionContext>("basicCallResolutionContext").call.getCallElement().getDebugText()?.appendQuoted()
+            o is ResolutionTaskHolder<*, *> -> o.field<BasicCallResolutionContext>("basicCallResolutionContext").call.getCallElement().getDebugText().appendQuoted()
         }
         return sb.toString()
     }

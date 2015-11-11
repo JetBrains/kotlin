@@ -223,7 +223,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     fun getExtraVars(): Set<TextWithImports> {
-        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext!!.getSourcePosition(), evaluationContext!!, hashSetOf())!!
+        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext.getSourcePosition(), evaluationContext, hashSetOf())
     }
 
     private inner class Printer() {
@@ -264,11 +264,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 is StackFrameDescriptor ->    logDescriptor(descriptor, "$curIndent frame    = $label\n")
                 is WatchItemDescriptor ->     logDescriptor(descriptor, "$curIndent extra    = ${descriptor.calcValueName()}\n")
                 is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label"
-                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext!!))})\n")
+                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext))})\n")
                 is StaticDescriptor ->        logDescriptor(descriptor, "$curIndent static   = $label\n")
                 is ThisDescriptorImpl ->      logDescriptor(descriptor, "$curIndent this     = $label\n")
                 is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label"
-                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext!!))})\n")
+                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext))})\n")
                 is MessageDescriptor ->       logDescriptor(descriptor, "$curIndent          - $label\n")
                 else ->                       logDescriptor(descriptor, "$curIndent unknown  = $label\n")
             }
@@ -352,7 +352,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
             val sourcePosition = ContextUtil.getSourcePosition(this)
             val contextElement = createContextElement(this)
 
-            contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_FRAME_FOR_TESTS, evaluationContext?.frameProxy)
+            contextElement.putCopyableUserData(KotlinCodeFragmentFactory.DEBUG_FRAME_FOR_TESTS, evaluationContext.frameProxy)
 
             try {
 

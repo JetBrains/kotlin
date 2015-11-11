@@ -199,7 +199,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                             val dataContext = MapDataContext()
                             dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), declaration))
                             val context = ConfigurationContext.getFromContext(dataContext)
-                            val actualClass = (context?.getConfiguration()?.getConfiguration() as? JetRunConfiguration)?.getRunClass()
+                            val actualClass = (context.getConfiguration()?.getConfiguration() as? JetRunConfiguration)?.getRunClass()
                             if (actualClass != null) {
                                 actualClasses.add(actualClass)
                             }
@@ -229,7 +229,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
         val dataContext = MapDataContext()
         dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), element))
 
-        val runnerAndConfigurationSettings = ConfigurationContext.getFromContext(dataContext)!!.getConfiguration()
+        val runnerAndConfigurationSettings = ConfigurationContext.getFromContext(dataContext).getConfiguration()
         if (save) {
             RunManagerEx.getInstanceEx(myProject).setTemporaryConfiguration(runnerAndConfigurationSettings)
         }

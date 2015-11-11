@@ -309,7 +309,7 @@ public class KotlinCoreEnvironment private constructor(
                 if (ourApplicationEnvironment == null) return
                 val environment = ourApplicationEnvironment
                 ourApplicationEnvironment = null
-                Disposer.dispose(environment!!.getParentDisposable())
+                Disposer.dispose(environment.getParentDisposable())
             }
         }
 

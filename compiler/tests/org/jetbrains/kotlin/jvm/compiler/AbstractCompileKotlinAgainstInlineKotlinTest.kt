@@ -54,10 +54,10 @@ public abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCom
         catch (e: Throwable) {
             var result = ""
             if (factory1 != null) {
-                result += "FIRST: \n\n" + factory1!!.createText()
+                result += "FIRST: \n\n" + factory1.createText()
             }
             if (factory2 != null) {
-                result += "\n\nSECOND: \n\n" + factory2!!.createText()
+                result += "\n\nSECOND: \n\n" + factory2.createText()
             }
             System.out.println(result)
             throw e

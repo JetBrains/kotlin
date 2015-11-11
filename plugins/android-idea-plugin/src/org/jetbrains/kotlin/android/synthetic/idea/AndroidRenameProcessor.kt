@@ -132,8 +132,8 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             oldPropName: String,
             processor: SyntheticFileGenerator
     ) {
-        val props = processor.getSyntheticFiles()?.flatMap { it.findChildrenByClass(javaClass<KtProperty>()).toList() }
-        val matchedProps = props?.filter { it.getName() == oldPropName } ?: listOf()
+        val props = processor.getSyntheticFiles().flatMap { it.findChildrenByClass(javaClass<KtProperty>()).toList() }
+        val matchedProps = props.filter { it.getName() == oldPropName } ?: listOf()
         for (prop in matchedProps) {
             allRenames[prop] = newPropName
         }

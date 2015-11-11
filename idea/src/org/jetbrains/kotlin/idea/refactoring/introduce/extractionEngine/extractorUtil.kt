@@ -553,7 +553,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                 if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
                     val varNameValidator = NewDeclarationNameValidator(body, lastExpression, NewDeclarationNameValidator.Target.VARIABLES)
                     val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue.valueType, varNameValidator, null).first()
-                    val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.text}"), lastExpression) as KtProperty
+                    val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression.text}"), lastExpression) as KtProperty
                     body.addBefore(psiFactory.createNewLine(), lastExpression)
                     psiFactory.createExpression(resultVal) to newDecl.initializer!!
                 }

@@ -98,12 +98,12 @@ public fun PsiElement.getParentOfTypesAndPredicate<T : PsiElement>(
     while (element != null) {
         @Suppress("UNCHECKED_CAST")
         when {
-            (parentClasses.isEmpty() || parentClasses.any { parentClass -> parentClass.isInstance(element) }) && predicate(element!! as T) ->
-                return element as T
+            (parentClasses.isEmpty() || parentClasses.any { parentClass -> parentClass.isInstance(element) }) && predicate(element as T) ->
+                return element
             element is PsiFile ->
                 return null
             else ->
-                element = element!!.getParent()
+                element = element.getParent()
         }
     }
 

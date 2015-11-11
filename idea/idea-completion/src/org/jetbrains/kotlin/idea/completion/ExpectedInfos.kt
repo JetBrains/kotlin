@@ -342,7 +342,7 @@ class ExpectedInfos(
 
         val alreadyHasStar = argument.getSpreadElement() != null
 
-        val varargElementType = parameter!!.varargElementType
+        val varargElementType = parameter.varargElementType
         if (varargElementType != null) {
             if (isFunctionLiteralArgument) return
 
@@ -356,16 +356,16 @@ class ExpectedInfos(
             }
 
             val starOptions = if (!alreadyHasStar) ItemOptions.STAR_PREFIX else ItemOptions.DEFAULT
-            add(ExpectedInfo.createForArgument(parameter!!.getType(), expectedName, varargTail, argumentPositionData, starOptions))
+            add(ExpectedInfo.createForArgument(parameter.getType(), expectedName, varargTail, argumentPositionData, starOptions))
         }
         else {
             if (alreadyHasStar) return
 
             val parameterType = if (useHeuristicSignatures)
                 resolutionFacade.ideService<HeuristicSignatures>().
-                        correctedParameterType(descriptor, parameter!!) ?: parameter!!.getType()
+                        correctedParameterType(descriptor, parameter) ?: parameter.getType()
             else
-                parameter!!.getType()
+                parameter.getType()
 
             if (isFunctionLiteralArgument) {
                 if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {

@@ -154,7 +154,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
             }
 
             if (insertLambda && lambdaInfo!!.explicitParameters) {
-                insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo!!.lambdaType)
+                insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo.lambdaType)
                 return
             }
 

@@ -144,7 +144,7 @@ fun KotlinType.hasTypeParametersToAdd(functionDescriptor: FunctionDescriptor, co
 
                 is FunctionDescriptor -> {
                     val function = functionDescriptor.source.getPsi() as? KtFunction
-                    function?.bodyExpression?.getResolutionScope(context, function!!.getResolutionFacade())
+                    function?.bodyExpression?.getResolutionScope(context, function.getResolutionFacade())
                 }
 
                 else -> null
