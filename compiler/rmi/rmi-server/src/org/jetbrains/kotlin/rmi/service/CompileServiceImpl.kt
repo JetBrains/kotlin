@@ -30,6 +30,7 @@ import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Level
@@ -81,12 +82,14 @@ class CompileServiceImpl(
     private val clientProxies: MutableSet<ClientOrSessionProxy> = hashSetOf()
     private val sessions: MutableMap<Int, ClientOrSessionProxy> = hashMapOf()
 
-    private val sessionsIdCounter: AtomicInteger = AtomicInteger(0)
+    private val sessionsIdCounter = AtomicInteger(0)
     private val internalRng = Random()
 
     private val classpathWatcher = LazyClasspathWatcher(compilerId.compilerClasspath)
 
-    private val compilationsCounter: AtomicInteger = AtomicInteger(0)
+    private val compilationsCounter = AtomicInteger(0)
+    private val shutdownQueued = AtomicBoolean(false)
+
     @Volatile private var _lastUsedSeconds = nowSeconds()
     public val lastUsedSeconds: Long get() = if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
 
@@ -138,7 +141,7 @@ class CompileServiceImpl(
                     }
                 }
             }
-            // assuming wrap, jumping to random number to reduce probability of further ckashes
+            // assuming wrap, jumping to random number to reduce probability of further clashes
             newId = sessionsIdCounter.addAndGet(internalRng.nextInt())
         }
         throw Exception("Invalid state or algorithm error")
@@ -163,7 +166,7 @@ class CompileServiceImpl(
     override fun getUsedMemory(): CompileService.CallResult<Long> = ifAlive { usedMemory(withGC = true) }
 
     override fun shutdown() {
-        ifAliveExclusive {
+        ifAliveExclusive(ignoreCompilerChanged = true) {
             log.info("Shutdown started")
             alive = false
             UnicastRemoteObject.unexportObject(this, true)
@@ -261,7 +264,8 @@ class CompileServiceImpl(
 
             // 3. clean dead clients, then check if any left - conditional shutdown (with small delay)
             synchronized(clientProxies) { clientProxies.removeAll( clientProxies.filter{ !it.isAlive }) }
-            if (clientProxies.none()) {
+            if (clientProxies.none() && compilationsCounter.get() > 0 && !shutdownQueued.get()) {
+                log.info("No more clients left, delayed shutdown in ${daemonOptions.shutdownDelayMilliseconds}ms")
                 shutdownWithDelay()
             }
             // 4. check idle timeout - shutdown
@@ -279,10 +283,16 @@ class CompileServiceImpl(
     }
 
     private fun shutdownWithDelay() {
+        shutdownQueued.set(true)
         val currentCompilationsCount = compilationsCounter.get()
         timer.schedule(daemonOptions.shutdownDelayMilliseconds) {
+            shutdownQueued.set(false)
             if (currentCompilationsCount == compilationsCounter.get()) {
+                log.fine("Execute delayed shutdown")
                 shutdown()
+            }
+            else {
+                log.info("Cancel delayed shutdown due to new client")
             }
         }
     }
@@ -336,7 +346,7 @@ class CompileServiceImpl(
     }
 
 
-    fun<R> checkedCompile(args: Array<out String>, serviceOut: PrintStream, rpcProfiler: Profiler, body: () -> R): R {
+    private fun<R> checkedCompile(args: Array<out String>, serviceOut: PrintStream, rpcProfiler: Profiler, body: () -> R): R {
         try {
             if (args.none())
                 throw IllegalArgumentException("Error: empty arguments list.")
@@ -378,20 +388,39 @@ class CompileServiceImpl(
         }
     }
 
-    fun<R> ifAlive(body: () -> R): CompileService.CallResult<R> = rwlock.read {
-        if (!alive) CompileService.CallResult.Dying()
-        CompileService.CallResult.Good( body() )
+    private fun<R> ifAlive(ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.read {
+        ifAliveChecksImpl(ignoreCompilerChanged) { CompileService.CallResult.Good(body()) }
     }
 
     // TODO: find how to implement it without using unique name for this variant; making name deliberately ugly meanwhile
-    fun ifAlive_Nothing(body: () -> Unit): CompileService.CallResult<Nothing> = rwlock.read {
-        if (!alive) CompileService.CallResult.Dying()
-        body()
-        CompileService.CallResult.Ok()
+    private fun ifAlive_Nothing(ignoreCompilerChanged: Boolean = false, body: () -> Unit): CompileService.CallResult<Nothing> = rwlock.read {
+        ifAliveChecksImpl(ignoreCompilerChanged) {
+            body()
+            CompileService.CallResult.Ok()
+        }
     }
 
-    fun<R> ifAliveExclusive(body: () -> R): CompileService.CallResult<R> = rwlock.write {
-        if (!alive) CompileService.CallResult.Dying()
-        CompileService.CallResult.Good( body() )
+    private fun<R> ifAliveExclusive(ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.write {
+        ifAliveChecksImpl(ignoreCompilerChanged) { CompileService.CallResult.Good(body()) }
     }
+
+    inline private fun<R> ifAliveChecksImpl(ignoreCompilerChanged: Boolean = false, body: () -> CompileService.CallResult<R>): CompileService.CallResult<R> =
+        when {
+            !alive -> CompileService.CallResult.Dying()
+            !ignoreCompilerChanged && classpathWatcher.isChanged -> {
+                log.info("Compiler changed, scheduling shutdown")
+                timer.schedule(1) { shutdown() }
+                CompileService.CallResult.Dying()
+            }
+            else -> {
+                try {
+                    body()
+                }
+                catch (e: Exception) {
+                    log.log(Level.SEVERE, "Exception", e)
+                    CompileService.CallResult.Error(e.message ?: "unknown")
+                }
+            }
+        }
+
 }

@@ -20,9 +20,9 @@ import net.rubygrapefruit.platform.ProcessLauncher
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
-import java.io.*
-import java.rmi.ConnectException
-import java.rmi.registry.LocateRegistry
+import java.io.File
+import java.io.OutputStream
+import java.io.PrintStream
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
@@ -61,7 +61,7 @@ public object KotlinCompilerClient {
                      ?.let { File(it) }
                      ?.ifOrNull { exists() }
                      ?: newFlagFile()
-        return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart, checkId)
+        return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
 
     public fun connectToCompileService(compilerId: CompilerId,
@@ -69,54 +69,30 @@ public object KotlinCompilerClient {
                                        daemonJVMOptions: DaemonJVMOptions,
                                        daemonOptions: DaemonOptions,
                                        reportingTargets: DaemonReportingTargets,
-                                       autostart: Boolean = true,
-                                       checkId: Boolean = true
+                                       autostart: Boolean = true
     ): CompileService? {
 
         var attempts = 0
-        var fileLock: FileBasedLock? = null
-        var shutdonwnPerformed = false
         try {
             while (attempts++ < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
-                val service = tryFindDaemon(File(daemonOptions.runFilesPath), compilerId, reportingTargets)
+                val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
                 if (service != null) {
-                    if (!checkId || service.checkCompilerId(compilerId)) {
-                        service.registerClient(clientAliveFlagFile.absolutePath)
-                        reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
-                        return service
-                    }
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "compiler identity don't match: " + compilerId.mappers.flatMap { it.toArgs("") }.joinToString(" "))
-                    if (!autostart) return null
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "shutdown the daemon")
-                    service.shutdown()
-                    // TODO: find more reliable way
-                    Thread.sleep(1000)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "daemon shut down correctly")
-                    shutdonwnPerformed = true
+                    // the newJVMOptions could be checked here for additional parameters, if needed
+                    service.registerClient(clientAliveFlagFile.absolutePath)
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
+                    return service
                 }
                 else {
                     if (!autostart) return null
-                    reportingTargets.report(DaemonReportCategory.DEBUG, if (shutdonwnPerformed) "starting a new daemon" else "no suitable daemon found, starting a new one")
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found, starting a new one")
                 }
 
-                if (fileLock == null || !fileLock.isLocked()) {
-                    File(daemonOptions.runFilesPath).mkdirs()
-                    fileLock = FileBasedLock(compilerId, daemonOptions)
-                    // need to check the daemons again here, because of possible racing conditions
-                    // note: the algorithm could be simpler if we'll acquire lock right from the beginning, but it may be costly
-                    attempts--
-                }
-                else {
-                    startDaemon(compilerId, daemonJVMOptions, daemonOptions, reportingTargets)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "daemon started, trying to find it")
-                }
+                startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
+                reportingTargets.report(DaemonReportCategory.DEBUG, "daemon started, trying to find it")
             }
         }
         catch (e: Exception) {
             reportingTargets.report(DaemonReportCategory.EXCEPTION, e.toString())
-        }
-        finally {
-            fileLock?.release()
         }
         return null
     }
@@ -270,60 +246,22 @@ public object KotlinCompilerClient {
 
     // --- Implementation ---------------------------------------
 
-    fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String = "daemon client") {
+    private fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String = "daemon client") {
         if (category == DaemonReportCategory.DEBUG && !verboseReporting) return
-        out?.println("[$source] ${category.name()}: $message")
+        out?.println("[$source] ${category.name}: $message")
         messages?.add(DaemonReportMessage(category, "[$source] $message"))
     }
 
 
-    private fun String.extractPortFromRunFilename(digest: String): Int =
-            makeRunFilenameString(timestamp = "[0-9TZ:\\.\\+-]+", digest = digest, port = "(\\d+)", escapeSequence = "\\").toRegex()
-                    .find(this)
-            ?.groups?.get(1)
-            ?.value?.toInt()
-            ?: 0
-
-
-    private fun tryFindDaemon(registryDir: File, compilerId: CompilerId, reportingTargets: DaemonReportingTargets): CompileService? {
-        val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
-        val daemons = registryDir.walk()
-                .map { Pair(it, it.name.extractPortFromRunFilename(classPathDigest)) }
-                .filter { it.second != 0 }
-                .mapNotNull {
-                    assert(it.second > 0 && it.second < 0xffff)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "found suitable daemon on port ${it.second}, trying to connect")
-                    val daemon = tryConnectToDaemon(it.second, reportingTargets)
-                    // cleaning orphaned file; note: daemon should shut itself down if it detects that the run file is deleted
-                    if (daemon == null && !it.first.delete()) {
-                        reportingTargets.report(DaemonReportCategory.INFO, "WARNING: unable to delete seemingly orphaned file '${it.first.absolutePath}', cleanup recommended")
-                    }
-                    daemon
-                }
-                .toList()
-        return when (daemons.size) {
-            0 -> null
-            1 -> daemons.first()
-            else -> throw IllegalStateException("Multiple daemons serving the same compiler, reset with the cleanup required")
-        // TODO: consider implementing automatic recovery instead, e.g. getting the youngest or least used daemon and shut down others
-        }
-    }
-
-
-    private fun tryConnectToDaemon(port: Int, reportingTargets: DaemonReportingTargets): CompileService? {
-        try {
-            val daemon = LocateRegistry.getRegistry(LoopbackNetworkInterface.loopbackInetAddressName, port)
-                    ?.lookup(COMPILER_SERVICE_RMI_NAME)
-            if (daemon != null)
-                return daemon as? CompileService ?:
-                       throw ClassCastException("Unable to cast compiler service, actual class received: ${daemon.javaClass}")
-            reportingTargets.report(DaemonReportCategory.EXCEPTION, "daemon not found")
-        }
-        catch (e: ConnectException) {
-            reportingTargets.report(DaemonReportCategory.EXCEPTION, "cannot connect to registry: " + (e.getCause()?.getMessage() ?: e.getMessage() ?: "unknown exception"))
-            // ignoring it - processing below
-        }
-        return null
+    private fun tryFindSuitableDaemonOrNewOpts(registryDir: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, report: (DaemonReportCategory, String) -> Unit): Pair<CompileService?, DaemonJVMOptions> {
+        val aliveWithOpts = walkDaemons(registryDir, compilerId, report)
+                .map { Pair(it, it.getDaemonJVMOptions()) }
+                .filter { it.second.isGood }
+        // TODO: consider to sort the found daemons by memory settings and take the largest (rather that the first found), but carefully analyze possible situations first
+        val opts = daemonJVMOptions.copy()
+        return aliveWithOpts.firstOrNull { daemonJVMOptions memorywiseFitsInto it.second.get() }
+                    ?.let { Pair(it.first, opts.updateMemoryUpperBounds(it.second.get())) }
+               ?: Pair(null, aliveWithOpts.fold(daemonJVMOptions, { opts, d -> opts.updateMemoryUpperBounds(d.second.get()) }))
     }
 
 
@@ -396,50 +334,8 @@ public object KotlinCompilerClient {
             }
         }
     }
-
-
-    class FileBasedLock(compilerId: CompilerId, daemonOptions: DaemonOptions) {
-
-        private val lockFile: File =
-                File(daemonOptions.runFilesPath,
-                     makeRunFilenameString(timestamp = "lock",
-                                           digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
-                                           port = "0"))
-        @Volatile private var locked = acquireLockFile(lockFile)
-        private val channel = if (locked) RandomAccessFile(lockFile, "rw").channel else null
-        private val lock = channel?.lock()
-
-        public fun isLocked(): Boolean = locked
-
-        @Synchronized public fun release(): Unit {
-            if (locked) {
-                lock?.release()
-                channel?.close()
-                lockFile.delete()
-                locked = false
-            }
-        }
-
-        @Synchronized private fun acquireLockFile(lockFile: File): Boolean {
-            val maxAttempts = COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_MS / COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS + 1
-            var attempt = 0L
-            while (true) {
-                if (lockFile.createNewFile()) break
-                // attempt to delete if file is orphaned
-                if (lockFile.delete() && lockFile.createNewFile()) break
-                if (lockFile.exists() && ++attempt >= maxAttempts)
-                    throw IOException("Timeout waiting the release of the lock file '${lockFile.absolutePath}")
-                Thread.sleep(COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS)
-            }
-            return true
-        }
-    }
 }
 
-
-public enum class DaemonReportCategory {
-    DEBUG, INFO, EXCEPTION;
-}
 
 public data class DaemonReportMessage(public val category: DaemonReportCategory, public val message: String)
 

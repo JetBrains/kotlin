@@ -22,6 +22,7 @@ import java.io.Serializable
 import java.lang.management.ManagementFactory
 import java.security.MessageDigest
 import kotlin.reflect.KMutableProperty1
+import kotlin.text.RegexOption
 
 
 public val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
@@ -54,8 +55,6 @@ public val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
     FileSystem.getRuntimeStateFilesPath("kotlin", "daemon")
 
 val CLASSPATH_ID_DIGEST = "MD5"
-
-public fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String = "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
 
 
 open class PropMapper<C, V, P : KMutableProperty1<C, V>>(val dest: C,
@@ -307,3 +306,35 @@ public fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
 
 
 public fun configureDaemonOptions(): DaemonOptions = configureDaemonOptions(DaemonOptions())
+
+
+fun String.memToBytes(): Long? =
+        "(\\d+)([kmg]?)".toRegex()
+                .matchEntire(this.trim().toLowerCase())
+                ?.groups?.let { match ->
+                    match.get(1)?.value?.let {
+                        it.toLong() *
+                        when (match.get(2)?.value) {
+                            "k" -> 1 shl 10
+                            "m" -> 1 shl 20
+                            "g" -> 1 shl 30
+                            else -> 1
+                        }
+                    }
+                }
+
+
+private fun daemonJVMOptionsMemoryProps() =
+    listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxPermSize, DaemonJVMOptions::reservedCodeCacheSize)
+
+
+infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean =
+        daemonJVMOptionsMemoryProps()
+            .all { (it.get(this).memToBytes() ?: 0) <= (it.get(other).memToBytes() ?: 0) }
+
+
+fun DaemonJVMOptions.updateMemoryUpperBounds(other: DaemonJVMOptions): DaemonJVMOptions {
+    daemonJVMOptionsMemoryProps()
+        .forEach { if ((it.get(this).memToBytes() ?: 0) < (it.get(other).memToBytes() ?: 0)) it.set(this, it.get(other)) }
+    return this
+}
