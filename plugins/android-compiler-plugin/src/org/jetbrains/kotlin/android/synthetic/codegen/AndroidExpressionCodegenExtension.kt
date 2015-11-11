@@ -91,7 +91,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         private val PROPERTY_NAME = "_\$_findViewCache"
         private val CACHED_FIND_VIEW_BY_ID_METHOD_NAME = "_\$_findCachedViewById"
         val CLEAR_CACHE_METHOD_NAME = "_\$_clearFindViewByIdCache"
-        val ON_DESTROY_METHOD_NAME = "onDestroy"
+        val ON_DESTROY_METHOD_NAME = "onDestroyView"
 
         fun isCacheSupported(descriptor: ClassifierDescriptor) = descriptor.source is KotlinSourceElement
     }
