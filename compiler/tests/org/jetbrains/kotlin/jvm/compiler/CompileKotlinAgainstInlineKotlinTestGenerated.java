@@ -1381,6 +1381,18 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("protectedMembers.1.kt")
+        public void testProtectedMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/protectedMembers.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("protectedMembersFromSuper.1.kt")
+        public void testProtectedMembersFromSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/protectedMembersFromSuper.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("superCall.1.kt")
         public void testSuperCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/superCall.1.kt");

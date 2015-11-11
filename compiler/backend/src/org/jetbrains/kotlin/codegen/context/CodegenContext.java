@@ -556,14 +556,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         if (descriptorContext == null && withinInliningContext && superCallTarget != null) {
-            //generate super callы within inline function through synthetic accessors
+            //generate super calls within inline function through synthetic accessors
             descriptorContext = ExpressionCodegen.getParentContextSubclassOf((ClassDescriptor) enclosed, this);
         }
 
         if (descriptorContext == null) {
             return descriptor;
         }
-        boolean isSuperCallInsideInline = withinInliningContext && superCallTarget != null;
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             int propertyAccessFlag = getVisibilityAccessFlag(descriptor);
@@ -572,13 +571,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             int getterAccessFlag = getter == null ? propertyAccessFlag
                                                   : propertyAccessFlag | getVisibilityAccessFlag(getter);
             boolean getterAccessorRequired = isAccessorRequired(getterAccessFlag, unwrappedDescriptor, descriptorContext,
-                                                                isSuperCallInsideInline);
+                                                                withinInliningContext, superCallTarget != null);
 
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
             int setterAccessFlag = setter == null ? propertyAccessFlag
                                                   : propertyAccessFlag | getVisibilityAccessFlag(setter);
             boolean setterAccessorRequired = isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext,
-                                                                isSuperCallInsideInline);
+                                                                withinInliningContext, superCallTarget != null);
 
             if (!getterAccessorRequired && !setterAccessorRequired) {
                 return descriptor;
@@ -587,7 +586,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
         else {
             int flag = getVisibilityAccessFlag(unwrappedDescriptor);
-            if (!isAccessorRequired(flag, unwrappedDescriptor, descriptorContext, isSuperCallInsideInline)) {
+            if (!isAccessorRequired(flag, unwrappedDescriptor, descriptorContext, withinInliningContext, superCallTarget != null)) {
                 return descriptor;
             }
             return (D) descriptorContext.getAccessor(descriptor, superCallTarget);
@@ -598,10 +597,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             int accessFlag,
             @NotNull CallableMemberDescriptor unwrappedDescriptor,
             @NotNull CodegenContext descriptorContext,
-            boolean isSuperCallInsideInline
+            boolean withinInline,
+            boolean isSuperCall
     ) {
-        return isSuperCallInsideInline || (accessFlag & ACC_PRIVATE) != 0 ||
-               ((accessFlag & ACC_PROTECTED) != 0 && !isInSamePackage(unwrappedDescriptor, descriptorContext.getContextDescriptor()));
+        return isSuperCall && withinInline ||
+               (accessFlag & ACC_PRIVATE) != 0 ||
+               ((accessFlag & ACC_PROTECTED) != 0 &&
+                (withinInline || !isInSamePackage(unwrappedDescriptor, descriptorContext.getContextDescriptor())));
     }
 
     private static boolean isInSamePackage(DeclarationDescriptor descriptor1, DeclarationDescriptor descriptor2) {
