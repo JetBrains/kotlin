@@ -2560,6 +2560,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("InnerTypes.kt")
+            public void testInnerTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InnerTypes.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("NamedObject.kt")
             public void testNamedObject() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NamedObject.kt");

@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
-import org.jetbrains.kotlin.types.AbstractLazyType
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.LazyType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedType(
@@ -34,11 +32,16 @@ class DeserializedType(
 
     override fun computeTypeConstructor() = typeDeserializer.typeConstructor(typeProto)
 
-    override fun computeArguments() =
-        typeProto.argumentList.mapIndexed {
-            index, proto ->
-            typeDeserializer.typeArgument(constructor.parameters.getOrNull(index), proto)
-        }.toReadOnlyList()
+    override fun computeArguments() = typeProto.collectAllArguments().deserialize()
+
+    private fun ProtoBuf.Type.collectAllArguments(): List<ProtoBuf.Type.Argument> =
+            argumentList + outerType(c.typeTable)?.collectAllArguments().orEmpty()
+
+    private fun List<ProtoBuf.Type.Argument>.deserialize(): List<TypeProjection> =
+            mapIndexed {
+                index, proto ->
+                typeDeserializer.typeArgument(constructor.parameters.getOrNull(index), proto)
+            }.toReadOnlyList()
 
     private val annotations = DeserializedAnnotationsWithPossibleTargets(c.storageManager) {
         c.components.annotationAndConstantLoader
