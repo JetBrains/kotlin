@@ -147,7 +147,7 @@ public class CallCompleter(
         }
 
         val returnType = getCandidateDescriptor().getReturnType()
-        if (returnType != null) {
+        if (returnType != null && !TypeUtils.noExpectedType(expectedType)) {
             updateSystemIfNeeded { builder ->
                 builder.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION.position())
                 builder.build()

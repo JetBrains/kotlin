@@ -368,7 +368,7 @@ public class DelegatedPropertyResolver {
                 if (conventionMethodFound(getMethodResults)) {
                     FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
                     KotlinType returnTypeOfGetMethod = descriptor.getReturnType();
-                    if (returnTypeOfGetMethod != null) {
+                    if (returnTypeOfGetMethod != null && !TypeUtils.noExpectedType(expectedType)) {
                         constraintSystem.addSupertypeConstraint(expectedType, returnTypeOfGetMethod, FROM_COMPLETER.position());
                     }
                     addConstraintForThisValue(constraintSystem, descriptor);

@@ -102,8 +102,6 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
             type.getNestedTypeParameters().filter { isMyTypeVariable(it) }
 
     override fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
-        if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return
-
         val newSubjectType = descriptorToVariableSubstitutor.substitute(subjectType, Variance.INVARIANT)
         addConstraint(SUB_TYPE, newSubjectType, constrainingType, ConstraintContext(constraintPosition, initial = true))
     }
