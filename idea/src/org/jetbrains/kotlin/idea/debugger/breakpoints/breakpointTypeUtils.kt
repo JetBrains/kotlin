@@ -98,9 +98,9 @@ fun computeVariants(
 
     val mainMethod = KotlinLineBreakpointType.getContainingMethod(pos.elementAt)
     if (mainMethod != null) {
-        result.add((kotlinBreakpointType as JavaLineBreakpointType).ExactJavaBreakpointVariant(
+        result.add(kotlinBreakpointType.KotlinLineBreakpointVariant(
                 XSourcePositionImpl.createByElement(mainMethod),
-                mainMethod, -1))
+                CodeInsightUtils.getTopmostElementAtOffset(pos.elementAt, pos.offset) ?: mainMethod))
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->

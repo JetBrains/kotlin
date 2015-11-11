@@ -148,4 +148,15 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
             return KotlinIcons.LAMBDA;
         }
     }
+
+    public class KotlinLineBreakpointVariant extends ExactJavaBreakpointVariant {
+        public KotlinLineBreakpointVariant(XSourcePosition position, PsiElement element) {
+            super(position, element, -1);
+        }
+
+        @Override
+        public Icon getIcon() {
+            return KotlinIcons.FUNCTION;
+        }
+    }
 }
