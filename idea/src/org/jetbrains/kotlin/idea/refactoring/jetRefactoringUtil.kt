@@ -40,6 +40,7 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -743,4 +744,8 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
     }
 
     return originalList
+}
+
+fun <T> Pass(body: (T) -> Unit) = object: Pass<T>() {
+    override fun pass(t: T) = body(t)
 }

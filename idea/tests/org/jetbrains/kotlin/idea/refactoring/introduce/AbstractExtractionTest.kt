@@ -32,6 +32,7 @@ import com.intellij.refactoring.introduceField.ElementToWorkOn
 import com.intellij.refactoring.introduceParameter.AbstractJavaInplaceIntroducer
 import com.intellij.refactoring.introduceParameter.IntroduceParameterProcessor
 import com.intellij.refactoring.introduceParameter.Util
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
@@ -67,11 +68,11 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
         doTest(path) { file ->
             file as KtFile
 
-            KotlinIntroduceVariableHandler().invoke(
-                    fixture.getProject(),
-                    fixture.getEditor(),
+            KotlinIntroduceVariableHandler.invoke(
+                    fixture.project,
+                    fixture.editor,
                     file,
-                    DataManager.getInstance().getDataContext(fixture.getEditor().getComponent())
+                    DataManager.getInstance().getDataContext(fixture.editor.component)
             )
         }
     }
@@ -341,6 +342,9 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
         catch(e: ConflictsInTestsException) {
             val message = e.messages.sorted().joinToString(" ").replace("\n", " ")
             KotlinTestUtils.assertEqualsToFile(conflictFile, message)
+        }
+        catch(e: CommonRefactoringUtil.RefactoringErrorHintException) {
+            KotlinTestUtils.assertEqualsToFile(conflictFile, e.message!!)
         }
         catch(e: RuntimeException) { // RuntimeException is thrown by IDEA code in CodeInsightUtils.java
             if (e.javaClass != RuntimeException::class.java) throw e
