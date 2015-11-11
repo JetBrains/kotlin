@@ -77,7 +77,7 @@ interface ConstraintSystem {
          * For example, for `fun <T> id(t: T) {}` to infer `T` in invocation `id(1)`
          * the constraint "Int is a subtype of T" should be generated where T is a subject type, and Int is a constraining type.
          */
-        fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition)
+        fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType?, constraintPosition: ConstraintPosition)
 
         /**
          * Adds a constraint that the constraining type is a supertype of the subject type.

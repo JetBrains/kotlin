@@ -186,8 +186,8 @@ public class TypeIntersector {
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
             processAllTypeParameters(expected, Variance.INVARIANT, processor);
             ConstraintSystem.Builder constraintSystem = new ConstraintSystemBuilderImpl();
-            constraintSystem.registerTypeVariables(CallHandle.NONE.INSTANCE, parameters.keySet(), false);
-            constraintSystem.addSubtypeConstraint(withParameters, expected, SPECIAL.position());
+            TypeSubstitutor substitutor = constraintSystem.registerTypeVariables(CallHandle.NONE.INSTANCE, parameters.keySet(), false);
+            constraintSystem.addSubtypeConstraint(withParameters, substitutor.substitute(expected, Variance.INVARIANT), SPECIAL.position());
 
             return constraintSystem.build().getStatus().isSuccessful();
         }

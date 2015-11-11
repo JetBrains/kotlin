@@ -86,7 +86,11 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
             if (receiverArgument is ExpressionReceiver) {
                 receiverType = updateResultTypeForSmartCasts(receiverType, receiverArgument.expression, context)
             }
-            builder.addSubtypeConstraint(receiverType, receiverParameter.type, RECEIVER_POSITION.position())
+            builder.addSubtypeConstraint(
+                    receiverType,
+                    builder.compositeSubstitutor().substitute(receiverParameter.type, Variance.INVARIANT),
+                    RECEIVER_POSITION.position()
+            )
         }
 
         val constraintSystem = builder.build()
@@ -100,6 +104,16 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         return OTHER_ERROR
     }
 
+    // Creates a substitutor which maps types to their representation in the constraint system.
+    // In case when some type parameter descriptor is represented by more than one variable in the system, the behavior is undefined.
+    private fun ConstraintSystem.Builder.compositeSubstitutor(): TypeSubstitutor {
+        return TypeSubstitutor.create(object : TypeSubstitution() {
+            override fun get(key: KotlinType): TypeProjection? {
+                return typeVariableSubstitutors.values.reversed().asSequence().mapNotNull { it.substitution.get(key) }.firstOrNull()
+            }
+        })
+    }
+
     fun addConstraintForValueArgument(
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
@@ -108,7 +122,6 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
             context: CallCandidateResolutionContext<*>,
             resolveFunctionArgumentBodies: ResolveArgumentsMode
     ) {
-
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
         val argumentExpression = valueArgument.getArgumentExpression()
 
@@ -124,7 +137,11 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         if (addConstraintForNestedCall(argumentExpression, constraintPosition, builder, newContext, effectiveExpectedType)) return
 
         val type = updateResultTypeForSmartCasts(typeInfoForCall.type, argumentExpression, context.replaceDataFlowInfo(dataFlowInfoForArgument))
-        builder.addSubtypeConstraint(type, effectiveExpectedType, constraintPosition)
+        builder.addSubtypeConstraint(
+                type,
+                builder.compositeSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT),
+                constraintPosition
+        )
     }
 
     private fun addConstraintForNestedCall(
@@ -157,7 +174,12 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val freshVariables = returnType.getNestedTypeParameters().map { conversion[it] }.filterNotNull()
         builder.registerTypeVariables(resultingCall.call.toHandle(), freshVariables, external = true)
 
-        builder.addSubtypeConstraint(candidateWithFreshVariables.returnType, effectiveExpectedType, constraintPosition)
+        builder.addSubtypeConstraint(
+                candidateWithFreshVariables.returnType,
+                builder.compositeSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT),
+                constraintPosition
+        )
+
         return true
     }
 
@@ -222,6 +244,9 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val dataFlowInfoForArguments = context.candidateCall.dataFlowInfoForArguments
         val dataFlowInfoForArgument = dataFlowInfoForArguments.getInfo(valueArgument)
 
+        val effectiveExpectedTypeInSystem =
+                constraintSystem.typeVariableSubstitutors[context.call.toHandle()]?.substitute(effectiveExpectedType, Variance.INVARIANT)
+
         //todo analyze function literal body once in 'dependent' mode, then complete it with respect to expected type
         val hasExpectedReturnType = !hasUnknownReturnType(expectedType)
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
@@ -239,7 +264,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
             val type = argumentTypeResolver.getFunctionLiteralTypeInfo(
                     argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
             if (!mismatch[0]) {
-                constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, position)
+                constraintSystem.addSubtypeConstraint(type, effectiveExpectedTypeInSystem, position)
                 temporaryToResolveFunctionLiteral.commit()
                 return
             }
@@ -248,7 +273,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val newContext = context.replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
                 .replaceContextDependency(INDEPENDENT)
         val type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
-        constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, position)
+        constraintSystem.addSubtypeConstraint(type, effectiveExpectedTypeInSystem, position)
     }
 
     private fun <D : CallableDescriptor> addConstraintForCallableReference(
@@ -264,7 +289,11 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         if (!ReflectionTypes.isCallableType(expectedType)) return
         val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument)
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
-        constraintSystem.addSubtypeConstraint(resolvedType, effectiveExpectedType, position)
+        constraintSystem.addSubtypeConstraint(
+                resolvedType,
+                constraintSystem.typeVariableSubstitutors[context.call.toHandle()]?.substitute(effectiveExpectedType, Variance.INVARIANT),
+                position
+        )
     }
 
     private fun <D : CallableDescriptor> getExpectedTypeForCallableReference(

@@ -51,20 +51,8 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     internal val usedInBounds = HashMap<TypeVariable, MutableList<TypeBounds.Bound>>()
     internal val errors = ArrayList<ConstraintError>()
     internal val initialConstraints = ArrayList<Constraint>()
-    internal val descriptorToVariable = LinkedHashMap<TypeParameterDescriptor, TypeVariable>()
 
     override val typeVariableSubstitutors = LinkedHashMap<CallHandle, TypeSubstitutor>()
-
-    private val descriptorToVariableSubstitutor: TypeSubstitutor by lazy {
-        TypeSubstitutor.create(object : TypeConstructorSubstitution() {
-            override fun get(key: TypeConstructor): TypeProjection? {
-                val descriptor = key.declarationDescriptor
-                if (descriptor !is TypeParameterDescriptor) return null
-                val typeVariable = descriptorToVariable[descriptor] ?: return null
-                return TypeProjectionImpl(typeVariable.type)
-            }
-        })
-    }
 
     private fun storeSubstitutor(call: CallHandle, substitutor: TypeSubstitutor): TypeSubstitutor {
         if (typeVariableSubstitutors.containsKey(call)) {
@@ -97,7 +85,6 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
 
         for ((descriptor, typeVariable) in typeParameters.zip(typeVariables)) {
             allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable))
-            descriptorToVariable[descriptor] = typeVariable
         }
 
         for ((typeVariable, typeBounds) in allTypeParameterBounds) {
@@ -124,9 +111,8 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         addConstraint(SUB_TYPE, subjectType, constrainingType, ConstraintContext(constraintPosition, initial = true))
     }
 
-    override fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
-        val newSubjectType = descriptorToVariableSubstitutor.substitute(subjectType, Variance.INVARIANT)
-        addConstraint(SUB_TYPE, constrainingType, newSubjectType, ConstraintContext(constraintPosition, initial = true))
+    override fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType?, constraintPosition: ConstraintPosition) {
+        addConstraint(SUB_TYPE, constrainingType, subjectType, ConstraintContext(constraintPosition, initial = true))
     }
 
     fun addConstraint(
@@ -387,9 +373,7 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     }
 
     override fun build(): ConstraintSystem {
-        return ConstraintSystemImpl(
-                allTypeParameterBounds, usedInBounds, errors, initialConstraints, descriptorToVariable, typeVariableSubstitutors
-        )
+        return ConstraintSystemImpl(allTypeParameterBounds, usedInBounds, errors, initialConstraints, typeVariableSubstitutors)
     }
 }
 

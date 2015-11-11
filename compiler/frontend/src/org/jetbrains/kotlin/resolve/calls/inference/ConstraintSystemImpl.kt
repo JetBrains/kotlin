@@ -38,7 +38,6 @@ internal class ConstraintSystemImpl(
         private val usedInBounds: Map<TypeVariable, MutableList<TypeBounds.Bound>>,
         private val errors: List<ConstraintError>,
         private val initialConstraints: List<ConstraintSystemBuilderImpl.Constraint>,
-        private val descriptorToVariable: Map<TypeParameterDescriptor, TypeVariable>,
         private val typeVariableSubstitutors: Map<CallHandle, TypeSubstitutor>
 ) : ConstraintSystem {
     private val localTypeParameterBounds: Map<TypeVariable, TypeBoundsImpl>
@@ -107,13 +106,15 @@ internal class ConstraintSystemImpl(
     }
 
     override val typeParameterDescriptors: Set<TypeParameterDescriptor>
-        get() = descriptorToVariable.keys
+        get() = typeVariables.map { it.originalTypeParameter }.toSet()
 
     override val typeVariables: Set<TypeVariable>
         get() = allTypeParameterBounds.keys
 
     override fun descriptorToVariable(call: CallHandle, descriptor: TypeParameterDescriptor): TypeVariable =
-            descriptorToVariable[descriptor] ?: throw IllegalArgumentException("Unknown descriptor: $descriptor, call: $call")
+            typeVariables.firstOrNull {
+                it.call == call && it.originalTypeParameter == descriptor
+            } ?: throw IllegalArgumentException("Unknown descriptor: $descriptor, call: $call")
 
     override fun getTypeBounds(typeVariable: TypeVariable): TypeBoundsImpl {
         return allTypeParameterBounds[typeVariable] ?:
@@ -167,7 +168,6 @@ internal class ConstraintSystemImpl(
         result.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) })
 
         result.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) })
-        result.descriptorToVariable.putAll(descriptorToVariable)
         result.typeVariableSubstitutors.putAll(typeVariableSubstitutors)
 
         return result

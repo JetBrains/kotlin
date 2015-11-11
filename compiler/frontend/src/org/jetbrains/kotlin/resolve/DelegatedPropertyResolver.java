@@ -356,6 +356,10 @@ public class DelegatedPropertyResolver {
                 KotlinType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
                 if (returnType == null) return;
 
+                TypeSubstitutor typeVariableSubstitutor =
+                        constraintSystem.getTypeVariableSubstitutors().get(TypeVariableKt.toHandle(resolvedCall.getCall()));
+                assert typeVariableSubstitutor != null : "No substitutor in the system for call: " + resolvedCall.getCall();
+
                 TemporaryBindingTrace traceToResolveConventionMethods =
                         TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods");
                 OverloadResolutionResults<FunctionDescriptor>
@@ -368,15 +372,12 @@ public class DelegatedPropertyResolver {
                     FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
                     KotlinType returnTypeOfGetMethod = descriptor.getReturnType();
                     if (returnTypeOfGetMethod != null && !TypeUtils.noExpectedType(expectedType)) {
-                        TypeSubstitutor substitutor =
-                                constraintSystem.getTypeVariableSubstitutors().get(TypeVariableKt.toHandle(resolvedCall.getCall()));
-                        assert substitutor != null : "No substitutor in the system for call: " + resolvedCall.getCall();
-                        KotlinType returnTypeInSystem = substitutor.substitute(returnTypeOfGetMethod, Variance.INVARIANT);
+                        KotlinType returnTypeInSystem = typeVariableSubstitutor.substitute(returnTypeOfGetMethod, Variance.INVARIANT);
                         if (returnTypeInSystem != null) {
                             constraintSystem.addSupertypeConstraint(expectedType, returnTypeInSystem, FROM_COMPLETER.position());
                         }
                     }
-                    addConstraintForThisValue(constraintSystem, descriptor);
+                    addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor);
                 }
                 if (!propertyDescriptor.isVar()) return;
 
@@ -399,9 +400,12 @@ public class DelegatedPropertyResolver {
 
                         if (!noExpectedType(expectedType)) {
                             constraintSystem.addSubtypeConstraint(
-                                    expectedType, valueParameterForThis.getType(), FROM_COMPLETER.position());
+                                    expectedType,
+                                    typeVariableSubstitutor.substitute(valueParameterForThis.getType(), Variance.INVARIANT),
+                                    FROM_COMPLETER.position()
+                            );
                         }
-                        addConstraintForThisValue(constraintSystem, descriptor);
+                        addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor);
                     }
                 }
             }
@@ -412,7 +416,11 @@ public class DelegatedPropertyResolver {
                         results.getResultCode() == OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
             }
 
-            private void addConstraintForThisValue(ConstraintSystem.Builder constraintSystem, FunctionDescriptor resultingDescriptor) {
+            private void addConstraintForThisValue(
+                    ConstraintSystem.Builder constraintSystem,
+                    TypeSubstitutor typeVariableSubstitutor,
+                    FunctionDescriptor resultingDescriptor
+            ) {
                 ReceiverParameterDescriptor extensionReceiver = propertyDescriptor.getExtensionReceiverParameter();
                 ReceiverParameterDescriptor dispatchReceiver = propertyDescriptor.getDispatchReceiverParameter();
                 KotlinType typeOfThis =
@@ -424,7 +432,11 @@ public class DelegatedPropertyResolver {
                 if (valueParameters.isEmpty()) return;
                 ValueParameterDescriptor valueParameterForThis = valueParameters.get(0);
 
-                constraintSystem.addSubtypeConstraint(typeOfThis, valueParameterForThis.getType(), FROM_COMPLETER.position());
+                constraintSystem.addSubtypeConstraint(
+                        typeOfThis,
+                        typeVariableSubstitutor.substitute(valueParameterForThis.getType(), Variance.INVARIANT),
+                        FROM_COMPLETER.position()
+                );
             }
         };
     }
