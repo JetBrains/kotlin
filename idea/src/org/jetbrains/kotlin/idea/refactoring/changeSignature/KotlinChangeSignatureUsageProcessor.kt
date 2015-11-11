@@ -114,7 +114,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         else {
             findSAMUsages(info, result)
             //findConstructorDelegationUsages(info, result)
-            findKotlinOverrides(info, result)
+            //findKotlinOverrides(info, result)
             if (info is JavaChangeInfo) {
                 findKotlinCallers(info, result)
             }
@@ -418,6 +418,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         }
     }
 
+    /*
     private fun findKotlinOverrides(changeInfo: ChangeInfo, result: MutableSet<UsageInfo>) {
         val method = changeInfo.method
         if (!method.isTrueJavaMethod()) return
@@ -429,6 +430,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             findDeferredUsagesOfParameters(changeInfo, result, unwrappedElement, functionDescriptor)
         }
     }
+    */
 
     private fun findKotlinCallers(changeInfo: JavaChangeInfo, result: MutableSet<UsageInfo>) {
         val method = changeInfo.method
@@ -796,6 +798,26 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         return null
     }
 
+    private fun hasInvalidOldIndex(it: JavaParameterInfo, usageInfo: KotlinWrapperForJavaUsageInfos): Boolean {
+        return it.oldIndex >= usageInfo.javaChangeInfo.method.parameterList.parametersCount
+    }
+
+    // TODO: Get rid of this hack
+    private fun createJavaChangeInfoDelegate(javaChangeInfo: JavaChangeInfo, usageInfo: KotlinWrapperForJavaUsageInfos): JavaChangeInfo {
+        if (!javaChangeInfo.newParameters.any { hasInvalidOldIndex(it, usageInfo) }) return javaChangeInfo
+        
+        return object : JavaChangeInfo by javaChangeInfo {
+            private val _newParameters = javaChangeInfo.newParameters.map {
+                if (hasInvalidOldIndex(it, usageInfo)) {
+                    ParameterInfoImpl(-1, it.name, it.typeWrapper, it.defaultValue)
+                }
+                else it
+            }.toTypedArray()
+
+            override fun getNewParameters() = _newParameters
+        }
+    }
+
     override fun processUsage(changeInfo: ChangeInfo, usageInfo: UsageInfo, beforeMethodChange: Boolean, usages: Array<UsageInfo>): Boolean {
         val method = changeInfo.method
         val isJavaMethodUsage = isJavaMethodUsage(usageInfo)
@@ -818,7 +840,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         if (isOverriderOrCaller(usage)) {
                             processor.processUsage(javaChangeInfo, usage, true, javaUsageInfos)
                         }
-                        if (processor.processUsage(javaChangeInfo, usage, beforeMethodChange, javaUsageInfos)) break
+                        val changeInfoDelegate = createJavaChangeInfoDelegate(javaChangeInfo, usageInfo)
+                        if (processor.processUsage(changeInfoDelegate, usage, beforeMethodChange, javaUsageInfos)) break
                     }
                     if (usage is OverriderUsageInfo && usage.isOriginalOverrider) {
                         val overridingMethod = usage.overridingMethod
