@@ -2,7 +2,7 @@ package
 
 package a {
     public fun test(/*0*/ a1: a.A, /*1*/ a2: a.A): kotlin.Unit
-    public operator fun </*0*/ T : kotlin.Comparable<T>> T.rangeTo(/*0*/ that: T): kotlin.Range<T>
+    public operator fun </*0*/ T : kotlin.Comparable<T>> T.rangeTo(/*0*/ that: T): kotlin.ClosedRange<T>
 
     public final class A {
         public constructor A()

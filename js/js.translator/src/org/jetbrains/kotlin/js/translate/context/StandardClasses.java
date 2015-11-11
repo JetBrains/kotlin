@@ -98,25 +98,15 @@ public final class StandardClasses {
             if (type == PrimitiveType.CHAR || type == PrimitiveType.LONG) continue;
 
             String typeName = type.getTypeName().asString();
-            standardClasses.declare().forFQ("kotlin." + typeName + "Range").kotlinClass("NumberRange")
-                    .methods("iterator", "contains").properties("start", "end", "increment");
-
-            standardClasses.declare().forFQ("kotlin." + typeName + "Progression").kotlinClass("NumberProgression")
-                    .methods("iterator", "contains").properties("start", "end", "increment");
+            standardClasses.declare().forFQ("kotlin." + typeName + "Range").kotlinClass("NumberRange");
+            standardClasses.declare().forFQ("kotlin." + typeName + "Progression").kotlinClass("NumberProgression");
         }
 
-        standardClasses.declare().forFQ("kotlin.LongRange").kotlinClass("LongRange")
-                .methods("iterator", "contains").properties("start", "end", "increment");
+        standardClasses.declare().forFQ("kotlin.LongRange").kotlinClass("LongRange");
+        standardClasses.declare().forFQ("kotlin.CharRange").kotlinClass("CharRange");
 
-        standardClasses.declare().forFQ("kotlin.CharRange").kotlinClass("CharRange")
-                .methods("iterator", "contains").properties("start", "end", "increment");
-
-
-        standardClasses.declare().forFQ("kotlin.LongProgression").kotlinClass("LongProgression")
-                .methods("iterator", "contains").properties("start", "end", "increment");
-
-        standardClasses.declare().forFQ("kotlin.CharProgression").kotlinClass("CharProgression")
-                .methods("iterator", "contains").properties("start", "end", "increment");
+        standardClasses.declare().forFQ("kotlin.LongProgression").kotlinClass("LongProgression");
+        standardClasses.declare().forFQ("kotlin.CharProgression").kotlinClass("CharProgression");
 
         standardClasses.declare().forFQ("kotlin.Enum").kotlinClass("Enum");
 

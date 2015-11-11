@@ -6,4 +6,4 @@ public class ClassObjectField {
     }
 }
 
-// REF: (k.StaticFieldInClassObjectInTrait.Companion).XX
+// REF: (in k.StaticFieldInClassObjectInTrait.Companion).XX

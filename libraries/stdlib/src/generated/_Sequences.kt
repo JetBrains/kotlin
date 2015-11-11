@@ -356,10 +356,28 @@ public fun <T> Sequence<T>.dropWhile(predicate: (T) -> Boolean): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing all elements matching the given [predicate].
+ * Returns a sequence containing only elements matching the given [predicate].
  */
 public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
     return FilteringSequence(this, true, predicate)
+}
+
+/**
+ * Returns a sequence containing only elements matching the given [predicate].
+ */
+public fun <T> Sequence<T>.filterIndexed(predicate: (Int, T) -> Boolean): Sequence<T> {
+    // TODO: Rewrite with generalized MapFilterIndexingSequence
+    return TransformingSequence(FilteringSequence(IndexingSequence(this), true, { predicate(it.index, it.value) }), { it.value })
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
 }
 
 /**
@@ -393,7 +411,7 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterNotTo(desti
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -583,22 +601,41 @@ public inline fun <T, K> Sequence<T>.groupByTo(map: MutableMap<K, MutableList<T>
 }
 
 /**
- * Returns a sequence containing the results of applying the given [transform] function to each element of the original sequence.
+ * Returns a sequence containing the results of applying the given [transform] function
+ * to each element in the original sequence.
  */
 public fun <T, R> Sequence<T>.map(transform: (T) -> R): Sequence<R> {
     return TransformingSequence(this, transform)
 }
 
 /**
- * Returns a sequence containing the results of applying the given [transform] function to each element and its index in the original sequence.
+ * Returns a sequence containing the results of applying the given [transform] function
+ * to each element and its index in the original sequence.
  */
 public fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Sequence<R> {
     return TransformingIndexedSequence(this, transform)
 }
 
 /**
- * Appends transformed elements and their indices in the original sequence using the given [transform] function
- * to the given [destination].
+ * Returns a sequence containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original sequence.
+ */
+public fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (Int, T) -> R?): Sequence<R> {
+    return TransformingIndexedSequence(this, transform).filterNotNull()
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original sequence
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C {
+    forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original sequence
+ * and appends the results to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
     var index = 0
@@ -608,8 +645,25 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(d
 }
 
 /**
- * Appends transformed elements of the original sequence using the given [transform] function
- * to the given [destination].
+ * Returns a sequence containing only the non-null results of applying the given [transform] function
+ * to each element in the original sequence.
+ */
+public fun <T, R : Any> Sequence<T>.mapNotNull(transform: (T) -> R?): Sequence<R> {
+    return TransformingSequence(this, transform).filterNotNull()
+}
+
+/**
+ * Applies the given [transform] function to each element in the original sequence
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapNotNullTo(destination: C, transform: (T) -> R?): C {
+    forEach { element -> transform(element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element of the original sequence
+ * and appends the results to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)

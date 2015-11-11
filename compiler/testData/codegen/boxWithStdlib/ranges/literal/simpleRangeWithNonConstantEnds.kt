@@ -11,21 +11,21 @@ fun box(): String {
         return "Wrong elements for (1 + 2)..(10 - 1): $list1"
     }
 
-    val list2 = ArrayList<Byte>()
+    val list2 = ArrayList<Int>()
     for (i in (1.toByte() + 2.toByte()).toByte()..(10.toByte() - 1.toByte()).toByte()) {
         list2.add(i)
         if (list2.size() > 23) break
     }
-    if (list2 != listOf<Byte>(3, 4, 5, 6, 7, 8, 9)) {
+    if (list2 != listOf<Int>(3, 4, 5, 6, 7, 8, 9)) {
         return "Wrong elements for (1.toByte() + 2.toByte()).toByte()..(10.toByte() - 1.toByte()).toByte(): $list2"
     }
 
-    val list3 = ArrayList<Short>()
+    val list3 = ArrayList<Int>()
     for (i in (1.toShort() + 2.toShort()).toShort()..(10.toShort() - 1.toShort()).toShort()) {
         list3.add(i)
         if (list3.size() > 23) break
     }
-    if (list3 != listOf<Short>(3, 4, 5, 6, 7, 8, 9)) {
+    if (list3 != listOf<Int>(3, 4, 5, 6, 7, 8, 9)) {
         return "Wrong elements for (1.toShort() + 2.toShort()).toShort()..(10.toShort() - 1.toShort()).toShort(): $list3"
     }
 
@@ -45,24 +45,6 @@ fun box(): String {
     }
     if (list5 != listOf<Char>('c', 'd', 'e', 'f', 'g')) {
         return "Wrong elements for (\"ace\"[1])..(\"age\"[1]): $list5"
-    }
-
-    val list6 = ArrayList<Double>()
-    for (i in (1.5 * 2)..(3.0 * 3.0)) {
-        list6.add(i)
-        if (list6.size() > 23) break
-    }
-    if (list6 != listOf<Double>(3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)) {
-        return "Wrong elements for (1.5 * 2)..(3.0 * 3.0): $list6"
-    }
-
-    val list7 = ArrayList<Float>()
-    for (i in (1.5.toFloat() * 2.toFloat())..(3.0.toFloat() * 3.0.toFloat())) {
-        list7.add(i)
-        if (list7.size() > 23) break
-    }
-    if (list7 != listOf<Float>(3.0.toFloat(), 4.0.toFloat(), 5.0.toFloat(), 6.0.toFloat(), 7.0.toFloat(), 8.0.toFloat(), 9.0.toFloat())) {
-        return "Wrong elements for (1.5.toFloat() * 2.toFloat())..(3.0.toFloat() * 3.0.toFloat()): $list7"
     }
 
     return "OK"

@@ -4,4 +4,4 @@ import dependency.*
 
 val a: Outer.<caret>Nested? = null
 
-// REF: (dependency.Outer).Nested
+// REF: (in dependency.Outer).Nested

@@ -11,21 +11,21 @@ fun box(): String {
         return "Wrong elements for 5 downTo 10: $list1"
     }
 
-    val list2 = ArrayList<Byte>()
+    val list2 = ArrayList<Int>()
     for (i in 5.toByte() downTo 10.toByte()) {
         list2.add(i)
         if (list2.size() > 23) break
     }
-    if (list2 != listOf<Byte>()) {
+    if (list2 != listOf<Int>()) {
         return "Wrong elements for 5.toByte() downTo 10.toByte(): $list2"
     }
 
-    val list3 = ArrayList<Short>()
+    val list3 = ArrayList<Int>()
     for (i in 5.toShort() downTo 10.toShort()) {
         list3.add(i)
         if (list3.size() > 23) break
     }
-    if (list3 != listOf<Short>()) {
+    if (list3 != listOf<Int>()) {
         return "Wrong elements for 5.toShort() downTo 10.toShort(): $list3"
     }
 
@@ -45,24 +45,6 @@ fun box(): String {
     }
     if (list5 != listOf<Char>()) {
         return "Wrong elements for 'a' downTo 'z': $list5"
-    }
-
-    val list6 = ArrayList<Double>()
-    for (i in -1.0 downTo 5.0) {
-        list6.add(i)
-        if (list6.size() > 23) break
-    }
-    if (list6 != listOf<Double>()) {
-        return "Wrong elements for -1.0 downTo 5.0: $list6"
-    }
-
-    val list7 = ArrayList<Float>()
-    for (i in -1.0.toFloat() downTo 5.0.toFloat()) {
-        list7.add(i)
-        if (list7.size() > 23) break
-    }
-    if (list7 != listOf<Float>()) {
-        return "Wrong elements for -1.0.toFloat() downTo 5.0.toFloat(): $list7"
     }
 
     return "OK"

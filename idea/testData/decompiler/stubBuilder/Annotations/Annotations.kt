@@ -22,7 +22,7 @@
 
     class Nested @a private @b(E.E1) @b(E.E2) constructor()
 
-    fun types(param: @a @b(E.E1) DoubleRange): @a @b(E.E2) Unit {}
+    fun types(param: @a @b(E.E1) LongRange): @a @b(E.E2) Unit {}
 }
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION,

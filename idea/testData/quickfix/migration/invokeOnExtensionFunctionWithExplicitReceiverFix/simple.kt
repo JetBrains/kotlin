@@ -1,0 +1,15 @@
+// "Surround callee with parenthesis" "true"
+
+class A {
+    val foo: B.() -> Unit get() = null!!
+}
+
+class B
+
+fun test(a: A, b: B) {
+    with(b) {
+        a.<caret>foo()
+    }
+}
+
+public inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()

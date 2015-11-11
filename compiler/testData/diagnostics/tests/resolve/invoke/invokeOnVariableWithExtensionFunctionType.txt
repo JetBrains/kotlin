@@ -1,0 +1,41 @@
+package
+
+package fooIsExtension {
+    public val fooIsExtension.A.foo: fooIsExtension.B.() -> kotlin.Unit
+    public fun test(/*0*/ a: fooIsExtension.A, /*1*/ b: fooIsExtension.B): kotlin.Unit
+    public inline fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
+
+    public final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class B {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package fooIsMember {
+    public fun test(/*0*/ a: fooIsMember.A, /*1*/ b: fooIsMember.B): kotlin.Unit
+    public inline fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
+
+    public final class A {
+        public constructor A()
+        public final val foo: fooIsMember.B.() -> kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class B {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

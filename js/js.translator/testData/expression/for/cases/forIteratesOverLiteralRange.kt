@@ -20,14 +20,6 @@ fun box(): String {
         n++
     assertEquals(4, n)
 
-    // http://youtrack.jetbrains.com/issue/KT-4381
-    // JS: fails to iterate over Double range
-    var nd = 0.0
-    for (i in 0.0 .. 10.0) {
-        nd += i
-    }
-    assertEquals(55.0, nd)
-
     // Evaluation order
     for (i in up("A", 0)..up("B", 5)) {
     }
@@ -53,10 +45,6 @@ fun box(): String {
         sLong += i
     assertEquals(55L, sLong)
 
-    var sDouble = 0.0
-    for(i in 0L..10.0)
-        sDouble += i
-    assertEquals(55.0, sDouble)
 
     return "OK"
 }

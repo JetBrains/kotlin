@@ -46,46 +46,50 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             val hashCode = when (kind) {
                 BYTE, CHAR, SHORT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * start.toInt() + end.toInt())"
+                "        if (isEmpty()) -1 else (31 * start.toInt() + endInclusive.toInt())"
                 INT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * start + end)"
+                "        if (isEmpty()) -1 else (31 * start + endInclusive)"
                 LONG -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * ${hashLong("start")} + ${hashLong("end")}).toInt()"
+                "        if (isEmpty()) -1 else (31 * ${hashLong("start")} + ${hashLong("endInclusive")}).toInt()"
                 FLOAT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * ${floatToIntBits("start")} + ${floatToIntBits("end")})"
+                "        if (isEmpty()) -1 else (31 * ${floatToIntBits("start")} + ${floatToIntBits("endInclusive")})"
                 DOUBLE -> "{\n" +
                 "        if (isEmpty()) return -1\n" +
                 "        var temp = ${doubleToLongBits("start")}\n" +
                 "        val result = ${hashLong("temp")}\n" +
-                "        temp = ${doubleToLongBits("end")}\n" +
+                "        temp = ${doubleToLongBits("endInclusive")}\n" +
                 "        return (31 * result + ${hashLong("temp")}).toInt()\n" +
                 "    }"
             }
 
-            val toString = "\"\$start..\$end\""
+            val toString = "\"\$start..\$endInclusive\""
 
             if (kind == FLOAT || kind == DOUBLE) {
-                out.println("""@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.WARNING)""")
-                out.println("""@Suppress("DEPRECATION_ERROR")""")
+                continue
+            }
+            if (kind == SHORT || kind == BYTE) {
+                out.println("""@Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)""")
             }
 
             out.println(
 """/**
  * A range of values of type `$t`.
  */
-public class $range(override val start: $t, override val end: $t) : Range<$t>, Progression<$t> {
-    override val increment: $incrementType
-        get() = $increment
+public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInclusive, $increment), ClosedRange<$t> {
+    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
+    override val end: $t get() = endInclusive
+""" + (if (kind != FLOAT && kind != DOUBLE) """
+    override val start: $t get() = first
+    override val endInclusive: $t get() = last
+""" else "") +
+"""
+    override fun contains(item: $t): Boolean = start <= item && item <= endInclusive
 
-    override fun contains(item: $t): Boolean = start <= item && item <= end
-
-    override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, end, $increment)
-
-    override fun isEmpty(): Boolean = start > end
+    override fun isEmpty(): Boolean = start > endInclusive
 
     override fun equals(other: Any?): Boolean =
         other is $range && (isEmpty() && other.isEmpty() ||
-        ${compare("start")} && ${compare("end")})
+        ${compare("start")} && ${compare("endInclusive")})
 
     override fun hashCode(): Int $hashCode
 

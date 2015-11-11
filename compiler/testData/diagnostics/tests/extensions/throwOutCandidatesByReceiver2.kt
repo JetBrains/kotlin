@@ -9,6 +9,6 @@ fun test(a1: A, a2: A) {
 }
 
 
-public operator fun <T: Comparable<T>> T.rangeTo(<!UNUSED_PARAMETER!>that<!>: T): Range<T> {
+public operator fun <T: Comparable<T>> T.rangeTo(<!UNUSED_PARAMETER!>that<!>: T): ClosedRange<T> {
     throw UnsupportedOperationException()
 }

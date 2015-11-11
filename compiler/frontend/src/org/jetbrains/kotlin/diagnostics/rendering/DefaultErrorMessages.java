@@ -594,6 +594,7 @@ public class DefaultErrorMessages {
         MAP.put(CANNOT_COMPLETE_RESOLVE, "Cannot choose among the following candidates without completing type inference: {0}", AMBIGUOUS_CALLS);
         MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}", AMBIGUOUS_CALLS);
         MAP.put(INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION, "Impossible call as extension because {0} is not an extension function.", ELEMENT_TEXT);
+        MAP.put(INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER, "Such calls are no longer supported, surround callee with parenthesis or pass receiver as first argument");
 
         MAP.put(NO_VALUE_FOR_PARAMETER, "No value passed for parameter {0}", NAME);
         MAP.put(MISSING_RECEIVER, "A receiver of type {0} is required", RENDER_TYPE);

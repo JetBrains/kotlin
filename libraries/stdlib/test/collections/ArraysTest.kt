@@ -736,6 +736,15 @@ class ArraysTest {
         expect(listOf("b"), { arrayOf("a", "b").filter { it > "a" } })
     }
 
+    @test fun filterIndexed() {
+        expect(listOf(), { intArrayOf().filterIndexed { i, v -> i > v } })
+        expect(listOf(2, 5, 8), { intArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == value % 2 } })
+        expect(listOf<Long>(2, 5, 8), { longArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == (value % 2).toInt() } })
+        expect(listOf<Byte>(2, 5, 8), { byteArrayOf(2, 4, 3, 5, 8).filterIndexed { index, value -> index % 2 == (value % 2).toInt() } })
+        expect(listOf('9', 'e', 'a'), { charArrayOf('9', 'e', 'd', 'a').filterIndexed { index, c -> c == 'a' || index < 2 }})
+        expect(listOf("a", "c", "d"), { arrayOf("a", "b", "c", "d").filterIndexed { index, s -> s == "a" || index >= 2 } })
+    }
+
     @test fun filterNot() {
         expect(listOf(), { intArrayOf().filterNot { it > 2 } })
         expect(listOf(1), { intArrayOf(1).filterNot { it > 2 } })
@@ -752,6 +761,27 @@ class ArraysTest {
 
     @test fun filterNotNull() {
         expect(listOf("a"), { arrayOf("a", null).filterNotNull() })
+    }
+
+    @test fun map() {
+        assertEquals(listOf(1, 2, 4), arrayOf("a", "bc", "test").map { it.length })
+        assertEquals(listOf('a', 'b', 'c'), intArrayOf(1, 2, 3).map { 'a' + it - 1 })
+        assertEquals(listOf(1, 2, 3), longArrayOf(1000, 2000, 3000).map { (it / 1000).toInt() })
+        assertEquals(listOf(1.0, 0.5, 0.4, 0.2, 0.1), doubleArrayOf(1.0, 2.0, 2.5, 5.0, 10.0).map { 1 / it })
+    }
+
+    @test fun mapIndexed() {
+        assertEquals(listOf(1, 1, 2), arrayOf("a", "bc", "test").mapIndexed { index, s -> s.length - index })
+        assertEquals(listOf(0, 2, 2), intArrayOf(3, 2, 1).mapIndexed { index, i -> i * index })
+        assertEquals(listOf("0;20", "1;21", "2;22"), longArrayOf(20, 21, 22).mapIndexed { index, it -> "$index;$it" })
+    }
+
+    @test fun mapNotNull() {
+        assertEquals(listOf(2, 3), arrayOf("", "bc", "def").mapNotNull { if (it.isEmpty()) null else it.length })
+    }
+
+    @test fun mapIndexedNotNull() {
+        assertEquals(listOf(2), arrayOf("a", null, "test").mapIndexedNotNull { index, it -> it?.run { if (index != 0) length / index else null  } })
     }
 
     @test fun asListPrimitives() {

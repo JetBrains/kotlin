@@ -2986,66 +2986,219 @@ public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Shor
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun <T> Array<out T>.filter(predicate: (T) -> Boolean): List<T> {
     return filterTo(ArrayList<T>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun BooleanArray.filter(predicate: (Boolean) -> Boolean): List<Boolean> {
     return filterTo(ArrayList<Boolean>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun ByteArray.filter(predicate: (Byte) -> Boolean): List<Byte> {
     return filterTo(ArrayList<Byte>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Char> {
     return filterTo(ArrayList<Char>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun DoubleArray.filter(predicate: (Double) -> Boolean): List<Double> {
     return filterTo(ArrayList<Double>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun FloatArray.filter(predicate: (Float) -> Boolean): List<Float> {
     return filterTo(ArrayList<Float>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun IntArray.filter(predicate: (Int) -> Boolean): List<Int> {
     return filterTo(ArrayList<Int>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun LongArray.filter(predicate: (Long) -> Boolean): List<Long> {
     return filterTo(ArrayList<Long>(), predicate)
 }
 
 /**
- * Returns a list containing all elements matching the given [predicate].
+ * Returns a list containing only elements matching the given [predicate].
  */
 public inline fun ShortArray.filter(predicate: (Short) -> Boolean): List<Short> {
     return filterTo(ArrayList<Short>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun <T> Array<out T>.filterIndexed(predicate: (Int, T) -> Boolean): List<T> {
+    return filterIndexedTo(ArrayList<T>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun BooleanArray.filterIndexed(predicate: (Int, Boolean) -> Boolean): List<Boolean> {
+    return filterIndexedTo(ArrayList<Boolean>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun ByteArray.filterIndexed(predicate: (Int, Byte) -> Boolean): List<Byte> {
+    return filterIndexedTo(ArrayList<Byte>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun CharArray.filterIndexed(predicate: (Int, Char) -> Boolean): List<Char> {
+    return filterIndexedTo(ArrayList<Char>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun DoubleArray.filterIndexed(predicate: (Int, Double) -> Boolean): List<Double> {
+    return filterIndexedTo(ArrayList<Double>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun FloatArray.filterIndexed(predicate: (Int, Float) -> Boolean): List<Float> {
+    return filterIndexedTo(ArrayList<Float>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun IntArray.filterIndexed(predicate: (Int, Int) -> Boolean): List<Int> {
+    return filterIndexedTo(ArrayList<Int>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun LongArray.filterIndexed(predicate: (Int, Long) -> Boolean): List<Long> {
+    return filterIndexedTo(ArrayList<Long>(), predicate)
+}
+
+/**
+ * Returns a list containing only elements matching the given [predicate].
+ */
+public inline fun ShortArray.filterIndexed(predicate: (Int, Short) -> Boolean): List<Short> {
+    return filterIndexedTo(ArrayList<Short>(), predicate)
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (Int, Boolean) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (Int, Byte) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (Int, Char) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (Int, Double) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (Int, Float) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (Int, Int) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (Int, Long) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements matching the given [predicate] to the given [destination].
+ */
+public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (Int, Short) -> Boolean): C {
+    forEachIndexed { index, element ->
+        if (predicate(index, element)) destination.add(element)
+    }
+    return destination
 }
 
 /**
@@ -3199,7 +3352,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(desti
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3207,7 +3360,7 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destina
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(destination: C, predicate: (Boolean) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3215,7 +3368,7 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(dest
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destination: C, predicate: (Byte) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3223,7 +3376,7 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destinatio
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3231,7 +3384,7 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destinatio
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destination: C, predicate: (Double) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3239,7 +3392,7 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destin
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destination: C, predicate: (Float) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3247,7 +3400,7 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destinat
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination: C, predicate: (Int) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3255,7 +3408,7 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination:
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destination: C, predicate: (Long) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -3263,7 +3416,7 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destinatio
 }
 
 /**
- * Appends all elements matching the given [predicate] into the given [destination].
+ * Appends all elements matching the given [predicate] to the given [destination].
  */
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destination: C, predicate: (Short) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4572,56 +4725,56 @@ public fun ShortArray.sortDescending(): Unit {
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
-    return toArrayList().apply { sort() }
+    return sortedArray().asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun ByteArray.sorted(): List<Byte> {
-    return toArrayList().apply { sort() }
+    return toTypedArray().apply { sort() }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun CharArray.sorted(): List<Char> {
-    return toArrayList().apply { sort() }
+    return toTypedArray().apply { sort() }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun DoubleArray.sorted(): List<Double> {
-    return toArrayList().apply { sort() }
+    return toTypedArray().apply { sort() }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun FloatArray.sorted(): List<Float> {
-    return toArrayList().apply { sort() }
+    return toTypedArray().apply { sort() }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun IntArray.sorted(): List<Int> {
-    return toArrayList().apply { sort() }
+    return toTypedArray().apply { sort() }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun LongArray.sorted(): List<Long> {
-    return toArrayList().apply { sort() }
+    return toTypedArray().apply { sort() }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
 public fun ShortArray.sorted(): List<Short> {
-    return toArrayList().apply { sort() }
+    return toTypedArray().apply { sort() }.asList()
 }
 
 /**
@@ -4946,63 +5099,63 @@ public fun ShortArray.sortedDescending(): List<Short> {
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun <T> Array<out T>.sortedWith(comparator: Comparator<in T>): List<T> {
-    return toArrayList().apply { sortWith(comparator) }
+    return sortedArrayWith(comparator).asList()
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun BooleanArray.sortedWith(comparator: Comparator<in Boolean>): List<Boolean> {
-    return toArrayList().apply { sortWith(comparator) }
+    return toTypedArray().apply { sortWith(comparator) }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun ByteArray.sortedWith(comparator: Comparator<in Byte>): List<Byte> {
-    return toArrayList().apply { sortWith(comparator) }
+    return toTypedArray().apply { sortWith(comparator) }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
-    return toArrayList().apply { sortWith(comparator) }
+    return toTypedArray().apply { sortWith(comparator) }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun DoubleArray.sortedWith(comparator: Comparator<in Double>): List<Double> {
-    return toArrayList().apply { sortWith(comparator) }
+    return toTypedArray().apply { sortWith(comparator) }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun FloatArray.sortedWith(comparator: Comparator<in Float>): List<Float> {
-    return toArrayList().apply { sortWith(comparator) }
+    return toTypedArray().apply { sortWith(comparator) }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun IntArray.sortedWith(comparator: Comparator<in Int>): List<Int> {
-    return toArrayList().apply { sortWith(comparator) }
+    return toTypedArray().apply { sortWith(comparator) }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun LongArray.sortedWith(comparator: Comparator<in Long>): List<Long> {
-    return toArrayList().apply { sortWith(comparator) }
+    return toTypedArray().apply { sortWith(comparator) }.asList()
 }
 
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
 public fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short> {
-    return toArrayList().apply { sortWith(comparator) }
+    return toTypedArray().apply { sortWith(comparator) }.asList()
 }
 
 /**
@@ -6515,134 +6668,169 @@ public inline fun <K> ShortArray.groupByTo(map: MutableMap<K, MutableList<Short>
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> CharArray.map(transform: (Char) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> FloatArray.map(transform: (Float) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> IntArray.map(transform: (Int) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> LongArray.map(transform: (Long) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element of the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original array.
  */
 public inline fun <R> ShortArray.map(transform: (Short) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <T, R> Array<out T>.mapIndexed(transform: (Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> BooleanArray.mapIndexed(transform: (Int, Boolean) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> ByteArray.mapIndexed(transform: (Int, Byte) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> CharArray.mapIndexed(transform: (Int, Char) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> DoubleArray.mapIndexed(transform: (Int, Double) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> FloatArray.mapIndexed(transform: (Int, Float) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> IntArray.mapIndexed(transform: (Int, Int) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> LongArray.mapIndexed(transform: (Int, Long) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each element and its index in the original array.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original array.
  */
 public inline fun <R> ShortArray.mapIndexed(transform: (Int, Short) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element and its index in the original array.
+ */
+public inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (Int, T) -> R?): List<R> {
+    return mapIndexedNotNullTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C {
+    forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
     var index = 0
@@ -6652,8 +6840,8 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (Int, Boolean) -> R): C {
     var index = 0
@@ -6663,8 +6851,8 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(des
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (Int, Byte) -> R): C {
     var index = 0
@@ -6674,8 +6862,8 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destin
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
     var index = 0
@@ -6685,8 +6873,8 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destin
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (Int, Double) -> R): C {
     var index = 0
@@ -6696,8 +6884,8 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(dest
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (Int, Float) -> R): C {
     var index = 0
@@ -6707,8 +6895,8 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(desti
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (Int, Int) -> R): C {
     var index = 0
@@ -6718,8 +6906,8 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destina
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (Int, Long) -> R): C {
     var index = 0
@@ -6729,8 +6917,8 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destin
 }
 
 /**
- * Appends transformed elements and their indices in the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element and its index in the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (Int, Short) -> R): C {
     var index = 0
@@ -6740,8 +6928,25 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(desti
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each element in the original array.
+ */
+public inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): List<R> {
+    return mapNotNullTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Applies the given [transform] function to each element in the original array
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapNotNullTo(destination: C, transform: (T) -> R?): C {
+    forEach { element -> transform(element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
@@ -6750,8 +6955,8 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destina
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destination: C, transform: (Boolean) -> R): C {
     for (item in this)
@@ -6760,8 +6965,8 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destinatio
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: C, transform: (Byte) -> R): C {
     for (item in this)
@@ -6770,8 +6975,8 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: C, transform: (Char) -> R): C {
     for (item in this)
@@ -6780,8 +6985,8 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination: C, transform: (Double) -> R): C {
     for (item in this)
@@ -6790,8 +6995,8 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination: C, transform: (Float) -> R): C {
     for (item in this)
@@ -6800,8 +7005,8 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination:
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C, transform: (Int) -> R): C {
     for (item in this)
@@ -6810,8 +7015,8 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: C, transform: (Long) -> R): C {
     for (item in this)
@@ -6820,8 +7025,8 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: 
 }
 
 /**
- * Appends transformed elements of the original array using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each element of the original array
+ * and appends the results to the given [destination].
  */
 public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination: C, transform: (Short) -> R): C {
     for (item in this)
@@ -11242,7 +11447,71 @@ public operator fun <T> Array<T>.plus(element: T): Array<T> {
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts the array in-place.
+ */
+@kotlin.jvm.JvmVersion
+public fun <T> Array<out T>.sort(): Unit {
+    if (size > 1) Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@kotlin.jvm.JvmVersion
+public fun ByteArray.sort(): Unit {
+    if (size > 1) Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@kotlin.jvm.JvmVersion
+public fun CharArray.sort(): Unit {
+    if (size > 1) Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@kotlin.jvm.JvmVersion
+public fun DoubleArray.sort(): Unit {
+    if (size > 1) Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@kotlin.jvm.JvmVersion
+public fun FloatArray.sort(): Unit {
+    if (size > 1) Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@kotlin.jvm.JvmVersion
+public fun IntArray.sort(): Unit {
+    if (size > 1) Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@kotlin.jvm.JvmVersion
+public fun LongArray.sort(): Unit {
+    if (size > 1) Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+@kotlin.jvm.JvmVersion
+public fun ShortArray.sort(): Unit {
+    if (size > 1) Arrays.sort(this)
+}
+
+/**
+ * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
@@ -11250,7 +11519,7 @@ public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size()): Uni
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
 public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
@@ -11258,7 +11527,7 @@ public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
 public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
@@ -11266,7 +11535,7 @@ public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
 public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
@@ -11274,7 +11543,7 @@ public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
 public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
@@ -11282,7 +11551,7 @@ public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
 public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
@@ -11290,7 +11559,7 @@ public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
 public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
@@ -11298,7 +11567,7 @@ public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
 public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
@@ -11306,7 +11575,15 @@ public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
 }
 
 /**
- * Sorts array or range in array inplace.
+ * Sorts the array in-place with the given [comparator].
+ */
+@kotlin.jvm.JvmVersion
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
+    if (size > 1) Arrays.sort(this, comparator)
+}
+
+/**
+ * Sorts a range in the array in-place with the given [comparator].
  */
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size()): Unit {

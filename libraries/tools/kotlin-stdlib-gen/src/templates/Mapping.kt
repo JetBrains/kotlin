@@ -30,7 +30,12 @@ fun mapping(): List<GenericFunction> {
     templates add f("mapIndexed(transform: (Int, T) -> R)") {
         inline(true)
 
-        doc { f -> "Returns a ${f.mapResult} containing the results of applying the given [transform] function to each ${f.element} and its index in the original ${f.collection}." }
+        doc { f ->
+            """
+            Returns a ${f.mapResult} containing the results of applying the given [transform] function
+            to each ${f.element} and its index in the original ${f.collection}.
+            """
+        }
         typeParam("R")
         returns("List<R>")
         body {
@@ -53,7 +58,12 @@ fun mapping(): List<GenericFunction> {
     templates add f("map(transform: (T) -> R)") {
         inline(true)
 
-        doc { f -> "Returns a ${f.mapResult} containing the results of applying the given [transform] function to each ${f.element} of the original ${f.collection}." }
+        doc { f ->
+            """
+            Returns a ${f.mapResult} containing the results of applying the given [transform] function
+            to each ${f.element} in the original ${f.collection}.
+            """
+        }
         typeParam("R")
         returns("List<R>")
         body {
@@ -75,39 +85,60 @@ fun mapping(): List<GenericFunction> {
         include(Maps)
     }
 
-    /*
-    templates add f("mapNotNull(transform: (T) -> R)") {
+    templates add f("mapNotNull(transform: (T) -> R?)") {
         inline(true)
-        exclude(Strings, ArraysOfPrimitives)
-        doc { f -> "Returns a ${f.mapResult} containing the results of applying the given [transform] function to each non-null ${f.element} of the original ${f.collection}." }
-        deprecate(Deprecation("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().map {} instead.", replaceWith = "filterNotNull().map(transform)"))
-        typeParam("T : Any")
-        typeParam("R")
+        include(Maps, CharSequences)
+        exclude(ArraysOfPrimitives)
+        typeParam("R : Any")
         returns("List<R>")
-        toNullableT = true
+        doc { f ->
+            """
+            Returns a ${f.mapResult} containing only the non-null results of applying the given [transform] function
+            to each ${f.element} in the original ${f.collection}.
+            """
+        }
         body {
-            """
-            return mapNotNullTo(ArrayList<R>(), transform)
-            """
+            "return mapNotNullTo(ArrayList<R>(), transform)"
         }
 
-        returns(Sequences) { "Sequence<R>" }
         inline(false, Sequences)
+        returns(Sequences) { "Sequence<R>" }
         body(Sequences) {
+            "return TransformingSequence(this, transform).filterNotNull()"
+        }
+
+    }
+
+    templates add f("mapIndexedNotNull(transform: (Int, T) -> R?)") {
+        inline(true)
+        include(CharSequences)
+        exclude(ArraysOfPrimitives)
+        typeParam("R : Any")
+        returns("List<R>")
+        doc { f ->
             """
-            return TransformingSequence(FilteringSequence(this, false, { it == null }) as Sequence<T>, transform)
+            Returns a ${f.mapResult} containing only the non-null results of applying the given [transform] function
+            to each ${f.element} and its index in the original ${f.collection}.
             """
         }
+        body {
+            "return mapIndexedNotNullTo(ArrayList<R>(), transform)"
+        }
+
+        inline(false, Sequences)
+        returns(Sequences) { "Sequence<R>" }
+        body(Sequences) {
+            "return TransformingIndexedSequence(this, transform).filterNotNull()"
+        }
     }
-    */
 
     templates add f("mapTo(destination: C, transform: (T) -> R)") {
         inline(true)
 
         doc { f ->
             """
-            Appends transformed ${f.element}s of the original ${f.collection} using the given [transform] function
-            to the given [destination].
+            Applies the given [transform] function to each ${f.element} of the original ${f.collection}
+            and appends the results to the given [destination].
             """
         }
         typeParam("R")
@@ -130,8 +161,8 @@ fun mapping(): List<GenericFunction> {
 
         doc { f ->
             """
-            Appends transformed ${f.element}s and their indices in the original ${f.collection} using the given [transform] function
-            to the given [destination].
+            Applies the given [transform] function to each ${f.element} and its index in the original ${f.collection}
+            and appends the results to the given [destination].
             """
         }
         typeParam("R")
@@ -147,38 +178,51 @@ fun mapping(): List<GenericFunction> {
             """
         }
         deprecate(Strings) { forBinaryCompatibility }
+        deprecate(Maps) { Deprecation("Use entries.mapIndexedTo instead.", replaceWith = "this.entries.mapIndexedTo(destination, transform)") }
         include(Maps, CharSequences, Strings)
     }
 
-    /*
-    templates add f("mapNotNullTo(destination: C, transform: (T) -> R)") {
+    templates add f("mapNotNullTo(destination: C, transform: (T) -> R?)") {
         inline(true)
-        exclude(Strings, ArraysOfPrimitives)
-        doc {
-            """
-            Appends transformed non-null elements of original collection using the given [transform] function
-            to the given [destination].
-            """
-        }
-        deprecate(Deprecation("This function will change its semantics soon to map&filter rather than filter&map. Use filterNotNull().mapTo(destination) {} instead.",
-                replaceWith = "filterNotNull().mapTo(destination, transform)"))
-        typeParam("T : Any")
-        typeParam("R")
+        include(Maps, CharSequences)
+        exclude(ArraysOfPrimitives)
+        typeParam("R : Any")
         typeParam("C : MutableCollection<in R>")
         returns("C")
-        toNullableT = true
+        doc { f ->
+            """
+            Applies the given [transform] function to each ${f.element} in the original ${f.collection}
+            and appends only the non-null results to the given [destination].
+            """
+        }
         body {
             """
-            for (element in this) {
-                if (element != null) {
-                    destination.add(transform(element))
-                }
-            }
+            forEach { element -> transform(element)?.let { destination.add(it) } }
             return destination
             """
         }
     }
-    */
+
+    templates add f("mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?)") {
+        inline(true)
+        include(CharSequences)
+        exclude(ArraysOfPrimitives)
+        typeParam("R : Any")
+        typeParam("C : MutableCollection<in R>")
+        returns("C")
+        doc { f ->
+            """
+            Applies the given [transform] function to each ${f.element} and its index in the original ${f.collection}
+            and appends only the non-null results to the given [destination].
+            """
+        }
+        body {
+            """
+            forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
+            return destination
+            """
+        }
+    }
 
     templates add f("flatMap(transform: (T) -> Iterable<R>)") {
         inline(true)

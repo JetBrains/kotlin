@@ -129,6 +129,13 @@ class MapTest {
         assertEquals(listOf("beer rocks", "Mells rocks"), list)
     }
 
+
+    @test fun mapNotNull() {
+        val m1 = mapOf("a" to 1, "b" to null)
+        val list = m1.mapNotNull { it.value?.let { v -> "${it.key}$v" } }
+        assertEquals(listOf("a1"), list)
+    }
+
     @test fun mapValues() {
         val m1 = mapOf("beverage" to "beer", "location" to "Mells")
         val m2 = m1.mapValues { it.value + "2" }

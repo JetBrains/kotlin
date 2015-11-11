@@ -137,17 +137,13 @@ public class Byte private () : Number, Comparable<Byte> {
     public operator fun unaryMinus(): Int
 
      /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): ByteRange
+    public operator fun rangeTo(other: Byte): IntRange
      /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): ShortRange
+    public operator fun rangeTo(other: Short): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Int): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Float): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Double): DoubleRange
 
     public override fun toByte(): Byte
     public override fun toChar(): Char
@@ -277,17 +273,13 @@ public class Short private () : Number, Comparable<Short> {
     public operator fun unaryMinus(): Int
 
      /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): ShortRange
+    public operator fun rangeTo(other: Byte): IntRange
      /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): ShortRange
+    public operator fun rangeTo(other: Short): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Int): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Float): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Double): DoubleRange
 
     public override fun toByte(): Byte
     public override fun toChar(): Char
@@ -424,10 +416,6 @@ public class Int private () : Number, Comparable<Int> {
     public operator fun rangeTo(other: Int): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Float): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Double): DoubleRange
 
     /** Shifts this value left by [bits]. */
     public infix fun shl(bitCount: Int): Int
@@ -579,10 +567,6 @@ public class Long private () : Number, Comparable<Long> {
     public operator fun rangeTo(other: Int): LongRange
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Float): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Double): DoubleRange
 
     /** Shifts this value left by [bits]. */
     public infix fun shl(bitCount: Int): Long
@@ -726,18 +710,6 @@ public class Float private () : Number, Comparable<Float> {
     /** Returns the negative of this value. */
     public operator fun unaryMinus(): Float
 
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Int): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Long): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Float): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Double): DoubleRange
 
     public override fun toByte(): Byte
     public override fun toChar(): Char
@@ -866,18 +838,6 @@ public class Double private () : Number, Comparable<Double> {
     /** Returns the negative of this value. */
     public operator fun unaryMinus(): Double
 
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): DoubleRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): DoubleRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Int): DoubleRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Long): DoubleRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Float): DoubleRange
-     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Double): DoubleRange
 
     public override fun toByte(): Byte
     public override fun toChar(): Char

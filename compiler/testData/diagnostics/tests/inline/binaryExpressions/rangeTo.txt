@@ -2,6 +2,6 @@ package
 
 public inline fun </*0*/ T, /*1*/ U, /*2*/ V> inlineFunWithInvoke(/*0*/ s: (T) -> U): kotlin.Unit
 public inline fun </*0*/ T, /*1*/ U, /*2*/ V> inlineFunWithInvoke(/*0*/ s: (T, U) -> U, /*1*/ ext: T.(U, U) -> V): kotlin.Unit
-public operator inline fun </*0*/ T, /*1*/ U> ((T) -> U).rangeTo(/*0*/ p: (T) -> U): kotlin.Range<kotlin.Int>
-public operator fun </*0*/ T, /*1*/ U, /*2*/ V> ((T, U) -> V).rangeTo(/*0*/ p: (T, U) -> V): kotlin.Range<kotlin.Int>
-public operator fun </*0*/ T, /*1*/ U, /*2*/ V, /*3*/ W> (T.(U, V) -> W).rangeTo(/*0*/ ext: T.(U, V) -> W): kotlin.Range<kotlin.Int>
+public operator inline fun </*0*/ T, /*1*/ U> ((T) -> U).rangeTo(/*0*/ p: (T) -> U): kotlin.ClosedRange<kotlin.Int>
+public operator fun </*0*/ T, /*1*/ U, /*2*/ V> ((T, U) -> V).rangeTo(/*0*/ p: (T, U) -> V): kotlin.ClosedRange<kotlin.Int>
+public operator fun </*0*/ T, /*1*/ U, /*2*/ V, /*3*/ W> (T.(U, V) -> W).rangeTo(/*0*/ ext: T.(U, V) -> W): kotlin.ClosedRange<kotlin.Int>

@@ -119,24 +119,43 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
+
+    templates add f("sort()") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        exclude(PrimitiveType.Boolean)
+        doc { "Sorts the array in-place." }
+        returns("Unit")
+        body {
+            "if (size > 1) Arrays.sort(this)"
+        }
+    }
+
     templates add f("sort(fromIndex: Int = 0, toIndex: Int = size())") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
-        doc { "Sorts array or range in array inplace." }
+        doc { "Sorts a range in the array in-place." }
         returns("Unit")
         body {
             "Arrays.sort(this, fromIndex, toIndex)"
         }
     }
 
+    templates add f("sortWith(comparator: Comparator<in T>)") {
+        only(ArraysOfObjects)
+        doc { "Sorts the array in-place with the given [comparator]." }
+        returns("Unit")
+        body {
+            "if (size > 1) Arrays.sort(this, comparator)"
+        }
+    }
+
     templates add f("sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size())") {
         only(ArraysOfObjects)
-        doc { "Sorts array or range in array inplace." }
+        doc { "Sorts a range in the array in-place with the given [comparator]." }
         returns("Unit")
         body {
             "Arrays.sort(this, fromIndex, toIndex, comparator)"
         }
-
     }
 
     templates add f("filterIsInstanceTo(destination: C, klass: Class<R>)") {

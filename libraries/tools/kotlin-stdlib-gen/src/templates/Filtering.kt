@@ -3,6 +3,7 @@ package templates
 import templates.Family.*
 import templates.DocExtensions.collection
 import templates.DocExtensions.element
+import templates.DocExtensions.mapResult
 
 fun filtering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -351,7 +352,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filter(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns a list containing all elements matching the given [predicate]." }
+        doc { f -> "Returns a ${f.mapResult} containing only ${f.element}s matching the given [predicate]." }
         returns("List<T>")
         body {
             """
@@ -364,7 +365,6 @@ fun filtering(): List<GenericFunction> {
         body(CharSequences, Strings) { f -> """return filterTo(StringBuilder(), predicate)${toResult(f)}""" }
 
         inline(false, Sequences)
-        doc(Sequences) { "Returns a sequence containing all elements matching the given [predicate]." }
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """
@@ -376,7 +376,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterTo(destination: C, predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Appends all elements matching the given [predicate] into the given [destination]." }
+        doc { f -> "Appends all ${f.element}s matching the given [predicate] to the given [destination]." }
         typeParam("C : TCollection")
         returns("C")
 
@@ -388,12 +388,56 @@ fun filtering(): List<GenericFunction> {
         }
 
         deprecate(Strings) { forBinaryCompatibility }
-        doc(CharSequences) { "Appends all characters matching the given [predicate] to the given [destination]." }
         body(CharSequences, Strings) {
             """
             for (index in 0..length() - 1) {
                 val element = get(index)
                 if (predicate(element)) destination.append(element)
+            }
+            return destination
+            """
+        }
+    }
+
+    templates add f("filterIndexed(predicate: (Int, T) -> Boolean)") {
+        inline(true)
+
+        doc { f -> "Returns a ${f.mapResult} containing only ${f.element}s matching the given [predicate]." }
+        returns("List<T>")
+        body {
+            """
+            return filterIndexedTo(ArrayList<T>(), predicate)
+            """
+        }
+
+        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing only those characters from the original ${f.collection} that match the given [predicate]." }
+        returns(CharSequences, Strings) { "SELF" }
+        body(CharSequences, Strings) { f -> """return filterIndexedTo(StringBuilder(), predicate)${toResult(f)}""" }
+
+        inline(false, Sequences)
+        returns(Sequences) { "Sequence<T>" }
+        body(Sequences) {
+            """
+            // TODO: Rewrite with generalized MapFilterIndexingSequence
+            return TransformingSequence(FilteringSequence(IndexingSequence(this), true, { predicate(it.index, it.value) }), { it.value })
+            """
+        }
+    }
+
+
+    templates add f("filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean)") {
+        inline(true)
+
+        include(CharSequences)
+
+        doc { f -> "Appends all ${f.element}s matching the given [predicate] to the given [destination]." }
+        typeParam("C : TCollection")
+        returns("C")
+
+        body { f ->
+            """
+            forEachIndexed { index, element ->
+                if (predicate(index, element)) destination.${ if (f==CharSequences) "append" else "add" }(element)
             }
             return destination
             """

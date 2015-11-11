@@ -4,4 +4,4 @@ public class Getter {
     }
 }
 
-// REF: (k.Class).prop
+// REF: (in k.Class).prop

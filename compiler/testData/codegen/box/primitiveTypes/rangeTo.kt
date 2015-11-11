@@ -4,8 +4,6 @@ fun box(): String {
     val s: Short = 239
     val i: Int = -1
     val j: Long = -42L
-    val f: Float = 3.14f
-    val d: Double = -2.72
 
     b.rangeTo(b)
     b rangeTo b
@@ -19,12 +17,6 @@ fun box(): String {
     b.rangeTo(j)
     b rangeTo j
     b..j
-    b.rangeTo(f)
-    b rangeTo f
-    b..f
-    b.rangeTo(d)
-    b rangeTo d
-    b..d
 
     c.rangeTo(c)
     c rangeTo c
@@ -42,12 +34,6 @@ fun box(): String {
     s.rangeTo(j)
     s rangeTo j
     s..j
-    s.rangeTo(f)
-    s rangeTo f
-    s..f
-    s.rangeTo(d)
-    s rangeTo d
-    s..d
 
     i.rangeTo(b)
     i rangeTo b
@@ -61,12 +47,6 @@ fun box(): String {
     i.rangeTo(j)
     i rangeTo j
     i..j
-    i.rangeTo(f)
-    i rangeTo f
-    i..f
-    i.rangeTo(d)
-    i rangeTo d
-    i..d
 
     j.rangeTo(b)
     j rangeTo b
@@ -80,57 +60,13 @@ fun box(): String {
     j.rangeTo(j)
     j rangeTo j
     j..j
-    j.rangeTo(f)
-    j rangeTo f
-    j..f
-    j.rangeTo(d)
-    j rangeTo d
-    j..d
-
-    f.rangeTo(b)
-    f rangeTo b
-    f..b
-    f.rangeTo(s)
-    f rangeTo s
-    f..s
-    f.rangeTo(i)
-    f rangeTo i
-    f..i
-    f.rangeTo(j)
-    f rangeTo j
-    f..j
-    f.rangeTo(f)
-    f rangeTo f
-    f..f
-    f.rangeTo(d)
-    f rangeTo d
-    f..d
-
-    d.rangeTo(b)
-    d rangeTo b
-    d..b
-    d.rangeTo(s)
-    d rangeTo s
-    d..s
-    d.rangeTo(i)
-    d rangeTo i
-    d..i
-    d.rangeTo(j)
-    d rangeTo j
-    d..j
-    d.rangeTo(f)
-    d rangeTo f
-    d..f
-    d.rangeTo(d)
-    d rangeTo d
-    d..d
 
     return "OK"
 }
 
 /*
 fun main(args: Array<String>) {
-    val s = "bcsijfd"
+    val s = "bcsij"
     for (i in s) {
         for (j in s) {
             if ((i == 'c') != (j == 'c')) continue

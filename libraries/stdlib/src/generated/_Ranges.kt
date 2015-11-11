@@ -12,9 +12,64 @@ import java.util.*
 
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@[kotlin.jvm.JvmName("downTo") kotlin.jvm.JvmVersion]
+public fun Byte.`-downTo`(to: Byte): ByteProgression {
+    return ByteProgression.fromClosedRange(this, to, -1)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@[kotlin.jvm.JvmName("downTo") kotlin.jvm.JvmVersion]
+public fun Short.`-downTo`(to: Byte): ShortProgression {
+    return ShortProgression.fromClosedRange(this, to.toShort(), -1)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@[kotlin.jvm.JvmName("downTo") kotlin.jvm.JvmVersion]
+public fun Byte.`-downTo`(to: Short): ShortProgression {
+    return ShortProgression.fromClosedRange(this.toShort(), to, -1)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@[kotlin.jvm.JvmName("downTo") kotlin.jvm.JvmVersion]
+public fun Short.`-downTo`(to: Short): ShortProgression {
+    return ShortProgression.fromClosedRange(this, to, -1)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@[kotlin.jvm.JvmName("until") kotlin.jvm.JvmVersion]
+public fun Byte.`-until`(to: Byte): ByteRange {
+    val to_  = (to - 1).toByte()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return ByteRange(this, to_)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@[kotlin.jvm.JvmName("until") kotlin.jvm.JvmVersion]
+public fun Short.`-until`(to: Byte): ShortRange {
+    return ShortRange(this, (to.toShort() - 1).toShort())
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@[kotlin.jvm.JvmName("until") kotlin.jvm.JvmVersion]
+public fun Byte.`-until`(to: Short): ShortRange {
+    val to_  = (to - 1).toShort()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return ShortRange(this.toShort(), to_)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@[kotlin.jvm.JvmName("until") kotlin.jvm.JvmVersion]
+public fun Short.`-until`(to: Short): ShortRange {
+    val to_  = (to - 1).toShort()
+    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
+    return ShortRange(this, to_)
+}
+
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun Range<Int>.contains(item: Byte): Boolean {
     return start <= item && item <= end
@@ -23,6 +78,15 @@ public operator fun Range<Int>.contains(item: Byte): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("intRangeContains")
+public operator fun ClosedRange<Int>.contains(item: Byte): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun Range<Long>.contains(item: Byte): Boolean {
     return start <= item && item <= end
@@ -31,6 +95,15 @@ public operator fun Range<Long>.contains(item: Byte): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("longRangeContains")
+public operator fun ClosedRange<Long>.contains(item: Byte): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Byte): Boolean {
     return start <= item && item <= end
@@ -39,9 +112,16 @@ public operator fun Range<Short>.contains(item: Byte): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("shortRangeContains")
+public operator fun ClosedRange<Short>.contains(item: Byte): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("doubleRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Double>.contains(item: Byte): Boolean {
     return start <= item && item <= end
 }
@@ -49,9 +129,16 @@ public operator fun Range<Double>.contains(item: Byte): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("doubleRangeContains")
+public operator fun ClosedRange<Double>.contains(item: Byte): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("floatRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Float>.contains(item: Byte): Boolean {
     return start <= item && item <= end
 }
@@ -59,6 +146,15 @@ public operator fun Range<Float>.contains(item: Byte): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("floatRangeContains")
+public operator fun ClosedRange<Float>.contains(item: Byte): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun Range<Int>.contains(item: Double): Boolean {
     return start <= item && item <= end
@@ -67,6 +163,15 @@ public operator fun Range<Int>.contains(item: Double): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("intRangeContains")
+public operator fun ClosedRange<Int>.contains(item: Double): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun Range<Long>.contains(item: Double): Boolean {
     return start <= item && item <= end
@@ -75,6 +180,15 @@ public operator fun Range<Long>.contains(item: Double): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("longRangeContains")
+public operator fun ClosedRange<Long>.contains(item: Double): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Double): Boolean {
     return start <= item && item <= end
@@ -83,6 +197,15 @@ public operator fun Range<Byte>.contains(item: Double): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("byteRangeContains")
+public operator fun ClosedRange<Byte>.contains(item: Double): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Double): Boolean {
     return start <= item && item <= end
@@ -91,9 +214,16 @@ public operator fun Range<Short>.contains(item: Double): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("shortRangeContains")
+public operator fun ClosedRange<Short>.contains(item: Double): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("floatRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Float>.contains(item: Double): Boolean {
     return start <= item && item <= end
 }
@@ -101,6 +231,15 @@ public operator fun Range<Float>.contains(item: Double): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("floatRangeContains")
+public operator fun ClosedRange<Float>.contains(item: Double): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun Range<Int>.contains(item: Float): Boolean {
     return start <= item && item <= end
@@ -109,6 +248,15 @@ public operator fun Range<Int>.contains(item: Float): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("intRangeContains")
+public operator fun ClosedRange<Int>.contains(item: Float): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun Range<Long>.contains(item: Float): Boolean {
     return start <= item && item <= end
@@ -117,6 +265,15 @@ public operator fun Range<Long>.contains(item: Float): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("longRangeContains")
+public operator fun ClosedRange<Long>.contains(item: Float): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Float): Boolean {
     return start <= item && item <= end
@@ -125,6 +282,15 @@ public operator fun Range<Byte>.contains(item: Float): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("byteRangeContains")
+public operator fun ClosedRange<Byte>.contains(item: Float): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Float): Boolean {
     return start <= item && item <= end
@@ -133,9 +299,16 @@ public operator fun Range<Short>.contains(item: Float): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("shortRangeContains")
+public operator fun ClosedRange<Short>.contains(item: Float): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("doubleRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Double>.contains(item: Float): Boolean {
     return start <= item && item <= end
 }
@@ -143,6 +316,15 @@ public operator fun Range<Double>.contains(item: Float): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("doubleRangeContains")
+public operator fun ClosedRange<Double>.contains(item: Float): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun Range<Long>.contains(item: Int): Boolean {
     return start <= item && item <= end
@@ -151,6 +333,15 @@ public operator fun Range<Long>.contains(item: Int): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("longRangeContains")
+public operator fun ClosedRange<Long>.contains(item: Int): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Int): Boolean {
     return start <= item && item <= end
@@ -159,6 +350,15 @@ public operator fun Range<Byte>.contains(item: Int): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("byteRangeContains")
+public operator fun ClosedRange<Byte>.contains(item: Int): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Int): Boolean {
     return start <= item && item <= end
@@ -167,9 +367,16 @@ public operator fun Range<Short>.contains(item: Int): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("shortRangeContains")
+public operator fun ClosedRange<Short>.contains(item: Int): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("doubleRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Double>.contains(item: Int): Boolean {
     return start <= item && item <= end
 }
@@ -177,9 +384,16 @@ public operator fun Range<Double>.contains(item: Int): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("doubleRangeContains")
+public operator fun ClosedRange<Double>.contains(item: Int): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("floatRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Float>.contains(item: Int): Boolean {
     return start <= item && item <= end
 }
@@ -187,6 +401,15 @@ public operator fun Range<Float>.contains(item: Int): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("floatRangeContains")
+public operator fun ClosedRange<Float>.contains(item: Int): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun Range<Int>.contains(item: Long): Boolean {
     return start <= item && item <= end
@@ -195,6 +418,15 @@ public operator fun Range<Int>.contains(item: Long): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("intRangeContains")
+public operator fun ClosedRange<Int>.contains(item: Long): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Long): Boolean {
     return start <= item && item <= end
@@ -203,6 +435,15 @@ public operator fun Range<Byte>.contains(item: Long): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("byteRangeContains")
+public operator fun ClosedRange<Byte>.contains(item: Long): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("shortRangeContains")
 public operator fun Range<Short>.contains(item: Long): Boolean {
     return start <= item && item <= end
@@ -211,9 +452,16 @@ public operator fun Range<Short>.contains(item: Long): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("shortRangeContains")
+public operator fun ClosedRange<Short>.contains(item: Long): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("doubleRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Double>.contains(item: Long): Boolean {
     return start <= item && item <= end
 }
@@ -221,9 +469,16 @@ public operator fun Range<Double>.contains(item: Long): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("doubleRangeContains")
+public operator fun ClosedRange<Double>.contains(item: Long): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("floatRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Float>.contains(item: Long): Boolean {
     return start <= item && item <= end
 }
@@ -231,6 +486,15 @@ public operator fun Range<Float>.contains(item: Long): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("floatRangeContains")
+public operator fun ClosedRange<Float>.contains(item: Long): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("intRangeContains")
 public operator fun Range<Int>.contains(item: Short): Boolean {
     return start <= item && item <= end
@@ -239,6 +503,15 @@ public operator fun Range<Int>.contains(item: Short): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("intRangeContains")
+public operator fun ClosedRange<Int>.contains(item: Short): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("longRangeContains")
 public operator fun Range<Long>.contains(item: Short): Boolean {
     return start <= item && item <= end
@@ -247,6 +520,15 @@ public operator fun Range<Long>.contains(item: Short): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
+@kotlin.jvm.JvmName("longRangeContains")
+public operator fun ClosedRange<Long>.contains(item: Short): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("byteRangeContains")
 public operator fun Range<Byte>.contains(item: Short): Boolean {
     return start <= item && item <= end
@@ -255,9 +537,16 @@ public operator fun Range<Byte>.contains(item: Short): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("byteRangeContains")
+public operator fun ClosedRange<Byte>.contains(item: Short): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("doubleRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Double>.contains(item: Short): Boolean {
     return start <= item && item <= end
 }
@@ -265,11 +554,26 @@ public operator fun Range<Double>.contains(item: Short): Boolean {
 /**
  * Checks if the specified [item] belongs to this range.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@kotlin.jvm.JvmName("doubleRangeContains")
+public operator fun ClosedRange<Double>.contains(item: Short): Boolean {
+    return start <= item && item <= endInclusive
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
 @kotlin.jvm.JvmName("floatRangeContains")
-@Suppress("DEPRECATION_ERROR")
 public operator fun Range<Float>.contains(item: Short): Boolean {
     return start <= item && item <= end
+}
+
+/**
+ * Checks if the specified [item] belongs to this range.
+ */
+@kotlin.jvm.JvmName("floatRangeContains")
+public operator fun ClosedRange<Float>.contains(item: Short): Boolean {
+    return start <= item && item <= endInclusive
 }
 
 /**
@@ -277,7 +581,7 @@ public operator fun Range<Float>.contains(item: Short): Boolean {
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Byte): IntProgression {
-    return IntProgression(this, to.toInt(), -1)
+    return IntProgression.fromClosedRange(this, to.toInt(), -1)
 }
 
 /**
@@ -285,43 +589,23 @@ public infix fun Int.downTo(to: Byte): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Byte): LongProgression {
-    return LongProgression(this, to.toLong(), -1L)
+    return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Byte): ByteProgression {
-    return ByteProgression(this, to, -1)
+public infix fun Byte.downTo(to: Byte): IntProgression {
+    return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Byte): ShortProgression {
-    return ShortProgression(this, to.toShort(), -1)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Double.downTo(to: Byte): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Float.downTo(to: Byte): FloatProgression {
-    return FloatProgression(this, to.toFloat(), -1.0F)
+public infix fun Short.downTo(to: Byte): IntProgression {
+    return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
@@ -329,127 +613,7 @@ public infix fun Float.downTo(to: Byte): FloatProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Char.downTo(to: Char): CharProgression {
-    return CharProgression(this, to, -1)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Int.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Long.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Byte.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Short.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Double.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this, to, -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Float.downTo(to: Double): DoubleProgression {
-    return DoubleProgression(this.toDouble(), to, -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Int.downTo(to: Float): FloatProgression {
-    return FloatProgression(this.toFloat(), to, -1.0F)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Long.downTo(to: Float): FloatProgression {
-    return FloatProgression(this.toFloat(), to, -1.0F)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Byte.downTo(to: Float): FloatProgression {
-    return FloatProgression(this.toFloat(), to, -1.0F)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Short.downTo(to: Float): FloatProgression {
-    return FloatProgression(this.toFloat(), to, -1.0F)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Double.downTo(to: Float): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Float.downTo(to: Float): FloatProgression {
-    return FloatProgression(this, to, -1.0F)
+    return CharProgression.fromClosedRange(this, to, -1)
 }
 
 /**
@@ -457,7 +621,7 @@ public infix fun Float.downTo(to: Float): FloatProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Int): IntProgression {
-    return IntProgression(this, to, -1)
+    return IntProgression.fromClosedRange(this, to, -1)
 }
 
 /**
@@ -465,7 +629,7 @@ public infix fun Int.downTo(to: Int): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Int): LongProgression {
-    return LongProgression(this, to.toLong(), -1L)
+    return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
@@ -473,7 +637,7 @@ public infix fun Long.downTo(to: Int): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Int): IntProgression {
-    return IntProgression(this.toInt(), to, -1)
+    return IntProgression.fromClosedRange(this.toInt(), to, -1)
 }
 
 /**
@@ -481,27 +645,7 @@ public infix fun Byte.downTo(to: Int): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Int): IntProgression {
-    return IntProgression(this.toInt(), to, -1)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Double.downTo(to: Int): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Float.downTo(to: Int): FloatProgression {
-    return FloatProgression(this, to.toFloat(), -1.0F)
+    return IntProgression.fromClosedRange(this.toInt(), to, -1)
 }
 
 /**
@@ -509,7 +653,7 @@ public infix fun Float.downTo(to: Int): FloatProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Long): LongProgression {
-    return LongProgression(this.toLong(), to, -1L)
+    return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
@@ -517,7 +661,7 @@ public infix fun Int.downTo(to: Long): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Long): LongProgression {
-    return LongProgression(this, to, -1L)
+    return LongProgression.fromClosedRange(this, to, -1L)
 }
 
 /**
@@ -525,7 +669,7 @@ public infix fun Long.downTo(to: Long): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Long): LongProgression {
-    return LongProgression(this.toLong(), to, -1L)
+    return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
@@ -533,27 +677,7 @@ public infix fun Byte.downTo(to: Long): LongProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Long): LongProgression {
-    return LongProgression(this.toLong(), to, -1L)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Double.downTo(to: Long): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Float.downTo(to: Long): FloatProgression {
-    return FloatProgression(this, to.toFloat(), -1.0F)
+    return LongProgression.fromClosedRange(this.toLong(), to, -1L)
 }
 
 /**
@@ -561,7 +685,7 @@ public infix fun Float.downTo(to: Long): FloatProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Short): IntProgression {
-    return IntProgression(this, to.toInt(), -1)
+    return IntProgression.fromClosedRange(this, to.toInt(), -1)
 }
 
 /**
@@ -569,157 +693,104 @@ public infix fun Int.downTo(to: Short): IntProgression {
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Short): LongProgression {
-    return LongProgression(this, to.toLong(), -1L)
+    return LongProgression.fromClosedRange(this, to.toLong(), -1L)
 }
 
 /**
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Byte.downTo(to: Short): ShortProgression {
-    return ShortProgression(this.toShort(), to, -1)
+public infix fun Byte.downTo(to: Short): IntProgression {
+    return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
  * Returns a progression from this value down to the specified [to] value with the increment -1.
  * The [to] value has to be less than this value.
  */
-public infix fun Short.downTo(to: Short): ShortProgression {
-    return ShortProgression(this, to, -1)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Double.downTo(to: Short): DoubleProgression {
-    return DoubleProgression(this, to.toDouble(), -1.0)
-}
-
-/**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
- * The [to] value has to be less than this value.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun Float.downTo(to: Short): FloatProgression {
-    return FloatProgression(this, to.toFloat(), -1.0F)
-}
-
-/**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
-public fun ByteProgression.reversed(): ByteProgression {
-    return ByteProgression(end, start, -increment)
+public infix fun Short.downTo(to: Short): IntProgression {
+    return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
 }
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun CharProgression.reversed(): CharProgression {
-    return CharProgression(end, start, -increment)
+    return CharProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun IntProgression.reversed(): IntProgression {
-    return IntProgression(end, start, -increment)
+    return IntProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun LongProgression.reversed(): LongProgression {
-    return LongProgression(end, start, -increment)
-}
-
-/**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
-public fun ShortProgression.reversed(): ShortProgression {
-    return ShortProgression(end, start, -increment)
+    return LongProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
  * Returns a progression that goes over this range in reverse direction.
  */
-public fun ByteRange.reversed(): ByteProgression {
-    return ByteProgression(end, start, -1)
-}
-
-/**
- * Returns a progression that goes over this range in reverse direction.
- */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun CharRange.reversed(): CharProgression {
-    return CharProgression(end, start, -1)
+    return CharProgression.fromClosedRange(last, first, -1)
 }
 
 /**
  * Returns a progression that goes over this range in reverse direction.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun IntRange.reversed(): IntProgression {
-    return IntProgression(end, start, -1)
+    return IntProgression.fromClosedRange(last, first, -1)
 }
 
 /**
  * Returns a progression that goes over this range in reverse direction.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun LongRange.reversed(): LongProgression {
-    return LongProgression(end, start, -1L)
+    return LongProgression.fromClosedRange(last, first, -1L)
+}
+
+/**
+ * Returns a progression that goes over the same range in the opposite direction with the same step.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public fun ByteProgression.reversed(): ByteProgression {
+    return ByteProgression.fromClosedRange(last, first, -increment)
+}
+
+/**
+ * Returns a progression that goes over the same range in the opposite direction with the same step.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public fun ShortProgression.reversed(): ShortProgression {
+    return ShortProgression.fromClosedRange(last, first, -increment)
 }
 
 /**
  * Returns a progression that goes over this range in reverse direction.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Suppress("DEPRECATION_ERROR")
+public fun ByteRange.reversed(): ByteProgression {
+    return ByteProgression.fromClosedRange(last, first, -1)
+}
+
+/**
+ * Returns a progression that goes over this range in reverse direction.
+ */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Suppress("DEPRECATION_ERROR")
 public fun ShortRange.reversed(): ShortProgression {
-    return ShortProgression(end, start, -1)
-}
-
-/**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public fun DoubleProgression.reversed(): DoubleProgression {
-    return DoubleProgression(end, start, -increment)
-}
-
-/**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public fun FloatProgression.reversed(): FloatProgression {
-    return FloatProgression(end, start, -increment)
-}
-
-/**
- * Returns a progression that goes over this range in reverse direction.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public fun DoubleRange.reversed(): DoubleProgression {
-    return DoubleProgression(end, start, -1.0)
-}
-
-/**
- * Returns a progression that goes over this range in reverse direction.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public fun FloatRange.reversed(): FloatProgression {
-    return FloatProgression(end, start, -1.0f)
-}
-
-/**
- * Returns a progression that goes over the same range with the given step.
- */
-public infix fun ByteProgression.step(step: Int): ByteProgression {
-    checkStepIsPositive(step > 0, step)
-    return ByteProgression(start, end, if (increment > 0) step else -step)
+    return ShortProgression.fromClosedRange(last, first, -1)
 }
 
 /**
@@ -727,7 +798,7 @@ public infix fun ByteProgression.step(step: Int): ByteProgression {
  */
 public infix fun CharProgression.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
-    return CharProgression(start, end, if (increment > 0) step else -step)
+    return CharProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -735,7 +806,7 @@ public infix fun CharProgression.step(step: Int): CharProgression {
  */
 public infix fun IntProgression.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
-    return IntProgression(start, end, if (increment > 0) step else -step)
+    return IntProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
@@ -743,97 +814,74 @@ public infix fun IntProgression.step(step: Int): IntProgression {
  */
 public infix fun LongProgression.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
-    return LongProgression(start, end, if (increment > 0) step else -step)
-}
-
-/**
- * Returns a progression that goes over the same range with the given step.
- */
-public infix fun ShortProgression.step(step: Int): ShortProgression {
-    checkStepIsPositive(step > 0, step)
-    return ShortProgression(start, end, if (increment > 0) step else -step)
+    return LongProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
  * Returns a progression that goes over this range with given step.
  */
-public infix fun ByteRange.step(step: Int): ByteProgression {
-    checkStepIsPositive(step > 0, step)
-    return ByteProgression(start, end, step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public infix fun CharRange.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
-    return CharProgression(start, end, step)
+    return CharProgression.fromClosedRange(first, last, step)
 }
 
 /**
  * Returns a progression that goes over this range with given step.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public infix fun IntRange.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
-    return IntProgression(start, end, step)
+    return IntProgression.fromClosedRange(first, last, step)
 }
 
 /**
  * Returns a progression that goes over this range with given step.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public infix fun LongRange.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
-    return LongProgression(start, end, step)
+    return LongProgression.fromClosedRange(first, last, step)
+}
+
+/**
+ * Returns a progression that goes over the same range with the given step.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public infix fun ByteProgression.step(step: Int): ByteProgression {
+    checkStepIsPositive(step > 0, step)
+    return ByteProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
+}
+
+/**
+ * Returns a progression that goes over the same range with the given step.
+ */
+@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Suppress("DEPRECATION_ERROR")
+public infix fun ShortProgression.step(step: Int): ShortProgression {
+    checkStepIsPositive(step > 0, step)
+    return ShortProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
 }
 
 /**
  * Returns a progression that goes over this range with given step.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Suppress("DEPRECATION_ERROR")
+public infix fun ByteRange.step(step: Int): ByteProgression {
+    checkStepIsPositive(step > 0, step)
+    return ByteProgression.fromClosedRange(first, last, step)
+}
+
+/**
+ * Returns a progression that goes over this range with given step.
+ */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Suppress("DEPRECATION_ERROR")
 public infix fun ShortRange.step(step: Int): ShortProgression {
     checkStepIsPositive(step > 0, step)
-    return ShortProgression(start, end, step)
-}
-
-/**
- * Returns a progression that goes over the same range with the given step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun DoubleProgression.step(step: Double): DoubleProgression {
-    checkStepIsPositive(step > 0, step)
-    return DoubleProgression(start, end, if (increment > 0) step else -step)
-}
-
-/**
- * Returns a progression that goes over the same range with the given step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun FloatProgression.step(step: Float): FloatProgression {
-    checkStepIsPositive(step > 0, step)
-    return FloatProgression(start, end, if (increment > 0) step else -step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun DoubleRange.step(step: Double): DoubleProgression {
-    if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN.")
-    checkStepIsPositive(step > 0, step)
-    return DoubleProgression(start, end, step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun FloatRange.step(step: Float): FloatProgression {
-    if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN.")
-    checkStepIsPositive(step > 0, step)
-    return FloatProgression(start, end, step)
+    return ShortProgression.fromClosedRange(first, last, step)
 }
 
 /**
@@ -852,19 +900,16 @@ public infix fun Long.until(to: Byte): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
- * The [to] value must be greater than [Byte.MIN_VALUE].
  */
-public infix fun Byte.until(to: Byte): ByteRange {
-    val to_  = (to - 1).toByte()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this .. to_
+public infix fun Byte.until(to: Byte): IntRange {
+    return this.toInt() .. (to.toInt() - 1).toInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  */
-public infix fun Short.until(to: Byte): ShortRange {
-    return this .. (to.toShort() - 1).toShort()
+public infix fun Short.until(to: Byte): IntRange {
+    return this.toInt() .. (to.toInt() - 1).toInt()
 }
 
 /**
@@ -970,22 +1015,16 @@ public infix fun Long.until(to: Short): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
- * The [to] value must be greater than [Short.MIN_VALUE].
  */
-public infix fun Byte.until(to: Short): ShortRange {
-    val to_  = (to - 1).toShort()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this.toShort() .. to_
+public infix fun Byte.until(to: Short): IntRange {
+    return this.toInt() .. (to.toInt() - 1).toInt()
 }
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
- * The [to] value must be greater than [Short.MIN_VALUE].
  */
-public infix fun Short.until(to: Short): ShortRange {
-    val to_  = (to - 1).toShort()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return this .. to_
+public infix fun Short.until(to: Short): IntRange {
+    return this.toInt() .. (to.toInt() - 1).toInt()
 }
 
 /**
@@ -1223,43 +1262,34 @@ public fun Short.coerceIn(minimumValue: Short?, maximumValue: Short?): Short {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Byte.coerceIn(range: Range<Byte>): Byte {
+public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
-    return if (this < range.start) range.start else if (this > range.end) range.end else this
+    return if (this < range.start) range.start else if (this > range.endInclusive) range.endInclusive else this
 }
 
 /**
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Int.coerceIn(range: Range<Int>): Int {
+public fun Int.coerceIn(range: ClosedRange<Int>): Int {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
-    return if (this < range.start) range.start else if (this > range.end) range.end else this
+    return if (this < range.start) range.start else if (this > range.endInclusive) range.endInclusive else this
 }
 
 /**
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Long.coerceIn(range: Range<Long>): Long {
+public fun Long.coerceIn(range: ClosedRange<Long>): Long {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
-    return if (this < range.start) range.start else if (this > range.end) range.end else this
+    return if (this < range.start) range.start else if (this > range.endInclusive) range.endInclusive else this
 }
 
 /**
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-public fun Short.coerceIn(range: Range<Short>): Short {
-    if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
-    return if (this < range.start) range.start else if (this > range.end) range.end else this
-}
-
-/**
- * Ensures that this value lies in the specified [range].
- * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T: Comparable<T>> T.coerceIn(range: Range<T>): T {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this
@@ -1269,7 +1299,47 @@ public fun <T: Comparable<T>> T.coerceIn(range: Range<T>): T {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
+public fun Byte.coerceIn(range: Range<Byte>): Byte {
+    if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
+    return if (this < range.start) range.start else if (this > range.end) range.end else this
+}
+
+/**
+ * Ensures that this value lies in the specified [range].
+ * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
+public fun Int.coerceIn(range: Range<Int>): Int {
+    if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
+    return if (this < range.start) range.start else if (this > range.end) range.end else this
+}
+
+/**
+ * Ensures that this value lies in the specified [range].
+ * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
+public fun Long.coerceIn(range: Range<Long>): Long {
+    if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
+    return if (this < range.start) range.start else if (this > range.end) range.end else this
+}
+
+/**
+ * Ensures that this value lies in the specified [range].
+ * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
+ */
+@Deprecated("Range<T> is deprecated. Use ClosedRange<T> instead.")
+public fun Short.coerceIn(range: Range<Short>): Short {
+    if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
+    return if (this < range.start) range.start else if (this > range.end) range.end else this
+}
+
+/**
+ * Ensures that this value lies in the specified [range].
+ * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
+ */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun Double.coerceIn(range: Range<Double>): Double {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this
@@ -1279,7 +1349,7 @@ public fun Double.coerceIn(range: Range<Double>): Double {
  * Ensures that this value lies in the specified [range].
  * @return this value if it's in the [range], or range.start if this value is less than range.start, or range.end if this value is greater than range.end.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun Float.coerceIn(range: Range<Float>): Float {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return if (this < range.start) range.start else if (this > range.end) range.end else this

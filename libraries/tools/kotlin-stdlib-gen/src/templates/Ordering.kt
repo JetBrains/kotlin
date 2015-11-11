@@ -99,7 +99,21 @@ fun ordering(): List<GenericFunction> {
         typeParam("T : Comparable<T>")
         body {
             """
-            return toArrayList().apply { sort() }
+                if (this is Collection) {
+                    if (size <= 1) return this.toArrayList()
+                    return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
+                }
+                return toArrayList().apply { sort() }
+            """
+        }
+        body(ArraysOfPrimitives) {
+            """
+            return toTypedArray().apply { sort() }.asList()
+            """
+        }
+        body(ArraysOfObjects) {
+            """
+            return sortedArray().asList()
             """
         }
 
@@ -214,7 +228,21 @@ fun ordering(): List<GenericFunction> {
         }
         body {
             """
+             if (this is Collection) {
+                if (size <= 1) return this.toArrayList()
+                return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
+            }
             return toArrayList().apply { sortWith(comparator) }
+            """
+        }
+        body(ArraysOfPrimitives) {
+            """
+            return toTypedArray().apply { sortWith(comparator) }.asList()
+            """
+        }
+        body(ArraysOfObjects) {
+            """
+            return sortedArrayWith(comparator).asList()
             """
         }
 

@@ -7,7 +7,7 @@ class Foo {
 }
 
 // MULTIRESOLVE
-// REF: (in Foo).getValue(Any?,Any?)
-// REF: (in Foo).setValue(Any?,Any?,Any?)
+// REF: (in Foo).getValue(Any?, Any?)
+// REF: (in Foo).setValue(Any?, Any?, Any?)
 // REF: (in Foo).propertyDelegated(Any?)
 

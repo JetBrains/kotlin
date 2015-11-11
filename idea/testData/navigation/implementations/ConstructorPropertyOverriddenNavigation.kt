@@ -8,5 +8,5 @@ class OtherTestInBody(some: Int, other: String): Test(some) {
     override var some: Int = some
 }
 
-// REF: (testing.OtherTestInConstructor).some
-// REF: (testing.OtherTestInBody).some
+// REF: (in testing.OtherTestInConstructor).some
+// REF: (in testing.OtherTestInBody).some

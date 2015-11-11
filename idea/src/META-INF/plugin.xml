@@ -464,16 +464,18 @@
     <runLineMarkerContributor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor"/>
 
     <iconProvider implementation="org.jetbrains.kotlin.idea.KotlinIconProvider"/>
+
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtFunctionPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtFunction"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtClassPresenter"
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtClass"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtObjectPresenter"
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtObjectDeclaration"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtPropertyPresenter"
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtProperty"/>
-    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtParameterPresenter"
+    <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtParameter"/>
+
     <gotoTargetRendererProvider id="JetGotoTargetRenderProvider" implementation="org.jetbrains.kotlin.idea.KotlinGotoTargetRenderProvider"
                                 order="first"/>
     <elementDescriptionProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinElementDescriptionProvider" order="first"/>

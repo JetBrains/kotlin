@@ -5,37 +5,28 @@ package kotlin
 /**
  * Represents a range of [Comparable] values.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR)
-public class ComparableRange<T: Comparable<T>> (
+private class ComparableRange<T: Comparable<T>> (
         override val start: T,
-        override val end: T
-): Range<T> {
-    override fun contains(item: T): Boolean {
-        return start <= item && item <= end
-    }
+        override val endInclusive: T
+): ClosedRange<T> {
 
-    @Suppress("DEPRECATION_ERROR")
     override fun equals(other: Any?): Boolean {
         return other is ComparableRange<*> && (isEmpty() && other.isEmpty() ||
-                start == other.start && end == other.end)
+                start == other.start && endInclusive == other.endInclusive)
     }
 
     override fun hashCode(): Int {
-        return if (isEmpty()) -1 else 31 * start.hashCode() + end.hashCode()
+        return if (isEmpty()) -1 else 31 * start.hashCode() + endInclusive.hashCode()
     }
 
-    override fun toString(): String = "$start..$end"
+    override fun toString(): String = "$start..$endInclusive"
 }
 
 /**
  * Creates a range from this [Comparable] value to the specified [that] value. This value
  * needs to be smaller than [that] value, otherwise the returned range will be empty.
  */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.", level = DeprecationLevel.ERROR)
-@Suppress("DEPRECATION_ERROR")
-public operator fun <T: Comparable<T>> T.rangeTo(that: T): ComparableRange<T> {
-    return ComparableRange(this, that)
-}
+public operator fun <T: Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = ComparableRange(this, that)
 
 
 internal fun checkStepIsPositive(isPositive: Boolean, step: Number) {

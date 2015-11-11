@@ -13,5 +13,5 @@ class SubSubBase: SubBase() {
 }
 
 
-// REF: (testing.SubBase).test
-// REF: (testing.SubSubBase).test
+// REF: (in testing.SubBase).test
+// REF: (in testing.SubSubBase).test

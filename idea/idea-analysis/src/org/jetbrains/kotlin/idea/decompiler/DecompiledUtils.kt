@@ -40,7 +40,7 @@ public fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
     }
 
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.classHeader
-    return header != null && !header.isInterfaceDefaultImpls
+    return header != null
 }
 
 public fun isKotlinJsMetaFile(file: VirtualFile): Boolean = file.getFileType() == KotlinJavaScriptMetaFileType

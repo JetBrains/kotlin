@@ -41,16 +41,18 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.flatMapTo(des
 }
 
 /**
- * Returns a list containing the results of applying the given [transform] function to each entry of the original map.
+ * Returns a list containing the results of applying the given [transform] function
+ * to each entry in the original map.
  */
 public inline fun <K, V, R> Map<K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
     return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
- * Appends transformed entrys and their indices in the original map using the given [transform] function
- * to the given [destination].
+ * Applies the given [transform] function to each entry and its index in the original map
+ * and appends the results to the given [destination].
  */
+@Deprecated("Use entries.mapIndexedTo instead.", ReplaceWith("this.entries.mapIndexedTo(destination, transform)"))
 public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapIndexedTo(destination: C, transform: (Int, Map.Entry<K, V>) -> R): C {
     var index = 0
     for (item in this)
@@ -59,8 +61,25 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapIndexedTo(
 }
 
 /**
- * Appends transformed entrys of the original map using the given [transform] function
- * to the given [destination].
+ * Returns a list containing only the non-null results of applying the given [transform] function
+ * to each entry in the original map.
+ */
+public inline fun <K, V, R : Any> Map<K, V>.mapNotNull(transform: (Map.Entry<K, V>) -> R?): List<R> {
+    return mapNotNullTo(ArrayList<R>(), transform)
+}
+
+/**
+ * Applies the given [transform] function to each entry in the original map
+ * and appends only the non-null results to the given [destination].
+ */
+public inline fun <K, V, R : Any, C : MutableCollection<in R>> Map<K, V>.mapNotNullTo(destination: C, transform: (Map.Entry<K, V>) -> R?): C {
+    forEach { element -> transform(element)?.let { destination.add(it) } }
+    return destination
+}
+
+/**
+ * Applies the given [transform] function to each entry of the original map
+ * and appends the results to the given [destination].
  */
 public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     for (item in this)

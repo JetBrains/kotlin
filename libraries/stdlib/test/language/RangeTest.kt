@@ -22,6 +22,9 @@ public class RangeTest {
         
         assertFalse(range.isEmpty())
 
+        assertTrue(9 in (range as ClosedRange<Int>))
+        assertFalse((range as ClosedRange<Int>).isEmpty())
+
         assertTrue(1.toShort() in range)
         assertTrue(1.toByte() in range)
         assertTrue(1.toLong() in range)
@@ -67,7 +70,8 @@ public class RangeTest {
         assertTrue(9.toByte() in openRange)
         assertFalse(10.toByte() in openRange)
 
-        assertTrue(assertFails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
+        // byte arguments now construct IntRange so no overflow here
+        // assertTrue(assertFails { 0.toByte() until Byte.MIN_VALUE } is IllegalArgumentException)
 
     }
 
@@ -100,7 +104,8 @@ public class RangeTest {
         assertTrue(9.toShort() in openRange)
         assertFalse(10.toShort() in openRange)
 
-        assertTrue(assertFails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
+        // short arguments now construct IntRange so no overflow here
+        // assertTrue(assertFails { 0.toShort() until Short.MIN_VALUE } is IllegalArgumentException)
     }
 
     @test fun longRange() {
@@ -119,6 +124,9 @@ public class RangeTest {
         assertFalse(10000000L in range)
         
         assertFalse(range.isEmpty())
+
+        assertTrue(9 in (range as ClosedRange<Long>))
+        assertFalse((range as ClosedRange<Long>).isEmpty())
 
         assertTrue(1.toByte() in range)
         assertTrue(1.toShort() in range)
@@ -152,6 +160,9 @@ public class RangeTest {
         assertFalse('\u1000' in range)
         
         assertFalse(range.isEmpty())
+
+        assertTrue('v' in (range as ClosedRange<Char>))
+        assertFalse((range as ClosedRange<Char>).isEmpty())
 
         val openRange = 'A' until 'Z'
         assertTrue('Y' in openRange)
@@ -237,6 +248,7 @@ public class RangeTest {
         assertTrue(IntRange.EMPTY == IntRange.EMPTY)
         assertEquals(IntRange.EMPTY, IntRange.EMPTY)
         assertEquals(0L..42L, 0L..42L)
+        assertEquals(0L..4200000042000000L, 0L..4200000042000000L)
         assertEquals(3 downTo 0, 3 downTo 0)
 
         assertEquals(2..1, 1..0)
@@ -249,12 +261,9 @@ public class RangeTest {
 
         assertTrue(1 downTo 2 == 2 downTo 3)
         assertTrue(-1L downTo 0L == -2L downTo -1L)
-        assertEquals(-1f downTo 1f, -2f downTo 2f)
-        assertEquals(-4.0 downTo -3.0, -2.0 downTo -1.0)
         assertEquals('j'..'a' step 4, 'u'..'q' step 2)
 
         assertFalse(0..1 == IntRange.EMPTY)
-        assertFalse(1f downTo 2f == 2f downTo 1f)
 
         assertEquals("range".."progression", "hashcode".."equals")
         assertFalse(("aa".."bb") == ("aaa".."bbb"))
@@ -274,7 +283,6 @@ public class RangeTest {
 
         assertEquals((1 downTo 2).hashCode(), (2 downTo 3).hashCode())
         assertEquals((1L downTo 2L).hashCode(), (2L downTo 3L).hashCode())
-        assertEquals((1.0 downTo 2.0).hashCode(), (2.0 downTo 3.0).hashCode())
         assertEquals(('a' downTo 'b').hashCode(), ('c' downTo 'd').hashCode())
 
         assertEquals(("range".."progression").hashCode(), ("hashcode".."equals").hashCode())

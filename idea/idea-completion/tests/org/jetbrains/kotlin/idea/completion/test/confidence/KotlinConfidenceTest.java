@@ -26,6 +26,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.completion.test.CompletionTestUtilKt;
+import org.jetbrains.kotlin.idea.test.RunnableWithException;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
@@ -58,6 +59,16 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         TestUtilsKt.invalidateLibraryCache(getProject());
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        TestUtilsKt.unInvalidateBuiltinsAndStdLib(getProject(), new RunnableWithException() {
+            @Override
+            public void run() throws Exception {
+                KotlinConfidenceTest.super.tearDown();
+            }
+        });
     }
 
     protected void doTest() {

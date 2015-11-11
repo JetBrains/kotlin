@@ -489,7 +489,7 @@ public inline fun ShortArray.plus(element: Short): ShortArray {
 }
 
 /**
- * Sorts the array inplace.
+ * Sorts the array in-place.
  */
 @library("primitiveArraySort")
 public fun ByteArray.sort(): Unit {
@@ -497,7 +497,7 @@ public fun ByteArray.sort(): Unit {
 }
 
 /**
- * Sorts the array inplace.
+ * Sorts the array in-place.
  */
 @library("primitiveArraySort")
 public fun CharArray.sort(): Unit {
@@ -505,7 +505,7 @@ public fun CharArray.sort(): Unit {
 }
 
 /**
- * Sorts the array inplace.
+ * Sorts the array in-place.
  */
 @library("primitiveArraySort")
 public fun DoubleArray.sort(): Unit {
@@ -513,7 +513,7 @@ public fun DoubleArray.sort(): Unit {
 }
 
 /**
- * Sorts the array inplace.
+ * Sorts the array in-place.
  */
 @library("primitiveArraySort")
 public fun FloatArray.sort(): Unit {
@@ -521,7 +521,7 @@ public fun FloatArray.sort(): Unit {
 }
 
 /**
- * Sorts the array inplace.
+ * Sorts the array in-place.
  */
 @library("primitiveArraySort")
 public fun IntArray.sort(): Unit {
@@ -529,7 +529,7 @@ public fun IntArray.sort(): Unit {
 }
 
 /**
- * Sorts the array inplace.
+ * Sorts the array in-place.
  */
 @library("primitiveArraySort")
 public fun ShortArray.sort(): Unit {
@@ -537,21 +537,23 @@ public fun ShortArray.sort(): Unit {
 }
 
 /**
- * Sorts the array inplace.
+ * Sorts the array in-place.
  */
 public fun <T: Comparable<T>> Array<out T>.sort(): Unit {
-    sort { a: T, b: T -> a.compareTo(b) }
+    if (size > 1)
+        sort { a: T, b: T -> a.compareTo(b) }
 }
 
 /**
- * Sorts the array inplace.
+ * Sorts the array in-place.
  */
 public fun LongArray.sort(): Unit {
-    sort { a: Long, b: Long -> a.compareTo(b) }
+    if (size > 1)
+        sort { a: Long, b: Long -> a.compareTo(b) }
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparison] function.
+ * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @native
 public fun <T> Array<out T>.sort(comparison: (T, T) -> Int): Unit {
@@ -559,7 +561,7 @@ public fun <T> Array<out T>.sort(comparison: (T, T) -> Int): Unit {
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparison] function.
+ * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @native
 public fun ByteArray.sort(comparison: (Byte, Byte) -> Int): Unit {
@@ -567,7 +569,7 @@ public fun ByteArray.sort(comparison: (Byte, Byte) -> Int): Unit {
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparison] function.
+ * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @native
 public fun CharArray.sort(comparison: (Char, Char) -> Int): Unit {
@@ -575,7 +577,7 @@ public fun CharArray.sort(comparison: (Char, Char) -> Int): Unit {
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparison] function.
+ * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @native
 public fun DoubleArray.sort(comparison: (Double, Double) -> Int): Unit {
@@ -583,7 +585,7 @@ public fun DoubleArray.sort(comparison: (Double, Double) -> Int): Unit {
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparison] function.
+ * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @native
 public fun FloatArray.sort(comparison: (Float, Float) -> Int): Unit {
@@ -591,7 +593,7 @@ public fun FloatArray.sort(comparison: (Float, Float) -> Int): Unit {
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparison] function.
+ * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @native
 public fun IntArray.sort(comparison: (Int, Int) -> Int): Unit {
@@ -599,7 +601,7 @@ public fun IntArray.sort(comparison: (Int, Int) -> Int): Unit {
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparison] function.
+ * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @native
 public fun LongArray.sort(comparison: (Long, Long) -> Int): Unit {
@@ -607,7 +609,7 @@ public fun LongArray.sort(comparison: (Long, Long) -> Int): Unit {
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparison] function.
+ * Sorts the array in-place according to the order specified by the given [comparison] function.
  */
 @native
 public fun ShortArray.sort(comparison: (Short, Short) -> Int): Unit {
@@ -615,10 +617,11 @@ public fun ShortArray.sort(comparison: (Short, Short) -> Int): Unit {
 }
 
 /**
- * Sorts the array inplace according to the order specified by the given [comparator] object.
+ * Sorts the array in-place according to the order specified by the given [comparator] object.
  */
 public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    sort { a, b -> comparator.compare(a, b) }
+    if (size > 1)
+        sort { a, b -> comparator.compare(a, b) }
 }
 
 /**

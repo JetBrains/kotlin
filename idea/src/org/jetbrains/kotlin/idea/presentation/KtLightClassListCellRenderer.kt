@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.presentation;
+package org.jetbrains.kotlin.idea.presentation
 
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.ItemPresentationProvider;
-import org.jetbrains.kotlin.psi.KtClass;
+import com.intellij.ide.util.PsiElementListCellRenderer
+import com.intellij.psi.presentation.java.ClassPresentationUtil
+import org.jetbrains.kotlin.asJava.KtLightClass
 
-public class KtClassPresenter implements ItemPresentationProvider<KtClass> {
-    @Override
-    public ItemPresentation getPresentation(KtClass item) {
-        return new KotlinDefaultNamedDeclarationPresentation(item);
-    }
+class KtLightClassListCellRenderer : PsiElementListCellRenderer<KtLightClass>() {
+    override fun getElementText(element: KtLightClass) = ClassPresentationUtil.getNameForClass(element, false)
+
+    override fun getContainerText(element: KtLightClass, name: String) = "(" + element.getFqName().parent() + ")"
+
+    override fun getIconFlags() = 0
 }

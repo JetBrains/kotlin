@@ -4,5 +4,5 @@ class Foo {
     fun getValue(_this: Any?, p: Any?): Int = 1
 }
 
-// REF: (in Foo).getValue(Any?,Any?)
+// REF: (in Foo).getValue(Any?, Any?)
 

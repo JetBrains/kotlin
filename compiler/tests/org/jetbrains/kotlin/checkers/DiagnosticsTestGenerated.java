@@ -13079,6 +13079,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("invokeOnVariableWithExtensionFunctionType.kt")
+                public void testInvokeOnVariableWithExtensionFunctionType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/invokeOnVariableWithExtensionFunctionType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("KT-4372.kt")
                 public void testKT_4372() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/KT-4372.kt");
@@ -13106,6 +13112,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("kt4321InvokeOnEnum.kt")
                 public void testKt4321InvokeOnEnum() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/kt4321InvokeOnEnum.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt9805.kt")
+                public void testKt9805() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/kt9805.kt");
                     doTest(fileName);
                 }
 

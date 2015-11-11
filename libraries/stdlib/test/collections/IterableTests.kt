@@ -146,6 +146,11 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         assertEquals(listOf("foo"), foo)
     }
 
+    @Test fun filterIndexed() {
+        val result = data.filterIndexed { index, value -> value.first() == ('a' + index) }
+        assertEquals(listOf("bar"), result)
+    }
+
     @Test
     fun drop() {
         val foo = data.drop(1)
@@ -237,6 +242,16 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         val indexed = data.withIndex().map { it.value.substring(0..it.index) }
         assertEquals(2, indexed.size)
         assertEquals(listOf("f", "ba"), indexed)
+    }
+
+    @Test
+    fun mapNotNull() {
+        assertEquals(listOf('o'), data.mapNotNull { it.firstOrNull { c -> c in "oui" } })
+    }
+
+    @Test
+    fun mapIndexedNotNull() {
+        assertEquals(listOf('b'), data.mapIndexedNotNull { index, s -> s.getOrNull(index - 1) })
     }
 
     @Test

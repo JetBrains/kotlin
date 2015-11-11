@@ -2751,12 +2751,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("infiniteSteps.kt")
-            public void testInfiniteSteps() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/expression/infiniteSteps.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("maxValueMinusTwoToMaxValue.kt")
             public void testMaxValueMinusTwoToMaxValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/expression/maxValueMinusTwoToMaxValue.kt");
@@ -2772,12 +2766,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("maxValueToMinValue.kt")
             public void testMaxValueToMinValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/expression/maxValueToMinValue.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("nanEnds.kt")
-            public void testNanEnds() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/expression/nanEnds.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -2940,12 +2928,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("infiniteSteps.kt")
-            public void testInfiniteSteps() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/literal/infiniteSteps.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("maxValueMinusTwoToMaxValue.kt")
             public void testMaxValueMinusTwoToMaxValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/literal/maxValueMinusTwoToMaxValue.kt");
@@ -2961,12 +2943,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("maxValueToMinValue.kt")
             public void testMaxValueToMinValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/literal/maxValueToMinValue.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("nanEnds.kt")
-            public void testNanEnds() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/literal/nanEnds.kt");
                 doTestWithStdlib(fileName);
             }
 

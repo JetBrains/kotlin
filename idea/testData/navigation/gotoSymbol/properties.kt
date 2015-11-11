@@ -18,6 +18,6 @@ class Some() {
 
 // SEARCH_TEXT: test
 // REF: (<root>).testGlobal
-// REF: (Some).testInClass
-// REF: (Some.Companion).testInClassObject
-// REF: (SomeTrait).testInTrait
+// REF: (in Some).testInClass
+// REF: (in Some.Companion).testInClassObject
+// REF: (in SomeTrait).testInTrait

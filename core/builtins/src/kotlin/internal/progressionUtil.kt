@@ -50,12 +50,16 @@ private fun differenceModulo(a: Long, b: Long, c: Long): Long {
  * @return the final element of the progression
  * @suppress
  */
+@Deprecated("This function supports the compiler infrastructure and is not intended to be used directly from user code. It may become internal soon.")
 public fun getProgressionFinalElement(start: Int, end: Int, increment: Int): Int {
     if (increment > 0) {
         return end - differenceModulo(end, start, increment)
     }
-    else {
+    else if (increment < 0) {
         return end + differenceModulo(start, end, -increment)
+    }
+    else {
+        throw IllegalArgumentException("Increment is zero.")
     }
 }
 
@@ -72,11 +76,15 @@ public fun getProgressionFinalElement(start: Int, end: Int, increment: Int): Int
  * @return the final element of the progression
  * @suppress
  */
+@Deprecated("This function supports the compiler infrastructure and is not intended to be used directly from user code. It may become internal soon.")
 public fun getProgressionFinalElement(start: Long, end: Long, increment: Long): Long {
     if (increment > 0) {
         return end - differenceModulo(end, start, increment)
     }
-    else {
+    else if (increment < 0) {
         return end + differenceModulo(start, end, -increment)
+    }
+    else {
+        throw IllegalArgumentException("Increment is zero.")
     }
 }
