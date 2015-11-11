@@ -86,7 +86,14 @@ interface ConstraintSystem {
          * For example, for `fun <T> create(): T` to infer `T` in invocation `val i: Int = create()`
          * the constraint "Int is a supertype of T" should be generated where T is a subject type, and Int is a constraining type.
          */
-        fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition)
+        fun addSupertypeConstraint(constrainingType: KotlinType, subjectType: KotlinType, constraintPosition: ConstraintPosition)
+
+        /**
+         * For each call for which type variables were registered, a type substitutor is stored in this map which maps
+         * type parameter descriptors of the candidate descriptor of that call -> type variables of the system.
+         * Those are the same substitutors that are returned by [registerTypeVariables] at the time of variable registration.
+         */
+        val typeVariableSubstitutors: Map<CallHandle, TypeSubstitutor>
 
         fun fixVariables()
 

@@ -99,9 +99,10 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
             val context = ConstraintContext(SPECIAL.position(), initial = true)
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> builder.addSubtypeConstraint(firstType, secondType, context.position)
-                MyConstraintKind.SUPERTYPE -> builder.addSupertypeConstraint(firstType, secondType, context.position)
+                MyConstraintKind.SUPERTYPE -> builder.addSubtypeConstraint(secondType, firstType, context.position)
                 MyConstraintKind.EQUAL -> builder.addConstraint(
-                        ConstraintSystemBuilderImpl.ConstraintKind.EQUAL, firstType, secondType, context)
+                        ConstraintSystemBuilderImpl.ConstraintKind.EQUAL, firstType, secondType, context
+                )
             }
         }
 

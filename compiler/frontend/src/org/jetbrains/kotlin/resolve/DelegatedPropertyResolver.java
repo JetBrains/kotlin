@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
+import org.jetbrains.kotlin.resolve.calls.inference.TypeVariableKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -36,9 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
-import org.jetbrains.kotlin.types.DeferredType;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -369,7 +368,13 @@ public class DelegatedPropertyResolver {
                     FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
                     KotlinType returnTypeOfGetMethod = descriptor.getReturnType();
                     if (returnTypeOfGetMethod != null && !TypeUtils.noExpectedType(expectedType)) {
-                        constraintSystem.addSupertypeConstraint(expectedType, returnTypeOfGetMethod, FROM_COMPLETER.position());
+                        TypeSubstitutor substitutor =
+                                constraintSystem.getTypeVariableSubstitutors().get(TypeVariableKt.toHandle(resolvedCall.getCall()));
+                        assert substitutor != null : "No substitutor in the system for call: " + resolvedCall.getCall();
+                        KotlinType returnTypeInSystem = substitutor.substitute(returnTypeOfGetMethod, Variance.INVARIANT);
+                        if (returnTypeInSystem != null) {
+                            constraintSystem.addSupertypeConstraint(expectedType, returnTypeInSystem, FROM_COMPLETER.position());
+                        }
                     }
                     addConstraintForThisValue(constraintSystem, descriptor);
                 }

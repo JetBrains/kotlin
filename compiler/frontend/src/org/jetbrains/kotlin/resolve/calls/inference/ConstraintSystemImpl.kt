@@ -38,7 +38,8 @@ internal class ConstraintSystemImpl(
         private val usedInBounds: Map<TypeVariable, MutableList<TypeBounds.Bound>>,
         private val errors: List<ConstraintError>,
         private val initialConstraints: List<ConstraintSystemBuilderImpl.Constraint>,
-        private val descriptorToVariable: Map<TypeParameterDescriptor, TypeVariable>
+        private val descriptorToVariable: Map<TypeParameterDescriptor, TypeVariable>,
+        private val typeVariableSubstitutors: Map<CallHandle, TypeSubstitutor>
 ) : ConstraintSystem {
     private val localTypeParameterBounds: Map<TypeVariable, TypeBoundsImpl>
         get() = allTypeParameterBounds.filterNot { it.key.isExternal }
@@ -167,6 +168,7 @@ internal class ConstraintSystemImpl(
 
         result.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) })
         result.descriptorToVariable.putAll(descriptorToVariable)
+        result.typeVariableSubstitutors.putAll(typeVariableSubstitutors)
 
         return result
     }

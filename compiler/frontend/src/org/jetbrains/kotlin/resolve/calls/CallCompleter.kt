@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.filterConstraintsOut
+import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.*
 
@@ -139,6 +141,14 @@ public class CallCompleter(
             expectedType: KotlinType,
             trace: BindingTrace
     ) {
+        val returnType = candidateDescriptor.returnType
+
+        fun ConstraintSystem.Builder.returnTypeInSystem(): KotlinType? =
+                returnType?.let {
+                    val substitutor = typeVariableSubstitutors[call.toHandle()] ?: error("No substitutor for call: $call")
+                    substitutor.substitute(it, Variance.INVARIANT)
+                }
+
         fun updateSystemIfNeeded(buildSystemWithAdditionalConstraints: (ConstraintSystem.Builder) -> ConstraintSystem?) {
             val system = buildSystemWithAdditionalConstraints(constraintSystem!!.toBuilder())
             if (system != null) {
@@ -146,11 +156,14 @@ public class CallCompleter(
             }
         }
 
-        val returnType = getCandidateDescriptor().getReturnType()
         if (returnType != null && !TypeUtils.noExpectedType(expectedType)) {
             updateSystemIfNeeded { builder ->
-                builder.addSupertypeConstraint(expectedType, returnType, EXPECTED_TYPE_POSITION.position())
-                builder.build()
+                val returnTypeInSystem = builder.returnTypeInSystem()
+                if (returnTypeInSystem != null) {
+                    builder.addSupertypeConstraint(expectedType, returnTypeInSystem, EXPECTED_TYPE_POSITION.position())
+                    builder.build()
+                }
+                else null
             }
         }
 
@@ -169,9 +182,13 @@ public class CallCompleter(
 
         if (returnType != null && expectedType === TypeUtils.UNIT_EXPECTED_TYPE) {
             updateSystemIfNeeded { builder ->
-                builder.addSupertypeConstraint(builtIns.getUnitType(), returnType, EXPECTED_TYPE_POSITION.position())
-                val system = builder.build()
-                if (system.status.isSuccessful()) system else null
+                val returnTypeInSystem = builder.returnTypeInSystem()
+                if (returnTypeInSystem != null) {
+                    builder.addSupertypeConstraint(builtIns.getUnitType(), returnTypeInSystem, EXPECTED_TYPE_POSITION.position())
+                    val system = builder.build()
+                    if (system.status.isSuccessful()) system else null
+                }
+                else null
             }
         }
 
