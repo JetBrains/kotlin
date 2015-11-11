@@ -138,8 +138,8 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
         return null;
     }
 
-    public class ExactKotlinJavaBreakpointVariant extends ExactJavaBreakpointVariant {
-        public ExactKotlinJavaBreakpointVariant(XSourcePosition position, KtFunction function, Integer lambdaOrdinal) {
+    public class KotlinLambdaBreakpointVariant extends ExactJavaBreakpointVariant {
+        public KotlinLambdaBreakpointVariant(XSourcePosition position, KtFunction function, Integer lambdaOrdinal) {
             super(position, function, lambdaOrdinal);
         }
 

@@ -29,10 +29,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.impl.XSourcePositionImpl
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.core.refactoring.getLineNumber
@@ -40,7 +37,6 @@ import org.jetbrains.kotlin.idea.core.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
 fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
@@ -108,7 +104,7 @@ fun computeVariants(
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->
-        result.add(kotlinBreakpointType.ExactKotlinJavaBreakpointVariant(
+        result.add(kotlinBreakpointType.KotlinLambdaBreakpointVariant(
                 XSourcePositionImpl.createByElement(lambda.bodyExpression), lambda, ordinal))
     }
 
