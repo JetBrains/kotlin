@@ -127,25 +127,29 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
     recCreateStubForPackageName(packageDirectiveStub)
 }
 
-fun createStubForTypeName(typeClassId: ClassId, parent: StubElement<out PsiElement>): KotlinUserTypeStub {
+fun createStubForTypeName(
+        typeClassId: ClassId,
+        parent: StubElement<out PsiElement>,
+        onUserTypeLevel: (KotlinUserTypeStub, Int) -> Unit = { x, y -> }
+): KotlinUserTypeStub {
     val fqName =
             if (typeClassId.isLocal()) KotlinBuiltIns.FQ_NAMES.any
             else typeClassId.asSingleFqName().toUnsafe()
-    val segments = fqName.pathSegments().toArrayList()
+    val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
-    val iterator = segments.listIterator(segments.size)
 
-    fun recCreateStubForType(current: StubElement<out PsiElement>): KotlinUserTypeStub {
-        val lastSegment = iterator.previous()
+    fun recCreateStubForType(current: StubElement<out PsiElement>, level: Int): KotlinUserTypeStub {
+        val lastSegment = segments[level]
         val userTypeStub = KotlinUserTypeStubImpl(current, isAbsoluteInRootPackage = false)
-        if (iterator.hasPrevious()) {
-            recCreateStubForType(userTypeStub)
+        if (level + 1 < segments.size) {
+            recCreateStubForType(userTypeStub, level + 1)
         }
         KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref())
+        onUserTypeLevel(userTypeStub, level)
         return userTypeStub
     }
 
-    return recCreateStubForType(parent)
+    return recCreateStubForType(parent, level = 0)
 }
 
 enum class FlagsToModifiers {

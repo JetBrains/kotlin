@@ -43,6 +43,12 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         doTest(fileName);
     }
 
+    @TestMetadata("InnerClasses")
+    public void ignoredInnerClasses() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/InnerClasses/");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedClasses")
     public void ignoredNestedClasses() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/NestedClasses/");

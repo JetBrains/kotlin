@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PossiblyInnerType
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -58,7 +60,34 @@ class DeserializedType(
 
     override fun getAnnotations(): Annotations = annotations
 
-    override fun getCapabilities() = c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
+    override fun getCapabilities() = typeCapabilities()
+
+    private val typeCapabilities = c.storageManager.createLazyValue { computeCapabilities() }
+
+    private fun computeCapabilities(): TypeCapabilities {
+        val capabilities = c.components.typeCapabilitiesLoader.loadCapabilities(typeProto)
+
+        return computePossiblyInnerType()?.let { it: PossiblyInnerType ->
+            CompositeTypeCapabilities(
+                    SingletonTypeCapabilities(
+                            PossiblyInnerTypeCapability::class.java,
+                            PossiblyInnerTypeCapabilityImpl(it)),
+                    capabilities)
+        } ?: capabilities
+    }
+
+    private fun computePossiblyInnerType(): PossiblyInnerType? {
+        if (!typeProto.hasClassName()) return null
+
+        val outerType = typeProto.outerType(c.typeTable)?.let { DeserializedType(c, it).computePossiblyInnerType() }
+
+        return PossiblyInnerType(
+                constructor.declarationDescriptor as ClassDescriptor,
+                typeProto.argumentList.deserialize(),
+                outerType)
+    }
+
+    private class PossiblyInnerTypeCapabilityImpl(override val possiblyInnerType: PossiblyInnerType?) : PossiblyInnerTypeCapability
 
     fun getPresentableText(): String = typeDeserializer.presentableTextForErrorType(typeProto)
 }

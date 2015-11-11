@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
+import java.util.*
 
 fun ClassDescriptor.computeConstructorTypeParameters(): List<TypeParameterDescriptor> {
     val declaredParameters = declaredTypeParameters
@@ -55,8 +56,13 @@ class PossiblyInnerType(
     fun segments(): List<PossiblyInnerType> = outerType?.segments().orEmpty() + this
 }
 
-fun KotlinType.buildPossiblyInnerType(): PossiblyInnerType?
-        = buildPossiblyInnerType(constructor.declarationDescriptor as? ClassDescriptor, 0)
+fun KotlinType.buildPossiblyInnerType(): PossiblyInnerType? {
+    if (constructor.declarationDescriptor is MissingDependencyErrorClass) {
+        return getCapability<PossiblyInnerTypeCapability>()?.possiblyInnerType
+    }
+
+    return buildPossiblyInnerType(constructor.declarationDescriptor as? ClassDescriptor, 0)
+}
 
 private fun KotlinType.buildPossiblyInnerType(classDescriptor: ClassDescriptor?, index: Int): PossiblyInnerType? {
     if (classDescriptor == null) return null

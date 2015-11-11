@@ -107,6 +107,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("InnerTypes")
+    public void testInnerTypes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/InnerTypes/");
+        doTest(fileName);
+    }
+
     @TestMetadata("LocalClass")
     public void testLocalClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/LocalClass/");
