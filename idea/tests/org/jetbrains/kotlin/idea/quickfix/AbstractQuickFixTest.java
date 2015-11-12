@@ -96,8 +96,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             @Override
             public void run() {
                 String fileText = "";
+                String expectedErrorMessage = "";
                 try {
                     fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET);
+                    expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ");
                     String contents = StringUtil.convertLineSeparators(fileText);
                     quickFixTestCase.configureFromFileText(testFile.getName(), contents);
                     quickFixTestCase.bringRealEditorBack();
@@ -105,6 +107,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                     checkForUnexpectedActions();
 
                     applyAction(contents, quickFixTestCase, testName, testFullPath);
+
+                    assertEmpty(expectedErrorMessage);
                 }
                 catch (FileComparisonFailure e) {
                     throw e;
@@ -113,10 +117,11 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                     throw e;
                 }
                 catch (Throwable e) {
-                    e.printStackTrace();
-                    fail(testName);
-                }
-                finally {
+                    if (!e.getMessage().equals(expectedErrorMessage)) {
+                        e.printStackTrace();
+                        fail(testName);
+                    }
+                } finally {
                     ConfigLibraryUtil.unconfigureLibrariesByDirective(getModule(), fileText);
                 }
             }

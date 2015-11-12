@@ -408,6 +408,10 @@ public fun KtDeclaration.visibilityModifierType(): KtModifierKeywordToken?
 
 public fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
 
+public val KtDeclaration.containingClassOrObject: KtClassOrObject?
+        get() = (parent as? KtClassBody)?.parent as? KtClassOrObject
+
+
 public fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     return (parentsWithSelf zip parents).firstOrNull {
         val (element, parent) = it
