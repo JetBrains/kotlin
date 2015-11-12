@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve.calls.inference;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import kotlin.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -88,12 +90,25 @@ public class ConstraintsUtil {
             @NotNull Call call,
             boolean substituteOtherTypeParametersInBound
     ) {
-        TypeVariable typeVariable = constraintSystem.descriptorToVariable(TypeVariableKt.toHandle(call), typeParameter);
+        TypeVariable typeVariable = ConstraintSystemUtilsKt.descriptorToVariable(
+                constraintSystem, TypeVariableKt.toHandle(call), typeParameter
+        );
         KotlinType type = constraintSystem.getTypeBounds(typeVariable).getValue();
         if (type == null) return true;
+
+        List<TypeParameterDescriptor> typeParametersUsedInSystem = CollectionsKt.map(
+                constraintSystem.getTypeVariables(),
+                new Function1<TypeVariable, TypeParameterDescriptor>() {
+                    @Override
+                    public TypeParameterDescriptor invoke(TypeVariable variable) {
+                        return variable.getOriginalTypeParameter();
+                    }
+                }
+        );
+
         for (KotlinType upperBound : typeParameter.getUpperBounds()) {
             if (!substituteOtherTypeParametersInBound &&
-                TypeUtils.dependsOnTypeParameters(upperBound, constraintSystem.getTypeParameterDescriptors())) {
+                TypeUtils.dependsOnTypeParameters(upperBound, typeParametersUsedInSystem)) {
                 continue;
             }
             KotlinType substitutedUpperBound = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);

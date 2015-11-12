@@ -33,6 +33,12 @@ fun ConstraintSystem.filterConstraintsOut(excludePositionKind: ConstraintPositio
     return toBuilder { !it.derivedFrom(excludePositionKind) }.build()
 }
 
+fun ConstraintSystem.descriptorToVariable(call: CallHandle, descriptor: TypeParameterDescriptor): TypeVariable {
+    return typeVariables.firstOrNull {
+        it.call == call && it.originalTypeParameter == descriptor
+    } ?: throw IllegalArgumentException("Unknown descriptor: $descriptor, call: $call")
+}
+
 internal fun KotlinType.getNestedArguments(): List<TypeProjection> {
     val result = ArrayList<TypeProjection>()
 

@@ -25,16 +25,9 @@ interface ConstraintSystem {
     val status: ConstraintSystemStatus
 
     /**
-     * Returns a set of all non-external type parameter descriptors.
-     */
-    val typeParameterDescriptors: Set<TypeParameterDescriptor>
-
-    /**
      * Returns a set of all registered type variables.
      */
     val typeVariables: Set<TypeVariable>
-
-    fun descriptorToVariable(call: CallHandle, descriptor: TypeParameterDescriptor): TypeVariable
 
     /**
      * Returns the resulting type constraints of solving the constraint system for specific type parameter descriptor.

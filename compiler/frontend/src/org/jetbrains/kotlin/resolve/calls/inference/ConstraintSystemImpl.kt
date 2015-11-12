@@ -105,16 +105,8 @@ internal class ConstraintSystemImpl(
         return SubstitutionFilteringInternalResolveAnnotations(substitution).buildSubstitutor()
     }
 
-    override val typeParameterDescriptors: Set<TypeParameterDescriptor>
-        get() = typeVariables.map { it.originalTypeParameter }.toSet()
-
     override val typeVariables: Set<TypeVariable>
         get() = allTypeParameterBounds.keys
-
-    override fun descriptorToVariable(call: CallHandle, descriptor: TypeParameterDescriptor): TypeVariable =
-            typeVariables.firstOrNull {
-                it.call == call && it.originalTypeParameter == descriptor
-            } ?: throw IllegalArgumentException("Unknown descriptor: $descriptor, call: $call")
 
     override fun getTypeBounds(typeVariable: TypeVariable): TypeBoundsImpl {
         return allTypeParameterBounds[typeVariable] ?:
