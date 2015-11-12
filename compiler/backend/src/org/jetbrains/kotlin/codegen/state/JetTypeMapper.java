@@ -734,7 +734,8 @@ public class JetTypeMapper {
         if (descriptor instanceof ConstructorDescriptor) {
             JvmMethodSignature method = mapSignature(descriptor);
             Type owner = mapClass(((ConstructorDescriptor) descriptor).getContainingDeclaration());
-            return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
+            String defaultImplDesc = mapDefaultMethod(descriptor, OwnerKind.IMPLEMENTATION).getDescriptor();
+            return new CallableMethod(owner, owner, defaultImplDesc, method, INVOKESPECIAL, null, null, null);
         }
 
         DeclarationDescriptor functionParent = descriptor.getOriginal().getContainingDeclaration();
@@ -744,7 +745,7 @@ public class JetTypeMapper {
         JvmMethodSignature signature;
         Type owner;
         Type ownerForDefaultImpl;
-        Type ownerForDefaultParam;
+        FunctionDescriptor baseMethodDescriptor;
         int invokeOpcode;
         Type thisClass;
 
@@ -759,9 +760,9 @@ public class JetTypeMapper {
 
             boolean isInterface = currentIsInterface && originalIsInterface;
 
-            ClassDescriptor ownerForDefault = (ClassDescriptor) findBaseDeclaration(functionDescriptor).getContainingDeclaration();
-            ownerForDefaultParam = mapClass(ownerForDefault);
-            ownerForDefaultImpl = isJvmInterface(ownerForDefault) ? mapDefaultImpls(ownerForDefault) : ownerForDefaultParam;
+            baseMethodDescriptor = findBaseDeclaration(functionDescriptor).getOriginal();
+            ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
+            ownerForDefaultImpl = isJvmInterface(ownerForDefault) ? mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE)) {
                 thisClass = mapClass(currentOwner);
@@ -810,8 +811,8 @@ public class JetTypeMapper {
         else {
             signature = mapSignature(functionDescriptor.getOriginal());
             owner = mapOwner(functionDescriptor);
-            ownerForDefaultParam = owner;
             ownerForDefaultImpl = owner;
+            baseMethodDescriptor = functionDescriptor;
             if (functionParent instanceof PackageFragmentDescriptor) {
                 invokeOpcode = INVOKESTATIC;
                 thisClass = null;
@@ -836,8 +837,11 @@ public class JetTypeMapper {
         else {
             receiverParameterType = null;
         }
+
+        String defaultImplDesc = mapDefaultMethod(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)).getDescriptor();
+
         return new CallableMethod(
-                owner, ownerForDefaultImpl, ownerForDefaultParam, signature, invokeOpcode,
+                owner, ownerForDefaultImpl, defaultImplDesc, signature, invokeOpcode,
                 thisClass, receiverParameterType, calleeType);
     }
 
@@ -916,6 +920,18 @@ public class JetTypeMapper {
         else {
             return updateMemberNameIfInternal(descriptor.getName().asString(), descriptor);
         }
+    }
+
+    @NotNull
+    private static OwnerKind getKindForDefaultImplCall(@NotNull FunctionDescriptor baseMethodDescriptor) {
+        DeclarationDescriptor containingDeclaration = baseMethodDescriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            return OwnerKind.PACKAGE;
+        }
+        else if (isInterface(containingDeclaration)) {
+            return OwnerKind.DEFAULT_IMPLS;
+        }
+        return OwnerKind.IMPLEMENTATION;
     }
 
     @NotNull
@@ -1047,7 +1063,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public static String getDefaultDescriptor(@NotNull Method method, @Nullable String dispatchReceiverDescriptor, boolean isExtension) {
+    private static String getDefaultDescriptor(@NotNull Method method, @Nullable String dispatchReceiverDescriptor, boolean isExtension) {
         String descriptor = method.getDescriptor();
         int argumentsCount = Type.getArgumentTypes(descriptor).length;
         if (isExtension) {

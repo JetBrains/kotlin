@@ -2937,6 +2937,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Signature extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInSignature() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/defaultArguments/signature"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("kt2789.kt")
+            public void testKt2789() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/signature/kt2789.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt9428.kt")
+            public void testKt9428() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/signature/kt9428.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt9924.kt")
+            public void testKt9924() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/signature/kt9924.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/delegatedProperty")

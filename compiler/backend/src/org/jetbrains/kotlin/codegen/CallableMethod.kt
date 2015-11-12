@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
@@ -31,7 +30,7 @@ import org.jetbrains.org.objectweb.asm.util.Printer
 public class CallableMethod(
         override val owner: Type,
         private val defaultImplOwner: Type?,
-        private val defaultImplParam: Type?,
+        private val defaultMethodDesc: String,
         private val signature: JvmMethodSignature,
         private val invokeOpcode: Int,
         override val dispatchReceiverType: Type?,
@@ -56,24 +55,21 @@ public class CallableMethod(
     }
 
     public fun genInvokeDefaultInstruction(v: InstructionAdapter) {
-        if (defaultImplOwner == null || defaultImplParam == null) {
+        if (defaultImplOwner == null) {
             throw IllegalStateException()
         }
 
         val method = getAsmMethod()
-        val desc = JetTypeMapper.getDefaultDescriptor(
-                method,
-                if (invokeOpcode == INVOKESTATIC) null else defaultImplParam.getDescriptor(),
-                extensionReceiverType != null
-        )
 
         if ("<init>".equals(method.getName())) {
             v.aconst(null)
-            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc, false)
+            v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", defaultMethodDesc, false)
         }
         else {
             v.visitMethodInsn(INVOKESTATIC, defaultImplOwner.getInternalName(),
-                              method.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc, false)
+                              method.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodDesc, false)
+
+            StackValue.coerce(Type.getReturnType(defaultMethodDesc), Type.getReturnType(signature.asmMethod.descriptor), v)
         }
     }
 
