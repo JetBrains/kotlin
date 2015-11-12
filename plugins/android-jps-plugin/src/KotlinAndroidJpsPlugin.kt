@@ -23,17 +23,21 @@ import org.jetbrains.jps.model.module.JpsModule
 import java.io.File
 import org.jetbrains.jps.android.AndroidJpsUtil
 import com.intellij.util.PathUtil
+import org.w3c.dom.Document
+import javax.xml.parsers.DocumentBuilderFactory
 
 public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.module
         val pluginId = ANDROID_COMPILER_PLUGIN_ID
         val resPath = getAndroidResPath(module)
-        val manifestFile = getAndroidManifest(module)
+        val applicationId = getAndroidManifest(module)?.let { getApplicationPackageFromManifest(it) }
 
-        return if (resPath != null && manifestFile != null) listOf(
-                getPluginOptionString(pluginId, RESOURCE_PATH_OPTION_NAME, resPath),
-                getPluginOptionString(pluginId, MANIFEST_FILE_OPTION_NAME, manifestFile))
+        return if (resPath != null && applicationId != null) {
+            listOf(
+                    getPluginOptionString(pluginId, VARIANT_OPTION_NAME, "main;$resPath"),
+                    getPluginOptionString(pluginId, PACKAGE_OPTION_NAME, applicationId))
+        }
         else listOf()
     }
 
@@ -56,21 +60,35 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
 
     private fun getAndroidResPath(module: JpsModule): String? {
         val extension = AndroidJpsUtil.getExtension(module) ?: return null
-        val path = AndroidJpsUtil.getResourceDirForCompilationPath(extension)
-        return File(path!!.absolutePath + "/layout").absolutePath
+        return AndroidJpsUtil.getResourceDirForCompilationPath(extension)?.absolutePath
     }
 
-    private fun getAndroidManifest(module: JpsModule): String? {
+    private fun getAndroidManifest(module: JpsModule): File? {
         val extension = AndroidJpsUtil.getExtension(module) ?: return null
-        return AndroidJpsUtil.getManifestFileForCompilationPath(extension)!!.absolutePath
+        return AndroidJpsUtil.getManifestFileForCompilationPath(extension)
     }
 
     companion object {
         private val JAR_FILE_NAME = "android-compiler-plugin.jar"
         private val ANDROID_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.android"
 
-        private val RESOURCE_PATH_OPTION_NAME = "androidRes"
-        private val MANIFEST_FILE_OPTION_NAME = "androidManifest"
+        private val VARIANT_OPTION_NAME = "variant"
+        private val PACKAGE_OPTION_NAME = "package"
+
+        private fun getApplicationPackageFromManifest(manifestFile: File): String? {
+            try {
+                return manifestFile.parseXml().documentElement.getAttribute("package")
+            }
+            catch (e: Exception) {
+                return null
+            }
+        }
+
+        private fun File.parseXml(): Document {
+            val factory = DocumentBuilderFactory.newInstance()
+            val builder = factory.newDocumentBuilder()
+            return builder.parse(this)
+        }
 
         private fun getPluginOptionString(pluginId: String, key: String, value: String): String {
             return "plugin:$pluginId:$key=$value"

@@ -7,14 +7,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.View
 
-import kotlinx.android.synthetic.main.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment.*
 import kotlinx.android.synthetic.main.fragment.view.*
 
 public class MyActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main)
+        setContentView(R.layout.activity_main)
         textField.setText("test")
     }
 }
