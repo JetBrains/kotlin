@@ -2352,6 +2352,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("KT9970.kt")
+            public void testKT9970() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/visibility/KT9970.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("VisibilityClassMembersFromExternal.kt")
             public void testVisibilityClassMembersFromExternal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/visibility/VisibilityClassMembersFromExternal.kt");
