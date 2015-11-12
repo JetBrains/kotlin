@@ -90,6 +90,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     override fun buildStarted(context: CompileContext) {
         LOG.debug("==========================================")
         LOG.info("is Kotlin incremental compilation enabled: ${IncrementalCompilation.isEnabled()}")
+        LOG.info("is Kotlin experimental incremental compilation enabled: ${IncrementalCompilation.isExperimental()}")
 
         val historyLabel = context.getBuilderParameter("history label")
         if (historyLabel != null) {
@@ -165,6 +166,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val allCompiledFiles = getAllCompiledFilesContainer(context)
         val filesToCompile = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
+
+        LOG.debug("Compiling files: ${filesToCompile.values()}")
+
         val start = System.nanoTime()
         val outputItemCollector = doCompileModuleChunk(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder,
                                                        environment, filesToCompile, incrementalCaches, messageCollector, project)
@@ -233,6 +237,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             fun isKotlin(file: File) = KotlinSourceFileCollector.isKotlinSourceFile(file)
             fun isNotCompiled(file: File) = file !in allCompiledFiles
 
+            LOG.debug("compilationResult = $this")
+
             when {
                 inlineAdded -> {
                     allCompiledFiles.clear()
@@ -256,8 +262,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         fun CompilationResult.doProcessChangesUsingLookups() {
             val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
 
+            LOG.debug("Start processing changes")
+
             // TODO group by fqName?
             for (change in changes) {
+                LOG.debug("Process $change")
 
                 if (change !is ChangeInfo.MembersChanged) continue
 
@@ -266,11 +275,16 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                         .asSequence()
                         .map { File(it) }
                         .filter { it !in compiledFiles && it.exists() }
+                        .toList()
+
+                LOG.debug("Mark dirty files: $files")
 
                 files.forEach {
                     FSOperations.markDirty(context, CompilationRound.NEXT, it)
                 }
             }
+
+            LOG.debug("End of processing changes")
 
             caches.forEach { it.cleanDirtyInlineFunctions() }
         }

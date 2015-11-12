@@ -646,9 +646,20 @@ public class IncrementalCacheImpl(
 }
 
 sealed class ChangeInfo(val fqName: FqName) {
-    open class MembersChanged(fqName: FqName, val names: Collection<String>) : ChangeInfo(fqName)
+    open class MembersChanged(fqName: FqName, val names: Collection<String>) : ChangeInfo(fqName) {
+        override fun toStringProperties(): String = super.toStringProperties() + ", names = $names"
+    }
+
     class Removed(fqName: FqName, names: Collection<String>) : MembersChanged(fqName, names)
+
     class SignatureChanged(fqName: FqName) : ChangeInfo(fqName)
+
+
+    protected open fun toStringProperties(): String = "fqName = $fqName"
+
+    override fun toString(): String {
+        return this.javaClass.simpleName + "(${toStringProperties()})"
+    }
 }
 
 data class CompilationResult(
