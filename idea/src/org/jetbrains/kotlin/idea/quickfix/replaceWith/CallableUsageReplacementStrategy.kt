@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.*
@@ -65,8 +66,14 @@ class CallableUsageReplacementStrategy(
         if (!callTypeHandler.precheckReplacementPattern(replacement)) return null
 
         return {
-            // copy replacement expression because it is modified by performCallReplacement
-            performCallReplacement(usage, bindingContext, resolvedCall, callElement, callTypeHandler, replacement.copy())
+            if (usage is KtOperationReferenceExpression && usage.getReferencedNameElementType() != KtTokens.IDENTIFIER) {
+                val nameExpression = OperatorToFunctionIntention.convert(usage.parent as KtExpression).second
+                createReplacer(nameExpression)!!.invoke()
+            }
+            else {
+                // copy replacement expression because it is modified by performCallReplacement
+                performCallReplacement(usage, bindingContext, resolvedCall, callElement, callTypeHandler, replacement.copy())
+            }
         }
     }
 
