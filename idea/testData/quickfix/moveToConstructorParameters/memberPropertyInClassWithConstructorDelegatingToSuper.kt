@@ -4,6 +4,7 @@
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Make protected
+// ACTION: Initialize with constructor parameter
 // ERROR: Property must be initialized or be abstract
 open class A(x: Int)
 

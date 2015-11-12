@@ -4293,6 +4293,99 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/initializeWithConstructorParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InitializeWithConstructorParameter extends AbstractQuickFixTest {
+        public void testAllFilesPresentInInitializeWithConstructorParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/initializeWithConstructorParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("localVar.kt")
+        public void testLocalVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/localVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyInClassNameClashInPrimaryConstructor.kt")
+        public void testMemberPropertyInClassNameClashInPrimaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyInClassNameClashInPrimaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyInClassNameClashInSecondaryConstructor.kt")
+        public void testMemberPropertyInClassNameClashInSecondaryConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyInClassNameClashInSecondaryConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyInClassNoConstructors.kt")
+        public void testMemberPropertyInClassNoConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyInClassNoConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyInClassPrimaryAndSecondaryConstructors.kt")
+        public void testMemberPropertyInClassPrimaryAndSecondaryConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyInClassPrimaryAndSecondaryConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyInClassPrimaryConstructorOnly.kt")
+        public void testMemberPropertyInClassPrimaryConstructorOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyInClassPrimaryConstructorOnly.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyInClassSecondaryConstructorsOnly.kt")
+        public void testMemberPropertyInClassSecondaryConstructorsOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyInClassSecondaryConstructorsOnly.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyInInterface.kt")
+        public void testMemberPropertyInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyInInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyInObject.kt")
+        public void testMemberPropertyInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyInObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyNoAccessorsInClassNoConstructors.kt")
+        public void testMemberPropertyNoAccessorsInClassNoConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyNoAccessorsInClassNoConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyNoAccessorsInClassPrimaryAndSecondaryConstructors.kt")
+        public void testMemberPropertyNoAccessorsInClassPrimaryAndSecondaryConstructors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyNoAccessorsInClassPrimaryAndSecondaryConstructors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyNoAccessorsInClassPrimaryConstructorOnly.kt")
+        public void testMemberPropertyNoAccessorsInClassPrimaryConstructorOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyNoAccessorsInClassPrimaryConstructorOnly.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberPropertyWithDelegateRuntime.kt")
+        public void testMemberPropertyWithDelegateRuntime() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/memberPropertyWithDelegateRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelProperty.kt")
+        public void testTopLevelProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/initializeWithConstructorParameter/topLevelProperty.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/insertDelegationCall")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

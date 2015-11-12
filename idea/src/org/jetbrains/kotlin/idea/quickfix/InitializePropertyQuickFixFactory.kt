@@ -26,20 +26,26 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.CollectingNameValidator
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.appendElement
+import org.jetbrains.kotlin.idea.core.getOrCreateBody
+import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
 
 object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
@@ -79,9 +85,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                     }
                 }
 
-                override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean {
-                    return affectedFunctions.flatMap { it.toLightMethods() }.all { MethodReferencesSearch.search(it).findFirst() == null }
-                }
+                override fun performSilently(affectedFunctions: Collection<PsiElement>) = noUsagesExist(affectedFunctions)
             }
         }
 
@@ -113,6 +117,83 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         }
     }
 
+    class InitializeWithConstructorParameter(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {
+        override fun getText() = "Initialize with constructor parameter"
+        override fun getFamilyName() = text
+
+        private fun configureChangeSignature(propertyDescriptor: PropertyDescriptor): KotlinChangeSignatureConfiguration {
+            return object : KotlinChangeSignatureConfiguration {
+                override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
+                    return originalDescriptor.modify {
+                        val classDescriptor = propertyDescriptor.containingDeclaration as ClassDescriptorWithResolutionScopes
+                        val constructorScope = classDescriptor.scopeForClassHeaderResolution
+                        val validator = CollectingNameValidator(originalDescriptor.parameters.map { it.name }) { name ->
+                            constructorScope.getContributedDescriptors(DescriptorKindFilter.VARIABLES, { it.asString() == name }).isEmpty()
+                        }
+                        val initializerText = CodeInsightUtils.defaultInitializer(propertyDescriptor.type) ?: "null"
+                        val newParam = KotlinParameterInfo(
+                                callableDescriptor = originalDescriptor.baseDescriptor,
+                                name = KotlinNameSuggester.suggestNameByName(propertyDescriptor.name.asString(), validator),
+                                type = propertyDescriptor.type,
+                                defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
+                        )
+                        it.addParameter(newParam)
+                    }
+                }
+
+                override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = noUsagesExist(affectedFunctions)
+            }
+        }
+
+        // TODO: Allow processing of multiple functions in Change Signature so that Start/Finish Mark can be used here
+        private fun processConstructors(
+                project: Project,
+                propertyDescriptor: PropertyDescriptor,
+                descriptorsToProcess: Iterator<ConstructorDescriptor>,
+                visitedElements: MutableSet<PsiElement> = HashSet()
+        ) {
+            if (!descriptorsToProcess.hasNext()) return
+            val descriptor = descriptorsToProcess.next()
+            val constructorPointer = descriptor.source.getPsi()?.createSmartPointer()
+            val config = configureChangeSignature(propertyDescriptor)
+            val changeSignature = { runChangeSignature(project, descriptor, config, element, text) }
+
+            changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
+                val constructorOrClass = constructorPointer?.element
+                val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.getPrimaryConstructor()
+                if (constructor == null || !visitedElements.add(constructor)) return@runRefactoringWithPostprocessing
+                constructor.getValueParameters().lastOrNull()?.let { newParam ->
+                    val psiFactory = KtPsiFactory(project)
+                    if (constructor is KtSecondaryConstructor) {
+                        constructor.getOrCreateBody().appendElement(psiFactory.createExpression("this.${element.name} = ${newParam.name!!}"))
+                    }
+                    else {
+                        element.setInitializer(psiFactory.createExpression(newParam.name!!))
+                    }
+                }
+                processConstructors(project, propertyDescriptor, descriptorsToProcess)
+            }
+        }
+
+        override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            val propertyDescriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
+            val classDescriptor = propertyDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes ?: return
+            val klass = element.containingClassOrObject ?: return
+            val constructorDescriptors = if (klass.hasExplicitPrimaryConstructor() || klass.getSecondaryConstructors().isEmpty()) {
+                listOf(classDescriptor.unsubstitutedPrimaryConstructor!!)
+            }
+            else {
+                classDescriptor.secondaryConstructors
+            }
+
+            processConstructors(project, propertyDescriptor, constructorDescriptors.iterator())
+        }
+    }
+
+    private fun noUsagesExist(affectedFunctions: Collection<PsiElement>): Boolean {
+        return affectedFunctions.flatMap { it.toLightMethods() }.all { MethodReferencesSearch.search(it).findFirst() == null }
+    }
+
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val property = diagnostic.psiElement as? KtProperty ?: return emptyList()
         if (property.receiverTypeReference != null) return emptyList()
@@ -123,10 +204,13 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
 
         (property.containingClassOrObject as? KtClass)?.let { klass ->
             if (klass.isAnnotation() || klass.isInterface()) return@let
-            if (property.accessors.isNotEmpty()) return@let
-            if (klass.getSecondaryConstructors().any { !it.getDelegationCall().isCallToThis }) return@let
 
-            actions.add(MoveToConstructorParameters(property))
+            if (property.accessors.isNotEmpty() || klass.getSecondaryConstructors().any { !it.getDelegationCall().isCallToThis }) {
+                actions.add(InitializeWithConstructorParameter(property))
+            }
+            else {
+                actions.add(MoveToConstructorParameters(property))
+            }
         }
 
         return actions

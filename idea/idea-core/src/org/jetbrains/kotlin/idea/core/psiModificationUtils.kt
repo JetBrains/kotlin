@@ -183,3 +183,12 @@ public fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToke
 
     addModifier(visibilityModifier)
 }
+
+fun KtSecondaryConstructor.getOrCreateBody(): KtBlockExpression {
+    bodyExpression?.let { return it }
+
+    val delegationCall = getDelegationCall()
+    val anchor = if (delegationCall.isImplicit) valueParameterList else delegationCall
+    val newBody = KtPsiFactory(this).createEmptyBody()
+    return addAfter(newBody, anchor) as KtBlockExpression
+}
