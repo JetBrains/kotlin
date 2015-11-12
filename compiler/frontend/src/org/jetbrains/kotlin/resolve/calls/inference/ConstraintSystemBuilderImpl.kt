@@ -328,8 +328,6 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         addBound(typeVariable, capturedType, EXACT_BOUND, constraintContext)
     }
 
-    internal fun getBoundsUsedIn(typeVariable: TypeVariable): List<Bound> = usedInBounds[typeVariable] ?: emptyList()
-
     internal fun getTypeBounds(variable: TypeVariable): TypeBoundsImpl {
         return allTypeParameterBounds[variable] ?:
                throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $variable")

@@ -41,10 +41,11 @@ fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {
     val typeVariable = newBound.typeVariable
     val typeBounds = getTypeBounds(typeVariable)
 
+    // Here and afterwards we're iterating indices of the original bounds list to prevent ConcurrentModificationException
     for (oldBoundIndex in typeBounds.bounds.indices) {
         addConstraintFromBounds(typeBounds.bounds[oldBoundIndex], newBound)
     }
-    val boundsUsedIn = getBoundsUsedIn(typeVariable)
+    val boundsUsedIn = usedInBounds[typeVariable] ?: emptyList<Bound>()
     for (index in boundsUsedIn.indices) {
         val boundUsedIn = boundsUsedIn[index]
         generateNewBound(boundUsedIn, newBound)
