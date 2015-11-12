@@ -121,7 +121,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         val pluginVersion = KotlinPluginUtil.getPluginVersion()
         val os = URLEncoder.encode(SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION, CharsetToolkit.UTF8)
         val uid = UpdateChecker.getInstallationUID(propertiesComponent)
-        val url = "https://plugins.jetbrains.com/plugins/list?pluginId=6954&build=$buildNumber&pluginVersion=$pluginVersion&os=$os&uuid=a$uid"
+        val url = "https://plugins.jetbrains.com/plugins/list?pluginId=6954&build=$buildNumber&pluginVersion=$pluginVersion&os=$os&uuid=$uid"
         val responseDoc = HttpRequests.request(url).connect {
             JDOMUtil.load(it.inputStream)
         }
