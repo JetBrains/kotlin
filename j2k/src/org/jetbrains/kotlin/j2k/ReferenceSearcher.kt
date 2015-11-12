@@ -33,8 +33,8 @@ public fun ReferenceSearcher.findVariableUsages(variable: PsiVariable, scope: Ps
 public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {
     return findLocalUsages(method, scope).mapNotNull {
         if (it is PsiReferenceExpression) {
-            val methodCall = it.getParent() as? PsiMethodCallExpression
-            if (methodCall?.getMethodExpression() == it) methodCall else null
+            val methodCall = it.parent as? PsiMethodCallExpression
+            if (methodCall?.methodExpression == it) methodCall else null
         }
         else {
             null
@@ -45,14 +45,14 @@ public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElemen
 public fun PsiField.isVar(searcher: ReferenceSearcher): Boolean {
     if (hasModifierProperty(PsiModifier.FINAL)) return false
     if (!hasModifierProperty(PsiModifier.PRIVATE)) return true
-    val containingClass = getContainingClass() ?: return true
+    val containingClass = containingClass ?: return true
     val writes = searcher.findVariableUsages(this, containingClass).filter { PsiUtil.isAccessedForWriting(it) }
-    if (writes.size() == 0) return false
-    if (writes.size() > 1) return true
+    if (writes.size == 0) return false
+    if (writes.size > 1) return true
     val write = writes.single()
-    val parent = write.getParent()
+    val parent = write.parent
     if (parent is PsiAssignmentExpression
-        && parent.getOperationSign().getTokenType() == JavaTokenType.EQ
+        && parent.operationSign.tokenType == JavaTokenType.EQ
         && write.isQualifierEmptyOrThis()
     ) {
         val constructor = write.getContainingConstructor()

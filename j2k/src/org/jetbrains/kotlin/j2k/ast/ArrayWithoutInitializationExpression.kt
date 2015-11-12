@@ -44,15 +44,15 @@ class ArrayWithoutInitializationExpression(val type: ArrayType, val expressions:
         }
 
         fun constructInnerType(hostType: ArrayType, expressions: List<Expression>): CodeBuilder {
-            if (expressions.size() == 1) {
+            if (expressions.size == 1) {
                 return oneDim(hostType, expressions[0])
             }
 
             val innerType = hostType.elementType
-            if (expressions.size() > 1 && innerType is ArrayType) {
+            if (expressions.size > 1 && innerType is ArrayType) {
                 return oneDim(hostType, expressions[0], {
                     builder.append("{")
-                    constructInnerType(innerType, expressions.subList(1, expressions.size()))
+                    constructInnerType(innerType, expressions.subList(1, expressions.size))
                     builder.append("}")
                 })
             }

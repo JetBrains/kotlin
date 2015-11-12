@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.j2k.usageProcessing
 
-import com.google.common.collect.Multimap
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.SpecialExpressionConverter
@@ -55,7 +54,7 @@ class UsageProcessingExpressionConverter(val processings: Map<PsiElement, Collec
             }
 
             is PsiMethodCallExpression -> {
-                val target = expression.getMethodExpression().resolve() as? PsiMethod ?: return null
+                val target = expression.methodExpression.resolve() as? PsiMethod ?: return null
                 val forTarget = processings[target] ?: return null
                 for (processing in forTarget) {
                     val converted = processing.convertedCodeProcessor?.convertMethodUsage(expression, codeConverter)

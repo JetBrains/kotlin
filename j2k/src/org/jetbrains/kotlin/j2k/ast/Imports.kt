@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import com.intellij.psi.PsiImportStatementBase
-import org.jetbrains.kotlin.j2k.*
 import com.intellij.psi.PsiImportList
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import com.intellij.psi.PsiImportStatementBase
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.Converter
+import org.jetbrains.kotlin.j2k.append
+import org.jetbrains.kotlin.j2k.quoteKeywords
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 
 class Import(val name: String) : Element() {
     override fun generateCode(builder: CodeBuilder) {
@@ -40,14 +43,13 @@ class ImportList(public var imports: List<Import>) : Element() {
 }
 
 public fun Converter.convertImportList(importList: PsiImportList): ImportList =
-        ImportList(importList.getAllImportStatements().mapNotNull { convertImport(it, true) }).assignPrototype(importList)
+        ImportList(importList.allImportStatements.mapNotNull { convertImport(it, true) }).assignPrototype(importList)
 
 public fun Converter.convertImport(anImport: PsiImportStatementBase, filter: Boolean): Import? {
     fun doConvert(): Import? {
-        val reference = anImport.getImportReference()
-        if (reference == null) return null
-        val qualifiedName = quoteKeywords(reference.getQualifiedName()!!)
-        if (anImport.isOnDemand()) {
+        val reference = anImport.importReference ?: return null
+        val qualifiedName = quoteKeywords(reference.qualifiedName!!)
+        if (anImport.isOnDemand) {
             return Import(qualifiedName + ".*")
         }
         else {

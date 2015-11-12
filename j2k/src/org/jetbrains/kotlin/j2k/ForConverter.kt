@@ -31,19 +31,19 @@ class ForConverter(
     private val settings = codeConverter.settings
     private val project = codeConverter.converter.project
 
-    private val initialization = statement.getInitialization()
-    private val update = statement.getUpdate()
-    private val condition = statement.getCondition()
-    private val body = statement.getBody()
+    private val initialization = statement.initialization
+    private val update = statement.update
+    private val condition = statement.condition
+    private val body = statement.body
 
     public fun execute(): Statement {
         val foreach = convertToForeach()
         if (foreach != null) return foreach
 
-        val initialization = statement.getInitialization()
-        val update = statement.getUpdate()
-        val condition = statement.getCondition()
-        val body = statement.getBody()
+        val initialization = statement.initialization
+        val update = statement.update
+        val condition = statement.condition
+        val body = statement.body
 
         val initializationConverted = codeConverter.convertStatement(initialization)
         val updateConverted = codeConverter.convertStatement(update)
@@ -60,7 +60,7 @@ class ForConverter(
 
                     val continueConverted = this@ForConverter.codeConverter.convertStatement(statement)
                     val statements = listOf(updateConverted, continueConverted)
-                    if (statement.getParent() is PsiCodeBlock) {
+                    if (statement.parent is PsiCodeBlock) {
                         // generate fictive statement which will generate multiple statements
                         return object : Statement() {
                             override fun generateCode(builder: CodeBuilder) {
@@ -75,10 +75,10 @@ class ForConverter(
             })
 
             if (body is PsiBlockStatement) {
-                val nameConflict = initialization is PsiDeclarationStatement && initialization.getDeclaredElements().any { loopVar ->
-                    loopVar is PsiNamedElement && body.getCodeBlock().getStatements().any { statement ->
-                        statement is PsiDeclarationStatement && statement.getDeclaredElements().any {
-                            it is PsiNamedElement && it.getName() == loopVar.getName()
+                val nameConflict = initialization is PsiDeclarationStatement && initialization.declaredElements.any { loopVar ->
+                    loopVar is PsiNamedElement && body.codeBlock.statements.any { statement ->
+                        statement is PsiDeclarationStatement && statement.declaredElements.any {
+                            it is PsiNamedElement && it.name == loopVar.name
                         }
                     }
                 }
@@ -88,7 +88,7 @@ class ForConverter(
                     Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
                 }
                 else {
-                    val block = codeConverterToUse.convertBlock(body.getCodeBlock(), true)
+                    val block = codeConverterToUse.convertBlock(body.codeBlock, true)
                     Block(block.statements + listOf(updateConverted), block.lBrace, block.rBrace, true).assignPrototypesFrom(block)
                 }
             }
@@ -147,23 +147,23 @@ class ForConverter(
 
     private fun convertToForeach(): ForeachStatement? {
         if (initialization is PsiDeclarationStatement) {
-            val loopVar = initialization.getDeclaredElements().singleOrNull() as? PsiLocalVariable ?: return null
+            val loopVar = initialization.declaredElements.singleOrNull() as? PsiLocalVariable ?: return null
             if (!loopVar.hasWriteAccesses(referenceSearcher, body)
                 && !loopVar.hasWriteAccesses(referenceSearcher, condition)
                 && condition is PsiBinaryExpression) {
 
-                val left = condition.getLOperand() as? PsiReferenceExpression ?: return null
-                val right = condition.getROperand() ?: return null
+                val left = condition.lOperand as? PsiReferenceExpression ?: return null
+                val right = condition.rOperand ?: return null
                 if (left.resolve() == loopVar) {
-                    val start = loopVar.getInitializer() ?: return null
-                    val operationType = (update as? PsiExpressionStatement)?.getExpression()?.isVariableIncrementOrDecrement(loopVar)
+                    val start = loopVar.initializer ?: return null
+                    val operationType = (update as? PsiExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
                     val reversed = when (operationType) {
                         JavaTokenType.PLUSPLUS -> false
                         JavaTokenType.MINUSMINUS -> true
                         else -> return null
                     }
 
-                    val inclusive = when (condition.getOperationTokenType()) {
+                    val inclusive = when (condition.operationTokenType) {
                         JavaTokenType.LT -> if (reversed) return null else false
                         JavaTokenType.LE -> if (reversed) return null else true
                         JavaTokenType.GT -> if (reversed) false else return null
@@ -187,8 +187,8 @@ class ForConverter(
     private fun PsiElement.isVariableIncrementOrDecrement(variable: PsiVariable): IElementType? {
         //TODO: simplify code when KT-5453 fixed
         val pair = when (this) {
-            is PsiPostfixExpression -> getOperationTokenType() to getOperand()
-            is PsiPrefixExpression -> getOperationTokenType() to getOperand()
+            is PsiPostfixExpression -> operationTokenType to operand
+            is PsiPrefixExpression -> operationTokenType to operand
             else -> return null
         }
         if ((pair.second as? PsiReferenceExpression)?.resolve() != variable) return null
@@ -210,16 +210,16 @@ class ForConverter(
         val collectionSize = if (reversed) {
             if (!inclusiveComparison) return null
 
-            if ((bound as? PsiLiteralExpression)?.getValue() != 0) return null
+            if ((bound as? PsiLiteralExpression)?.value != 0) return null
 
             if (start !is PsiBinaryExpression) return null
-            if (start.getOperationTokenType() != JavaTokenType.MINUS) return null
-            if ((start.getROperand() as? PsiLiteralExpression)?.getValue() != 1) return null
-            start.getLOperand()
+            if (start.operationTokenType != JavaTokenType.MINUS) return null
+            if ((start.rOperand as? PsiLiteralExpression)?.value != 1) return null
+            start.lOperand
         }
         else {
             if (inclusiveComparison) return null
-            if ((start as? PsiLiteralExpression)?.getValue() != 0) return null
+            if ((start as? PsiLiteralExpression)?.value != 0) return null
             bound
         }
 
@@ -227,13 +227,13 @@ class ForConverter(
         var indices: Expression? = null
 
         // check if it's iteration through list indices
-        if (collectionSize is PsiMethodCallExpression && collectionSize.getArgumentList().getExpressions().isEmpty()) {
-            val methodExpr = collectionSize.getMethodExpression()
-            if (methodExpr is PsiReferenceExpression && methodExpr.getReferenceName() == "size") {
-                val qualifier = methodExpr.getQualifierExpression()
+        if (collectionSize is PsiMethodCallExpression && collectionSize.argumentList.expressions.isEmpty()) {
+            val methodExpr = collectionSize.methodExpression
+            if (methodExpr is PsiReferenceExpression && methodExpr.referenceName == "size") {
+                val qualifier = methodExpr.qualifierExpression
                 if (qualifier is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */) {
                     val collectionType = PsiElementFactory.SERVICE.getInstance(project).createTypeByFQClassName(CommonClassNames.JAVA_UTIL_COLLECTION)
-                    val qualifierType = qualifier.getType()
+                    val qualifierType = qualifier.type
                     if (qualifierType != null && collectionType.isAssignableFrom(qualifierType)) {
                         indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
                     }
@@ -242,9 +242,9 @@ class ForConverter(
         }
         // check if it's iteration through array indices
         else if (collectionSize is PsiReferenceExpression /* we don't convert to .indices if qualifier is method call or something because of possible side effects */
-            && collectionSize.getReferenceName() == "length") {
-            val qualifier = collectionSize.getQualifierExpression()
-            if (qualifier is PsiReferenceExpression && qualifier.getType() is PsiArrayType) {
+            && collectionSize.referenceName == "length") {
+            val qualifier = collectionSize.qualifierExpression
+            if (qualifier is PsiReferenceExpression && qualifier.type is PsiArrayType) {
                 indices = QualifiedExpression(codeConverter.convertExpression(qualifier), Identifier("indices", false).assignNoPrototype())
             }
         }
@@ -263,7 +263,7 @@ class ForConverter(
         }
 
         if (bound is PsiLiteralExpression) {
-            val value = bound.getValue()
+            val value = bound.value
             if (value is Int) {
                 return LiteralExpression((value + correction).toString()).assignPrototype(bound)
             }
@@ -277,13 +277,13 @@ class ForConverter(
     private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {
         return when (this) {
             is PsiLoopStatement -> this
-            is PsiLabeledStatement -> this.getStatement()?.toContinuedLoop()
+            is PsiLabeledStatement -> this.statement?.toContinuedLoop()
             else -> null
         }
     }
 
     private fun hasNameConflict(): Boolean {
-        val names = statement.getInitialization()?.declaredVariableNames() ?: return false
+        val names = statement.initialization?.declaredVariableNames() ?: return false
         if (names.isEmpty()) return false
 
         val factory = PsiElementFactory.SERVICE.getInstance(project)
@@ -315,8 +315,8 @@ class ForConverter(
 
     private fun PsiStatement.declaredVariableNames(): Collection<String> {
         val declarationStatement = this as? PsiDeclarationStatement ?: return listOf()
-        return declarationStatement.getDeclaredElements()
+        return declarationStatement.declaredElements
                 .filterIsInstance<PsiVariable>()
-                .map { it.getName()!! }
+                .map { it.name!! }
     }
 }

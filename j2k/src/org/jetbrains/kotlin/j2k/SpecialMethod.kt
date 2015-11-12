@@ -131,7 +131,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     OBJECT_EQUALS(null, "equals", 1) {
         override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean
-                = super.matches(method, superMethodsSearcher) && method.getParameterList().getParameters().single().getType().getCanonicalText() == JAVA_LANG_OBJECT
+                = super.matches(method, superMethodsSearcher) && method.parameterList.parameters.single().type.canonicalText == JAVA_LANG_OBJECT
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
             if (qualifier == null || qualifier is PsiSuperExpression) return null
@@ -253,7 +253,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = super.matches(method, superMethodsSearcher) && method.parameterList.let { it.parametersCount == 2 && it.parameters.last().isVarArgs }
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
-            if (arguments.size() == 2 && arguments.last().isAssignableToCharSequenceArray()) {
+            if (arguments.size == 2 && arguments.last().isAssignableToCharSequenceArray()) {
                 return STRING_JOIN.convertCall(qualifier, arguments, typeArgumentsConverted, codeConverter)
             }
             else {
@@ -305,7 +305,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                   method.parameterList.parameters.let { it.first().type.canonicalText == "java.util.Locale" && it.last().isVarArgs }
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
-            if (arguments.size() < 2) return null // incorrect call
+            if (arguments.size < 2) return null // incorrect call
             return MethodCallExpression.build(codeConverter.convertExpression(arguments[1]), "format", codeConverter.convertExpressions(listOf(arguments[0]) + arguments.drop(2)), emptyList(), false)
         }
     },
@@ -404,9 +404,9 @@ private fun convertSystemOutMethodCall(
         codeConverter: CodeConverter
 ): Expression? {
     if (qualifier !is PsiReferenceExpression) return null
-    val qqualifier = qualifier.getQualifierExpression() as? PsiReferenceExpression ?: return null
-    if (qqualifier.getCanonicalText() != "java.lang.System") return null
-    if (qualifier.getReferenceName() != "out") return null
+    val qqualifier = qualifier.qualifierExpression as? PsiReferenceExpression ?: return null
+    if (qqualifier.canonicalText != "java.lang.System") return null
+    if (qualifier.referenceName != "out") return null
     if (typeArgumentsConverted.isNotEmpty()) return null
     return MethodCallExpression.build(null, methodName, arguments.map { codeConverter.convertExpression(it) }, emptyList(), false)
 }

@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.append
 
 class ReferenceElement(val name: Identifier, val typeArgs: List<Element>) : Element() {
     override fun generateCode(builder: CodeBuilder) {

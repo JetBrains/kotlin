@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
 
 class Initializer(val body: DeferredElement<Block>, modifiers: Modifiers) : Member(Annotations.Empty, modifiers) {
     override fun generateCode(builder: CodeBuilder) {

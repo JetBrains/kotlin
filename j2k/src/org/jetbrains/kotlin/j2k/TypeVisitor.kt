@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getJavaKeywordName() }
+private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.javaKeywordName }
 
 class TypeVisitor(
         private val converter: Converter,
@@ -38,7 +38,7 @@ class TypeVisitor(
     override fun visitType(type: PsiType) = ErrorType()
 
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
-        val name = primitiveType.getCanonicalText()
+        val name = primitiveType.canonicalText
         return if (name == "void") {
             UnitType()
         }
@@ -54,7 +54,7 @@ class TypeVisitor(
     }
 
     override fun visitArrayType(arrayType: PsiArrayType): Type {
-        return ArrayType(typeConverter.convertType(arrayType.getComponentType(), inAnnotationType = inAnnotationType), Nullability.Default, converter.settings)
+        return ArrayType(typeConverter.convertType(arrayType.componentType, inAnnotationType = inAnnotationType), Nullability.Default, converter.settings)
     }
 
     override fun visitClassType(classType: PsiClassType): Type {
@@ -68,7 +68,7 @@ class TypeVisitor(
 
         val psiClass = classType.resolve()
         if (psiClass != null) {
-            val javaClassName = psiClass.getQualifiedName()
+            val javaClassName = psiClass.qualifiedName
             val kotlinClassName = (if (mutability.isMutable(converter.settings)) toKotlinMutableTypesMap[javaClassName] else null)
                                   ?: toKotlinTypesMap[javaClassName]
             if (kotlinClassName != null) {
@@ -77,35 +77,35 @@ class TypeVisitor(
 
             if (inAnnotationType && javaClassName == "java.lang.Class") {
                 val fqName = FqName("kotlin.reflect.KClass")
-                val identifier = Identifier(fqName.shortName().getIdentifier(), imports = listOf(fqName)).assignNoPrototype()
+                val identifier = Identifier(fqName.shortName().identifier, imports = listOf(fqName)).assignNoPrototype()
                 return ReferenceElement(identifier, typeArgs).assignNoPrototype()
             }
         }
 
         if (classType is PsiClassReferenceType) {
-            return converter.convertCodeReferenceElement(classType.getReference(), hasExternalQualifier = false, typeArgsConverted = typeArgs)
+            return converter.convertCodeReferenceElement(classType.reference, hasExternalQualifier = false, typeArgsConverted = typeArgs)
         }
 
-        return ReferenceElement(Identifier(classType.getClassName() ?: "").assignNoPrototype(), typeArgs).assignNoPrototype()
+        return ReferenceElement(Identifier(classType.className ?: "").assignNoPrototype(), typeArgs).assignNoPrototype()
     }
 
     private fun getShortName(className: String): String = className.substringAfterLast('.', className)
 
     private fun convertTypeArgs(classType: PsiClassType): List<Type> {
-        if (classType.getParameterCount() == 0) {
+        if (classType.parameterCount == 0) {
             return createTypeArgsForRawTypeUsage(classType, Mutability.Default)
         }
         else {
-            return typeConverter.convertTypes(classType.getParameters())
+            return typeConverter.convertTypes(classType.parameters)
         }
     }
 
     private fun createTypeArgsForRawTypeUsage(classType: PsiClassType, mutability: Mutability): List<Type> {
         if (classType is PsiClassReferenceType) {
-            val targetClass = classType.getReference().resolve() as? PsiClass
+            val targetClass = classType.reference.resolve() as? PsiClass
             if (targetClass != null) {
-                return targetClass.getTypeParameters().map {
-                    val superType = it.getSuperTypes().first() // there must be at least one super type always
+                return targetClass.typeParameters.map {
+                    val superType = it.superTypes.first() // there must be at least one super type always
                     typeConverter.convertType(superType, Nullability.Default, mutability, inAnnotationType).assignNoPrototype()
                 }
             }
@@ -115,14 +115,14 @@ class TypeVisitor(
 
     override fun visitWildcardType(wildcardType: PsiWildcardType): Type {
         return when {
-            wildcardType.isExtends() -> OutProjectionType(typeConverter.convertType(wildcardType.getExtendsBound()))
-            wildcardType.isSuper() -> InProjectionType(typeConverter.convertType(wildcardType.getSuperBound()))
+            wildcardType.isExtends -> OutProjectionType(typeConverter.convertType(wildcardType.extendsBound))
+            wildcardType.isSuper -> InProjectionType(typeConverter.convertType(wildcardType.superBound))
             else -> StarProjectionType()
         }
     }
 
     override fun visitEllipsisType(ellipsisType: PsiEllipsisType): Type {
-        return VarArgType(typeConverter.convertType(ellipsisType.getComponentType(), inAnnotationType = inAnnotationType))
+        return VarArgType(typeConverter.convertType(ellipsisType.componentType, inAnnotationType = inAnnotationType))
     }
 
     companion object {

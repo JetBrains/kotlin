@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
-import java.util.ArrayList
+import java.util.*
 
 interface StatementConverter {
     fun convertStatement(statement: PsiStatement, codeConverter: CodeConverter): Statement
@@ -51,8 +51,8 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitAssertStatement(statement: PsiAssertStatement) {
-        val descriptionExpr = statement.getAssertDescription()
-        val condition = codeConverter.convertExpression(statement.getAssertCondition())
+        val descriptionExpr = statement.assertDescription
+        val condition = codeConverter.convertExpression(statement.assertCondition)
         if (descriptionExpr == null) {
             result = MethodCallExpression.buildNotNull(null, "assert", listOf(condition))
         }
@@ -65,30 +65,30 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitBlockStatement(statement: PsiBlockStatement) {
-        val block = codeConverter.convertBlock(statement.getCodeBlock())
+        val block = codeConverter.convertBlock(statement.codeBlock)
         result = MethodCallExpression.build(null, "run", listOf(LambdaExpression(null, block).assignNoPrototype()), listOf(), false)
     }
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
-        if (statement.getLabelIdentifier() == null) {
+        if (statement.labelIdentifier == null) {
             result = BreakStatement(Identifier.Empty)
         }
         else {
-            result = BreakStatement(converter.convertIdentifier(statement.getLabelIdentifier()))
+            result = BreakStatement(converter.convertIdentifier(statement.labelIdentifier))
         }
     }
 
     override fun visitContinueStatement(statement: PsiContinueStatement) {
-        if (statement.getLabelIdentifier() == null) {
+        if (statement.labelIdentifier == null) {
             result = ContinueStatement(Identifier.Empty)
         }
         else {
-            result = ContinueStatement(converter.convertIdentifier(statement.getLabelIdentifier()))
+            result = ContinueStatement(converter.convertIdentifier(statement.labelIdentifier))
         }
     }
 
     override fun visitDeclarationStatement(statement: PsiDeclarationStatement) {
-        result = DeclarationStatement(statement.getDeclaredElements().map {
+        result = DeclarationStatement(statement.declaredElements.map {
             when (it) {
                 is PsiLocalVariable -> codeConverter.convertLocalVariable(it)
                 is PsiClass -> converter.convertClass(it)
@@ -98,20 +98,20 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitDoWhileStatement(statement: PsiDoWhileStatement) {
-        val condition = statement.getCondition()
-        val expression = if (condition != null && condition.getType() != null)
-            codeConverter.convertExpression(condition, condition.getType())
+        val condition = statement.condition
+        val expression = if (condition != null && condition.type != null)
+            codeConverter.convertExpression(condition, condition.type)
         else
             codeConverter.convertExpression(condition)
-        result = DoWhileStatement(expression, codeConverter.convertStatementOrBlock(statement.getBody()), statement.isInSingleLine())
+        result = DoWhileStatement(expression, codeConverter.convertStatementOrBlock(statement.body), statement.isInSingleLine())
     }
 
     override fun visitExpressionStatement(statement: PsiExpressionStatement) {
-        result = codeConverter.convertExpression(statement.getExpression())
+        result = codeConverter.convertExpression(statement.expression)
     }
 
     override fun visitExpressionListStatement(statement: PsiExpressionListStatement) {
-        result = ExpressionListStatement(codeConverter.convertExpressions(statement.getExpressionList().getExpressions()))
+        result = ExpressionListStatement(codeConverter.convertExpressions(statement.expressionList.expressions))
     }
 
     override fun visitForStatement(statement: PsiForStatement) {
@@ -119,28 +119,28 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitForeachStatement(statement: PsiForeachStatement) {
-        val iteratorExpr = codeConverter.convertExpression(statement.getIteratedValue())
+        val iteratorExpr = codeConverter.convertExpression(statement.iteratedValue)
         val iterator = BangBangExpression.surroundIfNullable(iteratorExpr)
-        val iterationParameter = statement.getIterationParameter()
+        val iterationParameter = statement.iterationParameter
         result = ForeachStatement(iterationParameter.declarationIdentifier(),
                                   if (codeConverter.settings.specifyLocalVariableTypeByDefault) codeConverter.typeConverter.convertVariableType(iterationParameter) else null,
                                   iterator,
-                                  codeConverter.convertStatementOrBlock(statement.getBody()),
+                                  codeConverter.convertStatementOrBlock(statement.body),
                                   statement.isInSingleLine())
     }
 
     override fun visitIfStatement(statement: PsiIfStatement) {
-        val condition = statement.getCondition()
+        val condition = statement.condition
         val expression = codeConverter.convertExpression(condition, PsiType.BOOLEAN)
         result = IfStatement(expression,
-                             codeConverter.convertStatementOrBlock(statement.getThenBranch()),
-                             codeConverter.convertStatementOrBlock(statement.getElseBranch()),
+                             codeConverter.convertStatementOrBlock(statement.thenBranch),
+                             codeConverter.convertStatementOrBlock(statement.elseBranch),
                              statement.isInSingleLine())
     }
 
     override fun visitLabeledStatement(statement: PsiLabeledStatement) {
-        val statementConverted = codeConverter.convertStatement(statement.getStatement())
-        val identifier = converter.convertIdentifier(statement.getLabelIdentifier())
+        val statementConverted = codeConverter.convertStatement(statement.statement)
+        val identifier = converter.convertIdentifier(statement.labelIdentifier)
         if (statementConverted is ForConverter.WhileWithInitializationPseudoStatement) { // special case - if our loop gets converted to while with initialization we should move the label to the loop
             val labeledLoop = LabeledStatement(identifier, statementConverted.loop).assignPrototype(statement)
             result = ForConverter.WhileWithInitializationPseudoStatement(statementConverted.initialization, labeledLoop, statementConverted.kind)
@@ -151,10 +151,10 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitSwitchLabelStatement(statement: PsiSwitchLabelStatement) {
-        result = if (statement.isDefaultCase())
+        result = if (statement.isDefaultCase)
             ElseWhenEntrySelector()
         else
-            ValueWhenEntrySelector(codeConverter.convertExpression(statement.getCaseValue()))
+            ValueWhenEntrySelector(codeConverter.convertExpression(statement.caseValue))
     }
 
     override fun visitSwitchStatement(statement: PsiSwitchStatement) {
@@ -162,22 +162,22 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
     }
 
     override fun visitSynchronizedStatement(statement: PsiSynchronizedStatement) {
-        result = SynchronizedStatement(codeConverter.convertExpression(statement.getLockExpression()),
-                                         codeConverter.convertBlock(statement.getBody()))
+        result = SynchronizedStatement(codeConverter.convertExpression(statement.lockExpression),
+                                       codeConverter.convertBlock(statement.body))
     }
 
     override fun visitThrowStatement(statement: PsiThrowStatement) {
-        result = ThrowStatement(codeConverter.convertExpression(statement.getException()))
+        result = ThrowStatement(codeConverter.convertExpression(statement.exception))
     }
 
     override fun visitTryStatement(tryStatement: PsiTryStatement) {
-        val tryBlock = tryStatement.getTryBlock()
+        val tryBlock = tryStatement.tryBlock
         val catchesConverted = convertCatches(tryStatement)
-        val finallyConverted = codeConverter.convertBlock(tryStatement.getFinallyBlock())
+        val finallyConverted = codeConverter.convertBlock(tryStatement.finallyBlock)
 
-        val resourceList = tryStatement.getResourceList()
+        val resourceList = tryStatement.resourceList
         if (resourceList != null) {
-            val variables = resourceList.getResourceVariables()
+            val variables = resourceList.resourceVariables
             if (variables.isNotEmpty()) {
                 result = convertTryWithResources(tryBlock, variables, catchesConverted, finallyConverted)
                 return
@@ -189,12 +189,12 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
     private fun convertCatches(tryStatement: PsiTryStatement): List<CatchStatement> {
         val catches = ArrayList<CatchStatement>()
-        for ((block, parameter) in tryStatement.getCatchBlocks().zip(tryStatement.getCatchBlockParameters())) {
+        for ((block, parameter) in tryStatement.catchBlocks.zip(tryStatement.catchBlockParameters)) {
             val blockConverted = codeConverter.convertBlock(block)
             val annotations = converter.convertAnnotations(parameter)
-            val parameterType = parameter.getType()
+            val parameterType = parameter.type
             val types = if (parameterType is PsiDisjunctionType)
-                parameterType.getDisjunctions()
+                parameterType.disjunctions
             else
                 listOf(parameterType)
             for (t in types) {
@@ -220,7 +220,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             val parameter = LambdaParameter(Identifier(variable.name!!).assignNoPrototype(), null).assignNoPrototype()
             val parameterList = ParameterList(listOf(parameter)).assignNoPrototype()
             val lambda = LambdaExpression(parameterList, block)
-            expression = MethodCallExpression.build(codeConverter.convertExpression(variable.getInitializer()), "use", listOf(lambda), listOf(), false)
+            expression = MethodCallExpression.build(codeConverter.convertExpression(variable.initializer), "use", listOf(lambda), listOf(), false)
             expression.assignNoPrototype()
             block = Block(listOf(expression), LBrace().assignNoPrototype(), RBrace().assignNoPrototype()).assignNoPrototype()
         }
@@ -229,21 +229,21 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
             return wrapResultStatement(expression)
         }
 
-        block = Block(listOf(wrapResultStatement(expression)), LBrace().assignPrototype(tryBlock?.getLBrace()), RBrace().assignPrototype(tryBlock?.getRBrace()), true)
+        block = Block(listOf(wrapResultStatement(expression)), LBrace().assignPrototype(tryBlock?.lBrace), RBrace().assignPrototype(tryBlock?.rBrace), true)
         return TryStatement(block.assignPrototype(tryBlock), catchesConverted, finallyConverted)
     }
 
     override fun visitWhileStatement(statement: PsiWhileStatement) {
-        val condition = statement.getCondition()
-        val expression = if (condition?.getType() != null)
-            codeConverter.convertExpression(condition, condition!!.getType())
+        val condition = statement.condition
+        val expression = if (condition?.type != null)
+            codeConverter.convertExpression(condition, condition!!.type)
         else
             codeConverter.convertExpression(condition)
-        result = WhileStatement(expression, codeConverter.convertStatementOrBlock(statement.getBody()), statement.isInSingleLine())
+        result = WhileStatement(expression, codeConverter.convertStatementOrBlock(statement.body), statement.isInSingleLine())
     }
 
     override fun visitReturnStatement(statement: PsiReturnStatement) {
-        val returnValue = statement.getReturnValue()
+        val returnValue = statement.returnValue
         val methodReturnType = codeConverter.methodReturnType
         val expression = if (returnValue != null && methodReturnType != null)
             codeConverter.convertExpression(returnValue, methodReturnType)
@@ -260,7 +260,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
 fun CodeConverter.convertStatementOrBlock(statement: PsiStatement?): Statement {
     return if (statement is PsiBlockStatement)
-        convertBlock(statement.getCodeBlock())
+        convertBlock(statement.codeBlock)
     else
         convertStatement(statement)
 }

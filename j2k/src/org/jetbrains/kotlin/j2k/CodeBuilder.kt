@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.ast.SpacesInheritance
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import java.util.ArrayList
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 fun<T> CodeBuilder.buildList(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
@@ -72,7 +70,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             append(docConverter.convertDocComment(element), false)
         }
         else {
-            append(element.getText()!!, element.isEndOfLineComment())
+            append(element.text!!, element.isEndOfLineComment())
         }
     }
 
@@ -245,7 +243,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
     private fun MutableList<PsiElement>.collectCommentsAndSpacesBefore(element: PsiElement): MutableList<PsiElement> {
         if (element == topElement) return this
 
-        val prev = element.getPrevSibling()
+        val prev = element.prevSibling
         if (prev != null) {
             if (prev.isCommentOrSpace()) {
                 if (prev !in commentsAndSpacesUsed) {
@@ -258,7 +256,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             }
         }
         else {
-            collectCommentsAndSpacesBefore(element.getParent()!!)
+            collectCommentsAndSpacesBefore(element.parent!!)
         }
         return this
     }
@@ -266,7 +264,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
     private fun MutableList<PsiElement>.collectCommentsAndSpacesAfter(element: PsiElement): MutableList<PsiElement> {
         if (element == topElement) return this
 
-        val next = element.getNextSibling()
+        val next = element.nextSibling
         if (next != null) {
             if (next.isCommentOrSpace()) {
                 if (next is PsiWhiteSpace && next.hasLineBreaks()) return this // do not attach anything on next line after element
@@ -280,13 +278,13 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
             }
         }
         else {
-            collectCommentsAndSpacesAfter(element.getParent()!!)
+            collectCommentsAndSpacesAfter(element.parent!!)
         }
         return this
     }
 
     private fun MutableList<PsiElement>.collectCommentsAndSpacesAtStart(element: PsiElement): MutableList<PsiElement> {
-        var child = element.getFirstChild()
+        var child = element.firstChild
         while(child != null) {
             if (child.isCommentOrSpace()) {
                 if (child !in commentsAndSpacesUsed) add(child) else break
@@ -295,13 +293,13 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
                 collectCommentsAndSpacesAtStart(child)
                 break
             }
-            child = child.getNextSibling()
+            child = child.nextSibling
         }
         return this
     }
 
     private fun MutableList<PsiElement>.collectCommentsAndSpacesAtEnd(element: PsiElement): MutableList<PsiElement> {
-        var child = element.getLastChild()
+        var child = element.lastChild
         while(child != null) {
             if (child.isCommentOrSpace()) {
                 if (child !in commentsAndSpacesUsed) add(child) else break
@@ -310,7 +308,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
                 collectCommentsAndSpacesAtEnd(child)
                 break
             }
-            child = child.getPrevSibling()
+            child = child.prevSibling
         }
         return this
     }
@@ -323,7 +321,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
                 other.isEmpty() -> return this
 
                 else -> {
-                    val result = ArrayList<T>(size() + other.size())
+                    val result = ArrayList<T>(size + other.size)
                     result.addAll(this)
                     result.addAll(other)
                     return result
@@ -332,7 +330,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
         }
 
         fun<T> List<T>.reversed(): List<T> {
-            return if (size() <= 1)
+            return if (size <= 1)
                 this
             else
                 this.asReversed()
@@ -340,20 +338,20 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
 
         fun PsiElement.isCommentOrSpace() = this is PsiComment || this is PsiWhiteSpace
 
-        fun PsiElement.isEndOfLineComment() = this is PsiComment && getTokenType() == JavaTokenType.END_OF_LINE_COMMENT
+        fun PsiElement.isEndOfLineComment() = this is PsiComment && tokenType == JavaTokenType.END_OF_LINE_COMMENT
 
-        fun PsiElement.isEmptyElement() = getFirstChild() == null && getTextLength() == 0
+        fun PsiElement.isEmptyElement() = firstChild == null && textLength == 0
 
-        fun PsiWhiteSpace.lineBreakCount() = StringUtil.getLineBreakCount(getText())
+        fun PsiWhiteSpace.lineBreakCount() = StringUtil.getLineBreakCount(text)
 
-        fun PsiWhiteSpace.hasLineBreaks() = StringUtil.containsLineBreak(getText())
+        fun PsiWhiteSpace.hasLineBreaks() = StringUtil.containsLineBreak(text)
 
         fun CharSequence.trailingLineBreakCount(): Int {
-            var i = length() - 1
+            var i = length - 1
             while (i >= 0 && this[i] == '\n') {
                 i--
             }
-            return length() - i - 1
+            return length - i - 1
         }
     }
 }

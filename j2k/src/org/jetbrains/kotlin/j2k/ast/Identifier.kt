@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
-    val name = getName()
-    return if (name != null) Identifier(name, false).assignPrototype(getNameIdentifier()!!) else Identifier.Empty
+    val name = name
+    return if (name != null) Identifier(name, false).assignPrototype(nameIdentifier!!) else Identifier.Empty
 }
 
 class Identifier(
@@ -51,14 +51,14 @@ class Identifier(
         imports.forEach { builder.addImport(it) }
     }
 
-    private fun quote(str: String): String = "`" + str + "`"
+    private fun quote(str: String): String = "`$str`"
 
     override fun toString() = if (isNullable) "$name?" else name
 
     companion object {
         val Empty = Identifier("")
 
-        private val KEYWORDS = KtTokens.KEYWORDS.getTypes().map { (it as KtKeywordToken).getValue() }.toSet()
+        private val KEYWORDS = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()
 
         fun toKotlin(name: String): String = Identifier(name).toKotlin()
     }

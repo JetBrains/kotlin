@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.TypeUtils
-import java.util.HashMap
-import java.util.HashSet
+import java.util.*
 
 class TypeConverter(val converter: Converter) {
     private val typesBeingConverted = HashSet<PsiType>()
@@ -64,13 +63,13 @@ class TypeConverter(val converter: Converter) {
                       converter.settings).assignNoPrototype()
         }
         else {
-            convertType(variable.getType(), variableNullability(variable), variableMutability(variable))
+            convertType(variable.type, variableNullability(variable), variableMutability(variable))
         }
-        return result.assignPrototype(variable.getTypeElement())
+        return result.assignPrototype(variable.typeElement)
     }
 
     public fun convertMethodReturnType(method: PsiMethod): Type
-            = convertType(method.getReturnType(), methodNullability(method), methodMutability(method)).assignPrototype(method.getReturnTypeElement())
+            = convertType(method.returnType, methodNullability(method), methodMutability(method)).assignPrototype(method.returnTypeElement)
 
     public fun variableNullability(variable: PsiVariable): Nullability
             = nullabilityFlavor.forVariableType(variable)
@@ -84,13 +83,13 @@ class TypeConverter(val converter: Converter) {
     public fun methodMutability(method: PsiMethod): Mutability
             = mutabilityFlavor.forMethodReturnType(method)
 
-    private fun PsiVariable.isMainMethodParameter() = this is PsiParameter && (getDeclarationScope() as? PsiMethod)?.isMainMethod() ?: false
+    private fun PsiVariable.isMainMethodParameter() = this is PsiParameter && (declarationScope as? PsiMethod)?.isMainMethod() ?: false
 
     private fun searchScope(element: PsiElement): PsiElement? {
         return when(element) {
-            is PsiParameter -> element.getDeclarationScope()
-            is PsiField -> if (element.hasModifierProperty(PsiModifier.PRIVATE)) element.getContainingClass() else element.getContainingFile()
-            is PsiMethod -> if (element.hasModifierProperty(PsiModifier.PRIVATE)) element.getContainingClass() else element.getContainingFile()
+            is PsiParameter -> element.declarationScope
+            is PsiField -> if (element.hasModifierProperty(PsiModifier.PRIVATE)) element.containingClass else element.containingFile
+            is PsiMethod -> if (element.hasModifierProperty(PsiModifier.PRIVATE)) element.containingClass else element.containingFile
             is PsiLocalVariable -> element.getContainingMethod()
             else -> null
         }
@@ -100,7 +99,7 @@ class TypeConverter(val converter: Converter) {
         if (hasModifierProperty(PsiModifier.FINAL)) return true
         return when(this) {
             is PsiLocalVariable -> !hasWriteAccesses(converter.referenceSearcher, getContainingMethod())
-            is PsiField -> if (hasModifierProperty(PsiModifier.PRIVATE)) !hasWriteAccesses(converter.referenceSearcher, getContainingClass()) else false
+            is PsiField -> if (hasModifierProperty(PsiModifier.PRIVATE)) !hasWriteAccesses(converter.referenceSearcher, containingClass) else false
             else -> false
         }
     }
@@ -129,7 +128,7 @@ class TypeConverter(val converter: Converter) {
         private fun forVariableTypeNoCache(variable: PsiVariable): T {
             if (variable is PsiEnumConstant) return forEnumConstant
 
-            val variableType = variable.getType()
+            val variableType = variable.type
             var value = fromType(variableType)
             if (value != default) return value
 
@@ -137,14 +136,14 @@ class TypeConverter(val converter: Converter) {
             if (value != default) return value
 
             if (variable is PsiParameter) {
-                val scope = variable.getDeclarationScope()
+                val scope = variable.declarationScope
                 if (scope is PsiMethod) {
-                    val paramIndex = scope.getParameterList().getParameters().indexOf(variable)
+                    val paramIndex = scope.parameterList.parameters.indexOf(variable)
                     assert(paramIndex >= 0)
-                    val superSignatures = scope.getHierarchicalMethodSignature().getSuperSignatures()
+                    val superSignatures = scope.hierarchicalMethodSignature.superSignatures
                     value = superSignatures.map { signature ->
-                        val params = signature.getMethod().getParameterList().getParameters()
-                        if (paramIndex < params.size()) forVariableType(params[paramIndex]) else default
+                        val params = signature.method.parameterList.parameters
+                        if (paramIndex < params.size) forVariableType(params[paramIndex]) else default
                     }.firstOrNull { it != default } ?: default
                     if (value != default) return value
                 }
@@ -179,7 +178,7 @@ class TypeConverter(val converter: Converter) {
         }
 
         private fun forMethodReturnTypeNoCache(method: PsiMethod): T {
-            val returnType = method.getReturnType() ?: return default
+            val returnType = method.returnType ?: return default
 
             var value = fromType(returnType)
             if (value != default) return value
@@ -187,8 +186,8 @@ class TypeConverter(val converter: Converter) {
             value = fromAnnotations(method)
             if (value != default) return value
 
-            val superSignatures = method.getHierarchicalMethodSignature().getSuperSignatures()
-            value = superSignatures.map { forMethodReturnType(it.getMethod()) }.firstOrNull { it != default } ?: default
+            val superSignatures = method.hierarchicalMethodSignature.superSignatures
+            value = superSignatures.map { forMethodReturnType(it.method) }.firstOrNull { it != default } ?: default
             if (value != default) return value
 
             value = fromTypeHeuristics(returnType)
@@ -196,7 +195,7 @@ class TypeConverter(val converter: Converter) {
 
             if (!converter.inConversionScope(method)) return default // do not analyze body and usages of methods out of our conversion scope
 
-            val body = method.getBody()
+            val body = method.body
             if (body != null) {
                 value = fromMethodBody(body)
                 if (value != default) return value
@@ -230,7 +229,7 @@ class TypeConverter(val converter: Converter) {
         override fun fromType(type: PsiType) = if (type is PsiPrimitiveType) Nullability.NotNull else Nullability.Default
 
         override fun fromAnnotations(owner: PsiModifierListOwner): Nullability {
-            val manager = NullableNotNullManager.getInstance(owner.getProject())
+            val manager = NullableNotNullManager.getInstance(owner.project)
             return if (manager.isNotNull(owner, false/* we do not check bases because they are checked by callers of this method*/))
                 Nullability.NotNull
             else if (manager.isNullable(owner, false))
@@ -240,7 +239,7 @@ class TypeConverter(val converter: Converter) {
         }
 
         override fun forVariableTypeBeforeUsageSearch(variable: PsiVariable): Nullability {
-            val initializer = variable.getInitializer()
+            val initializer = variable.initializer
             if (initializer != null) {
                 val initializerNullability = initializer.nullability()
                 if (initializerNullability != Nullability.Default) {
@@ -259,8 +258,8 @@ class TypeConverter(val converter: Converter) {
 
             if (variable is PsiParameter) {
                 // Object.equals corresponds to Any.equals which has nullable parameter:
-                val scope = variable.getDeclarationScope()
-                if (scope is PsiMethod && scope.getName() == "equals" && scope.getContainingClass()?.getQualifiedName() == JAVA_LANG_OBJECT) {
+                val scope = variable.declarationScope
+                if (scope is PsiMethod && scope.name == "equals" && scope.containingClass?.qualifiedName == JAVA_LANG_OBJECT) {
                     return Nullability.Nullable
                 }
             }
@@ -276,25 +275,25 @@ class TypeConverter(val converter: Converter) {
         }
 
         // variables of types like Integer are most likely nullable
-        override fun fromTypeHeuristics(type: PsiType) = if (type.getCanonicalText() in boxingTypes) Nullability.Nullable else Nullability.Default
+        override fun fromTypeHeuristics(type: PsiType) = if (type.canonicalText in boxingTypes) Nullability.Nullable else Nullability.Default
 
         override fun fromUsage(usage: PsiExpression): Nullability {
             return if (isNullableFromUsage(usage)) Nullability.Nullable else Nullability.Default
         }
 
         private fun isNullableFromUsage(usage: PsiExpression): Boolean {
-            val parent = usage.getParent()
-            if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && usage == parent.getLExpression()) {
-                return parent.getRExpression()?.nullability() == Nullability.Nullable
+            val parent = usage.parent
+            if (parent is PsiAssignmentExpression && parent.operationTokenType == JavaTokenType.EQ && usage == parent.lExpression) {
+                return parent.rExpression?.nullability() == Nullability.Nullable
             }
             else if (parent is PsiBinaryExpression) {
-                val operationType = parent.getOperationTokenType()
+                val operationType = parent.operationTokenType
                 if (operationType == JavaTokenType.EQEQ || operationType == JavaTokenType.NE) {
-                    val otherOperand = if (usage == parent.getLOperand()) parent.getROperand() else parent.getLOperand()
+                    val otherOperand = if (usage == parent.lOperand) parent.rOperand else parent.lOperand
                     return otherOperand?.isNullLiteral() ?: false
                 }
             }
-            else if (parent is PsiVariable && usage == parent.getInitializer() && parent.isEffectivelyFinal()) {
+            else if (parent is PsiVariable && usage == parent.initializer && parent.isEffectivelyFinal()) {
                 return variableNullability(parent) == Nullability.Nullable
             }
             return false
@@ -302,15 +301,15 @@ class TypeConverter(val converter: Converter) {
 
         override fun forVariableTypeAfterUsageSearch(variable: PsiVariable): Nullability {
             if (variable is PsiParameter) {
-                val method = variable.getDeclarationScope() as? PsiMethod
+                val method = variable.declarationScope as? PsiMethod
                 if (method != null) {
                     val scope = searchScope(method)
                     if (scope != null) {
-                        val parameters = method.getParameterList().getParameters()
+                        val parameters = method.parameterList.parameters
                         val parameterIndex = parameters.indexOf(variable)
                         for (call in converter.referenceSearcher.findMethodCalls(method, scope)) {
-                            val args = call.getArgumentList().getExpressions()
-                            if (args.size() == parameters.size()) {
+                            val args = call.argumentList.expressions
+                            if (args.size == parameters.size) {
                                 if (args[parameterIndex].nullability() == Nullability.Nullable) {
                                     return Nullability.Nullable
                                 }
@@ -326,7 +325,7 @@ class TypeConverter(val converter: Converter) {
             var isNullable = false
             body.accept(object: JavaRecursiveElementVisitor() {
                 override fun visitReturnStatement(statement: PsiReturnStatement) {
-                    if (statement.getReturnValue()?.nullability() == Nullability.Nullable) {
+                    if (statement.returnValue?.nullability() == Nullability.Nullable) {
                         isNullable = true
                     }
                 }
@@ -340,20 +339,20 @@ class TypeConverter(val converter: Converter) {
 
         private fun PsiExpression.nullability(): Nullability {
             return when (this) {
-                is PsiLiteralExpression -> if (getType() != PsiType.NULL) Nullability.NotNull else Nullability.Nullable
+                is PsiLiteralExpression -> if (type != PsiType.NULL) Nullability.NotNull else Nullability.Nullable
 
                 is PsiNewExpression -> Nullability.NotNull
 
                 is PsiConditionalExpression -> {
-                    val nullability1 = getThenExpression()?.nullability()
+                    val nullability1 = thenExpression?.nullability()
                     if (nullability1 == Nullability.Nullable) return Nullability.Nullable
-                    val nullability2 = getElseExpression()?.nullability()
+                    val nullability2 = elseExpression?.nullability()
                     if (nullability2 == Nullability.Nullable) return Nullability.Nullable
                     if (nullability1 == Nullability.NotNull && nullability2 == Nullability.NotNull) return Nullability.NotNull
                     Nullability.Default
                 }
 
-                is PsiParenthesizedExpression -> getExpression()?.nullability() ?: Nullability.Default
+                is PsiParenthesizedExpression -> expression?.nullability() ?: Nullability.Default
 
 
             //TODO: some other cases
@@ -368,7 +367,7 @@ class TypeConverter(val converter: Converter) {
 
         override fun fromType(type: PsiType): Mutability {
             val target = (type as? PsiClassType)?.resolve() ?: return Mutability.NonMutable
-            if (target.getQualifiedName() !in TypeVisitor.toKotlinMutableTypesMap.keySet()) return Mutability.NonMutable
+            if (!TypeVisitor.toKotlinMutableTypesMap.keys.containsRaw(target.qualifiedName)) return Mutability.NonMutable
             return Mutability.Default
         }
 
@@ -376,7 +375,7 @@ class TypeConverter(val converter: Converter) {
             if (owner is KtLightElement<*, *>) {
                 val jetDeclaration = owner.getOrigin() as? KtCallableDeclaration ?: return Mutability.Default
                 val descriptor = converter.services.resolverForConverter.resolveToDescriptor(jetDeclaration) as? CallableDescriptor ?: return Mutability.Default
-                val type = descriptor.getReturnType() ?: return Mutability.Default
+                val type = descriptor.returnType ?: return Mutability.Default
                 val classDescriptor = TypeUtils.getClassDescriptor(type) ?: return Mutability.Default
                 return if (DescriptorUtils.getFqName(classDescriptor).asString() in mutableKotlinClasses)
                     Mutability.Mutable
@@ -385,30 +384,30 @@ class TypeConverter(val converter: Converter) {
             }
             //TODO: Kotlin compiled elements
 
-            return super<TypeFlavor>.fromAnnotations(owner) //TODO: ReadOnly annotation
+            return super.fromAnnotations(owner) //TODO: ReadOnly annotation
         }
 
         override fun fromUsage(usage: PsiExpression)
                 = if (isMutableFromUsage(usage)) Mutability.Mutable else Mutability.Default
 
         private fun isMutableFromUsage(usage: PsiExpression): Boolean {
-            val parent = usage.getParent()
-            if (parent is PsiReferenceExpression && usage == parent.getQualifierExpression() && parent.getParent() is PsiMethodCallExpression) {
-                return parent.getReferenceName() in modificationMethodNames
+            val parent = usage.parent
+            if (parent is PsiReferenceExpression && usage == parent.qualifierExpression && parent.parent is PsiMethodCallExpression) {
+                return modificationMethodNames.containsRaw(parent.referenceName)
             }
             else if (parent is PsiExpressionList) {
-                val call = parent.getParent() as? PsiCall ?: return false
+                val call = parent.parent as? PsiCall ?: return false
                 val method = call.resolveMethod() ?: return false
-                val paramIndex = parent.getExpressions().indexOf(usage)
-                val parameterList = method.getParameterList()
-                if (paramIndex >= parameterList.getParametersCount()) return false
-                return variableMutability(parameterList.getParameters()[paramIndex]) == Mutability.Mutable
+                val paramIndex = parent.expressions.indexOf(usage)
+                val parameterList = method.parameterList
+                if (paramIndex >= parameterList.parametersCount) return false
+                return variableMutability(parameterList.parameters[paramIndex]) == Mutability.Mutable
             }
-            else if (parent is PsiVariable && usage == parent.getInitializer()) {
+            else if (parent is PsiVariable && usage == parent.initializer) {
                 return variableMutability(parent) == Mutability.Mutable
             }
-            else if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && usage == parent.getRExpression()) {
-                val leftSideVar = (parent.getLExpression() as? PsiReferenceExpression)?.resolve() as? PsiVariable ?: return false
+            else if (parent is PsiAssignmentExpression && parent.operationTokenType == JavaTokenType.EQ && usage == parent.rExpression) {
+                val leftSideVar = (parent.lExpression as? PsiReferenceExpression)?.resolve() as? PsiVariable ?: return false
                 return variableMutability(leftSideVar) == Mutability.Mutable
             }
             return false
@@ -431,6 +430,6 @@ class TypeConverter(val converter: Converter) {
                 "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll"
         )
 
-        private val mutableKotlinClasses = TypeVisitor.toKotlinMutableTypesMap.values().toSet()
+        private val mutableKotlinClasses = TypeVisitor.toKotlinMutableTypesMap.values.toSet()
     }
 }

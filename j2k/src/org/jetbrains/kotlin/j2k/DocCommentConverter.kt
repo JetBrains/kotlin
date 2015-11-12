@@ -30,8 +30,8 @@ object EmptyDocCommentConverter: DocCommentConverter {
 }
 
 fun PsiDocTag.content(): String =
-        getChildren()
-                .dropWhile { it.getNode().getElementType() == JavaDocTokenType.DOC_TAG_NAME }
+        children
+                .dropWhile { it.node.elementType == JavaDocTokenType.DOC_TAG_NAME }
                 .dropWhile { it is PsiWhiteSpace }
-                .filterNot { it.getNode().getElementType() == JavaDocTokenType.DOC_COMMENT_LEADING_ASTERISKS }
-                .joinToString("") { it.getText() }
+                .filterNot { it.node.elementType == JavaDocTokenType.DOC_COMMENT_LEADING_ASTERISKS }
+                .joinToString("") { it.text }

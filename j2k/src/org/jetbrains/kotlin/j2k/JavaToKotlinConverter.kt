@@ -76,7 +76,7 @@ public class JavaToKotlinConverter(
 
                 AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
 
-                kotlinFile.getText()
+                kotlinFile.text
             }
             catch(e: ProcessCanceledException) {
                 throw e
@@ -150,7 +150,7 @@ public class JavaToKotlinConverter(
     ): ExternalCodeProcessing? {
         if (usageProcessings.isEmpty()) return null
 
-        val map: Map<PsiElement, Collection<UsageProcessing>> = usageProcessings.values()
+        val map: Map<PsiElement, Collection<UsageProcessing>> = usageProcessings.values
                 .flatMap { it }
                 .filter { it.javaCodeProcessor != null || it.kotlinCodeProcessor != null }
                 .groupBy { it.targetElement }
@@ -160,13 +160,13 @@ public class JavaToKotlinConverter(
             override fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit {
                 val refs = ArrayList<ReferenceInfo>()
 
-                progress.setText("Searching usages to update...")
+                progress.text = "Searching usages to update..."
 
-                for ((i, entry) in map.entrySet().withIndex()) {
+                for ((i, entry) in map.entries.withIndex()) {
                     val psiElement = entry.key
                     val processings = entry.value
 
-                    progress.setText2((psiElement as? PsiNamedElement)?.getName() ?: "")
+                    progress.text2 = (psiElement as? PsiNamedElement)?.name ?: ""
                     progress.checkCanceled()
 
                     ProgressManager.getInstance().runProcess(
@@ -174,10 +174,10 @@ public class JavaToKotlinConverter(
                                 val searchJava = processings.any { it.javaCodeProcessor != null }
                                 val searchKotlin = processings.any { it.kotlinCodeProcessor != null }
                                 services.referenceSearcher.findUsagesForExternalCodeProcessing(psiElement, searchJava, searchKotlin)
-                                        .filterNot { inConversionScope(it.getElement()) }
-                                        .mapTo(refs) { ReferenceInfo(it, psiElement, it.getElement().getContainingFile(), processings) }
+                                        .filterNot { inConversionScope(it.element) }
+                                        .mapTo(refs) { ReferenceInfo(it, psiElement, it.element.containingFile, processings) }
                             },
-                            ProgressPortionReporter(progress, i / map.size().toDouble(), 1.0 / map.size()))
+                            ProgressPortionReporter(progress, i / map.size.toDouble(), 1.0 / map.size))
 
                 }
 
@@ -187,10 +187,10 @@ public class JavaToKotlinConverter(
     }
 
     private fun processUsages(refs: Collection<ReferenceInfo>) {
-        for (fileRefs in refs.groupBy { it.file }.values()) { // group by file for faster sorting
+        for (fileRefs in refs.groupBy { it.file }.values) { // group by file for faster sorting
             ReferenceLoop@
             for ((reference, target, file, processings) in fileRefs.sortedWith(ReferenceComparator)) {
-                val processors = when (reference.getElement().getLanguage()) {
+                val processors = when (reference.element.language) {
                     JavaLanguage.INSTANCE -> processings.mapNotNull { it.javaCodeProcessor }
                     KotlinLanguage.INSTANCE -> processings.mapNotNull { it.kotlinCodeProcessor }
                     else -> continue@ReferenceLoop
@@ -208,8 +208,8 @@ public class JavaToKotlinConverter(
     }
 
     private fun checkReferenceValid(reference: PsiReference, afterProcessor: ExternalCodeProcessor?) {
-        val element = reference.getElement()
-        assert(element.isValid() && element.getContainingFile() !is DummyHolder) {
+        val element = reference.element
+        assert(element.isValid && element.containingFile !is DummyHolder) {
             "Reference $reference got invalidated" + (if (afterProcessor != null) " after processing with $afterProcessor" else "")
         }
     }
@@ -233,7 +233,7 @@ public class JavaToKotlinConverter(
         }
 
         private val progressText = "Converting Java to Kotlin"
-        private val fileCount = files?.size() ?: 0
+        private val fileCount = files?.size ?: 0
         private val fileCountText = fileCount.toString() + " " + if (fileCount > 1) "files" else "file"
         private var fraction = 0.0
         private var pass = 1
@@ -247,13 +247,13 @@ public class JavaToKotlinConverter(
             // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
             ProgressManager.getInstance().runProcess(
                     {
-                        progress?.setText("$progressText ($fileCountText) - pass $pass of 3")
+                        progress?.text = "$progressText ($fileCountText) - pass $pass of 3"
 
                         for ((i, item) in inputItems.withIndex()) {
                             progress?.checkCanceled()
-                            progress?.setFraction(fraction + fractionPortion * i / fileCount)
+                            progress?.fraction = fraction + fractionPortion * i / fileCount
 
-                            progress?.setText2(files!![i].getVirtualFile().getPresentableUrl())
+                            progress?.text2 = files!![i].virtualFile.presentableUrl
 
                             outputItems.add(processItem(item))
                         }
@@ -273,15 +273,15 @@ public class JavaToKotlinConverter(
     ) : DelegatingProgressIndicator(indicator) {
 
         init {
-            setFraction(0.0)
+            fraction = 0.0
         }
 
         override fun start() {
-            setFraction(0.0)
+            fraction = 0.0
         }
 
         override fun stop() {
-            setFraction(portion)
+            fraction = portion
         }
 
         override fun setFraction(fraction: Double) {

@@ -201,7 +201,7 @@ class LambdaExpression(val parameterList: ParameterList?, val block: Block) : Ex
         if (parameterList != null && !parameterList.parameters.isEmpty()) {
             builder.append(parameterList)
                     .append("->")
-                    .append(if (block.statements.size() > 1) "\n" else " ")
+                    .append(if (block.statements.size > 1) "\n" else " ")
                     .append(block.statements, "\n")
         }
         else {

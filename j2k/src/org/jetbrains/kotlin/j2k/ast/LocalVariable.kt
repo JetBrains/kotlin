@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.CodeBuilder
 
 class LocalVariable(
