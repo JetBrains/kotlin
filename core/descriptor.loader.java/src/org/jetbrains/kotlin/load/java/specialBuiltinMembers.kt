@@ -270,7 +270,7 @@ private val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescripto
 
 private fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
 
-private fun CallableMemberDescriptor.firstOverridden(
+public fun CallableMemberDescriptor.firstOverridden(
         predicate: (CallableMemberDescriptor) -> Boolean
 ): CallableMemberDescriptor? {
     var result: CallableMemberDescriptor? = null
