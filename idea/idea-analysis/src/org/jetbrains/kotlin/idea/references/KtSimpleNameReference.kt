@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -179,14 +180,14 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
     private fun KtNameReferenceExpression.changeQualifiedName(fqName: FqName): KtElement {
         assert(!fqName.isRoot()) { "Can't set empty FqName for element $this" }
 
-        val shortName = fqName.shortName().asString()
+        val shortName = fqName.shortName().render()
         val psiFactory = KtPsiFactory(this)
         val fqNameBase = (getParent() as? KtCallExpression)?.let { parent ->
             val callCopy = parent.copy() as KtCallExpression
             callCopy.getCalleeExpression()!!.replace(psiFactory.createSimpleName(shortName)).getParent()!!.getText()
         } ?: shortName
 
-        val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().asString()}.$fqNameBase" else fqNameBase
+        val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().render()}.$fqNameBase" else fqNameBase
 
         val elementToReplace = getQualifiedElement()
         return when (elementToReplace) {
