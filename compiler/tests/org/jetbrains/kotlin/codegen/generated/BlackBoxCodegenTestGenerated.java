@@ -896,63 +896,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
     }
 
-    @TestMetadata("compiler/testData/codegen/box/builtinsProperties")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class BuiltinsProperties extends AbstractBlackBoxCodegenTest {
-        public void testAllFilesPresentInBuiltinsProperties() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/builtinsProperties"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("bridges.kt")
-        public void testBridges() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/bridges.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("collectionImpl.kt")
-        public void testCollectionImpl() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/collectionImpl.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("enumAsOrdinaled.kt")
-        public void testEnumAsOrdinaled() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/enumAsOrdinaled.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("explicitSuperCall.kt")
-        public void testExplicitSuperCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/explicitSuperCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("irrelevantRemoveAtOverride.kt")
-        public void testIrrelevantRemoveAtOverride() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/irrelevantRemoveAtOverride.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("maps.kt")
-        public void testMaps() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/maps.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("throwable.kt")
-        public void testThrowable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/throwable.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("valuesInsideEnum.kt")
-        public void testValuesInsideEnum() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/builtinsProperties/valuesInsideEnum.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/box/casts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7360,6 +7303,63 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("implicitToGrandSon.kt")
         public void testImplicitToGrandSon() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/implicitToGrandSon.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/specialBuiltins")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SpecialBuiltins extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInSpecialBuiltins() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/specialBuiltins"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("bridges.kt")
+        public void testBridges() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/bridges.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("collectionImpl.kt")
+        public void testCollectionImpl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/collectionImpl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumAsOrdinaled.kt")
+        public void testEnumAsOrdinaled() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/enumAsOrdinaled.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("explicitSuperCall.kt")
+        public void testExplicitSuperCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/explicitSuperCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("irrelevantRemoveAtOverride.kt")
+        public void testIrrelevantRemoveAtOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/irrelevantRemoveAtOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("maps.kt")
+        public void testMaps() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/maps.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("throwable.kt")
+        public void testThrowable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/throwable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("valuesInsideEnum.kt")
+        public void testValuesInsideEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/valuesInsideEnum.kt");
             doTest(fileName);
         }
     }
