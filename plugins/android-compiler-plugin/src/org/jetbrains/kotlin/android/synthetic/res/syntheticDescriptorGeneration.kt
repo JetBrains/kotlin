@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -65,17 +66,18 @@ internal fun genPropertyForWidget(
                                   defaultType.constructor.parameters.map { StarProjectionImpl(it) })
     } ?: context.viewType
 
-    return genProperty(resolvedWidget.widget.id, receiverType, type, packageFragmentDescriptor, sourceEl, resolvedWidget.errorType)
+    return genProperty(resolvedWidget.widget.id, receiverType, type, packageFragmentDescriptor, sourceEl, context, resolvedWidget.errorType)
 }
 
 internal fun genPropertyForFragment(
         packageFragmentDescriptor: PackageFragmentDescriptor,
         receiverType: KotlinType,
         type: KotlinType,
-        fragment: AndroidResource.Fragment
+        fragment: AndroidResource.Fragment,
+        context: SyntheticElementResolveContext
 ): PropertyDescriptor {
     val sourceElement = fragment.sourceElement?.let { XmlSourceElement(it) } ?: SourceElement.NO_SOURCE
-    return genProperty(fragment.id, receiverType, type, packageFragmentDescriptor, sourceElement, null)
+    return genProperty(fragment.id, receiverType, type, packageFragmentDescriptor, sourceElement, context, null)
 }
 
 private fun genProperty(
@@ -84,8 +86,11 @@ private fun genProperty(
         type: KotlinType,
         containingDeclaration: DeclarationDescriptor,
         sourceElement: SourceElement,
+        context: SyntheticElementResolveContext,
         errorType: String?
 ): PropertyDescriptor {
+    val alwaysCastToView = type.constructor.declarationDescriptor?.fqNameUnsafe?.asString() == AndroidConst.VIEWSTUB_FQNAME
+
     val property = object : AndroidSyntheticProperty, PropertyDescriptorImpl(
             containingDeclaration,
             null,
@@ -99,9 +104,11 @@ private fun genProperty(
             false,
             false) {
         override val errorType = errorType
+        override val alwaysCastToView = alwaysCastToView
     }
 
-    val flexibleType = DelegatingFlexibleType.create(type, type.makeNullable(), FlexibleTypeCapabilities.NONE)
+    val actualType = if (alwaysCastToView) context.viewType else type
+    val flexibleType = DelegatingFlexibleType.create(actualType, actualType.makeNullable(), FlexibleTypeCapabilities.NONE)
     property.setType(
             flexibleType,
             emptyList<TypeParameterDescriptor>(),
@@ -131,6 +138,7 @@ interface AndroidSyntheticFunction
 
 interface AndroidSyntheticProperty {
     val errorType: String?
+    val alwaysCastToView: Boolean
 
     val isErrorType: Boolean
         get() = errorType != null

@@ -118,4 +118,10 @@ public class AndroidSyntheticPropertyDescriptorTestGenerated extends AbstractAnd
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/descriptors/unresolvedWidget/");
         doTest(fileName);
     }
+
+    @TestMetadata("viewStub")
+    public void testViewStub() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/descriptors/viewStub/");
+        doTest(fileName);
+    }
 }

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.android.synthetic
 
-import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 
 public object AndroidConst {
     val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
@@ -44,6 +42,8 @@ public object AndroidConst {
     //TODO FqName / ClassId
 
     val VIEW_FQNAME = "android.view.View"
+    val VIEWSTUB_FQNAME = "android.view.ViewStub"
+
     val ACTIVITY_FQNAME = "android.app.Activity"
     val FRAGMENT_FQNAME = "android.app.Fragment"
     val SUPPORT_V4_PACKAGE = "android.support.v4"

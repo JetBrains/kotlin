@@ -66,7 +66,7 @@ class AndroidSyntheticPackageFragmentDescriptor(
                     }
                     is AndroidResource.Fragment -> if (!packageData.forView) {
                         for ((receiverType, type) in fragmentTypes) {
-                            properties += genPropertyForFragment(packageFragmentDescriptor, receiverType, type, resource)
+                            properties += genPropertyForFragment(packageFragmentDescriptor, receiverType, type, resource, context)
                         }
                     }
                 }
