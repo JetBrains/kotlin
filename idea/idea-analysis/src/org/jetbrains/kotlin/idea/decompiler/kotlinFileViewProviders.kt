@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.PsiFileImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -37,7 +38,13 @@ abstract class KotlinClassFileViewProviderBase(
         val psiFile = createFile(manager.getProject(), file, KotlinFileType.INSTANCE)
         val text = psiFile?.getText() ?: ""
 
-        (psiFile as? PsiFileImpl)?.markInvalidated()
+        DebugUtil.startPsiModification("Invalidating throw-away copy of file that was used for getting text")
+        try {
+            (psiFile as? PsiFileImpl)?.markInvalidated()
+        }
+        finally {
+            DebugUtil.finishPsiModification()
+        }
 
         text
     }
