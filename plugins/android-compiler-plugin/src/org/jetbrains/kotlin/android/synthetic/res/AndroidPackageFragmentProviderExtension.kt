@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.storage.StorageManager
+import java.util.*
 
 abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProviderExtension {
     protected abstract fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager?
@@ -49,44 +50,51 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
 
         val lazyContext = LazySyntheticElementResolveContext(module, storageManager)
 
-        val packageDescriptors = arrayListOf<PackageFragmentDescriptor>()
+        val allPackageDescriptors = arrayListOf<PackageFragmentDescriptor>()
+        val packagesToLookupInCompletion = arrayListOf<PackageFragmentDescriptor>()
 
         // Packages with synthetic properties
         for (variantData in moduleData) {
             for ((layoutName, layouts) in variantData) {
-                fun createPackageFragment(fqName: String, forView: Boolean, isDeprecated: Boolean = false): PackageFragmentDescriptor {
+                fun createPackageFragment(fqName: String, forView: Boolean, isDeprecated: Boolean = false) {
                     val resources = layoutXmlFileManager.extractResources(layouts, module)
                     val packageData = AndroidSyntheticPackageData(moduleData, forView, isDeprecated, resources)
-                    return AndroidSyntheticPackageFragmentDescriptor(module, FqName(fqName), packageData, lazyContext, storageManager)
+                    val packageDescriptor = AndroidSyntheticPackageFragmentDescriptor(
+                            module, FqName(fqName), packageData, lazyContext, storageManager)
+                    packagesToLookupInCompletion += packageDescriptor
+                    allPackageDescriptors += packageDescriptor
                 }
 
                 val packageFqName = AndroidConst.SYNTHETIC_PACKAGE + '.' + variantData.variant.name + '.' + layoutName
 
-                packageDescriptors += createPackageFragment(packageFqName, false)
-                packageDescriptors += createPackageFragment(packageFqName + ".view", true)
+                createPackageFragment(packageFqName, false)
+                createPackageFragment(packageFqName + ".view", true)
 
                 if (variantData.variant.isMainVariant && !moduleData.any { it.variant.name == layoutName }) {
                     val deprecatedPackageFqName = AndroidConst.SYNTHETIC_PACKAGE + '.' + layoutName
-                    packageDescriptors += createPackageFragment(deprecatedPackageFqName, false, isDeprecated = true)
-                    packageDescriptors += createPackageFragment(deprecatedPackageFqName + ".view", true, isDeprecated = true)
+                    createPackageFragment(deprecatedPackageFqName, false, isDeprecated = true)
+                    createPackageFragment(deprecatedPackageFqName + ".view", true, isDeprecated = true)
                 }
             }
         }
 
         // Empty middle packages
         AndroidConst.SYNTHETIC_SUBPACKAGES.forEachUntilLast { s ->
-            packageDescriptors += PredefinedPackageFragmentDescriptor(s, module, storageManager)
+            allPackageDescriptors += PredefinedPackageFragmentDescriptor(s, module, storageManager)
         }
+
         for (variantData in moduleData) {
             val fqName = AndroidConst.SYNTHETIC_PACKAGE + '.' + variantData.variant.name
-            packageDescriptors += PredefinedPackageFragmentDescriptor(fqName, module, storageManager)
+            allPackageDescriptors += PredefinedPackageFragmentDescriptor(fqName, module, storageManager)
         }
 
         // Package with clearFindViewByIdCache()
         AndroidConst.SYNTHETIC_SUBPACKAGES.last().let { s ->
-            packageDescriptors += PredefinedPackageFragmentDescriptor(s, module, storageManager) { descriptor ->
+            val packageDescriptor = PredefinedPackageFragmentDescriptor(s, module, storageManager, packagesToLookupInCompletion) { descriptor ->
                 lazyContext().getWidgetReceivers(false).map { genClearCacheFunction(descriptor, it) }
             }
+            packagesToLookupInCompletion += packageDescriptor
+            allPackageDescriptors += packageDescriptor
         }
 
         val provider = AndroidSyntheticPackageFragmentProvider(allPackageDescriptors)
@@ -95,7 +103,9 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
     }
 }
 
-class AndroidSyntheticPackageFragmentProvider(val packageFragments: Collection<PackageFragmentDescriptor>) : PackageFragmentProvider {
+class AndroidSyntheticPackageFragmentProvider(
+        val packageFragments: Collection<PackageFragmentDescriptor>
+) : PackageFragmentProvider {
     override fun getPackageFragments(fqName: FqName) = packageFragments.filter { it.fqName == fqName }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) =

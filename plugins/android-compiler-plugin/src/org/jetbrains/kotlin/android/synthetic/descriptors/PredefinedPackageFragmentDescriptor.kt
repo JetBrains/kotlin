@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.android.synthetic.descriptors
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -33,6 +30,7 @@ class PredefinedPackageFragmentDescriptor(
         fqName: String,
         module: ModuleDescriptor,
         private val storageManager: StorageManager,
+        val subpackages: List<PackageFragmentDescriptor> = emptyList(),
         private val descriptors: (PredefinedPackageFragmentDescriptor) -> Collection<DeclarationDescriptor> = { emptyList() }
 ) : PackageFragmentDescriptorImpl(module, FqName(fqName)) {
     private val calculatedDescriptors = storageManager.createLazyValue {

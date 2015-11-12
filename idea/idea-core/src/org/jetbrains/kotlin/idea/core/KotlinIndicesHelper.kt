@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -145,7 +146,18 @@ public class KotlinIndicesHelper(
                 }
                 .flatMap { index.get(it, project, scope).asSequence() }
 
-        return findSuitableExtensions(declarations, receiverTypes, callTypeAndReceiver.callType)
+        val suitableExtensions = findSuitableExtensions(declarations, receiverTypes, callTypeAndReceiver.callType)
+
+        val additionalDescriptors = ArrayList<CallableDescriptor>(0)
+
+        for (extension in KotlinIndicesHelperExtension.getInstances(project)) {
+            extension.appendExtensionCallables(additionalDescriptors, moduleDescriptor, receiverTypes, nameFilter)
+        }
+
+        return if (additionalDescriptors.isNotEmpty())
+            suitableExtensions + additionalDescriptors
+        else
+            suitableExtensions
     }
 
     private fun MutableCollection<String>.addTypeNames(type: KotlinType) {

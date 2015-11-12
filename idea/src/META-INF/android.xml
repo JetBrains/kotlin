@@ -17,5 +17,6 @@
         <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.android.synthetic.codegen.AndroidOnDestroyClassBuilderInterceptorExtension"/>
         <packageFragmentProviderExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.res.IDEAndroidPackageFragmentProviderExtension"/>
         <simpleNameReferenceExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidSimpleNameReferenceExtension"/>
+        <kotlinIndicesHelperExtension implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidIndicesHelperExtension"/>
     </extensions>
 </idea-plugin>
