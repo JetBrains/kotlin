@@ -224,7 +224,7 @@ public interface KtTokens {
     TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
 
     /**
-     * Don't add KDocTokens to COMMENTS TokenSet, because it is used in JetParserDefinition.getCommentTokens(),
+     * Don't add KDocTokens to COMMENTS TokenSet, because it is used in KotlinParserDefinition.getCommentTokens(),
      * and therefor all COMMENTS tokens will be ignored by PsiBuilder.
      *
      * @see KtPsiUtil#isInComment(com.intellij.psi.PsiElement)
