@@ -23,7 +23,7 @@ package kotlin
  * A progression of values of type `Byte`.
  */
 public open class ByteProgression
-    @Deprecated("This constructor will become private soon. Use ByteProgression.fromClosedRange() instead.", ReplaceWith("ByteProgression.fromClosedRange(start, end, increment)"))
+    @Deprecated("This constructor will become private soon. Use ByteProgression.fromClosedRange() instead.", ReplaceWith("ByteProgression.fromClosedRange(start, endInclusive, increment)"))
     public constructor
     (
             start: Byte,
@@ -81,7 +81,7 @@ public open class ByteProgression
  * A progression of values of type `Char`.
  */
 public open class CharProgression
-    @Deprecated("This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", ReplaceWith("CharProgression.fromClosedRange(start, end, increment)"))
+    @Deprecated("This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", ReplaceWith("CharProgression.fromClosedRange(start, endInclusive, increment)"))
     public constructor
     (
             start: Char,
@@ -140,7 +140,7 @@ public open class CharProgression
  * A progression of values of type `Short`.
  */
 public open class ShortProgression
-    @Deprecated("This constructor will become private soon. Use ShortProgression.fromClosedRange() instead.", ReplaceWith("ShortProgression.fromClosedRange(start, end, increment)"))
+    @Deprecated("This constructor will become private soon. Use ShortProgression.fromClosedRange() instead.", ReplaceWith("ShortProgression.fromClosedRange(start, endInclusive, increment)"))
     public constructor
     (
             start: Short,
@@ -198,7 +198,7 @@ public open class ShortProgression
  * A progression of values of type `Int`.
  */
 public open class IntProgression
-    @Deprecated("This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", ReplaceWith("IntProgression.fromClosedRange(start, end, increment)"))
+    @Deprecated("This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", ReplaceWith("IntProgression.fromClosedRange(start, endInclusive, increment)"))
     public constructor
     (
             start: Int,
@@ -256,7 +256,7 @@ public open class IntProgression
  * A progression of values of type `Long`.
  */
 public open class LongProgression
-    @Deprecated("This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", ReplaceWith("LongProgression.fromClosedRange(start, end, increment)"))
+    @Deprecated("This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", ReplaceWith("LongProgression.fromClosedRange(start, endInclusive, increment)"))
     public constructor
     (
             start: Long,
