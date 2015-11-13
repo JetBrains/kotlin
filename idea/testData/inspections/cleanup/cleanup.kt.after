@@ -83,3 +83,7 @@ fun test(a: AAA, b: BBB) {
         (a.foo)()
     }
 }
+
+fun infixTest() {
+    arrayListOf(1, 2, 3).map { it }
+}
