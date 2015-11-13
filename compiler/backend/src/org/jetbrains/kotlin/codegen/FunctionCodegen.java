@@ -883,7 +883,9 @@ public class FunctionCodegen {
             @NotNull Method bridge,
             @NotNull final Method delegateTo
     ) {
-        if (BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) == null) return;
+        BuiltinMethodsWithSpecialGenericSignature.DefaultValue defaultValue =
+                BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor);
+        if (defaultValue == null) return;
 
         assert descriptor.getValueParameters().size() == 1 : "Should be descriptor with one value parameter, but found: " + descriptor;
 
@@ -904,12 +906,10 @@ public class FunctionCodegen {
 
         iv.ifne(afterBarrier);
 
-        String shortName = getFqName(descriptor).shortName().asString();
-        StackValue returnValue =
-                ("indexOf".equals(shortName) || "lastIndexOf".equals(shortName)) ? StackValue.constant(-1, Type.INT_TYPE) : StackValue.none();
+        Type returnType = bridge.getReturnType();
 
-        returnValue.put(bridge.getReturnType(), iv);
-        iv.areturn(bridge.getReturnType());
+        StackValue.constant(defaultValue.getValue(), returnType).put(returnType, iv);
+        iv.areturn(returnType);
 
         iv.visitLabel(afterBarrier);
     }

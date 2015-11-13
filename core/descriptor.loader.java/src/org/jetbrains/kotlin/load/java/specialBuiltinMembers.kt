@@ -59,8 +59,8 @@ object BuiltinSpecialProperties {
         return callableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl()
     }
 
-    fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
-        if (fqNameOrNull() in FQ_NAMES) return true
+    private fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
+        if (FQ_NAMES.containsRaw(fqNameOrNull())) return true
         if (!isFromBuiltins()) return false
 
         return overriddenDescriptors.any { hasBuiltinSpecialPropertyFqName(it) }
@@ -83,19 +83,26 @@ object BuiltinMethodsWithSpecialGenericSignature {
             FqName("kotlin.MutableCollection.removeAll"),
             FqName("kotlin.MutableCollection.retainAll")
     )
-    private val GENERIC_PARAMETERS_FQ_NAMES = setOf(
-            FqName("kotlin.Collection.contains"),
-            FqName("kotlin.MutableCollection.remove"),
-            FqName("kotlin.Map.containsKey"),
-            FqName("kotlin.Map.containsValue"),
-            FqName("kotlin.Map.get"),
-            FqName("kotlin.MutableMap.remove"),
-            FqName("kotlin.List.indexOf"),
-            FqName("kotlin.List.lastIndexOf")
+
+    public enum class DefaultValue(val value: Any?) {
+        NULL(null), INDEX(-1), FALSE(false)
+    }
+
+    private val GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP = mapOf(
+            FqName("kotlin.Collection.contains")      to DefaultValue.FALSE,
+            FqName("kotlin.MutableCollection.remove") to DefaultValue.FALSE,
+            FqName("kotlin.Map.containsKey")          to DefaultValue.FALSE,
+            FqName("kotlin.Map.containsValue")        to DefaultValue.FALSE,
+
+            FqName("kotlin.Map.get")                  to DefaultValue.NULL,
+            FqName("kotlin.MutableMap.remove")        to DefaultValue.NULL,
+
+            FqName("kotlin.List.indexOf")             to DefaultValue.INDEX,
+            FqName("kotlin.List.lastIndexOf")         to DefaultValue.INDEX
     )
 
     private val ERASED_VALUE_PARAMETERS_FQ_NAMES =
-            GENERIC_PARAMETERS_FQ_NAMES + ERASED_COLLECTION_PARAMETER_FQ_NAMES
+            GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.keys + ERASED_COLLECTION_PARAMETER_FQ_NAMES
 
     private val ERASED_VALUE_PARAMETERS_SHORT_NAMES =
             ERASED_VALUE_PARAMETERS_FQ_NAMES.map { it.shortName() }.toSet()
@@ -109,6 +116,14 @@ object BuiltinMethodsWithSpecialGenericSignature {
     ): FunctionDescriptor? {
         if (!functionDescriptor.name.sameAsBuiltinMethodWithErasedValueParameters) return null
         return functionDescriptor.firstOverridden { it.hasErasedValueParametersInJava } as FunctionDescriptor?
+    }
+
+    @JvmStatic
+    fun getDefaultValueForOverriddenBuiltinFunction(functionDescriptor: FunctionDescriptor): DefaultValue? {
+        if (functionDescriptor.name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
+        return functionDescriptor.firstOverridden {
+            GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.keys.containsRaw(it.fqNameOrNull())
+        }?.let { GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP[it.fqNameSafe] }
     }
 
     val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
@@ -131,7 +146,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
         return when (builtinFqName) {
             in ERASED_COLLECTION_PARAMETER_FQ_NAMES -> SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
-            in GENERIC_PARAMETERS_FQ_NAMES -> SpecialSignatureInfo.GENERIC_PARAMETER
+            in GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP -> SpecialSignatureInfo.GENERIC_PARAMETER
             else -> error("Unexpected kind of special builtin: $builtinFqName")
         }
     }

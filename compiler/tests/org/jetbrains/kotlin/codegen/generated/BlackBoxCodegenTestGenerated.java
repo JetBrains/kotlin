@@ -7327,6 +7327,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("emptyList.kt")
+        public void testEmptyList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/emptyList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyMap.kt")
+        public void testEmptyMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/emptyMap.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyStringMap.kt")
+        public void testEmptyStringMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/emptyStringMap.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enumAsOrdinaled.kt")
         public void testEnumAsOrdinaled() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/enumAsOrdinaled.kt");
