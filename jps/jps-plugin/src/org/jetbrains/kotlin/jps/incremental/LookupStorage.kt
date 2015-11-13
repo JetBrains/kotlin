@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.jps.incremental
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.storage.StorageProvider
-import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.jps.incremental.storage.*
 import org.jetbrains.kotlin.utils.Printer
@@ -184,9 +184,12 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
 class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
     val lookups = MultiMap<LookupSymbol, String>()
 
-    override fun record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        lookups.putValue(LookupSymbol(name, scopeFqName), locationInfo.filePath)
-        delegate.record(locationInfo, scopeFqName, scopeKind, name)
+    override val requiresPosition: Boolean
+        get() = delegate.requiresPosition
+
+    override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+        lookups.putValue(LookupSymbol(name, scopeFqName), filePath)
+        delegate.record(filePath, position, scopeFqName, scopeKind, name)
     }
 }
 

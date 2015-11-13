@@ -17,11 +17,10 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.util.*
 
@@ -120,9 +119,12 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 class TestLookupTracker : LookupTracker {
     val lookups = arrayListOf<LookupInfo>()
 
-    override fun record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        val (line, column) = locationInfo.position
-        lookups.add(LookupInfo(locationInfo.filePath, line, column, scopeFqName, scopeKind, name))
+    override val requiresPosition: Boolean
+        get() = true
+
+    override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+        val (line, column) = position
+        lookups.add(LookupInfo(filePath, line, column, scopeFqName, scopeKind, name))
     }
 
     data class LookupInfo(
