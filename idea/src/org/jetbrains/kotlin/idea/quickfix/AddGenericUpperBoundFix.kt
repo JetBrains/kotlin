@@ -83,7 +83,7 @@ public class AddGenericUpperBoundFix(
 
             val resultingSubstitutor = successfulConstraintSystem.resultingSubstitutor
 
-            return inferenceData.descriptor.typeParameters.map factory@{
+            return inferenceData.descriptor.typeParameters.mapNotNull factory@{
                 typeParameterDescriptor ->
 
                 if (ConstraintsUtil.checkUpperBoundIsSatisfied(
@@ -96,7 +96,7 @@ public class AddGenericUpperBoundFix(
                                ?: return@factory null
 
                 createAction(argument, upperBound)
-            }.filterNotNull()
+            }
         }
 
         private fun createAction(argument: KotlinType, upperBound: KotlinType): IntentionAction? {

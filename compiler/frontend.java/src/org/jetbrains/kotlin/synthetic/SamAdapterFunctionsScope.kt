@@ -77,8 +77,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
         return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
             type.memberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filterIsInstance<FunctionDescriptor>()
-                    .map { extensionForFunction(it.original) }
-                    .filterNotNull()
+                    .mapNotNull { extensionForFunction(it.original) }
         }
     }
 

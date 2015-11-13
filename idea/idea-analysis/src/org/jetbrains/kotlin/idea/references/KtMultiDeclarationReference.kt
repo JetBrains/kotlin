@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
 class KtMultiDeclarationReference(element: KtMultiDeclaration) : KtMultiReference<KtMultiDeclaration>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        return expression.getEntries().map { entry ->
+        return expression.getEntries().mapNotNull { entry ->
             context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.getCandidateDescriptor()
-        }.filterNotNull()
+        }
     }
 
     override fun getRangeInElement(): TextRange? {

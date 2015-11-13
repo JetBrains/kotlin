@@ -212,11 +212,10 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
             .match(scopeElement, unifier)
             .asSequence()
             .filter { !(it.range.getTextRange() intersects originalTextRange) }
-            .map { match ->
+            .mapNotNull { match ->
                 val controlFlow = getControlFlowIfMatched(match)
                 controlFlow?.let { DuplicateInfo(match.range, it, unifierParameters.map { match.result.substitution[it]!!.text!! }) }
             }
-            .filterNotNull()
             .toList()
 }
 
@@ -421,7 +420,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
     fun getReturnArguments(resultExpression: KtExpression?): List<String> {
         return descriptor.controlFlow.outputValues
-                .map {
+                .mapNotNull {
                     when (it) {
                         is ExpressionValue -> resultExpression?.text
                         is Jump -> if (it.conditional) "false" else null
@@ -430,7 +429,6 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                         else -> throw IllegalArgumentException("Unknown output value: $it")
                     }
                 }
-                .filterNotNull()
     }
 
     fun replaceWithReturn(
@@ -525,7 +523,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         for ((expr, originalOffset) in originalOffsetByExpr) {
             if (expr.isValid) {
-                val replacements = exprReplacementMap[expr].map { it?.invoke(descriptor, expr) }.filterNotNull()
+                val replacements = exprReplacementMap[expr].mapNotNull { it?.invoke(descriptor, expr) }
                 nameByOffset.put(originalOffset, if (replacements.isEmpty()) arrayListOf(expr) else replacements)
             }
         }

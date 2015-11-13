@@ -32,7 +32,7 @@ import java.io.File
 public interface AbstractSMAPBaseTest {
 
     private fun extractSMAPFromClasses(outputFiles: Iterable<OutputFile>): List<SMAPAndFile> {
-        return outputFiles.map { outputFile ->
+        return outputFiles.mapNotNull { outputFile ->
             var debugInfo: String? = null
             ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.ASM5) {
                 override fun visitSource(source: String?, debug: String?) {
@@ -41,7 +41,7 @@ public interface AbstractSMAPBaseTest {
             }, 0)
 
             SMAPAndFile.SMAPAndFile(debugInfo, outputFile.sourceFiles.single())
-        }.filterNotNull()
+        }
     }
 
     private fun extractSmapFromSource(file: KtFile): SMAPAndFile? {
@@ -63,11 +63,11 @@ public interface AbstractSMAPBaseTest {
             return
         }
 
-        val sourceData = inputFiles.map { extractSmapFromSource(it) }.filterNotNull()
+        val sourceData = inputFiles.mapNotNull { extractSmapFromSource(it) }
         val compiledData = extractSMAPFromClasses(outputFiles).groupBy {
             it.sourceFile
         }.map {
-            val smap = it.getValue().map { replaceHash(it.smap) }.filterNotNull().joinToString("\n")
+            val smap = it.getValue().mapNotNull { it.smap?.replaceHash() }.joinToString("\n")
             SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key)
         }.toMap { it.sourceFile }
 
@@ -77,17 +77,16 @@ public interface AbstractSMAPBaseTest {
         }
     }
 
-    fun replaceHash(data: String?): String? {
-        if (data == null) return null
 
-        val fileSectionStart = data.indexOf("*F") + 3
-        val lineSection = data.indexOf("*L") - 1
+    private fun String.replaceHash(): String {
+        val fileSectionStart = indexOf("*F") + 3
+        val lineSection = indexOf("*L") - 1
 
-        val files = data.substring(fileSectionStart, lineSection).split("\n")
+        val files = substring(fileSectionStart, lineSection).split("\n")
 
         val cleaned = files.joinToString("\n")
 
-        return data.substring(0, fileSectionStart) + cleaned + data.substring(lineSection)
+        return substring(0, fileSectionStart) + cleaned + substring(lineSection)
     }
 
     class SMAPAndFile(val smap: String?, val sourceFile: String) {

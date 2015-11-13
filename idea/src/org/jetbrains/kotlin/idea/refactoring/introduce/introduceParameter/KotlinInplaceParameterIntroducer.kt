@@ -55,8 +55,7 @@ public class KotlinInplaceParameterIntroducer(
         null,
         originalDescriptor.originalRange.elements.single() as KtExpression,
         originalDescriptor.occurrencesToReplace
-                .map { it.elements.single() as KtExpression }
-                .filterNotNull()
+                .mapNotNull { it.elements.single() as KtExpression }
                 .toTypedArray(),
         INTRODUCE_PARAMETER,
         project,

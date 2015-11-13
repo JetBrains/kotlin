@@ -66,8 +66,8 @@ open class PropMapper<C, V, P : KMutableProperty1<C, V>>(val dest: C,
     open fun toArgs(prefix: String = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX): List<String> =
             when {
                 skipIf(prop.get(dest)) -> listOf<String>()
-                mergeDelimiter != null -> listOf(listOf(prefix + names.first(), toString(prop.get(dest))).filterNotNull().joinToString(mergeDelimiter))
-                else -> listOf(prefix + names.first(), toString(prop.get(dest))).filterNotNull()
+                mergeDelimiter != null -> listOf(listOfNotNull(prefix + names.first(), toString(prop.get(dest))).joinToString(mergeDelimiter))
+                else -> listOfNotNull(prefix + names.first(), toString(prop.get(dest)))
             }
 
     open fun apply(s: String) = prop.set(dest, fromString(s))

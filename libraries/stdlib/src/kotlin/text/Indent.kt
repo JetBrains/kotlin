@@ -110,14 +110,12 @@ private fun getIndentFunction(indent: String) = when {
 
 private inline fun List<String>.reindent(resultSizeEstimate: Int, indentAddFunction: (String) -> String, indentCutFunction: (String) -> String?): String {
     val lastIndex = lastIndex
-    // TODO: Use mapNotNullIndexed
-    return mapIndexed { index, value ->
+    return mapIndexedNotNull { index, value ->
             if ((index == 0 || index == lastIndex) && value.isBlank())
                 null
             else
                 indentCutFunction(value)?.let { cutted -> indentAddFunction(cutted) } ?: value
         }
-        .filterNotNull()
         .joinTo(StringBuilder(resultSizeEstimate), "\n")
         .toString()
 }

@@ -244,7 +244,7 @@ fun createModifierListStubForDeclaration(
 ): KotlinModifierListStubImpl {
     assert(flagsToTranslate.isNotEmpty())
 
-    val modifiers = flagsToTranslate.map { it.getModifiers(flags) }.filterNotNull() + additionalModifiers
+    val modifiers = flagsToTranslate.mapNotNull { it.getModifiers(flags) } + additionalModifiers
     return createModifierListStub(parent, modifiers)!!
 }
 

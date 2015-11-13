@@ -252,10 +252,10 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             val lambdas = getLambdasAtLineIfAny(sourcePosition)
             val file = sourcePosition.file.containingFile as KtFile
             val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
-            lambdas.map {
+            lambdas.mapNotNull {
                 val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(it, file)
                 getInternalClassNameForElement(it, typeMapper, file, isInLibrary).className
-            }.filterNotNull()
+            }
         }
     }
 
@@ -327,9 +327,9 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             throw NoDataException.INSTANCE
         }
 
-        return classNameForPositionAndInlinedOnes(position).map {
+        return classNameForPositionAndInlinedOnes(position).mapNotNull {
             className -> myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
-        }.filterNotNull()
+        }
     }
 
     @TestOnly

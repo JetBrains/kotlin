@@ -211,8 +211,7 @@ class ExpectedInfos(
             val callExpression = (call.callElement as? KtExpression)?.getQualifiedExpressionForSelectorOrThis() ?: return results
             val expectedFuzzyTypes = ExpectedInfos(bindingContext, resolutionFacade, useHeuristicSignatures, useOuterCallsExpectedTypeCount - 1)
                     .calculate(callExpression)
-                    .map { it.fuzzyType }
-                    .filterNotNull()
+                    .mapNotNull { it.fuzzyType }
             if (expectedFuzzyTypes.isEmpty() || expectedFuzzyTypes.any { it.freeParameters.isNotEmpty() }) return results
 
             return expectedFuzzyTypes
@@ -469,8 +468,7 @@ class ExpectedInfos(
         if (functionLiteral != null) {
             val literalExpression = functionLiteral.parent as KtFunctionLiteralExpression
             return calculate(literalExpression)
-                    .map { it.fuzzyType }
-                    .filterNotNull()
+                    .mapNotNull { it.fuzzyType }
                     .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }
                     .map {
                         val returnType = KotlinBuiltIns.getReturnTypeFromFunctionType(it.type)

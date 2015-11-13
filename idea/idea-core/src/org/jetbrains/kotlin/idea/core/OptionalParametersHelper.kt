@@ -47,8 +47,7 @@ public object OptionalParametersHelper {
         val descriptor = resolvedCall.getResultingDescriptor()
 
         val parameterToDefaultValue = descriptor.getValueParameters()
-                .map { parameter -> defaultParameterValue(parameter, project)?.let { parameter to it } }
-                .filterNotNull()
+                .mapNotNull { parameter -> defaultParameterValue(parameter, project)?.let { parameter to it } }
                 .toMap()
         if (parameterToDefaultValue.isEmpty()) return emptyList()
 

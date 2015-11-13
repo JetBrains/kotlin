@@ -75,8 +75,7 @@ class AnonymousSuperMacro : Macro() {
         return resolutionScope
                 .collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
                 .filter { it is ClassDescriptor && it.modality.isOverridable && (it.kind == ClassKind.CLASS || it.kind == ClassKind.INTERFACE) }
-                .map { DescriptorToSourceUtils.descriptorToDeclaration(it) as PsiNamedElement? }
-                .filterNotNull()
+                .mapNotNull { DescriptorToSourceUtils.descriptorToDeclaration(it) as PsiNamedElement? }
                 .toTypedArray()
     }
 }

@@ -44,7 +44,7 @@ import java.util.ArrayList
 
 fun analyzePushDownConflicts(context: KotlinPushDownContext,
                              usages: Array<out UsageInfo>): MultiMap<PsiElement, String> {
-    val targetClasses = usages.map { it.element?.unwrapped }.filterNotNull()
+    val targetClasses = usages.mapNotNull { it.element?.unwrapped }
 
     val conflicts = MultiMap<PsiElement, String>()
 

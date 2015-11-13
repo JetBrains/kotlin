@@ -249,7 +249,7 @@ public open class KotlinIntroduceParameterHandler(
                     val textRange = it.range.getTextRange()
                     forbiddenRanges.any { it.intersects(textRange) }
                 }
-                .map {
+                .mapNotNull {
                     val matchedElement = it.range.elements.singleOrNull()
                     when (matchedElement) {
                         is KtExpression -> matchedElement
@@ -257,7 +257,6 @@ public open class KotlinIntroduceParameterHandler(
                         else -> null
                     } as? KtExpression
                 }
-                .filterNotNull()
                 .map { it.toRange() }
 
         project.executeCommand(

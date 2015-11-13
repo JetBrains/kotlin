@@ -373,8 +373,7 @@ public open class KotlinChangeInfo(
             else
                 PsiModifier.PACKAGE_LOCAL
             val propagationTargets = primaryPropagationTargets.asSequence()
-                    .map { it.getRepresentativeLightMethod() }
-                    .filterNotNull()
+                    .mapNotNull { it.getRepresentativeLightMethod() }
                     .toSet()
             val javaChangeInfo = ChangeSignatureProcessor(
                     getMethod().getProject(),
@@ -413,7 +412,7 @@ public open class KotlinChangeInfo(
             val oldParameterCount = originalPsiMethod.parameterList.parametersCount
             var indexInCurrentPsiMethod = 0
             return newParameterList.withIndex()
-                    .map { pair ->
+                    .mapNotNullTo(ArrayList()) map@ { pair ->
                         val (i, info) = pair
 
                         if (info.defaultValueForParameter != null && defaultValuesRemained-- <= 0) return@map null
@@ -435,7 +434,6 @@ public open class KotlinChangeInfo(
                         val defaultValue = info.defaultValueForCall ?: info.defaultValueForParameter
                         ParameterInfoImpl(javaOldIndex, info.getName(), type, defaultValue?.getText() ?: "")
                     }
-                    .filterNotNullTo(ArrayList())
         }
 
         fun createJavaChangeInfoForFunctionOrGetter(
@@ -470,7 +468,7 @@ public open class KotlinChangeInfo(
         if (javaChangeInfos == null) {
             val method = getMethod()
             originalToCurrentMethods = matchOriginalAndCurrentMethods(method.toLightMethods())
-            javaChangeInfos = originalToCurrentMethods.entries.map {
+            javaChangeInfos = originalToCurrentMethods.entries.mapNotNull {
                 val (originalPsiMethod, currentPsiMethod) = it
 
                 when (method) {
@@ -488,7 +486,7 @@ public open class KotlinChangeInfo(
                     }
                     else -> null
                 }
-            }.filterNotNull()
+            }
         }
 
         return javaChangeInfos

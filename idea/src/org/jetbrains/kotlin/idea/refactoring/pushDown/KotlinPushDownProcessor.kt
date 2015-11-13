@@ -94,14 +94,13 @@ public class KotlinPushDownProcessor(
     }
 
     override fun getAfterData(usages: Array<out UsageInfo>) = RefactoringEventData().apply {
-        addElements(usages.map { it.element as? KtClassOrObject }.filterNotNull())
+        addElements(usages.mapNotNull { it.element as? KtClassOrObject })
     }
 
     override fun findUsages(): Array<out UsageInfo> {
         return HierarchySearchRequest(context.sourceClass, context.sourceClass.useScope, false)
                 .searchInheritors()
-                .map { it.unwrapped }
-                .filterNotNull()
+                .mapNotNull { it.unwrapped }
                 .map { SubclassUsage(it) }
                 .toTypedArray()
     }

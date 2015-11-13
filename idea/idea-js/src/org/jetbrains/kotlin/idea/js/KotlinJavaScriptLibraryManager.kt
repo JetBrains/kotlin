@@ -76,8 +76,7 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
 
         val changedFiles = events
                 .filter { it !is MyVFileContentChangeEvent && it is VFileContentChangeEvent }
-                .map { it.file }
-                .filterNotNull()
+                .mapNotNull { it.file }
 
         val files = update(changedFiles, addToMapIfAbsent = false)
         val application = ApplicationManager.getApplication()

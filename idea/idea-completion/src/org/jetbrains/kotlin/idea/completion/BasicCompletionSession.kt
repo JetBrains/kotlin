@@ -500,8 +500,7 @@ class BasicCompletionSession(
             val classOrObject = position.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return
             val classDescriptor = resolutionFacade.resolveToDescriptor(classOrObject) as ClassDescriptor
             var superClasses = classDescriptor.defaultType.constructor.supertypesWithAny()
-                    .map { it.constructor.declarationDescriptor as? ClassDescriptor }
-                    .filterNotNull()
+                    .mapNotNull { it.constructor.declarationDescriptor as? ClassDescriptor }
 
             if (callTypeAndReceiver.receiver != null) {
                 val referenceVariantsSet = referenceVariants!!.imported.toSet()

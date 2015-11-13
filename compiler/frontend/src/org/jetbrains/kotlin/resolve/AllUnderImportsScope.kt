@@ -40,7 +40,7 @@ class AllUnderImportsScope(descriptor: DeclarationDescriptor) : BaseImportingSco
             = scopes.flatMap { it.getContributedDescriptors(kindFilter, nameFilter) }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation)
-            = scopes.asSequence().map { it.getContributedClassifier(name, location) }.filterNotNull().singleOrNull()
+            = scopes.asSequence().mapNotNull { it.getContributedClassifier(name, location) }.singleOrNull()
 
     override fun getContributedVariables(name: Name, location: LookupLocation)
             = scopes.flatMap { it.getContributedVariables(name, location) }

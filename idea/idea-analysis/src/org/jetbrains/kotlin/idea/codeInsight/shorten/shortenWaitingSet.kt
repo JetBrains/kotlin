@@ -72,11 +72,10 @@ public fun KtElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) 
 public fun performDelayedShortening(project: Project) {
     project.elementsToShorten?.let { requests ->
         project.elementsToShorten = null
-        val elements = requests.map { it.pointer.getElement() }
-        val options = requests.map { it.options }
-        val elementToOptions = (elements zip options).toMap()
+        val elementToOptions = requests.mapNotNull { req -> req.pointer.element?.let { it to req.options } }.toMap()
+        val elements = elementToOptions.keys
         //TODO: this is not correct because it should not shorten deep into the elements!
-        ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements.filterNotNull())
+        ShortenReferences({ elementToOptions[it] ?: ShortenReferences.Options.DEFAULT }).process(elements)
     }
 }
 

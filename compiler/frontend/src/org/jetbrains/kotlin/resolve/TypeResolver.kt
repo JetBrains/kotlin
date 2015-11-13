@@ -237,8 +237,7 @@ public class TypeResolver(
                 val modifierList = param.modifierList
                 if (modifierList != null) {
                     KtTokens.MODIFIER_KEYWORDS_ARRAY
-                            .map { modifierList.getModifier(it) }
-                            .filterNotNull()
+                            .mapNotNull { modifierList.getModifier(it) }
                             .forEach { c.trace.report(Errors.UNSUPPORTED.on(it, "modifier on parameter in function type"))
                     }
                 }

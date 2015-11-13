@@ -70,7 +70,7 @@ public fun buildDecompiledText(
         classHeader.isCompatibleFileFacadeKind() ->
             buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())))
         classHeader.isCompatibleClassKind() ->
-            buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull())
+            buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)))
         classHeader.isCompatibleMultifileClassKind() -> {
             val partClasses = findMultifileClassParts(classFile, kotlinClass)
             val partMembers = partClasses.flatMap { partClass -> resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName()) }
@@ -95,7 +95,7 @@ public fun buildDecompiledTextFromJsMetadata(
     }
     else {
         val classId = JsMetaFileUtils.getClassId(classFile)
-        return buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classId)).filterNotNull(), descriptorRendererForKotlinJavascriptDecompiler)
+        return buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), descriptorRendererForKotlinJavascriptDecompiler)
     }
 }
 

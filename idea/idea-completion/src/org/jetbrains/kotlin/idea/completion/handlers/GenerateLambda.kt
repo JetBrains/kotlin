@@ -82,8 +82,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, useHeuristicSignatures = false).calculate(expression)
 
     val functionTypes = expectedInfos
-            .map { it.fuzzyType?.type }
-            .filterNotNull()
+            .mapNotNull { it.fuzzyType?.type }
             .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }
             .toSet()
     if (functionTypes.size() <= 1) return false

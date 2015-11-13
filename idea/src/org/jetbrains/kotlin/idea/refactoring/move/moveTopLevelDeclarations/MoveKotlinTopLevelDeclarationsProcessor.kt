@@ -120,13 +120,12 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                 val projectScope = lightElement.getProject().projectScope()
                 val results = ReferencesSearch
                         .search(lightElement, projectScope, false)
-                        .mapTo(ArrayList<UsageInfo?>()) { ref ->
+                        .mapNotNullTo(ArrayList()) { ref ->
                             if (foundReferences.add(ref) && elementsToMove.all { !it.isAncestor(ref.getElement())}) {
                                 createMoveUsageInfoIfPossible(ref, lightElement, true)
                             }
                             else null
                         }
-                        .filterNotNull()
 
                 val name = lightElement.getKotlinFqName()?.asString()
                 if (name != null) {

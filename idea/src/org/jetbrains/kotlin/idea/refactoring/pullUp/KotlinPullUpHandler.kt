@@ -74,15 +74,12 @@ public class KotlinPullUpHandler : AbstractPullPushMembersHandler(
         val classDescriptor = classOrObject.resolveToDescriptor() as ClassDescriptor
         val superClasses = classDescriptor.defaultType
                 .supertypes()
-                .asSequence()
-                .map {
+                .mapNotNull {
                     val descriptor = it.constructor.declarationDescriptor
                     val declaration = descriptor?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
                     if ((declaration is KtClass || declaration is PsiClass)
                         && declaration.canRefactor()) declaration as PsiNamedElement else null
                 }
-                .filterNotNull()
-                .asIterable()
                 .sortedBy { it.qualifiedClassNameForRendering() }
 
         if (superClasses.isEmpty()) {

@@ -55,7 +55,7 @@ class AnnotationConverter(private val converter: Converter) {
                 if (child is PsiWhiteSpace) !child.isInSingleLine() else false
             }
 
-            annotations.map { convertAnnotation(it, newLineAfter = newLines) }.filterNotNull()
+            annotations.mapNotNull { convertAnnotation(it, newLineAfter = newLines) }
         }
         else {
             listOf()

@@ -281,16 +281,14 @@ abstract class CompletionSession(
         if (expectedInfos.isEmpty()) return null
 
         var context = expectedInfos
-                .map { it.fuzzyType?.type?.constructor?.declarationDescriptor?.importableFqName }
-                .filterNotNull()
+                .mapNotNull { it.fuzzyType?.type?.constructor?.declarationDescriptor?.importableFqName }
                 .distinct()
                 .singleOrNull()
                 ?.let { "expectedType=$it" }
 
         if (context == null) {
             context = expectedInfos
-                    .map { it.expectedName }
-                    .filterNotNull()
+                    .mapNotNull { it.expectedName }
                     .distinct()
                     .singleOrNull()
                     ?.let { "expectedName=$it" }

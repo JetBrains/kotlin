@@ -238,7 +238,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val scopeToImport = getMemberScope(parentFqName, moduleDescriptor) ?: return ImportDescriptorResult.FAIL
             val importedScopes = imports
                     .filter { it.isAllUnder () }
-                    .map {
+                    .mapNotNull {
                         val importPath = it.getImportPath()
                         if (importPath != null) {
                             val fqName = importPath.fqnPart()
@@ -248,7 +248,6 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                             null
                         }
                     }
-                    .filterNotNull()
 
             val filePackage = moduleDescriptor.getPackage(file.getPackageFqName())
 
@@ -266,7 +265,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
             val topLevelScope = resolutionFacade.getFileResolutionScope(file)
             val conflictCandidates: List<ClassifierDescriptor> = classNamesToImport
                     .flatMap {
-                        importedScopes.map { scope -> scope.getContributedClassifier(it, NoLookupLocation.FROM_IDE) }.filterNotNull()
+                        importedScopes.mapNotNull { scope -> scope.getContributedClassifier(it, NoLookupLocation.FROM_IDE) }
                     }
                     .filter { importedClass ->
                         isVisible(importedClass)

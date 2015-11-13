@@ -665,9 +665,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             val expandedValueParameters = declaration.getValueParameters()
-            parameterIndicesToShorten.asSequence()
-                    .map { expandedValueParameters[it].getTypeReference() }
-                    .filterNotNullTo(typeRefsToShorten)
+            parameterIndicesToShorten.mapNotNullTo(typeRefsToShorten) { expandedValueParameters[it].getTypeReference() }
 
             return typeRefsToShorten
         }

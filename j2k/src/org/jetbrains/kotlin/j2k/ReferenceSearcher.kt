@@ -31,7 +31,7 @@ public fun ReferenceSearcher.findVariableUsages(variable: PsiVariable, scope: Ps
         = findLocalUsages(variable, scope).filterIsInstance<PsiReferenceExpression>()
 
 public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {
-    return findLocalUsages(method, scope).map {
+    return findLocalUsages(method, scope).mapNotNull {
         if (it is PsiReferenceExpression) {
             val methodCall = it.getParent() as? PsiMethodCallExpression
             if (methodCall?.getMethodExpression() == it) methodCall else null
@@ -39,7 +39,7 @@ public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElemen
         else {
             null
         }
-    }.filterNotNull()
+    }
 }
 
 public fun PsiField.isVar(searcher: ReferenceSearcher): Boolean {

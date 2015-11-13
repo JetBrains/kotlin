@@ -169,7 +169,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                 object : IntentionWrapper(MarkHiddenAndDeprecatedAction(property), property.containingFile), LowPriorityAction {}
             else
                 null
-            listOf(fix1, fix2).filterNotNull().toTypedArray()
+            listOfNotNull(fix1, fix2).toTypedArray()
         }
         else {
             emptyArray()
@@ -196,8 +196,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                                     val searchScope = KotlinSourceFilterScope.sources(GlobalSearchScope.projectScope(project), project)
                                     ReferencesSearch.search(declaration, searchScope)
                                             .filterIsInstance<KtSimpleNameReference>()
-                                            .map { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }
-                                            .filterNotNull()
+                                            .mapNotNull { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }
                                             .filter { import -> !import.isAllUnder && import.targetDescriptors().size() == 1 }
                                 }
                                 UIUtil.invokeLaterIfNeeded {

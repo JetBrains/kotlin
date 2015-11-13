@@ -327,14 +327,17 @@ public object LightClassUtil {
                                              public val setter: PsiMethod?,
                                              public val backingField: PsiField?,
                                              additionalAccessors: List<PsiMethod>) : Iterable<PsiMethod> {
-        private val allMethods = arrayListOf<PsiMethod>()
-        val allDeclarations = arrayListOf<PsiNamedElement>()
+        private val allMethods: List<PsiMethod>
+        val allDeclarations: List<PsiNamedElement>
 
         init {
-            listOf(getter, setter).filterNotNullTo(allMethods)
-            listOf<PsiNamedElement?>(getter, setter, backingField).filterNotNullTo(allDeclarations)
-            allDeclarations.addAll(additionalAccessors)
+            allMethods = arrayListOf<PsiMethod>()
+            arrayOf(getter, setter).filterNotNullTo(allMethods)
             additionalAccessors.filterIsInstanceTo<PsiMethod, MutableList<PsiMethod>>(allMethods)
+
+            allDeclarations = arrayListOf<PsiNamedElement>()
+            arrayOf<PsiNamedElement?>(getter, setter, backingField).filterNotNullTo(allDeclarations)
+            allDeclarations.addAll(additionalAccessors)
         }
 
         override fun iterator(): Iterator<PsiMethod> = allMethods.iterator()

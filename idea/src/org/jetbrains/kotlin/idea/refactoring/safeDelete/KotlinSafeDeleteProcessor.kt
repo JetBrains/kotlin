@@ -73,7 +73,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             val javaUsages = ArrayList<UsageInfo>()
             val searchInfo = super.findUsages(element, allElementsToDelete, javaUsages)
 
-            javaUsages.map { usageInfo ->
+            javaUsages.mapNotNullTo(usages) { usageInfo ->
                 when (usageInfo) {
                     is SafeDeleteOverridingMethodUsageInfo ->
                         usageInfo.getSmartPointer().getElement()?.let { usageElement ->
@@ -102,15 +102,14 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     else -> usageInfo
                 }
-            }.filterNotNull().toCollection(usages)
+            }
 
             return searchInfo
         }
 
         fun findUsagesByJavaProcessor(elements: Sequence<PsiElement>, insideDeleted: Condition<PsiElement>): Condition<PsiElement> =
                 elements
-                        .map { element -> findUsagesByJavaProcessor(element, true)?.getInsideDeletedCondition() }
-                        .filterNotNull()
+                        .mapNotNull { element -> findUsagesByJavaProcessor(element, true)?.getInsideDeletedCondition() }
                         .fold(insideDeleted) { condition1, condition2 -> Conditions.or(condition1, condition2) }
 
         fun findUsagesByJavaProcessor(ktDeclaration: KtDeclaration): NonCodeUsageSearchInfo {

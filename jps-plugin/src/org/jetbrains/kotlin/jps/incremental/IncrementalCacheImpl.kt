@@ -263,7 +263,7 @@ public class IncrementalCacheImpl(
 
         val changes =
                 if (IncrementalCompilation.isExperimental())
-                    dirtyClasses.map { createChangeInfo(it) }.asSequence().filterNotNull()
+                    dirtyClasses.mapNotNull { createChangeInfo(it) }.asSequence()
                 else
                     emptySequence<ChangeInfo>()
 

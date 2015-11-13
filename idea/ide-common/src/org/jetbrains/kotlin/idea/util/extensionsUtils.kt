@@ -85,7 +85,7 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
 
     val extensionReceiverType = fuzzyExtensionReceiverType()!!
     val substitutors = types
-            .map {
+            .mapNotNull {
                 var substitutor = extensionReceiverType.checkIsSuperTypeOf(it)
                 // check if we may fail due to receiver expression being nullable
                 if (substitutor == null && it.nullability() == TypeNullability.NULLABLE && extensionReceiverType.nullability() == TypeNullability.NOT_NULL) {
@@ -93,7 +93,6 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
                 }
                 substitutor
             }
-            .filterNotNull()
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return if (substitutors.any()) listOf(this) else listOf()
     }

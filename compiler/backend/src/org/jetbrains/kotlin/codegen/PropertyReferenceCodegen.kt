@@ -127,7 +127,7 @@ public class PropertyReferenceCodegen(
                     StackValue.singleton(containingObject, typeMapper).put(typeMapper.mapClass(containingObject), this)
                 }
 
-                for ((index, type) in listOf(dispatchReceiverType, extensionReceiverType).filterNotNull().withIndex()) {
+                for ((index, type) in listOfNotNull(dispatchReceiverType, extensionReceiverType).withIndex()) {
                     StackValue.local(index + 1, OBJECT_TYPE).put(typeMapper.mapType(type), this)
                 }
 

@@ -365,13 +365,13 @@ public open class KtLightClassForExplicitDeclaration(
     override fun toString() = "${KtLightClass::class.java.simpleName}:$classFqName"
 
     override fun getOwnInnerClasses(): List<PsiClass> {
-        val result = ArrayList<PsiClass?>()
-        classOrObject.declarations.filterIsInstance<KtClassOrObject>().mapTo(result) { create(it) }
+        val result = ArrayList<PsiClass>()
+        classOrObject.declarations.filterIsInstance<KtClassOrObject>().mapNotNullTo(result) { create(it) }
 
         if (classOrObject.hasInterfaceDefaultImpls) {
             result.add(KtLightClassForInterfaceDefaultImpls(classFqName.defaultImplsChild(), classOrObject))
         }
-        return result.filterNotNull()
+        return result
     }
 
     override fun getUseScope(): SearchScope = getOrigin().useScope

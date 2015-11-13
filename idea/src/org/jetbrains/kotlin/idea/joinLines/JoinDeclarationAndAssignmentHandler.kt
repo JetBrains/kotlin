@@ -41,8 +41,7 @@ public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
                               ?.firstOrNull { !isToSkip(it) }  ?: return -1
 
         val pair = element.parentsWithSelf
-                           .map { getPropertyAndAssignment(it) }
-                           .filterNotNull()
+                           .mapNotNull { getPropertyAndAssignment(it) }
                            .firstOrNull() ?: return -1
         val (property, assignment) = pair
 

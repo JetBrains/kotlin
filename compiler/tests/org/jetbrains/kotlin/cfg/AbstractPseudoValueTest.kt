@@ -66,8 +66,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
 
         val elementToValues = getElementToValueMap(pseudocode)
         val unboundValues = pseudocode.getInstructions()
-                .map { (it as? InstructionWithValue)?.outputValue }
-                .filterNotNull()
+                .mapNotNull { (it as? InstructionWithValue)?.outputValue }
                 .filter { it.element == null }
                 .sortedBy { it.debugName }
         val allValues = elementToValues.values() + unboundValues

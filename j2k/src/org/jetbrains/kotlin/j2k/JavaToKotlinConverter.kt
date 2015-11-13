@@ -191,8 +191,8 @@ public class JavaToKotlinConverter(
             ReferenceLoop@
             for ((reference, target, file, processings) in fileRefs.sortedWith(ReferenceComparator)) {
                 val processors = when (reference.getElement().getLanguage()) {
-                    JavaLanguage.INSTANCE -> processings.map { it.javaCodeProcessor }.filterNotNull()
-                    KotlinLanguage.INSTANCE -> processings.map { it.kotlinCodeProcessor }.filterNotNull()
+                    JavaLanguage.INSTANCE -> processings.mapNotNull { it.javaCodeProcessor }
+                    KotlinLanguage.INSTANCE -> processings.mapNotNull { it.kotlinCodeProcessor }
                     else -> continue@ReferenceLoop
                 }
 

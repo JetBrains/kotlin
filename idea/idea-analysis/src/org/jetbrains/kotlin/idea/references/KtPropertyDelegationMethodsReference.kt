@@ -42,9 +42,9 @@ public class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate) :
         if (descriptor !is PropertyDescriptor) {
             return Collections.emptyList()
         }
-        return (descriptor.getAccessors().map {
+        return (descriptor.getAccessors().mapNotNull {
             accessor ->
             context.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor)?.getCandidateDescriptor()
-        } + listOf(context.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, descriptor)?.getCandidateDescriptor())).filterNotNull()
+        } + listOfNotNull(context.get(BindingContext.DELEGATED_PROPERTY_PD_RESOLVED_CALL, descriptor)?.getCandidateDescriptor()))
     }
 }

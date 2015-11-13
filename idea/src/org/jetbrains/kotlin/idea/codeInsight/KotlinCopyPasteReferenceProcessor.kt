@@ -202,13 +202,13 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         if (file !is KtFile) return listOf()
 
         val fileResolutionScope = file.getResolutionFacade().getFileResolutionScope(file)
-        return referenceData.map {
+        return referenceData.mapNotNull {
             val reference = findReference(it, file, blockStart)
             if (reference != null)
                 createReferenceToRestoreData(reference, it, file, fileResolutionScope)
             else
                 null
-        }.filterNotNull()
+        }
     }
 
     private fun findReference(data: KotlinReferenceData, file: KtFile, blockStart: Int): KtReference? {
@@ -250,8 +250,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
         }
         val referencedFqNames = referencedDescriptors
                 .filterNot { ErrorUtils.isError(it) }
-                .map { it.importableFqName }
-                .filterNotNull()
+                .mapNotNull { it.importableFqName }
                 .toSet()
         if (referencedFqNames.singleOrNull() == originalFqName) return null
 

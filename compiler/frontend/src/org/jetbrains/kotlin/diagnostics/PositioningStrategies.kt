@@ -253,7 +253,7 @@ public object PositioningStrategies {
             val visibilityTokens = listOf(KtTokens.PRIVATE_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PUBLIC_KEYWORD, KtTokens.INTERNAL_KEYWORD)
             val modifierList = element.getModifierList()
 
-            val result = visibilityTokens.map { modifierList?.getModifier(it)?.getTextRange() }.filterNotNull()
+            val result = visibilityTokens.mapNotNull { modifierList?.getModifier(it)?.getTextRange() }
             if (!result.isEmpty()) return result
 
             // Try to resolve situation when there's no visibility modifiers written before element

@@ -74,7 +74,7 @@ public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqN
 public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo: PackageNameInfo): List<UsageInfo> {
     val file = getContainingFile() as? KtFile ?: return listOf()
 
-    val importPaths = file.getImportDirectives().map { it.getImportPath() }.filterNotNull()
+    val importPaths = file.getImportDirectives().mapNotNull { it.getImportPath() }
 
     tailrec fun isImported(descriptor: DeclarationDescriptor): Boolean {
         val fqName = DescriptorUtils.getFqName(descriptor).let { if (it.isSafe()) it.toSafe() else return@isImported false }

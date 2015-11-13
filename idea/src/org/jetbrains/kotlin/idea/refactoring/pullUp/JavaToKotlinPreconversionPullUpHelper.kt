@@ -78,8 +78,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
         setter?.let { dummyAccessorByName[setterName] = dummyTargetClass.add(it) as PsiMethod }
         fieldsToUsages[member] = ReferencesSearch
                 .search(member)
-                .map { helper.createUsage(encapsulateFieldsDescriptor, fieldDescriptor, it) }
-                .filterNotNull()
+                .mapNotNull { helper.createUsage(encapsulateFieldsDescriptor, fieldDescriptor, it) }
     }
 
     override fun move(info: MemberInfo, substitutor: PsiSubstitutor) {

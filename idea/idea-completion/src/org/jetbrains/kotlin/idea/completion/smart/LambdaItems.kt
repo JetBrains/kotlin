@@ -39,8 +39,7 @@ object LambdaItems {
         if (functionExpectedInfos.isEmpty()) return
 
         val distinctTypes = functionExpectedInfos
-                .map { it.fuzzyType?.type }
-                .filterNotNull()
+                .mapNotNull { it.fuzzyType?.type }
                 .toSet()
 
         val singleType = if (distinctTypes.size() == 1) distinctTypes.single() else null

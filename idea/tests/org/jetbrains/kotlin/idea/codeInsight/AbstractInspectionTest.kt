@@ -71,7 +71,7 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
             setTestDataPath("${KotlinTestUtils.getHomeDirectory()}/$srcDir")
 
             val afterFiles = srcDir.listFiles { it.name == "inspectionData" }?.single()?.listFiles { it.extension == "after" } ?: emptyArray()
-            val psiFiles = srcDir.walkTopDown().treeFilter { it.name != "inspectionData" }.map {
+            val psiFiles = srcDir.walkTopDown().treeFilter { it.name != "inspectionData" }.mapNotNull {
                 file ->
                 if (file.isDirectory) {
                      null
@@ -89,7 +89,7 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
                                 "package ${file.nameWithoutExtension};$text"
                     configureByText(file.name, fileText)!!
                 }
-            }.filterNotNull().toList()
+            }.toList()
 
             val isJs = srcDir.endsWith("js")
 

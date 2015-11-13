@@ -51,7 +51,7 @@ fun checkConflicts(project: Project,
 
     val pullUpData = KotlinPullUpData(sourceClass,
                                       targetClass,
-                                      memberInfos.map { it.member }.filterNotNull())
+                                      memberInfos.mapNotNull { it.member })
 
     with(pullUpData) {
         for (memberInfo in memberInfos) {
@@ -112,8 +112,7 @@ private fun KotlinPullUpData.checkAccidentalOverrides(
                     .searchInheritors()
                     .asSequence()
                     .filterNot { it.unwrapped == sourceClass || it.unwrapped == targetClass }
-                    .map { it.unwrapped as? KtClassOrObject }
-                    .filterNotNull()
+                    .mapNotNull { it.unwrapped as? KtClassOrObject }
                     .forEach {
                         val subClassDescriptor = resolutionFacade.resolveToDescriptor(it) as ClassDescriptor
                         val substitutor = getTypeSubstitutor(targetClassDescriptor.defaultType,

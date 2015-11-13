@@ -157,9 +157,9 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                                         ?: return null
             val valueArguments = targetEntryDescriptor.allValueArguments
             val valueArgument = valueArguments.entrySet().firstOrNull()?.getValue() as? ArrayValue ?: return null
-            return valueArgument.value.filterIsInstance<EnumValue>().map {
+            return valueArgument.value.filterIsInstance<EnumValue>().mapNotNull {
                 KotlinTarget.valueOrNull(it.value.name.asString())
-            }.filterNotNull().toSet()
+            }.toSet()
         }
 
         public fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?): List<KotlinTarget> {

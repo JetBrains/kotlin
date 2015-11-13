@@ -178,7 +178,7 @@ public class KotlinChangeSignature(project: Project,
     override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
         val adjustedDescriptor = adjustDescriptor(descriptorsForChange) ?: return
 
-        val affectedFunctions = adjustedDescriptor.affectedCallables.map { it.getElement() }.filterNotNull()
+        val affectedFunctions = adjustedDescriptor.affectedCallables.mapNotNull { it.getElement() }
         if (affectedFunctions.any { !checkModifiable(it) }) return
 
         if (configuration.performSilently(affectedFunctions) || ApplicationManager.getApplication()!!.isUnitTestMode()) {

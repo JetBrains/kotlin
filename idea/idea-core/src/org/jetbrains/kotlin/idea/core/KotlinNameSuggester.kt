@@ -90,8 +90,7 @@ public object KotlinNameSuggester {
         val result = LinkedHashSet<String>()
 
         suggestNamesByExpressionOnly(collection, bindingContext, { true })
-                .map { StringUtil.unpluralize(it) }
-                .filterNotNull()
+                .mapNotNull { StringUtil.unpluralize(it) }
                 .mapTo(result) { suggestNameByName(it, validator) }
 
         result.addNamesByType(elementType, validator)

@@ -48,8 +48,7 @@ public class IterableTypesDetection(
 
         private val typesWithExtensionIterator: Collection<KotlinType> = scope
                 .collectFunctions(iteratorName, NoLookupLocation.FROM_IDE)
-                .map { it.extensionReceiverParameter }
-                .filterNotNull()
+                .mapNotNull { it.extensionReceiverParameter }
                 .map { it.type }
 
         override fun isIterable(type: FuzzyType, loopVarType: KotlinType?): Boolean {

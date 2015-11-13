@@ -151,8 +151,7 @@ public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo)
         if (receiverTypeCandidates.isNotEmpty()) {
             val containers = receiverTypeCandidates
-                    .map { candidate -> getDeclarationIfApplicable(project, candidate)?.let { candidate to it } }
-                    .filterNotNull()
+                    .mapNotNull { candidate -> getDeclarationIfApplicable(project, candidate)?.let { candidate to it } }
 
             chooseContainerElementIfNecessary(containers, editor, popupTitle, false, { it.second }) {
                 runBuilder(CallablePlacement.WithReceiver(it.first))

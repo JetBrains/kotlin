@@ -84,9 +84,9 @@ internal class ParameterNameExpression(
         }
 
         // remember other parameter names for later use
-        val parameterNames = parameterList.getParameters().asSequence().map { jetParameter ->
+        val parameterNames = parameterList.getParameters().mapNotNullTo(HashSet<String>()) { jetParameter ->
             if (jetParameter == parameter) null else jetParameter.getName()
-        }.filterNotNullTo(HashSet<String>())
+        }
 
         // add fallback parameter name
         if (names.isEmpty()) {

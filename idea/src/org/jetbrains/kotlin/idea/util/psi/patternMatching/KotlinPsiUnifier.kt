@@ -708,7 +708,7 @@ public class KotlinPsiUnifier(
         }
 
         private fun ASTNode.getChildrenRange(): KotlinPsiRange =
-                getChildren(null).map { it.getPsi() }.filterNotNull().toRange()
+                getChildren(null).mapNotNull { it.getPsi() }.toRange()
 
         private fun PsiElement.unwrapWeakly(): KtElement? {
             return when {

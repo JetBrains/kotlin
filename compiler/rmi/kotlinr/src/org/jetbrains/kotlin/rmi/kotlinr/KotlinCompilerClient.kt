@@ -236,11 +236,10 @@ public object KotlinCompilerClient {
             ?.split(File.pathSeparator)
             ?.map { File(it).parentFile }
             ?.distinct()
-            ?.map {
+            ?.mapNotNull {
                 it?.walk()
                         ?.firstOrNull { it.name.equals(COMPILER_JAR_NAME, ignoreCase = true) }
             }
-            ?.filterNotNull()
             ?.firstOrNull()
             ?.let { listOf(it.absolutePath) }
 
@@ -266,7 +265,7 @@ public object KotlinCompilerClient {
         val daemons = registryDir.walk()
                 .map { Pair(it, it.name.extractPortFromRunFilename(classPathDigest)) }
                 .filter { it.second != 0 }
-                .map {
+                .mapNotNull {
                     assert(it.second > 0 && it.second < 0xffff)
                     reportingTargets.report(DaemonReportCategory.DEBUG, "found suitable daemon on port ${it.second}, trying to connect")
                     val daemon = tryConnectToDaemon(it.second, reportingTargets)
@@ -276,7 +275,6 @@ public object KotlinCompilerClient {
                     }
                     daemon
                 }
-                .filterNotNull()
                 .toList()
         return when (daemons.size) {
             0 -> null

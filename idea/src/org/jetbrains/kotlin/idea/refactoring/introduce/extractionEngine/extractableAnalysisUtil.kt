@@ -154,11 +154,11 @@ private fun List<Instruction>.getResultTypeAndExpressions(
                }
     }
 
-    val resultTypes = map(::instructionToType).filterNotNull()
-    var commonSupertype = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else module.builtIns.defaultReturnType
+    val resultTypes = mapNotNull(::instructionToType)
+    val commonSupertype = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else module.builtIns.defaultReturnType
     val resultType = if (options.allowSpecialClassNames) commonSupertype else commonSupertype.approximateWithResolvableType(targetScope, false)
 
-    val expressions = map { instructionToExpression(it, false) }.filterNotNull()
+    val expressions = mapNotNull { instructionToExpression(it, false) }
 
     return resultType to expressions
 }
@@ -420,13 +420,9 @@ fun KtTypeParameter.collectRelevantConstraints(): List<KtTypeConstraint> {
 fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<KotlinType> {
     val typeRefs = ArrayList<KtTypeReference>()
     originalDeclaration.extendsBound?.let { typeRefs.add(it) }
-    originalConstraints
-            .map { it.boundTypeReference }
-            .filterNotNullTo(typeRefs)
+    originalConstraints.mapNotNullTo(typeRefs) { it.boundTypeReference }
 
-    return typeRefs
-            .map { bindingContext[BindingContext.TYPE, it] }
-            .filterNotNull()
+    return typeRefs.mapNotNull { bindingContext[BindingContext.TYPE, it] }
 }
 
 private fun KotlinType.isExtractable(targetScope: LexicalScope?): Boolean {
@@ -812,9 +808,9 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
         for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
             if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
 
-            val currentRefExprs = result.nameByOffset[originalOffset].map {
+            val currentRefExprs = result.nameByOffset[originalOffset].mapNotNull {
                 (it as? KtThisExpression)?.instanceReference ?: it as? KtSimpleNameExpression
-            }.filterNotNull()
+            }
 
             currentRefExprs.forEach { processReference(resolveResult, it) }
         }

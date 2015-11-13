@@ -207,14 +207,14 @@ fun KtExpression.guessTypes(
 }
 
 private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinType> {
-    val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.asSequence().map { ref ->
+    val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.mapNotNullTo(HashSet<KotlinType>()) { ref ->
         if (ref is KtSimpleNameReference) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
         }
         else {
             null
         }
-    }.filterNotNullTo(HashSet<KotlinType>())
+    }
 
     if (expectedTypes.isEmpty() || expectedTypes.any { expectedType -> ErrorUtils.containsErrorType(expectedType) }) {
         return arrayOf()
@@ -257,7 +257,7 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
 fun KtExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight() ?: this
 
 fun KtCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
-    return getTypeArguments().map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }.filterNotNull()
+    return getTypeArguments().mapNotNull { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }
 }
 
 fun KtCallExpression.getParameterInfos(): List<ParameterInfo> {
