@@ -44,7 +44,10 @@ public fun TypeParameterDescriptor.starProjectionType(): KotlinType {
                             TypeUtils.makeStarProjection(key.getDeclarationDescriptor() as TypeParameterDescriptor)
                         else null
 
-            }
+            },
+            // This parameter forces TypeSubstitutor to substitute star projections "as is" even if type argument is nullable,
+            // for example Rec<T : Rec<T?>>. It is needed to prevent infinite recursion for recursive generic types
+            true
     ).substitute(this.getUpperBounds().first(), Variance.OUT_VARIANCE)!!
 }
 

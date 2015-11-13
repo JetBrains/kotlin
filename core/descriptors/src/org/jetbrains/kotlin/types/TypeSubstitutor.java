@@ -49,7 +49,12 @@ public class TypeSubstitutor {
 
     @NotNull
     public static TypeSubstitutor create(@NotNull TypeSubstitution substitution) {
-        return new TypeSubstitutor(substitution);
+        return new TypeSubstitutor(substitution, false);
+    }
+
+    @NotNull
+    public static TypeSubstitutor create(@NotNull TypeSubstitution substitution, boolean substituteStarProjectionAsIs) {
+        return new TypeSubstitutor(substitution, substituteStarProjectionAsIs);
     }
 
     @NotNull
@@ -70,9 +75,11 @@ public class TypeSubstitutor {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private final @NotNull TypeSubstitution substitution;
+    private final boolean substituteStarProjectionAsIs;
 
-    protected TypeSubstitutor(@NotNull TypeSubstitution substitution) {
+    protected TypeSubstitutor(@NotNull TypeSubstitution substitution, boolean substituteStarProjectionAsIs) {
         this.substitution = substitution;
+        this.substituteStarProjectionAsIs = substituteStarProjectionAsIs;
     }
 
     public boolean isEmpty() {
@@ -173,7 +180,7 @@ public class TypeSubstitutor {
             }
             KotlinType substitutedType;
             CustomTypeVariable typeVariable = TypeCapabilitiesKt.getCustomTypeVariable(type);
-            if (replacement.isStarProjection()) {
+            if (replacement.isStarProjection() && (substituteStarProjectionAsIs || !type.isMarkedNullable())) {
                 return replacement;
             }
             else if (typeVariable != null) {

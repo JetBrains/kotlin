@@ -1,0 +1,11 @@
+package
+
+public fun acceptRec(/*0*/ rec: Rec<*>): kotlin.Unit
+public fun checkRec(/*0*/ rec: Rec<*>): kotlin.Unit
+
+public interface Rec</*0*/ T : Rec<T>> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): T?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
