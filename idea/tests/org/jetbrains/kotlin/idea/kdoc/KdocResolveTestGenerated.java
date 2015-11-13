@@ -96,6 +96,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("StaticMember.kt")
+    public void testStaticMember() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/StaticMember.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeParamReference.kt")
     public void testTypeParamReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/TypeParamReference.kt");

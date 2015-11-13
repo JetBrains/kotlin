@@ -142,7 +142,9 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
         }
     }
     return LexicalChainedScope(headerScope, descriptor, false, null,
-                               "Class ${descriptor.getName()} scope", descriptor.getDefaultType().getMemberScope())
+                               "Class ${descriptor.name} scope",
+                               descriptor.defaultType.getMemberScope(),
+                               descriptor.staticScope)
 }
 
 public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
