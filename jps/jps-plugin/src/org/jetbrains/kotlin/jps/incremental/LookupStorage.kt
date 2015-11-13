@@ -59,10 +59,10 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
         val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
         val fileIds = lookupMap[key] ?: return emptySet()
 
-        return fileIds.map {
+        return fileIds.mapNotNull {
             // null means it's outdated
             idToFile[it]?.path
-        }.filterNotNull()
+        }
     }
 
     public fun add(lookupSymbol: LookupSymbol, containingPaths: Collection<String>) {
@@ -138,7 +138,7 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
         }
 
         for (lookup in lookupMap.keys) {
-            val fileIds = lookupMap[lookup]!!.map { oldIdToNewId[it] }.filterNotNull().toSet()
+            val fileIds = lookupMap[lookup]!!.mapNotNull { oldIdToNewId[it] }.toSet()
 
             if (fileIds.isEmpty()) {
                 lookupMap.remove(lookup)
