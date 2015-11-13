@@ -129,7 +129,7 @@ public abstract class ByteIterator : kotlin.Iterator<kotlin.Byte> {
 }
 
 @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use IntProgression instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression", imports = {})) public open class ByteProgression : kotlin.Progression<kotlin.Byte> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ByteProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ByteProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor ByteProgression(/*0*/ start: kotlin.Byte, /*1*/ endInclusive: kotlin.Byte, /*2*/ increment: kotlin.Int)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ByteProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ByteProgression.fromClosedRange(start, endInclusive, increment)", imports = {})) public constructor ByteProgression(/*0*/ start: kotlin.Byte, /*1*/ endInclusive: kotlin.Byte, /*2*/ increment: kotlin.Int)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Byte
         public open override /*1*/ fun <get-end>(): kotlin.Byte
     public final val first: kotlin.Byte
@@ -231,7 +231,7 @@ public abstract class CharIterator : kotlin.Iterator<kotlin.Char> {
 }
 
 public open class CharProgression : kotlin.Progression<kotlin.Char> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "CharProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor CharProgression(/*0*/ start: kotlin.Char, /*1*/ endInclusive: kotlin.Char, /*2*/ increment: kotlin.Int)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "CharProgression.fromClosedRange(start, endInclusive, increment)", imports = {})) public constructor CharProgression(/*0*/ start: kotlin.Char, /*1*/ endInclusive: kotlin.Char, /*2*/ increment: kotlin.Int)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Char
         public open override /*1*/ fun <get-end>(): kotlin.Char
     public final val first: kotlin.Char
@@ -650,7 +650,7 @@ public abstract class IntIterator : kotlin.Iterator<kotlin.Int> {
 }
 
 public open class IntProgression : kotlin.Progression<kotlin.Int> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor IntProgression(/*0*/ start: kotlin.Int, /*1*/ endInclusive: kotlin.Int, /*2*/ increment: kotlin.Int)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression.fromClosedRange(start, endInclusive, increment)", imports = {})) public constructor IntProgression(/*0*/ start: kotlin.Int, /*1*/ endInclusive: kotlin.Int, /*2*/ increment: kotlin.Int)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Int
         public open override /*1*/ fun <get-end>(): kotlin.Int
     public final val first: kotlin.Int
@@ -840,7 +840,7 @@ public abstract class LongIterator : kotlin.Iterator<kotlin.Long> {
 }
 
 public open class LongProgression : kotlin.Progression<kotlin.Long> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "LongProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor LongProgression(/*0*/ start: kotlin.Long, /*1*/ endInclusive: kotlin.Long, /*2*/ increment: kotlin.Long)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "LongProgression.fromClosedRange(start, endInclusive, increment)", imports = {})) public constructor LongProgression(/*0*/ start: kotlin.Long, /*1*/ endInclusive: kotlin.Long, /*2*/ increment: kotlin.Long)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Long
         public open override /*1*/ fun <get-end>(): kotlin.Long
     public final val first: kotlin.Long
@@ -1165,7 +1165,7 @@ public abstract class ShortIterator : kotlin.Iterator<kotlin.Short> {
 }
 
 @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use IntProgression instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression", imports = {})) public open class ShortProgression : kotlin.Progression<kotlin.Short> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ShortProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ShortProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor ShortProgression(/*0*/ start: kotlin.Short, /*1*/ endInclusive: kotlin.Short, /*2*/ increment: kotlin.Int)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ShortProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ShortProgression.fromClosedRange(start, endInclusive, increment)", imports = {})) public constructor ShortProgression(/*0*/ start: kotlin.Short, /*1*/ endInclusive: kotlin.Short, /*2*/ increment: kotlin.Int)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Short
         public open override /*1*/ fun <get-end>(): kotlin.Short
     public final val first: kotlin.Short
