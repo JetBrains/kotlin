@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.synthetic
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
@@ -161,11 +160,13 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 newOwner: DeclarationDescriptor,
                 newModality: Modality,
                 newVisibility: Visibility,
-                newIsOperator: Boolean,
-                newIsInfix: Boolean,
-                newIsExternal: Boolean,
-                newIsInline: Boolean,
-                newIsTailrec: Boolean,
+                isOperator: Boolean,
+                isInfix: Boolean,
+                isExternal: Boolean,
+                isInline: Boolean,
+                isTailrec: Boolean,
+                hasStableParameterNames: Boolean,
+                hasSynthesizedParameterNames: Boolean,
                 original: FunctionDescriptor?,
                 copyOverrides: Boolean,
                 kind: CallableMemberDescriptor.Kind,
@@ -178,7 +179,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
         ): FunctionDescriptor? {
             val descriptor = super.doSubstitute(
                     originalSubstitutor, newOwner, newModality, newVisibility,
-                    newIsOperator, newIsInfix, newIsExternal, newIsInline, newIsTailrec, original,
+                    isOperator, isInfix, isExternal, isInline, isTailrec, hasStableParameterNames, hasSynthesizedParameterNames, original,
                     copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name,
                     preserveSource, signatureChange)
                     as MyFunctionDescriptor? ?: return null

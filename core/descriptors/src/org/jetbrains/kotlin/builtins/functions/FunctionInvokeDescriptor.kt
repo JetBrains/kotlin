@@ -39,6 +39,8 @@ public class FunctionInvokeDescriptor private constructor(
     // "p0", "p1", etc. should not be baked into the language
     override fun hasStableParameterNames(): Boolean = false
 
+    override fun hasSynthesizedParameterNames(): Boolean = true
+
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             original: FunctionDescriptor?,

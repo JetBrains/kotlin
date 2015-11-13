@@ -47,6 +47,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isExternal = false;
     private boolean isInline = false;
     private boolean isTailrec = false;
+    private boolean hasStableParameterNames = true;
+    private boolean hasSynthesizedParameterNames = false;
     private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
     private final FunctionDescriptor original;
     private final Kind kind;
@@ -83,7 +85,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.visibility = visibility;
         this.extensionReceiverParameter = DescriptorFactory.createExtensionReceiverParameterForCallable(this, receiverParameterType);
         this.dispatchReceiverParameter = dispatchReceiverParameter;
-        
+
         for (int i = 0; i < typeParameters.size(); ++i) {
             TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
             if (typeParameterDescriptor.getIndex() != i) {
@@ -133,6 +135,14 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             //throw new IllegalStateException("returnType already set");
         }
         this.unsubstitutedReturnType = unsubstitutedReturnType;
+    }
+
+    public void setHasStableParameterNames(boolean hasStableParameterNames) {
+        this.hasStableParameterNames = hasStableParameterNames;
+    }
+
+    public void setHasSynthesizedParameterNames(boolean hasSynthesizedParameterNames) {
+        this.hasSynthesizedParameterNames = hasSynthesizedParameterNames;
     }
 
     @Nullable
@@ -221,12 +231,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     @Override
     public boolean hasStableParameterNames() {
-        return true;
+        return hasStableParameterNames;
     }
 
     @Override
     public boolean hasSynthesizedParameterNames() {
-        return false;
+        return hasSynthesizedParameterNames;
     }
 
     @Override
@@ -253,6 +263,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         }
         return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility,
                             isOperator, isInfix, isExternal, isInline, isTailrec,
+                            hasStableParameterNames, hasSynthesizedParameterNames,
                             getOriginal(), true, getKind());
     }
 
@@ -266,12 +277,16 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             boolean isExternal,
             boolean isInline,
             boolean isTailrec,
+            boolean hasStableParameterNames,
+            boolean hasSynthesizedParameterNames,
             @Nullable FunctionDescriptor original,
             boolean copyOverrides,
             @NotNull Kind kind
     ) {
         return doSubstitute(originalSubstitutor,
-                            newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec, original, copyOverrides, kind,
+                            newOwner, newModality, newVisibility, isOperator, isInfix, isExternal, isInline, isTailrec,
+                            hasStableParameterNames, hasSynthesizedParameterNames,
+                            original, copyOverrides, kind,
                             getValueParameters(), getExtensionReceiverParameterType(), getReturnType(),
                             null, /* preserveSource = */ false, /* signatureChange */ false);
     }
@@ -294,6 +309,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             boolean isExternal,
             boolean isInline,
             boolean isTailrec,
+            boolean hasStableParameterNames,
+            boolean hasSynthesizedParameterNames,
             @Nullable FunctionDescriptor original,
             boolean copyOverrides,
             @NotNull Kind kind,
@@ -364,6 +381,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setExternal(isExternal);
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
+        substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
+        substitutedDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames);
 
         if (signatureChange || getInitialSignatureDescriptor() != null) {
             FunctionDescriptor initialSignature = (getInitialSignatureDescriptor() != null ? getInitialSignatureDescriptor() : this);

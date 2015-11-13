@@ -87,6 +87,8 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
     result.isExternal = original.isExternal
     result.isInline = original.isInline
     result.isTailrec = original.isTailrec
+    result.setHasStableParameterNames(false);
+    result.setHasSynthesizedParameterNames(true);
 
     return result
 }

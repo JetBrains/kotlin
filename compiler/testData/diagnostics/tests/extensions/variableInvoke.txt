@@ -1,6 +1,6 @@
 package
 
-public fun test(/*0*/ foo: kotlin.Int.() -> kotlin.Unit): kotlin.Unit
+public fun test(/*0*/ foo: kotlin.Int.(kotlin.String) -> kotlin.Unit): kotlin.Unit
 
 public final class A {
     public constructor A(/*0*/ foo: kotlin.Int.() -> kotlin.Unit)
