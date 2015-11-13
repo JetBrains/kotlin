@@ -50,8 +50,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
         SignaturesPropagationData data =
                 new SignaturesPropagationData(owner, returnType, receiverType, valueParameters, typeParameters, method);
         return new AlternativeMethodSignature(
-                data.getModifiedReturnType(), data.getModifiedReceiverType(), data.getModifiedValueParameters(),
-                data.getModifiedTypeParameters(), data.getSignatureErrors(), data.getModifiedHasStableParameterNames()
+                returnType, data.getModifiedReceiverType(), data.getModifiedValueParameters(),
+                typeParameters, data.getSignatureErrors(), data.getModifiedHasStableParameterNames()
         );
     }
 

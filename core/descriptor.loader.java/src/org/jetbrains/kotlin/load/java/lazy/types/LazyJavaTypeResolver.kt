@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.*
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.createProjection
@@ -54,7 +53,7 @@ class LazyJavaTypeResolver(
                 else c.module.builtIns.getUnitType()
             }
             is JavaClassifierType ->
-                if (PLATFORM_TYPES && attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
+                if (attr.allowFlexible && attr.howThisTypeIsUsed != SUPERTYPE)
                     FlexibleJavaClassifierTypeCapabilities.create(
                             LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_LOWER_BOUND)),
                             LazyJavaClassifierType(javaType, attr.toFlexible(FLEXIBLE_UPPER_BOUND))
@@ -71,7 +70,7 @@ class LazyJavaTypeResolver(
             val primitiveType = (javaComponentType as? JavaPrimitiveType)?.getType()
             if (primitiveType != null) {
                 val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
-                return@run if (PLATFORM_TYPES && attr.allowFlexible)
+                return@run if (attr.allowFlexible)
                     FlexibleJavaClassifierTypeCapabilities.create(jetType, TypeUtils.makeNullable(jetType))
                 else TypeUtils.makeNullableAsSpecified(jetType, !attr.isMarkedNotNull)
             }
@@ -79,7 +78,7 @@ class LazyJavaTypeResolver(
             val componentType = transformJavaType(javaComponentType,
                                                   TYPE_ARGUMENT.toAttributes(attr.allowFlexible, attr.isForAnnotationParameter))
 
-            if (PLATFORM_TYPES && attr.allowFlexible) {
+            if (attr.allowFlexible) {
                 return@run FlexibleJavaClassifierTypeCapabilities.create(
                         c.module.builtIns.getArrayType(INVARIANT, componentType),
                         TypeUtils.makeNullable(c.module.builtIns.getArrayType(OUT_VARIANCE, componentType)))

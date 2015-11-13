@@ -1084,9 +1084,7 @@ public abstract class StackValue {
 
                 v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD,
                                  backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
-                if (!genNotNullAssertionForField(v, state, descriptor)) {
-                    genNotNullAssertionForLateInitIfNeeded(v);
-                }
+                genNotNullAssertionForLateInitIfNeeded(v);
                 coerceTo(type, v);
             }
             else {

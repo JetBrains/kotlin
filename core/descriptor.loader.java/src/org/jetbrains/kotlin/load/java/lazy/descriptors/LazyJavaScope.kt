@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -278,15 +277,14 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
         get() = isFinal && isStatic
 
     private fun getPropertyType(field: JavaField, annotations: Annotations): KotlinType {
-        // Fields do not have their own generic parameters
-        val finalStatic = field.isFinalStatic
-        // simple static constants should not have flexible types:
-        val allowFlexible = PLATFORM_TYPES && !(finalStatic && c.components.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
+        // Fields do not have their own generic parameters.
+        // Simple static constants should not have flexible types.
+        val allowFlexible = !(field.isFinalStatic && c.components.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
         val propertyType = c.typeResolver.transformJavaType(
-                field.getType(),
+                field.type,
                 LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_INVARIANT, annotations, allowFlexible)
         )
-        if ((!allowFlexible || !PLATFORM_TYPES) && finalStatic) {
+        if (!allowFlexible) {
             return TypeUtils.makeNotNullable(propertyType)
         }
 
