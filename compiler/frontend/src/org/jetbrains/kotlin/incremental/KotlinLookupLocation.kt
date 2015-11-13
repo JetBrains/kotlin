@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnInPsiFile
 import org.jetbrains.kotlin.incremental.components.LocationInfo
-import org.jetbrains.kotlin.incremental.components.LocationInfo.Position
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 

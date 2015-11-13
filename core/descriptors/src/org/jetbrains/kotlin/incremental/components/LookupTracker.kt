@@ -17,8 +17,12 @@
 package org.jetbrains.kotlin.incremental.components
 
 public interface LookupTracker {
+    // used in tests for more accurate checks
+    val requiresPosition: Boolean
+
     fun record(
-            locationInfo: LocationInfo,
+            filePath: String,
+            position: Position,
             scopeFqName: String,
             scopeKind: ScopeKind,
             name: String
@@ -26,7 +30,10 @@ public interface LookupTracker {
 
     companion object {
         val DO_NOTHING: LookupTracker = object : LookupTracker {
-            override fun record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+            override val requiresPosition: Boolean
+                get() = false
+
+            override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
             }
         }
     }

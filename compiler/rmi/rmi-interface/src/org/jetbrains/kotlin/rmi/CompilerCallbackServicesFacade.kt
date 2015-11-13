@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.rmi
 
-import org.jetbrains.kotlin.incremental.components.LocationInfo
+import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
@@ -72,8 +72,10 @@ public interface CompilerCallbackServicesFacade : Remote {
     // ----------------------------------------------------
     // LookupTracker
     @Throws(RemoteException::class)
-    fun lookupTracker_record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String)
-    
+    fun lookupTracker_requiresPosition(): Boolean
+
+    fun lookupTracker_record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String)
+
     @Throws(RemoteException::class)
     fun lookupTracker_isDoNothing(): Boolean
     
