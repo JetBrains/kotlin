@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.sameAsR
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
-import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -421,12 +420,15 @@ public class LazyJavaClassMemberScope(
 
     override fun resolveMethodSignature(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
-            valueParameters: LazyJavaScope.ResolvedValueParameters
+            valueParameters: List<ValueParameterDescriptor>
     ): LazyJavaScope.MethodSignatureData {
         val propagated = c.components.externalSignatureResolver.resolvePropagatedSignature(
-                method, ownerDescriptor, returnType, null, valueParameters.descriptors, methodTypeParameters
+                method, ownerDescriptor, returnType, null, valueParameters, methodTypeParameters
         )
-        return LazyJavaScope.MethodSignatureData(propagated, propagated.errors)
+        return LazyJavaScope.MethodSignatureData(
+                propagated.returnType, propagated.receiverType, propagated.valueParameters, propagated.typeParameters,
+                propagated.hasStableParameterNames(), propagated.errors
+        )
     }
 
     private fun hasOverriddenBuiltinFunctionWithErasedValueParameters(

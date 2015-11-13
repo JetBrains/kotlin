@@ -60,7 +60,7 @@ public interface ExternalSignatureResolver {
         private final boolean hasStableParameterNames;
 
         public AlternativeMethodSignature(
-                @Nullable KotlinType returnType,
+                @NotNull KotlinType returnType,
                 @Nullable KotlinType receiverType,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
@@ -75,7 +75,7 @@ public interface ExternalSignatureResolver {
             this.hasStableParameterNames = hasStableParameterNames;
         }
 
-        @Nullable
+        @NotNull
         public KotlinType getReturnType() {
             return returnType;
         }

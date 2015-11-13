@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
-import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
@@ -97,7 +96,11 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     open protected fun JavaMethodDescriptor.isVisibleAsFunction() = true
 
     protected data class MethodSignatureData(
-            val effectiveSignature: ExternalSignatureResolver.AlternativeMethodSignature,
+            val returnType: KotlinType,
+            val receiverType: KotlinType?,
+            val valueParameters: List<ValueParameterDescriptor>,
+            val typeParameters: List<TypeParameterDescriptor>,
+            val hasStableParameterNames: Boolean,
             val errors: List<String>
     )
 
@@ -105,7 +108,8 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
             method: JavaMethod,
             methodTypeParameters: List<TypeParameterDescriptor>,
             returnType: KotlinType,
-            valueParameters: ResolvedValueParameters): MethodSignatureData
+            valueParameters: List<ValueParameterDescriptor>
+    ): MethodSignatureData
 
     fun resolveMethodToFunctionDescriptor(method: JavaMethod): JavaMethodDescriptor {
         val annotations = c.resolveAnnotations(method)
@@ -120,22 +124,22 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
 
         val returnType = computeMethodReturnType(method, annotations, c)
 
-        val (effectiveSignature, signatureErrors) = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters)
+        val effectiveSignature = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters.descriptors)
 
         functionDescriptorImpl.initialize(
-                effectiveSignature.getReceiverType(),
+                effectiveSignature.receiverType,
                 getDispatchReceiverParameter(),
-                effectiveSignature.getTypeParameters(),
-                effectiveSignature.getValueParameters(),
-                effectiveSignature.getReturnType(),
+                effectiveSignature.typeParameters,
+                effectiveSignature.valueParameters,
+                effectiveSignature.returnType,
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
                 method.getVisibility()
         )
 
-        functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames(), valueParameters.hasSynthesizedNames)
+        functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)
 
-        if (signatureErrors.isNotEmpty()) {
-            c.components.externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, signatureErrors)
+        if (effectiveSignature.errors.isNotEmpty()) {
+            c.components.externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, effectiveSignature.errors)
         }
 
         return functionDescriptorImpl
