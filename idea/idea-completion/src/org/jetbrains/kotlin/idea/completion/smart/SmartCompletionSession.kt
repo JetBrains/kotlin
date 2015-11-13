@@ -97,6 +97,14 @@ class SmartCompletionSession(
 
         val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
         withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
+            if (filter != null && receiverTypes != null) {
+                val results = ExtensionFunctionTypeValueCompletion(receiverTypes, callTypeAndReceiver.callType, lookupElementFactory)
+                        .processVariables(contextVariablesProvider)
+                for ((invokeDescriptor, factory) in results) {
+                    collector.addElements(filter(invokeDescriptor, factory))
+                }
+            }
+
             if (contextVariableTypesForAdditionalItems.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
                 val additionalItems = smartCompletion!!.additionalItems(lookupElementFactory).first
                 collector.addElements(additionalItems)

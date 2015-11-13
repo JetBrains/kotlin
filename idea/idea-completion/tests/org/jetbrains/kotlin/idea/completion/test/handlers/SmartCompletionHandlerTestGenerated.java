@@ -383,6 +383,18 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ExtensionFunctionTypeVariable1.kt")
+    public void testExtensionFunctionTypeVariable1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ExtensionFunctionTypeVariable1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionFunctionTypeVariable2.kt")
+    public void testExtensionFunctionTypeVariable2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ExtensionFunctionTypeVariable2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ForLoopRange.kt")
     public void testForLoopRange() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ForLoopRange.kt");

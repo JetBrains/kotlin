@@ -1201,6 +1201,39 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ExtensionFunctionTypeValues extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInExtensionFunctionTypeValues() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ImplicitReceiver.kt")
+            public void testImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues/ImplicitReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SafeCall.kt")
+            public void testSafeCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues/SafeCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues/Simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCast.kt")
+            public void testSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues/SmartCast.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/extensions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

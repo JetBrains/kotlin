@@ -34,13 +34,13 @@ import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
-public fun CallableDescriptor.substituteExtensionIfCallable(
+public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receivers: Collection<ReceiverValue>,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo,
         callType: CallType<*>,
         containingDeclarationOrModule: DeclarationDescriptor
-): Collection<CallableDescriptor> {
+): Collection<TCallable> {
     val sequence = receivers.asSequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).asSequence() }
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
@@ -50,32 +50,32 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
     }
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(
+public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallableWithImplicitReceiver(
         scope: LexicalScope,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo
-): Collection<CallableDescriptor> {
+): Collection<TCallable> {
     val receiverValues = scope.getImplicitReceiversWithInstance().map { it.getValue() }
     return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.DEFAULT, scope.ownerDescriptor)
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallable(
+public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receiver: ReceiverValue,
         callType: CallType<*>,
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo,
         containingDeclarationOrModule: DeclarationDescriptor
-): Collection<CallableDescriptor> {
+): Collection<TCallable> {
     if (!receiver.exists()) return listOf()
 
     var types = SmartCastManager().getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo)
     return substituteExtensionIfCallable(types, callType)
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallable(
+public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receiverTypes: Collection<KotlinType>,
         callType: CallType<*>
-): Collection<CallableDescriptor> {
+): Collection<TCallable> {
     if (!callType.descriptorKindFilter.accepts(this)) return listOf()
 
     var types = receiverTypes.asSequence()
@@ -98,7 +98,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         return if (substitutors.any()) listOf(this) else listOf()
     }
     else {
-        return substitutors.map { substitute(it)!! }.toList()
+        return substitutors.map { @Suppress("UNCHECKED_CAST") (substitute(it) as TCallable) }.toList()
     }
 }
 

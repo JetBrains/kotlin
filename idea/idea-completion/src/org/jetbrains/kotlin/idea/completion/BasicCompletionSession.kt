@@ -207,6 +207,15 @@ class BasicCompletionSession(
 
             val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
             withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
+                if (receiverTypes != null) {
+                    ExtensionFunctionTypeValueCompletion(receiverTypes, callTypeAndReceiver.callType, lookupElementFactory)
+                            .processVariables(contextVariablesProvider)
+                            .forEach {
+                                val lookupElements = it.factory.createStandardLookupElementsForDescriptor(it.invokeDescriptor, useReceiverTypes = true)
+                                collector.addElements(lookupElements)
+                            }
+                }
+
                 if (contextVariableTypesForSmartCompletion.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
                     completeWithSmartCompletion(lookupElementFactory)
                 }

@@ -71,6 +71,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ExtensionFunctionTypeVariable1.kt")
+    public void testExtensionFunctionTypeVariable1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExtensionFunctionTypeVariable1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExtensionFunctionTypeVariable2.kt")
+    public void testExtensionFunctionTypeVariable2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExtensionFunctionTypeVariable2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExtensionReceiverTypeArg.kt")
     public void testExtensionReceiverTypeArg() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExtensionReceiverTypeArg.kt");

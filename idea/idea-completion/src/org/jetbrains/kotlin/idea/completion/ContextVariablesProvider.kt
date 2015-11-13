@@ -37,7 +37,8 @@ class RealContextVariablesProvider(
         private val referenceVariantsHelper: ReferenceVariantsHelper,
         private val contextElement: PsiElement
 ) : ContextVariablesProvider {
-    private val functionTypeVariables by lazy {
+
+    val allFunctionTypeVariables by lazy {
         collectVariables().filter { KotlinBuiltIns.isFunctionOrExtensionFunctionType(it.type) }
     }
 
@@ -49,7 +50,7 @@ class RealContextVariablesProvider(
 
     override fun functionTypeVariables(requiredType: FuzzyType): Collection<Pair<VariableDescriptor, TypeSubstitutor>> {
         val result = SmartList<Pair<VariableDescriptor, TypeSubstitutor>>()
-        for (variable in functionTypeVariables) {
+        for (variable in allFunctionTypeVariables) {
             val substitutor = variable.fuzzyReturnType()?.checkIsSubtypeOf(requiredType) ?: continue
             result.add(variable to substitutor)
         }
