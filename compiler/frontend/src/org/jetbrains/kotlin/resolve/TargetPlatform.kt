@@ -49,7 +49,7 @@ abstract class TargetPlatform(
 }
 
 private val DEFAULT_DECLARATION_CHECKERS = listOf(
-        DataClassAnnotationChecker(),
+        DataClassDeclarationChecker(),
         ConstModifierChecker,
         UnderscoreChecker,
         InlineParameterChecker,
