@@ -20,10 +20,12 @@ import com.sun.jdi.*
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.Value
 import org.jetbrains.org.objectweb.asm.Type
+import java.lang.reflect.AccessibleObject
 import com.sun.jdi.Type as jdi_Type
 import com.sun.jdi.Value as jdi_Value
 
 val CLASS = Type.getType(javaClass<Class<*>>())
+val OBJECT = Type.getType(Any::class.java)
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
 public class JDIEval(
@@ -224,6 +226,11 @@ public class JDIEval(
 
         val args = mapArguments(arguments, method.safeArgumentTypes())
         args.disableCollection()
+
+        if (shouldInvokeMethodWithReflection(method, args)) {
+            return invokeMethodWithReflection(_class.asType(), NULL_VALUE, args, methodDesc)
+        }
+
         val result = mayThrow { _class.invokeMethod(thread, method, args, invokePolicy) }
         args.enableCollection()
         return result.asValue()
@@ -290,6 +297,11 @@ public class JDIEval(
         fun doInvokeMethod(obj: ObjectReference, method: Method, policy: Int): Value {
             val args = mapArguments(arguments, method.safeArgumentTypes())
             args.disableCollection()
+
+            if (shouldInvokeMethodWithReflection(method, args)) {
+                return invokeMethodWithReflection(instance.asmType, instance, args, methodDesc)
+            }
+
             val result = mayThrow { obj.invokeMethod(thread, method, args, policy) }
             args.enableCollection()
             return result.asValue()
@@ -304,6 +316,54 @@ public class JDIEval(
             val method = findMethod(methodDesc, obj.referenceType() ?: methodDesc.ownerType.asReferenceType())
             return doInvokeMethod(obj, method, invokePolicy)
         }
+    }
+
+    private fun shouldInvokeMethodWithReflection(method: Method, args: List<com.sun.jdi.Value?>): Boolean {
+        return !method.isVarArgs && args.zip(method.argumentTypes()).any { isArrayOfInterfaces(it.first?.type(), it.second) }
+    }
+
+    private fun isArrayOfInterfaces(valueType: jdi_Type?, expectedType: jdi_Type?): Boolean {
+        return (valueType as? ArrayType)?.componentType() is InterfaceType && (expectedType as? ArrayType)?.componentType() == OBJECT.asReferenceType()
+    }
+
+    private fun invokeMethodWithReflection(ownerType: Type, instance: Value, args: List<jdi_Value?>, methodDesc: MethodDescription): Value {
+        val methodToInvoke = invokeMethod(
+                loadClass(ownerType),
+                MethodDescription(
+                        CLASS.internalName,
+                        "getDeclaredMethod",
+                        "(Ljava/lang/String;[L${CLASS.internalName};)Ljava/lang/reflect/Method;",
+                        true
+                ),
+                listOf(vm.mirrorOf(methodDesc.name).asValue(), *methodDesc.parameterTypes.map { loadClass(it) }.toTypedArray())
+        )
+
+        invokeMethod(
+                methodToInvoke,
+                MethodDescription(
+                        Type.getType(AccessibleObject::class.java).internalName,
+                        "setAccessible",
+                        "(Z)V",
+                        true
+                ),
+                listOf(vm.mirrorOf(true).asValue())
+        )
+
+        val invocationResult = invokeMethod(
+                methodToInvoke,
+                MethodDescription(
+                        methodToInvoke.asmType.internalName,
+                        "invoke",
+                        "(L${OBJECT.internalName};[L${OBJECT.internalName};)L${OBJECT.internalName};",
+                        true
+                ),
+                listOf(instance, *args.map { it.asValue() }.toTypedArray())
+        )
+
+        if (methodDesc.returnType.sort != Type.OBJECT && methodDesc.returnType.sort != Type.ARRAY && methodDesc.returnType.sort != Type.VOID) {
+            return unboxType(invocationResult, methodDesc.returnType)
+        }
+        return invocationResult
     }
 
     private fun List<jdi_Value?>.disableCollection() {

@@ -784,6 +784,41 @@ class TestData extends BaseTestData {
         return b[1];
     }
 
+    @IgnoreInReflectionTests
+    public static void invokeMethodWithArrayOfInterfaces() {
+        BaseToArray[] c = new BaseToArray[1];
+
+        TestInvokeWithObjectArray.invokeStaticFun(c);
+        TestInvokeWithObjectArray.invokeStaticPrivateFun(c);
+
+        TestInvokeWithObjectArray myObj = new TestInvokeWithObjectArray();
+        myObj.invokeMemberFun(c);
+        myObj.invokeMemberPrivateFun(c);
+
+        int i = TestInvokeWithObjectArray.primitiveReturnValue(c) + 1;
+    }
+
+    private static class TestInvokeWithObjectArray {
+        public static void invokeStaticFun(Object[] o) {
+        }
+
+        public static void invokeStaticPrivateFun(Object[] o) {
+        }
+
+        public void invokeMemberFun(Object[] o) {
+        }
+
+        public void invokeMemberPrivateFun(Object[] o) {
+        }
+
+        public static int primitiveReturnValue(Object[] o) {
+            return 1;
+        }
+    }
+
+    private interface BaseToArray {
+    }
+
     public TestData() {
     }
 }
