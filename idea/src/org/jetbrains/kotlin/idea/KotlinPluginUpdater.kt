@@ -35,6 +35,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.updateSettings.impl.UpdateChecker
+import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.CharsetToolkit
@@ -60,6 +61,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     fun queueUpdateCheck(reportNoUpdates: Boolean = false) {
         if (ApplicationManager.getApplication().isUnitTestMode) return
+        if (!UpdateSettings.getInstance().isCheckNeeded) return
 
         ApplicationManager.getApplication().assertIsDispatchThread()
         if (!checkQueued) {
