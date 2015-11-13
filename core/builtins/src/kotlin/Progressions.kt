@@ -18,6 +18,8 @@
 
 package kotlin
 
+import kotlin.internal.getProgressionLastElement
+
 @Deprecated("Use IntProgression instead.", ReplaceWith("IntProgression"), level = DeprecationLevel.WARNING)
 /**
  * A progression of values of type `Byte`.
@@ -41,7 +43,7 @@ public open class ByteProgression
     /**
      * The last element in the progression.
      */
-    public val last: Byte = kotlin.internal.getProgressionFinalElement(start.toInt(), endInclusive.toInt(), increment).toByte()
+    public val last: Byte = getProgressionLastElement(start.toInt(), endInclusive.toInt(), increment).toByte()
 
     @Deprecated("Use first instead.", ReplaceWith("first"))
     public override val start: Byte get() = first
@@ -99,7 +101,7 @@ public open class CharProgression
     /**
      * The last element in the progression.
      */
-    public val last: Char = kotlin.internal.getProgressionFinalElement(start.toInt(), endInclusive.toInt(), increment).toChar()
+    public val last: Char = getProgressionLastElement(start.toInt(), endInclusive.toInt(), increment).toChar()
 
     @Deprecated("Use first instead.", ReplaceWith("first"))
     public override val start: Char get() = first
@@ -158,7 +160,7 @@ public open class ShortProgression
     /**
      * The last element in the progression.
      */
-    public val last: Short = kotlin.internal.getProgressionFinalElement(start.toInt(), endInclusive.toInt(), increment).toShort()
+    public val last: Short = getProgressionLastElement(start.toInt(), endInclusive.toInt(), increment).toShort()
 
     @Deprecated("Use first instead.", ReplaceWith("first"))
     public override val start: Short get() = first
@@ -216,7 +218,7 @@ public open class IntProgression
     /**
      * The last element in the progression.
      */
-    public val last: Int = kotlin.internal.getProgressionFinalElement(start.toInt(), endInclusive.toInt(), increment).toInt()
+    public val last: Int = getProgressionLastElement(start.toInt(), endInclusive.toInt(), increment).toInt()
 
     @Deprecated("Use first instead.", ReplaceWith("first"))
     public override val start: Int get() = first
@@ -274,7 +276,7 @@ public open class LongProgression
     /**
      * The last element in the progression.
      */
-    public val last: Long = kotlin.internal.getProgressionFinalElement(start.toLong(), endInclusive.toLong(), increment).toLong()
+    public val last: Long = getProgressionLastElement(start.toLong(), endInclusive.toLong(), increment).toLong()
 
     @Deprecated("Use first instead.", ReplaceWith("first"))
     public override val start: Long get() = first

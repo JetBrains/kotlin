@@ -35,16 +35,16 @@ fun integerProgressionIterator(kind: ProgressionKind): String {
  * An iterator over a progression of values of type `$t`.
  * @property increment the number by which the value is incremented on each step.
  */
-internal class ${t}ProgressionIterator(start: $t, end: $t, val increment: $incrementType) : ${t}Iterator() {
-    private var next = start$toInt
-    private val finalElement: $t = getProgressionFinalElement(start$toInt, end$toInt, increment)$toType
-    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
+internal class ${t}ProgressionIterator(first: $t, last: $t, val increment: $incrementType) : ${t}Iterator() {
+    private var next = first$toInt
+    private val finalElement = last$toInt
+    private var hasNext: Boolean = if (increment > 0) first <= last else first >= last
 
     override fun hasNext(): Boolean = hasNext
 
     override fun next$t(): $t {
         val value = next
-        if (value == finalElement$toInt) {
+        if (value == finalElement) {
             hasNext = false
         }
         else {
@@ -77,8 +77,6 @@ internal class ${t}ProgressionIterator(start: $t, val end: $t, val increment: $t
 
 class GenerateProgressionIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun generateBody() {
-        out.println("import kotlin.internal.getProgressionFinalElement")
-        out.println()
         for (kind in ProgressionKind.values()) {
             if (kind != FLOAT && kind != DOUBLE) {
                 out.println(integerProgressionIterator(kind))

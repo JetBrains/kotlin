@@ -74,7 +74,7 @@ public open class $progression
     /**
      * The last element in the progression.
      */
-    public val last: $t = kotlin.internal.getProgressionFinalElement(start.to$incrementType(), endInclusive.to$incrementType(), increment).to$t()
+    public val last: $t = getProgressionLastElement(start.to$incrementType(), endInclusive.to$incrementType(), increment).to$t()
 
     @Deprecated("Use first instead.", ReplaceWith("first"))
     public override val start: $t get() = first
@@ -182,6 +182,8 @@ public open class $progression(
     }
 
     override fun generateBody() {
+        out.println("import kotlin.internal.getProgressionLastElement")
+        out.println()
         for (kind in ProgressionKind.values) {
             if (kind == FLOAT || kind == DOUBLE)
                 continue
