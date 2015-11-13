@@ -39,6 +39,22 @@ interface CompilerSelector {
     operator fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*>
 }
 
+interface EventManger {
+    fun onCompilationFinished(f : () -> Unit)
+}
+
+private class EventMangerImpl : EventManger {
+    private val onCompilationFinished = arrayListOf<() -> Unit>()
+
+    override fun onCompilationFinished(f: () -> Unit) {
+        onCompilationFinished.add(f)
+    }
+
+    fun fireCompilationFinished() {
+        onCompilationFinished.forEach { it() }
+    }
+}
+
 class CompileServiceImpl(
         val registry: Registry,
         val compiler: CompilerSelector,
@@ -79,10 +95,10 @@ class CompileServiceImpl(
                                serviceOutputStream: RemoteOutputStream,
                                operationsTracer: RemoteOperationsTracer?
     ): Int =
-            doCompile(args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, profiler ->
+            doCompile(args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, eventManager, profiler ->
                 when (outputFormat) {
                     CompileService.OutputFormat.PLAIN -> compiler[targetPlatform].exec(printStream, *args)
-                    CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, profiler), *args)
+                    CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, eventManager, profiler), *args)
                 }
             }
 
@@ -94,10 +110,10 @@ class CompileServiceImpl(
                                           serviceOutputStream: RemoteOutputStream,
                                           operationsTracer: RemoteOperationsTracer?
     ): Int =
-            doCompile(args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, profiler ->
+            doCompile(args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, eventManager, profiler ->
                 when (compilerOutputFormat) {
                     CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
-                    CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, profiler), *args)
+                    CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, eventManager, profiler), *args)
                 }
             }
 
@@ -143,16 +159,17 @@ class CompileServiceImpl(
                           compilerMessagesStreamProxy: RemoteOutputStream,
                           serviceOutputStreamProxy: RemoteOutputStream,
                           operationsTracer: RemoteOperationsTracer?,
-                          body: (PrintStream, Profiler) -> ExitCode): Int =
+                          body: (PrintStream, EventManger, Profiler) -> ExitCode): Int =
             ifAlive {
 
                 operationsTracer?.before("compile")
                 val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
+                val eventManger = EventMangerImpl()
                 val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler), 4096))
                 val serviceOutputStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler), 4096))
                 try {
                     checkedCompile(args, serviceOutputStream, rpcProfiler) {
-                        val res = body(compilerMessagesStream, rpcProfiler).code
+                        val res = body(compilerMessagesStream, eventManger, rpcProfiler).code
                         _lastUsedSeconds = nowSeconds()
                         res
                     }
@@ -160,14 +177,15 @@ class CompileServiceImpl(
                 finally {
                     serviceOutputStream.flush()
                     compilerMessagesStream.flush()
+                    eventManger.fireCompilationFinished()
                     operationsTracer?.after("compile")
                 }
             }
 
-    private fun createCompileServices(facade: CompilerCallbackServicesFacade, rpcProfiler: Profiler): Services {
+    private fun createCompileServices(facade: CompilerCallbackServicesFacade, eventManger: EventManger, rpcProfiler: Profiler): Services {
         val builder = Services.Builder()
         if (facade.hasIncrementalCaches() || facade.hasLookupTracker()) {
-            builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(facade, rpcProfiler))
+            builder.register(IncrementalCompilationComponents::class.java, RemoteIncrementalCompilationComponentsClient(facade, eventManger, rpcProfiler))
         }
         if (facade.hasCompilationCanceledStatus()) {
             builder.register(CompilationCanceledStatus::class.java, RemoteCompilationCanceledStatusClient(facade, rpcProfiler))

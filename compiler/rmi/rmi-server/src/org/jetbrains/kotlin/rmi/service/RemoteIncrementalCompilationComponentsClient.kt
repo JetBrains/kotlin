@@ -25,9 +25,10 @@ import org.jetbrains.kotlin.rmi.DummyProfiler
 import org.jetbrains.kotlin.rmi.Profiler
 
 
-class RemoteIncrementalCompilationComponentsClient(val facade: CompilerCallbackServicesFacade, val profiler: Profiler = DummyProfiler()) : IncrementalCompilationComponents {
+class RemoteIncrementalCompilationComponentsClient(val facade: CompilerCallbackServicesFacade, eventManger: EventManger, val profiler: Profiler = DummyProfiler()) : IncrementalCompilationComponents {
+    val remoteLookupTrackerClient = RemoteLookupTrackerClient(facade, eventManger, profiler)
 
     override fun getIncrementalCache(target: TargetId): IncrementalCache = RemoteIncrementalCacheClient(facade, target, profiler)
 
-    override fun getLookupTracker(): LookupTracker = RemoteLookupTrackerClient(facade, profiler)
+    override fun getLookupTracker(): LookupTracker = remoteLookupTrackerClient
 }

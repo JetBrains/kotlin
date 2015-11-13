@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.rmi.kotlinr
 
+import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
@@ -67,8 +66,12 @@ public class CompilerCallbackServicesFacadeServer(
 
     override fun lookupTracker_requiresPosition() = incrementalCompilationComponents!!.getLookupTracker().requiresPosition
 
-    override fun lookupTracker_record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        incrementalCompilationComponents!!.getLookupTracker().record(filePath, position, scopeFqName, scopeKind, name)
+    override fun lookupTracker_record(lookups: Collection<LookupInfo>) {
+        val lookupTracker = incrementalCompilationComponents!!.getLookupTracker()
+
+        for (it in lookups) {
+            lookupTracker.record(it.filePath, it.position, it.scopeFqName, it.scopeKind, it.name)
+        }
     }
 
     private val lookupTracker_isDoNothing: Boolean = incrementalCompilationComponents != null && incrementalCompilationComponents.getLookupTracker() == LookupTracker.DO_NOTHING

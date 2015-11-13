@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.incremental.components
 
+import java.io.Serializable
+
 public interface LookupTracker {
     // used in tests for more accurate checks
     val requiresPosition: Boolean
@@ -43,3 +45,11 @@ public enum class ScopeKind {
     PACKAGE,
     CLASSIFIER
 }
+
+data class LookupInfo(
+        val filePath: String,
+        val position: Position,
+        val scopeFqName: String,
+        val scopeKind: ScopeKind,
+        val name: String
+) : Serializable
