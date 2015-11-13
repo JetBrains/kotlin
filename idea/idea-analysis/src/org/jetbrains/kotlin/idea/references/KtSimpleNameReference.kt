@@ -74,12 +74,8 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         if (element != null) {
             if (!canBeReferenceTo(element)) return false
 
-            val extensions = Extensions.getArea(element.getProject()).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).getExtensions()
-            for (extension in extensions) {
-                val value = extension.isReferenceTo(this, element)
-                if (value != null) {
-                    return value
-                }
+            for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
+                if (extension.isReferenceTo(this, element)) return true
             }
         }
 

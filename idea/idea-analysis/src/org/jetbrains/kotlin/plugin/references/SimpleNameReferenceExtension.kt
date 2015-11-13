@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 
 public interface SimpleNameReferenceExtension {
     companion object {
-        public val EP_NAME: ExtensionPointName<SimpleNameReferenceExtension> = ExtensionPointName.create("org.jetbrains.kotlin.simpleNameReferenceExtension")!!
+        public val EP_NAME: ExtensionPointName<SimpleNameReferenceExtension> =
+                ExtensionPointName.create("org.jetbrains.kotlin.simpleNameReferenceExtension")
     }
 
-    fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement): Boolean?
+    fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement): Boolean
     fun handleElementRename(reference: KtSimpleNameReference, psiFactory: KtPsiFactory, newElementName: String): PsiElement?
 }
