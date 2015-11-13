@@ -24,7 +24,7 @@ import java.lang.reflect.AccessibleObject
 import com.sun.jdi.Type as jdi_Type
 import com.sun.jdi.Value as jdi_Value
 
-val CLASS = Type.getType(javaClass<Class<*>>())
+val CLASS = Type.getType(Class::class.java)
 val OBJECT = Type.getType(Any::class.java)
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
@@ -36,14 +36,14 @@ public class JDIEval(
 ) : Eval {
 
     private val primitiveTypes = mapOf(
-            Type.BOOLEAN_TYPE.getClassName() to vm.mirrorOf(true).type(),
-            Type.BYTE_TYPE.getClassName() to vm.mirrorOf(1.toByte()).type(),
-            Type.SHORT_TYPE.getClassName() to vm.mirrorOf(1.toShort()).type(),
-            Type.INT_TYPE.getClassName() to vm.mirrorOf(1.toInt()).type(),
-            Type.CHAR_TYPE.getClassName() to vm.mirrorOf('1').type(),
-            Type.LONG_TYPE.getClassName() to vm.mirrorOf(1L).type(),
-            Type.FLOAT_TYPE.getClassName() to vm.mirrorOf(1.0f).type(),
-            Type.DOUBLE_TYPE.getClassName() to vm.mirrorOf(1.0).type()
+            Type.BOOLEAN_TYPE.className to vm.mirrorOf(true).type(),
+            Type.BYTE_TYPE.className to vm.mirrorOf(1.toByte()).type(),
+            Type.SHORT_TYPE.className to vm.mirrorOf(1.toShort()).type(),
+            Type.INT_TYPE.className to vm.mirrorOf(1.toInt()).type(),
+            Type.CHAR_TYPE.className to vm.mirrorOf('1').type(),
+            Type.LONG_TYPE.className to vm.mirrorOf(1L).type(),
+            Type.FLOAT_TYPE.className to vm.mirrorOf(1.0f).type(),
+            Type.DOUBLE_TYPE.className to vm.mirrorOf(1.0).type()
     )
 
     override fun loadClass(classType: Type): Value {
@@ -51,34 +51,34 @@ public class JDIEval(
     }
 
     fun loadClass(classType: Type, classLoader: ClassLoaderReference?): Value {
-        val loadedClasses = vm.classesByName(classType.getInternalName())
+        val loadedClasses = vm.classesByName(classType.internalName)
         if (!loadedClasses.isEmpty()) {
             val loadedClass = loadedClasses[0]
-            if (classType.getDescriptor() in BOOTSTRAP_CLASS_DESCRIPTORS || loadedClass.classLoader() == classLoader) {
+            if (classType.descriptor in BOOTSTRAP_CLASS_DESCRIPTORS || loadedClass.classLoader() == classLoader) {
                 return loadedClass.classObject().asValue()
             }
         }
         if (classLoader == null) {
             return invokeStaticMethod(
                     MethodDescription(
-                            CLASS.getInternalName(),
+                            CLASS.internalName,
                             "forName",
                             "(Ljava/lang/String;)Ljava/lang/Class;",
                             true
                     ),
-                    listOf(vm.mirrorOf(classType.getInternalName().replace('/', '.')).asValue())
+                    listOf(vm.mirrorOf(classType.internalName.replace('/', '.')).asValue())
             )
         }
         else {
             return invokeStaticMethod(
                     MethodDescription(
-                            CLASS.getInternalName(),
+                            CLASS.internalName,
                             "forName",
                             "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;",
                             true
                     ),
                     listOf(
-                            vm.mirrorOf(classType.getInternalName().replace('/', '.')).asValue(),
+                            vm.mirrorOf(classType.internalName.replace('/', '.')).asValue(),
                             boolean(true),
                             classLoader.asValue()
                     )
@@ -93,7 +93,7 @@ public class JDIEval(
     }
 
     override fun isInstanceOf(value: Value, targetType: Type): Boolean {
-        assert(targetType.getSort() == Type.OBJECT || targetType.getSort() == Type.ARRAY) {
+        assert(targetType.sort == Type.OBJECT || targetType.sort == Type.ARRAY) {
             "Can't check isInstanceOf() for non-object type $targetType"
         }
 
@@ -101,7 +101,7 @@ public class JDIEval(
         return invokeMethod(
                 _class,
                 MethodDescription(
-                        CLASS.getInternalName(),
+                        CLASS.internalName,
                         "isInstance",
                         "(Ljava/lang/Object;)Z",
                         false
@@ -119,12 +119,12 @@ public class JDIEval(
 
     private val Type.arrayElementType: Type
         get(): Type {
-            assert(getSort() == Type.ARRAY) { "Not an array type: $this" }
-            return Type.getType(getDescriptor().substring(1))
+            assert(sort == Type.ARRAY) { "Not an array type: $this" }
+            return Type.getType(descriptor.substring(1))
         }
 
     private fun fillArray(elementType: Type, size: Int, nestedSizes: List<Int>): Value {
-        val arr = newArray(Type.getType("[" + elementType.getDescriptor()), size)
+        val arr = newArray(Type.getType("[" + elementType.descriptor), size)
         if (!nestedSizes.isEmpty()) {
             val nestedElementType = elementType.arrayElementType
             val nestedSize = nestedSizes[0]
@@ -151,7 +151,7 @@ public class JDIEval(
             return array.array().getValue(index.int).asValue()
         }
         catch (e: IndexOutOfBoundsException) {
-            throwEvalException(ArrayIndexOutOfBoundsException(e.getMessage()))
+            throwEvalException(ArrayIndexOutOfBoundsException(e.message))
         }
     }
 
@@ -160,7 +160,7 @@ public class JDIEval(
             return array.array().setValue(index.int, newValue.asJdiValue(vm, array.asmType.arrayElementType))
         }
         catch (e: IndexOutOfBoundsException) {
-            throwEvalException(ArrayIndexOutOfBoundsException(e.getMessage()))
+            throwEvalException(ArrayIndexOutOfBoundsException(e.message))
         }
     }
 
@@ -175,7 +175,7 @@ public class JDIEval(
 
     private fun findStaticField(fieldDesc: FieldDescription): Field {
         val field = findField(fieldDesc)
-        if (!field.isStatic()) {
+        if (!field.isStatic) {
             throwBrokenCodeException(NoSuchFieldError("Field is not static: $fieldDesc"))
         }
         return field
@@ -189,7 +189,7 @@ public class JDIEval(
     override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
         val field = findStaticField(fieldDesc)
 
-        if (field.isFinal()) {
+        if (field.isFinal) {
             throwBrokenCodeException(NoSuchFieldError("Can't modify a final field: $field"))
         }
 
@@ -218,7 +218,7 @@ public class JDIEval(
 
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
         val method = findMethod(methodDesc)
-        if (!method.isStatic()) {
+        if (!method.isStatic) {
             throwBrokenCodeException(NoSuchMethodError("Method is not static: $methodDesc"))
         }
         val _class = method.declaringType()
@@ -261,7 +261,7 @@ public class JDIEval(
             Type.BYTE_TYPE -> MethodDescription("java/lang/Byte", "byteValue", "()B", false)
             Type.FLOAT_TYPE -> MethodDescription("java/lang/Float", "floatValue", "()F", false)
             Type.DOUBLE_TYPE -> MethodDescription("java/lang/Double", "doubleValue", "()D", false)
-            else -> throw UnsupportedOperationException("Couldn't unbox non primitive type ${type.getInternalName()}")
+            else -> throw UnsupportedOperationException("Couldn't unbox non primitive type ${type.internalName}")
         }
         return invokeMethod(boxedValue, method, listOf(), true)
     }
@@ -276,7 +276,7 @@ public class JDIEval(
             Type.CHAR_TYPE -> MethodDescription("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false)
             Type.FLOAT_TYPE -> MethodDescription("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false)
             Type.DOUBLE_TYPE -> MethodDescription("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false)
-            else -> throw UnsupportedOperationException("Couldn't box non primitive type ${value.asmType.getInternalName()}")
+            else -> throw UnsupportedOperationException("Couldn't box non primitive type ${value.asmType.internalName}")
         }
         return invokeStaticMethod(method, listOf(value))
     }
@@ -397,7 +397,7 @@ public class JDIEval(
                 if (dimensions == 0)
                     baseType
                 else
-                    Type.getType("[".repeat(dimensions) + baseType.asType().getDescriptor()).asReferenceType(declaringType().classLoader())
+                    Type.getType("[".repeat(dimensions) + baseType.asType().descriptor).asReferenceType(declaringType().classLoader())
             }
         }
     }

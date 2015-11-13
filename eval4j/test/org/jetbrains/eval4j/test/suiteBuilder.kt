@@ -16,29 +16,28 @@
 
 package org.jetbrains.eval4j.test
 
-import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.Opcodes.*
+import junit.framework.TestCase
+import junit.framework.TestSuite
+import org.jetbrains.eval4j.ExceptionThrown
+import org.jetbrains.eval4j.InterpreterResult
+import org.jetbrains.eval4j.ObjectValue
+import org.jetbrains.eval4j.ValueReturned
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.lang.reflect.Modifier
-import org.jetbrains.eval4j.*
-import org.junit.Assert.*
-import junit.framework.TestSuite
-import junit.framework.TestCase
-import java.lang.reflect.Method
-import java.lang.reflect.Field
-import java.lang.reflect.Constructor
-import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Array as JArray
-import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
-import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 fun buildTestSuite(
         create: (MethodNode, Class<*>, InterpreterResult?) -> TestCase
 ): TestSuite {
     val suite = TestSuite()
 
-    val ownerClass = javaClass<TestData>()
-    val inputStream = ownerClass.getClassLoader()!!.getResourceAsStream(ownerClass.getInternalName() + ".class")!!
+    val ownerClass = TestData::class.java
+    val inputStream = ownerClass.classLoader!!.getResourceAsStream(ownerClass.getInternalName() + ".class")!!
 
     ClassReader(inputStream).accept(object : ClassVisitor(ASM5) {
 
@@ -61,27 +60,27 @@ private fun buildTestCase(ownerClass: Class<TestData>,
                           methodNode: MethodNode,
                           create: (MethodNode, Class<out Any?>, InterpreterResult?) -> TestCase): TestCase? {
     var expected: InterpreterResult? = null
-    for (method in ownerClass.getDeclaredMethods()) {
-        if (method.getName() == methodNode.name) {
-            val isStatic = (method.getModifiers() and Modifier.STATIC) != 0
-            if (method.getParameterTypes()!!.size() > 0) {
+    for (method in ownerClass.declaredMethods) {
+        if (method.name == methodNode.name) {
+            val isStatic = (method.modifiers and Modifier.STATIC) != 0
+            if (method.parameterTypes!!.size > 0) {
                 println("Skipping method with parameters: $method")
             }
-            else if (!isStatic && !method.getName()!!.startsWith("test")) {
+            else if (!isStatic && !method.name!!.startsWith("test")) {
                 println("Skipping instance method (should be started with 'test') : $method")
             }
             else {
-                method.setAccessible(true)
+                method.isAccessible = true
                 try {
                     val result = method.invoke(if (isStatic) null else ownerClass.newInstance())
-                    val returnType = Type.getType(method.getReturnType()!!)
+                    val returnType = Type.getType(method.returnType!!)
                     expected = ValueReturned(objectToValue(result, returnType))
                 }
                 catch (e: UnsupportedOperationException) {
                     println("Skipping $method: $e")
                 }
                 catch (e: Throwable) {
-                    val cause = e.getCause() ?: e
+                    val cause = e.cause ?: e
                     expected = ExceptionThrown(objectToValue(cause, Type.getType(cause.javaClass)) as ObjectValue, ExceptionThrown.ExceptionKind.FROM_EVALUATOR)
                 }
             }

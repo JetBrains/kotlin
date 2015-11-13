@@ -56,7 +56,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
     }
 
     override fun newOperation(insn: AbstractInsnNode): Value? {
-        return when (insn.getOpcode()) {
+        return when (insn.opcode) {
             ACONST_NULL -> {
                 return NULL_VALUE
             }
@@ -90,7 +90,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                     is Double -> double(cst)
                     is String -> eval.loadString(cst)
                     is Type -> {
-                        val sort = cst.getSort()
+                        val sort = cst.sort
                         when (sort) {
                             Type.OBJECT, Type.ARRAY -> eval.loadClass(cst)
                             Type.METHOD -> throw UnsupportedByteCodeException("Mothod handles are not supported")
@@ -113,7 +113,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
     }
 
     override fun unaryOperation(insn: AbstractInsnNode, value: Value): Value? {
-        return when (insn.getOpcode()) {
+        return when (insn.opcode) {
             INEG -> int(-value.int)
             IINC -> int(value.int + (insn as IincInsnNode).incr)
             L2I -> int(value.long.toInt())
@@ -187,7 +187,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                     ObjectValue(value.obj(), targetType)
                 }
                 else {
-                    throwEvalException(ClassCastException("${value.asmType.getClassName()} cannot be cast to ${targetType.getClassName()}"))
+                    throwEvalException(ClassCastException("${value.asmType.className} cannot be cast to ${targetType.className}"))
                 }
             }
 
@@ -218,7 +218,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
     }
 
     override fun binaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value): Value? {
-        return when (insn.getOpcode()) {
+        return when (insn.opcode) {
             IALOAD, BALOAD, CALOAD, SALOAD,
             FALOAD, LALOAD, DALOAD,
             AALOAD -> eval.getArrayElement(value1, value2)
@@ -280,7 +280,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                     l1 == l2 -> 0
                     l1 < l2 -> -1
                     // one of them is NaN
-                    else -> if (insn.getOpcode() == FCMPG) 1 else -1
+                    else -> if (insn.opcode == FCMPG) 1 else -1
                 })
             }
 
@@ -294,7 +294,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                     l1 == l2 -> 0
                     l1 < l2 -> -1
                     // one of them is NaN
-                    else -> if (insn.getOpcode() == DCMPG) 1 else -1
+                    else -> if (insn.opcode == DCMPG) 1 else -1
                 })
             }
 
@@ -328,7 +328,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
     }
 
     override fun ternaryOperation(insn: AbstractInsnNode, value1: Value, value2: Value, value3: Value): Value? {
-        return when (insn.getOpcode()) {
+        return when (insn.opcode) {
             IASTORE, LASTORE, FASTORE, DASTORE, AASTORE, BASTORE, CASTORE, SASTORE -> {
                 eval.setArrayElement(value1, value2, value3)
                 null
@@ -338,7 +338,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
     }
 
     override fun naryOperation(insn: AbstractInsnNode, values: List<Value>): Value {
-        return when (insn.getOpcode()) {
+        return when (insn.opcode) {
             MULTIANEWARRAY -> {
                 val node = insn as MultiANewArrayInsnNode
                 eval.newMultiDimensionalArray(Type.getType(node.desc), values.map { v -> v.int })
@@ -348,8 +348,8 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 eval.invokeMethod(
                         values[0],
                         MethodDescription(insn as MethodInsnNode),
-                        values.subList(1, values.size()),
-                        insn.getOpcode() == INVOKESPECIAL
+                        values.subList(1, values.size),
+                        insn.opcode == INVOKESPECIAL
                 )
             }
 
@@ -362,7 +362,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
 
 
     override fun returnOperation(insn: AbstractInsnNode, value: Value, expected: Value) {
-        when (insn.getOpcode()) {
+        when (insn.opcode) {
             IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
                 // Handled by interpreter loop
             }

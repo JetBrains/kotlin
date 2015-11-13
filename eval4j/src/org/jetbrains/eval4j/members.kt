@@ -16,10 +16,10 @@
 
 package org.jetbrains.eval4j
 
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.Opcodes.*
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
 open class MemberDescription protected constructor(
         val ownerInternalName: String,
@@ -64,7 +64,7 @@ fun MethodDescription(insn: MethodInsnNode): MethodDescription =
             insn.owner,
             insn.name,
             insn.desc,
-            insn.getOpcode() == INVOKESTATIC
+            insn.opcode == INVOKESTATIC
         )
 
 val MethodDescription.returnType: Type
@@ -86,7 +86,7 @@ fun FieldDescription(insn: FieldInsnNode): FieldDescription =
                 insn.owner,
                 insn.name,
                 insn.desc,
-                insn.getOpcode() in setOf(GETSTATIC, PUTSTATIC)
+                insn.opcode in setOf(GETSTATIC, PUTSTATIC)
         )
 
 val FieldDescription.fieldType: Type

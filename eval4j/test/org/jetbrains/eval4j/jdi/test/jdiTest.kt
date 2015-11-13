@@ -16,24 +16,25 @@
 
 package org.jetbrains.eval4j.jdi.test
 
-import org.jetbrains.eval4j.*
 import com.sun.jdi.*
-import junit.framework.TestSuite
-import org.jetbrains.eval4j.test.buildTestSuite
-import junit.framework.TestCase
-import org.junit.Assert.*
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.atomic.AtomicInteger
-import org.jetbrains.eval4j.jdi.*
-import java.io.File
-import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.eval4j.test.getTestName
-import com.sun.jdi.ObjectReference
 import com.sun.jdi.event.BreakpointEvent
 import com.sun.jdi.event.ClassPrepareEvent
+import junit.framework.TestCase
+import junit.framework.TestSuite
+import org.jetbrains.eval4j.*
+import org.jetbrains.eval4j.jdi.JDIEval
+import org.jetbrains.eval4j.jdi.asValue
+import org.jetbrains.eval4j.jdi.jdiObj
+import org.jetbrains.eval4j.jdi.makeInitialFrame
+import org.jetbrains.eval4j.test.buildTestSuite
+import org.jetbrains.eval4j.test.getTestName
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
+import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicInteger
 
-val DEBUGEE_CLASS = javaClass<Debugee>()
+val DEBUGEE_CLASS = Debugee::class.java
 
 fun suite(): TestSuite {
     val connectors = Bootstrap.virtualMachineManager().launchingConnectors()
@@ -42,7 +43,7 @@ fun suite(): TestSuite {
 
     val connectorArgs = connector.defaultArguments()
 
-    val debugeeName = DEBUGEE_CLASS.getName()
+    val debugeeName = DEBUGEE_CLASS.name
     println("Debugee name: $debugeeName")
     connectorArgs["main"]!!.setValue(debugeeName)
     connectorArgs["options"]!!.setValue("-classpath out/production/eval4j${File.pathSeparator}out/test/eval4j")
@@ -111,7 +112,7 @@ fun suite(): TestSuite {
                 val args = if ((methodNode.access and Opcodes.ACC_STATIC) == 0) {
                     // Instance method
                     val newInstance = eval.newInstance(Type.getType(ownerClass))
-                    val thisValue = eval.invokeMethod(newInstance, MethodDescription(ownerClass.getName(), "<init>", "()V", false), listOf(), true)
+                    val thisValue = eval.invokeMethod(newInstance, MethodDescription(ownerClass.name, "<init>", "()V", false), listOf(), true)
                     listOf(thisValue)
                 }
                 else {

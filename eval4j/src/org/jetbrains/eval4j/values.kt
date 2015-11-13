@@ -22,7 +22,7 @@ import org.jetbrains.org.objectweb.asm.tree.LabelNode
 public interface Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
     public val asmType: Type
     public val valid: Boolean
-    override fun getSize(): Int = asmType.getSize()
+    override fun getSize(): Int = asmType.size
 
     override fun toString(): String
 }
@@ -42,7 +42,7 @@ object VOID_VALUE: Value {
 }
 
 fun makeNotInitializedValue(t: Type): Value? {
-    return when (t.getSort()) {
+    return when (t.sort) {
         Type.VOID -> null
         else -> NotInitialized(t)
     }
