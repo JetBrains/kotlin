@@ -17,44 +17,58 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
+fun DeclarationDescriptorWithVisibility.isVisible(from: DeclarationDescriptor): Boolean {
+    return isVisible(from, null)
+}
+
 fun DeclarationDescriptorWithVisibility.isVisible(
+        context: PsiElement,
+        receiverExpression: KtExpression?,
+        bindingContext: BindingContext,
+        resolutionFacade: ResolutionFacade
+): Boolean {
+    val resolutionScope = context.getResolutionScope(bindingContext, resolutionFacade)
+    val from = resolutionScope.ownerDescriptor
+    return isVisible(from, receiverExpression, bindingContext, resolutionScope)
+}
+
+private fun DeclarationDescriptorWithVisibility.isVisible(
         from: DeclarationDescriptor,
+        receiverExpression: KtExpression?,
         bindingContext: BindingContext? = null,
-        element: KtSimpleNameExpression? = null
+        resolutionScope: LexicalScope? = null
 ): Boolean {
     if (Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, this, from)) return true
-    if (bindingContext == null || element == null) return false
 
-    val receiver = element.getReceiverExpression()
-    val type = receiver?.let { bindingContext.getType(it) }
-    val explicitReceiver = type?.let { ExpressionReceiver.create(receiver!!, it, bindingContext) }
+    if (bindingContext == null || resolutionScope == null) return false
 
-    if (explicitReceiver != null) {
+    if (receiverExpression != null) {
+        val receiverType = bindingContext.getType(receiverExpression) ?: return false
+        val explicitReceiver = ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
         return Visibilities.isVisible(explicitReceiver, this, from)
     }
-
-    val resolutionScope = element.getResolutionScope(bindingContext, element.getResolutionFacade())
-    val implicitReceivers = resolutionScope.getImplicitReceiversHierarchy()
-    for (implicitReceiver in implicitReceivers) {
-        if (Visibilities.isVisible(implicitReceiver.value, this, from)) return true
+    else {
+        return resolutionScope.getImplicitReceiversHierarchy().any {
+            Visibilities.isVisible(it.value, this, from)
+        }
     }
-    return false
 }
 
 private fun compareDescriptorsText(project: Project, d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {

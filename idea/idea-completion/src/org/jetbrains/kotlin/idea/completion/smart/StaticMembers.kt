@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -61,10 +60,8 @@ class StaticMembers(
             context: KtSimpleNameExpression,
             enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
-        val containingDescriptor = context.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
-
         fun processMember(descriptor: DeclarationDescriptor) {
-            if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(containingDescriptor, bindingContext, context)) return
+            if (descriptor is DeclarationDescriptorWithVisibility && !descriptor.isVisible(context, null, bindingContext, resolutionFacade)) return
 
             val matcher: (ExpectedInfo) -> ExpectedInfoMatch
             if (descriptor is CallableDescriptor) {

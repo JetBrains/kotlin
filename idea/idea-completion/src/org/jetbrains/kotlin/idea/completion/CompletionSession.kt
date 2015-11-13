@@ -192,7 +192,7 @@ abstract class CompletionSession(
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
-            val visible = descriptor.isVisible(inDescriptor, bindingContext, nameExpression)
+            val visible = descriptor.isVisible(position, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
             if (visible) return true
             return completeNonAccessible && !descriptor.isFromLibrary()
         }
