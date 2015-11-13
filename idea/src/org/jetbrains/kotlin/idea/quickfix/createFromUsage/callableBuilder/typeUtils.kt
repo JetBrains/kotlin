@@ -53,16 +53,16 @@ private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor,
 
                 val typeParameter = it.key
 
-                var wrappingTypeParameter: TypeParameterDescriptor
+                var wrappingTypeParameter: TypeParameterDescriptor? = null
                 var wrappingTypeConstructor: TypeConstructor
+
+                wrappingTypeConstructor = object : TypeConstructor by typeParameter.typeConstructor {
+                    override fun getDeclarationDescriptor() = wrappingTypeParameter
+                }
 
                 wrappingTypeParameter = object : TypeParameterDescriptor by typeParameter {
                     override fun getName() = name
                     override fun getTypeConstructor() = wrappingTypeConstructor
-                }
-
-                wrappingTypeConstructor = object : TypeConstructor by typeParameter.typeConstructor {
-                    override fun getDeclarationDescriptor() = wrappingTypeParameter
                 }
 
                 val wrappingType = object : KotlinType by typeParameter.defaultType {

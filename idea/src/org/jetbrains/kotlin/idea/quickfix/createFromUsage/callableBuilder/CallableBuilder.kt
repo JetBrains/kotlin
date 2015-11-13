@@ -143,15 +143,15 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     val currentFileContext: BindingContext
     val currentFileModule: ModuleDescriptor
 
-    val pseudocode: Pseudocode? by lazy { config.originalElement.getContainingPseudocode(currentFileContext) }
-
-    private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
-
     init {
         val result = config.currentFile.analyzeFullyAndGetResult()
         currentFileContext = result.bindingContext
         currentFileModule = result.moduleDescriptor
     }
+
+    val pseudocode: Pseudocode? by lazy { config.originalElement.getContainingPseudocode(currentFileContext) }
+
+    private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
 
     public var placement: CallablePlacement by Delegates.notNull()
 
