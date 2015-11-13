@@ -917,6 +917,13 @@ public class OverrideResolver {
     private void checkVisibility(@NotNull TopDownAnalysisContext c) {
         for (Map.Entry<KtCallableDeclaration, CallableMemberDescriptor> entry : c.getMembers().entrySet()) {
             checkVisibilityForMember(entry.getKey(), entry.getValue());
+            if (entry.getKey() instanceof KtProperty && entry.getValue() instanceof PropertyDescriptor) {
+                KtPropertyAccessor setter = ((KtProperty) entry.getKey()).getSetter();
+                PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) entry.getValue()).getSetter();
+                if (setter != null && setterDescriptor != null) {
+                    checkVisibilityForMember(setter, setterDescriptor);
+                }
+            }
         }
     }
 

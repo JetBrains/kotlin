@@ -433,6 +433,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("OverridenSetterVisibility.kt")
+        public void testOverridenSetterVisibility() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/OverridenSetterVisibility.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OverridingVarByVal.kt")
         public void testOverridingVarByVal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/OverridingVarByVal.kt");
