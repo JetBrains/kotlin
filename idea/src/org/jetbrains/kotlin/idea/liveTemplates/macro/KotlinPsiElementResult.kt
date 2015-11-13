@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.liveTemplates.macro;
+package org.jetbrains.kotlin.idea.liveTemplates.macro
 
-import com.intellij.codeInsight.template.JavaPsiElementResult;
-import com.intellij.psi.PsiNamedElement;
+import com.intellij.codeInsight.template.JavaPsiElementResult
+import com.intellij.psi.PsiNamedElement
 
-public class KotlinPsiElementResult extends JavaPsiElementResult {
-    public KotlinPsiElementResult(PsiNamedElement element) {
-        super(element);
-    }
-
-    @Override
-    public String toString() {
-        return ((PsiNamedElement) getElement()).getName();
+class KotlinPsiElementResult(element: PsiNamedElement) : JavaPsiElementResult(element) {
+    override fun toString(): String {
+        return (element as PsiNamedElement).name ?: ""
     }
 }
