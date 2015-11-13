@@ -15,8 +15,11 @@ class D {
 }
 
 enum class H {
+    I0 {
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class II0
+    },
     <!WRONG_MODIFIER_TARGET!>inner<!> I {
-        inner class II
+        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>inner<!> class II
     };
     
     inner class J

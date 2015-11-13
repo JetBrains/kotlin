@@ -82,6 +82,8 @@ public final class D {
 }
 
 public final enum class H : kotlin.Enum<H> {
+    enum entry I0
+
     enum entry I
 
     private constructor H()
