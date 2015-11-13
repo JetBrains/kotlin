@@ -112,8 +112,9 @@ public object KotlinCompilerRunner {
                 val stream = ByteArrayOutputStream()
                 val out = PrintStream(stream)
 
-                if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) == null)
-                    System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "")
+// Uncomment after resolving problems with parallel compilation and tests
+//                if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) == null)
+//                    System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "")
 
                 val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, argsArray, environment, messageCollector, out)
 

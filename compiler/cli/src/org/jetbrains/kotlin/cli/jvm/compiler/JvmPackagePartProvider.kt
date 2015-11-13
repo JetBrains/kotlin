@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import java.io.EOFException
 
 public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvider {
 
@@ -47,7 +48,11 @@ public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePar
         }.filterNotNull().flatMap {
             it.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }.toList<VirtualFile>()
         }.map {
-            ModuleMapping.create(it.contentsToByteArray())
+            try {
+                ModuleMapping.create(it.contentsToByteArray())
+            } catch (e: EOFException) {
+                throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$it', roots: $roots", e)
+            }
         }
 
         return mappings.map { it.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }.distinct()
