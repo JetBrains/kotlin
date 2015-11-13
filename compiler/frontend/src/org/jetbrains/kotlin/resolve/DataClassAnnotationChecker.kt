@@ -41,7 +41,9 @@ public class DataClassAnnotationChecker : DeclarationChecker {
             val primaryConstructor = declaration.getPrimaryConstructor()
             val parameters = primaryConstructor?.valueParameters ?: emptyList()
             if (parameters.isEmpty()) {
-                declaration.nameIdentifier?.let { diagnosticHolder.report(Errors.DATA_CLASS_WITHOUT_PARAMETERS.on(it)) }
+                (primaryConstructor?.valueParameterList ?: declaration.nameIdentifier)?.let {
+                    diagnosticHolder.report(Errors.DATA_CLASS_WITHOUT_PARAMETERS.on(it))
+                }
             }
             for (parameter in parameters) {
                 if (parameter.isVarArg) {
