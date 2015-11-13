@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -880,7 +881,7 @@ public class FunctionCodegen {
             @NotNull InstructionAdapter iv,
             @NotNull FunctionDescriptor descriptor,
             @NotNull Method bridge,
-            @NotNull Method delegateTo
+            @NotNull final Method delegateTo
     ) {
         if (BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) == null) return;
 
@@ -890,33 +891,14 @@ public class FunctionCodegen {
 
         iv.load(1, OBJECT_TYPE);
 
-        KotlinType jetType = descriptor.getValueParameters().get(0).getType();
-
-        // TODO: reuse logic from ExpressionCodegen
-        if (jetType.isMarkedNullable()) {
-            Label nope = new Label();
-            Label end = new Label();
-
-            iv.dup();
-            iv.ifnull(nope);
-            TypeIntrinsics.instanceOf(
-                    iv,
-                    jetType,
-                    boxType(delegateTo.getArgumentTypes()[0])
-            );
-            iv.goTo(end);
-            iv.mark(nope);
-            iv.pop();
-            iv.iconst(1);
-            iv.mark(end);
-        }
-        else {
-            TypeIntrinsics.instanceOf(
-                    iv,
-                    jetType,
-                    boxType(delegateTo.getArgumentTypes()[0])
-            );
-        }
+        final KotlinType kotlinType = descriptor.getValueParameters().get(0).getType();
+        CodegenUtilKt.generateIsCheck(iv, kotlinType, new Function1<InstructionAdapter, Unit>() {
+            @Override
+            public Unit invoke(InstructionAdapter adapter) {
+                TypeIntrinsics.instanceOf(adapter, kotlinType, boxType(delegateTo.getArgumentTypes()[0]));
+                return Unit.INSTANCE;
+            }
+        });
 
         Label afterBarrier = new Label();
 

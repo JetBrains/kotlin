@@ -27,6 +27,7 @@ import com.intellij.util.containers.Stack;
 import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -3749,7 +3750,7 @@ The "returned" value of try expression with no finally is either the last expres
         return negated ? StackValue.not(value) : value;
     }
 
-    private StackValue generateInstanceOf(final StackValue expressionToGen, final KotlinType jetType, final boolean leaveExpressionOnStack) {
+    private StackValue generateInstanceOf(final StackValue expressionToGen, final KotlinType kotlinType, final boolean leaveExpressionOnStack) {
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -3757,22 +3758,13 @@ The "returned" value of try expression with no finally is either the last expres
                 if (leaveExpressionOnStack) {
                     v.dup();
                 }
-                if (jetType.isMarkedNullable()) {
-                    Label nope = new Label();
-                    Label end = new Label();
-
-                    v.dup();
-                    v.ifnull(nope);
-                    generateInstanceOfInstruction(jetType);
-                    v.goTo(end);
-                    v.mark(nope);
-                    v.pop();
-                    v.iconst(1);
-                    v.mark(end);
-                }
-                else {
-                    generateInstanceOfInstruction(jetType);
-                }
+                CodegenUtilKt.generateIsCheck(v, kotlinType, new Function1<InstructionAdapter, Unit>() {
+                    @Override
+                    public Unit invoke(InstructionAdapter adapter) {
+                        generateInstanceOfInstruction(kotlinType);
+                        return Unit.INSTANCE;
+                    }
+                });
                 return null;
             }
         });
