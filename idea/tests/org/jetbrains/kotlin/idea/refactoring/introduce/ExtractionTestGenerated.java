@@ -432,6 +432,81 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhileCondition.kt");
             doIntroduceVariableTest(fileName);
         }
+
+        @TestMetadata("idea/testData/refactoring/introduceVariable/extractToScope")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ExtractToScope extends AbstractExtractionTest {
+            public void testAllFilesPresentInExtractToScope() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceVariable/extractToScope"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("implicitOuterThisInsideNestedLamba.kt")
+            public void testImplicitOuterThisInsideNestedLamba() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/implicitOuterThisInsideNestedLamba.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("implicitThisInsideNestedLamba.kt")
+            public void testImplicitThisInsideNestedLamba() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/implicitThisInsideNestedLamba.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("insideFunExpression.kt")
+            public void testInsideFunExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/insideFunExpression.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("insideFunExpressionWithBlock.kt")
+            public void testInsideFunExpressionWithBlock() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/insideFunExpressionWithBlock.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("insideLamba.kt")
+            public void testInsideLamba() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/insideLamba.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("insideNestedFunExpression.kt")
+            public void testInsideNestedFunExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/insideNestedFunExpression.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("insideNestedFunExpressionInLambda.kt")
+            public void testInsideNestedFunExpressionInLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/insideNestedFunExpressionInLambda.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("insideNestedLamba.kt")
+            public void testInsideNestedLamba() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/insideNestedLamba.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("insideNestedLambdaInFunExpression.kt")
+            public void testInsideNestedLambdaInFunExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/insideNestedLambdaInFunExpression.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("itInsideNestedLamba.kt")
+            public void testItInsideNestedLamba() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/itInsideNestedLamba.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("outerItInsideNestedLamba.kt")
+            public void testOuterItInsideNestedLamba() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/extractToScope/outerItInsideNestedLamba.kt");
+                doIntroduceVariableTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/refactoring/extractFunction")

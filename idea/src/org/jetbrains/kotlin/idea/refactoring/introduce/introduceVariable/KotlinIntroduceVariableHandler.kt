@@ -29,13 +29,18 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
+import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.idea.core.refactoring.Pass
+import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
@@ -61,9 +66,11 @@ import org.jetbrains.kotlin.resolve.ObservableBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
@@ -314,7 +321,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
         return isUsedAsExpression(bindingContext) || container != parent
     }
 
-    private fun PsiElement.getContainer(): PsiElement? {
+    private fun KtElement.getContainer(): KtElement? {
         if (this is KtBlockExpression) return this
 
         return (parentsWithSelf zip parents).firstOrNull {
@@ -326,7 +333,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                 is KtDeclarationWithBody -> parent.bodyExpression == place
                 else -> false
             }
-        }?.second
+        }?.second as? KtElement
     }
 
     private fun KtContainerNode.isBadContainerNode(place: PsiElement): Boolean {
@@ -339,8 +346,8 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
         }
     }
 
-    private fun PsiElement.getOccurrenceContainer(): PsiElement? {
-        var result: PsiElement? = null
+    private fun KtExpression.getOccurrenceContainer(): KtElement? {
+        var result: KtElement? = null
         for ((place, parent) in parentsWithSelf zip parents) {
             when {
                 parent is KtContainerNode && place !is KtBlockExpression && !parent.isBadContainerNode(place) -> result = parent
@@ -361,12 +368,14 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
     fun doRefactoring(
             project: Project,
             editor: Editor?,
-            expressionToExtract: KtExpression?,
+            expression: KtExpression,
+            container: KtElement,
+            occurrenceContainer: KtElement,
+            resolutionFacade: ResolutionFacade,
+            bindingContext: BindingContext,
             occurrencesToReplace: List<KtExpression>?,
             onNonInteractiveFinish: ((KtProperty) -> Unit)?
     ) {
-        val expression = expressionToExtract?.let { KtPsiUtil.safeDeparenthesize(it) }
-                         ?: return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"))
         val parent = expression.parent
 
         when {
@@ -388,8 +397,6 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"))
         }
 
-        val resolutionFacade = expression.getResolutionFacade()
-        val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.FULL)
         val expressionType = bindingContext.getType(expression) //can be null or error type
         val scope = expression.getResolutionScope(bindingContext, resolutionFacade)
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
@@ -408,11 +415,6 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.expression.has.unit.type"))
         }
 
-        val container = expression.getContainer()
-                        ?: return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"))
-        val occurrenceContainer = expression.getOccurrenceContainer()
-                                  ?: return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"))
-
         val isInplaceAvailable = editor != null
                                  && editor.settings.isVariableInplaceRenameEnabled
                                  && !ApplicationManager.getApplication().isUnitTestMode
@@ -427,7 +429,11 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             val replaceOccurrence = expression.shouldReplaceOccurrence(bindingContext, container) || allReplaces.size > 1
 
             val commonParent = PsiTreeUtil.findCommonParent(allReplaces) as KtElement
-            val commonContainer = commonParent.getContainer() as KtElement
+            var commonContainer = commonParent.getContainer()!!
+            if (commonContainer != container && container.isAncestor(commonContainer, true)) {
+                commonContainer = container
+            }
+
             val validator = NewDeclarationNameValidator(
                     commonContainer,
                     calculateAnchor(commonParent, commonContainer, allReplaces),
@@ -475,6 +481,100 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
         }
         else {
             callback.pass(OccurrencesChooser.ReplaceChoice.ALL)
+        }
+    }
+
+    private fun PsiElement.isFunExpressionOrLambdaBody(): Boolean {
+        if (isFunctionalExpression()) return true
+        val parent = parent as? KtFunction ?: return false
+        return parent.bodyExpression == this && (parent is KtFunctionLiteral || parent.isFunctionalExpression())
+    }
+
+    private fun KtExpression.getCandidateContainers(
+            resolutionFacade: ResolutionFacade,
+            originalContext: BindingContext
+    ): List<Pair<KtElement, KtElement>> {
+        val file = getContainingKtFile()
+
+        val references = collectDescendantsOfType<KtReferenceExpression>()
+
+        fun isResolvableNextTo(neighbour: KtExpression): Boolean {
+            val scope = neighbour.getResolutionScope(originalContext, resolutionFacade)
+            val newContext = analyzeInContext(scope, neighbour)
+            val project = file.project
+            return references.all {
+                val originalDescriptor = originalContext[BindingContext.REFERENCE_TARGET, it]
+                val newDescriptor = newContext[BindingContext.REFERENCE_TARGET, it]
+
+                if (originalDescriptor is ValueParameterDescriptor
+                    && (originalContext[BindingContext.AUTO_CREATED_IT, originalDescriptor] ?: false)) {
+                    return@all originalDescriptor.containingDeclaration.source.getPsi().isAncestor(neighbour, true)
+                }
+
+                compareDescriptors(project, newDescriptor, originalDescriptor)
+            }
+        }
+
+        val firstContainer = getContainer() ?: return emptyList()
+        val firstOccurrenceContainer = getOccurrenceContainer() ?: return emptyList()
+
+        val containers = SmartList(firstContainer)
+        val occurrenceContainers = SmartList(firstOccurrenceContainer)
+
+        if (!firstContainer.isFunExpressionOrLambdaBody()) return listOf(firstContainer to firstOccurrenceContainer)
+
+        val lambdasAndContainers = ArrayList<Pair<KtExpression, KtElement>>().apply {
+            var container = firstContainer
+            do {
+                var lambda: KtExpression = container.getNonStrictParentOfType<KtFunction>()!!
+                if (lambda is KtFunctionLiteral) lambda = lambda.parent as? KtFunctionLiteralExpression ?: return@apply
+                if (!isResolvableNextTo(lambda)) return@apply
+                container = lambda.getContainer() ?: return@apply
+                add(lambda to container)
+            } while (container.isFunExpressionOrLambdaBody())
+        }
+
+        lambdasAndContainers.mapTo(containers) { it.second }
+        lambdasAndContainers.mapTo(occurrenceContainers) { it.first.getOccurrenceContainer() }
+        return ArrayList<Pair<KtElement, KtElement>>().apply {
+            for ((container, occurrenceContainer) in (containers zip occurrenceContainers)) {
+                if (occurrenceContainer == null) continue
+                add(container to occurrenceContainer)
+            }
+        }
+    }
+
+    fun doRefactoring(
+            project: Project,
+            editor: Editor?,
+            expressionToExtract: KtExpression?,
+            occurrencesToReplace: List<KtExpression>?,
+            onNonInteractiveFinish: ((KtProperty) -> Unit)?
+    ) {
+        val expression = expressionToExtract?.let { KtPsiUtil.safeDeparenthesize(it) }
+                         ?: return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"))
+
+        val resolutionFacade = expression.getResolutionFacade()
+        val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.FULL)
+
+        fun runWithChosenContainers(container: KtElement, occurrenceContainer: KtElement) {
+            doRefactoring(project, editor, expression, container, occurrenceContainer, resolutionFacade, bindingContext, occurrencesToReplace, onNonInteractiveFinish)
+        }
+
+        val candidateContainers = expression.getCandidateContainers(resolutionFacade, bindingContext).ifEmpty {
+            return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.container"))
+        }
+
+        if (editor == null) {
+            return candidateContainers.first().let { runWithChosenContainers(it.first, it.second) }
+        }
+
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            return candidateContainers.last().let { runWithChosenContainers(it.first, it.second) }
+        }
+
+        chooseContainerElementIfNecessary(candidateContainers, editor, "Select target code block", true, { it.first }) {
+            runWithChosenContainers(it.first, it.second)
         }
     }
 

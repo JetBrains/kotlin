@@ -422,3 +422,5 @@ public fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
         }
     }?.first as KtExpression? ?: this
 }
+
+public fun PsiElement.isFunctionalExpression(): Boolean = this is KtNamedFunction && nameIdentifier == null
