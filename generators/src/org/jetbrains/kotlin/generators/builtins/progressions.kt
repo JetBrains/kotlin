@@ -56,7 +56,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
  * A progression of values of type `$t`.
  */
 public open class $progression
-    @Deprecated("This constructor will become private soon. Use $progression.fromClosedRange() instead.", ReplaceWith("$progression.fromClosedRange(start, end, increment)"))
+    @Deprecated("This constructor will become private soon. Use $progression.fromClosedRange() instead.", ReplaceWith("$progression.fromClosedRange(start, endInclusive, increment)"))
     public constructor
     (
             start: $t,
