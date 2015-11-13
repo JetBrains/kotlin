@@ -4,5 +4,7 @@ fun f(r: IntRange) {
 }
 
 // 0 iterator
-// 1 getStart
-// 1 getEnd
+// 0 getStart
+// 0 getEnd
+// 1 getFirst
+// 1 getLast

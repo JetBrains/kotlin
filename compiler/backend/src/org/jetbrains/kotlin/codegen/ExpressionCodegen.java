@@ -743,6 +743,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // This method consumes range/progression from stack
         // The result is stored to local variable
         protected void generateRangeOrProgressionProperty(Type loopRangeType, String getterName, Type elementType, int varToStore) {
+            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + elementType.getDescriptor(), false);
+            v.store(varToStore, elementType);
+        }
+
+        protected void generateRangeOrProgressionBoxedProperty(Type loopRangeType, String getterName, Type elementType, int varToStore) {
             Type boxedType = boxType(elementType);
             v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + boxedType.getDescriptor(), false);
             StackValue.coerce(boxedType, elementType, v);
@@ -901,10 +906,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private abstract class AbstractForInProgressionOrRangeLoopGenerator extends AbstractForLoopGenerator {
         protected int endVar;
 
-        // For integer progressions instead of comparing loopParameterVar with endVar at the beginning of an iteration we check whether
-        // loopParameterVar == finalVar at the end of the iteration (and also if there should be any iterations at all, before the loop)
-        protected final boolean isIntegerProgression;
-
         private AbstractForInProgressionOrRangeLoopGenerator(@NotNull KtForExpression forExpression) {
             super(forExpression);
 
@@ -914,12 +915,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 case Type.SHORT:
                 case Type.CHAR:
                 case Type.LONG:
-                    isIntegerProgression = true;
-                    break;
-
-                case Type.DOUBLE:
-                case Type.FLOAT:
-                    isIntegerProgression = false;
                     break;
 
                 default:
@@ -934,17 +929,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             endVar = createLoopTempVariable(asmElementType);
         }
 
-        // Index of the local variable holding the actual last value of the loop parameter.
-        // For ranges it equals end, for progressions it's a function of start, end and increment
-        protected abstract int getFinalVar();
-
         protected void checkPostCondition(@NotNull Label loopExit) {
-            int finalVar = getFinalVar();
-            assert isIntegerProgression && finalVar != -1 :
-                    "Post-condition should be checked only in case of integer progressions, finalVar = " + finalVar;
+            assert endVar != -1 :
+                    "endVar must be allocated, endVar = " + endVar;
 
             v.load(loopParameterVar, asmElementType);
-            v.load(finalVar, asmElementType);
+            v.load(endVar, asmElementType);
             if (asmElementType.getSort() == Type.LONG) {
                 v.lcmp();
                 v.ifeq(loopExit);
@@ -952,6 +942,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             else {
                 v.ificmpeq(loopExit);
             }
+        }
+
+        @Override
+        public void checkPreCondition(@NotNull Label loopExit) {
         }
     }
 
@@ -970,24 +964,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         protected abstract void storeRangeStartAndEnd();
 
         @Override
-        protected int getFinalVar() {
-            return endVar;
-        }
-
-        @Override
-        public void checkPreCondition(@NotNull Label loopExit) {
-            if (isIntegerProgression) return;
-
-            v.load(loopParameterVar, asmElementType);
-            v.load(endVar, asmElementType);
-
-            v.cmpg(asmElementType);
-            v.ifgt(loopExit);
-        }
-
-        @Override
         public void checkEmptyLoop(@NotNull Label loopExit) {
-            if (!isIntegerProgression) return;
 
             v.load(loopParameterVar, asmElementType);
             v.load(endVar, asmElementType);
@@ -1006,9 +983,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         @Override
         protected void increment(@NotNull Label loopExit) {
-            if (isIntegerProgression) {
-                checkPostCondition(loopExit);
-            }
+            checkPostCondition(loopExit);
 
             if (asmElementType == Type.INT_TYPE) {
                 v.iinc(loopParameterVar, 1);
@@ -1055,8 +1030,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             gen(forExpression.getLoopRange(), asmLoopRangeType);
             v.dup();
 
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getStart", asmElementType, loopParameterVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getEnd", asmElementType, endVar);
+            // ranges inherit first and last from corresponding progressions
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, endVar);
         }
     }
 
@@ -1064,15 +1040,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         private int incrementVar;
         private Type incrementType;
 
-        private int finalVar;
-
         private ForInProgressionExpressionLoopGenerator(@NotNull KtForExpression forExpression) {
             super(forExpression);
-        }
-
-        @Override
-        protected int getFinalVar() {
-            return finalVar;
         }
 
         @Override
@@ -1094,66 +1063,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.dup();
             v.dup();
 
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getStart", asmElementType, loopParameterVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getEnd", asmElementType, endVar);
-            generateRangeOrProgressionProperty(asmLoopRangeType, "getIncrement", incrementType, incrementVar);
-
-            storeFinalVar();
-        }
-
-        private void storeFinalVar() {
-            if (!isIntegerProgression) {
-                finalVar = -1;
-                return;
-            }
-
-            v.load(loopParameterVar, asmElementType);
-            v.load(endVar, asmElementType);
-            v.load(incrementVar, incrementType);
-
-            Type methodParamType = asmElementType.getSort() == Type.LONG ? Type.LONG_TYPE : Type.INT_TYPE;
-            v.invokestatic("kotlin/internal/ProgressionUtilKt", "getProgressionFinalElement",
-                           Type.getMethodDescriptor(methodParamType, methodParamType, methodParamType, methodParamType), false);
-
-            finalVar = createLoopTempVariable(asmElementType);
-            v.store(finalVar, asmElementType);
-        }
-
-        @Override
-        public void checkPreCondition(@NotNull Label loopExit) {
-            if (isIntegerProgression) return;
-
-            v.load(loopParameterVar, asmElementType);
-            v.load(endVar, asmElementType);
-            v.load(incrementVar, incrementType);
-
-            Label negativeIncrement = new Label();
-            Label afterIf = new Label();
-
-            if (incrementType.getSort() == Type.DOUBLE) {
-                v.dconst(0.0);
-            }
-            else {
-                v.fconst(0.0f);
-            }
-            v.cmpl(incrementType);
-            v.ifle(negativeIncrement); // if increment < 0, jump
-
-            // increment > 0
-            v.cmpg(asmElementType); // if loop parameter is NaN, exit from loop, as well
-            v.ifgt(loopExit);
-            v.goTo(afterIf);
-
-            // increment < 0
-            v.mark(negativeIncrement);
-            v.cmpl(asmElementType); // if loop parameter is NaN, exit from loop, as well
-            v.iflt(loopExit);
-            v.mark(afterIf);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, endVar);
+            generateRangeOrProgressionBoxedProperty(asmLoopRangeType, "getIncrement", incrementType, incrementVar);
         }
 
         @Override
         public void checkEmptyLoop(@NotNull Label loopExit) {
-            if (!isIntegerProgression) return;
 
             v.load(loopParameterVar, asmElementType);
             v.load(endVar, asmElementType);
@@ -1198,9 +1114,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         @Override
         protected void increment(@NotNull Label loopExit) {
-            if (isIntegerProgression) {
-                checkPostCondition(loopExit);
-            }
+            checkPostCondition(loopExit);
 
             v.load(loopParameterVar, asmElementType);
             v.load(incrementVar, asmElementType);
