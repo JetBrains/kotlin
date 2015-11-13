@@ -47,16 +47,15 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import java.util.*
 
 abstract class BaseKotlinVariableMacro : Macro() {
-    private fun getVariables(params: Array<Expression>, context: ExpressionContext): Array<KtNamedDeclaration>? {
-        if (params.size != 0) return null
+    private fun getVariables(params: Array<Expression>, context: ExpressionContext): Collection<KtNamedDeclaration> {
+        if (params.size != 0) return emptyList()
 
         val project = context.project
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.editor!!.document)
-        if (psiFile !is KtFile) return null
+        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.editor!!.document) as? KtFile ?: return emptyList()
 
-        val contextExpression = findContextExpression(psiFile, context.startOffset) ?: return null
+        val contextExpression = findContextExpression(psiFile, context.startOffset) ?: return emptyList()
 
         val resolutionFacade = contextExpression.getResolutionFacade()
 
@@ -95,7 +94,7 @@ abstract class BaseKotlinVariableMacro : Macro() {
             }
         }
 
-        return declarations.toTypedArray()
+        return declarations
     }
 
     private fun getAllVariables(scope: LexicalScope): Collection<DeclarationDescriptor> {
@@ -125,17 +124,13 @@ abstract class BaseKotlinVariableMacro : Macro() {
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val vars = getVariables(params, context)
-        if (vars == null || vars.size == 0) return null
-        return KotlinPsiElementResult(vars[0])
+        if (vars.isEmpty()) return null
+        return KotlinPsiElementResult(vars.first())
     }
 
     override fun calculateLookupItems(params: Array<Expression>, context: ExpressionContext): Array<LookupElement>? {
         val vars = getVariables(params, context)
-        if (vars == null || vars.size < 2) return null
-        val set = LinkedHashSet<LookupElement>()
-        for (`var` in vars) {
-            set.add(LookupElementBuilder.create(`var`))
-        }
-        return set.toArray<LookupElement>(arrayOfNulls<LookupElement>(set.size))
+        if (vars.size < 2) return null
+        return vars.map { LookupElementBuilder.create(it) }.toTypedArray()
     }
 }

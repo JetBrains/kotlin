@@ -18,18 +18,11 @@ package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 
 class IterableVariableMacro : BaseKotlinVariableMacro() {
-
-    override fun getName(): String {
-        return "kotlinIterableVariable"
-    }
-
-    override fun getPresentableName(): String {
-        return KotlinBundle.message("macro.iterable.variable")
-    }
+    override fun getName() = "kotlinIterableVariable"
+    override fun getPresentableName() = "kotlinIterableVariable()"
 
     override fun isSuitable(
             variableDescriptor: VariableDescriptor,

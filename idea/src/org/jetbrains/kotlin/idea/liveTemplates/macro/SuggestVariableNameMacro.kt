@@ -18,17 +18,11 @@ package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 
 class SuggestVariableNameMacro : BaseKotlinVariableMacro() {
-    override fun getName(): String {
-        return "kotlinSuggestVariableName"
-    }
-
-    override fun getPresentableName(): String {
-        return KotlinBundle.message("macro.suggest.variable.name")
-    }
+    override fun getName() = "kotlinSuggestVariableName"
+    override fun getPresentableName() = "kotlinSuggestVariableName()"
 
     override fun isSuitable(
             variableDescriptor: VariableDescriptor,

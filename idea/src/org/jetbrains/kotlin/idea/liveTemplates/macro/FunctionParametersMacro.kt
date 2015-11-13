@@ -18,18 +18,12 @@ package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.codeInsight.template.*
 import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFunction
 import java.util.*
 
 class FunctionParametersMacro : Macro() {
-    override fun getName(): String {
-        return "functionParameters"
-    }
-
-    override fun getPresentableName(): String {
-        return KotlinBundle.message("macro.fun.parameters")
-    }
+    override fun getName() = "functionParameters"
+    override fun getPresentableName() = "functionParameters()"
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val project = context.project
@@ -53,8 +47,6 @@ class FunctionParametersMacro : Macro() {
         return null
     }
 
-    override fun isAcceptableInContext(context: TemplateContextType?): Boolean {
-        return context is JavaCodeContextType
-    }
+    override fun isAcceptableInContext(context: TemplateContextType?) = context is JavaCodeContextType
 
 }

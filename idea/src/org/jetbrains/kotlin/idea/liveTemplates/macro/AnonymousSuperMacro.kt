@@ -48,26 +48,25 @@ class AnonymousSuperMacro : Macro() {
         }
 
         val vars = getSupertypes(params, context)
-        if (vars == null || vars.size == 0) return null
+        if (vars.isEmpty()) return null
         return KotlinPsiElementResult(vars.first())
     }
 
     override fun calculateLookupItems(params: Array<Expression>, context: ExpressionContext): Array<LookupElement>? {
         val superTypes = getSupertypes(params, context)
-        if (superTypes == null || superTypes.size < 2) return null
+        if (superTypes.size < 2) return null
         return superTypes.map { LookupElementBuilder.create(it) }.toTypedArray()
     }
 
-    private fun getSupertypes(params: Array<Expression>, context: ExpressionContext): Array<PsiNamedElement>? {
-        if (params.size != 0) return null
+    private fun getSupertypes(params: Array<Expression>, context: ExpressionContext): Collection<PsiNamedElement> {
+        if (params.size != 0) return emptyList()
 
-        val project = context.project
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
+        psiDocumentManager.commitAllDocuments()
 
-        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.editor!!.document)
-        if (psiFile !is KtFile) return null
+        val psiFile = psiDocumentManager.getPsiFile(context.editor!!.document) as? KtFile ?: return emptyList()
 
-        val expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.startOffset), KtExpression::class.java) ?: return null
+        val expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.startOffset), KtExpression::class.java) ?: return emptyList()
 
         val bindingContext = expression.analyze(BodyResolveMode.FULL)
         val resolutionScope = expression.getResolutionScope(bindingContext, expression.getResolutionFacade())
@@ -76,6 +75,5 @@ class AnonymousSuperMacro : Macro() {
                 .collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
                 .filter { it is ClassDescriptor && it.modality.isOverridable && (it.kind == ClassKind.CLASS || it.kind == ClassKind.INTERFACE) }
                 .mapNotNull { DescriptorToSourceUtils.descriptorToDeclaration(it) as PsiNamedElement? }
-                .toTypedArray()
     }
 }

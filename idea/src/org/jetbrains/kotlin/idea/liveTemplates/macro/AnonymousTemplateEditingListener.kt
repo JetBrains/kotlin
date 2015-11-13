@@ -53,9 +53,7 @@ internal class AnonymousTemplateEditingListener(private val psiFile: PsiFile, pr
 
     override fun templateFinished(template: Template?, brokenOff: Boolean) {
         editor.putUserData(LISTENER_KEY, null)
-        if (brokenOff) {
-            return
-        }
+        if (brokenOff) return
 
         if (classDescriptor != null) {
             if (classDescriptor!!.kind == ClassKind.CLASS) {
