@@ -38,33 +38,30 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 public class KDocReference(element: KDocName): KtMultiReference<KDocName>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val declaration = getElement().getContainingDoc().getOwner()
-        if (declaration == null) {
-            return arrayListOf()
-        }
-        val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
-        if (declarationDescriptor == null) {
-            return arrayListOf()
-        }
-        val kdocLink = getElement().getStrictParentOfType<KDocLink>()!!
-        return resolveKDocLink(getElement().getResolutionFacade(),
+        val declaration = element.getContainingDoc().getOwner() ?: return arrayListOf()
+        val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] ?: return arrayListOf()
+
+        val kdocLink = element.getStrictParentOfType<KDocLink>()!!
+        return resolveKDocLink(element.getResolutionFacade(),
                                declarationDescriptor,
                                kdocLink.getTagIfSubject(),
-                               getElement().getQualifiedName())
+                               element.getQualifiedName())
     }
 
-    override fun getRangeInElement(): TextRange = getElement().getNameTextRange()
+    override fun getRangeInElement(): TextRange = element.getNameTextRange()
 
     override fun canRename(): Boolean = true
 
+    override fun resolve(): PsiElement? = multiResolve(false).firstOrNull()?.element
+
     override fun handleElementRename(newElementName: String?): PsiElement? {
-        val textRange = getElement().getNameTextRange()
-        val newText = textRange.replace(getElement().getText(), newElementName!!)
-        val newLink = KDocElementFactory(getElement().getProject()).createNameFromText(newText)
-        return getElement().replace(newLink)
+        val textRange = element.getNameTextRange()
+        val newText = textRange.replace(element.text, newElementName!!)
+        val newLink = KDocElementFactory(element.project).createNameFromText(newText)
+        return element.replace(newLink)
     }
 
-    override fun getCanonicalText(): String = getElement().getNameText()
+    override fun getCanonicalText(): String = element.getNameText()
 }
 
 public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
@@ -76,7 +73,7 @@ public fun resolveKDocLink(resolutionFacade: ResolutionFacade,
     }
 
     // Try to find a matching local descriptor (parameter or type parameter) first.
-    if (qualifiedName.size() == 1) {
+    if (qualifiedName.size == 1) {
         val localResult = resolveInLocalScope(fromDescriptor, qualifiedName.single(), resolutionFacade)
         if (!localResult.isEmpty()) {
             return localResult
@@ -105,13 +102,13 @@ public fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<Decl
     // TODO resolve parameters of functions passed as parameters
     when (fromDescriptor) {
         is CallableDescriptor ->
-            return fromDescriptor.getValueParameters()
+            return fromDescriptor.valueParameters
         is ClassifierDescriptor -> {
-            val typeParams = fromDescriptor.getTypeConstructor().getParameters()
+            val typeParams = fromDescriptor.typeConstructor.parameters
             if (fromDescriptor is ClassDescriptor) {
-                val constructorDescriptor = fromDescriptor.getUnsubstitutedPrimaryConstructor()
+                val constructorDescriptor = fromDescriptor.unsubstitutedPrimaryConstructor
                 if (constructorDescriptor != null) {
-                    return typeParams + constructorDescriptor.getValueParameters()
+                    return typeParams + constructorDescriptor.valueParameters
                 }
             }
             return typeParams
@@ -123,27 +120,27 @@ public fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<Decl
 
 private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedName: List<String>): List<DeclarationDescriptor> {
     val name = qualifiedName.singleOrNull() ?: return listOf()
-    return getParamDescriptors(fromDescriptor).filter { it.getName().asString() == name }
+    return getParamDescriptors(fromDescriptor).filter { it.name.asString() == name }
 }
 
 private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): MemberScope {
-    return descriptor.getContainingDeclaration().getPackage(descriptor.fqName).memberScope
+    return descriptor.containingDeclaration.getPackage(descriptor.fqName).memberScope
 }
 
 private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescriptor): LexicalScope {
 
     val headerScope = LexicalScopeImpl(outerScope, descriptor, false, descriptor.thisAsReceiverParameter,
-                                       "Class ${descriptor.getName()} header scope") {
+                                       "Class ${descriptor.name} header scope") {
         for (typeParameter in descriptor.declaredTypeParameters) {
             addClassifierDescriptor(typeParameter)
         }
-        for (constructor in descriptor.getConstructors()) {
+        for (constructor in descriptor.constructors) {
             addFunctionDescriptor(constructor)
         }
     }
     return LexicalChainedScope(headerScope, descriptor, false, null,
                                "Class ${descriptor.name} scope",
-                               descriptor.defaultType.getMemberScope(),
+                               descriptor.defaultType.memberScope,
                                descriptor.staticScope)
 }
 
@@ -175,9 +172,9 @@ public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: De
 }
 
 private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutionFacade: ResolutionFacade): LexicalScope {
-    val parent = descriptor.getContainingDeclaration()
+    val parent = descriptor.containingDeclaration
     if (parent is PackageFragmentDescriptor) {
-        val containingFile = (descriptor.getSource() as? PsiSourceElement)?.psi?.getContainingFile() as? KtFile
+        val containingFile = (descriptor.source as? PsiSourceElement)?.psi?.containingFile as? KtFile
         if (containingFile != null) {
             return resolutionFacade.getFileResolutionScope(containingFile)
         }

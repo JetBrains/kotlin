@@ -72,6 +72,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Overloads.kt")
+    public void testOverloads() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/Overloads.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ParamReference.kt")
     public void testParamReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ParamReference.kt");
