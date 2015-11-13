@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.components;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
@@ -24,35 +23,23 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
-import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
-import org.jetbrains.kotlin.load.java.structure.JavaField;
-import org.jetbrains.kotlin.load.java.structure.JavaMember;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
-import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.AlternativeFieldSignatureData;
-import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.AlternativeMethodSignatureData;
 import org.jetbrains.kotlin.resolve.jvm.kotlinSignature.SignaturesPropagationData;
 import org.jetbrains.kotlin.types.KotlinType;
 
-import java.util.Collections;
 import java.util.List;
 
 public class TraceBasedExternalSignatureResolver implements ExternalSignatureResolver {
-    @NotNull private final BindingTrace trace;
-    @NotNull private final Project project;
+    private final BindingTrace trace;
 
-    public TraceBasedExternalSignatureResolver(
-            @NotNull Project project,
-            @NotNull BindingTrace trace
-    ) {
-        this.project = project;
+    public TraceBasedExternalSignatureResolver(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 
     @Override
     @NotNull
-    public PropagatedMethodSignature resolvePropagatedSignature(
+    public AlternativeMethodSignature resolvePropagatedSignature(
             @NotNull JavaMethod method,
             @NotNull ClassDescriptor owner,
             @NotNull KotlinType returnType,
@@ -62,60 +49,10 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
     ) {
         SignaturesPropagationData data =
                 new SignaturesPropagationData(owner, returnType, receiverType, valueParameters, typeParameters, method);
-        return new PropagatedMethodSignature(data.getModifiedReturnType(), data.getModifiedReceiverType(),
-                                             data.getModifiedValueParameters(), data.getModifiedTypeParameters(), data.getSignatureErrors(),
-                                             data.getModifiedHasStableParameterNames(), data.getSuperFunctions());
-    }
-
-    @Override
-    @NotNull
-    public AlternativeMethodSignature resolveAlternativeMethodSignature(
-            @NotNull JavaMember methodOrConstructor,
-            boolean hasSuperMethods,
-            @Nullable KotlinType returnType,
-            @Nullable KotlinType receiverType,
-            @NotNull List<ValueParameterDescriptor> valueParameters,
-            @NotNull List<TypeParameterDescriptor> typeParameters,
-            boolean hasStableParameterNames
-    ) {
-        assert methodOrConstructor instanceof JavaMethod || methodOrConstructor instanceof JavaConstructor :
-                "Not a method or a constructor: " + methodOrConstructor.getName();
-
-        AlternativeMethodSignatureData data = new AlternativeMethodSignatureData(
-                methodOrConstructor, receiverType, project, valueParameters, returnType, typeParameters, hasSuperMethods
+        return new AlternativeMethodSignature(
+                data.getModifiedReturnType(), data.getModifiedReceiverType(), data.getModifiedValueParameters(),
+                data.getModifiedTypeParameters(), data.getSignatureErrors(), data.getModifiedHasStableParameterNames()
         );
-
-        if (data.isAnnotated() && !data.hasErrors()) {
-            if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) {
-                return new AlternativeMethodSignature(returnType, receiverType, valueParameters,
-                                                      typeParameters, Collections.<String>emptyList(), hasStableParameterNames);
-            }
-            return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),
-                                                  Collections.<String>emptyList(), true);
-        }
-
-        List<String> error = data.hasErrors() ? Collections.singletonList(data.getError()) : Collections.<String>emptyList();
-        return new AlternativeMethodSignature(returnType, receiverType, valueParameters, typeParameters, error, hasStableParameterNames);
-    }
-
-    @Override
-    @NotNull
-    public AlternativeFieldSignature resolveAlternativeFieldSignature(
-            @NotNull JavaField field,
-            @NotNull KotlinType returnType,
-            boolean isVar
-    ) {
-        AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(field, returnType, project, isVar);
-
-        if (data.isAnnotated() && !data.hasErrors()) {
-            if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) {
-                return new AlternativeFieldSignature(returnType, null);
-            }
-            return new AlternativeFieldSignature(data.getReturnType(), null);
-        }
-
-        String error = data.hasErrors() ? data.getError() : null;
-        return new AlternativeFieldSignature(returnType, error);
     }
 
     @Override

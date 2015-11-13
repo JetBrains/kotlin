@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithDifferentJvmName.sameAsR
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
+import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -425,13 +426,7 @@ public class LazyJavaClassMemberScope(
         val propagated = c.components.externalSignatureResolver.resolvePropagatedSignature(
                 method, ownerDescriptor, returnType, null, valueParameters.descriptors, methodTypeParameters
         )
-        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
-                method, !propagated.getSuperMethods().isEmpty(), propagated.getReturnType(),
-                propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters(),
-                propagated.hasStableParameterNames()
-        )
-
-        return LazyJavaScope.MethodSignatureData(effectiveSignature, propagated.getErrors() + effectiveSignature.getErrors())
+        return LazyJavaScope.MethodSignatureData(propagated, propagated.errors)
     }
 
     private fun hasOverriddenBuiltinFunctionWithErasedValueParameters(
@@ -476,22 +471,12 @@ public class LazyJavaClassMemberScope(
         )
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
-        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
-                constructor, false, null, null, valueParameters.descriptors, Collections.emptyList(), false)
 
-        constructorDescriptor.initialize(
-                effectiveSignature.getValueParameters(),
-                constructor.getVisibility()
-        )
-        constructorDescriptor.setHasStableParameterNames(effectiveSignature.hasStableParameterNames())
+        constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility)
+        constructorDescriptor.setHasStableParameterNames(false)
         constructorDescriptor.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
 
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
-
-        val signatureErrors = effectiveSignature.getErrors()
-        if (!signatureErrors.isEmpty()) {
-            c.components.externalSignatureResolver.reportSignatureErrors(constructorDescriptor, signatureErrors)
-        }
 
         c.components.javaResolverCache.recordConstructor(constructor, constructorDescriptor)
 

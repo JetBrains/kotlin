@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.FqName
@@ -36,8 +37,9 @@ public abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJava
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
             valueParameters: LazyJavaScope.ResolvedValueParameters
     ): LazyJavaScope.MethodSignatureData {
-        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
-                method, false, returnType, null, valueParameters.descriptors, methodTypeParameters, false)
+        val effectiveSignature = ExternalSignatureResolver.AlternativeMethodSignature(
+                returnType, null, valueParameters.descriptors, methodTypeParameters, emptyList<String>(), false
+        )
         return LazyJavaScope.MethodSignatureData(effectiveSignature, effectiveSignature.getErrors())
     }
 

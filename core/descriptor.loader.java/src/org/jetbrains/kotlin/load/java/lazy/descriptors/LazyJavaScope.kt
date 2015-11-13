@@ -241,18 +241,12 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
-        val isVar = !field.isFinal()
         val propertyDescriptor = createPropertyDescriptor(field)
         propertyDescriptor.initialize(null, null)
 
         val propertyType = getPropertyType(field, propertyDescriptor.getAnnotations())
-        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeFieldSignature(field, propertyType, isVar)
-        val signatureErrors = effectiveSignature.getErrors()
-        if (!signatureErrors.isEmpty()) {
-            c.components.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
-        }
 
-        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getDispatchReceiverParameter(), null as KotlinType?)
+        propertyDescriptor.setType(propertyType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
             propertyDescriptor.setCompileTimeInitializer(

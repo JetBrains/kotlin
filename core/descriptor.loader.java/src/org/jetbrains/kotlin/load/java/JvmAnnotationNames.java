@@ -38,13 +38,8 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_INTERFACE_DEFAULT_IMPLS = new FqName("kotlin.jvm.internal.KotlinInterfaceDefaultImpls");
     public static final FqName KOTLIN_LOCAL_CLASS = new FqName("kotlin.jvm.internal.KotlinLocalClass");
 
-    public static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
-
     public static final FqName KOTLIN_DELEGATED_METHOD = new FqName("kotlin.jvm.internal.KotlinDelegatedMethod");
     public static final String IMPLEMENTATION_CLASS_NAME_FIELD_NAME = "implementationClassName";
-
-    public static final FqName KOTLIN_SIGNATURE = new FqName("kotlin.jvm.KotlinSignature");
-    public static final FqName OLD_KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");
 
     public static final String VERSION_FIELD_NAME = "version";
     public static final String FILE_PART_CLASS_NAMES_FIELD_NAME = "filePartClassNames";
@@ -87,7 +82,7 @@ public final class JvmAnnotationNames {
     private static final Set<JvmClassName> SPECIAL_META_ANNOTATIONS = new HashSet<JvmClassName>();
     static {
         for (FqName fqName : Arrays.asList(
-                KOTLIN_CLASS, KOTLIN_PACKAGE, KOTLIN_SIGNATURE, KOTLIN_SYNTHETIC_CLASS, KOTLIN_INTERFACE_DEFAULT_IMPLS, KOTLIN_LOCAL_CLASS
+                KOTLIN_CLASS, KOTLIN_PACKAGE, KOTLIN_SYNTHETIC_CLASS, KOTLIN_INTERFACE_DEFAULT_IMPLS, KOTLIN_LOCAL_CLASS
         )) {
             SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
         }
@@ -105,7 +100,7 @@ public final class JvmAnnotationNames {
         JvmClassName className = JvmClassName.byClassId(classId);
         return (javaSpecificAnnotationsAreSpecial
                 && (NULLABILITY_ANNOTATIONS.contains(className) || SPECIAL_META_ANNOTATIONS.contains(className))
-               ) || SPECIAL_ANNOTATIONS.contains(className) || className.getInternalName().startsWith("jet/runtime/typeinfo/");
+               ) || SPECIAL_ANNOTATIONS.contains(className);
     }
 
     private JvmAnnotationNames() {

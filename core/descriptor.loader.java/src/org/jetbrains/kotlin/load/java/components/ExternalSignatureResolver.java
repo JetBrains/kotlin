@@ -18,9 +18,10 @@ package org.jetbrains.kotlin.load.java.components;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.load.java.structure.JavaField;
-import org.jetbrains.kotlin.load.java.structure.JavaMember;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.load.java.structure.JavaMethod;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -31,7 +32,7 @@ public interface ExternalSignatureResolver {
     ExternalSignatureResolver DO_NOTHING = new ExternalSignatureResolver() {
         @NotNull
         @Override
-        public PropagatedMethodSignature resolvePropagatedSignature(
+        public AlternativeMethodSignature resolvePropagatedSignature(
                 @NotNull JavaMethod method,
                 @NotNull ClassDescriptor owner,
                 @NotNull KotlinType returnType,
@@ -39,34 +40,9 @@ public interface ExternalSignatureResolver {
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters
         ) {
-            return new PropagatedMethodSignature(
-                    returnType, receiverType, valueParameters, typeParameters, Collections.<String>emptyList(), false,
-                    Collections.<FunctionDescriptor>emptyList()
-            );
-        }
-
-        @NotNull
-        @Override
-        public AlternativeMethodSignature resolveAlternativeMethodSignature(
-                @NotNull JavaMember methodOrConstructor,
-                boolean hasSuperMethods,
-                @Nullable KotlinType returnType,
-                @Nullable KotlinType receiverType,
-                @NotNull List<ValueParameterDescriptor> valueParameters,
-                @NotNull List<TypeParameterDescriptor> typeParameters,
-                boolean hasStableParameterNames
-        ) {
             return new AlternativeMethodSignature(
-                    returnType, receiverType, valueParameters, typeParameters, Collections.<String>emptyList(), hasStableParameterNames
+                    returnType, receiverType, valueParameters, typeParameters, Collections.<String>emptyList(), false
             );
-        }
-
-        @NotNull
-        @Override
-        public AlternativeFieldSignature resolveAlternativeFieldSignature(
-                @NotNull JavaField field, @NotNull KotlinType returnType, boolean isVar
-        ) {
-            return new AlternativeFieldSignature(returnType, null);
         }
 
         @Override
@@ -75,24 +51,12 @@ public interface ExternalSignatureResolver {
         }
     };
 
-    abstract class MemberSignature {
-        private final List<String> signatureErrors;
-
-        protected MemberSignature(@NotNull List<String> signatureErrors) {
-            this.signatureErrors = signatureErrors;
-        }
-
-        @NotNull
-        public List<String> getErrors() {
-            return signatureErrors;
-        }
-    }
-
-    class AlternativeMethodSignature extends MemberSignature {
+    class AlternativeMethodSignature {
         private final KotlinType returnType;
         private final KotlinType receiverType;
         private final List<ValueParameterDescriptor> valueParameters;
         private final List<TypeParameterDescriptor> typeParameters;
+        private final List<String> signatureErrors;
         private final boolean hasStableParameterNames;
 
         public AlternativeMethodSignature(
@@ -103,11 +67,11 @@ public interface ExternalSignatureResolver {
                 @NotNull List<String> signatureErrors,
                 boolean hasStableParameterNames
         ) {
-            super(signatureErrors);
             this.returnType = returnType;
             this.receiverType = receiverType;
             this.valueParameters = valueParameters;
             this.typeParameters = typeParameters;
+            this.signatureErrors = signatureErrors;
             this.hasStableParameterNames = hasStableParameterNames;
         }
 
@@ -134,70 +98,21 @@ public interface ExternalSignatureResolver {
         public boolean hasStableParameterNames() {
             return hasStableParameterNames;
         }
-    }
-
-    class AlternativeFieldSignature extends MemberSignature {
-        private final KotlinType returnType;
-
-        public AlternativeFieldSignature(@NotNull KotlinType returnType, @Nullable String signatureError) {
-            super(signatureError == null ? Collections.<String>emptyList() : Collections.singletonList(signatureError));
-            this.returnType = returnType;
-        }
 
         @NotNull
-        public KotlinType getReturnType() {
-            return returnType;
-        }
-    }
-
-    class PropagatedMethodSignature extends AlternativeMethodSignature {
-        private final List<FunctionDescriptor> superMethods;
-
-        public PropagatedMethodSignature(
-                @Nullable KotlinType returnType,
-                @Nullable KotlinType receiverType,
-                @NotNull List<ValueParameterDescriptor> valueParameters,
-                @NotNull List<TypeParameterDescriptor> typeParameters,
-                @NotNull List<String> signatureErrors,
-                boolean hasStableParameterNames,
-                @NotNull List<FunctionDescriptor> superMethods
-        ) {
-            super(returnType, receiverType, valueParameters, typeParameters, signatureErrors, hasStableParameterNames);
-            this.superMethods = superMethods;
-        }
-
-        @NotNull
-        public List<FunctionDescriptor> getSuperMethods() {
-            return superMethods;
+        public List<String> getErrors() {
+            return signatureErrors;
         }
     }
 
     @NotNull
-    PropagatedMethodSignature resolvePropagatedSignature(
+    AlternativeMethodSignature resolvePropagatedSignature(
             @NotNull JavaMethod method,
             @NotNull ClassDescriptor owner,
             @NotNull KotlinType returnType,
             @Nullable KotlinType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<TypeParameterDescriptor> typeParameters
-    );
-
-    @NotNull
-    AlternativeMethodSignature resolveAlternativeMethodSignature(
-            @NotNull JavaMember methodOrConstructor,
-            boolean hasSuperMethods,
-            @Nullable KotlinType returnType,
-            @Nullable KotlinType receiverType,
-            @NotNull List<ValueParameterDescriptor> valueParameters,
-            @NotNull List<TypeParameterDescriptor> typeParameters,
-            boolean hasStableParameterNames
-    );
-
-    @NotNull
-    AlternativeFieldSignature resolveAlternativeFieldSignature(
-            @NotNull JavaField field,
-            @NotNull KotlinType returnType,
-            boolean isVar
     );
 
     void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors);
