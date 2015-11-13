@@ -240,7 +240,6 @@ Goals:
 - `org.jetbrains.annotations.NotNull` - value can not be null/passing null leads to an exception
 - `org.jetbrains.annotations.ReadOnly` - only non-mutating methods can be used on this collection/iterable/iterator
 - `org.jetbrains.annotations.Mutable` - mutating methods can be used on this collection/iterable/iterator
-- `kotlin.jvm.KotlinSignature(str)` - `str` is a string representation of a more precise signature
 
 See [appendix](#appendix) for more details
 
@@ -262,35 +261,6 @@ class Sub extends Super {
     void foo(@Nullable String p) {...} // Warning: Signature does not match the one in the superclass, discarded
 }
 ```
-
-#### @KotlinSignature
-
-``` java
-package kotlin.jvm;
-
-@Target({ElementType.METHOD, ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.FIELD})
-public @interface KotlinSignature {
-    String value();
-}
-```
-
-Usage:
-
-``` java
-class C {
-    @KotlinSignature("fun foo(): MutableList<String?>")
-    List<String> foo() { ... }
-}
-
-```
-
-Name resolution: `@KotlinSignature` can use short names from types, because full names are already specified in respective positions in
-the Java signature.
-
-- If there's a `@KotlinSignature` annotation, other annotations are ignored
-- If erasure of the signature specified by `@KotlinSignature` differs from the actual erased signature,
-  a warning is reported and the `@KotlinSignature` annotation is ignored
-- Otherwise, the signature from `@KotlinSignature` is used.
 
 #### @Nullable, @NotNull, @ReadOnly, @Mutable
 
@@ -436,7 +406,7 @@ fun foo(p: List<T>!): R! // conflict on nullability, no conflict on mutability
 ```
 
 ```
-fun foo(MutableList<T> p): R // super A, written in Kotlin or has @KotlinSignature
+fun foo(MutableList<T> p): R // super A, written in Kotlin
 @Nullable
 R foo(List<T> p) // subclass B
 

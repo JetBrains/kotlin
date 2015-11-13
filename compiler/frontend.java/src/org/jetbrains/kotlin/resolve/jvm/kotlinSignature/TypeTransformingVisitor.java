@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.jvm.kotlinSignature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
@@ -43,8 +42,6 @@ import static org.jetbrains.kotlin.load.java.components.TypeUsage.TYPE_ARGUMENT;
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 
 public class TypeTransformingVisitor extends KtVisitor<KotlinType, Void> {
-    private static boolean strictMode = false;
-
     private final KotlinType originalType;
     private final Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
@@ -195,13 +192,7 @@ public class TypeTransformingVisitor extends KtVisitor<KotlinType, Void> {
             }
             if (altProjectionKind != INVARIANT && parameter.getVariance() != INVARIANT) {
                 if (altProjectionKind == parameter.getVariance()) {
-                    if (strictMode) {
-                        throw new AlternativeSignatureMismatchException("Projection kind '%s' is redundant",
-                                altProjectionKind, DescriptorUtils.getFqName(typeConstructor.getDeclarationDescriptor()));
-                    }
-                    else {
-                        altProjectionKind = projectionKind;
-                    }
+                    altProjectionKind = projectionKind;
                 }
                 else {
                     throw new AlternativeSignatureMismatchException("Projection kind '%s' is conflicting with variance of %s",
@@ -240,10 +231,5 @@ public class TypeTransformingVisitor extends KtVisitor<KotlinType, Void> {
 
     private static boolean isSameName(String qualifiedName, String fullyQualifiedName) {
         return fullyQualifiedName.equals(qualifiedName) || fullyQualifiedName.endsWith("." + qualifiedName);
-    }
-
-    @TestOnly
-    public static void setStrictMode(boolean strictMode) {
-        TypeTransformingVisitor.strictMode = strictMode;
     }
 }

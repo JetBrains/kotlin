@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm;
 
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.cli.CliBaseTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,11 +23,6 @@ import org.junit.Test;
 import java.io.File;
 
 public class K2JvmCliTest extends CliBaseTest {
-    @Test
-    public void wrongKotlinSignature() throws Exception {
-        executeCompilerCompareOutputJVM();
-    }
-
     @Test
     public void wrongAbiVersion() throws Exception {
         executeCompilerCompareOutputJVM();

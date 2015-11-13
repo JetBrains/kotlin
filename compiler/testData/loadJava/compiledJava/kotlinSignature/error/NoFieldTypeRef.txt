@@ -1,6 +1,0 @@
-package test
-
-public open class NoFieldTypeRef {
-    public constructor NoFieldTypeRef()
-    public final var foo: kotlin.String!
-}

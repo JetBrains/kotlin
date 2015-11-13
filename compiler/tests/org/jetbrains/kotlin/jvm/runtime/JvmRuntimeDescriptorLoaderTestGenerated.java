@@ -3745,104 +3745,8 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Error extends AbstractJvmRuntimeDescriptorLoaderTest {
-                @TestMetadata("AddingNullability.java")
-                public void testAddingNullability() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/AddingNullability.java");
-                    doTest(fileName);
-                }
-
                 public void testAllFilesPresentInError() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.java$"), true);
-                }
-
-                @TestMetadata("ConflictingProjectionKind.java")
-                public void testConflictingProjectionKind() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/ConflictingProjectionKind.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("ExplicitFieldGettersAndSetters.java")
-                public void testExplicitFieldGettersAndSetters() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/ExplicitFieldGettersAndSetters.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("ExtraUpperBound.java")
-                public void testExtraUpperBound() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/ExtraUpperBound.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("MissingUpperBound.java")
-                public void testMissingUpperBound() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/MissingUpperBound.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("NoFieldTypeRef.java")
-                public void testNoFieldTypeRef() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/NoFieldTypeRef.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("NotVarargReplacedWithVararg.java")
-                public void testNotVarargReplacedWithVararg() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/NotVarargReplacedWithVararg.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("RedundantProjectionKind.java")
-                public void testRedundantProjectionKind() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/RedundantProjectionKind.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("ReturnTypeMissing.java")
-                public void testReturnTypeMissing() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/ReturnTypeMissing.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("SyntaxError.java")
-                public void testSyntaxError() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/SyntaxError.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("SyntaxErrorInFieldAnnotation.java")
-                public void testSyntaxErrorInFieldAnnotation() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/SyntaxErrorInFieldAnnotation.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("VarargReplacedWithNotVararg.java")
-                public void testVarargReplacedWithNotVararg() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/VarargReplacedWithNotVararg.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongFieldInitializer.java")
-                public void testWrongFieldInitializer() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongFieldInitializer.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongFieldMutability.java")
-                public void testWrongFieldMutability() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongFieldMutability.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongFieldName.java")
-                public void testWrongFieldName() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongFieldName.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongMethodName.java")
-                public void testWrongMethodName() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongMethodName.java");
-                    doTest(fileName);
                 }
 
                 @TestMetadata("WrongProjectionKind.java")
@@ -3857,57 +3761,15 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                     doTest(fileName);
                 }
 
-                @TestMetadata("WrongTypeName1.java")
-                public void testWrongTypeName1() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongTypeName1.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongTypeName2.java")
-                public void testWrongTypeName2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongTypeName2.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongTypeName3.java")
-                public void testWrongTypeName3() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongTypeName3.java");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("WrongTypeParameterBoundStructure1.java")
                 public void testWrongTypeParameterBoundStructure1() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongTypeParameterBoundStructure1.java");
                     doTest(fileName);
                 }
 
-                @TestMetadata("WrongTypeParameterBoundStructure2.java")
-                public void testWrongTypeParameterBoundStructure2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongTypeParameterBoundStructure2.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongTypeParametersCount.java")
-                public void testWrongTypeParametersCount() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongTypeParametersCount.java");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("WrongValueParameterStructure1.java")
                 public void testWrongValueParameterStructure1() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongValueParameterStructure1.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongValueParameterStructure2.java")
-                public void testWrongValueParameterStructure2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongValueParameterStructure2.java");
-                    doTest(fileName);
-                }
-
-                @TestMetadata("WrongValueParametersCount.java")
-                public void testWrongValueParametersCount() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongValueParametersCount.java");
                     doTest(fileName);
                 }
             }
@@ -4149,12 +4011,6 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("TwoSuperclassesInconsistentGenericTypes.java")
             public void testTwoSuperclassesInconsistentGenericTypes() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/TwoSuperclassesInconsistentGenericTypes.java");
-                doTest(fileName);
-            }
-
-            @TestMetadata("TwoSuperclassesVarargAndNot.java")
-            public void testTwoSuperclassesVarargAndNot() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation/TwoSuperclassesVarargAndNot.java");
                 doTest(fileName);
             }
         }

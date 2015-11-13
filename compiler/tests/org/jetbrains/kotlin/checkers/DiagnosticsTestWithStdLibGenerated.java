@@ -746,27 +746,6 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
     }
 
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class KotlinSignature extends AbstractDiagnosticsTestWithStdLib {
-        public void testAllFilesPresentInKotlinSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("constructorNamedArguments.kt")
-        public void testConstructorNamedArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/constructorNamedArguments.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("parameterNames.kt")
-        public void testParameterNames() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/parameterNames.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kt7585")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

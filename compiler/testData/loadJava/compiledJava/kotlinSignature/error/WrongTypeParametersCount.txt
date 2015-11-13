@@ -1,6 +1,0 @@
-package test
-
-public open class WrongTypeParametersCount {
-    public constructor WrongTypeParametersCount()
-    public open fun </*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> foo(/*0*/ p0: A!, /*1*/ p1: (kotlin.MutableList<out B!>..kotlin.List<B!>?)): kotlin.Unit
-}
